@@ -65,14 +65,21 @@ Bila Playwright tidak bisa mengunduh browser (misalnya di sandbox), arahkan ke C
 
 ## Deploy ke Vercel (dilakukan pemilik akun)
 
-1. Di Vercel: **Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Set **Root Directory** ke `Frontend` (framework terdeteksi sebagai Next.js). Biarkan opsi "Include files outside the Root Directory" aktif agar `Database/` ikut terbaca.
-2. **Build Command:** `pnpm build:vercel` (menjalankan `prisma migrate deploy` sebelum `next build`).
-3. Tambah database lewat **Storage → Marketplace → Neon** di project Vercel: pilih PostgreSQL 17 dan region Singapore, lalu hubungkan ke Production dan Preview. Integrasi ini mengisi `DATABASE_URL` (pooled) dan `DATABASE_URL_UNPOOLED` (direct, dipakai migrasi) secara otomatis, dan bisa membuat branch database terpisah untuk tiap preview.
-4. **Environment Variables** tambahan: `NEXT_PUBLIC_SITE_URL`. `DIRECT_URL` tidak perlu diisi bila memakai integrasi (hanya untuk koneksi Neon manual).
-5. Setelah deploy pertama, jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan `DATABASE_URL` production: `pnpm db:seed`.
-6. Cek `https://<domain>/api/health` harus mengembalikan `{"status":"ok","database":"ok"}`.
+Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, dan Ignored Build Step. Yang perlu dilakukan di dashboard:
 
-Domain `.site` dihubungkan di Milestone 5.
+1. **Vercel → Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Set **Root Directory** ke `Frontend`. Biarkan opsi "Include files outside the Root Directory" aktif agar `Database/` ikut terbaca. Build command dan region terbaca otomatis dari `vercel.json`.
+2. **Storage → Marketplace → Neon** di project Vercel: region **Singapore (aws-ap-southeast-1)**, PostgreSQL 17, hubungkan ke Production dan Preview. Integrasi mengisi `DATABASE_URL` (pooled) dan `DATABASE_URL_UNPOOLED` (direct, untuk migrasi) secara otomatis.
+3. **Branch database per preview (disarankan):** aktifkan pembuatan branch Neon untuk tiap preview di pengaturan integrasi, beserta penghapusan otomatis branch lama (paket gratis maksimal 10 branch). Setelah aktif, tambahkan env `MIGRATE_ON_BUILD=true` khusus **Preview**. Tanpa branch preview, jangan tambahkan env ini, agar preview tidak mengubah database production.
+4. **Environment Variables** tambahan: `NEXT_PUBLIC_SITE_URL` (Production: domain final, Preview: boleh dikosongkan). `DIRECT_URL` tidak perlu bila memakai integrasi.
+5. Deploy. Migrasi hanya berjalan di production (`Frontend/scripts/vercel-build.sh`). Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`).
+6. Jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan URL database production: `pnpm db:seed`.
+7. Cek `https://<domain>/api/health` harus mengembalikan `{"status":"ok","database":"ok"}`.
+
+Setelah deploy (pemilik akun):
+
+- **GitHub → Settings → Rules → Rulesets → New branch ruleset** untuk `main`: aktifkan *Require status checks to pass* (pilih job CI), *Block force pushes*, dan *Restrict deletions*. Tambahkan diri Anda (Repository admin) di *Bypass list* agar commit dokumen tetap bisa langsung ke `main`.
+- **UptimeRobot** (gratis): monitor HTTP ke `https://<domain>/api/health` tiap 5 menit, notifikasi ke **email** dan **Telegram**.
+- Domain `.site` dihubungkan di Milestone 5.
 
 ## Dokumen
 

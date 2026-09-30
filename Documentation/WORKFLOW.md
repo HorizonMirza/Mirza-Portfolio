@@ -26,7 +26,7 @@ Rencana (TODO.md) → Kerjakan di branch → Cek lokal → PR → CI + Preview �
 7. **Merge:** squash merge ke `main` setelah disetujui. Vercel deploy production otomatis.
 8. **Catat:** centang tugas di `TODO.md`, perbarui dokumen bila keputusan berubah.
 
-> Catatan: jawaban 22.1 menyebut "di main". Alur di atas memakai PR ke `main` supaya setiap perubahan punya preview dan bisa direview sebelum tayang. Jika Anda tetap ingin push langsung ke `main`, ubah bagian ini dan bagian 3. Untuk dokumen saja, push langsung dapat diterima.
+> **Keputusan (2026-09-30):** perubahan **kode** (`Frontend/`, `Database/`) lewat branch → PR → preview → merge. Perubahan **dokumen** (`Documentation/`, `.md`, `.agents/`) boleh langsung ke `main`, dan tidak memicu build Vercel. Untuk PR, pemilik memakai **Squash and merge** di GitHub, sehingga commit di `main` atas nama pemilik dan bertanda Verified.
 
 ## 3. Branch dan Commit
 

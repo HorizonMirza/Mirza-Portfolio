@@ -394,10 +394,24 @@ Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DAT
 | Lingkungan | Tujuan | Database |
 |---|---|---|
 | Lokal | Pengembangan | Postgres 17 lokal (Docker) atau Neon branch `dev` |
-| Preview (per PR) | Review hasil sebelum merge | Neon branch per preview, dibuat otomatis oleh integrasi Vercel |
+| Preview (per PR) | Review hasil sebelum merge | Neon branch per preview, dibuat dan dihapus otomatis oleh integrasi Vercel (maksimal 10 branch di paket gratis) |
 | Production | Situs live | Neon branch `main` |
 
-Alur: PR → CI hijau → Vercel membuat preview → merge ke `main` → Vercel deploy production. Migrasi database dijalankan `prisma migrate deploy` pada tahap build production, hanya untuk migrasi yang kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis berikutnya).
+Alur kode: branch → PR → CI hijau → Vercel membuat preview → merge ke `main` → Vercel deploy production. Dokumen boleh langsung ke `main` (tidak memicu build).
+
+**Konfigurasi hosting** (`Frontend/vercel.json`):
+
+| Pengaturan | Nilai | Alasan |
+|---|---|---|
+| Region fungsi server | `sin1` (Singapura) | Vercel dan Neon belum punya region Indonesia. Singapura terdekat, dan satu kota dengan database. Halaman statis tetap dilayani CDN terdekat pengunjung |
+| Build command | `pnpm build:vercel` → `scripts/vercel-build.sh` | `prisma migrate deploy` hanya bila `VERCEL_ENV=production` atau `MIGRATE_ON_BUILD=true` (preview dengan branch database sendiri) |
+| Ignored Build Step | `scripts/vercel-ignore-build.sh` | Build dilewati bila tidak ada perubahan di `Frontend/` atau `Database/`. Bila commit pembanding tidak tersedia, build tetap dijalankan |
+
+Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis berikutnya), karena versi lama dan baru bisa sempat berjalan bersamaan.
+
+**Batas paket gratis** yang relevan: Vercel Hobby (100 GB bandwidth, 1 juta pemanggilan fungsi per bulan, cron maksimal sekali sehari, **hanya untuk penggunaan pribadi non-komersial**) dan Neon Free (0,5 GB, 100 CU-jam, 10 branch, tidur setelah 5 menit). Bila situs kelak menawarkan jasa berbayar, pindah ke Vercel Pro atau Cloudflare Workers.
+
+**Perlindungan `main`** (GitHub ruleset, diatur pemilik): status CI wajib hijau untuk merge PR, force push dan penghapusan branch diblokir, admin ada di bypass list untuk commit dokumen.
 
 **Rollback:** Vercel "Instant Rollback" ke deployment sebelumnya. Jika migrasi ikut berubah, pulihkan dari backup (bagian 11).
 
