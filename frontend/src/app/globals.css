@@ -1,0 +1,143 @@
+@import 'tailwindcss';
+
+/* Mode gelap memakai class .dark di <html> (diatur next-themes). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Token desain. Sumber: documentation/DESIGN.md bagian 2.
+ * Rasio kontras sudah dihitung di DESIGN.md. Ubah di sini saja, jangan menaruh warna acak di komponen.
+ */
+:root {
+  --bg: #f6f9fc;
+  --surface: #ffffff;
+  --surface-2: #eaf0f8;
+  --text: #0b1220;
+  --text-muted: #475569;
+  --primary: #1d4fd7;
+  --primary-fg: #ffffff;
+  /* --border hanya untuk pemisah dekoratif, elemen interaktif pakai --border-strong */
+  --border: #cbd5e1;
+  --border-strong: #64748b;
+  --danger: #b42318;
+  --success: #0b7a3e;
+  /* --accent dekoratif saja, tidak untuk teks */
+  --accent: #0ea5e9;
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0a0f1c;
+  --surface: #111a2e;
+  --surface-2: #18233d;
+  --text: #e8eef9;
+  --text-muted: #a3b0c8;
+  --primary: #7ba1ff;
+  --primary-fg: #0a0f1c;
+  --border: #33415f;
+  --border-strong: #6b7a99;
+  --danger: #ff8a80;
+  --success: #5fd394;
+  --accent: #38bdf8;
+
+  color-scheme: dark;
+}
+
+/* Halaman tanpa next-themes (global-not-found) mengikuti preferensi sistem. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --bg: #0a0f1c;
+    --surface: #111a2e;
+    --surface-2: #18233d;
+    --text: #e8eef9;
+    --text-muted: #a3b0c8;
+    --primary: #7ba1ff;
+    --primary-fg: #0a0f1c;
+    --border: #33415f;
+    --border-strong: #6b7a99;
+    --danger: #ff8a80;
+    --success: #5fd394;
+    --accent: #38bdf8;
+
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-accent: var(--accent);
+
+  /* alias untuk komponen shadcn/ui */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-ring: var(--primary);
+  --color-input: var(--border-strong);
+
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, 'SFMono-Regular', monospace;
+}
+
+@theme {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* skala tipografi fluid (mobile -> desktop) */
+  --text-display: clamp(2.5rem, 1.6rem + 4.5vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-h1: clamp(2rem, 1.6rem + 2vw, 3rem);
+  --text-h1--line-height: 1.1;
+  --text-h2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --text-h2--line-height: 1.2;
+  --text-h3: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+  --text-h3--line-height: 1.3;
+  --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-body--line-height: 1.65;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* cincin fokus jelas untuk navigasi keyboard (DESIGN.md bagian 8) */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

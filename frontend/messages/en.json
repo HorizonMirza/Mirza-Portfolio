@@ -1,0 +1,32 @@
+{
+  "Metadata": {
+    "title": "Muhammad Mirza — Portfolio",
+    "description": "Portfolio of Muhammad Mirza, a Computer Science (Artificial Intelligence) student at BINUS University and fullstack developer."
+  },
+  "Common": {
+    "skipToContent": "Skip to main content"
+  },
+  "Locale": {
+    "label": "Language",
+    "id": "Indonesia",
+    "en": "English"
+  },
+  "Theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "Home": {
+    "eyebrow": "Muhammad Mirza",
+    "title": "This portfolio is under construction.",
+    "body": "In the meantime, you can find my experience and projects on LinkedIn and GitHub.",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "body": "This address doesn't exist or has moved.",
+    "home": "Back to home"
+  }
+}
