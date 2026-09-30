@@ -14,7 +14,7 @@ Alasan tiap pilihan: [`documentation/ARCHITECTURE.md`](documentation/ARCHITECTUR
 | Folder | Isi |
 |---|---|
 | [`frontend/`](frontend) | Aplikasi Next.js: halaman publik, (nanti) panel admin, route handler, tes |
-| [`backend/`](backend) | Disiapkan untuk API terpisah (stack seperti GAAS, menunggu keputusan) |
+| [`backend/`](backend) | Peta lokasi kode server. Backend berjalan di dalam Next.js (Opsi A, tanpa server terpisah) |
 | [`database/`](database) | Skema Prisma, migrasi SQL, dan data seed dari CV |
 | [`documentation/`](documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi |
 

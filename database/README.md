@@ -18,4 +18,4 @@ pnpm db:seed       # jalankan data seed (idempoten)
 pnpm db:studio     # lihat isi database
 ```
 
-Catatan: bila backend beralih ke ASP.NET Core + Entity Framework Core (stack GAAS), migrasi akan dikelola oleh backend, dan folder ini menjadi acuan struktur tabel.
+Backend berjalan di dalam Next.js (Opsi A), jadi Prisma tetap menjadi pengelola skema dan migrasi.

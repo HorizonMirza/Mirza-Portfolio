@@ -117,6 +117,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Terjemahan otomatis sebagai bantuan (bukan pengganti)
 - [ ] Studi kasus dengan komponen interaktif (MDX)
 - [ ] Pencarian dalam situs
+- [ ] Asisten AI "Tanya tentang Mirza" (menjawab dari data CV/project, batas pemakaian harian). Usulan pengganti live chat, berbiaya per pemakaian, **belum diputuskan**
 
 ## Log Perubahan Rencana
 
@@ -125,3 +126,5 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Dokumen awal dibuat |
 | 2026-09-30 | M1 selesai (kecuali Vercel/Neon). Komponen Dialog dan sejenisnya dipindah ke M2 |
 | 2026-09-30 | Repo dirapikan: `frontend/`, `backend/`, `database/`, `documentation/`, akar hanya `.md`. Commit memakai awalan `[CLAUDIA]` |
+| 2026-09-30 | Pindah ke repo baru `HorizonMirza/Mirza-Portfolio`, branch `main`, satu commit awal atas nama Horizon Mirza |
+| 2026-09-30 | Stack dikunci: Opsi A (Next.js full-stack). Stack GAAS (ASP.NET Core) tidak dipakai, lihat ARCHITECTURE bagian 12 |

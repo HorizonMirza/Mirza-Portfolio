@@ -89,7 +89,7 @@ frontend/        aplikasi Next.js. SEMUA perintah pnpm dijalankan dari sini (cd 
   src/app/api/       route handlers     src/features/   per domain (schema, queries, actions, components)
   src/components/    ui/, shared/       src/lib/        db, auth, env, ...
   messages/          id.json, en.json   scripts/seed.ts, tests/unit/, e2e/
-backend/         disiapkan untuk API terpisah (stack GAAS, menunggu keputusan pemilik)
+backend/         README peta kode server. Backend ada di dalam Next.js (Opsi A, final)
 database/        schema.prisma, migrations/, seed/seed-data.ts
 documentation/   dokumen perencanaan
 ```

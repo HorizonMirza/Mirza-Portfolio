@@ -1,12 +1,16 @@
 # Backend
 
-Folder ini disiapkan untuk API terpisah.
+Keputusan 2026-09-30: **Opsi A, Next.js full-stack.** Tidak ada server backend terpisah. Logika server berjalan di dalam aplikasi Next.js di `frontend/`, lalu di-deploy bersama ke Vercel.
 
-**Status:** belum ada kode. Pemilik ingin memakai stack seperti GAAS (ASP.NET Core Web API + Entity Framework Core + PostgreSQL + JWT di cookie httpOnly). Keputusan yang masih ditunggu:
+Folder ini menjadi peta lokasi kode backend:
 
-- versi .NET (usulan: .NET 10 LTS, karena .NET 8 berakhir dukungannya November 2026)
-- hosting backend (Render atau Koyeb, karena Vercel tidak menjalankan .NET)
+| Bagian backend | Lokasi |
+|---|---|
+| Route handler / API (`/api/health`, `/api/contact`, `/api/v1/*`, ...) | `frontend/src/app/api/` |
+| Mutasi admin (Server Actions: validasi Zod, cek `SUPER_ADMIN`, tulis `AuditLog`) | `frontend/src/features/<domain>/actions.ts` (mulai M2) |
+| Query data | `frontend/src/features/<domain>/queries.ts` (mulai M2) |
+| Koneksi database, env, auth, layanan pihak ketiga | `frontend/src/lib/` |
+| Pengalihan bahasa dan perlindungan `/admin` | `frontend/src/proxy.ts` |
+| Skema, migrasi, dan data seed | `database/` |
 
-Sampai backend ini dibuat, logika server yang ada (misalnya `/api/health`) masih berjalan di dalam Next.js, yaitu `frontend/src/app/api/`. Skema database ada di `database/`.
-
-Rencana lengkap: [`documentation/ARCHITECTURE.md`](../documentation/ARCHITECTURE.md) dan [`documentation/TODO.md`](../documentation/TODO.md).
+Alasan memilih Opsi A dan alternatif yang tidak dipilih (ASP.NET Core seperti GAAS, FastAPI): `documentation/ARCHITECTURE.md` bagian 12.

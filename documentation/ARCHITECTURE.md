@@ -99,7 +99,7 @@ flowchart LR
 │   ├── e2e/                  # Playwright + axe
 │   ├── prisma.config.ts      # menunjuk ke ../database/
 │   └── package.json          # semua perintah pnpm dijalankan dari sini
-├── backend/                  # disiapkan untuk API terpisah (stack GAAS, menunggu keputusan)
+├── backend/                  # README peta kode server (backend berjalan di dalam Next.js)
 ├── database/
 │   ├── schema.prisma         # skema database
 │   ├── migrations/           # migrasi SQL
@@ -376,7 +376,8 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 
 | # | Keputusan | Alasan | Status |
 |---|---|---|---|
-| 1 | Next.js full-stack tanpa backend terpisah | Cepat selesai, satu deploy | Final (jawaban 17.2) |
+| 1 | Next.js full-stack tanpa backend terpisah | Cepat selesai, satu deploy | Final (jawaban 17.2), **dikonfirmasi ulang 2026-09-30** |
+| 1a | Tidak memakai ASP.NET Core + Next.js (stack GAAS) atau FastAPI | Dipertimbangkan 2026-09-30. Ditolak karena: (1) recruiter menilai project, bukan arsitektur situs portofolio, dan kemampuan C#/.NET sudah terbukti lewat project GAAS; (2) backend .NET di hosting gratis "tidur" 30–50 detik saat sepi; (3) dua deploy dan dua layanan untuk satu orang; (4) M1 sudah jadi dan teruji. Bisa ditinjau lagi bila target kerja spesifik .NET | Final |
 | 2 | Konten di DB dengan kolom `_id`/`_en` | Sederhana, mudah dicari dan divalidasi, cukup untuk dua bahasa | Diusulkan |
 | 3 | Analitik sendiri tanpa cookie | Tidak perlu banner cookie, data untuk dashboard admin | Diusulkan |
 | 4 | Live chat lewat widget lazy | Vercel tidak menjalankan WebSocket permanen | Menunggu konfirmasi |
