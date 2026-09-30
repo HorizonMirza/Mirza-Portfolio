@@ -6,7 +6,7 @@ Status: **draf v1**. Desain dibuat langsung di kode (jawaban 15.1), jadi dokumen
 
 **Kata kunci:** tenang, presisi, personal. Biru, banyak ruang kosong, tipografi kuat, gerak halus.
 
-**Konsep: "Horizon" [USULAN, menunggu persetujuan].** Referensi utama (ibnuhakim.id) kuat karena punya satu metafora yang mengatur seluruh situs. Metafora Mirza diambil dari identitasnya sendiri: nama merek dan akun GitHub-nya "Horizon" (Horizon Organizer, `HorizonMirza`), dan ceritanya adalah mahasiswa AI yang membangun komunitas sejak SMA dan kini membangun software, menatap ke depan. Detail cerita ada di `Documentation/CONTENT.md` bagian 2.
+**Konsep: "Horizon" (disetujui 2026-09-30, M4).** Pemilik memilih mempertahankan desain tenang yang ada (bukan meniru nuansa ibnuhakim.id) dengan hero canvas "Horizon", tampilan awal **gelap**, dan tombol WhatsApp melayang sebagai pengganti live chat. Referensi utama (ibnuhakim.id) kuat karena punya satu metafora yang mengatur seluruh situs. Metafora Mirza diambil dari identitasnya sendiri: nama merek dan akun GitHub-nya "Horizon" (Horizon Organizer, `HorizonMirza`), dan ceritanya adalah mahasiswa AI yang membangun komunitas sejak SMA dan kini membangun software, menatap ke depan. Detail cerita ada di `Documentation/CONTENT.md` bagian 2.
 
 Bahasa visualnya:
 - **Hero:** grid perspektif tipis yang menyempit menuju garis horizon, dengan pita cahaya yang naik pelan di garis itu (kesan fajar/awal karier). Canvas 2D ringan, biru berkontras rendah agar teks tetap fokus. Pada desktop, grid sedikit miring mengikuti kursor. Di HP dan pada `prefers-reduced-motion`, bingkai statis.
@@ -70,8 +70,8 @@ Aturan: **satu warna primer**, aksen sekunder hanya untuk dekorasi. Warna tidak 
 
 | Peran | Font | Bobot | Catatan |
 |---|---|---|---|
-| Judul dan isi | **Plus Jakarta Sans** | 400, 500, 600, 700 | Modern, rapi untuk Latin, hasil karya desainer Indonesia. Dimuat lewat `next/font` (self-host, tanpa permintaan ke pihak ketiga) |
-| Kode, label teknis | **JetBrains Mono** | 400, 500 | Untuk tech stack, tanggal, label kecil |
+| Judul dan isi | **Plus Jakarta Sans** | 400, 500, 600, 700 | Modern, rapi untuk Latin, hasil karya desainer Indonesia. Dimuat lewat `next/font` (self-host, tanpa permintaan ke pihak ketiga), hanya subset latin (27 KB) dan di-preload |
+| Kode, label teknis | **JetBrains Mono** | 400, 500 | Untuk tech stack, tanggal, label kecil. Tidak di-preload (bukan elemen LCP) |
 
 Skala (mobile → desktop), `clamp()` agar mulus:
 
@@ -101,7 +101,7 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`).
 |---|---|
 | Durasi | cepat 150 ms, normal 250 ms, lambat 500 ms |
 | Easing | `cubic-bezier(0.22, 1, 0.36, 1)` (keluar halus) |
-| Reveal saat scroll | fade + geser 12 px, sekali saja, disusun bertahap ≤ 60 ms |
+| Reveal saat scroll | fade + geser 12 px, 400 ms, sekali saja. Hanya elemen yang berada di bawah layar saat halaman dibuka |
 | Transisi halaman | fade 150 ms |
 | Hero | grid perspektif menuju garis horizon, pita cahaya naik sangat pelan |
 
@@ -109,10 +109,12 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`).
 
 | Kebutuhan | Teknologi | Beban JS |
 |---|---|---|
-| Reveal saat scroll, progres scroll | CSS scroll-driven animation (`animation-timeline: view()`), fallback: tampil langsung tanpa animasi | 0 KB |
+| Reveal saat scroll | `IntersectionObserver` sekali jalan (`components/site/reveal-observer.tsx`). Versi CSS scroll-driven dibatalkan di M4: elemen yang berhenti di tepi bawah layar tertahan setengah transparan dan gagal uji kontras (axe/Lighthouse) | < 1 KB |
+| Header padat saat digulir | CSS scroll-driven animation (`animation-timeline: scroll()`) | 0 KB |
+| Menu HP | atribut `popover` bawaan browser (Esc, fokus ditangani browser) | < 1 KB |
 | Transisi antarhalaman | View Transitions (CSS + dukungan Next.js/React) | 0 KB |
 | Muncul/hilang elemen, hover, fokus | CSS `transition` + `@starting-style` | 0 KB |
-| Hero "Horizon" | Canvas 2D buatan sendiri | ±4 KB |
+| Hero "Horizon" | Canvas 2D buatan sendiri (`components/site/horizon-canvas.tsx`) di atas latar CSS statis yang tampil lebih dulu | ±3 KB |
 | Menu HP, modal, daftar yang berubah urutan | **Motion**, hanya di komponen tersebut (`'use client'`) | seperlunya |
 
 Aturan: jangan memakai Motion untuk efek yang bisa dibuat dengan CSS. Browser yang belum mendukung scroll-driven animation atau View Transitions tetap menampilkan konten dengan benar, hanya tanpa animasi. GSAP, WebGL, dan smooth scroll (Lenis) tidak dipakai.
@@ -364,3 +366,11 @@ Aturan lain: target sentuh ≥ 44 × 44 px, tidak ada scroll horizontal, area am
 - Foto profil, logo/inisial, dan data GAAS (project awal). Project lain menyusul lewat admin.
 - Konfirmasi konsep "Horizon" (bagian 1), atau arah lain.
 - Setelah bahan tiba, sesuaikan kalimat hero, pilih foto, dan uji kontras ulang jika warna berubah.
+
+## 11. Keputusan M4 (2026-09-30)
+
+- Desain tetap tenang seperti M3, tidak digeser ke nuansa ibnuhakim.id (pilihan pemilik).
+- Tema awal **gelap**; pengunjung tetap bisa memilih Terang/Sistem dan pilihannya tersimpan.
+- Hero "Horizon": canvas 2D. Tingkat perangkat: HP 24 garis, DPR 1, 30 fps tanpa miring kursor; tablet 32 garis; desktop 48 garis, DPR ≤ 2, miring mengikuti kursor. Bingkai statis bila `prefers-reduced-motion`, `saveData`, atau memori ≤ 2 GB. Berhenti saat tab tersembunyi atau hero keluar layar. Diinisialisasi saat idle.
+- Live chat diganti **tombol WhatsApp melayang** (tanpa skrip pihak ketiga), hanya tampil bila nomor WhatsApp diisi di admin.
+- Transisi halaman memakai `<ViewTransition>` React (fade 150 ms), dimatikan pada reduced-motion.

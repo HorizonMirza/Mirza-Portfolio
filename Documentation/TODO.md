@@ -95,15 +95,19 @@ Status: selesai 2026-09-30. 146 tes unit dan 88 tes E2E (Chromium + emulasi HP, 
 
 ## M4 — Polish (≈ 1 hari)
 
-- [ ] Hero "Horizon" (canvas 2D ringan, tingkat perangkat, anggaran performa di `DESIGN.md`) dan pelat status `[?]`
-- [ ] Animasi reveal (CSS scroll-driven) dan transisi halaman (View Transitions), tanpa JS. Motion hanya untuk menu HP/modal. Dukung `prefers-reduced-motion`
-- [ ] Widget live chat lazy `[?]`
-- [ ] SEO: metadata, Open Graph (gambar dinamis), sitemap, robots, `hreflang`, data terstruktur `Person`
-- [ ] Aksesibilitas: audit axe, uji keyboard dan pembaca layar
-- [ ] Performa: optimasi gambar dan font, cek Lighthouse mobile ≥ 90 dan Web Vitals
-- [ ] Header keamanan dan CSP (nonce)
-- [ ] Tes E2E alur utama pada Chromium, WebKit, Firefox, dan emulasi HP
-- [ ] Review kode dan review keamanan
+Status: selesai 2026-09-30 kecuali uji manual pembaca layar dan lintas browser di CI (lihat di bawah). Keputusan pemilik: desain tetap, hero canvas, WhatsApp, tema awal gelap.
+
+- [x] Hero "Horizon" canvas 2D (tingkat perangkat, idle init, berhenti saat tidak terlihat, statis pada reduced-motion/hemat data) di atas latar CSS statis. Pelat status sudah ada sejak M3
+- [x] Reveal sekali jalan (IntersectionObserver, < 1 KB) dan transisi halaman (`<ViewTransition>`), header padat saat digulir (CSS). Menu HP memakai `popover` bawaan, tanpa Motion. Semua menghormati `prefers-reduced-motion`
+- [x] Tombol WhatsApp melayang menggantikan live chat (keputusan 2026-09-30)
+- [x] Tema awal gelap (keputusan 2026-09-30)
+- [x] SEO: metadata + canonical + hreflang per halaman, Open Graph dinamis (umum dan per project), sitemap, robots (preview tidak diindeks), JSON-LD `Person`
+- [x] Aksesibilitas: axe bersih di semua halaman publik dan admin (terang/gelap, ID/EN, desktop/HP), Lighthouse Accessibility 100
+- [ ] Uji manual keyboard dan pembaca layar (VoiceOver/TalkBack) di perangkat nyata, dilakukan pemilik setelah deploy
+- [x] Performa: subset font latin saja (−22 KB) dan font mono tidak di-preload. Lighthouse mobile (lokal, throttling simulasi): Performance 94–99, Accessibility 100, Best Practices 100, SEO 100 di 5 halaman. LCP terukur 0,2 s; LCP simulasi 2,1–3,1 s karena JS kerangka Next/React (±190 KB). Web Vitals lapangan dicek dengan Speed Insights setelah deploy
+- [x] Header keamanan dan CSP (tanpa nonce untuk publik, nonce untuk admin), notifikasi email login baru
+- [x] Tes E2E Chromium + emulasi HP lokal (96 lulus); Firefox, WebKit, dan iPhone ditambahkan ke CI (`E2E_ALL_BROWSERS=1`), hasil pertama menunggu CI
+- [x] Review kode dan keamanan mandiri (temuan diperbaiki: notifikasi login di serverless memakai `after()`, CSP `upgrade-insecure-requests` hanya di Vercel)
 
 **Selesai bila:** Lighthouse mobile ≥ 90 di semua kategori, axe bersih, semua tes lulus.
 
@@ -152,3 +156,4 @@ Status: selesai 2026-09-30. 146 tes unit dan 88 tes E2E (Chromium + emulasi HP, 
 | 2026-09-30 | M2 selesai: Better Auth, panel admin (dashboard, profil, project, skill, pengalaman, pesan, pelanggan, audit, akun), unggah Cloudinary, 120 tes unit, 59 tes E2E. Broadcast dan notifikasi login ditunda. UI admin hanya bahasa Indonesia |
 | 2026-09-30 | Alur kerja: semua langsung di `main`, tanpa branch lain dan tanpa PR (permintaan pemilik). `feat/m2-admin` disatukan ke `main` (fast-forward), templat PR dihapus |
 | 2026-09-30 | M3 selesai: halaman publik dari database, kontak, newsletter double opt-in, CV, statistik tanpa cookie + cron, API v1. Keputusan PRD 11 no. 1, 4 (opt-in), 5, 10 dikonfirmasi. Ditemukan dan diperbaiki: `dynamicParams = false` di layout locale membuat halaman publik 404 setelah revalidasi |
+| 2026-09-30 | M4 selesai: hero canvas, reveal, transisi, WhatsApp, tema gelap, SEO, CSP + header keamanan, notifikasi login, tes lintas browser di CI. PRD 11 no. 3 dan 14 dikonfirmasi |

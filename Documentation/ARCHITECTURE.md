@@ -408,14 +408,14 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 
 | Ancaman | Kontrol |
 |---|---|
-| XSS | React escape default. Markdown lewat `rehype-sanitize`. CSP ketat dengan nonce. Tidak ada `dangerouslySetInnerHTML` tanpa sanitasi |
+| XSS | React escape default. Markdown lewat `rehype-sanitize`. CSP (`lib/csp.ts`): halaman publik statis tanpa nonce (`script-src 'self' 'unsafe-inline'`, arahan lain ketat), panel admin dinamis dengan nonce per permintaan + `'strict-dynamic'` (`src/proxy.ts`). Satu-satunya `dangerouslySetInnerHTML` adalah JSON-LD dengan `<` di-escape (`lib/json-ld.tsx`) |
 | Injeksi SQL | Hanya lewat Prisma (parameterisasi). Tidak ada `$queryRawUnsafe` |
 | CSRF | Server Actions memeriksa Origin. Route handler mutasi memeriksa `Origin`/`Sec-Fetch-Site` |
 | Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik |
 | Spam form | Honeypot + rate limit + validasi panjang. CAPTCHA hanya jika masih ada spam |
 | Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Respons diverifikasi di server, tipe (gambar, PDF) dan ukuran (5 MB) dicek ulang, berkas ditolak dihapus |
 | Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
-| Header | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` |
+| Header | HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, CSP dengan `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. `upgrade-insecure-requests` hanya di Vercel |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=high` di CI, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
 | Akses admin | Satu akun, log audit, ganti password dengan rate limit. Notifikasi login baru via email menyusul bersama Resend (M4) |
@@ -489,3 +489,6 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
 | 13 | Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()` | Hampir tanpa JavaScript klien, Esc dan fokus ditangani browser | Final (M3, 2026-09-30) |
 | 14 | Konfirmasi dan berhenti newsletter lewat tombol (POST) di halaman, bukan GET di tautan email | Pemindai tautan email tidak ikut mengonfirmasi atau memberhentikan langganan | Final (M3, 2026-09-30) |
+| 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
+| 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
+| 17 | Notifikasi login baru ke email admin lewat hook Better Auth + `after()` Next.js | Tidak menunda login dan tetap terkirim di serverless | Final (M4, 2026-09-30) |

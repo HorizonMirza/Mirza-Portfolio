@@ -2,7 +2,7 @@
 
 Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk mengelola konten.
 
-**Status:** Milestone 1–3 selesai: situs publik dua bahasa dari database, panel admin di `/admin`, kontak, newsletter, dan API publik. Berikutnya Milestone 4 (polish), lihat [`Documentation/TODO.md`](Documentation/TODO.md).
+**Status:** Milestone 1–4 selesai: situs publik dua bahasa dari database, panel admin di `/admin`, kontak, newsletter, API publik, SEO, dan header keamanan. Berikutnya Milestone 5 (deploy dan domain), lihat [`Documentation/TODO.md`](Documentation/TODO.md).
 
 ## Stack
 
