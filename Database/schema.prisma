@@ -1,0 +1,268 @@
+// Skema database portofolio. Acuan: Documentation/ARCHITECTURE.md bagian 5.
+// Prisma CLI dijalankan dari folder Frontend/ (lihat Frontend/prisma.config.ts).
+// Konten publik dua bahasa memakai pasangan kolom `*_id` (Indonesia) dan `*_en` (Inggris).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../Frontend/src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  SUPER_ADMIN
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ProjectCategory {
+  SOFTWARE
+  COMMUNITY_BUSINESS
+}
+
+enum ExperienceType {
+  WORK
+  EDUCATION
+  ORGANIZATION
+}
+
+enum AssetKind {
+  IMAGE
+  DOCUMENT
+}
+
+enum MessageStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+enum SubscriberStatus {
+  PENDING
+  CONFIRMED
+  UNSUBSCRIBED
+}
+
+enum Availability {
+  OPEN
+  BUSY
+  NOT_LOOKING
+}
+
+// Hanya satu SUPER_ADMIN yang dibuat lewat seed. Tidak ada registrasi publik.
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(USER)
+  name         String?
+  lastLoginAt  DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  auditLogs    AuditLog[]
+}
+
+// Singleton: selalu id = 1.
+model Profile {
+  id                  Int          @id @default(1)
+  name                String
+  headline_id         String
+  headline_en         String
+  bio_id              String       @db.Text
+  bio_en              String       @db.Text
+  city                String?
+  email               String?
+  whatsapp            String?
+  socials             Json         @default("{}")
+  availability        Availability @default(OPEN)
+  availabilityNote_id String?
+  availabilityNote_en String?
+  currentRole_id      String?
+  currentRole_en      String?
+  photoId             String?      @unique
+  photo               Asset?       @relation("ProfilePhoto", fields: [photoId], references: [id], onDelete: SetNull)
+  cvId                String?      @unique
+  cv                  Asset?       @relation("ProfileCv", fields: [cvId], references: [id], onDelete: SetNull)
+  updatedAt           DateTime     @updatedAt
+}
+
+model Project {
+  id             String          @id @default(cuid())
+  slug           String          @unique
+  title_id       String
+  title_en       String
+  summary_id     String
+  summary_en     String
+  description_id String          @db.Text
+  description_en String          @db.Text
+  caseStudy_id   String?         @db.Text
+  caseStudy_en   String?         @db.Text
+  year           Int
+  category       ProjectCategory @default(SOFTWARE)
+  demoUrl        String?
+  repoUrl        String?
+  // format "owner/repo" untuk metadata GitHub otomatis
+  githubRepo     String?
+  featured       Boolean         @default(false)
+  order          Int             @default(0)
+  status         ContentStatus   @default(DRAFT)
+  publishedAt    DateTime?
+  coverId        String?
+  cover          Asset?          @relation("ProjectCover", fields: [coverId], references: [id], onDelete: SetNull)
+  images         ProjectImage[]
+  skills         Skill[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([status, order])
+}
+
+model ProjectImage {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assetId   String
+  asset     Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  order     Int     @default(0)
+
+  @@unique([projectId, assetId])
+}
+
+model SkillCategory {
+  id      String  @id @default(cuid())
+  name_id String
+  name_en String
+  order   Int     @default(0)
+  skills  Skill[]
+}
+
+model Skill {
+  id         String        @id @default(cuid())
+  name       String        @unique
+  icon       String?
+  order      Int           @default(0)
+  categoryId String
+  category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  projects   Project[]
+}
+
+model Experience {
+  id             String         @id @default(cuid())
+  type           ExperienceType
+  organization   String
+  title_id       String
+  title_en       String
+  description_id String         @db.Text
+  description_en String         @db.Text
+  startDate      DateTime       @db.Date
+  // null = masih berlangsung
+  endDate        DateTime?      @db.Date
+  location       String?
+  order          Int            @default(0)
+  status         ContentStatus  @default(PUBLISHED)
+  logoId         String?
+  logo           Asset?         @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([type, startDate])
+}
+
+model Asset {
+  id            String         @id @default(cuid())
+  // id di Cloudinary
+  publicId      String         @unique
+  url           String
+  kind          AssetKind
+  format        String?
+  bytes         Int?
+  width         Int?
+  height        Int?
+  alt_id        String?
+  alt_en        String?
+  createdAt     DateTime       @default(now())
+  profilePhoto  Profile?       @relation("ProfilePhoto")
+  profileCv     Profile?       @relation("ProfileCv")
+  projectCovers Project[]      @relation("ProjectCover")
+  projectImages ProjectImage[]
+  experiences   Experience[]   @relation("ExperienceLogo")
+}
+
+model Message {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  subject   String?
+  body      String        @db.Text
+  status    MessageStatus @default(NEW)
+  locale    String?
+  // hash IP + garam, bukan IP mentah
+  ipHash    String?
+  readAt    DateTime?
+  createdAt DateTime      @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Subscriber {
+  id             String           @id @default(cuid())
+  email          String           @unique
+  status         SubscriberStatus @default(PENDING)
+  // hash token konfirmasi/berhenti, token asli hanya dikirim lewat email
+  tokenHash      String           @unique
+  locale         String           @default("id")
+  confirmedAt    DateTime?
+  unsubscribedAt DateTime?
+  createdAt      DateTime         @default(now())
+}
+
+model Broadcast {
+  id             String    @id @default(cuid())
+  subject        String
+  body           String    @db.Text
+  recipientCount Int       @default(0)
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+}
+
+// Statistik pengunjung tanpa cookie. visitorHash memakai garam harian.
+model PageView {
+  id           String   @id @default(cuid())
+  path         String
+  locale       String?
+  referrerHost String?
+  device       String?
+  visitorHash  String
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String
+  entityId  String?
+  diff      Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
+
+model CvDownload {
+  id        String   @id @default(cuid())
+  locale    String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

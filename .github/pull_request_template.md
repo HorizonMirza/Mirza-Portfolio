@@ -4,11 +4,11 @@
 
 ## Kenapa
 
-<!-- Tautkan ke bagian documentation/PRD.md atau documentation/TODO.md yang relevan. -->
+<!-- Tautkan ke bagian Documentation/PRD.md atau Documentation/TODO.md yang relevan. -->
 
 ## Cara uji
 
-- [ ] `cd frontend && pnpm lint && pnpm typecheck && pnpm test && pnpm build`
+- [ ] `cd Frontend && pnpm lint && pnpm typecheck && pnpm test && pnpm build`
 - [ ] `pnpm test:e2e`
 - [ ] Dicek di preview Vercel: HP (360 px), tablet, desktop
 - [ ] Mode terang dan gelap, bahasa ID dan EN
