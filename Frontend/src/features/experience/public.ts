@@ -3,7 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
-import { CACHE_TAGS } from '@/lib/cache-tags'
+import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
 
 import { dateToMonth } from './schema'
@@ -49,6 +49,6 @@ export const getPublicExperiences = cache(
       }))
     },
     ['public-experiences'],
-    { tags: [CACHE_TAGS.experience] },
+    { tags: [CACHE_TAGS.experience], revalidate: PUBLIC_CACHE_SECONDS },
   ),
 )

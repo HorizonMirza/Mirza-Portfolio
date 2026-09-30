@@ -86,14 +86,14 @@ export default async function ProjectsPage({ params }: PageProps<'/[locale]/proj
               href={github}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-primary hover:underline"
+              className="inline-flex items-center gap-1 text-primary underline underline-offset-4"
             >
               {t('moreGithub')}
               <ArrowUpRight className="size-4" aria-hidden="true" />
               <span className="sr-only">{tCommon('openInNewTab')}</span>
             </a>
           ) : null}
-          <Link href="/experience" className="text-primary hover:underline">
+          <Link href="/experience" className="text-primary underline underline-offset-4">
             {t('moreJourney')}
           </Link>
         </p>

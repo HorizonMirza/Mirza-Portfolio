@@ -3,7 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
-import { CACHE_TAGS } from '@/lib/cache-tags'
+import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
 
 export type PublicSkillCategory = {
@@ -45,6 +45,6 @@ export const getPublicSkills = cache(
         }))
     },
     ['public-skills'],
-    { tags: [CACHE_TAGS.skills, CACHE_TAGS.projects] },
+    { tags: [CACHE_TAGS.skills, CACHE_TAGS.projects], revalidate: PUBLIC_CACHE_SECONDS },
   ),
 )

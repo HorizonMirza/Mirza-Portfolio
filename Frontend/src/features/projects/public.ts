@@ -5,7 +5,7 @@ import { cache } from 'react'
 
 import type { PublicImage } from '@/features/profile/public'
 import type { Prisma } from '@/generated/prisma/client'
-import { CACHE_TAGS } from '@/lib/cache-tags'
+import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
 import { safeImage } from '@/lib/public-image'
 
@@ -69,7 +69,7 @@ export const getPublishedProjects = cache(
       return rows.map((p) => ({ ...p, cover: safeImage(p.cover) }))
     },
     ['public-projects'],
-    { tags: [CACHE_TAGS.projects] },
+    { tags: [CACHE_TAGS.projects], revalidate: PUBLIC_CACHE_SECONDS },
   ),
 )
 
@@ -98,6 +98,6 @@ export const getPublishedProject = cache(
       }
     },
     ['public-project'],
-    { tags: [CACHE_TAGS.projects] },
+    { tags: [CACHE_TAGS.projects], revalidate: PUBLIC_CACHE_SECONDS },
   ),
 )

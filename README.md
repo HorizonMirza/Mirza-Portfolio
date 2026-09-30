@@ -84,7 +84,7 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
    - Opsional: `GITHUB_TOKEN`, `HASH_SALT_SECRET`.
    - `ADMIN_EMAIL` dan `ADMIN_PASSWORD` **tidak** perlu di Vercel, cukup saat menjalankan seed dari komputer lokal.
 5. Deploy. Migrasi hanya berjalan di production (`Frontend/scripts/vercel-build.sh`). Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`).
-6. Jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan URL database production beserta `ADMIN_EMAIL` dan `ADMIN_PASSWORD`: `pnpm db:seed`. Setelah itu masuk ke `https://<domain>/admin`.
+6. Jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan URL database production beserta `ADMIN_EMAIL` dan `ADMIN_PASSWORD`: `pnpm db:seed`. Isi dari seed muncul di situs paling lambat 10 menit kemudian (atau langsung setelah Anda menyimpan sesuatu di admin). Setelah itu masuk ke `https://<domain>/admin`.
 7. Cek `https://<domain>/api/health` harus mengembalikan `{"status":"ok","database":"ok"}`.
 
 Setelah deploy (pemilik akun):

@@ -3,7 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
-import { CACHE_TAGS } from '@/lib/cache-tags'
+import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
 import { safeImage } from '@/lib/public-image'
 
@@ -82,7 +82,7 @@ const load = unstable_cache(
     }
   },
   ['public-profile'],
-  { tags: [CACHE_TAGS.profile, CACHE_TAGS.experience] },
+  { tags: [CACHE_TAGS.profile, CACHE_TAGS.experience], revalidate: PUBLIC_CACHE_SECONDS },
 )
 
 export const getPublicProfile = cache(load)

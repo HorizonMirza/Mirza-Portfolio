@@ -7,3 +7,7 @@ export const CACHE_TAGS = {
 } as const
 
 export type CacheTag = keyof typeof CACHE_TAGS
+
+// Batas umur cache data publik. Aksi admin tetap langsung terlihat (updateTag); batas ini jaring
+// pengaman untuk perubahan di luar admin, misalnya seed setelah deploy pertama atau edit langsung di DB.
+export const PUBLIC_CACHE_SECONDS = 600

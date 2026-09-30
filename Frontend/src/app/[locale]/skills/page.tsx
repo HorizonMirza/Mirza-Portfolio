@@ -66,7 +66,7 @@ export default async function SkillsPage({ params }: PageProps<'/[locale]/skills
                             {j > 0 ? ', ' : null}
                             <Link
                               href={`/projects/${slug}`}
-                              className="text-primary underline-offset-4 hover:underline"
+                              className="text-primary underline underline-offset-4"
                             >
                               {titleBySlug.get(slug) ?? slug}
                             </Link>

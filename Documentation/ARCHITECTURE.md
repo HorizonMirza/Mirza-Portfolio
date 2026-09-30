@@ -84,6 +84,7 @@ flowchart LR
 | Metadata GitHub | Fetch server dengan `revalidate` 1 jam, gagal = tidak ditampilkan | Data cache Next |
 
 Catatan:
+- Cache data publik punya batas umur 10 menit (`PUBLIC_CACHE_SECONDS`) sebagai jaring pengaman: tanpa itu, data yang diubah di luar admin (misalnya `pnpm db:seed` setelah deploy pertama) tidak pernah tampil karena cache data bertahan antar-build. Aksi admin tetap langsung terlihat lewat `updateTag`.
 - Data dari `unstable_cache` diserialisasi JSON, jadi query publik hanya mengembalikan nilai sederhana (tanggal sebagai string `YYYY-MM` atau ISO).
 - Build butuh database (`DATABASE_URL`) karena halaman publik dirender dari data. CI dan Vercel sudah menyediakannya.
 - **Jangan** `export const dynamicParams = false` di `app/[locale]/layout.tsx`: render ulang ISR setelah revalidasi gagal (`NoFallbackError`) dan semua halaman publik menjadi 404. Locale asing ditolak lewat `hasLocale()`.

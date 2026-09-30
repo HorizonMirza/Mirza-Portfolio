@@ -62,6 +62,12 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.getByLabel('Summary', { exact: true }).fill('Summary for the E2E test.')
   await page.locator('#description_en').fill('Description.')
   await page.getByLabel('Slug').fill(`e2e-${suffix}`.toLowerCase())
+  // satu skill agar halaman Skill publik menampilkan tautan "Dipakai di"
+  await page
+    .locator('fieldset')
+    .filter({ hasText: 'Bahasa Pemrograman' })
+    .getByText('TypeScript', { exact: true })
+    .click()
   await page.getByRole('button', { name: 'Buat project' }).click()
   await expect(page.getByText('Project dibuat.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
@@ -78,6 +84,17 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(titleId)
   await page.goto('/en/projects')
   await expect(page.getByRole('link', { name: `E2E project ${suffix}` })).toBeVisible()
+
+  // Aksesibilitas halaman publik saat ada project terbit (kartu, tautan "Dipakai di", detail).
+  const publicFailures: string[] = []
+  for (const path of ['/en/projects', '/id/skills', `/id/projects/${slug}`]) {
+    await page.goto(path)
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+      .analyze()
+    publicFailures.push(...results.violations.map((v) => `${path} ${v.id}: ${v.help}`))
+  }
+  expect(publicFailures).toEqual([])
 
   await page.goto('/admin/projects')
   await page.getByRole('searchbox', { name: 'Cari project' }).fill(suffix)
