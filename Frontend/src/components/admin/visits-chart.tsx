@@ -34,7 +34,12 @@ export function VisitsChart({ data }: { data: Point[] }) {
   return (
     <div className="h-64 w-full" aria-hidden="true">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+        {/* grafik hanya visual (aria-hidden); datanya tersedia di tabel di bawahnya, jadi tidak perlu fokus keyboard */}
+        <LineChart
+          data={data}
+          margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
+          accessibilityLayer={false}
+        >
           <CartesianGrid vertical={false} stroke="var(--border)" />
           <XAxis
             dataKey="day"

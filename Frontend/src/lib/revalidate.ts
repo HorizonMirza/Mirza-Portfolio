@@ -2,6 +2,8 @@ import 'server-only'
 
 import { revalidatePath, updateTag } from 'next/cache'
 
+import { routing } from '@/i18n/routing'
+
 export const CACHE_TAGS = {
   profile: 'profile',
   projects: 'projects',
@@ -13,5 +15,7 @@ export const CACHE_TAGS = {
 // Hanya boleh dipanggil dari Server Action (syarat updateTag di Next 16).
 export function revalidateContent(...tags: (keyof typeof CACHE_TAGS)[]) {
   for (const tag of tags) updateTag(CACHE_TAGS[tag])
-  revalidatePath('/[locale]', 'layout')
+  // Pakai path literal per bahasa. Pola '/[locale]' membuat render ulang ISR memakai nilai
+  // '[locale]' apa adanya sehingga /id dan /en menjadi 404 (dynamicParams = false).
+  for (const locale of routing.locales) revalidatePath(`/${locale}`, 'layout')
 }
