@@ -46,7 +46,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 |---|---|---|
 | F1 | **Home**: hero layar penuh dengan animasi, nama, posisi yang dicari, CTA Unduh CV + GitHub, ringkasan project unggulan | P0 |
 | F2 | **About**: bio personal, foto, data kontak yang boleh ditampilkan | P0 |
-| F3 | **Experience & Education**: timeline pengalaman kerja dan pendidikan **[ASUMSI]** satu halaman `/experience` | P0 |
+| F3 | **Experience & Education**: timeline pengalaman kerja, organisasi, dan pendidikan dalam satu halaman `/experience` dengan filter | P0 |
 | F4 | **Skills**: dikelompokkan (Frontend, Backend, Database, Tools/DevOps), tanpa progress bar persen **[ASUMSI]** | P0 |
 | F5 | **Projects**: daftar + halaman detail (galeri, tech stack, demo, repo, tahun, studi kasus) + metadata GitHub otomatis | P0 |
 | F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
@@ -59,7 +59,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F13 | **Newsletter**: form berlangganan dengan konfirmasi email (double opt-in) dan tautan berhenti | P0 |
 | F14 | **SEO & berbagi**: metadata per halaman, Open Graph, sitemap, robots.txt, data terstruktur `Person` | P0 |
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
-| F16 | **API publik** read-only (project, skill, profil) **[ASUMSI]** | P1 |
+| F16 | **API publik** read-only (project, skill, profil) | P1 |
 | F17 | **Pelat status di hero** yang dapat diubah admin (status ketersediaan, lokasi, posisi sekarang) **[USULAN, dari referensi utama]** | P0 |
 | F18 | **Kategori project**: Software dan Komunitas & Bisnis **[USULAN, dari CV]** | P0 |
 
@@ -136,16 +136,16 @@ Nomor merujuk ke `Documentation/00-discovery.md` bagian 6.
 
 | # | Keputusan sementara | Alternatif |
 |---|---|---|
-| 1 | Halaman `/experience` berisi timeline kerja dan pendidikan | Pisahkan menjadi dua halaman |
+| 1 | ~~Halaman `/experience` berisi timeline kerja dan pendidikan~~ **Dikonfirmasi 2026-09-30:** satu halaman dengan filter Semua/Kerja/Organisasi/Pendidikan | Pisahkan menjadi dua halaman |
 | 2 | Blog dan sertifikat ditunda ke v2 | Masukkan ke v1 |
 | 3 | Live chat: widget gratis, dimuat saat diklik | Hanya tombol WhatsApp |
-| 4 | Newsletter: double opt-in, kirim broadcast dari admin lewat Resend | Kirim manual di luar sistem |
-| 5 | Form kontak: honeypot + rate limit (menyimpang dari jawaban 19.2/20.1 "tidak") | Tanpa proteksi, sesuai jawaban awal |
+| 4 | Newsletter: double opt-in, kirim broadcast dari admin lewat Resend. **Double opt-in dikonfirmasi 2026-09-30** (dikerjakan M3); broadcast masih menunggu | Kirim manual di luar sistem |
+| 5 | ~~Form kontak: honeypot + rate limit~~ **Dikonfirmasi 2026-09-30:** honeypot + rate limit 5 pesan per jam per IP (IP di-hash) | Tanpa proteksi, sesuai jawaban awal |
 | 6 | Secret tidak pernah di-commit, hanya `Frontend/.env.example` | — |
 | 7 | Alur PR ke `main` (Vercel preview otomatis) | Push langsung ke `main` |
 | 8 | Resend untuk email, Cloudinary untuk gambar dan CV | Cloudflare R2 |
 | 9 | GitHub API untuk metadata kartu project dan tombol "Impor dari GitHub" di admin | Daftar repo otomatis penuh |
-| 10 | API publik read-only: `/api/v1/projects`, `/api/v1/skills`, `/api/v1/profile` | Tanpa API publik |
+| 10 | ~~API publik read-only~~ **Dikonfirmasi 2026-09-30:** `/api/v1/projects`, `/api/v1/skills`, `/api/v1/profile` dibuat di M3 (tanpa email/WhatsApp) | Tanpa API publik |
 | 11 | Skill dikelompokkan tanpa level angka | Tampilkan level |
 | 12 | Tampilkan kota dan tombol WhatsApp. Alamat lengkap tidak ditampilkan | Tampilkan alamat penuh |
 | 13 | Semua konten diisi manual dalam dua bahasa | Terjemahan otomatis |

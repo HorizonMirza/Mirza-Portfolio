@@ -2,7 +2,7 @@
 
 Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk mengelola konten.
 
-**Status:** Milestone 1 (setup) dan Milestone 2 (panel admin di `/admin`) selesai. Halaman publik lengkap menyusul di Milestone 3, lihat [`Documentation/TODO.md`](Documentation/TODO.md).
+**Status:** Milestone 1–3 selesai: situs publik dua bahasa dari database, panel admin di `/admin`, kontak, newsletter, dan API publik. Berikutnya Milestone 4 (polish), lihat [`Documentation/TODO.md`](Documentation/TODO.md).
 
 ## Stack
 
@@ -13,7 +13,7 @@ Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTUR
 
 | Folder | Isi |
 |---|---|
-| [`Frontend/`](Frontend) | Aplikasi Next.js: halaman publik, panel admin `/admin`, route handler, tes |
+| [`Frontend/`](Frontend) | Aplikasi Next.js: halaman publik, panel admin `/admin`, route handler (`/api/v1`, `/api/cv`, `/api/track`, `/api/cron`), tes |
 | [`Backend/`](Backend) | Peta lokasi kode server. Backend berjalan di dalam Next.js (Opsi A, tanpa server terpisah) |
 | [`Database/`](Database) | Skema Prisma, migrasi SQL, dan data seed dari CV |
 | [`Documentation/`](Documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi |
@@ -78,7 +78,10 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
 4. **Environment Variables** tambahan:
    - `NEXT_PUBLIC_SITE_URL` (Production: domain final, Preview: boleh dikosongkan). `DIRECT_URL` tidak perlu bila memakai integrasi.
    - `BETTER_AUTH_SECRET` (wajib, minimal 32 karakter, **berbeda** untuk Production dan Preview) dan `BETTER_AUTH_URL` (Production: domain final; Preview: kosongkan, otomatis memakai URL deployment).
-   - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` untuk unggah berkas. Opsional: `GITHUB_TOKEN`, `HASH_SALT_SECRET`.
+   - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` untuk unggah berkas.
+   - Email (form kontak dan newsletter): `RESEND_API_KEY`, `EMAIL_FROM` (alamat di domain yang sudah diverifikasi di Resend, contoh `Muhammad Mirza <halo@domainanda.site>`), `CONTACT_TO_EMAIL` (kotak masuk Anda). Tanpa ini, pesan kontak tetap tersimpan di admin dan newsletter menampilkan "belum aktif".
+   - `CRON_SECRET` (minimal 16 karakter acak) untuk Vercel Cron harian (`/api/cron/daily`: ringkas statistik, hapus data kunjungan > 90 hari).
+   - Opsional: `GITHUB_TOKEN`, `HASH_SALT_SECRET`.
    - `ADMIN_EMAIL` dan `ADMIN_PASSWORD` **tidak** perlu di Vercel, cukup saat menjalankan seed dari komputer lokal.
 5. Deploy. Migrasi hanya berjalan di production (`Frontend/scripts/vercel-build.sh`). Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`).
 6. Jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan URL database production beserta `ADMIN_EMAIL` dan `ADMIN_PASSWORD`: `pnpm db:seed`. Setelah itu masuk ke `https://<domain>/admin`.

@@ -76,10 +76,19 @@ flowchart LR
 
 | Halaman | Render | Cache |
 |---|---|---|
-| Home, About, Experience, Skills, Projects, detail Project | Static + ISR, dibatalkan lewat `revalidateTag` saat admin menyimpan | Tag per entitas |
+| Home, About, Experience, Skills, Projects, detail Project | Static (SSG) + ISR. Data lewat `unstable_cache` bertag (`features/*/public.ts`); aksi admin memanggil `updateTag` + `revalidatePath` literal `/id` dan `/en` sehingga perubahan langsung tampil | Tag per entitas (`lib/cache-tags.ts`) |
+| Detail project yang terbit setelah build | Dirender saat pertama diminta (`dynamicParams = true` di `[slug]`) lalu di-cache | Tag `projects` |
 | Kontak, Privasi, 404 | Static | — |
+| Konfirmasi/berhenti newsletter | Dinamis (membaca `?token=`), `noindex` | — |
 | `/admin/*` | Dinamis, tanpa cache, `noindex` | — |
-| Metadata GitHub | Fetch server dengan `revalidate` 1 jam | Data cache Next |
+| Metadata GitHub | Fetch server dengan `revalidate` 1 jam, gagal = tidak ditampilkan | Data cache Next |
+
+Catatan:
+- Data dari `unstable_cache` diserialisasi JSON, jadi query publik hanya mengembalikan nilai sederhana (tanggal sebagai string `YYYY-MM` atau ISO).
+- Build butuh database (`DATABASE_URL`) karena halaman publik dirender dari data. CI dan Vercel sudah menyediakannya.
+- **Jangan** `export const dynamicParams = false` di `app/[locale]/layout.tsx`: render ulang ISR setelah revalidasi gagal (`NoFallbackError`) dan semua halaman publik menjadi 404. Locale asing ditolak lewat `hasLocale()`.
+- Filter tidak membuat halaman dinamis: filter pengalaman memakai radio + CSS `:has()` (tanpa JS), filter project di klien dan baru muncul bila ≥ 3 project atau ≥ 2 kategori.
+- Gambar publik hanya dari akun Cloudinary di `CLOUDINARY_CLOUD_NAME` (`lib/public-image.ts`); gambar lain dilewati agar halaman tidak gagal render.
 
 ## 4. Struktur Folder
 
@@ -120,7 +129,7 @@ Aturan: satu domain, satu folder di `features/`. Kode `lib/` tidak boleh mengimp
 ### Catatan implementasi (M1)
 
 - **Next 16:** `middleware.ts` diganti `Frontend/src/proxy.ts` (runtime Node.js), `params` selalu async, `revalidateTag(tag, profile)` butuh argumen kedua, dan `updateTag` dipakai di Server Action. Dokumentasi yang sesuai versi ada di `node_modules/next/dist/docs/` (lihat `AGENTS.md`).
-- **Root layout:** tidak ada `app/layout.tsx`. `app/[locale]/layout.tsx` adalah root layout situs publik (`dynamicParams = false`, hanya `id`/`en`), dan nanti `app/admin/layout.tsx` menjadi root layout kedua. URL yang tidak dikenal ditangani `app/global-not-found.tsx` (flag `experimental.globalNotFound`).
+- **Root layout:** tidak ada `app/layout.tsx`. `app/[locale]/layout.tsx` adalah root layout situs publik (hanya `id`/`en` lewat `generateStaticParams` + `hasLocale`), dan `app/admin/layout.tsx` root layout kedua. URL yang tidak dikenal ditangani `app/global-not-found.tsx` (flag `experimental.globalNotFound`).
 - **Font:** self-host lewat `next/font/local` dari berkas Fontsource di `Frontend/src/fonts/`, jadi build tidak mengakses Google Fonts.
 - **Prisma client** di-generate ke `Frontend/src/generated/prisma` (tidak di-commit, dibuat oleh `postinstall`). Skema dan migrasi ada di `Database/`, sedangkan Prisma CLI dijalankan dari `Frontend/` lewat `Frontend/prisma.config.ts`. CLI dan seed membaca `Frontend/.env.local` lalu `.env`, sama seperti Next.js.
 - **Vercel:** Root Directory = `Frontend`, dengan opsi "Include files outside the Root Directory" aktif (bawaan) agar `../Database/` ikut terbaca saat build.
@@ -313,7 +322,7 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 
 Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tests/unit/authz.test.ts` (setiap action menolak tanpa sesi sebelum menyentuh database). Hasil action berbentuk `ActionResult` (`lib/action-result.ts`): pesan untuk toast dan `fieldErrors` untuk form. Catatan:
 
-- **Jangan** `revalidatePath('/[locale]', 'layout')`: dengan `dynamicParams = false`, render ulang ISR memakai nilai `[locale]` apa adanya dan beranda menjadi 404.
+- **Jangan** `revalidatePath('/[locale]', 'layout')` dan jangan `dynamicParams = false` di layout locale: keduanya membuat halaman publik 404 setelah revalidasi (lihat Strategi render).
 - Berkas `'use server'` hanya boleh mengekspor fungsi async. Konstanta dan skema ditaruh di `schema.ts`.
 - Urutan project, kategori, dan skill diubah dengan tombol naik/turun (aksesibel untuk keyboard), urutan ditulis ulang 0..n dalam transaksi. Pengalaman diurutkan dari tanggal mulai.
 - Log audit tidak memuat isi pesan, nama, atau email pengunjung. Email dan WhatsApp profil disamarkan.
@@ -335,25 +344,28 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 
 ### 6.2 Form publik (Server Actions)
 
-Form kontak dan pendaftaran newsletter memakai **Server Action** dengan `useActionState`, bukan route handler, agar tetap berfungsi tanpa JavaScript di sisi klien. Setiap action: validasi Zod, honeypot, rate limit per IP-hash, lalu mengembalikan state `{ status, fieldErrors, message }` untuk ditampilkan dengan `aria-live`.
+Form kontak dan pendaftaran newsletter memakai **Server Action** dengan `useActionState`, bukan route handler, agar tetap berfungsi tanpa JavaScript di sisi klien (diuji E2E dengan JavaScript mati). Setiap action: validasi Zod, honeypot, rate limit per IP-hash, lalu mengembalikan state `{ status, fieldErrors, message, values }`. Pesan berupa kunci terjemahan, diterjemahkan di klien dan dibacakan lewat `role="alert"`/`status`.
 
 | Action | Fungsi |
 |---|---|
-| `submitContact` | Simpan `Message`, kirim email notifikasi (Resend) |
-| `subscribeNewsletter` | Buat `Subscriber` PENDING, kirim email konfirmasi |
+| `submitContact` | Honeypot → validasi → rate limit 5/jam per IP-hash → simpan `Message` (IP hanya hash) → notifikasi ke `CONTACT_TO_EMAIL` lewat Resend bila diatur (gagal kirim tidak menggagalkan pengunjung) |
+| `subscribeNewsletter` | Double opt-in: `Subscriber` PENDING dengan hash token → email konfirmasi (React Email, dua bahasa) + header `List-Unsubscribe`. Jawaban sama untuk email yang sudah terdaftar (tidak bisa ditebak). Tanpa Resend: "belum aktif" |
+| `confirmSubscription` | Dipanggil dari tombol di `/[locale]/newsletter/confirm?token=` (POST, bukan saat tautan dibuka, agar pemindai tautan email tidak ikut mengonfirmasi). Token hanya sekali pakai |
+| `unsubscribe` | Dari `/[locale]/newsletter/unsubscribe?token=<id>.<hmac>`; token tanda tangan HMAC, tidak disimpan |
+
+Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). Template di `src/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
 
 ### 6.3 Route Handlers
 
 | Metode | Path | Akses | Fungsi |
 |---|---|---|---|
-| GET | `/api/v1/projects` | Publik | Daftar project terbit (`?locale=id\|en`, paginasi) |
-| GET | `/api/v1/projects/{slug}` | Publik | Detail project |
-| GET | `/api/v1/skills` | Publik | Skill per kategori |
-| GET | `/api/v1/profile` | Publik | Profil publik |
-| GET | `/api/newsletter/confirm?token=` | Publik | Konfirmasi langganan |
-| GET | `/api/newsletter/unsubscribe?token=` | Publik | Berhenti langganan |
-| POST | `/api/track` | Publik, rate limit | Catat kunjungan halaman (beacon) |
-| GET | `/api/cv` | Publik | Catat unduhan lalu arahkan ke CV terbaru |
+| GET | `/api/v1/projects` | Publik | Daftar project terbit. `?locale=id\|en` → teks satu bahasa, tanpa → `{ id, en }` |
+| GET | `/api/v1/projects/{slug}` | Publik | Detail project terbit, 404 bila tidak ada |
+| GET | `/api/v1/skills` | Publik | Skill per kategori beserta slug project yang memakainya |
+| GET | `/api/v1/profile` | Publik | Profil publik **tanpa** email dan WhatsApp (agar tidak mudah dipanen bot) |
+| POST | `/api/track` | Publik, same-origin, rate limit 300/jam | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
+| GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
+| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas 7 hari terakhir ke `PageViewDaily` (idempoten), hapus `PageView` > 90 hari dan `RateLimit` > 1 hari. Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
 | GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
 
 ### 6.4 Kontrak
@@ -407,7 +419,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Rantai pasok | `pnpm audit --audit-level=high` di CI, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
 | Akses admin | Satu akun, log audit, ganti password dengan rate limit. Notifikasi login baru via email menyusul bersama Resend (M4) |
 
-Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
+Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
 
 ## 9. Lingkungan dan Deployment
 
@@ -471,3 +483,6 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 9 | PostgreSQL 17, UUID v7, `timestamptz`, ringkasan `PageViewDaily`, Neon via integrasi Vercel | Konsisten lokal/CI/production, cegah bug zona waktu, hemat kuota | Final (2026-09-30) |
 | 10 | Mutasi admin (termasuk tanda tangan unggah dan impor GitHub) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
+| 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
+| 13 | Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()` | Hampir tanpa JavaScript klien, Esc dan fokus ditangani browser | Final (M3, 2026-09-30) |
+| 14 | Konfirmasi dan berhenti newsletter lewat tombol (POST) di halaman, bukan GET di tautan email | Pemindai tautan email tidak ikut mengonfirmasi atau memberhentikan langganan | Final (M3, 2026-09-30) |

@@ -73,20 +73,23 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 
 ## M3 — Halaman Publik (≈ 1 hari)
 
-- [ ] Navbar, footer, toggle bahasa dan tema, tautan lewati konten
-- [ ] Home (hero + bagian ringkas)
-- [ ] About
-- [ ] Experience & Education (timeline + filter) `[?]`
-- [ ] Skills
-- [ ] Projects: daftar, filter teknologi, halaman detail, metadata GitHub. Harus tampil baik dengan 1 project (GAAS): kartu unggulan lebar, filter tersembunyi sampai cukup project, keadaan kosong
-- [ ] Kontak: Server Action `submitContact` + `useActionState` (tanpa library form) + email Resend (template React Email ID/EN) + honeypot dan rate limit tabel `RateLimit` `[?]`
-- [ ] Unduh CV: `/api/cv` dengan penghitung unduhan
-- [ ] Newsletter publik: Server Action `subscribeNewsletter`, route konfirmasi dan unsubscribe `[?]`
-- [ ] Kebijakan Privasi, 404, error
-- [ ] Revalidate berbasis tag dari aksi admin
-- [ ] Statistik pengunjung: `/api/track`, ringkasan di dashboard admin
-- [ ] API publik `/api/v1/*` `[?]`
-- [ ] Seluruh konten dua bahasa, isi awal dari CV. Seed project hanya GAAS
+Status: selesai 2026-09-30. 146 tes unit dan 88 tes E2E (Chromium + emulasi HP, axe di semua halaman publik dan admin, terang/gelap, ID/EN) lulus di sandbox.
+
+- [x] Navbar (padat saat digulir, tanpa JS), menu HP (`popover` bawaan browser), footer, toggle bahasa dan tema, tautan lewati konten
+- [x] Home: hero + pelat status (status, lokasi, kampus, posisi sekarang dari admin), project pilihan, perjalanan terbaru, skill, ajakan kontak, newsletter. Latar "Horizon" versi CSS statis (canvas di M4)
+- [x] About: bio Markdown, foto, kontak, CV
+- [x] Experience & Education: satu halaman, timeline + filter tanpa JS (keputusan 2026-09-30)
+- [x] Skills: dikelompokkan, tanpa persen, tautan ke project yang memakai skill
+- [x] Projects: daftar, kartu lebar untuk 1 project, filter kategori/teknologi baru muncul bila ≥ 3 project atau ≥ 2 kategori, keadaan kosong, halaman detail (studi kasus Markdown, galeri, teknologi, metadata GitHub, sebelumnya/berikutnya)
+- [x] Kontak: Server Action `submitContact` + `useActionState` (jalan tanpa JS) + honeypot + rate limit 5/jam + notifikasi Resend opsional (keputusan 2026-09-30)
+- [x] Unduh CV: `/api/cv` dengan penghitung unduhan
+- [x] Newsletter publik: double opt-in, halaman konfirmasi dan berhenti (tombol POST), email React Email ID/EN (keputusan 2026-09-30). Aktif setelah `RESEND_API_KEY` + `EMAIL_FROM` diisi
+- [x] Kebijakan Privasi, 404, error
+- [x] Revalidate berbasis tag dari aksi admin (perubahan langsung tampil, diuji E2E)
+- [x] Statistik pengunjung: `/api/track` tanpa cookie + Vercel Cron harian (ringkasan `PageViewDaily`, hapus data > 90 hari)
+- [x] API publik `/api/v1/*` (keputusan 2026-09-30)
+- [x] Seluruh konten dua bahasa, isi awal dari CV. Seed project hanya GAAS (masih **draf** sampai izin publikasi dikonfirmasi)
+- [ ] Uji email sungguhan (butuh domain terverifikasi di Resend) dan unggah Cloudinary sungguhan (butuh kunci)
 
 **Selesai bila:** semua halaman publik tampil dari data database dalam ID dan EN, terang dan gelap.
 
@@ -148,3 +151,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Hosting: Vercel Hobby + Neon Free di Singapura (`sin1`), `vercel.json`, migrasi hanya di production, Ignored Build Step, ruleset `main`, UptimeRobot + Telegram |
 | 2026-09-30 | M2 selesai: Better Auth, panel admin (dashboard, profil, project, skill, pengalaman, pesan, pelanggan, audit, akun), unggah Cloudinary, 120 tes unit, 59 tes E2E. Broadcast dan notifikasi login ditunda. UI admin hanya bahasa Indonesia |
 | 2026-09-30 | Alur kerja: semua langsung di `main`, tanpa branch lain dan tanpa PR (permintaan pemilik). `feat/m2-admin` disatukan ke `main` (fast-forward), templat PR dihapus |
+| 2026-09-30 | M3 selesai: halaman publik dari database, kontak, newsletter double opt-in, CV, statistik tanpa cookie + cron, API v1. Keputusan PRD 11 no. 1, 4 (opt-in), 5, 10 dikonfirmasi. Ditemukan dan diperbaiki: `dynamicParams = false` di layout locale membuat halaman publik 404 setelah revalidasi |

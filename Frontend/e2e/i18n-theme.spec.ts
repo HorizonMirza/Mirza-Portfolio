@@ -1,4 +1,9 @@
-import { expect, test, type Browser } from '@playwright/test'
+import { expect, type Page, test, type Browser } from '@playwright/test'
+
+// Di HP, pilihan bahasa dan tema ada di dalam menu.
+async function openControls(page: Page, isMobile: boolean, label = 'Buka menu') {
+  if (isMobile) await page.getByRole('button', { name: label }).click()
+}
 
 async function openRootWithLocale(browser: Browser, locale: string) {
   const context = await browser.newContext({ locale })
@@ -12,7 +17,7 @@ test('browser berbahasa Indonesia diarahkan ke /id', async ({ browser }) => {
   await expect(page).toHaveURL(/\/id$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'id')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Portofolio ini sedang dibangun.',
+    'Mahasiswa AI BINUS yang membangun software dan komunitas.',
   )
   await context.close()
 })
@@ -29,21 +34,24 @@ test('bahasa lain jatuh ke bahasa bawaan /id', async ({ browser }) => {
   await context.close()
 })
 
-test('pengganti bahasa berpindah ke versi Inggris', async ({ page }) => {
-  await page.goto('/id')
+test('pengganti bahasa berpindah ke versi Inggris di halaman yang sama', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/id/experience')
+  await openControls(page, isMobile)
   await page
     .getByRole('navigation', { name: 'Bahasa' })
     .getByRole('link', { name: 'English' })
     .click()
-  await expect(page).toHaveURL(/\/en$/)
+  await expect(page).toHaveURL(/\/en\/experience$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'This portfolio is under construction.',
-  )
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Experience & Education')
 })
 
-test('tema gelap dan terang bisa dipilih dan tersimpan', async ({ page }) => {
+test('tema gelap dan terang bisa dipilih dan tersimpan', async ({ page, isMobile }) => {
   await page.goto('/id')
+  await openControls(page, isMobile)
   const html = page.locator('html')
   const group = page.getByRole('group', { name: 'Tema' })
 
@@ -53,6 +61,7 @@ test('tema gelap dan terang bisa dipilih dan tersimpan', async ({ page }) => {
 
   await page.reload()
   await expect(html).toHaveClass(/dark/)
+  await openControls(page, isMobile)
 
   await group.getByRole('button', { name: 'Terang' }).click()
   await expect(html).toHaveClass(/light/)
@@ -67,15 +76,26 @@ test('tautan lewati konten muncul saat difokus dengan keyboard', async ({ page }
   await expect(skip).toBeVisible()
 })
 
-test('tidak ada error di console', async ({ page }) => {
+test('tidak ada error di console', async ({ page, isMobile }) => {
   const errors: string[] = []
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text())
   })
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/id')
+  await openControls(page, isMobile)
   await page.getByRole('button', { name: 'Gelap' }).click()
-  await page.goto('/en')
+  for (const path of [
+    '/en',
+    '/en/about',
+    '/en/experience',
+    '/en/skills',
+    '/en/projects',
+    '/en/contact',
+    '/en/privacy',
+  ]) {
+    await page.goto(path)
+  }
   expect(errors).toEqual([])
 })
 

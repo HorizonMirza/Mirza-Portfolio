@@ -8,7 +8,7 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** Milestone 1 (setup) dan Milestone 2 (auth + panel admin) selesai. Kerjakan milestone berikutnya hanya bila diminta Mirza (`Documentation/TODO.md`).
+**Status:** Milestone 1 (setup), 2 (auth + panel admin), dan 3 (halaman publik) selesai. Kerjakan milestone berikutnya hanya bila diminta Mirza (`Documentation/TODO.md`).
 
 **Next.js 16:** API berbeda dari versi lama. Baca `Frontend/AGENTS.md` dan panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 

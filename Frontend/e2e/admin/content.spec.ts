@@ -71,6 +71,14 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Project disimpan.')).toBeVisible()
 
+  // Project yang terbit setelah build langsung tampil di situs publik (revalidasi + dynamicParams).
+  const slug = `e2e-${suffix}`.toLowerCase()
+  const detail = await page.goto(`/id/projects/${slug}`)
+  expect(detail?.status()).toBe(200)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(titleId)
+  await page.goto('/en/projects')
+  await expect(page.getByRole('link', { name: `E2E project ${suffix}` })).toBeVisible()
+
   await page.goto('/admin/projects')
   await page.getByRole('searchbox', { name: 'Cari project' }).fill(suffix)
   const item = page.getByText(titleId).locator('visible=true').first()
@@ -85,6 +93,9 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
   await expect(page.getByText('Project dihapus.')).toBeVisible()
   await expect(page.getByText(titleId)).toHaveCount(0)
+
+  const gone = await page.goto(`/id/projects/${slug}`)
+  expect(gone?.status()).toBe(404)
 
   await page.goto('/admin/audit?entity=Project')
   await expect(page.locator('main ol > li').first()).toContainText('hapus')
