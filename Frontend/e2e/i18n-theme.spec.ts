@@ -76,10 +76,16 @@ test('tautan lewati konten muncul saat difokus dengan keyboard', async ({ page }
   await expect(skip).toBeVisible()
 })
 
-test('tidak ada error di console', async ({ page, isMobile }) => {
+// WebKit mencatat prefetch RSC yang dibatalkan karena pindah halaman sebagai error
+// "due to access control checks". Itu bukan kegagalan aplikasi.
+const abortedPrefetch = /\?_rsc=\S+ due to access control checks\.$/
+
+test('tidak ada error di console', async ({ page, isMobile, browserName }) => {
   const errors: string[] = []
   page.on('console', (message) => {
-    if (message.type() === 'error') errors.push(message.text())
+    if (message.type() !== 'error') return
+    if (browserName === 'webkit' && abortedPrefetch.test(message.text())) return
+    errors.push(message.text())
   })
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/id')
@@ -95,6 +101,7 @@ test('tidak ada error di console', async ({ page, isMobile }) => {
     '/en/privacy',
   ]) {
     await page.goto(path)
+    await page.waitForLoadState('networkidle')
   }
   expect(errors).toEqual([])
 })

@@ -116,8 +116,11 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await expect(page.getByText('Project dihapus.')).toBeVisible()
   await expect(page.getByText(titleId)).toHaveCount(0)
 
-  const gone = await page.goto(`/id/projects/${slug}`)
-  expect(gone?.status()).toBe(404)
+  // Status dicek langsung ke server, tanpa cache HTTP browser. Firefox menerapkan
+  // stale-while-revalidate juga untuk navigasi, jadi `next start` lokal bisa menyajikan salinan
+  // lama dari cache browser. Di Vercel, CDN mengganti Cache-Control ke browser.
+  const gone = await page.request.get(`/id/projects/${slug}`)
+  expect(gone.status()).toBe(404)
 
   await page.goto('/admin/audit?entity=Project')
   await expect(page.locator('main ol > li').first()).toContainText('hapus')
