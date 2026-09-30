@@ -111,7 +111,7 @@ flowchart LR
 │   ├── migrations/           # migrasi SQL
 │   └── seed/seed-data.ts     # data awal dari CV
 ├── Documentation/            # PRD, DESIGN, ARCHITECTURE, WORKFLOW, TODO, CONTENT, REFERENCES
-├── .github/                  # workflows, dependabot, templat PR
+├── .github/                  # workflows CI, templat PR
 └── .agents/skill/           # skill proyek untuk Claude Code
 ```
 
@@ -384,7 +384,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
 | Header | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
-| Rantai pasok | Dependabot, `pnpm audit` di CI, versi terkunci |
+| Rantai pasok | `pnpm audit --audit-level=high` di CI, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
 | Akses admin | Satu akun, log audit, notifikasi login baru via email |
 
 Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
@@ -409,7 +409,7 @@ Alur: PR → CI hijau → Vercel membuat preview → merge ke `main` → Vercel 
 | `e2e.yml` | PR | Playwright (Chromium + WebKit + Firefox) dan axe pada URL preview |
 | `lighthouse.yml` | PR | Lighthouse CI, gagal jika kategori < 90 |
 | `backup.yml` | Cron harian | `pg_dump`, kompres, **enkripsi**, simpan sebagai artifact/penyimpanan privat |
-| `dependabot.yml` | Mingguan | Update dependency dan GitHub Actions |
+| (tanpa bot) | Bulanan, manual | Update dependency dan GitHub Actions oleh Claude, commit atas nama pemilik (`WORKFLOW.md` bagian 10a) |
 
 Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib dienkripsi** sebelum diunggah.
 

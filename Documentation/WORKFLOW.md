@@ -118,9 +118,23 @@ Perubahan desain, fitur, atau struktur data tetap lewat PR.
 | Frekuensi | Kegiatan |
 |---|---|
 | Harian | Update konten lewat admin, baca pesan masuk |
-| Mingguan | Tinjau PR Dependabot, cek Sentry dan uptime |
-| Bulanan | Cek skor Lighthouse dan Web Vitals, tinjau statistik unduhan CV dan pesan, bersihkan pesan lama |
-| Triwulan | Uji pemulihan backup, audit dependency (`pnpm audit`), tinjau akses akun dan token |
+| Mingguan | Cek Sentry, uptime, dan **Dependabot alerts** (Security → Dependabot) |
+| Bulanan | **Update dependency** (lihat bagian 10a), cek skor Lighthouse dan Web Vitals, tinjau statistik unduhan CV dan pesan, bersihkan pesan lama |
+| Triwulan | Uji pemulihan backup, tinjau akses akun dan token |
+
+### 10a. Update dependency (tanpa bot)
+
+Dependabot **update otomatis dimatikan** (tidak ada `.github/dependabot.yml`), agar tidak ada PR atau commit dari bot dan Contributors tetap hanya pemilik. **Dependabot alerts** tetap aktif sebagai notifikasi. **Dependabot security updates** (PR otomatis) juga dimatikan.
+
+Update dikerjakan Claude **sebulan sekali**, atau **segera** bila ada peringatan keamanan high/critical:
+
+1. `cd Frontend && pnpm outdated` dan `pnpm audit`.
+2. Naikkan patch/minor sekaligus. Major satu per satu, baca catatan rilisnya (untuk Next.js: panduan di `node_modules/next/dist/docs/`).
+3. Periksa juga versi GitHub Actions di `.github/workflows/ci.yml`.
+4. Celah di dependency tidak langsung yang belum diperbaiki induknya: pakai `overrides` di `Frontend/pnpm-workspace.yaml`, lengkap dengan alasan dan kapan dihapus.
+5. Jalankan pemeriksaan lengkap (lint, typecheck, test, build, E2E), lalu commit `[CLAUDIA] chore(deps): ...` atas nama Horizon Mirza.
+
+CI menjalankan `pnpm audit --audit-level=high` di setiap push dan PR, sehingga celah baru yang tinggi langsung membuat CI merah.
 
 ## 11. Umpan Balik
 

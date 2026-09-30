@@ -76,6 +76,7 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 
 **Proses**
 - Jangan menambah dependency, layanan, atau biaya tanpa persetujuan. Tuliskan alasannya.
+- Tidak ada Dependabot update otomatis. Update dependency dikerjakan manual sebulan sekali atau saat ada alert keamanan (`Documentation/WORKFLOW.md` bagian 10a).
 - Jangan mengambil keputusan yang tercantum "terbuka" di `PRD.md` bagian 11 tanpa konfirmasi. Beri tanda asumsi bila terpaksa memakai default.
 - Kerjakan di branch, satu tujuan per PR. Kriteria selesai: `Documentation/WORKFLOW.md` bagian 4.
 - Laporkan hasil dengan jujur: tes yang gagal, langkah yang dilewati, dan hal yang belum bisa diverifikasi.

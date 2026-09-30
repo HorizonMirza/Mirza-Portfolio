@@ -18,7 +18,7 @@ Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTUR
 | [`Database/`](Database) | Skema Prisma, migrasi SQL, dan data seed dari CV |
 | [`Documentation/`](Documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi |
 
-Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI dan Dependabot, wajib di akar) dan `.agents/` (skill untuk agen AI).
+Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI dan templat PR, wajib di akar) dan `.agents/` (skill untuk agen AI).
 
 ## Menjalankan secara lokal
 

@@ -7,3 +7,10 @@ ignoredBuiltDependencies:
   - '@swc/core'
   - sharp
   - unrs-resolver
+
+# Paksa versi aman untuk dependency milik Prisma CLI yang punya celah keamanan
+# (mysql2: GHSA-rgwj-5xj2-c3m3 dan lainnya, deepmerge-ts: stack exhaustion).
+# Hapus bila Prisma sudah memakai versi aman sendiri.
+overrides:
+  mysql2: ^3.23.1
+  deepmerge-ts: ^8.0.0

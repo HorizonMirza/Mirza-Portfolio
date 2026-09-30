@@ -34,7 +34,7 @@ Status: **draf v1**. Urutan = prioritas. Tanda `[?]` = bergantung pada keputusan
 - [x] Vitest + Testing Library, Playwright (+ axe) di Chromium desktop dan emulasi HP
 - [x] Prisma 7 + PostgreSQL: skema sesuai `ARCHITECTURE.md` bagian 5, migrasi awal, seed idempoten dari CV (GAAS berstatus DRAFT)
 - [x] `Frontend/src/lib/env.ts` (validasi Zod), `Frontend/.env.example`
-- [x] GitHub Actions `ci.yml` (lint, format, typecheck, unit, migrasi + cek drift, seed, build, E2E, gitleaks), `dependabot.yml`, templat PR
+- [x] GitHub Actions `ci.yml` (lint, format, typecheck, unit, audit keamanan, migrasi + cek drift, seed, build, E2E, gitleaks), templat PR. Dependabot update otomatis dimatikan (lihat `WORKFLOW.md` bagian 10a)
 - [ ] Koneksi repo ke Vercel dan database Neon (butuh akun pemilik, langkah di README bagian "Deploy ke Vercel")
 - [x] `/api/health`
 - [x] README (cara menjalankan lokal dan deploy)
@@ -139,3 +139,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Frontend: animasi utama pindah ke CSS bawaan (Motion seperlunya), form publik ke Server Actions tanpa library form, ditambah rencana TanStack Table, Recharts, editor Markdown untuk M2 |
 | 2026-09-30 | Backend: Auth.js → Better Auth (hash bawaan), Upstash → tabel `RateLimit` di Postgres, Octokit → `fetch`, tambah React Email dan Vercel Cron |
 | 2026-09-30 | Database: PostgreSQL 17, UUID v7, `timestamptz`, tabel `PageViewDaily`, migrasi awal dibuat ulang, Neon via integrasi Vercel |
+| 2026-09-30 | Dependabot update otomatis dihapus (alerts tetap). Update dependency manual bulanan. GitHub Actions dinaikkan, `pnpm audit` masuk CI, `overrides` untuk mysql2 dan deepmerge-ts (celah di Prisma CLI) |
