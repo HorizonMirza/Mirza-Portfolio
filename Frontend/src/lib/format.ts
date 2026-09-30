@@ -46,3 +46,18 @@ export function lastDayKeys(days: number, now: Date = new Date()): string[] {
     return d.toISOString().slice(0, 10)
   })
 }
+
+// Kolom @db.Date disimpan tengah malam UTC, jadi ditampilkan dengan zona UTC agar bulannya tidak bergeser.
+const monthFormatter = new Intl.DateTimeFormat('id-ID', {
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
+export function formatMonth(date: Date): string {
+  return monthFormatter.format(date)
+}
+
+export function formatPeriod(start: Date, end: Date | null): string {
+  return `${formatMonth(start)} – ${end ? formatMonth(end) : 'sekarang'}`
+}
