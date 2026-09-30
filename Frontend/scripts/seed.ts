@@ -11,12 +11,24 @@ config({ path: ['.env.local', '.env'], quiet: true })
 // Menjalankan data dari Database/seed/seed-data.ts. Dijalankan dengan `pnpm db:seed` dari Frontend/.
 // Seed bersifat idempoten: aman dijalankan berulang, data yang sudah diubah lewat admin
 // untuk profil TIDAK ditimpa (hanya dibuat bila belum ada).
+//
+// Mode `--bootstrap` (dipanggil build production Vercel): konten CV hanya diisi bila database
+// masih kosong (belum ada profil), supaya item yang dihapus lewat admin tidak muncul lagi di
+// deploy berikutnya. Akun admin tetap dibuat bila belum ada dan ADMIN_EMAIL/ADMIN_PASSWORD diisi.
+const bootstrap = process.argv.includes('--bootstrap')
+
 async function main() {
   const connectionString = process.env.DATABASE_URL
   if (!connectionString) throw new Error('DATABASE_URL belum diisi')
   const db = new PrismaClient({ adapter: new PrismaPg({ connectionString }) })
 
   try {
+    if (bootstrap && (await db.profile.findUnique({ where: { id: 1 }, select: { id: true } }))) {
+      console.log('Bootstrap: database sudah berisi, konten CV tidak diisi ulang.')
+      await seedAdmin(db)
+      return
+    }
+
     await db.profile.upsert({
       where: { id: 1 },
       update: {},
@@ -125,6 +137,15 @@ async function seedAdmin(db: PrismaClient) {
       await db.user.update({ where: { id: existing.id }, data: { role: 'SUPER_ADMIN' } })
     }
     console.log('Akun admin sudah ada, password tidak diubah.')
+    return
+  }
+  // Hanya satu Super Admin (PRD 5.2). Mengganti ADMIN_EMAIL tidak membuat akun kedua.
+  const otherAdmin = await db.user.findFirst({
+    where: { role: 'SUPER_ADMIN' },
+    select: { id: true },
+  })
+  if (otherAdmin) {
+    console.log('Sudah ada Super Admin lain, akun baru tidak dibuat.')
     return
   }
 

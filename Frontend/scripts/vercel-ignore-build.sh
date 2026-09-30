@@ -4,12 +4,15 @@
 # (misalnya Documentation/, .github/, README.md). Bila ragu, build selalu dijalankan.
 set -u
 
+# VERCEL_GIT_PREVIOUS_SHA = commit deploy sukses sebelumnya. Kosong pada deploy pertama,
+# jadi build selalu dijalankan (jangan membandingkan dengan HEAD^).
 base="${VERCEL_GIT_PREVIOUS_SHA:-}"
-if [ -z "$base" ] || ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
-  base="HEAD^"
+if [ -z "$base" ]; then
+  echo "Belum ada deploy sebelumnya, build dijalankan."
+  exit 1
 fi
 
-if ! git rev-parse --verify --quiet "${base}^{commit}" >/dev/null; then
+if ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
   echo "Commit pembanding tidak tersedia, build dijalankan."
   exit 1
 fi

@@ -448,6 +448,8 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 
 **Rollback:** Vercel "Instant Rollback" ke deployment sebelumnya. Jika migrasi ikut berubah, pulihkan dari backup (bagian 11).
 
+**Deploy pertama tanpa langkah manual (2026-09-30):** `scripts/vercel-build.sh` di production menjalankan `prisma migrate deploy`, lalu `tsx scripts/seed.ts --bootstrap` (konten CV hanya bila belum ada profil; akun admin hanya bila belum ada Super Admin sama sekali), lalu `next build`. URL auth di Vercel tanpa `BETTER_AUTH_URL`: domain production proyek (`VERCEL_PROJECT_PRODUCTION_URL`), dan semua alamat Vercel deployment tersebut masuk `trustedOrigins`. Ignored Build Step selalu mem-build bila belum ada deploy sebelumnya.
+
 ## 10. CI/CD (GitHub Actions)
 
 | Workflow | Pemicu | Isi |

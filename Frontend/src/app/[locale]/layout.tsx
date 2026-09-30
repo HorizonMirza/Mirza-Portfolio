@@ -10,6 +10,7 @@ import { PageViewTracker } from '@/components/site/page-view-tracker'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
 import { routing } from '@/i18n/routing'
+import { siteUrl } from '@/lib/env'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
 // Jangan set `dynamicParams = false` di sini. Dengan itu, render ulang ISR setelah admin menyimpan
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
   const t = await getTranslations({ locale, namespace: 'Metadata' })
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+    metadataBase: new URL(siteUrl()),
     title: { default: t('title'), template: '%s — Muhammad Mirza' },
     description: t('description'),
     alternates: {

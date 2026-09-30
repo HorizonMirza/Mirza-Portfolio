@@ -70,22 +70,33 @@ Bila Playwright tidak bisa mengunduh browser (misalnya di sandbox), arahkan ke C
 
 ## Deploy ke Vercel (dilakukan pemilik akun)
 
-Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, dan Ignored Build Step. Yang perlu dilakukan di dashboard:
+Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, Ignored Build Step, dan Vercel Cron harian. Deploy production pertama otomatis menjalankan migrasi, lalu mengisi konten dari CV dan membuat akun admin bila database masih kosong. Tidak perlu menjalankan apa pun dari komputer sendiri.
 
-1. **Vercel → Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Set **Root Directory** ke `Frontend`. Biarkan opsi "Include files outside the Root Directory" aktif agar `Database/` ikut terbaca. Build command dan region terbaca otomatis dari `vercel.json`.
-2. **Storage → Marketplace → Neon** di project Vercel: region **Singapore (aws-ap-southeast-1)**, PostgreSQL 17, hubungkan ke Production dan Preview. Integrasi mengisi `DATABASE_URL` (pooled) dan `DATABASE_URL_UNPOOLED` (direct, untuk migrasi) secara otomatis.
-3. **Branch database per preview (disarankan):** aktifkan pembuatan branch Neon untuk tiap preview di pengaturan integrasi, beserta penghapusan otomatis branch lama (paket gratis maksimal 10 branch). Setelah aktif, tambahkan env `MIGRATE_ON_BUILD=true` khusus **Preview**. Tanpa branch preview, jangan tambahkan env ini, agar preview tidak mengubah database production.
-4. **Environment Variables** tambahan:
-   - `NEXT_PUBLIC_SITE_URL` (Production: domain final, Preview: boleh dikosongkan). `DIRECT_URL` tidak perlu bila memakai integrasi.
-   - `BETTER_AUTH_SECRET` (wajib, minimal 32 karakter, **berbeda** untuk Production dan Preview) dan `BETTER_AUTH_URL` (Production: domain final; Preview: kosongkan, otomatis memakai URL deployment).
-   - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` untuk unggah berkas.
-   - Email (form kontak dan newsletter): `RESEND_API_KEY`, `EMAIL_FROM` (alamat di domain yang sudah diverifikasi di Resend, contoh `Muhammad Mirza <halo@domainanda.site>`), `CONTACT_TO_EMAIL` (kotak masuk Anda). Tanpa ini, pesan kontak tetap tersimpan di admin dan newsletter menampilkan "belum aktif".
-   - `CRON_SECRET` (minimal 16 karakter acak) untuk Vercel Cron harian (`/api/cron/daily`: ringkas statistik, hapus data kunjungan > 90 hari).
-   - Opsional: `GITHUB_TOKEN`, `HASH_SALT_SECRET`.
-   - `ADMIN_EMAIL` dan `ADMIN_PASSWORD` **tidak** perlu di Vercel, cukup saat menjalankan seed dari komputer lokal.
-5. Deploy. Migrasi hanya berjalan di production (`Frontend/scripts/vercel-build.sh`). Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`).
-6. Jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan URL database production beserta `ADMIN_EMAIL` dan `ADMIN_PASSWORD`: `pnpm db:seed`. Isi dari seed muncul di situs paling lambat 10 menit kemudian (atau langsung setelah Anda menyimpan sesuatu di admin). Setelah itu masuk ke `https://<domain>/admin`.
-7. Cek `https://<domain>/api/health` harus mengembalikan `{"status":"ok","database":"ok"}`.
+1. **Vercel → Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Klik **Edit** di Root Directory lalu pilih `Frontend`. Framework terdeteksi Next.js, build command dan region terbaca dari `vercel.json`. Klik **Deploy**. Deploy pertama ini **akan gagal** karena database belum ada, itu wajar.
+2. **Storage → Create Database → Neon** (di halaman project): region **Singapore (aws-ap-southeast-1)**, hubungkan ke **Production** dan **Preview**. Integrasi mengisi `DATABASE_URL` dan `DATABASE_URL_UNPOOLED` otomatis.
+3. **Settings → Environment Variables**, tambahkan:
+
+   | Nama | Environment | Nilai |
+   |---|---|---|
+   | `BETTER_AUTH_SECRET` | Production | teks acak minimal 32 karakter |
+   | `BETTER_AUTH_SECRET` | Preview | teks acak lain (berbeda dari Production) |
+   | `ADMIN_EMAIL` | Production | email untuk login admin |
+   | `ADMIN_PASSWORD` | Production | password admin, minimal 12 karakter |
+   | `CRON_SECRET` | Production | teks acak minimal 16 karakter |
+   | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Production, Preview | dari dashboard Cloudinary (opsional, untuk unggah foto/CV/gambar) |
+   | `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL` | Production | opsional, untuk email kontak dan newsletter. `EMAIL_FROM` harus di domain yang terverifikasi di Resend |
+
+   `BETTER_AUTH_URL` dan `NEXT_PUBLIC_SITE_URL` **dikosongkan dulu**: situs otomatis memakai domain `*.vercel.app` proyek. Isi keduanya (`https://domainanda.site`) setelah domain sendiri terpasang.
+4. **Deployments → titik tiga pada deploy terakhir → Redeploy**. Di log build akan terlihat "All migrations have been successfully applied", "Akun admin dibuat", dan "Seed selesai".
+5. Buka `https://<proyek>.vercel.app/api/health` → harus `{"status":"ok","database":"ok"}`. Lalu masuk ke `https://<proyek>.vercel.app/admin` dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD`.
+6. Setelah bisa masuk: **hapus** env `ADMIN_PASSWORD` dari Vercel (akun sudah tersimpan di database), lalu ganti password lewat `/admin/account` bila perlu. Mengganti `ADMIN_EMAIL` nanti tidak membuat akun admin kedua.
+7. Isi dari admin langsung tampil di situs. Perubahan di luar admin (misalnya langsung di database) tampil paling lambat 10 menit kemudian.
+
+Catatan:
+- Migrasi dan pengisian awal hanya berjalan di **production** (`Frontend/scripts/vercel-build.sh`), jadi preview tidak pernah mengubah database production. Bila preview memakai branch database Neon sendiri (opsi di pengaturan integrasi Neon), tambahkan `MIGRATE_ON_BUILD=true` khusus Preview.
+- Pengisian awal (`scripts/seed.ts --bootstrap`) hanya mengisi konten bila belum ada profil, jadi data yang Anda hapus lewat admin tidak muncul lagi di deploy berikutnya.
+- Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama selalu di-build.
+- Menjalankan seed manual dari komputer sendiri tetap bisa: `pnpm db:seed` di `Frontend/` dengan `DATABASE_URL` production.
 
 Setelah deploy (pemilik akun):
 

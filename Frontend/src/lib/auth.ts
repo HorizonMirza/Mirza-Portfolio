@@ -5,7 +5,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { nextCookies } from 'better-auth/next-js'
 
 import { getDb } from '@/lib/db'
-import { getAuthEnv, resolveBaseUrl } from '@/lib/env'
+import { getAuthEnv, resolveBaseUrl, trustedAuthOrigins } from '@/lib/env'
 import { authRateLimitStorage, hashIdentifier } from '@/lib/rate-limit'
 
 // Batas percobaan login: 5 kali per 15 menit per IP (ARCHITECTURE.md bagian 7).
@@ -16,13 +16,12 @@ export const MIN_PASSWORD_LENGTH = 12
 function createAuth() {
   const env = getAuthEnv()
   const baseURL = resolveBaseUrl(env)
-  const previewOrigin = env.VERCEL_URL ? `https://${env.VERCEL_URL}` : undefined
 
   return betterAuth({
     appName: 'Portofolio Muhammad Mirza',
     secret: env.BETTER_AUTH_SECRET,
     baseURL,
-    trustedOrigins: [baseURL, previewOrigin].filter((v): v is string => Boolean(v)),
+    trustedOrigins: trustedAuthOrigins(env),
     database: prismaAdapter(getDb(), { provider: 'postgresql' }),
     emailAndPassword: {
       enabled: true,

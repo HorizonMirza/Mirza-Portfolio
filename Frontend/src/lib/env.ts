@@ -55,7 +55,11 @@ export const authEnvSchema = z.object({
     .min(32, 'BETTER_AUTH_SECRET minimal 32 karakter (buat dengan: openssl rand -base64 32)'),
   BETTER_AUTH_URL: z.url().optional(),
   NEXT_PUBLIC_SITE_URL: z.url().optional(),
+  // diisi otomatis oleh Vercel: URL deployment ini, URL branch, dan domain production proyek
   VERCEL_URL: z.string().optional(),
+  VERCEL_BRANCH_URL: z.string().optional(),
+  VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
+  VERCEL_ENV: z.string().optional(),
   // kunci terpisah untuk hash IP di rate limit publik; bila kosong diturunkan dari BETTER_AUTH_SECRET
   HASH_SALT_SECRET: z.string().min(32).optional(),
 })
@@ -80,12 +84,24 @@ export function getAuthEnv(): AuthEnv {
   return cachedAuth
 }
 
-// URL dasar aplikasi untuk auth: BETTER_AUTH_URL > NEXT_PUBLIC_SITE_URL > URL deployment Vercel.
+// URL dasar aplikasi untuk auth: BETTER_AUTH_URL > NEXT_PUBLIC_SITE_URL > domain production
+// Vercel (hanya di production) > URL deployment Vercel.
 export function resolveBaseUrl(env: AuthEnv): string | undefined {
   if (env.BETTER_AUTH_URL) return env.BETTER_AUTH_URL
   if (env.NEXT_PUBLIC_SITE_URL) return env.NEXT_PUBLIC_SITE_URL
+  if (env.VERCEL_ENV === 'production' && env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
   if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
   return undefined
+}
+
+// Asal yang boleh memanggil API auth: URL dasar ditambah semua alamat yang dibuat Vercel untuk
+// deployment ini (domain production, URL branch, URL unik deployment), agar login jalan di semuanya.
+export function trustedAuthOrigins(env: AuthEnv): string[] {
+  const hosts = [env.VERCEL_PROJECT_PRODUCTION_URL, env.VERCEL_BRANCH_URL, env.VERCEL_URL]
+  const origins = [resolveBaseUrl(env), ...hosts.map((h) => (h ? `https://${h}` : undefined))]
+  return [...new Set(origins.filter((v): v is string => Boolean(v)))]
 }
 
 // URL publik situs untuk tautan absolut (email, sitemap). Urutan: domain yang diatur,
