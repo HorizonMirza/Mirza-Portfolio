@@ -22,7 +22,7 @@ jobs:
     name: Lint, typecheck, unit test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           package_json_file: Frontend/package.json
@@ -60,7 +60,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/portfolio
       NEXT_PUBLIC_SITE_URL: http://localhost:3100
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           package_json_file: Frontend/package.json
@@ -90,7 +90,7 @@ jobs:
     name: Scan secret (gitleaks)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
