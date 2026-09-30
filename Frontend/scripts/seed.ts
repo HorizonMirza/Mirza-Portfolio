@@ -3,6 +3,7 @@ import { config } from 'dotenv'
 
 import { PrismaClient } from '../src/generated/prisma/client'
 import { experiences, profile, projects, skillCategories } from '../../Database/seed/seed-data'
+import { seedId } from './seed-ids'
 
 config({ path: ['.env.local', '.env'], quiet: true })
 
@@ -35,7 +36,7 @@ async function main() {
     })
 
     for (const [index, category] of skillCategories.entries()) {
-      const id = `seed-skillcat-${category.key}`
+      const id = seedId(`skill-category:${category.key}`)
       await db.skillCategory.upsert({
         where: { id },
         update: {},
@@ -51,7 +52,7 @@ async function main() {
     }
 
     for (const [index, item] of experiences.entries()) {
-      const id = `seed-exp-${item.key}`
+      const id = seedId(`experience:${item.key}`)
       await db.experience.upsert({
         where: { id },
         update: {},

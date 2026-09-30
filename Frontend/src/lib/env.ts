@@ -11,6 +11,8 @@ export const serverEnvSchema = z.object({
       message: 'DATABASE_URL harus berupa URL PostgreSQL',
     }),
   DIRECT_URL: z.string().optional(),
+  // diisi otomatis oleh integrasi Neon di Vercel, dipakai untuk migrasi
+  DATABASE_URL_UNPOOLED: z.string().optional(),
   NEXT_PUBLIC_SITE_URL: z.url().optional(),
 })
 

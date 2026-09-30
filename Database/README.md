@@ -1,6 +1,6 @@
 # Database
 
-PostgreSQL 16. Isi folder ini:
+PostgreSQL 17. Primary key UUID v7, semua waktu `timestamptz` (UTC, ditampilkan dalam `Asia/Jakarta`). Isi folder ini:
 
 | Berkas | Isi |
 |---|---|

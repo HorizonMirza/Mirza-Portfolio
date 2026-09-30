@@ -22,7 +22,7 @@ Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI 
 
 ## Menjalankan secara lokal
 
-Prasyarat: Node.js 24 LTS (lihat `Frontend/.nvmrc`), pnpm 10 (`corepack enable`), dan PostgreSQL 16 (lokal, Docker, atau branch Neon).
+Prasyarat: Node.js 24 LTS (lihat `Frontend/.nvmrc`), pnpm 10 (`corepack enable`), dan PostgreSQL 17 (lokal, Docker, atau branch Neon).
 **Semua perintah dijalankan dari folder `Frontend/`.**
 
 ```bash
@@ -37,7 +37,7 @@ pnpm dev                      # http://localhost:3000 -> diarahkan ke /id atau /
 Contoh Postgres lokal dengan Docker:
 
 ```bash
-docker run -d --name portfolio-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
+docker run -d --name portfolio-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:17
 # DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
 ```
 
@@ -65,10 +65,10 @@ Bila Playwright tidak bisa mengunduh browser (misalnya di sandbox), arahkan ke C
 
 ## Deploy ke Vercel (dilakukan pemilik akun)
 
-1. Buat database di [Neon](https://neon.tech): project baru, region Singapore, lalu salin connection string **pooled** dan **direct**.
-2. Di Vercel: **Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Set **Root Directory** ke `Frontend` (framework terdeteksi sebagai Next.js). Biarkan opsi "Include files outside the Root Directory" aktif agar `Database/` ikut terbaca.
-3. **Build Command:** `pnpm build:vercel` (menjalankan `prisma migrate deploy` sebelum `next build`).
-4. **Environment Variables** (Production dan Preview): `DATABASE_URL` (pooled), `DIRECT_URL` (direct), `NEXT_PUBLIC_SITE_URL`. Sebaiknya Preview memakai branch Neon terpisah.
+1. Di Vercel: **Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Set **Root Directory** ke `Frontend` (framework terdeteksi sebagai Next.js). Biarkan opsi "Include files outside the Root Directory" aktif agar `Database/` ikut terbaca.
+2. **Build Command:** `pnpm build:vercel` (menjalankan `prisma migrate deploy` sebelum `next build`).
+3. Tambah database lewat **Storage → Marketplace → Neon** di project Vercel: pilih PostgreSQL 17 dan region Singapore, lalu hubungkan ke Production dan Preview. Integrasi ini mengisi `DATABASE_URL` (pooled) dan `DATABASE_URL_UNPOOLED` (direct, dipakai migrasi) secara otomatis, dan bisa membuat branch database terpisah untuk tiap preview.
+4. **Environment Variables** tambahan: `NEXT_PUBLIC_SITE_URL`. `DIRECT_URL` tidak perlu diisi bila memakai integrasi (hanya untuk koneksi Neon manual).
 5. Setelah deploy pertama, jalankan seed sekali dari komputer lokal (di `Frontend/`) dengan `DATABASE_URL` production: `pnpm db:seed`.
 6. Cek `https://<domain>/api/health` harus mengembalikan `{"status":"ok","database":"ok"}`.
 

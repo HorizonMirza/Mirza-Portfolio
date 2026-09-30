@@ -105,7 +105,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Beli dan hubungkan domain `.site` (pemandu langkah), DNS, HTTPS
 - [ ] Verifikasi domain di Resend (SPF/DKIM)
 - [ ] Variabel lingkungan production, migrasi production, seed admin
-- [ ] Vercel Cron (`Frontend/vercel.json`): bersihkan `PageView`/`RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET`
+- [ ] Vercel Cron (`Frontend/vercel.json`): ringkas `PageView` ke `PageViewDaily`, hapus `PageView` > 90 hari dan `RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET`
 - [ ] Sentry, uptime monitor, Vercel Analytics + Speed Insights, notifikasi email dan Telegram
 - [ ] Backup harian terenkripsi (`backup.yml`) dan uji pemulihan
 - [ ] Uji rollback Vercel
@@ -138,3 +138,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Dasar dinaikkan: Node 22 → 24 LTS, TypeScript 5.9 → 6.0, ESLint 9 → 10 (+ `@eslint/compat`), @types/node 20 → 24. pnpm tetap 10 |
 | 2026-09-30 | Frontend: animasi utama pindah ke CSS bawaan (Motion seperlunya), form publik ke Server Actions tanpa library form, ditambah rencana TanStack Table, Recharts, editor Markdown untuk M2 |
 | 2026-09-30 | Backend: Auth.js → Better Auth (hash bawaan), Upstash → tabel `RateLimit` di Postgres, Octokit → `fetch`, tambah React Email dan Vercel Cron |
+| 2026-09-30 | Database: PostgreSQL 17, UUID v7, `timestamptz`, tabel `PageViewDaily`, migrasi awal dibuat ulang, Neon via integrasi Vercel |

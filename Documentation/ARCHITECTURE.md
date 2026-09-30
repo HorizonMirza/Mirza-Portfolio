@@ -23,7 +23,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Animasi | **CSS bawaan** (scroll-driven animation, View Transitions, `@starting-style`) untuk reveal, transisi, dan hover. **Canvas 2D buatan sendiri** untuk hero. **Motion** hanya untuk animasi yang bergantung state React (menu, modal, daftar), dimuat di komponen yang butuh saja | 0 KB JS untuk sebagian besar gerak, ringan di HP, mendukung Lighthouse ≥ 90 dan `prefers-reduced-motion` | Motion untuk semua animasi (JS lebih berat), GSAP (baru dipertimbangkan bila butuh animasi scroll yang sangat kompleks), Three.js/WebGL (terlalu berat untuk HP), Lenis (mengganggu scroll bawaan dan aksesibilitas) |
 | Tema | **next-themes** | Tanpa flicker, ikut sistem | Buatan sendiri |
 | i18n | **next-intl**, rute `/id` dan `/en` | Server component friendly, SEO (`hreflang`) | i18next |
-| Database | **PostgreSQL di Neon** | Serverless, tier gratis, branching database | Supabase (fitur lebih banyak dari yang dibutuhkan) |
+| Database | **PostgreSQL 17 di Neon**, dipasang lewat **integrasi Vercel Marketplace** | Serverless, tier gratis permanen, branch database per preview, env terisi otomatis. Fitur yang dipakai: `timestamptz`, `uuid`, `jsonb`, transactional DDL | MySQL (PlanetScale tidak lagi gratis, tanpa `timestamptz`/`uuid` bawaan, DDL tidak transaksional), Supabase (tidur setelah seminggu sepi), Prisma Postgres |
 | ORM | **Prisma 7** (generator `prisma-client`, driver adapter `@prisma/adapter-pg`, `prisma.config.ts`) | Type-safe, migrasi jelas, sesuai pilihan Anda | Drizzle |
 | Auth | **Better Auth**: email + password, pendaftaran publik dimatikan, adapter Prisma, sesi disimpan di database | Stabil, TypeScript penuh, sesi bisa dicabut, rate limit login bawaan. Auth.js v5 lama berstatus beta dan pengembangannya bergabung dengan tim Better Auth | Auth.js v5, JWT buatan sendiri (pola GAAS) |
 | Hash password | **Bawaan Better Auth** (scrypt) | Aman, tanpa dependency tambahan, konsisten dengan cara Better Auth memverifikasi login | Argon2id, bcrypt |
@@ -128,7 +128,7 @@ Aturan: satu domain, satu folder di `features/`. Kode `lib/` tidak boleh mengimp
 
 ## 5. Model Data
 
-Konten dua bahasa memakai kolom berpasangan `*_id` dan `*_en`. Semua kolom teks publik wajib punya kedua bahasa (divalidasi Zod).
+Konten dua bahasa memakai kolom berpasangan `*_id` dan `*_en`. Semua `id` bertipe UUID v7 (ditulis `string` di diagram). Semua kolom teks publik wajib punya kedua bahasa (divalidasi Zod).
 
 ```mermaid
 erDiagram
@@ -269,6 +269,14 @@ erDiagram
       string visitorHash "harian, tanpa IP mentah"
       datetime createdAt
     }
+    PageViewDaily {
+      uuid id PK
+      date date
+      string path
+      string locale
+      int views
+      int visitors
+    }
     AuditLog {
       string id PK
       string actorId FK
@@ -290,7 +298,9 @@ Catatan:
 - `User.role` ditambahkan sebagai additional field Better Auth: `USER` atau `SUPER_ADMIN`. Hanya satu `SUPER_ADMIN` yang dibuat lewat seed. Tidak ada registrasi publik.
 - `RateLimit` dipakai helper rate limit untuk form publik dan `/api/track`. Baris lama dibersihkan Vercel Cron.
 - `PageView.visitorHash` = hash(IP + user-agent + garam harian). Garam berganti tiap hari sehingga pengunjung tidak bisa dilacak lintas hari.
-- Tabel besar seperti `PageView` diringkas dan dibersihkan otomatis (retensi 13 bulan).
+- `PageView` mentah disimpan **90 hari**. Vercel Cron meringkasnya tiap hari ke `PageViewDaily` (disimpan permanen), lalu menghapus data mentah yang lewat 90 hari. Tujuannya menjaga kuota Neon gratis (0,5 GB).
+- **Primary key UUID v7** (`@default(uuid(7)) @db.Uuid`): tipe asli PostgreSQL dan urut waktu. Seed memakai UUID v5 deterministik (`Frontend/scripts/seed-ids.ts`) agar idempoten.
+- **Waktu:** semua `DateTime` bertipe `timestamptz(3)` dan disimpan UTC. Tampilan (halaman, email, PDF, export) selalu dikonversi ke `Asia/Jakarta`. Tanggal kalender tanpa jam (`startDate`, `endDate`, `PageViewDaily.date`) memakai `date`. Pelajaran dari audit GAAS F-01 (jam UTC tercetak sebagai WIB).
 
 ## 6. Rancangan API
 
@@ -377,14 +387,14 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Rantai pasok | Dependabot, `pnpm audit` di CI, versi terkunci |
 | Akses admin | Satu akun, log audit, notifikasi login baru via email |
 
-Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
+Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
 
 ## 9. Lingkungan dan Deployment
 
 | Lingkungan | Tujuan | Database |
 |---|---|---|
-| Lokal | Pengembangan | Neon branch `dev` atau Postgres lokal |
-| Preview (per PR) | Review hasil sebelum merge | Neon branch `preview` |
+| Lokal | Pengembangan | Postgres 17 lokal (Docker) atau Neon branch `dev` |
+| Preview (per PR) | Review hasil sebelum merge | Neon branch per preview, dibuat otomatis oleh integrasi Vercel |
 | Production | Situs live | Neon branch `main` |
 
 Alur: PR → CI hijau → Vercel membuat preview → merge ke `main` → Vercel deploy production. Migrasi database dijalankan `prisma migrate deploy` pada tahap build production, hanya untuk migrasi yang kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis berikutnya).
@@ -424,3 +434,4 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 6 | Better Auth untuk login admin (menggantikan Auth.js) | Stabil, sesi di database, rate limit bawaan | Final (2026-09-30) |
 | 7 | Rate limit di PostgreSQL, tanpa Upstash | Trafik kecil, satu layanan lebih sedikit | Final (2026-09-30) |
 | 8 | `fetch` untuk GitHub API, React Email untuk template, Vercel Cron untuk tugas harian | Lebih sedikit dependency, gratis | Final (2026-09-30) |
+| 9 | PostgreSQL 17, UUID v7, `timestamptz`, ringkasan `PageViewDaily`, Neon via integrasi Vercel | Konsisten lokal/CI/production, cegah bug zona waktu, hemat kuota | Final (2026-09-30) |

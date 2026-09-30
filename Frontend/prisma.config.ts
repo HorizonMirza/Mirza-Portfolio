@@ -4,7 +4,8 @@ import { defineConfig } from 'prisma/config'
 // Sama seperti Next.js: .env.local lebih diutamakan daripada .env
 config({ path: ['.env.local', '.env'], quiet: true })
 
-// Migrasi memakai koneksi langsung (DIRECT_URL, tanpa pooler Neon) bila tersedia.
+// Migrasi memakai koneksi langsung tanpa pooler Neon bila tersedia: DIRECT_URL (manual) atau
+// DATABASE_URL_UNPOOLED (diisi otomatis oleh integrasi Neon di Vercel).
 // `prisma generate` tidak butuh koneksi, jadi URL boleh kosong saat install/CI.
 export default defineConfig({
   // skema, migrasi, dan data seed disimpan di folder Database/ di akar repo
@@ -14,6 +15,6 @@ export default defineConfig({
     seed: 'tsx scripts/seed.ts',
   },
   datasource: {
-    url: process.env.DIRECT_URL ?? process.env.DATABASE_URL,
+    url: process.env.DIRECT_URL || process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL,
   },
 })

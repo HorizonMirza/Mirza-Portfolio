@@ -24,14 +24,14 @@ CREATE TYPE "Availability" AS ENUM ('OPEN', 'BUSY', 'NOT_LOOKING');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "role" "Role" NOT NULL DEFAULT 'USER',
     "name" TEXT,
-    "lastLoginAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "lastLoginAt" TIMESTAMPTZ(3),
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -53,16 +53,16 @@ CREATE TABLE "Profile" (
     "availabilityNote_en" TEXT,
     "currentRole_id" TEXT,
     "currentRole_en" TEXT,
-    "photoId" TEXT,
-    "cvId" TEXT,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "photoId" UUID,
+    "cvId" UUID,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Project" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "slug" TEXT NOT NULL,
     "title_id" TEXT NOT NULL,
     "title_en" TEXT NOT NULL,
@@ -80,19 +80,19 @@ CREATE TABLE "Project" (
     "featured" BOOLEAN NOT NULL DEFAULT false,
     "order" INTEGER NOT NULL DEFAULT 0,
     "status" "ContentStatus" NOT NULL DEFAULT 'DRAFT',
-    "publishedAt" TIMESTAMP(3),
-    "coverId" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "publishedAt" TIMESTAMPTZ(3),
+    "coverId" UUID,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "ProjectImage" (
-    "id" TEXT NOT NULL,
-    "projectId" TEXT NOT NULL,
-    "assetId" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "projectId" UUID NOT NULL,
+    "assetId" UUID NOT NULL,
     "order" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "ProjectImage_pkey" PRIMARY KEY ("id")
@@ -100,7 +100,7 @@ CREATE TABLE "ProjectImage" (
 
 -- CreateTable
 CREATE TABLE "SkillCategory" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name_id" TEXT NOT NULL,
     "name_en" TEXT NOT NULL,
     "order" INTEGER NOT NULL DEFAULT 0,
@@ -110,18 +110,18 @@ CREATE TABLE "SkillCategory" (
 
 -- CreateTable
 CREATE TABLE "Skill" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "icon" TEXT,
     "order" INTEGER NOT NULL DEFAULT 0,
-    "categoryId" TEXT NOT NULL,
+    "categoryId" UUID NOT NULL,
 
     CONSTRAINT "Skill_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Experience" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "type" "ExperienceType" NOT NULL,
     "organization" TEXT NOT NULL,
     "title_id" TEXT NOT NULL,
@@ -133,16 +133,16 @@ CREATE TABLE "Experience" (
     "location" TEXT,
     "order" INTEGER NOT NULL DEFAULT 0,
     "status" "ContentStatus" NOT NULL DEFAULT 'PUBLISHED',
-    "logoId" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "logoId" UUID,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(3) NOT NULL,
 
     CONSTRAINT "Experience_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Asset" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "publicId" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "kind" "AssetKind" NOT NULL,
@@ -152,14 +152,14 @@ CREATE TABLE "Asset" (
     "height" INTEGER,
     "alt_id" TEXT,
     "alt_en" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Asset_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Message" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "subject" TEXT,
@@ -167,77 +167,89 @@ CREATE TABLE "Message" (
     "status" "MessageStatus" NOT NULL DEFAULT 'NEW',
     "locale" TEXT,
     "ipHash" TEXT,
-    "readAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "readAt" TIMESTAMPTZ(3),
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Subscriber" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "status" "SubscriberStatus" NOT NULL DEFAULT 'PENDING',
     "tokenHash" TEXT NOT NULL,
     "locale" TEXT NOT NULL DEFAULT 'id',
-    "confirmedAt" TIMESTAMP(3),
-    "unsubscribedAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "confirmedAt" TIMESTAMPTZ(3),
+    "unsubscribedAt" TIMESTAMPTZ(3),
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Subscriber_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Broadcast" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "subject" TEXT NOT NULL,
     "body" TEXT NOT NULL,
     "recipientCount" INTEGER NOT NULL DEFAULT 0,
-    "sentAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "sentAt" TIMESTAMPTZ(3),
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Broadcast_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "PageView" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "path" TEXT NOT NULL,
     "locale" TEXT,
     "referrerHost" TEXT,
     "device" TEXT,
     "visitorHash" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "PageView_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "PageViewDaily" (
+    "id" UUID NOT NULL,
+    "date" DATE NOT NULL,
+    "path" TEXT NOT NULL,
+    "locale" TEXT NOT NULL DEFAULT '',
+    "views" INTEGER NOT NULL DEFAULT 0,
+    "visitors" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "PageViewDaily_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "AuditLog" (
-    "id" TEXT NOT NULL,
-    "actorId" TEXT,
+    "id" UUID NOT NULL,
+    "actorId" UUID,
     "action" TEXT NOT NULL,
     "entity" TEXT NOT NULL,
     "entityId" TEXT,
     "diff" JSONB,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CvDownload" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "locale" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "CvDownload_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "_ProjectToSkill" (
-    "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
+    "A" UUID NOT NULL,
+    "B" UUID NOT NULL,
 
     CONSTRAINT "_ProjectToSkill_AB_pkey" PRIMARY KEY ("A","B")
 );
@@ -283,6 +295,12 @@ CREATE INDEX "PageView_createdAt_idx" ON "PageView"("createdAt");
 
 -- CreateIndex
 CREATE INDEX "PageView_path_createdAt_idx" ON "PageView"("path", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "PageViewDaily_date_idx" ON "PageViewDaily"("date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PageViewDaily_date_path_locale_key" ON "PageViewDaily"("date", "path", "locale");
 
 -- CreateIndex
 CREATE INDEX "AuditLog_entity_entityId_idx" ON "AuditLog"("entity", "entityId");

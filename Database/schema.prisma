@@ -1,6 +1,8 @@
 // Skema database portofolio. Acuan: Documentation/ARCHITECTURE.md bagian 5.
 // Prisma CLI dijalankan dari folder Frontend/ (lihat Frontend/prisma.config.ts).
 // Konten publik dua bahasa memakai pasangan kolom `*_id` (Indonesia) dan `*_en` (Inggris).
+// Primary key memakai UUID v7 (urut waktu). Semua waktu disimpan sebagai timestamptz (UTC),
+// ditampilkan dalam zona Asia/Jakarta. Tanggal kalender (startDate/endDate) memakai @db.Date.
 
 generator client {
   provider = "prisma-client"
@@ -57,14 +59,14 @@ enum Availability {
 
 // Hanya satu SUPER_ADMIN yang dibuat lewat seed. Tidak ada registrasi publik.
 model User {
-  id           String     @id @default(cuid())
+  id           String     @id @default(uuid(7)) @db.Uuid
   email        String     @unique
   passwordHash String
   role         Role       @default(USER)
   name         String?
-  lastLoginAt  DateTime?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  lastLoginAt  DateTime?  @db.Timestamptz(3)
+  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
   auditLogs    AuditLog[]
 }
 
@@ -85,15 +87,15 @@ model Profile {
   availabilityNote_en String?
   currentRole_id      String?
   currentRole_en      String?
-  photoId             String?      @unique
+  photoId             String?      @unique @db.Uuid
   photo               Asset?       @relation("ProfilePhoto", fields: [photoId], references: [id], onDelete: SetNull)
-  cvId                String?      @unique
+  cvId                String?      @unique @db.Uuid
   cv                  Asset?       @relation("ProfileCv", fields: [cvId], references: [id], onDelete: SetNull)
-  updatedAt           DateTime     @updatedAt
+  updatedAt           DateTime     @updatedAt @db.Timestamptz(3)
 }
 
 model Project {
-  id             String          @id @default(cuid())
+  id             String          @id @default(uuid(7)) @db.Uuid
   slug           String          @unique
   title_id       String
   title_en       String
@@ -112,22 +114,22 @@ model Project {
   featured       Boolean         @default(false)
   order          Int             @default(0)
   status         ContentStatus   @default(DRAFT)
-  publishedAt    DateTime?
-  coverId        String?
+  publishedAt    DateTime?       @db.Timestamptz(3)
+  coverId        String?         @db.Uuid
   cover          Asset?          @relation("ProjectCover", fields: [coverId], references: [id], onDelete: SetNull)
   images         ProjectImage[]
   skills         Skill[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
 
   @@index([status, order])
 }
 
 model ProjectImage {
-  id        String  @id @default(cuid())
-  projectId String
+  id        String  @id @default(uuid(7)) @db.Uuid
+  projectId String  @db.Uuid
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assetId   String
+  assetId   String  @db.Uuid
   asset     Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
   order     Int     @default(0)
 
@@ -135,7 +137,7 @@ model ProjectImage {
 }
 
 model SkillCategory {
-  id      String  @id @default(cuid())
+  id      String  @id @default(uuid(7)) @db.Uuid
   name_id String
   name_en String
   order   Int     @default(0)
@@ -143,17 +145,17 @@ model SkillCategory {
 }
 
 model Skill {
-  id         String        @id @default(cuid())
+  id         String        @id @default(uuid(7)) @db.Uuid
   name       String        @unique
   icon       String?
   order      Int           @default(0)
-  categoryId String
+  categoryId String        @db.Uuid
   category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   projects   Project[]
 }
 
 model Experience {
-  id             String         @id @default(cuid())
+  id             String         @id @default(uuid(7)) @db.Uuid
   type           ExperienceType
   organization   String
   title_id       String
@@ -166,16 +168,16 @@ model Experience {
   location       String?
   order          Int            @default(0)
   status         ContentStatus  @default(PUBLISHED)
-  logoId         String?
+  logoId         String?        @db.Uuid
   logo           Asset?         @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
 
   @@index([type, startDate])
 }
 
 model Asset {
-  id            String         @id @default(cuid())
+  id            String         @id @default(uuid(7)) @db.Uuid
   // id di Cloudinary
   publicId      String         @unique
   url           String
@@ -186,7 +188,7 @@ model Asset {
   height        Int?
   alt_id        String?
   alt_en        String?
-  createdAt     DateTime       @default(now())
+  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
   profilePhoto  Profile?       @relation("ProfilePhoto")
   profileCv     Profile?       @relation("ProfileCv")
   projectCovers Project[]      @relation("ProjectCover")
@@ -195,7 +197,7 @@ model Asset {
 }
 
 model Message {
-  id        String        @id @default(cuid())
+  id        String        @id @default(uuid(7)) @db.Uuid
   name      String
   email     String
   subject   String?
@@ -204,65 +206,80 @@ model Message {
   locale    String?
   // hash IP + garam, bukan IP mentah
   ipHash    String?
-  readAt    DateTime?
-  createdAt DateTime      @default(now())
+  readAt    DateTime?     @db.Timestamptz(3)
+  createdAt DateTime      @default(now()) @db.Timestamptz(3)
 
   @@index([status, createdAt])
 }
 
 model Subscriber {
-  id             String           @id @default(cuid())
+  id             String           @id @default(uuid(7)) @db.Uuid
   email          String           @unique
   status         SubscriberStatus @default(PENDING)
   // hash token konfirmasi/berhenti, token asli hanya dikirim lewat email
   tokenHash      String           @unique
   locale         String           @default("id")
-  confirmedAt    DateTime?
-  unsubscribedAt DateTime?
-  createdAt      DateTime         @default(now())
+  confirmedAt    DateTime?        @db.Timestamptz(3)
+  unsubscribedAt DateTime?        @db.Timestamptz(3)
+  createdAt      DateTime         @default(now()) @db.Timestamptz(3)
 }
 
 model Broadcast {
-  id             String    @id @default(cuid())
+  id             String    @id @default(uuid(7)) @db.Uuid
   subject        String
   body           String    @db.Text
   recipientCount Int       @default(0)
-  sentAt         DateTime?
-  createdAt      DateTime  @default(now())
+  sentAt         DateTime? @db.Timestamptz(3)
+  createdAt      DateTime  @default(now()) @db.Timestamptz(3)
 }
 
 // Statistik pengunjung tanpa cookie. visitorHash memakai garam harian.
+// Data mentah disimpan 90 hari, lalu diringkas ke PageViewDaily oleh Vercel Cron.
 model PageView {
-  id           String   @id @default(cuid())
+  id           String   @id @default(uuid(7)) @db.Uuid
   path         String
   locale       String?
   referrerHost String?
   device       String?
   visitorHash  String
-  createdAt    DateTime @default(now())
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
 
   @@index([createdAt])
   @@index([path, createdAt])
 }
 
+// Ringkasan harian dari PageView, disimpan permanen (hemat kuota Neon 0,5 GB).
+// locale "" berarti halaman tanpa bahasa (mis. /api atau 404 global).
+model PageViewDaily {
+  id       String   @id @default(uuid(7)) @db.Uuid
+  date     DateTime @db.Date
+  path     String
+  locale   String   @default("")
+  views    Int      @default(0)
+  visitors Int      @default(0)
+
+  @@unique([date, path, locale])
+  @@index([date])
+}
+
 model AuditLog {
-  id        String   @id @default(cuid())
-  actorId   String?
+  id        String   @id @default(uuid(7)) @db.Uuid
+  actorId   String?  @db.Uuid
   actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
   action    String
   entity    String
   entityId  String?
   diff      Json?
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@index([entity, entityId])
   @@index([createdAt])
 }
 
 model CvDownload {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid(7)) @db.Uuid
   locale    String?
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
 
   @@index([createdAt])
 }

@@ -71,6 +71,7 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 - WCAG 2.2 AA: semantik HTML, keyboard, fokus terlihat, alt text dua bahasa, `prefers-reduced-motion`.
 - Target Lighthouse mobile ≥ 90. Jangan menambah JavaScript klien tanpa alasan. Utamakan Server Components.
 - Gunakan token desain (CSS variables), bukan warna atau ukuran acak.
+- Waktu disimpan UTC (`timestamptz`) dan **selalu ditampilkan dalam zona `Asia/Jakarta`** lewat `Intl.DateTimeFormat` (termasuk email, PDF, export). Primary key UUID v7. Seed memakai `seedId()` agar idempoten.
 - Animasi: CSS dulu (scroll-driven, View Transitions, `@starting-style`). Motion hanya untuk gerak yang bergantung state React. Form publik memakai Server Action + `useActionState`, tanpa library form (`Documentation/DESIGN.md` bagian 2.4 dan 3).
 
 **Proses**
@@ -100,7 +101,7 @@ Documentation/   dokumen perencanaan
 ## Menjalankan di Sesi Cloud
 
 - Sandbox bawaan memakai Node 22, sedangkan proyek butuh Node 24 (`Frontend/.nvmrc`). Unduh Node 24 dari nodejs.org (cek SHASUMS256) ke scratchpad lalu taruh di awal `PATH`.
-- Postgres 16 tersedia di `/usr/lib/postgresql/16/bin` (jalankan sebagai user non-root, data di luar repo).
+- Proyek memakai PostgreSQL 17 (CI dan production). Sandbox hanya punya Postgres 16 di `/usr/lib/postgresql/16/bin` (jalankan sebagai user non-root, data di luar repo), cukup untuk uji lokal, tetapi hasil akhir dipastikan oleh CI.
 - E2E: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e` (jalankan `pnpm build` dulu).
 - Jangan `pkill -f` dengan pola yang juga muncul di perintah shell itu sendiri.
 
