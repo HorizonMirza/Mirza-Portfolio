@@ -57,17 +57,75 @@ enum Availability {
   NOT_LOOKING
 }
 
-// Hanya satu SUPER_ADMIN yang dibuat lewat seed. Tidak ada registrasi publik.
+// Tabel autentikasi mengikuti skema Better Auth (lihat Frontend/src/lib/auth.ts).
+// Hanya satu SUPER_ADMIN yang dibuat lewat seed. Pendaftaran publik dimatikan.
 model User {
-  id           String     @id @default(uuid(7)) @db.Uuid
-  email        String     @unique
-  passwordHash String
-  role         Role       @default(USER)
-  name         String?
-  lastLoginAt  DateTime?  @db.Timestamptz(3)
-  createdAt    DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt    DateTime   @updatedAt @db.Timestamptz(3)
-  auditLogs    AuditLog[]
+  id            String     @id @default(uuid(7)) @db.Uuid
+  name          String
+  email         String     @unique
+  emailVerified Boolean    @default(false)
+  image         String?
+  role          Role       @default(USER)
+  createdAt     DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime   @updatedAt @db.Timestamptz(3)
+  sessions      Session[]
+  accounts      Account[]
+  auditLogs     AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  token     String   @unique
+  expiresAt DateTime @db.Timestamptz(3)
+  // hanya untuk sesi admin sendiri, tampil di halaman keamanan admin
+  ipAddress String?
+  userAgent String?
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([userId])
+}
+
+// Password (hash scrypt dari Better Auth) disimpan di Account dengan providerId "credential".
+model Account {
+  id                    String    @id @default(uuid(7)) @db.Uuid
+  accountId             String
+  providerId            String
+  userId                String    @db.Uuid
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  password              String?
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime? @db.Timestamptz(3)
+  refreshTokenExpiresAt DateTime? @db.Timestamptz(3)
+  scope                 String?
+  createdAt             DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt @db.Timestamptz(3)
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(uuid(7)) @db.Uuid
+  identifier String
+  value      String
+  expiresAt  DateTime @db.Timestamptz(3)
+  createdAt  DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(3)
+
+  @@index([identifier])
+}
+
+// Penghitung rate limit bersama untuk login (Better Auth customStorage) dan form publik.
+// `key` selalu berupa hash HMAC, tidak pernah memuat IP mentah (Frontend/src/lib/rate-limit.ts).
+// Jendela tetap: windowStart = awal jendela dalam epoch milidetik.
+model RateLimit {
+  key         String @id
+  count       Int
+  windowStart BigInt
 }
 
 // Singleton: selalu id = 1.

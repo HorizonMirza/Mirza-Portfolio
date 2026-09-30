@@ -38,3 +38,44 @@ export function getServerEnv(): ServerEnv {
   cached ??= parseServerEnv(process.env)
   return cached
 }
+
+// Kunci khusus autentikasi. Dipisah agar halaman publik tidak gagal hanya karena kunci auth
+// belum diisi, sedangkan panel admin menolak berjalan tanpa kunci yang layak.
+export const authEnvSchema = z.object({
+  BETTER_AUTH_SECRET: z
+    .string({ error: 'BETTER_AUTH_SECRET wajib diisi' })
+    .min(32, 'BETTER_AUTH_SECRET minimal 32 karakter (buat dengan: openssl rand -base64 32)'),
+  BETTER_AUTH_URL: z.url().optional(),
+  NEXT_PUBLIC_SITE_URL: z.url().optional(),
+  VERCEL_URL: z.string().optional(),
+  // kunci terpisah untuk hash IP di rate limit publik; bila kosong diturunkan dari BETTER_AUTH_SECRET
+  HASH_SALT_SECRET: z.string().min(32).optional(),
+})
+
+export type AuthEnv = z.infer<typeof authEnvSchema>
+
+export function parseAuthEnv(source: Record<string, string | undefined>): AuthEnv {
+  const result = authEnvSchema.safeParse(source)
+  if (!result.success) {
+    const detail = result.error.issues
+      .map((issue) => `- ${issue.path.join('.')}: ${issue.message}`)
+      .join('\n')
+    throw new Error(`Variabel lingkungan auth tidak valid:\n${detail}`)
+  }
+  return result.data
+}
+
+let cachedAuth: AuthEnv | undefined
+
+export function getAuthEnv(): AuthEnv {
+  cachedAuth ??= parseAuthEnv(process.env)
+  return cachedAuth
+}
+
+// URL dasar aplikasi untuk auth: BETTER_AUTH_URL > NEXT_PUBLIC_SITE_URL > URL deployment Vercel.
+export function resolveBaseUrl(env: AuthEnv): string | undefined {
+  if (env.BETTER_AUTH_URL) return env.BETTER_AUTH_URL
+  if (env.NEXT_PUBLIC_SITE_URL) return env.NEXT_PUBLIC_SITE_URL
+  if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
+  return undefined
+}

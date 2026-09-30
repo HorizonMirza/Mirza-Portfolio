@@ -1,4 +1,5 @@
 import { PrismaPg } from '@prisma/adapter-pg'
+import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
 
 import { PrismaClient } from '../src/generated/prisma/client'
@@ -94,6 +95,8 @@ async function main() {
       })
     }
 
+    await seedAdmin(db)
+
     const counts = {
       experiences: await db.experience.count(),
       skills: await db.skill.count(),
@@ -103,6 +106,48 @@ async function main() {
   } finally {
     await db.$disconnect()
   }
+}
+
+// Akun Super Admin dari ADMIN_EMAIL + ADMIN_PASSWORD. Bila akun sudah ada, password TIDAK
+// ditimpa (pakai `pnpm admin:reset-password` untuk menggantinya).
+async function seedAdmin(db: PrismaClient) {
+  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase()
+  const password = process.env.ADMIN_PASSWORD
+  if (!email || !password) {
+    console.log('ADMIN_EMAIL/ADMIN_PASSWORD kosong, akun admin tidak dibuat.')
+    return
+  }
+  if (password.length < 12) throw new Error('ADMIN_PASSWORD minimal 12 karakter')
+
+  const existing = await db.user.findUnique({ where: { email } })
+  if (existing) {
+    if (existing.role !== 'SUPER_ADMIN') {
+      await db.user.update({ where: { id: existing.id }, data: { role: 'SUPER_ADMIN' } })
+    }
+    console.log('Akun admin sudah ada, password tidak diubah.')
+    return
+  }
+
+  const passwordHash = await hashPassword(password)
+  await db.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        email,
+        name: process.env.ADMIN_NAME?.trim() || profile.name,
+        emailVerified: true,
+        role: 'SUPER_ADMIN',
+      },
+    })
+    await tx.account.create({
+      data: {
+        userId: user.id,
+        accountId: user.id,
+        providerId: 'credential',
+        password: passwordHash,
+      },
+    })
+  })
+  console.log('Akun admin dibuat.')
 }
 
 main().catch((error) => {
