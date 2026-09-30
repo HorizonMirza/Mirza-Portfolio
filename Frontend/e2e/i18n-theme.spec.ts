@@ -79,12 +79,8 @@ test('tidak ada error di console', async ({ page }) => {
   expect(errors).toEqual([])
 })
 
-for (const path of [
-  '/id/halaman-yang-tidak-ada',
-  '/en/missing-page',
-  '/admin',
-  '/admin/belum-ada',
-]) {
+// URL /admin/* tanpa sesi diarahkan ke login (e2e/admin/access.spec.ts).
+for (const path of ['/id/halaman-yang-tidak-ada', '/en/missing-page']) {
   test(`URL tidak dikenal ${path} menampilkan 404 dua bahasa`, async ({ page }) => {
     const response = await page.goto(path)
     expect(response?.status()).toBe(404)

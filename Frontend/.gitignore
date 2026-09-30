@@ -54,3 +54,6 @@ next-env.d.ts
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# sesi login tes E2E
+/e2e/.auth/

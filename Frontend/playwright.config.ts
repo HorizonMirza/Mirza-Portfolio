@@ -19,8 +19,10 @@ export default defineConfig({
   },
   // Milestone 1: Chromium desktop dan emulasi HP. WebKit dan Firefox ditambahkan di Milestone 4.
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['Pixel 7'] } },
+    // login admin sekali, sesinya dipakai tes di e2e/admin
+    { name: 'setup', testMatch: /auth\.setup\.ts/ },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, dependencies: ['setup'] },
+    { name: 'mobile', use: { ...devices['Pixel 7'] }, dependencies: ['setup'] },
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined
