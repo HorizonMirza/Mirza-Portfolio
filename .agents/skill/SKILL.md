@@ -9,7 +9,7 @@ Baca `CLAUDE.md` dan dokumen di `Documentation/` yang relevan sebelum memakai re
 
 ## Resep A — Menambah entitas konten baru
 
-Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, satu PR.
+Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
 
 1. **Model data** di `Database/schema.prisma`. Teks publik memakai pasangan `*_id` dan `*_en`. Tambahkan `createdAt`, `updatedAt`, dan `order`/`status` bila relevan. Buat migrasi **kompatibel ke belakang**.
 2. **Skema Zod** di `Frontend/src/features/<domain>/schema.ts`. Wajibkan kedua bahasa, batasi panjang, validasi URL dan slug.
@@ -98,11 +98,10 @@ Jalankan `pnpm lint && pnpm typecheck && pnpm test && pnpm build`, lalu telusuri
 - [ ] Tidak menambah JS klien tanpa alasan, gambar lewat `next/image`
 - [ ] Lighthouse mobile ≥ 90 pada halaman yang terdampak
 
-## Resep F — Commit dan PR
+## Resep F — Commit dan push
 
 - Commit: `tipe(lingkup): deskripsi bahasa Indonesia`, contoh `feat(admin): tambah CRUD skill`.
-- Satu PR = satu tujuan. Isi: apa, kenapa, cara uji, tangkapan layar mobile dan desktop, catatan asumsi.
-- Jangan membuat PR kecuali diminta.
+- Satu commit = satu tujuan. Semua di `main`, tanpa branch dan tanpa PR. Jalankan pemeriksaan lengkap (termasuk `test:e2e`) sebelum push, karena push langsung live.
 
 ## Hal yang Tidak Boleh Dilakukan
 

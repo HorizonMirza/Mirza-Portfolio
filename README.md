@@ -18,7 +18,7 @@ Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTUR
 | [`Database/`](Database) | Skema Prisma, migrasi SQL, dan data seed dari CV |
 | [`Documentation/`](Documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi |
 
-Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI dan templat PR, wajib di akar) dan `.agents/` (skill untuk agen AI).
+Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI, wajib di akar) dan `.agents/` (skill untuk agen AI).
 
 ## Menjalankan secara lokal
 
@@ -62,7 +62,7 @@ docker run -d --name portfolio-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 pos
 | `pnpm db:studio` | Prisma Studio |
 | `pnpm admin:reset-password` | Ganti password admin dari terminal (`ADMIN_EMAIL`, `ADMIN_NEW_PASSWORD`) |
 
-Sebelum push jalankan: `pnpm lint && pnpm typecheck && pnpm test && pnpm build`.
+Semua pekerjaan langsung di `main` (tanpa branch lain), dan push ke `main` langsung live. Sebelum push jalankan: `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`.
 Hook pre-commit (Husky + lint-staged, di `Frontend/.husky`) menjalankan ESLint dan Prettier pada berkas yang di-stage.
 
 Bila Playwright tidak bisa mengunduh browser (misalnya di sandbox), arahkan ke Chromium yang terpasang:
@@ -86,7 +86,7 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
 
 Setelah deploy (pemilik akun):
 
-- **GitHub → Settings → Rules → Rulesets → New branch ruleset** untuk `main`: aktifkan *Require status checks to pass* (pilih job CI), *Block force pushes*, dan *Restrict deletions*. Tambahkan diri Anda (Repository admin) di *Bypass list* agar commit dokumen tetap bisa langsung ke `main`.
+- **GitHub → Settings → Rules → Rulesets → New branch ruleset** untuk `main`: aktifkan *Block force pushes* dan *Restrict deletions*. Jangan aktifkan *Require a pull request*, karena semua pekerjaan langsung di `main` (tanpa branch lain).
 - **UptimeRobot** (gratis): monitor HTTP ke `https://<domain>/api/health` tiap 5 menit, notifikasi ke **email** dan **Telegram**.
 - Domain `.site` dihubungkan di Milestone 5.
 

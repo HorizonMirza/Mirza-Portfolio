@@ -14,25 +14,22 @@ Claude tidak mengambil keputusan yang tercatat sebagai "terbuka" tanpa konfirmas
 ## 2. Urutan Kerja per Milestone
 
 ```
-Rencana (TODO.md) → Kerjakan di branch → Cek lokal → PR → CI + Preview → Review Mirza → Merge → Deploy → Catat
+Rencana (TODO.md) → Kerjakan di main → Cek lokal lengkap → Push ke main → CI → Deploy otomatis → Review Mirza → Catat
 ```
 
-1. **Rencana:** ambil tugas dari `Documentation/TODO.md` berurutan. Satu PR = satu tujuan yang jelas.
-2. **Kerjakan:** buat branch dari `main`, kerja kecil dan sering commit.
-3. **Cek lokal:** jalankan `pnpm lint`, `pnpm typecheck`, `pnpm test`, dan `pnpm build` sebelum push.
-4. **PR:** isi templat PR (apa, kenapa, cara uji, tangkapan layar mobile dan desktop).
-5. **CI dan preview:** semua pemeriksaan hijau, Vercel membuat URL preview.
-6. **Review:** Mirza membuka preview di HP dan laptop, membaca diff, memberi komentar. Claude menindaklanjuti.
-7. **Merge:** squash merge ke `main` setelah disetujui. Vercel deploy production otomatis.
-8. **Catat:** centang tugas di `TODO.md`, perbarui dokumen bila keputusan berubah.
+1. **Rencana:** ambil tugas dari `Documentation/TODO.md` berurutan. Satu commit = satu tujuan yang jelas.
+2. **Kerjakan:** langsung di `main`, kerja kecil dan sering commit.
+3. **Cek lokal lengkap sebelum push:** `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`, `pnpm build`, dan `pnpm test:e2e`. Karena push ke `main` langsung menjadi versi live di Vercel, semua harus hijau dulu.
+4. **Push ke `main`:** CI berjalan di setiap push. Bila CI merah, perbaikan langsung jadi prioritas pertama (atau kembalikan dengan Vercel Instant Rollback).
+5. **Review:** Mirza membuka situs di HP dan laptop, membaca riwayat commit, memberi komentar. Claude menindaklanjuti dengan commit baru.
+6. **Catat:** centang tugas di `TODO.md`, perbarui dokumen bila keputusan berubah.
 
-> **Keputusan (2026-09-30):** perubahan **kode** (`Frontend/`, `Database/`) lewat branch → PR → preview → merge. Perubahan **dokumen** (`Documentation/`, `.md`, `.agents/`) boleh langsung ke `main`, dan tidak memicu build Vercel. Untuk PR, pemilik memakai **Squash and merge** di GitHub, sehingga commit di `main` atas nama pemilik dan bertanda Verified.
+> **Keputusan (2026-09-30, diperbarui):** **semua pekerjaan langsung di `main`, tidak ada branch lain** (permintaan pemilik, sama seperti pola GAAS). Tidak ada PR. Branch lama sudah disatukan ke `main` dengan fast-forward, sehingga semua commit tetap atas nama pemilik.
 
 ## 3. Branch dan Commit
 
-- `main` selalu dapat dideploy. Tidak ada `dev` terpisah (proyek kecil, satu pemilik).
-- Nama branch: `feat/<topik>`, `fix/<topik>`, `Documentation/<topik>`, `chore/<topik>`, contoh `feat/admin-crud-project`.
-- Branch berumur pendek (idealnya ≤ 1–2 hari).
+- Hanya ada branch `main`, dan `main` selalu dapat dideploy. Tidak ada `dev`, branch fitur, atau PR.
+- Tidak ada force push dan tidak ada penulisan ulang riwayat di `main`.
 - **Commit:** awalan `[CLAUDIA]` untuk commit dari Claude (pola repo GAAS), lalu format Conventional Commits dengan tipe bahasa Inggris dan deskripsi bahasa Indonesia. Tanpa baris atribusi AI (`Co-Authored-By`, `Claude-Session`), sesuai permintaan pemilik. Commit manual pemilik tanpa awalan.
 
   ```
@@ -86,10 +83,10 @@ Claude memeriksa diff sendiri sebelum meminta review, lalu menjalankan review ko
 
 ## 7. Rilis, Deployment, dan Rollback
 
-- **Deploy:** otomatis dari `main` ke Vercel (production). Tidak ada staging terpisah. Preview PR berfungsi sebagai staging (jawaban 30.1).
-- **Migrasi database:** kompatibel ke belakang. Tambahkan kolom/tabel dulu, hapus di rilis berikutnya. Jalankan di preview sebelum production.
+- **Deploy:** otomatis dari `main` ke Vercel (production). Tidak ada staging terpisah dan tidak ada preview PR, jadi pemeriksaan lokal lengkap (bagian 2 langkah 3) menggantikan staging.
+- **Migrasi database:** kompatibel ke belakang. Tambahkan kolom/tabel dulu, hapus di rilis berikutnya. Uji dulu di database lokal/CI (CI menjalankan migrasi + seed dua kali) sebelum push.
 - **Daftar periksa rilis:**
-  - [ ] CI hijau, preview sudah dicek di HP nyata
+  - [ ] CI hijau, situs sudah dicek di HP nyata
   - [ ] Lighthouse mobile ≥ 90
   - [ ] Variabel lingkungan production lengkap
   - [ ] Backup terbaru ada dan pernah diuji pulih
@@ -104,7 +101,7 @@ Konten diubah lewat `/admin`, bukan lewat kode:
 2. Halaman terkait diperbarui otomatis (revalidate) dalam ≤ 1 menit.
 3. Perubahan tercatat di log audit.
 
-Perubahan desain, fitur, atau struktur data tetap lewat PR.
+Perubahan desain, fitur, atau struktur data dikerjakan Claude di kode lalu di-push ke `main`.
 
 ## 9. Manajemen Secret
 
@@ -154,10 +151,10 @@ Repo GAAS (`HorizonMirza/gaas-generalaffairapplicationsupport`) sudah punya alur
 |---|---|---|
 | Kontributor | Pemilik + 3 asisten AI (Claude Code, Antigravity, Codex) dalam sandbox terpisah | Pemilik + Claude |
 | Awalan commit | `[CLAUDIA]`, `[AGY]`, `[NOVA]` per asisten | Sama: `[CLAUDIA]` + Conventional Commits (`[CLAUDIA] feat(...)`) |
-| Branch | Push langsung ke `main` setelah verifikasi | Branch pendek + PR + preview Vercel |
+| Branch | Push langsung ke `main` setelah verifikasi | Sama: langsung ke `main` setelah pemeriksaan lokal lengkap (keputusan pemilik 2026-09-30) |
 | Verifikasi | `dotnet build`, `tsc --noEmit`, Playwright untuk UI, `resetdb` bila skema berubah | `lint`, `typecheck`, `test`, `build`, Playwright + axe, Lighthouse CI |
 | Bahasa | UI Indonesia, dokumen Indonesia | Konten ID/EN, komentar dan commit Indonesia |
 | Dokumen | `CLAUDE.md`, `AGENTS.md`, `Documentation/Prd.md`, `skill.md`, `workflow.md`, `TODO.md` | `CLAUDE.md`, `Documentation/PRD.md`, `ARCHITECTURE.md`, `DESIGN.md`, `WORKFLOW.md`, `TODO.md`, `SKILL.md` |
 | Klarifikasi | Bertanya dulu bila permintaan ambigu, konfirmasi sebelum aksi sulit dibalik | Sama (lihat bagian 12) |
 
-**Keputusan yang perlu Anda ambil:** ikut pola GAAS (push langsung ke `main`, awalan `[CLAUDIA]`) atau pola PR di atas? Perbedaan pentingnya: di portofolio setiap push ke `main` langsung menjadi versi live di Vercel, sedangkan GAAS berjalan lokal. Karena itu rencana ini memakai PR + preview. Jika Anda tetap ingin push langsung, bagian 2 dan 3 akan saya ubah, dan CI wajib hijau sebelum push.
+**Diputuskan (2026-09-30):** ikut pola GAAS, push langsung ke `main` dengan awalan `[CLAUDIA]`. Karena setiap push ke `main` langsung live di Vercel, pemeriksaan lokal lengkap (termasuk E2E) wajib sebelum push.

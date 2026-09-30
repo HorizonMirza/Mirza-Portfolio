@@ -19,14 +19,14 @@ Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) +
 | `Documentation/PRD.md` | Tujuan, fitur, user story, kriteria penerimaan, keputusan sementara | Sebelum mengerjakan fitur apa pun |
 | `Documentation/DESIGN.md` | Token, tipografi, komponen, wireframe, aksesibilitas, pedoman tulisan | Sebelum mengerjakan UI |
 | `Documentation/ARCHITECTURE.md` | Tech stack, model data, API, keamanan, deployment | Sebelum mengubah struktur, data, atau API |
-| `Documentation/WORKFLOW.md` | Branch, commit, Definition of Done, rilis | Sebelum commit atau PR |
+| `Documentation/WORKFLOW.md` | Commit, Definition of Done, rilis | Sebelum commit atau push |
 | `Documentation/TODO.md` | Milestone dan tugas | Untuk menentukan pekerjaan berikutnya |
 | `Documentation/00-discovery.md` | Jawaban asli pemilik dan keputusan terbuka | Bila ada keraguan tentang maksud pemilik |
 | `Documentation/CONTENT.md` | Konten dari CV (pengalaman, pendidikan, skill, angka yang boleh dipakai) dan yang masih ditanyakan | Sebelum menulis atau mengisi teks/seed apa pun |
 | `Documentation/REFERENCES.md` | Analisis referensi desain, prinsip yang diambil dan yang dilarang | Sebelum keputusan desain atau animasi |
 | `.agents/skill/SKILL.md` | Resep untuk tugas berulang (entitas baru, halaman baru). Tidak dimuat otomatis oleh Claude Code (bukan di `.claude/skills/`), jadi **baca manual** | Saat menambah entitas atau halaman |
 
-Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md` > `PRD.md` > dokumen lain. Jika Anda mengubah keputusan, perbarui dokumen terkait di PR yang sama.
+Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md` > `PRD.md` > dokumen lain. Jika Anda mengubah keputusan, perbarui dokumen terkait di commit yang sama.
 
 ## Stack Singkat
 
@@ -78,10 +78,9 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 - Jangan menambah dependency, layanan, atau biaya tanpa persetujuan. Tuliskan alasannya.
 - Tidak ada Dependabot update otomatis. Update dependency dikerjakan manual sebulan sekali atau saat ada alert keamanan (`Documentation/WORKFLOW.md` bagian 10a).
 - Jangan mengambil keputusan yang tercantum "terbuka" di `PRD.md` bagian 11 tanpa konfirmasi. Beri tanda asumsi bila terpaksa memakai default.
-- Perubahan kode (`Frontend/`, `Database/`) lewat branch + PR (pemilik merge dengan Squash and merge). Perubahan dokumen boleh langsung ke `main`. Satu tujuan per PR. Kriteria selesai: `Documentation/WORKFLOW.md` bagian 4.
+- **Semua pekerjaan langsung di `main`, tidak ada branch lain dan tidak ada PR** (keputusan pemilik). Push ke `main` langsung live di Vercel, jadi jalankan `lint`, `format:check`, `typecheck`, `test`, `build`, dan `test:e2e` sampai hijau sebelum push. Tanpa force push. Satu tujuan per commit. Kriteria selesai: `Documentation/WORKFLOW.md` bagian 4.
 - Jangan menjalankan migrasi dari build preview ke database production. Hosting: `Frontend/vercel.json` (region `sin1`).
 - Laporkan hasil dengan jujur: tes yang gagal, langkah yang dilewati, dan hal yang belum bisa diverifikasi.
-- Jangan membuat PR kecuali diminta.
 
 ## Struktur
 

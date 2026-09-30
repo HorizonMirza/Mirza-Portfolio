@@ -147,3 +147,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Dependabot update otomatis dihapus (alerts tetap). Update dependency manual bulanan. GitHub Actions dinaikkan, `pnpm audit` masuk CI, `overrides` untuk mysql2 dan deepmerge-ts (celah di Prisma CLI) |
 | 2026-09-30 | Hosting: Vercel Hobby + Neon Free di Singapura (`sin1`), `vercel.json`, migrasi hanya di production, Ignored Build Step, ruleset `main`, UptimeRobot + Telegram |
 | 2026-09-30 | M2 selesai: Better Auth, panel admin (dashboard, profil, project, skill, pengalaman, pesan, pelanggan, audit, akun), unggah Cloudinary, 120 tes unit, 59 tes E2E. Broadcast dan notifikasi login ditunda. UI admin hanya bahasa Indonesia |
+| 2026-09-30 | Alur kerja: semua langsung di `main`, tanpa branch lain dan tanpa PR (permintaan pemilik). `feat/m2-admin` disatukan ke `main` (fast-forward), templat PR dihapus |

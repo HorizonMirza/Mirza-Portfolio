@@ -111,7 +111,7 @@ flowchart LR
 │   ├── migrations/           # migrasi SQL
 │   └── seed/seed-data.ts     # data awal dari CV
 ├── Documentation/            # PRD, DESIGN, ARCHITECTURE, WORKFLOW, TODO, CONTENT, REFERENCES
-├── .github/                  # workflows CI, templat PR
+├── .github/                  # workflows CI
 └── .agents/skill/           # skill proyek untuk Claude Code
 ```
 
