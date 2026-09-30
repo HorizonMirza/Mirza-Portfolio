@@ -46,25 +46,28 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 
 ## M2 — Auth dan Super Admin (≈ 1 hari)
 
-- [ ] Better Auth (email + password, `disableSignUp`, adapter Prisma, sesi di database, hash bawaan), halaman `/admin/login`
-- [ ] Migrasi skema: tabel Better Auth (`User`, `Session`, `Account`, `Verification`) + `role`, hapus `User.passwordHash`
-- [ ] Middleware/proxy melindungi `/admin/*` dan pemeriksaan ulang di setiap action
-- [ ] Rate limit login bawaan Better Auth (penyimpanan database)
-- [ ] Tabel `RateLimit` + helper `lib/rate-limit.ts` untuk form publik
-- [ ] Seed akun admin dari environment, skrip `admin:reset-password`
-- [ ] Komponen UI: Dialog, Sheet, Toast, DropdownMenu, Tabs (dari M1)
-- [ ] Layout admin (sidebar, responsif) dan dashboard awal. `app/admin/layout.tsx` menjadi root layout kedua (merender `<html>` sendiri)
-- [ ] Modul CRUD (pola di `SKILL.md`): Project, Skill + kategori, Experience, Profile/hero
-- [ ] Unggah bertanda tangan ke Cloudinary (gambar, foto, CV) dengan alt text dua bahasa
-- [ ] Form dua bahasa (tab ID/EN) dengan React Hook Form + Zod, status draf/terbit, urutan (geser)
-- [ ] Tabel admin dengan TanStack Table (cari, urut, paginasi, jadi kartu di HP)
-- [ ] Editor studi kasus: textarea Markdown + pratinjau (`react-markdown` + `rehype-sanitize`)
-- [ ] Grafik kunjungan di dashboard dengan Recharts (shadcn charts), hanya dimuat di `/admin`
-- [ ] Impor dari GitHub (`fetch` ke REST API, cache 1 jam) → mengisi form project
-- [ ] Kotak masuk pesan (baru/dibaca/arsip)
-- [ ] Log audit (tulis pada setiap mutasi) dan halaman peninjau
-- [ ] Newsletter di admin: daftar pelanggan, kirim broadcast `[?]`
-- [ ] Tes: unit skema dan otorisasi, E2E login dan CRUD project
+- [x] Better Auth (email + password, `disableSignUp`, adapter Prisma, sesi di database, hash bawaan), halaman `/admin/login`
+- [x] Migrasi skema: tabel Better Auth (`User`, `Session`, `Account`, `Verification`) + `role`, hapus `User.passwordHash`
+- [x] Middleware/proxy melindungi `/admin/*` dan pemeriksaan ulang di setiap action
+- [x] Rate limit login bawaan Better Auth (penyimpanan database)
+- [x] Tabel `RateLimit` + helper `lib/rate-limit.ts` untuk form publik
+- [x] Seed akun admin dari environment, skrip `admin:reset-password`
+- [x] Komponen UI: Dialog, Sheet, Toast, DropdownMenu, Tabs (dari M1)
+- [x] Layout admin (sidebar, responsif) dan dashboard awal. `app/admin/layout.tsx` menjadi root layout kedua (merender `<html>` sendiri)
+- [x] Modul CRUD (pola di `SKILL.md`): Project, Skill + kategori, Experience, Profile/hero
+- [x] Unggah bertanda tangan ke Cloudinary (gambar, foto, CV) dengan alt text dua bahasa. Diuji dengan respons Cloudinary tiruan; uji dengan akun asli menunggu kunci dari pemilik
+- [x] Form dua bahasa (tab ID/EN) dengan React Hook Form + Zod, status draf/terbit, urutan lewat tombol naik/turun (bukan seret, agar bisa dengan keyboard). Pengalaman diurutkan otomatis dari tanggal mulai
+- [x] Tabel admin dengan TanStack Table (cari, urut, paginasi, jadi kartu di HP)
+- [x] Editor studi kasus: textarea Markdown + pratinjau (`react-markdown` + `rehype-sanitize`)
+- [x] Grafik kunjungan di dashboard dengan Recharts (shadcn charts), hanya dimuat di `/admin`
+- [x] Impor dari GitHub (`fetch` ke REST API, cache 1 jam) → mengisi form project. Diuji dengan `fetch` tiruan (API GitHub dibatasi di sandbox)
+- [x] Kotak masuk pesan (baru/dibaca/arsip)
+- [x] Log audit (tulis pada setiap mutasi) dan halaman peninjau
+- [x] Newsletter di admin: daftar pelanggan dan hapus
+- [ ] Kirim broadcast newsletter `[?]` (menunggu keputusan PRD bagian 11, butuh Resend)
+- [x] Halaman akun: ganti password (rate limit, sesi lain dicabut)
+- [ ] Notifikasi email saat ada login baru (butuh Resend, dikerjakan bersama form kontak di M4)
+- [x] Tes: unit skema dan otorisasi, E2E login dan CRUD project
 
 **Selesai bila:** Mirza bisa login dan mengelola semua konten, semua aksi tercatat di audit.
 
@@ -143,3 +146,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Database: PostgreSQL 17, UUID v7, `timestamptz`, tabel `PageViewDaily`, migrasi awal dibuat ulang, Neon via integrasi Vercel |
 | 2026-09-30 | Dependabot update otomatis dihapus (alerts tetap). Update dependency manual bulanan. GitHub Actions dinaikkan, `pnpm audit` masuk CI, `overrides` untuk mysql2 dan deepmerge-ts (celah di Prisma CLI) |
 | 2026-09-30 | Hosting: Vercel Hobby + Neon Free di Singapura (`sin1`), `vercel.json`, migrasi hanya di production, Ignored Build Step, ruleset `main`, UptimeRobot + Telegram |
+| 2026-09-30 | M2 selesai: Better Auth, panel admin (dashboard, profil, project, skill, pengalaman, pesan, pelanggan, audit, akun), unggah Cloudinary, 120 tes unit, 59 tes E2E. Broadcast dan notifikasi login ditunda. UI admin hanya bahasa Indonesia |

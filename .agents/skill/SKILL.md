@@ -14,15 +14,27 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, satu PR.
 1. **Model data** di `Database/schema.prisma`. Teks publik memakai pasangan `*_id` dan `*_en`. Tambahkan `createdAt`, `updatedAt`, dan `order`/`status` bila relevan. Buat migrasi **kompatibel ke belakang**.
 2. **Skema Zod** di `Frontend/src/features/<domain>/schema.ts`. Wajibkan kedua bahasa, batasi panjang, validasi URL dan slug.
 3. **Query** di `Frontend/src/features/<domain>/queries.ts`. Baca hanya kolom yang dibutuhkan. Beri cache tag `<domain>` sesuai pola yang sudah ada. Next 16: baca `node_modules/next/dist/docs/` dulu, API cache berubah dari versi lama.
-4. **Actions** di `Frontend/src/features/<domain>/actions.ts` (Server Actions). Pola wajib:
+4. **Actions** di `Frontend/src/features/<domain>/actions.ts` (`'use server'`, hanya ekspor fungsi async). Contoh lengkap: `features/projects/actions.ts`. Pola wajib:
    ```ts
-   // 1) pastikan admin  2) validasi  3) transaksi: tulis + AuditLog  4) revalidate
-   const session = await requireSuperAdmin()
-   const data = schema.parse(input)
-   await db.$transaction([...tulis, ...catatAudit(session, 'create', '<entity>', id, data)])
-   updateTag('<domain>') // Next 16: di Server Action pakai updateTag (read-your-writes); revalidateTag butuh argumen kedua
+   export async function saveX(id: string | null, input: unknown): Promise<ActionResult<{ id: string }>> {
+     try {
+       const admin = await requireSuperAdmin()            // 1) pastikan admin (lempar UnauthorizedError)
+       const parsed = xSchema.safeParse(input)            // 2) validasi ulang di server
+       if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+       const saved = await getDb().$transaction(async (tx) => {  // 3) tulis + AuditLog dalam satu transaksi
+         const after = await tx.x.create({ data: parsed.data })
+         await writeAudit(tx, { actorId: admin.userId, action: 'create', entity: 'X', entityId: after.id, after })
+         return after
+       })
+       revalidateContent('<domain>')                      // 4) updateTag + path literal /id dan /en
+       return ok('X dibuat.', { id: saved.id })
+     } catch (error) {
+       return toActionError(error, { slug: 'Slug' })      // galat unik → fieldErrors, tanpa detail internal
+     }
+   }
    ```
-5. **UI admin** di `Frontend/src/app/admin/<domain>/`: tabel TanStack Table (cari, urut, paginasi), form React Hook Form + Zod dengan tab ID/EN, status draf/terbit, hapus dengan konfirmasi. Toast untuk hasil aksi.
+   Jangan memanggil `revalidatePath('/[locale]', 'layout')` (beranda jadi 404). Jangan mencatat isi pesan/email pengunjung di audit. Tambahkan action baru ke daftar di `tests/unit/authz.test.ts`.
+5. **UI admin** di `Frontend/src/app/admin/(panel)/<domain>/` (panggil `requireSuperAdminPage()`), komponen di `features/<domain>/components/`. Pakai komponen bersama di `components/admin/`: `DataTable` (TanStack Table v9, jadi kartu di HP), `BilingualTabs` + `countLangErrors`, `Field`, `MarkdownEditor`, `ConfirmDelete`, `ReorderButtons` (urutan naik/turun, bukan seret), `StatusBadge`, `FormFooter`, `applyResult` (toast + galat server ke field). Form: React Hook Form + `zodResolver` dengan skema yang sama dengan server.
 6. **Tampilan publik** di `Frontend/src/app/[locale]/...` memakai Server Components. Panggil `setRequestLocale(locale)` di layout/page agar tetap statis. Tambahkan ke sitemap bila punya halaman sendiri.
 7. **Teks UI** ditambahkan ke `Frontend/messages/id.json` **dan** `Frontend/messages/en.json`.
 8. **Tes:** unit untuk skema dan otorisasi, E2E untuk alur tambah → tampil di publik.

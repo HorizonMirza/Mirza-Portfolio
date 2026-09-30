@@ -309,7 +309,29 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 1. memeriksa sesi dan role `SUPER_ADMIN` di sisi server,
 2. memvalidasi input dengan Zod,
 3. menulis ke database dan `AuditLog` dalam satu transaksi,
-4. memanggil `revalidateTag`.
+4. memanggil `revalidateContent()` (`lib/revalidate.ts`): `updateTag` per domain lalu `revalidatePath` literal `/id` dan `/en`.
+
+Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tests/unit/authz.test.ts` (setiap action menolak tanpa sesi sebelum menyentuh database). Hasil action berbentuk `ActionResult` (`lib/action-result.ts`): pesan untuk toast dan `fieldErrors` untuk form. Catatan:
+
+- **Jangan** `revalidatePath('/[locale]', 'layout')`: dengan `dynamicParams = false`, render ulang ISR memakai nilai `[locale]` apa adanya dan beranda menjadi 404.
+- Berkas `'use server'` hanya boleh mengekspor fungsi async. Konstanta dan skema ditaruh di `schema.ts`.
+- Urutan project, kategori, dan skill diubah dengan tombol naik/turun (aksesibel untuk keyboard), urutan ditulis ulang 0..n dalam transaksi. Pengalaman diurutkan dari tanggal mulai.
+- Log audit tidak memuat isi pesan, nama, atau email pengunjung. Email dan WhatsApp profil disamarkan.
+- UI admin hanya berbahasa Indonesia (satu pengguna). Konten yang dikelola tetap dua bahasa.
+
+| Modul | Halaman | Action |
+|---|---|---|
+| Profil | `/admin/profile` | `saveProfile` |
+| Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
+| Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
+| Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
+| Berkas | di Profil dan Project | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
+| Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
+| Pelanggan | `/admin/subscribers` | `deleteSubscriber` |
+| Audit | `/admin/audit` | (baca saja) |
+| Akun | `/admin/account` | `changePassword` |
+
+**Unggah Cloudinary** (tanpa SDK): `signAssetUpload` membuat tanda tangan SHA-1 di server (secret tidak ke browser) → browser mengunggah langsung ke `api.cloudinary.com` → `attachUploadedAsset` memverifikasi tanda tangan respons (`public_id` + `version`), memeriksa ulang folder, tipe, format, ukuran, dan asal URL, lalu mencatat `Asset`. Berkas yang ditolak atau diganti dihapus dari Cloudinary. Tanpa kunci `CLOUDINARY_*`, form unggah diganti pesan "belum aktif". `next/image` hanya mengizinkan `res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/`.
 
 ### 6.2 Form publik (Server Actions)
 
@@ -332,8 +354,6 @@ Form kontak dan pendaftaran newsletter memakai **Server Action** dengan `useActi
 | GET | `/api/newsletter/unsubscribe?token=` | Publik | Berhenti langganan |
 | POST | `/api/track` | Publik, rate limit | Catat kunjungan halaman (beacon) |
 | GET | `/api/cv` | Publik | Catat unduhan lalu arahkan ke CV terbaru |
-| POST | `/api/admin/upload-sign` | Admin | Tanda tangan unggahan Cloudinary |
-| GET | `/api/admin/github/repo?name=` | Admin | Ambil data repo untuk impor project |
 | GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
 
 ### 6.4 Kontrak
@@ -368,7 +388,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 - **Better Auth** email + password dengan `disableSignUp: true`. Sesi disimpan di tabel `Session` (bisa dicabut dari admin), cookie `httpOnly`, `secure`, `sameSite=lax`. Masa berlaku sesi pendek (misalnya 8 jam).
 - Login dibatasi oleh rate limit bawaan Better Auth (penyimpanan database, misalnya 5 percobaan per 15 menit per IP) dengan pesan galat yang sama untuk email salah maupun password salah.
 - **Pertahanan berlapis:** middleware/proxy melindungi `/admin/*`, dan setiap Server Action serta route handler admin memeriksa ulang sesi dan role.
-- Tidak ada registrasi publik. Akun admin dibuat oleh skrip seed lewat API server Better Auth (agar format hash cocok) memakai `ADMIN_EMAIL` dan `ADMIN_PASSWORD` dari environment, lalu password diganti lewat admin.
+- Tidak ada registrasi publik. Akun admin dibuat oleh skrip seed (hash dari `better-auth/crypto` agar formatnya cocok) memakai `ADMIN_EMAIL` dan `ADMIN_PASSWORD` dari environment, lalu password diganti lewat `/admin/account` (5 percobaan per 15 menit, sesi di perangkat lain dicabut).
 - Lupa password: prosedur pemulihan lewat skrip yang dijalankan pemilik (`pnpm admin:reset-password`), tanpa alur email publik.
 
 ## 8. Rencana Keamanan
@@ -380,12 +400,12 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | CSRF | Server Actions memeriksa Origin. Route handler mutasi memeriksa `Origin`/`Sec-Fetch-Site` |
 | Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik |
 | Spam form | Honeypot + rate limit + validasi panjang. CAPTCHA hanya jika masih ada spam |
-| Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Batasi tipe (gambar, PDF) dan ukuran |
+| Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Respons diverifikasi di server, tipe (gambar, PDF) dan ukuran (5 MB) dicek ulang, berkas ditolak dihapus |
 | Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
 | Header | HSTS, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors 'none'` |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=high` di CI, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
-| Akses admin | Satu akun, log audit, notifikasi login baru via email |
+| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Notifikasi login baru via email menyusul bersama Resend (M4) |
 
 Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
 
@@ -449,3 +469,5 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 7 | Rate limit di PostgreSQL, tanpa Upstash | Trafik kecil, satu layanan lebih sedikit | Final (2026-09-30) |
 | 8 | `fetch` untuk GitHub API, React Email untuk template, Vercel Cron untuk tugas harian | Lebih sedikit dependency, gratis | Final (2026-09-30) |
 | 9 | PostgreSQL 17, UUID v7, `timestamptz`, ringkasan `PageViewDaily`, Neon via integrasi Vercel | Konsisten lokal/CI/production, cegah bug zona waktu, hemat kuota | Final (2026-09-30) |
+| 10 | Mutasi admin (termasuk tanda tangan unggah dan impor GitHub) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
+| 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
