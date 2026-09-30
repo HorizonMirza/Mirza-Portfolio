@@ -17,12 +17,20 @@ export default defineConfig({
     trace: 'retain-on-failure',
     launchOptions: { executablePath },
   },
-  // Milestone 1: Chromium desktop dan emulasi HP. WebKit dan Firefox ditambahkan di Milestone 4.
   projects: [
     // login admin sekali, sesinya dipakai tes di e2e/admin
     { name: 'setup', testMatch: /auth\.setup\.ts/ },
     { name: 'chromium', use: { ...devices['Desktop Chrome'] }, dependencies: ['setup'] },
     { name: 'mobile', use: { ...devices['Pixel 7'] }, dependencies: ['setup'] },
+    // Firefox, WebKit (Safari), dan iPhone dijalankan di CI (E2E_ALL_BROWSERS=1). Di sandbox lokal
+    // hanya Chromium yang terpasang.
+    ...(process.env.E2E_ALL_BROWSERS
+      ? [
+          { name: 'firefox', use: { ...devices['Desktop Firefox'] }, dependencies: ['setup'] },
+          { name: 'webkit', use: { ...devices['Desktop Safari'] }, dependencies: ['setup'] },
+          { name: 'iphone', use: { ...devices['iPhone 14'] }, dependencies: ['setup'] },
+        ]
+      : []),
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined

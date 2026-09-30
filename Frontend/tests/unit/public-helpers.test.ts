@@ -105,3 +105,47 @@ describe('isBot dan isSameOrigin', () => {
     expect(isSameOrigin(req({}))).toBe(false)
   })
 })
+
+describe('buildCsp', async () => {
+  const { buildCsp } = await import('@/lib/csp')
+  it('halaman publik: tanpa nonce, tanpa eval, tetap ketat untuk arahan lain', () => {
+    const csp = buildCsp({ dev: false, preview: false, upgrade: true })
+    expect(csp).toContain("script-src 'self' 'unsafe-inline'")
+    expect(csp).not.toContain('unsafe-eval')
+    expect(csp).toContain("frame-ancestors 'none'")
+    expect(csp).toContain("object-src 'none'")
+    expect(csp).toContain("img-src 'self' data: blob: https://res.cloudinary.com")
+    expect(csp).toContain('upgrade-insecure-requests')
+    expect(csp).not.toContain('api.cloudinary.com')
+  })
+  it('admin: nonce + strict-dynamic, tanpa unsafe-inline di script-src, boleh unggah ke Cloudinary', () => {
+    const csp = buildCsp({ nonce: 'abc123', dev: false, preview: false })
+    const script = csp.split('; ').find((d) => d.startsWith('script-src'))!
+    expect(script).toBe("script-src 'self' 'nonce-abc123' 'strict-dynamic'")
+    expect(csp).toContain("connect-src 'self' https://api.cloudinary.com")
+  })
+  it('preview mengizinkan toolbar Vercel, dev mengizinkan eval dan websocket', () => {
+    expect(buildCsp({ dev: false, preview: true })).toContain('https://vercel.live')
+    const dev = buildCsp({ dev: true, preview: false })
+    expect(dev).toContain("'unsafe-eval'")
+    expect(dev).not.toContain('upgrade-insecure-requests')
+    expect(buildCsp({ dev: false, preview: false })).not.toContain('upgrade-insecure-requests')
+  })
+})
+
+describe('describeDevice', async () => {
+  const { describeDevice } = await import('@/lib/login-notice')
+  it('meringkas user-agent', () => {
+    expect(
+      describeDevice(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36',
+      ),
+    ).toBe('Chrome di Windows')
+    expect(
+      describeDevice(
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit Version/18.0 Mobile Safari/604.1',
+      ),
+    ).toBe('Safari di iOS')
+    expect(describeDevice(null)).toBe('Browser tidak dikenal di sistem tidak dikenal')
+  })
+})

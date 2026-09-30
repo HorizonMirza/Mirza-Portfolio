@@ -31,18 +31,13 @@ export async function generateMetadata({
   if (!locale) return {}
   const project = await getPublishedProject(slug)
   if (!project) return {}
-  const meta = pageMetadata({
+  // Gambar Open Graph dibuat oleh opengraph-image.tsx di folder ini.
+  return pageMetadata({
     locale,
     path: `/projects/${slug}`,
     title: loc(project, 'title', locale),
     description: loc(project, 'summary', locale),
   })
-  if (project.cover)
-    meta.openGraph = {
-      ...meta.openGraph,
-      images: [{ url: project.cover.url, alt: loc(project.cover, 'alt', locale) }],
-    }
-  return meta
 }
 
 export default async function ProjectPage({ params }: PageProps<'/[locale]/projects/[slug]'>) {

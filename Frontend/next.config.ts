@@ -1,6 +1,8 @@
 import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 
+import { buildCsp, SECURITY_HEADERS } from './src/lib/csp'
+
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 // Optimasi gambar hanya untuk akun Cloudinary milik situs ini (bukan semua res.cloudinary.com).
@@ -17,7 +19,23 @@ const nextConfig: NextConfig = {
     // 404 global untuk URL di luar /[locale] (app/global-not-found.tsx)
     globalNotFound: true,
   },
-  // Header keamanan lengkap dan CSP ditambahkan di Milestone 4.
+  async headers() {
+    const dev = process.env.NODE_ENV !== 'production'
+    const preview = process.env.VERCEL_ENV === 'preview'
+    return [
+      { source: '/:path*', headers: SECURITY_HEADERS },
+      // CSP tanpa nonce untuk semua kecuali /admin (admin diberi CSP ber-nonce oleh src/proxy.ts)
+      {
+        source: '/((?!admin).*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: buildCsp({ dev, preview, upgrade: process.env.VERCEL === '1' }),
+          },
+        ],
+      },
+    ]
+  },
 }
 
 export default withNextIntl(nextConfig)

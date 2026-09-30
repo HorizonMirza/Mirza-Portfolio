@@ -24,6 +24,9 @@
   --accent: #0ea5e9;
   /* warna seri grafik, divalidasi skrip dataviz (pita kecerahan + kontras) */
   --chart-1: #1d4fd7;
+  /* warna merek WhatsApp untuk tombol melayang; ikon gelap di atasnya ±9:1 */
+  --whatsapp: #25d366;
+  --whatsapp-fg: #0b1220;
 
   color-scheme: light;
 }
@@ -81,6 +84,8 @@
   --color-success: var(--success);
   --color-accent: var(--accent);
   --color-chart-1: var(--chart-1);
+  --color-whatsapp: var(--whatsapp);
+  --color-whatsapp-fg: var(--whatsapp-fg);
 
   /* alias untuk komponen shadcn/ui */
   --color-background: var(--bg);
@@ -240,4 +245,46 @@
 .experience-filter:has(input[value='EDUCATION']:checked)
   li[data-type]:not([data-type='EDUCATION']) {
   display: none;
+}
+
+/* Latar statis disembunyikan begitu canvas siap agar grid tidak tampil ganda. */
+.horizon-backdrop:has(.horizon-canvas[data-ready='true']) .horizon-static {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out-soft);
+}
+
+/* Reveal sekali jalan (DESIGN.md 2.4), dikendalikan components/site/reveal-observer.tsx.
+   Hanya elemen yang ditandai "pending" (di bawah layar saat dibuka) yang disembunyikan. */
+.reveal[data-reveal] {
+  transition:
+    opacity 400ms var(--ease-out-soft),
+    translate 400ms var(--ease-out-soft);
+}
+
+.reveal[data-reveal='pending'] {
+  opacity: 0;
+  translate: 0 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-reveal] {
+    transition: none;
+    opacity: 1;
+    translate: none;
+  }
+}
+
+/* Transisi halaman: fade 150 ms (DESIGN.md 2.4), dimatikan bila gerak dikurangi. */
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 150ms;
+  animation-timing-function: var(--ease-out-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }

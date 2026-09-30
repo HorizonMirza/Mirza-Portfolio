@@ -84,8 +84,10 @@ jobs:
       - name: Seed (dua kali untuk memastikan idempoten)
         run: pnpm db:seed && pnpm db:seed
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm test:e2e
+        env:
+          E2E_ALL_BROWSERS: '1'
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

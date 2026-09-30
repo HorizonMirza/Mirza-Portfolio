@@ -215,5 +215,9 @@
     "body": "This page failed to load. Please try again in a moment.",
     "retry": "Try again",
     "home": "Back to home"
+  },
+  "WhatsApp": {
+    "label": "Chat on WhatsApp (opens in a new tab)",
+    "prefill": "Hi Mirza, I saw your portfolio."
   }
 }

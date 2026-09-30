@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test'
 import { ADMIN_STATE, hasAdminEnv } from './helpers'
 
 test.skip(!hasAdminEnv, 'butuh ADMIN_EMAIL dan ADMIN_PASSWORD')
-test.use({ storageState: ADMIN_STATE })
+test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' } })
 
 const PAGES = [
   '/admin',
@@ -21,9 +21,14 @@ const PAGES = [
 ]
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`halaman admin (${theme}) tanpa pelanggaran aksesibilitas`, async ({ page }) => {
+  test(`halaman admin (${theme}) tanpa pelanggaran aksesibilitas dan CSP`, async ({ page }) => {
     await page.addInitScript((value) => localStorage.setItem('theme', value), theme)
     const failures: string[] = []
+    // CSP admin ber-nonce: skrip Next.js dan skrip tema harus tetap jalan
+    page.on('console', (m) => {
+      if (m.type() === 'error' && /Content Security Policy|CSP/i.test(m.text()))
+        failures.push(`CSP: ${m.text()}`)
+    })
     for (const path of PAGES) {
       const response = await page.goto(path)
       expect(response?.status(), path).toBe(200)

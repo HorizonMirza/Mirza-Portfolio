@@ -14,6 +14,8 @@ import { getPublishedProjects } from '@/features/projects/public'
 import { getPublicSkills } from '@/features/skills/public'
 import { NewsletterForm } from '@/features/subscribers/components/newsletter-form'
 import { Link } from '@/i18n/navigation'
+import { siteUrl } from '@/lib/env'
+import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
 import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata, whatsappUrl } from '@/lib/seo'
@@ -66,8 +68,29 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const github = profile?.socials.github
   const cvHref = `/api/cv?locale=${locale}`
 
+  // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
+  const person = profile
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: profile.name,
+        url: `${siteUrl()}/${locale}`,
+        description: loc(profile, 'headline', locale),
+        jobTitle: loc(profile, 'currentRole', locale) || undefined,
+        image: profile.photo?.url,
+        sameAs: Object.values(profile.socials),
+        address: profile.city
+          ? { '@type': 'PostalAddress', addressLocality: profile.city, addressCountry: 'ID' }
+          : undefined,
+        alumniOf: profile.campus
+          ? { '@type': 'CollegeOrUniversity', name: profile.campus.organization }
+          : undefined,
+      }
+    : null
+
   return (
     <>
+      {person ? <JsonLd data={person} /> : null}
       <section aria-labelledby="hero-title" className="flex min-h-[calc(100svh-4rem)] flex-col">
         <Container className="flex flex-1 flex-col justify-center gap-8 pt-10 pb-8 md:pt-16">
           <div>
@@ -165,7 +188,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       </section>
 
       <section aria-labelledby="featured-title" className="py-16 md:py-24">
-        <Container>
+        <Container className="reveal">
           <SectionHeading
             id="featured-title"
             index="02"
@@ -211,7 +234,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {experiences.length > 0 ? (
         <section aria-labelledby="journey-title" className="border-t border-border py-16 md:py-24">
-          <Container>
+          <Container className="reveal">
             <SectionHeading
               id="journey-title"
               index="03"
@@ -252,7 +275,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {skills.length > 0 ? (
         <section aria-labelledby="stack-title" className="border-t border-border py-16 md:py-24">
-          <Container>
+          <Container className="reveal">
             <SectionHeading
               id="stack-title"
               index="04"
@@ -290,7 +313,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       ) : null}
 
       <section aria-labelledby="cta-title" className="border-t border-border py-16 md:py-24">
-        <Container className="grid gap-12 lg:grid-cols-[1.2fr_1fr]">
+        <Container className="reveal grid gap-12 lg:grid-cols-[1.2fr_1fr]">
           <div>
             <SectionHeading id="cta-title" index="05" title={t('ctaHeading')} className="mb-4" />
             <p className="max-w-prose text-muted">{t('ctaBody')}</p>

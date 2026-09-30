@@ -33,7 +33,7 @@ export async function ProjectCard({
   return (
     <article
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition-colors hover:border-border-strong has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-primary dark:shadow-none',
+        'reveal group relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-sm transition-colors hover:border-border-strong has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-primary dark:shadow-none',
         wide && 'md:grid md:grid-cols-[1.1fr_1fr]',
       )}
     >

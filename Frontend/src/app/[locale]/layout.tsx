@@ -2,13 +2,16 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
+import { ViewTransition } from 'react'
 
 import '@/app/globals.css'
 import { jakarta, jetbrains } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { PageViewTracker } from '@/components/site/page-view-tracker'
+import { RevealObserver } from '@/components/site/reveal-observer'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
+import { WhatsAppButton } from '@/components/site/whatsapp-button'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
 
@@ -58,7 +61,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         </a>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          // tampilan awal gelap (keputusan pemilik M4); pilihan pengunjung tersimpan
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
@@ -66,10 +70,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             <div className="flex min-h-dvh flex-col">
               <SiteHeader locale={locale} />
               <main id="main" className="flex-1">
-                {children}
+                {/* Transisi antarhalaman: fade singkat lewat View Transitions (tanpa library) */}
+                <ViewTransition>{children}</ViewTransition>
               </main>
               <SiteFooter locale={locale} />
             </div>
+            <WhatsAppButton locale={locale} />
+            <RevealObserver />
             <PageViewTracker />
           </NextIntlClientProvider>
         </ThemeProvider>

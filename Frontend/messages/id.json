@@ -215,5 +215,9 @@
     "body": "Halaman ini gagal dimuat. Coba lagi sebentar lagi.",
     "retry": "Coba lagi",
     "home": "Kembali ke beranda"
+  },
+  "WhatsApp": {
+    "label": "Chat lewat WhatsApp (membuka tab baru)",
+    "prefill": "Halo Mirza, saya melihat portofolio Anda."
   }
 }

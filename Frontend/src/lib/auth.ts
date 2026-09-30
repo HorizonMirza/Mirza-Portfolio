@@ -3,9 +3,11 @@ import 'server-only'
 import { betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { nextCookies } from 'better-auth/next-js'
+import { after } from 'next/server'
 
 import { getDb } from '@/lib/db'
 import { getAuthEnv, resolveBaseUrl, trustedAuthOrigins } from '@/lib/env'
+import { notifyLogin } from '@/lib/login-notice'
 import { authRateLimitStorage, hashIdentifier } from '@/lib/rate-limit'
 
 // Batas percobaan login: 5 kali per 15 menit per IP (ARCHITECTURE.md bagian 7).
@@ -59,6 +61,11 @@ function createAuth() {
               ipAddress: session.ipAddress ? hashIdentifier(session.ipAddress) : null,
             },
           }),
+          // email ke admin setiap ada login baru (bila Resend diatur). Dijalankan lewat after() agar
+          // tidak menunda respons login dan tetap selesai di serverless setelah respons terkirim.
+          after: async (session) => {
+            after(() => notifyLogin(session))
+          },
         },
       },
     },

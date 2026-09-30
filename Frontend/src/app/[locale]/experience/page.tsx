@@ -67,7 +67,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
 
           <ol className="relative flex flex-col gap-10 border-l border-border pl-6 md:pl-10">
             {items.map((e) => (
-              <li key={e.id} data-type={e.type} className="relative">
+              <li key={e.id} data-type={e.type} className="reveal relative">
                 <span
                   aria-hidden="true"
                   className="absolute top-2 -left-[calc(1.5rem+5px)] size-2.5 rounded-full border-2 border-bg bg-primary md:-left-[calc(2.5rem+5px)]"

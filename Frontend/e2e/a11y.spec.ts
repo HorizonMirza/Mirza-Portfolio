@@ -2,6 +2,9 @@ import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 // WCAG 2.2 AA (DESIGN.md bagian 8). Dicek di kedua bahasa dan kedua tema.
+// Kontras diukur pada keadaan akhir; animasi reveal sesaat dimatikan lewat reduced-motion.
+test.use({ contextOptions: { reducedMotion: 'reduce' } })
+
 const PAGES = ['', '/about', '/experience', '/skills', '/projects', '/contact', '/privacy']
 
 for (const locale of ['id', 'en'] as const) {

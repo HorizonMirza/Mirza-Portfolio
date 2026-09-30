@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ReactNode } from 'react'
 
@@ -13,7 +14,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function AdminRootLayout({ children }: { children: ReactNode }) {
+export default async function AdminRootLayout({ children }: { children: ReactNode }) {
+  // nonce CSP dari src/proxy.ts untuk skrip tema next-themes
+  const nonce = (await headers()).get('x-nonce') ?? undefined
   return (
     <html
       lang="id"
@@ -28,8 +31,9 @@ export default function AdminRootLayout({ children }: { children: ReactNode }) {
           Lewati ke konten utama
         </a>
         <ThemeProvider
+          nonce={nonce}
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

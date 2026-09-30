@@ -43,7 +43,7 @@ export default async function SkillsPage({ params }: PageProps<'/[locale]/skills
             <section
               key={c.id}
               aria-labelledby={`skill-cat-${c.id}`}
-              className="grid gap-4 py-8 md:grid-cols-[16rem_1fr] md:gap-10"
+              className="reveal grid gap-4 py-8 md:grid-cols-[16rem_1fr] md:gap-10"
             >
               <h2 id={`skill-cat-${c.id}`} className="text-h3 font-semibold">
                 <span

@@ -175,3 +175,52 @@ test.describe('route handler publik', () => {
     expect([302, 303]).toContain(res.status())
   })
 })
+
+test('header keamanan ada dan tidak ada pelanggaran CSP di halaman publik', async ({
+  page,
+  request,
+}) => {
+  const res = await request.get('/id')
+  const h = res.headers()
+  expect(h['content-security-policy']).toContain("frame-ancestors 'none'")
+  expect(h['x-content-type-options']).toBe('nosniff')
+  expect(h['strict-transport-security']).toContain('max-age=')
+  expect(h['referrer-policy']).toBe('strict-origin-when-cross-origin')
+
+  const violations: string[] = []
+  page.on('console', (m) => {
+    if (m.type() === 'error' && /Content Security Policy|CSP/i.test(m.text()))
+      violations.push(m.text())
+  })
+  for (const path of ['/id', '/en/about', '/id/experience', '/en/projects', '/id/contact']) {
+    await page.goto(path)
+    await page.waitForLoadState('networkidle').catch(() => undefined)
+  }
+  expect(violations).toEqual([])
+})
+
+test('sitemap, robots, dan gambar Open Graph tersedia', async ({ request }) => {
+  const sitemap = await request.get('/sitemap.xml')
+  expect(sitemap.status()).toBe(200)
+  const xml = await sitemap.text()
+  expect(xml).toContain('/id/experience')
+  expect(xml).toContain('hreflang="en"')
+  const robots = await (await request.get('/robots.txt')).text()
+  expect(robots).toContain('Disallow: /admin')
+  const og = await request.get('/en/opengraph-image')
+  expect(og.status()).toBe(200)
+  expect(og.headers()['content-type']).toContain('image/png')
+})
+
+test('beranda memuat data terstruktur Person tanpa email atau WhatsApp', async ({ page }) => {
+  await page.goto('/id')
+  const raw = await page.locator('script[type="application/ld+json"]').first().textContent()
+  const data = JSON.parse(raw ?? '{}')
+  expect(data['@type']).toBe('Person')
+  expect(JSON.stringify(data)).not.toMatch(/whatsapp|mailto|@gmail/i)
+})
+
+test('tema awal gelap untuk pengunjung baru', async ({ page }) => {
+  await page.goto('/id')
+  await expect(page.locator('html')).toHaveClass(/dark/)
+})
