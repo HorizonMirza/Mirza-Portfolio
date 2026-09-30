@@ -3,5 +3,11 @@
   "framework": "nextjs",
   "regions": ["sin1"],
   "buildCommand": "pnpm build:vercel",
-  "ignoreCommand": "bash scripts/vercel-ignore-build.sh"
+  "ignoreCommand": "bash scripts/vercel-ignore-build.sh",
+  "crons": [
+    {
+      "path": "/api/cron/daily",
+      "schedule": "0 18 * * *"
+    }
+  ]
 }
