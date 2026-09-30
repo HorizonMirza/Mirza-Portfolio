@@ -18,8 +18,16 @@ export const serverEnvSchema = z.object({
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>
 
+// Nilai kosong ("") dianggap tidak diisi, supaya .env.example yang disalin apa adanya
+// dan env Vercel yang dikosongkan tidak menggagalkan validasi kunci opsional.
+function withoutEmpty(source: Record<string, string | undefined>) {
+  return Object.fromEntries(
+    Object.entries(source).filter(([, v]) => v !== undefined && v.trim() !== ''),
+  )
+}
+
 export function parseServerEnv(source: Record<string, string | undefined>): ServerEnv {
-  const result = serverEnvSchema.safeParse(source)
+  const result = serverEnvSchema.safeParse(withoutEmpty(source))
   if (!result.success) {
     // pesan hanya menyebut nama kunci, tidak pernah nilainya
     const detail = result.error.issues
@@ -55,7 +63,7 @@ export const authEnvSchema = z.object({
 export type AuthEnv = z.infer<typeof authEnvSchema>
 
 export function parseAuthEnv(source: Record<string, string | undefined>): AuthEnv {
-  const result = authEnvSchema.safeParse(source)
+  const result = authEnvSchema.safeParse(withoutEmpty(source))
   if (!result.success) {
     const detail = result.error.issues
       .map((issue) => `- ${issue.path.join('.')}: ${issue.message}`)
