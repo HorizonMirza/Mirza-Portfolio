@@ -30,7 +30,7 @@ Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md
 
 ## Stack Singkat
 
-Next.js (App Router) + TypeScript strict · Tailwind + shadcn/ui + Motion · next-intl · PostgreSQL (Neon) + Prisma · Auth.js (Credentials, satu admin) · Zod · Cloudinary · Resend · Upstash · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
+Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind + shadcn/ui + Motion · next-intl · PostgreSQL (Neon) + Prisma · Auth.js (Credentials, satu admin) · Zod · Cloudinary · Resend · Upstash · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
 
 ## Perintah
 
@@ -98,6 +98,7 @@ Documentation/   dokumen perencanaan
 
 ## Menjalankan di Sesi Cloud
 
+- Sandbox bawaan memakai Node 22, sedangkan proyek butuh Node 24 (`Frontend/.nvmrc`). Unduh Node 24 dari nodejs.org (cek SHASUMS256) ke scratchpad lalu taruh di awal `PATH`.
 - Postgres 16 tersedia di `/usr/lib/postgresql/16/bin` (jalankan sebagai user non-root, data di luar repo).
 - E2E: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e` (jalankan `pnpm build` dulu).
 - Jangan `pkill -f` dengan pola yang juga muncul di perintah shell itu sendiri.

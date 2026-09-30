@@ -16,7 +16,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 
 | Lapisan | Pilihan | Alasan | Alternatif yang tidak dipilih |
 |---|---|---|---|
-| Runtime / paket | Node.js LTS aktif, **pnpm** | Cepat, hemat disk, lockfile deterministik | npm, yarn |
+| Runtime / paket | **Node.js 24 LTS**, **pnpm 10** | Node 24 = Active LTS (didukung sampai April 2028). pnpm: cepat, hemat disk, lockfile deterministik, didukung Vercel | npm, yarn, Bun (kompatibilitas dengan Next.js/Prisma belum setara Node) |
 | Framework | **Next.js 16 (App Router, Turbopack)** + React 19 + **TypeScript strict** | SEO (SSG/ISR), satu codebase untuk UI dan API, cocok dengan Vercel | Astro (kurang cocok untuk admin dinamis), Remix |
 | Styling | **Tailwind CSS** + design token CSS variables | Cepat, konsisten, mudah tema gelap/terang | CSS Modules |
 | Komponen | **shadcn/ui** (Radix) | Aksesibel bawaan, kode dimiliki sendiri, mudah disesuaikan | MUI, Chakra |
@@ -40,7 +40,8 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Unit test | **Vitest** + Testing Library | Cepat, cocok TypeScript | Jest |
 | E2E dan a11y | **Playwright** + `@axe-core/playwright` | Uji lintas browser dan aksesibilitas otomatis | Cypress |
 | Performa | **Lighthouse CI** | Gerbang skor ≥ 90 di CI | Manual |
-| Lint/format | ESLint + Prettier + `tsc --noEmit` | Standar ekosistem Next | Biome |
+| Bahasa | **TypeScript 6.0** (strict) | Versi jembatan menuju TypeScript 7. TS 7 belum dipakai karena `typescript-eslint` baru mendukung < 6.1 | TypeScript 5.9 |
+| Lint/format | **ESLint 10** + Prettier + `tsc --noEmit` | Standar ekosistem Next. ESLint 9 sudah tidak didukung. Plugin bawaan `eslint-config-next` (react, jsx-a11y, import) belum mendukung ESLint 10, jadi dibungkus `fixupConfigRules` dari `@eslint/compat` | Biome |
 | Git hooks | Husky + lint-staged | Cegah commit yang rusak | — |
 | Scan secret | **gitleaks** di CI | Cegah kebocoran kunci | — |
 | CI/CD | **GitHub Actions** + integrasi Git **Vercel** | Preview per PR, deploy otomatis dari `main` | — |

@@ -6,7 +6,7 @@ Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk men
 
 ## Stack
 
-Next.js 16 (App Router, Turbopack) · React 19 · TypeScript strict · Tailwind CSS 4 · next-intl · next-themes · PostgreSQL (Neon) + Prisma 7 · Zod · Vitest · Playwright + axe · pnpm · Vercel · GitHub Actions.
+Node.js 24 · Next.js 16 (App Router, Turbopack) · React 19 · TypeScript 6 (strict) · Tailwind CSS 4 · next-intl · next-themes · PostgreSQL (Neon) + Prisma 7 · Zod · Vitest · Playwright + axe · pnpm · Vercel · GitHub Actions.
 Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTURE.md).
 
 ## Struktur
@@ -22,7 +22,7 @@ Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI 
 
 ## Menjalankan secara lokal
 
-Prasyarat: Node.js 22 (lihat `Frontend/.nvmrc`), pnpm 10 (`corepack enable`), dan PostgreSQL 16 (lokal, Docker, atau branch Neon).
+Prasyarat: Node.js 24 LTS (lihat `Frontend/.nvmrc`), pnpm 10 (`corepack enable`), dan PostgreSQL 16 (lokal, Docker, atau branch Neon).
 **Semua perintah dijalankan dari folder `Frontend/`.**
 
 ```bash
