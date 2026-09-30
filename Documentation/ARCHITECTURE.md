@@ -25,8 +25,8 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | i18n | **next-intl**, rute `/id` dan `/en` | Server component friendly, SEO (`hreflang`) | i18next |
 | Database | **PostgreSQL di Neon** | Serverless, tier gratis, branching database | Supabase (fitur lebih banyak dari yang dibutuhkan) |
 | ORM | **Prisma 7** (generator `prisma-client`, driver adapter `@prisma/adapter-pg`, `prisma.config.ts`) | Type-safe, migrasi jelas, sesuai pilihan Anda | Drizzle |
-| Auth | **Auth.js (NextAuth v5)**, Credentials, sesi JWT | Sesuai pilihan Anda, cukup untuk satu admin | Better Auth (cadangan jika Auth.js v5 bermasalah) |
-| Hash password | **Argon2id** (`@node-rs/argon2`) | Standar modern, jalan di Vercel | bcrypt |
+| Auth | **Better Auth**: email + password, pendaftaran publik dimatikan, adapter Prisma, sesi disimpan di database | Stabil, TypeScript penuh, sesi bisa dicabut, rate limit login bawaan. Auth.js v5 lama berstatus beta dan pengembangannya bergabung dengan tim Better Auth | Auth.js v5, JWT buatan sendiri (pola GAAS) |
+| Hash password | **Bawaan Better Auth** (scrypt) | Aman, tanpa dependency tambahan, konsisten dengan cara Better Auth memverifikasi login | Argon2id, bcrypt |
 | Validasi | **Zod** | Satu skema untuk server dan form | Yup |
 | Form publik (kontak, newsletter) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
 | Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
@@ -34,9 +34,10 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Grafik dashboard admin | **Recharts** lewat shadcn charts (M2), hanya dimuat di `/admin` | Standar shadcn, tidak membebani halaman publik | Chart.js |
 | Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
-| Email | **Resend** | API sederhana, tier gratis, cocok untuk kontak dan newsletter | SMTP sendiri |
-| Rate limit | **Upstash Redis** (`@upstash/ratelimit`) | Cocok serverless, tier gratis | Tabel database |
-| GitHub | **Octokit** (REST, token read-only, di-cache) | Metadata repo tanpa membebani limit | Scraping |
+| Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
+| Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
+| GitHub | **`fetch` biasa** ke GitHub REST API (token read-only), di-cache Next.js 1 jam | Hanya 1–2 endpoint, tidak perlu library | Octokit, scraping |
+| Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (retensi `PageView`, `RateLimit`), ganti garam hash harian, ringkas statistik | GitHub Actions cron (tetap dipakai untuk backup) |
 | Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Web Analytics** + **Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
 | Live chat | Widget pihak ketiga gratis (default **Tawk.to**), lazy saat diklik | Memenuhi permintaan fitur tanpa server WebSocket | Server WebSocket sendiri (tidak didukung Vercel) |
 | Error tracking | **Sentry** | Tier gratis, integrasi Next.js | LogRocket |
@@ -63,7 +64,7 @@ flowchart LR
     N -->|URL bertanda tangan| CL[Cloudinary<br/>gambar dan CV]
     N -->|kirim email| RS[Resend]
     N -->|metadata repo| GH[GitHub API]
-    N -->|rate limit| UP[(Upstash Redis)]
+    VC[Vercel Cron] -->|harian| N
     N -.->|error| SE[Sentry]
     V -.->|lazy saat diklik| CH[Widget live chat]
     GA[GitHub Actions] -->|cron: backup terenkripsi| DB
@@ -94,7 +95,7 @@ flowchart LR
 │   │   │   └── global-not-found.tsx
 │   │   ├── components/       # ui/ (gaya shadcn), sections/, admin/, shared/
 │   │   ├── features/         # per domain: projects/, skills/, experience/, ...
-│   │   ├── lib/              # db, auth, env, github, cloudinary, resend, ratelimit
+│   │   ├── lib/              # db, auth (Better Auth), env, github, cloudinary, email, rate-limit
 │   │   ├── i18n/             # konfigurasi next-intl
 │   │   ├── fonts/            # font self-host (OFL)
 │   │   └── generated/prisma/ # client Prisma hasil generate (tidak di-commit)
@@ -144,8 +145,26 @@ erDiagram
     User {
       string id PK
       string email UK
-      string passwordHash
+      string name
+      boolean emailVerified
       enum role "USER | SUPER_ADMIN"
+    }
+    Session {
+      string id PK
+      string userId FK
+      string token UK
+      datetime expiresAt
+    }
+    Account {
+      string id PK
+      string userId FK
+      string providerId "credential"
+      string password "hash scrypt"
+    }
+    RateLimit {
+      string key PK
+      int count
+      datetime windowStart
     }
     Profile {
       int id PK "singleton"
@@ -267,7 +286,9 @@ erDiagram
 ```
 
 Catatan:
-- `User.role` menyimpan `USER` dan `SUPER_ADMIN` agar sesuai rencana, tetapi hanya satu `SUPER_ADMIN` yang dibuat lewat seed. Tidak ada registrasi publik.
+- `User`, `Session`, `Account`, dan `Verification` mengikuti skema Better Auth (dibuat di M2 dengan `@better-auth/cli generate`, lalu disesuaikan). Hash password disimpan di `Account.password`, bukan di `User`. Kolom `passwordHash` di skema M1 dihapus lewat migrasi M2 (tabelnya masih kosong).
+- `User.role` ditambahkan sebagai additional field Better Auth: `USER` atau `SUPER_ADMIN`. Hanya satu `SUPER_ADMIN` yang dibuat lewat seed. Tidak ada registrasi publik.
+- `RateLimit` dipakai helper rate limit untuk form publik dan `/api/track`. Baris lama dibersihkan Vercel Cron.
 - `PageView.visitorHash` = hash(IP + user-agent + garam harian). Garam berganti tiap hari sehingga pengunjung tidak bisa dilacak lintas hari.
 - Tabel besar seperti `PageView` diringkas dan dibersihkan otomatis (retensi 13 bulan).
 
@@ -334,10 +355,10 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 
 ## 7. Autentikasi dan Otorisasi
 
-- Auth.js Credentials, sesi **JWT**, cookie `httpOnly`, `secure`, `sameSite=lax`. Masa berlaku sesi pendek (misalnya 8 jam).
-- Login dibatasi (misalnya 5 percobaan per 15 menit per IP dan per email) dan diberi jeda seragam agar tidak membocorkan apakah email ada.
+- **Better Auth** email + password dengan `disableSignUp: true`. Sesi disimpan di tabel `Session` (bisa dicabut dari admin), cookie `httpOnly`, `secure`, `sameSite=lax`. Masa berlaku sesi pendek (misalnya 8 jam).
+- Login dibatasi oleh rate limit bawaan Better Auth (penyimpanan database, misalnya 5 percobaan per 15 menit per IP) dengan pesan galat yang sama untuk email salah maupun password salah.
 - **Pertahanan berlapis:** middleware/proxy melindungi `/admin/*`, dan setiap Server Action serta route handler admin memeriksa ulang sesi dan role.
-- Tidak ada registrasi publik. Akun admin dibuat lewat `prisma db seed` memakai `ADMIN_EMAIL` dan `ADMIN_PASSWORD` dari environment, lalu password diganti lewat admin.
+- Tidak ada registrasi publik. Akun admin dibuat oleh skrip seed lewat API server Better Auth (agar format hash cocok) memakai `ADMIN_EMAIL` dan `ADMIN_PASSWORD` dari environment, lalu password diganti lewat admin.
 - Lupa password: prosedur pemulihan lewat skrip yang dijalankan pemilik (`pnpm admin:reset-password`), tanpa alur email publik.
 
 ## 8. Rencana Keamanan
@@ -347,7 +368,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | XSS | React escape default. Markdown lewat `rehype-sanitize`. CSP ketat dengan nonce. Tidak ada `dangerouslySetInnerHTML` tanpa sanitasi |
 | Injeksi SQL | Hanya lewat Prisma (parameterisasi). Tidak ada `$queryRawUnsafe` |
 | CSRF | Server Actions memeriksa Origin. Route handler mutasi memeriksa `Origin`/`Sec-Fetch-Site` |
-| Brute force | Rate limit login dan form publik (Upstash) |
+| Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik |
 | Spam form | Honeypot + rate limit + validasi panjang. CAPTCHA hanya jika masih ada spam |
 | Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Batasi tipe (gambar, PDF) dan ukuran |
 | Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
@@ -356,7 +377,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Rantai pasok | Dependabot, `pnpm audit` di CI, versi terkunci |
 | Akses admin | Satu akun, log audit, notifikasi login baru via email |
 
-Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DIRECT_URL`, `AUTH_SECRET`, `AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `UPSTASH_REDIS_REST_*`, `GITHUB_TOKEN`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
+Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DIRECT_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
 
 ## 9. Lingkungan dan Deployment
 
@@ -400,4 +421,6 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 3 | Analitik sendiri tanpa cookie | Tidak perlu banner cookie, data untuk dashboard admin | Diusulkan |
 | 4 | Live chat lewat widget lazy | Vercel tidak menjalankan WebSocket permanen | Menunggu konfirmasi |
 | 5 | Rate limit + honeypot di form publik | Mencegah spam dan kuota email habis | Menunggu konfirmasi (berbeda dari jawaban awal) |
-| 6 | Auth.js dengan Better Auth sebagai cadangan | Auth.js v5 masih relatif baru | Diusulkan |
+| 6 | Better Auth untuk login admin (menggantikan Auth.js) | Stabil, sesi di database, rate limit bawaan | Final (2026-09-30) |
+| 7 | Rate limit di PostgreSQL, tanpa Upstash | Trafik kecil, satu layanan lebih sedikit | Final (2026-09-30) |
+| 8 | `fetch` untuk GitHub API, React Email untuk template, Vercel Cron untuk tugas harian | Lebih sedikit dependency, gratis | Final (2026-09-30) |

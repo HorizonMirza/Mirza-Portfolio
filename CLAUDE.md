@@ -30,7 +30,7 @@ Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md
 
 ## Stack Singkat
 
-Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas (Motion seperlunya) · next-intl · PostgreSQL (Neon) + Prisma · Auth.js (Credentials, satu admin) · Zod · Cloudinary · Resend · Upstash · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
+Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas (Motion seperlunya) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Resend + React Email · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
 
 ## Perintah
 

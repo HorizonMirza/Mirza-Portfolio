@@ -12,7 +12,7 @@ Status: **draf v1**. Urutan = prioritas. Tanda `[?]` = bergantung pada keputusan
 - [ ] Teks halaman error dan 404
 - [ ] Tautan sosial (LinkedIn, GitHub, email, WhatsApp, Instagram)
 - [ ] Jawaban untuk 15 keputusan terbuka (`Documentation/00-discovery.md` bagian 6, ringkasan di `PRD.md` bagian 11)
-- [ ] Akun layanan: Neon, Vercel, Cloudinary, Resend, Upstash, Sentry, uptime monitor
+- [ ] Akun layanan: Neon, Vercel, Cloudinary, Resend, Sentry, uptime monitor (Upstash tidak diperlukan lagi)
 - [ ] Domain `.site` (dibimbing pada M5)
 
 ## M0 — Pra-Perencanaan dan Dokumen
@@ -45,9 +45,11 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 
 ## M2 — Auth dan Super Admin (≈ 1 hari)
 
-- [ ] Auth.js Credentials + Argon2id, sesi JWT, halaman `/admin/login`
+- [ ] Better Auth (email + password, `disableSignUp`, adapter Prisma, sesi di database, hash bawaan), halaman `/admin/login`
+- [ ] Migrasi skema: tabel Better Auth (`User`, `Session`, `Account`, `Verification`) + `role`, hapus `User.passwordHash`
 - [ ] Middleware/proxy melindungi `/admin/*` dan pemeriksaan ulang di setiap action
-- [ ] Rate limit login (Upstash)
+- [ ] Rate limit login bawaan Better Auth (penyimpanan database)
+- [ ] Tabel `RateLimit` + helper `lib/rate-limit.ts` untuk form publik
 - [ ] Seed akun admin dari environment, skrip `admin:reset-password`
 - [ ] Komponen UI: Dialog, Sheet, Toast, DropdownMenu, Tabs (dari M1)
 - [ ] Layout admin (sidebar, responsif) dan dashboard awal. `app/admin/layout.tsx` menjadi root layout kedua (merender `<html>` sendiri)
@@ -57,7 +59,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Tabel admin dengan TanStack Table (cari, urut, paginasi, jadi kartu di HP)
 - [ ] Editor studi kasus: textarea Markdown + pratinjau (`react-markdown` + `rehype-sanitize`)
 - [ ] Grafik kunjungan di dashboard dengan Recharts (shadcn charts), hanya dimuat di `/admin`
-- [ ] Impor dari GitHub (Octokit, cache) → mengisi form project
+- [ ] Impor dari GitHub (`fetch` ke REST API, cache 1 jam) → mengisi form project
 - [ ] Kotak masuk pesan (baru/dibaca/arsip)
 - [ ] Log audit (tulis pada setiap mutasi) dan halaman peninjau
 - [ ] Newsletter di admin: daftar pelanggan, kirim broadcast `[?]`
@@ -73,7 +75,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Experience & Education (timeline + filter) `[?]`
 - [ ] Skills
 - [ ] Projects: daftar, filter teknologi, halaman detail, metadata GitHub. Harus tampil baik dengan 1 project (GAAS): kartu unggulan lebar, filter tersembunyi sampai cukup project, keadaan kosong
-- [ ] Kontak: Server Action `submitContact` + `useActionState` (tanpa library form) + email Resend + honeypot dan rate limit `[?]`
+- [ ] Kontak: Server Action `submitContact` + `useActionState` (tanpa library form) + email Resend (template React Email ID/EN) + honeypot dan rate limit tabel `RateLimit` `[?]`
 - [ ] Unduh CV: `/api/cv` dengan penghitung unduhan
 - [ ] Newsletter publik: Server Action `subscribeNewsletter`, route konfirmasi dan unsubscribe `[?]`
 - [ ] Kebijakan Privasi, 404, error
@@ -103,6 +105,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Beli dan hubungkan domain `.site` (pemandu langkah), DNS, HTTPS
 - [ ] Verifikasi domain di Resend (SPF/DKIM)
 - [ ] Variabel lingkungan production, migrasi production, seed admin
+- [ ] Vercel Cron (`Frontend/vercel.json`): bersihkan `PageView`/`RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET`
 - [ ] Sentry, uptime monitor, Vercel Analytics + Speed Insights, notifikasi email dan Telegram
 - [ ] Backup harian terenkripsi (`backup.yml`) dan uji pemulihan
 - [ ] Uji rollback Vercel
@@ -134,3 +137,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Folder diganti menjadi `Frontend/`, `Backend/`, `Database/`, `Documentation/`. Skill dipindah ke `.agents/skill/SKILL.md` |
 | 2026-09-30 | Dasar dinaikkan: Node 22 → 24 LTS, TypeScript 5.9 → 6.0, ESLint 9 → 10 (+ `@eslint/compat`), @types/node 20 → 24. pnpm tetap 10 |
 | 2026-09-30 | Frontend: animasi utama pindah ke CSS bawaan (Motion seperlunya), form publik ke Server Actions tanpa library form, ditambah rencana TanStack Table, Recharts, editor Markdown untuk M2 |
+| 2026-09-30 | Backend: Auth.js → Better Auth (hash bawaan), Upstash → tabel `RateLimit` di Postgres, Octokit → `fetch`, tambah React Email dan Vercel Cron |
