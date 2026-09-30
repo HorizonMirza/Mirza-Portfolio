@@ -22,6 +22,8 @@
   --success: #0b7a3e;
   /* --accent dekoratif saja, tidak untuk teks */
   --accent: #0ea5e9;
+  /* warna seri grafik, divalidasi skrip dataviz (pita kecerahan + kontras) */
+  --chart-1: #1d4fd7;
 
   color-scheme: light;
 }
@@ -39,6 +41,7 @@
   --danger: #ff8a80;
   --success: #5fd394;
   --accent: #38bdf8;
+  --chart-1: #6690f5;
 
   color-scheme: dark;
 }
@@ -58,6 +61,7 @@
     --danger: #ff8a80;
     --success: #5fd394;
     --accent: #38bdf8;
+    --chart-1: #6690f5;
 
     color-scheme: dark;
   }
@@ -76,6 +80,7 @@
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-accent: var(--accent);
+  --color-chart-1: var(--chart-1);
 
   /* alias untuk komponen shadcn/ui */
   --color-background: var(--bg);

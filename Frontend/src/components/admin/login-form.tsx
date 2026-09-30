@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
 
 export function LoginForm({ redirectTo }: { redirectTo: string }) {
+  const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
 
@@ -30,8 +32,9 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
       )
       return
     }
-    // muat ulang penuh agar layout server membaca sesi baru
-    window.location.assign(redirectTo)
+    // layout server membaca cookie sesi baru saat navigasi
+    router.replace(redirectTo)
+    router.refresh()
   }
 
   return (
