@@ -1,23 +1,28 @@
+'use client'
+
 import { useTranslations } from 'next-intl'
 
 import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { Link } from '@/i18n/navigation'
 
-export default function LocaleNotFound() {
-  const t = useTranslations('NotFound')
-
+// Pesan sopan tanpa detail teknis (DESIGN.md bagian 6).
+export default function LocaleError({
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  const t = useTranslations('Error')
   return (
     <Container className="flex min-h-[60dvh] flex-col justify-center py-16">
-      <p className="font-mono text-label tracking-widest text-muted uppercase">404</p>
+      <p className="font-mono text-label tracking-widest text-muted uppercase">500</p>
       <h1 className="mt-3 text-h1 font-bold tracking-tight">{t('title')}</h1>
       <p className="mt-4 max-w-prose text-muted">{t('body')}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button asChild>
-          <Link href="/">{t('home')}</Link>
-        </Button>
+        <Button onClick={() => reset()}>{t('retry')}</Button>
         <Button asChild variant="secondary">
-          <Link href="/projects">{t('projects')}</Link>
+          <Link href="/">{t('home')}</Link>
         </Button>
       </div>
     </Container>

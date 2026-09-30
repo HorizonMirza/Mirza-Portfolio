@@ -87,3 +87,16 @@ export function resolveBaseUrl(env: AuthEnv): string | undefined {
   if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
   return undefined
 }
+
+// URL publik situs untuk tautan absolut (email, sitemap). Urutan: domain yang diatur,
+// domain production Vercel, URL deployment, lalu localhost.
+export function siteUrl(source: Record<string, string | undefined> = process.env): string {
+  const pick = (v: string | undefined) => (v && v.trim() !== '' ? v.trim() : undefined)
+  const explicit = pick(source.NEXT_PUBLIC_SITE_URL)
+  if (explicit) return explicit.replace(/\/$/, '')
+  const production = pick(source.VERCEL_PROJECT_PRODUCTION_URL)
+  if (production) return `https://${production}`
+  const deployment = pick(source.VERCEL_URL)
+  if (deployment) return `https://${deployment}`
+  return 'http://localhost:3000'
+}

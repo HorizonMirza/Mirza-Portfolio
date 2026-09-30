@@ -2,7 +2,7 @@
 
 import type { ComponentProps } from 'react'
 
-import { MarkdownView } from '@/components/admin/markdown-view'
+import { MarkdownView } from '@/components/shared/markdown-view'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 

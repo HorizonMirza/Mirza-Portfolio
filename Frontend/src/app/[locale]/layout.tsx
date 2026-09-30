@@ -6,11 +6,14 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import '@/app/globals.css'
 import { jakarta, jetbrains } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
+import { PageViewTracker } from '@/components/site/page-view-tracker'
+import { SiteFooter } from '@/components/site/site-footer'
+import { SiteHeader } from '@/components/site/site-header'
 import { routing } from '@/i18n/routing'
 
-// Hanya id dan en yang sah. Segmen lain (mis. /admin/...) tidak dianggap bahasa,
-// sehingga URL yang tidak dikenal jatuh ke app/global-not-found.tsx.
-export const dynamicParams = false
+// Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
+// Jangan set `dynamicParams = false` di sini. Dengan itu, render ulang ISR setelah admin menyimpan
+// gagal (NoFallbackError) dan seluruh halaman publik menjadi 404 (ditemukan lewat tes E2E, M3).
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -23,7 +26,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
-    title: t('title'),
+    title: { default: t('title'), template: '%s — Muhammad Mirza' },
     description: t('description'),
     alternates: {
       canonical: `/${locale}`,
@@ -58,7 +61,16 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+          <NextIntlClientProvider>
+            <div className="flex min-h-dvh flex-col">
+              <SiteHeader locale={locale} />
+              <main id="main" className="flex-1">
+                {children}
+              </main>
+              <SiteFooter locale={locale} />
+            </div>
+            <PageViewTracker />
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>

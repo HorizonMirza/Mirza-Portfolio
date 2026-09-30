@@ -12,6 +12,8 @@ const repoResponse = z.object({
   language: z.string().nullable(),
   topics: z.array(z.string()).optional(),
   private: z.boolean(),
+  stargazers_count: z.number().int().optional(),
+  pushed_at: z.string().nullable().optional(),
 })
 
 export type GithubRepo = z.infer<typeof repoResponse>
@@ -68,4 +70,28 @@ export function matchSkills(
     [...(repo.topics ?? []), ...(repo.language ? [repo.language] : [])].map(normalize),
   )
   return skills.filter((s) => wanted.has(normalize(s.name))).map((s) => s.id)
+}
+
+export type GithubMeta = {
+  stars: number
+  language: string | null
+  pushedAt: string | null
+  url: string
+}
+
+// Metadata kartu project publik. Gagal (batas API, jaringan, repo privat) → null, kartu tetap tampil.
+export async function getGithubMeta(repo: string | null): Promise<GithubMeta | null> {
+  if (!repo) return null
+  try {
+    const data = await fetchGithubRepo(repo)
+    if (data.private) return null
+    return {
+      stars: data.stargazers_count ?? 0,
+      language: data.language,
+      pushedAt: data.pushed_at ?? null,
+      url: data.html_url,
+    }
+  } catch {
+    return null
+  }
 }
