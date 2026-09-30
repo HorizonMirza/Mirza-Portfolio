@@ -95,7 +95,7 @@ Status: selesai 2026-09-30. 146 tes unit dan 88 tes E2E (Chromium + emulasi HP, 
 
 ## M4 — Polish (≈ 1 hari)
 
-Status: selesai 2026-09-30 kecuali uji manual pembaca layar dan lintas browser di CI (lihat di bawah). Keputusan pemilik: desain tetap, hero canvas, WhatsApp, tema awal gelap.
+Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. Keputusan pemilik: desain tetap, hero canvas, WhatsApp, tema awal gelap.
 
 - [x] Hero "Horizon" canvas 2D (tingkat perangkat, idle init, berhenti saat tidak terlihat, statis pada reduced-motion/hemat data) di atas latar CSS statis. Pelat status sudah ada sejak M3
 - [x] Reveal sekali jalan (IntersectionObserver, < 1 KB) dan transisi halaman (`<ViewTransition>`), header padat saat digulir (CSS). Menu HP memakai `popover` bawaan, tanpa Motion. Semua menghormati `prefers-reduced-motion`
@@ -106,7 +106,7 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar dan lintas browser d
 - [ ] Uji manual keyboard dan pembaca layar (VoiceOver/TalkBack) di perangkat nyata, dilakukan pemilik setelah deploy
 - [x] Performa: subset font latin saja (−22 KB) dan font mono tidak di-preload. Lighthouse mobile (lokal, throttling simulasi): Performance 94–99, Accessibility 100, Best Practices 100, SEO 100 di 5 halaman. LCP terukur 0,2 s; LCP simulasi 2,1–3,1 s karena JS kerangka Next/React (±190 KB). Web Vitals lapangan dicek dengan Speed Insights setelah deploy
 - [x] Header keamanan dan CSP (tanpa nonce untuk publik, nonce untuk admin), notifikasi email login baru
-- [x] Tes E2E Chromium + emulasi HP lokal (96 lulus); Firefox, WebKit, dan iPhone ditambahkan ke CI (`E2E_ALL_BROWSERS=1`), hasil pertama menunggu CI
+- [x] Tes E2E Chromium + emulasi HP lokal (96 lulus); Firefox, WebKit, dan iPhone di CI (`E2E_ALL_BROWSERS=1`) hijau sejak commit 452c1ce
 - [x] Review kode dan keamanan mandiri (temuan diperbaiki: notifikasi login di serverless memakai `after()`, CSP `upgrade-insecure-requests` hanya di Vercel)
 
 **Selesai bila:** Lighthouse mobile ≥ 90 di semua kategori, axe bersih, semua tes lulus.
