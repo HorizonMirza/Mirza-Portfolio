@@ -53,7 +53,10 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Layout admin (sidebar, responsif) dan dashboard awal. `app/admin/layout.tsx` menjadi root layout kedua (merender `<html>` sendiri)
 - [ ] Modul CRUD (pola di `SKILL.md`): Project, Skill + kategori, Experience, Profile/hero
 - [ ] Unggah bertanda tangan ke Cloudinary (gambar, foto, CV) dengan alt text dua bahasa
-- [ ] Form dua bahasa (tab ID/EN), status draf/terbit, urutan (geser)
+- [ ] Form dua bahasa (tab ID/EN) dengan React Hook Form + Zod, status draf/terbit, urutan (geser)
+- [ ] Tabel admin dengan TanStack Table (cari, urut, paginasi, jadi kartu di HP)
+- [ ] Editor studi kasus: textarea Markdown + pratinjau (`react-markdown` + `rehype-sanitize`)
+- [ ] Grafik kunjungan di dashboard dengan Recharts (shadcn charts), hanya dimuat di `/admin`
 - [ ] Impor dari GitHub (Octokit, cache) → mengisi form project
 - [ ] Kotak masuk pesan (baru/dibaca/arsip)
 - [ ] Log audit (tulis pada setiap mutasi) dan halaman peninjau
@@ -70,9 +73,9 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [ ] Experience & Education (timeline + filter) `[?]`
 - [ ] Skills
 - [ ] Projects: daftar, filter teknologi, halaman detail, metadata GitHub. Harus tampil baik dengan 1 project (GAAS): kartu unggulan lebar, filter tersembunyi sampai cukup project, keadaan kosong
-- [ ] Kontak: form + `/api/contact` + email Resend + honeypot dan rate limit `[?]`
+- [ ] Kontak: Server Action `submitContact` + `useActionState` (tanpa library form) + email Resend + honeypot dan rate limit `[?]`
 - [ ] Unduh CV: `/api/cv` dengan penghitung unduhan
-- [ ] Newsletter publik: subscribe, konfirmasi, unsubscribe `[?]`
+- [ ] Newsletter publik: Server Action `subscribeNewsletter`, route konfirmasi dan unsubscribe `[?]`
 - [ ] Kebijakan Privasi, 404, error
 - [ ] Revalidate berbasis tag dari aksi admin
 - [ ] Statistik pengunjung: `/api/track`, ringkasan di dashboard admin
@@ -84,7 +87,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 ## M4 — Polish (≈ 1 hari)
 
 - [ ] Hero "Horizon" (canvas 2D ringan, tingkat perangkat, anggaran performa di `DESIGN.md`) dan pelat status `[?]`
-- [ ] Animasi reveal dan transisi halaman, dukung `prefers-reduced-motion`
+- [ ] Animasi reveal (CSS scroll-driven) dan transisi halaman (View Transitions), tanpa JS. Motion hanya untuk menu HP/modal. Dukung `prefers-reduced-motion`
 - [ ] Widget live chat lazy `[?]`
 - [ ] SEO: metadata, Open Graph (gambar dinamis), sitemap, robots, `hreflang`, data terstruktur `Person`
 - [ ] Aksesibilitas: audit axe, uji keyboard dan pembaca layar
@@ -130,3 +133,4 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 | 2026-09-30 | Stack dikunci: Opsi A (Next.js full-stack). Stack GAAS (ASP.NET Core) tidak dipakai, lihat ARCHITECTURE bagian 12 |
 | 2026-09-30 | Folder diganti menjadi `Frontend/`, `Backend/`, `Database/`, `Documentation/`. Skill dipindah ke `.agents/skill/SKILL.md` |
 | 2026-09-30 | Dasar dinaikkan: Node 22 → 24 LTS, TypeScript 5.9 → 6.0, ESLint 9 → 10 (+ `@eslint/compat`), @types/node 20 → 24. pnpm tetap 10 |
+| 2026-09-30 | Frontend: animasi utama pindah ke CSS bawaan (Motion seperlunya), form publik ke Server Actions tanpa library form, ditambah rencana TanStack Table, Recharts, editor Markdown untuk M2 |

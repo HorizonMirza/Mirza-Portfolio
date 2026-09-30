@@ -30,7 +30,7 @@ Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md
 
 ## Stack Singkat
 
-Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind + shadcn/ui + Motion · next-intl · PostgreSQL (Neon) + Prisma · Auth.js (Credentials, satu admin) · Zod · Cloudinary · Resend · Upstash · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
+Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas (Motion seperlunya) · next-intl · PostgreSQL (Neon) + Prisma · Auth.js (Credentials, satu admin) · Zod · Cloudinary · Resend · Upstash · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
 
 ## Perintah
 
@@ -71,6 +71,7 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 - WCAG 2.2 AA: semantik HTML, keyboard, fokus terlihat, alt text dua bahasa, `prefers-reduced-motion`.
 - Target Lighthouse mobile ≥ 90. Jangan menambah JavaScript klien tanpa alasan. Utamakan Server Components.
 - Gunakan token desain (CSS variables), bukan warna atau ukuran acak.
+- Animasi: CSS dulu (scroll-driven, View Transitions, `@starting-style`). Motion hanya untuk gerak yang bergantung state React. Form publik memakai Server Action + `useActionState`, tanpa library form (`Documentation/DESIGN.md` bagian 2.4 dan 3).
 
 **Proses**
 - Jangan menambah dependency, layanan, atau biaya tanpa persetujuan. Tuliskan alasannya.

@@ -22,7 +22,7 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, satu PR.
    await db.$transaction([...tulis, ...catatAudit(session, 'create', '<entity>', id, data)])
    updateTag('<domain>') // Next 16: di Server Action pakai updateTag (read-your-writes); revalidateTag butuh argumen kedua
    ```
-5. **UI admin** di `Frontend/src/app/admin/<domain>/`: tabel (cari, urut, paginasi), form dengan tab ID/EN, status draf/terbit, hapus dengan konfirmasi. Toast untuk hasil aksi.
+5. **UI admin** di `Frontend/src/app/admin/<domain>/`: tabel TanStack Table (cari, urut, paginasi), form React Hook Form + Zod dengan tab ID/EN, status draf/terbit, hapus dengan konfirmasi. Toast untuk hasil aksi.
 6. **Tampilan publik** di `Frontend/src/app/[locale]/...` memakai Server Components. Panggil `setRequestLocale(locale)` di layout/page agar tetap statis. Tambahkan ke sitemap bila punya halaman sendiri.
 7. **Teks UI** ditambahkan ke `Frontend/messages/id.json` **dan** `Frontend/messages/en.json`.
 8. **Tes:** unit untuk skema dan otorisasi, E2E untuk alur tambah → tampil di publik.
@@ -42,7 +42,7 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, satu PR.
 
 1. Tentukan akses: publik, publik + rate limit, atau admin.
 2. Validasi input dengan Zod. Untuk metode mutasi periksa `Origin`.
-3. Respons mengikuti kontrak di `ARCHITECTURE.md` bagian 6.3 (`{ data }` / `{ error: { code, message, fields } }`).
+3. Respons mengikuti kontrak di `ARCHITECTURE.md` bagian 6.4 (`{ data }` / `{ error: { code, message, fields } }`).
 4. Endpoint publik mutasi wajib rate limit dan tidak membocorkan detail internal pada galat.
 5. Jangan mencatat data pribadi di log.
 6. Tambahkan tes dan perbarui tabel endpoint di `ARCHITECTURE.md`.

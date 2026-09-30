@@ -20,15 +20,19 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Framework | **Next.js 16 (App Router, Turbopack)** + React 19 + **TypeScript strict** | SEO (SSG/ISR), satu codebase untuk UI dan API, cocok dengan Vercel | Astro (kurang cocok untuk admin dinamis), Remix |
 | Styling | **Tailwind CSS** + design token CSS variables | Cepat, konsisten, mudah tema gelap/terang | CSS Modules |
 | Komponen | **shadcn/ui** (Radix) | Aksesibel bawaan, kode dimiliki sendiri, mudah disesuaikan | MUI, Chakra |
-| Animasi | **Motion** (Framer Motion) + canvas ringan untuk hero | Deklaratif, mendukung reduced-motion | GSAP, Three.js (terlalu berat untuk HP) |
+| Animasi | **CSS bawaan** (scroll-driven animation, View Transitions, `@starting-style`) untuk reveal, transisi, dan hover. **Canvas 2D buatan sendiri** untuk hero. **Motion** hanya untuk animasi yang bergantung state React (menu, modal, daftar), dimuat di komponen yang butuh saja | 0 KB JS untuk sebagian besar gerak, ringan di HP, mendukung Lighthouse ≥ 90 dan `prefers-reduced-motion` | Motion untuk semua animasi (JS lebih berat), GSAP (baru dipertimbangkan bila butuh animasi scroll yang sangat kompleks), Three.js/WebGL (terlalu berat untuk HP), Lenis (mengganggu scroll bawaan dan aksesibilitas) |
 | Tema | **next-themes** | Tanpa flicker, ikut sistem | Buatan sendiri |
 | i18n | **next-intl**, rute `/id` dan `/en` | Server component friendly, SEO (`hreflang`) | i18next |
 | Database | **PostgreSQL di Neon** | Serverless, tier gratis, branching database | Supabase (fitur lebih banyak dari yang dibutuhkan) |
 | ORM | **Prisma 7** (generator `prisma-client`, driver adapter `@prisma/adapter-pg`, `prisma.config.ts`) | Type-safe, migrasi jelas, sesuai pilihan Anda | Drizzle |
 | Auth | **Auth.js (NextAuth v5)**, Credentials, sesi JWT | Sesuai pilihan Anda, cukup untuk satu admin | Better Auth (cadangan jika Auth.js v5 bermasalah) |
 | Hash password | **Argon2id** (`@node-rs/argon2`) | Standar modern, jalan di Vercel | bcrypt |
-| Validasi | **Zod** + React Hook Form | Satu skema untuk client dan server | Yup |
-| Markdown | `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, aman dari XSS | MDX di repo |
+| Validasi | **Zod** | Satu skema untuk server dan form | Yup |
+| Form publik (kontak, newsletter) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
+| Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
+| Tabel admin | **TanStack Table** (M2) | Headless, cari/urut/paginasi, cocok dengan shadcn | AG Grid (berat) |
+| Grafik dashboard admin | **Recharts** lewat shadcn charts (M2), hanya dimuat di `/admin` | Standar shadcn, tidak membebani halaman publik | Chart.js |
+| Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Email | **Resend** | API sederhana, tier gratis, cocok untuk kontak dan newsletter | SMTP sendiri |
 | Rate limit | **Upstash Redis** (`@upstash/ratelimit`) | Cocok serverless, tier gratis | Tabel database |
@@ -276,7 +280,16 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 3. menulis ke database dan `AuditLog` dalam satu transaksi,
 4. memanggil `revalidateTag`.
 
-### 6.2 Route Handlers
+### 6.2 Form publik (Server Actions)
+
+Form kontak dan pendaftaran newsletter memakai **Server Action** dengan `useActionState`, bukan route handler, agar tetap berfungsi tanpa JavaScript di sisi klien. Setiap action: validasi Zod, honeypot, rate limit per IP-hash, lalu mengembalikan state `{ status, fieldErrors, message }` untuk ditampilkan dengan `aria-live`.
+
+| Action | Fungsi |
+|---|---|
+| `submitContact` | Simpan `Message`, kirim email notifikasi (Resend) |
+| `subscribeNewsletter` | Buat `Subscriber` PENDING, kirim email konfirmasi |
+
+### 6.3 Route Handlers
 
 | Metode | Path | Akses | Fungsi |
 |---|---|---|---|
@@ -284,8 +297,6 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 | GET | `/api/v1/projects/{slug}` | Publik | Detail project |
 | GET | `/api/v1/skills` | Publik | Skill per kategori |
 | GET | `/api/v1/profile` | Publik | Profil publik |
-| POST | `/api/contact` | Publik, rate limit | Kirim pesan kontak |
-| POST | `/api/newsletter/subscribe` | Publik, rate limit | Daftar, kirim email konfirmasi |
 | GET | `/api/newsletter/confirm?token=` | Publik | Konfirmasi langganan |
 | GET | `/api/newsletter/unsubscribe?token=` | Publik | Berhenti langganan |
 | POST | `/api/track` | Publik, rate limit | Catat kunjungan halaman (beacon) |
@@ -294,7 +305,7 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 | GET | `/api/admin/github/repo?name=` | Admin | Ambil data repo untuk impor project |
 | GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
 
-### 6.3 Kontrak
+### 6.4 Kontrak
 
 - Respons JSON, `Content-Type: application/json`.
 - Sukses: `{ "data": ..., "meta": { ... } }`. Galat: `{ "error": { "code": "VALIDATION_ERROR", "message": "...", "fields": { ... } } }`.
@@ -305,15 +316,21 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 Contoh:
 
 ```http
-POST /api/contact
-{ "name": "Rina", "email": "rina@contoh.id", "subject": "Kolaborasi", "message": "Halo Mirza ...", "website": "" }
+GET /api/v1/projects?locale=id&page=1
 
-201 { "data": { "id": "..." } }
-400 { "error": { "code": "VALIDATION_ERROR", "message": "Data tidak valid", "fields": { "email": "Format email tidak valid" } } }
-429 { "error": { "code": "RATE_LIMITED", "message": "Terlalu banyak percobaan, coba lagi nanti" } }
+200 { "data": [{ "slug": "gaas", "title": "GAAS", "summary": "...", "year": 2026 }], "meta": { "page": 1, "total": 1 } }
+400 { "error": { "code": "VALIDATION_ERROR", "message": "Parameter tidak valid", "fields": { "locale": "Harus id atau en" } } }
+429 { "error": { "code": "RATE_LIMITED", "message": "Terlalu banyak permintaan, coba lagi nanti" } }
 ```
 
-`website` adalah kolom honeypot. Jika terisi, pesan dibuang diam-diam dan tetap membalas sukses.
+Contoh state yang dikembalikan Server Action form kontak (bagian 6.2):
+
+```ts
+{ status: 'error', fieldErrors: { email: 'Format email tidak valid' }, message: 'Data tidak valid' }
+{ status: 'success', message: 'Pesan terkirim' }
+```
+
+Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang diam-diam dan action tetap mengembalikan sukses.
 
 ## 7. Autentikasi dan Otorisasi
 

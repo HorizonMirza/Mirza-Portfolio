@@ -103,7 +103,19 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`).
 | Easing | `cubic-bezier(0.22, 1, 0.36, 1)` (keluar halus) |
 | Reveal saat scroll | fade + geser 12 px, sekali saja, disusun bertahap ≤ 60 ms |
 | Transisi halaman | fade 150 ms |
-| Hero | simpul melayang lambat, kecepatan sangat rendah |
+| Hero | grid perspektif menuju garis horizon, pita cahaya naik sangat pelan |
+
+**Teknologi gerak (urutan prioritas):**
+
+| Kebutuhan | Teknologi | Beban JS |
+|---|---|---|
+| Reveal saat scroll, progres scroll | CSS scroll-driven animation (`animation-timeline: view()`), fallback: tampil langsung tanpa animasi | 0 KB |
+| Transisi antarhalaman | View Transitions (CSS + dukungan Next.js/React) | 0 KB |
+| Muncul/hilang elemen, hover, fokus | CSS `transition` + `@starting-style` | 0 KB |
+| Hero "Horizon" | Canvas 2D buatan sendiri | ±4 KB |
+| Menu HP, modal, daftar yang berubah urutan | **Motion**, hanya di komponen tersebut (`'use client'`) | seperlunya |
+
+Aturan: jangan memakai Motion untuk efek yang bisa dibuat dengan CSS. Browser yang belum mendukung scroll-driven animation atau View Transitions tetap menampilkan konten dengan benar, hanya tanpa animasi. GSAP, WebGL, dan smooth scroll (Lenis) tidak dipakai.
 
 `prefers-reduced-motion: reduce` → semua gerak dimatikan atau diganti perubahan opasitas instan. Hero menampilkan bingkai statis.
 
@@ -126,10 +138,10 @@ Berbasis shadcn/ui, disesuaikan dengan token di atas. Semua punya keadaan: defau
 | **Chip / Badge** | Mono, kecil, untuk teknologi |
 | **Timeline item** | Garis vertikal, titik, periode, peran, instansi, uraian |
 | **Skill group** | Judul kategori + daftar chip |
-| **Form field** | Label selalu terlihat, teks bantuan, galat inline dengan `aria-describedby` |
+| **Form field** | Label selalu terlihat, teks bantuan, galat inline dengan `aria-describedby`. Form publik: Server Action + `useActionState` (tanpa library form). Form admin: React Hook Form |
 | **Toast** | Untuk hasil aksi admin (`role="status"`) |
 | **Dialog / Sheet** | Fokus terkunci, tutup dengan Esc |
-| **Table (admin)** | Pengurutan, pencarian, paginasi, ubah jadi kartu di HP |
+| **Table (admin)** | TanStack Table: pengurutan, pencarian, paginasi, ubah jadi kartu di HP |
 | **Empty / Error state** | Pesan jelas dan aksi lanjutan |
 | **Skeleton** | Untuk data yang dimuat |
 
