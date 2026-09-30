@@ -33,7 +33,7 @@ export async function writeAudit(
   tx: Tx,
   input: {
     actorId: string
-    action: 'create' | 'update' | 'delete' | 'reorder' | 'import'
+    action: 'create' | 'update' | 'delete' | 'reorder' | 'import' | 'password'
     entity: string
     entityId?: string | null
     before?: Snapshot | null

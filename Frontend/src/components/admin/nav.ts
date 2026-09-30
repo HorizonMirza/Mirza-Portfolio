@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Mail,
   Sparkles,
+  KeyRound,
   UserRound,
 } from 'lucide-react'
 
@@ -18,6 +19,7 @@ export const adminNav = [
   { href: '/admin/messages', label: 'Pesan', icon: Inbox },
   { href: '/admin/subscribers', label: 'Pelanggan', icon: Mail },
   { href: '/admin/audit', label: 'Log audit', icon: History },
+  { href: '/admin/account', label: 'Akun', icon: KeyRound },
 ] as const
 
 // Link aktif: sama persis untuk dashboard, awalan untuk halaman lain.
