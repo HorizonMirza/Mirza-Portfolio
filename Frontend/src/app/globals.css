@@ -389,3 +389,92 @@
     animation: none;
   }
 }
+
+/* Login admin: lingkaran foto memakai kilau yang sama dengan kolom. */
+.login-ring {
+  border-radius: 9999px;
+  padding: 2px;
+}
+
+/* Login admin: isi otomatis browser (autofill) tidak boleh mengganti latar kolom menjadi terang. */
+.login-input:-webkit-autofill,
+.login-input:-webkit-autofill:hover,
+.login-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  -webkit-box-shadow: 0 0 0 1000px #111117 inset;
+  box-shadow: 0 0 0 1000px #111117 inset;
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* Tombol tema: ikon matahari (terang) dan bulan (gelap) digambar ulang sambil membesar/mengecil,
+   meniru komponen AnimatedThemeToggle tanpa framer-motion. */
+.theme-icon path {
+  stroke-dasharray: 1;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transition:
+    transform 700ms var(--ease-out-soft),
+    stroke-dashoffset 700ms var(--ease-out-soft);
+}
+.theme-sun path {
+  transform: scale(1);
+  stroke-dashoffset: 0;
+}
+.theme-moon {
+  transform: scale(0);
+  stroke-dashoffset: 1;
+}
+.dark .theme-sun path {
+  transform: scale(0);
+  stroke-dashoffset: 1;
+}
+.dark .theme-moon {
+  transform: scale(1);
+  stroke-dashoffset: 0;
+}
+
+/* Ganti tema: tampilan baru meluas melingkar dari tombol (animasi clip-path di theme-toggle.tsx),
+   tanpa crossfade bawaan. */
+:root[data-theme-switch]::view-transition-old(root),
+:root[data-theme-switch]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-theme-switch]::view-transition-old(root) {
+  z-index: 1;
+}
+:root[data-theme-switch]::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Ganti bahasa: kode bahasa berputar keluar saat ditekan dan berputar masuk di halaman baru. */
+.lang-code {
+  display: inline-block;
+  animation: lang-in 450ms var(--ease-out-soft) both;
+}
+.lang-code[data-leaving] {
+  animation: lang-out 300ms var(--ease-out-soft) both;
+}
+@keyframes lang-in {
+  from {
+    opacity: 0;
+    transform: translateY(70%) rotateX(-80deg);
+  }
+}
+@keyframes lang-out {
+  to {
+    opacity: 0;
+    transform: translateY(-70%) rotateX(80deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon path {
+    transition: none;
+  }
+  .lang-code,
+  .lang-code[data-leaving] {
+    animation: none;
+  }
+}

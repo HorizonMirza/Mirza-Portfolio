@@ -11,22 +11,23 @@ import { Link } from '@/i18n/navigation'
 
 import { NavLinks } from './nav-links'
 
-const pill =
-  'flex items-center gap-1 rounded-full border border-border bg-surface/90 p-1 shadow-lg backdrop-blur-lg'
+// permukaan melayang bersama: kapsul menu dan tombol-tombol bulat di topbar
+const floating = 'border border-border bg-surface/90 shadow-lg backdrop-blur-lg'
+const pill = `flex items-center gap-1 rounded-full p-1 ${floating}`
 
 // Foto profil bulat: foto dari admin bila ada, selain itu foto bawaan pemilik.
 function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
   return (
     <Link
       href="/"
-      className="inline-flex size-10 shrink-0 overflow-hidden rounded-full bg-surface-2 ring-1 ring-border"
+      className={`inline-flex size-11 shrink-0 overflow-hidden rounded-full ${floating}`}
     >
       <Image
         src={photoUrl ?? DEFAULT_PROFILE_AVATAR}
         alt=""
-        width={80}
-        height={80}
-        sizes="40px"
+        width={88}
+        height={88}
+        sizes="44px"
         className="size-full object-cover"
       />
       <span className="sr-only">{name}</span>
@@ -34,8 +35,9 @@ function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
   )
 }
 
-// Topbar "tubelight": kapsul melayang di atas. Desktop: foto, menu teks, bahasa, tema, CV.
-// HP: kapsul atas hanya foto, bahasa, tema. Menu pindah ke kapsul ikon di bawah layar.
+// Topbar "tubelight" tiga bagian: foto bulat di kiri, kapsul menu di tengah (desktop),
+// tombol bahasa dan tema di kanan, masing-masing lingkaran sendiri.
+// HP: menu pindah ke kapsul ikon di bawah layar.
 export async function SiteHeader({ locale }: { locale: AppLocale }) {
   const [t, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Nav' }),
@@ -45,24 +47,29 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
 
   return (
     <>
-      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 flex justify-center px-4 pt-3 lg:pt-4">
-        <div className={pill}>
-          <Avatar name={name} photoUrl={profile?.photo?.url} />
-          <nav aria-label={t('label')} className="hidden px-1 lg:block">
-            <NavLinks variant="top" />
+      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 px-4 pt-3 sm:px-6 lg:px-8 lg:pt-4">
+        <div className="mx-auto grid max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div className="justify-self-start">
+            <Avatar name={name} photoUrl={profile?.photo?.url} />
+          </div>
+          <nav aria-label={t('label')} className="hidden lg:block">
+            <div className={pill}>
+              <NavLinks variant="top" />
+            </div>
           </nav>
-          <span aria-hidden="true" className="mx-1 hidden h-6 w-px bg-border lg:block" />
-          <LocaleSwitcher />
-          <ThemeToggle />
-          {profile?.hasCv ? (
-            <a
-              href={`/api/cv?locale=${locale}`}
-              className="ml-1 hidden min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-fg transition-colors hover:bg-primary/90 lg:inline-flex"
-            >
-              <Download className="size-4" aria-hidden="true" />
-              {t('downloadCv')}
-            </a>
-          ) : null}
+          <div className="col-start-3 flex items-center gap-2 justify-self-end">
+            {profile?.hasCv ? (
+              <a
+                href={`/api/cv?locale=${locale}`}
+                className="hidden min-h-11 items-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-fg shadow-lg transition-colors hover:bg-primary/90 lg:inline-flex"
+              >
+                <Download className="size-4" aria-hidden="true" />
+                {t('downloadCv')}
+              </a>
+            ) : null}
+            <LocaleSwitcher className={`size-11 ${floating}`} />
+            <ThemeToggle className={`size-11 ${floating}`} />
+          </div>
         </div>
       </header>
       <nav

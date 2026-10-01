@@ -26,13 +26,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
         >
           Lewati ke konten utama
         </a>
-        <ThemeProvider
-          nonce={nonce}
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider nonce={nonce} attribute="class" defaultTheme="dark" enableSystem>
           {/* komponen bersama (toggle tema) memakai teks dari messages/id.json */}
           <NextIntlClientProvider locale="id">
             {children}

@@ -18,7 +18,7 @@ const icons = {
   contact: Mail,
 } as const
 
-// Lampu di atas menu aktif. Saat pindah halaman, React <ViewTransition> dengan nama yang sama
+// Lampu hitam/putih (ikut warna teks tema) di atas menu aktif. Saat pindah halaman, React <ViewTransition> dengan nama yang sama
 // menggeser lampu dari menu lama ke menu baru (View Transitions bawaan browser, tanpa library).
 // Nama dibedakan per varian agar tidak ada dua elemen dengan nama yang sama di satu halaman.
 function Lamp({ variant }: { variant: 'top' | 'bottom' }) {
@@ -26,11 +26,11 @@ function Lamp({ variant }: { variant: 'top' | 'bottom' }) {
     <ViewTransition name={`nav-lamp-${variant}`} share="auto" default="none">
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute -top-[5px] left-1/2 h-1 w-8 -translate-x-1/2 rounded-t-full bg-note"
+        className="pointer-events-none absolute -top-[5px] left-1/2 h-1 w-8 -translate-x-1/2 rounded-t-full bg-text"
       >
-        <span className="absolute -top-2 -left-2 h-6 w-12 rounded-full bg-note/20 blur-md" />
-        <span className="absolute -top-1 h-6 w-8 rounded-full bg-note/20 blur-md" />
-        <span className="absolute top-0 left-2 size-4 rounded-full bg-note/20 blur-sm" />
+        <span className="absolute -top-2 -left-2 h-6 w-12 rounded-full bg-text/20 blur-md" />
+        <span className="absolute -top-1 h-6 w-8 rounded-full bg-text/20 blur-md" />
+        <span className="absolute top-0 left-2 size-4 rounded-full bg-text/20 blur-sm" />
       </span>
     </ViewTransition>
   )
@@ -54,7 +54,7 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
               className={cn(
                 'relative inline-flex items-center justify-center rounded-full text-sm font-semibold text-muted transition-colors hover:text-text',
                 variant === 'top' ? 'min-h-10 px-4' : 'size-11',
-                active && 'bg-note/10 text-text',
+                active && 'bg-surface-2 text-text',
               )}
             >
               {variant === 'top' ? (

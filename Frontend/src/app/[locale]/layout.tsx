@@ -61,7 +61,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           // tampilan awal gelap (keputusan pemilik M4); pilihan pengunjung tersimpan
           defaultTheme="dark"
           enableSystem
-          disableTransitionOnChange
         >
           <NextIntlClientProvider>
             {/* pb: ruang untuk menu bawah di HP (fixed) agar footer tidak tertutup */}
