@@ -11,6 +11,7 @@ import { PageViewTracker } from '@/components/site/page-view-tracker'
 import { RevealObserver } from '@/components/site/reveal-observer'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
+import { VercelInsights } from '@/components/site/vercel-insights'
 import { WhatsAppButton } from '@/components/site/whatsapp-button'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
@@ -78,6 +79,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             <WhatsAppButton locale={locale} />
             <RevealObserver />
             <PageViewTracker />
+            {/* Hanya di Vercel: di luar Vercel skrip /_vercel/* tidak ada (404 di CI dan lokal) */}
+            {process.env.VERCEL === '1' && <VercelInsights />}
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

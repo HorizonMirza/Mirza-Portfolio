@@ -8,7 +8,7 @@ import { formatDateShort } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
 
 // Perbarui tanggal ini setiap kali isi kebijakan berubah.
-const UPDATED_AT = '2026-09-30T00:00:00Z'
+const UPDATED_AT = '2026-10-01T00:00:00Z'
 
 const SECTIONS = ['visits', 'contact', 'newsletter', 'cv', 'services', 'rights'] as const
 

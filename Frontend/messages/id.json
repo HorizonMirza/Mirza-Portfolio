@@ -205,7 +205,7 @@
     "cvHeading": "Unduhan CV",
     "cvBody": "Hanya jumlah unduhan dan bahasa halaman yang dicatat, tanpa data pribadi.",
     "servicesHeading": "Layanan pihak ketiga",
-    "servicesBody": "Situs dijalankan di Vercel, database di Neon (Singapura), gambar dan CV di Cloudinary, dan email dikirim lewat Resend. Masing-masing hanya menerima data yang dibutuhkan untuk menjalankan fungsinya.",
+    "servicesBody": "Situs dijalankan di Vercel, database di Neon (Singapura), gambar dan CV di Cloudinary, dan email dikirim lewat Resend. Vercel Web Analytics dan Speed Insights mencatat jumlah kunjungan dan kecepatan halaman tanpa cookie, dengan alamat halaman tanpa parameter. Error di server dilaporkan ke Sentry tanpa data pribadi. Masing-masing hanya menerima data yang dibutuhkan untuk menjalankan fungsinya.",
     "rightsHeading": "Hak Anda",
     "rightsBody": "Anda bisa meminta salinan atau penghapusan data Anda lewat halaman kontak.",
     "contactLink": "Buka halaman kontak"
