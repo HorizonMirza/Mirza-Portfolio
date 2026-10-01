@@ -9,6 +9,8 @@ import { canAnimateViewTransition, originOf, revealChange } from '@/lib/circle-r
 import { cn } from '@/lib/utils'
 
 const subscribe = () => () => {}
+// sama dengan durasi transisi .theme-icon di globals.css
+const ICON_ANIMATION_MS = 750
 
 const SUN_RAYS = [
   'M12.4058 1.76251V3.76251',
@@ -68,7 +70,15 @@ export function ThemeToggle({ className }: { className?: string }) {
       root.classList.remove('light', 'dark')
       root.classList.add(next)
       root.style.colorScheme = next
-      setTheme(next)
+      try {
+        localStorage.setItem('theme', next)
+      } catch {
+        // penyimpanan diblokir: tema tetap berganti untuk kunjungan ini
+      }
+      // State next-themes diperbarui setelah animasi ikon selesai: disableTransitionOnChange
+      // mematikan semua transisi sesaat saat next-themes memasang tema, dan itu akan memotong
+      // animasi ikon bila dijalankan sekarang.
+      window.setTimeout(() => setTheme(next), ICON_ANIMATION_MS)
     }
 
     if (!canAnimateViewTransition()) {
