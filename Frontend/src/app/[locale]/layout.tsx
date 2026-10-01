@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { ViewTransition } from 'react'
 
 import '@/app/globals.css'
-import { jakarta, jetbrains } from '@/app/fonts'
+import { fontVariables } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { PageViewTracker } from '@/components/site/page-view-tracker'
 import { RevealObserver } from '@/components/site/reveal-observer'
@@ -48,11 +48,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const t = await getTranslations('Common')
 
   return (
-    <html
-      lang={locale}
-      className={`${jakarta.variable} ${jetbrains.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <body className="bg-bg text-text">
         <a
           href="#main"

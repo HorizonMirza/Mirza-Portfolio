@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import './globals.css'
-import { jakarta, jetbrains } from './fonts'
+import { fontVariables } from './fonts'
 
 export const metadata: Metadata = {
   title: '404 — Halaman tidak ditemukan / Page not found',
@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 // Halaman ini tidak melewati layout, jadi tema mengikuti preferensi sistem (lihat globals.css).
 export default function GlobalNotFound() {
   return (
-    <html lang="id" className={`${jakarta.variable} ${jetbrains.variable}`}>
+    <html lang="id" className={fontVariables}>
       <body className="bg-bg text-text">
         <main className="mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4">
           <p className="font-mono text-label tracking-widest text-muted uppercase">404</p>
-          <h1 className="mt-3 text-h1 font-bold tracking-tight">Halaman tidak ditemukan</h1>
+          <h1 className="mt-3 text-h1 font-bold">Halaman tidak ditemukan</h1>
           <p className="mt-2 text-muted" lang="en">
             Page not found
           </p>

@@ -74,9 +74,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
           <span aria-hidden="true">·</span>
           <span>{project.year}</span>
         </p>
-        <h1 className="mt-3 max-w-3xl text-h1 font-bold tracking-tight">
-          {loc(project, 'title', locale)}
-        </h1>
+        <h1 className="mt-3 max-w-3xl text-h1 font-bold">{loc(project, 'title', locale)}</h1>
         <p className="mt-4 max-w-prose text-body text-muted">{loc(project, 'summary', locale)}</p>
         {project.demoUrl || project.repoUrl ? (
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -117,14 +115,14 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       <div className="grid gap-12 lg:grid-cols-[1fr_18rem]">
         <div className="flex min-w-0 flex-col gap-12">
           <section aria-labelledby="project-overview">
-            <h2 id="project-overview" className="mb-4 text-h2 font-bold tracking-tight">
+            <h2 id="project-overview" className="mb-4 text-h2 font-bold">
               {t('overview')}
             </h2>
             <MarkdownView source={loc(project, 'description', locale)} size="base" />
           </section>
           {caseStudy ? (
             <section aria-labelledby="project-case">
-              <h2 id="project-case" className="mb-4 text-h2 font-bold tracking-tight">
+              <h2 id="project-case" className="mb-4 text-h2 font-bold">
                 {t('caseStudy')}
               </h2>
               <MarkdownView source={caseStudy} size="base" />
@@ -132,7 +130,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
           ) : null}
           {project.images.length > 0 ? (
             <section aria-labelledby="project-gallery">
-              <h2 id="project-gallery" className="mb-4 text-h2 font-bold tracking-tight">
+              <h2 id="project-gallery" className="mb-4 text-h2 font-bold">
                 {t('gallery')}
               </h2>
               <ul className="grid gap-4 sm:grid-cols-2">

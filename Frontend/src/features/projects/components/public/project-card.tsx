@@ -72,7 +72,7 @@ export async function ProjectCard({
           <span aria-hidden="true">·</span>
           <span>{project.year}</span>
         </p>
-        <Heading className={cn('font-semibold tracking-tight', wide ? 'text-h2' : 'text-h3')}>
+        <Heading className={cn('font-semibold', wide ? 'text-h2' : 'text-h3')}>
           {/* Seluruh kartu dapat diklik lewat pseudo-element, tautan tetap satu untuk pembaca layar. */}
           <Link
             href={`/projects/${project.slug}`}

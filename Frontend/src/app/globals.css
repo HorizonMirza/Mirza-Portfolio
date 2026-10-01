@@ -93,7 +93,8 @@
   --color-ring: var(--primary);
   --color-input: var(--border-strong);
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-oswald), 'Arial Narrow', sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, 'SFMono-Regular', monospace;
 }
 
@@ -103,12 +104,13 @@
   --radius-lg: 16px;
 
   /* skala tipografi fluid (mobile -> desktop) */
-  --text-display: clamp(2.5rem, 1.6rem + 4.5vw, 4.5rem);
-  --text-display--line-height: 1.05;
-  --text-h1: clamp(2rem, 1.6rem + 2vw, 3rem);
-  --text-h1--line-height: 1.1;
-  --text-h2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
-  --text-h2--line-height: 1.2;
+  /* judul memakai Oswald (condensed): ukuran dinaikkan sekitar 15-20% agar bobot visualnya setara */
+  --text-display: clamp(3rem, 1.9rem + 5vw, 5rem);
+  --text-display--line-height: 1;
+  --text-h1: clamp(2.3rem, 1.85rem + 2.3vw, 3.45rem);
+  --text-h1--line-height: 1.05;
+  --text-h2: clamp(1.75rem, 1.5rem + 1.15vw, 2.3rem);
+  --text-h2--line-height: 1.1;
   --text-h3: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
   --text-h3--line-height: 1.3;
   --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
@@ -124,6 +126,19 @@
     background-color: var(--bg);
     color: var(--text);
     -webkit-text-size-adjust: 100%;
+  }
+
+  /* Judul: Oswald. h1 dan h2 huruf kapital (hanya tampilan, pembaca layar tetap membaca teks asli). */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  h1,
+  h2 {
+    text-transform: uppercase;
+    letter-spacing: 0;
   }
 
   body {

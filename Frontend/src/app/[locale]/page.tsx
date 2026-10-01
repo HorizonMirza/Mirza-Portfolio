@@ -98,10 +98,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               <span aria-hidden="true">01 — </span>
               {name}
             </p>
-            <h1
-              id="hero-title"
-              className="mt-4 max-w-4xl text-display font-bold tracking-tight text-balance"
-            >
+            <h1 id="hero-title" className="mt-4 max-w-5xl text-display font-bold text-balance">
               {profile ? loc(profile, 'headline', locale) : name}
             </h1>
           </div>

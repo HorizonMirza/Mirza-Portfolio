@@ -33,7 +33,7 @@ export default async function DashboardPage() {
     <div className="flex flex-col gap-8">
       <header>
         <p className="font-mono text-label tracking-widest text-muted uppercase">Dashboard</p>
-        <h1 className="mt-2 text-h1 font-bold tracking-tight">Halo, {admin.name.split(' ')[0]}.</h1>
+        <h1 className="mt-2 text-h1 font-bold">Halo, {admin.name.split(' ')[0]}.</h1>
       </header>
 
       <section aria-label="Ringkasan" className="grid grid-cols-2 gap-3 lg:grid-cols-4">

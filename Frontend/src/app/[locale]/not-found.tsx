@@ -10,7 +10,7 @@ export default function LocaleNotFound() {
   return (
     <Container className="flex min-h-[60dvh] flex-col justify-center py-16">
       <p className="font-mono text-label tracking-widest text-muted uppercase">404</p>
-      <h1 className="mt-3 text-h1 font-bold tracking-tight">{t('title')}</h1>
+      <h1 className="mt-3 text-h1 font-bold">{t('title')}</h1>
       <p className="mt-4 max-w-prose text-muted">{t('body')}</p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button asChild>

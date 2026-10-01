@@ -25,7 +25,7 @@ export function TokenAction({ kind, token }: { kind: 'confirm' | 'unsubscribe'; 
           : 'invalid'
     return (
       <div role="status">
-        <h2 className="text-h2 font-bold tracking-tight">{t(`${key}Title`)}</h2>
+        <h2 className="text-h2 font-bold">{t(`${key}Title`)}</h2>
         <p className="mt-3 text-muted">{t(`${key}Body`)}</p>
         <Button asChild variant="secondary" className="mt-6">
           <Link href="/">{t('backHome')}</Link>

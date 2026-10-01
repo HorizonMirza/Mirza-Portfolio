@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import type { ReactNode } from 'react'
 
 import '@/app/globals.css'
-import { jakarta, jetbrains } from '@/app/fonts'
+import { fontVariables } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 
@@ -18,11 +18,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
   // nonce CSP dari src/proxy.ts untuk skrip tema next-themes
   const nonce = (await headers()).get('x-nonce') ?? undefined
   return (
-    <html
-      lang="id"
-      className={`${jakarta.variable} ${jetbrains.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="id" className={fontVariables} suppressHydrationWarning>
       <body className="bg-bg text-text">
         <a
           href="#main"

@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: PageProps<'/admin/logi
       className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-12"
     >
       <p className="font-mono text-label tracking-widest text-muted uppercase">Super Admin</p>
-      <h1 className="mt-2 text-h2 font-bold tracking-tight">Masuk ke panel admin</h1>
+      <h1 className="mt-2 text-h2 font-bold">Masuk ke panel admin</h1>
       <LoginForm redirectTo={target} />
     </main>
   )

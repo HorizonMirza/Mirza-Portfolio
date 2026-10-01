@@ -18,7 +18,7 @@ export function SectionHeading({
 }) {
   return (
     <div className={cn('mb-8 flex flex-wrap items-end justify-between gap-4', className)}>
-      <h2 id={id} className="text-h2 font-bold tracking-tight">
+      <h2 id={id} className="text-h2 font-bold">
         <span
           className="mb-2 block font-mono text-label font-medium tracking-widest text-muted uppercase"
           aria-hidden="true"
@@ -67,7 +67,7 @@ export function PageIntro({
       {eyebrow ? (
         <p className="font-mono text-label tracking-widest text-muted uppercase">{eyebrow}</p>
       ) : null}
-      <h1 className="mt-3 max-w-3xl text-h1 font-bold tracking-tight">{title}</h1>
+      <h1 className="mt-3 max-w-3xl text-h1 font-bold">{title}</h1>
       {intro ? <p className="mt-4 max-w-prose text-muted">{intro}</p> : null}
     </header>
   )

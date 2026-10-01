@@ -18,7 +18,7 @@ export default async function NewsletterPage({
   return (
     <Container className="flex min-h-[60dvh] flex-col justify-center py-16">
       <p className="font-mono text-label tracking-widest text-muted uppercase">{t('heading')}</p>
-      <h1 className="mt-3 mb-6 text-h1 font-bold tracking-tight">{t('emailUnsubscribe')}</h1>
+      <h1 className="mt-3 mb-6 text-h1 font-bold">{t('emailUnsubscribe')}</h1>
       <TokenAction kind="unsubscribe" token={token} />
     </Container>
   )
