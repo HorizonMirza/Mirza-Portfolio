@@ -470,17 +470,12 @@
   }
 }
 
-/* Keyboard skill 3D (features/skills/components/skill-keyboard.tsx). Pelat dimiringkan dengan transform
-   2D: rotasi lalu dipipihkan vertikal = proyeksi ortografis dari rotateX(50deg) rotateZ(-34deg), tanpa
-   lapisan 3D (transform 3D membuat WebKit di CI crash). Tebal tombol dibuat
-   dengan bayangan bertumpuk searah "ke bawah layar" di bidang yang miring: arah (-0.56, 0.83) untuk
-   rotateZ(-34deg). Tinggi tombol = --kb-lift; saat ditekan mengecil sehingga tombol turun.
-   Warna tombol = warna brand (--cap), warna logo = --ink (hitam/putih paling kontras). */
-@property --kb-lift {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 0px;
-}
+/* Keyboard skill CSS (features/skills/components/skill-keyboard.tsx), cadangan keyboard 3D Spline.
+   Dibuat seringan mungkin karena WebKit di CI crash oleh versi yang lebih berat (transform 3D,
+   bayangan blur besar, @property): pelat dimiringkan dengan transform 2D (rotasi lalu dipipihkan
+   vertikal = proyeksi ortografis dari rotateX(50deg) rotateZ(-34deg)); tebal tombol berupa empat
+   bayangan padat searah "ke bawah layar" di bidang miring, arah (-0.56, 0.83). Saat ditekan,
+   --press mengecil sehingga tombol turun. Warna tombol = warna brand (--cap), logo = --ink. */
 .kb-stage {
   display: flex;
   justify-content: center;
@@ -505,11 +500,8 @@
   border-radius: 1.25rem;
   background: var(--plate);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.08),
-    -3px 4px 0 var(--plate-side),
-    -6px 9px 0 var(--plate-side),
-    -9px 13px 0 var(--plate-side),
-    -24px 36px 32px rgb(0 0 0 / 0.45);
+    -5px 7px 0 var(--plate-side),
+    -10px 14px 0 var(--plate-side);
   /* cos(50deg) = 0.643 */
   transform: scaleY(0.643) rotate(-34deg);
 }
@@ -524,8 +516,7 @@
   }
 }
 .kb-key {
-  --kb-lift: var(--depth);
-  --side: color-mix(in srgb, var(--cap) 50%, #000);
+  --press: 1;
   position: relative;
   width: var(--key);
   height: var(--key);
@@ -533,19 +524,19 @@
   border: 0;
   background: none;
   cursor: pointer;
-  transition: --kb-lift 140ms var(--ease-out-soft);
   -webkit-tap-highlight-color: transparent;
 }
 .kb-cap {
-  --sx: calc(var(--kb-lift) * -0.07);
-  --sy: calc(var(--kb-lift) * 0.104);
+  --lift: calc(var(--depth) * var(--press));
+  --sx: calc(var(--lift) * -0.14);
+  --sy: calc(var(--lift) * 0.2075);
+  --side: color-mix(in srgb, var(--cap) 50%, #000);
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
   border-radius: 26%;
-  background:
-    radial-gradient(120% 90% at 30% 15%, rgb(255 255 255 / 0.22), transparent 60%), var(--cap);
+  background: var(--cap);
   color: var(--ink);
   box-shadow:
     inset 0 2px 0 rgb(255 255 255 / 0.28),
@@ -553,12 +544,11 @@
     var(--sx) var(--sy) 0 var(--side),
     calc(var(--sx) * 2) calc(var(--sy) * 2) 0 var(--side),
     calc(var(--sx) * 3) calc(var(--sy) * 3) 0 var(--side),
-    calc(var(--sx) * 4) calc(var(--sy) * 4) 0 var(--side),
-    calc(var(--sx) * 5) calc(var(--sy) * 5) 0 var(--side),
-    calc(var(--sx) * 6) calc(var(--sy) * 6) 0 var(--side),
-    calc(var(--sx) * 7) calc(var(--sy) * 7) 0 var(--side),
-    calc(var(--sx) * 8) calc(var(--sy) * 8) 0 color-mix(in srgb, var(--cap) 35%, #000);
-  transform: translate(calc(var(--kb-lift) * 0.56), calc(var(--kb-lift) * -0.83));
+    calc(var(--sx) * 4) calc(var(--sy) * 4) 0 color-mix(in srgb, var(--cap) 35%, #000);
+  transform: translate(calc(var(--lift) * 0.56), calc(var(--lift) * -0.83));
+  transition:
+    transform 140ms var(--ease-out-soft),
+    box-shadow 140ms var(--ease-out-soft);
 }
 .kb-glyph {
   width: 48%;
@@ -567,10 +557,10 @@
 /* ditekan: tombol turun */
 .kb-key:hover,
 .kb-key[data-active] {
-  --kb-lift: calc(var(--depth) * 0.4);
+  --press: 0.4;
 }
 .kb-key:active {
-  --kb-lift: 1px;
+  --press: 0.05;
 }
 .kb-key:focus-visible {
   outline: none;
