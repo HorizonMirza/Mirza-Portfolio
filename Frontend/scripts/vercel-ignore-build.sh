@@ -12,6 +12,12 @@ if [ -z "$base" ]; then
   exit 1
 fi
 
+# Redeploy commit yang sama (misalnya setelah mengubah Environment Variables) selalu di-build.
+if [ "$base" = "${VERCEL_GIT_COMMIT_SHA:-}" ]; then
+  echo "Redeploy commit yang sama, build dijalankan."
+  exit 1
+fi
+
 if ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
   echo "Commit pembanding tidak tersedia, build dijalankan."
   exit 1

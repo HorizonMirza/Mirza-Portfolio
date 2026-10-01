@@ -95,7 +95,7 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
 Catatan:
 - Migrasi dan pengisian awal hanya berjalan di **production** (`Frontend/scripts/vercel-build.sh`), jadi preview tidak pernah mengubah database production. Bila preview memakai branch database Neon sendiri (opsi di pengaturan integrasi Neon), tambahkan `MIGRATE_ON_BUILD=true` khusus Preview.
 - Pengisian awal (`scripts/seed.ts --bootstrap`) hanya mengisi konten bila belum ada profil, jadi data yang Anda hapus lewat admin tidak muncul lagi di deploy berikutnya.
-- Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama selalu di-build.
+- Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama dan Redeploy commit yang sama (misalnya setelah mengubah Environment Variables) selalu di-build.
 - Menjalankan seed manual dari komputer sendiri tetap bisa: `pnpm db:seed` di `Frontend/` dengan `DATABASE_URL` production.
 
 Setelah deploy (pemilik akun):
