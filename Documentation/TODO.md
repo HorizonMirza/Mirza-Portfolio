@@ -113,9 +113,9 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 
 ## M5 — Deploy (≈ 1 hari)
 
-- [ ] Beli dan hubungkan domain `.site` (pemandu langkah), DNS, HTTPS
+- [x] Domain `mmirza.site` (Hostinger): A `@` dan CNAME `www` ke Vercel, `www` dialihkan 308 ke `mmirza.site`, HTTPS aktif, `NEXT_PUBLIC_SITE_URL` dan `BETTER_AUTH_URL` diisi (2026-10-01)
 - [ ] Verifikasi domain di Resend (SPF/DKIM)
-- [ ] Variabel lingkungan production, migrasi production, seed admin
+- [x] Variabel lingkungan production, Neon Singapura, migrasi production, seed admin (deploy pertama 2026-10-01)
 - [ ] Vercel Cron (`Frontend/vercel.json`): ringkas `PageView` ke `PageViewDaily`, hapus `PageView` > 90 hari dan `RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET`
 - [ ] Sentry, UptimeRobot (monitor `/api/health` tiap 5 menit, notifikasi email + Telegram), Vercel Analytics + Speed Insights
 - [ ] GitHub ruleset untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
