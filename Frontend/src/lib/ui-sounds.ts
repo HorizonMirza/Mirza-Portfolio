@@ -105,3 +105,23 @@ export function playLanguageSound(toEnglish: boolean) {
   }
   blip(ctx, out, { at: 0.62, freq: toEnglish ? 1320 : 990, dur: 0.12, vol: 0.18, type: 'sine' })
 }
+
+function ping(ctx: AudioContext, out: GainNode, freq: number, dur: number, vol: number) {
+  const t = ctx.currentTime
+  const osc = ctx.createOscillator()
+  osc.frequency.value = freq
+  const gain = ctx.createGain()
+  envelope(gain, t, vol, 0.003, dur)
+  osc.connect(gain)
+  gain.connect(out)
+  osc.start(t)
+  osc.stop(t + dur + 0.05)
+}
+
+// Menu utama: tik kaca, denting tipis dan pendek karena menu paling sering ditekan.
+export function playNavSound() {
+  const a = audio()
+  if (!a) return
+  ping(a.ctx, a.out, 2600, 0.12, 0.12)
+  ping(a.ctx, a.out, 3950, 0.08, 0.06)
+}

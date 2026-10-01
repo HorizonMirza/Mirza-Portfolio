@@ -474,3 +474,7 @@ Pemilik memilih dari dua demo berisi masing-masing 10 suara: tema nomor 5 (desir
 - Menu utama tinggal lima: Beranda, Tentang, Pengalaman, Project, Kontak, tetap di tengah.
 - Topbar lebar penuh tanpa batas kontainer 1200 px: foto profil di pojok kiri, tombol bahasa dan tema di pojok kanan (jarak tepi 12 px di HP, 20 px di desktop).
 - Baris kredit keyboard 3D (Naresh Khatri, Simple Icons, logo Git) pindah ke bawah bagian skill di beranda.
+
+## 24. Suara menu utama (2026-10-01)
+
+Pemilik memilih nomor 2 dari lima demo: **tik kaca** (dua sinus 2600 Hz dan 3950 Hz, 0,12 detik, lebih pelan dari suara tema dan bahasa karena menu paling sering ditekan). `playNavSound` di `lib/ui-sounds.ts`, dipanggil dari menu atas (desktop) dan menu bawah (HP). Menu yang sedang aktif tidak berbunyi karena halamannya tidak berpindah.

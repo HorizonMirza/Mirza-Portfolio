@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { ViewTransition } from 'react'
 
 import { Link, usePathname } from '@/i18n/navigation'
+import { playNavSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 import { isSiteNavActive, siteNav } from './nav-items'
@@ -50,6 +51,8 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
             <Link
               href={item.href}
               aria-current={active ? 'page' : undefined}
+              // menu yang sedang aktif tidak berpindah halaman, jadi tidak berbunyi
+              onClick={active ? undefined : playNavSound}
               title={variant === 'bottom' ? t(item.key) : undefined}
               className={cn(
                 'relative inline-flex items-center justify-center rounded-full text-sm font-semibold text-muted transition-colors hover:text-text',
