@@ -290,22 +290,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       ) : null}
 
       {skills.length > 0 ? (
-        <section aria-labelledby="stack-title" className="border-t border-border py-16 md:py-24">
+        <section
+          id="skills"
+          aria-labelledby="stack-title"
+          className="scroll-mt-24 border-t border-border py-16 md:py-24"
+        >
           <Container className="reveal">
-            <SectionHeading
-              id="stack-title"
-              index="04"
-              title={t('stackHeading')}
-              action={
-                <Link
-                  href="/skills"
-                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  {t('stackMore')}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              }
-            />
+            <SectionHeading id="stack-title" index="04" title={t('stackHeading')} />
             <SkillKeyboard3D
               keycaps={skillKeycaps}
               label={tKeyboard('label')}
@@ -320,6 +311,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 />
               }
             />
+            <p className="mt-6 text-xs text-muted">{tKeyboard('credit')}</p>
           </Container>
         </section>
       ) : null}

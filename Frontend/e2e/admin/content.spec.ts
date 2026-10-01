@@ -94,7 +94,7 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
 
   // Aksesibilitas halaman publik saat ada project terbit (kartu, tautan "Dipakai di", detail).
   const publicFailures: string[] = []
-  for (const path of ['/en/projects', '/id/skills', `/id/projects/${slug}`]) {
+  for (const path of ['/en/projects', '/id', `/id/projects/${slug}`]) {
     await page.goto(path)
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

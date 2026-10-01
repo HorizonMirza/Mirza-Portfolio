@@ -4,7 +4,7 @@ import { getPublishedProjects } from '@/features/projects/public'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
 
-const STATIC_PATHS = ['', '/about', '/experience', '/skills', '/projects', '/contact', '/privacy']
+const STATIC_PATHS = ['', '/about', '/experience', '/projects', '/contact', '/privacy']
 
 // Setiap halaman tercantum per bahasa dengan alternatif hreflang ke bahasa lain.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

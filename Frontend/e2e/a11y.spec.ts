@@ -5,7 +5,7 @@ import { expect, test } from '@playwright/test'
 // Kontras diukur pada keadaan akhir; animasi reveal sesaat dimatikan lewat reduced-motion.
 test.use({ contextOptions: { reducedMotion: 'reduce' } })
 
-const PAGES = ['', '/about', '/experience', '/skills', '/projects', '/contact', '/privacy']
+const PAGES = ['', '/about', '/experience', '/projects', '/contact', '/privacy']
 
 for (const locale of ['id', 'en'] as const) {
   for (const theme of ['light', 'dark'] as const) {

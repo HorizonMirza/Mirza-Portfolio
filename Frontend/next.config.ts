@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
     // 404 global untuk URL di luar /[locale] (app/global-not-found.tsx)
     globalNotFound: true,
   },
+  // Halaman Skill digabung ke beranda (keputusan pemilik 2026-10-01); tautan lama diarahkan ke sana.
+  async redirects() {
+    return [{ source: '/:locale(id|en)/skills', destination: '/:locale#skills', permanent: true }]
+  },
   async headers() {
     const dev = process.env.NODE_ENV !== 'production'
     const preview = process.env.VERCEL_ENV === 'preview'

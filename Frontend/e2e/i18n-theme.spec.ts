@@ -86,7 +86,6 @@ test('tidak ada error di console', async ({ page, browserName }) => {
     '/en',
     '/en/about',
     '/en/experience',
-    '/en/skills',
     '/en/projects',
     '/en/contact',
     '/en/privacy',

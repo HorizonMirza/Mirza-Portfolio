@@ -149,13 +149,13 @@ Berbasis shadcn/ui, disesuaikan dengan token di atas. Semua punya keadaan: defau
 
 ## 4. Peta Situs dan Navigasi
 
-Navigasi di atas. Urutan: **Home · About · Experience · Skills · Projects · Contact**, di kanan: toggle bahasa, toggle tema, tombol "Unduh CV".
+Navigasi di atas. Urutan: **Home · About · Experience · Projects · Contact** (5 menu sejak 2026-10-01; Skills menjadi bagian beranda), di kanan: toggle bahasa, toggle tema, tombol "Unduh CV".
 
 ```
 /[locale]                 Home
 /[locale]/about           About
 /[locale]/experience      Pengalaman & Pendidikan
-/[locale]/skills          Skills
+/[locale]/skills          dialihkan (308) ke /[locale]#skills
 /[locale]/projects        Daftar project
 /[locale]/projects/[slug] Detail project
 /[locale]/contact         Kontak
@@ -467,3 +467,10 @@ Pemilik memilih dari dua demo berisi masing-masing 10 suara: tema nomor 5 (desir
 - Tema: derau tersaring yang menyapu turun saat ke gelap dan naik saat ke terang (0,38 detik).
 - Bahasa: 12 bip acak selama huruf diacak lalu satu nada penutup (sekitar 0,7 detik, selaras dengan animasi acak huruf). Ke English sedikit lebih tinggi.
 - Hanya berbunyi dari klik pengguna, volume pelan (0,4). Browser tanpa Web Audio atau yang menolaknya: tombol tetap bekerja tanpa suara. Belum ada tombol untuk mematikan suara (menunggu keputusan pemilik).
+
+## 23. Navbar lima menu (2026-10-01)
+
+- Halaman Skill dihapus: skill cukup tampil di bagian "Yang saya pakai" di beranda (`#skills`, keyboard 3D). URL lama `/id/skills` dan `/en/skills` dialihkan permanen (308) ke `/id#skills` dan `/en#skills`; sitemap tidak lagi memuatnya.
+- Menu utama tinggal lima: Beranda, Tentang, Pengalaman, Project, Kontak, tetap di tengah.
+- Topbar lebar penuh tanpa batas kontainer 1200 px: foto profil di pojok kiri, tombol bahasa dan tema di pojok kanan (jarak tepi 12 px di HP, 20 px di desktop).
+- Baris kredit keyboard 3D (Naresh Khatri, Simple Icons, logo Git) pindah ke bawah bagian skill di beranda.

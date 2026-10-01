@@ -66,7 +66,6 @@
     "journeyHeading": "Perjalanan terbaru",
     "journeyMore": "Lihat seluruh perjalanan",
     "stackHeading": "Yang saya pakai",
-    "stackMore": "Semua skill",
     "ctaHeading": "Ada yang ingin dibangun?",
     "ctaBody": "Tawaran kerja, project, atau pertanyaan soal komunitas. Tulis saja, pesannya langsung masuk ke kotak masuk saya.",
     "ctaMessage": "Kirim pesan",
@@ -95,12 +94,7 @@
     "none": "Belum ada pengalaman yang diterbitkan."
   },
   "Skills": {
-    "metaTitle": "Skill",
-    "metaDescription": "Bahasa pemrograman, framework, dan kemampuan non-teknis Muhammad Mirza.",
-    "title": "Skill",
-    "intro": "Bahasa, framework, dan kemampuan non-teknis yang saya pakai, dikelompokkan tanpa angka persen.",
-    "usedIn": "Dipakai di",
-    "none": "Belum ada skill yang ditampilkan."
+    "usedIn": "Dipakai di"
   },
   "Projects": {
     "metaTitle": "Project",

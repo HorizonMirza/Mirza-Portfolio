@@ -48,8 +48,9 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
 
   return (
     <>
-      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 px-4 pt-3 sm:px-6 lg:px-8 lg:pt-4">
-        <div className="mx-auto grid max-w-[1200px] grid-cols-[1fr_auto_1fr] items-center gap-3">
+      {/* Lebar penuh (tanpa batas kontainer): foto di pojok kiri, tombol bahasa dan tema di pojok kanan */}
+      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 px-3 pt-3 sm:px-4 lg:px-5 lg:pt-4">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="justify-self-start">
             <Avatar name={name} photoUrl={profile?.photo?.url} />
           </div>

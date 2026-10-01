@@ -66,7 +66,6 @@
     "journeyHeading": "Recent journey",
     "journeyMore": "See the full journey",
     "stackHeading": "What I work with",
-    "stackMore": "All skills",
     "ctaHeading": "Have something to build?",
     "ctaBody": "Job offers, projects, or questions about community building. Write to me and it lands straight in my inbox.",
     "ctaMessage": "Send a message",
@@ -95,12 +94,7 @@
     "none": "No experience published yet."
   },
   "Skills": {
-    "metaTitle": "Skills",
-    "metaDescription": "Programming languages, frameworks, and non-technical skills of Muhammad Mirza.",
-    "title": "Skills",
-    "intro": "Languages, frameworks, and non-technical skills I use, grouped without percentage bars.",
-    "usedIn": "Used in",
-    "none": "No skills to show yet."
+    "usedIn": "Used in"
   },
   "Projects": {
     "metaTitle": "Projects",

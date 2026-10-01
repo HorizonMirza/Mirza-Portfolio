@@ -3,7 +3,6 @@ export const siteNav = [
   { href: '/', key: 'home' },
   { href: '/about', key: 'about' },
   { href: '/experience', key: 'experience' },
-  { href: '/skills', key: 'skills' },
   { href: '/projects', key: 'projects' },
   { href: '/contact', key: 'contact' },
 ] as const

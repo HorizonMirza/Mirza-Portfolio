@@ -28,7 +28,7 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
 test.describe('keyboard skill CSS (cadangan saat gerak dikurangi atau tanpa WebGL)', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
   test('tombol menampilkan rincian skill dan bisa dipakai dengan keyboard', async ({ page }) => {
-    await page.goto('/id/skills')
+    await page.goto('/id')
     const keyboard = page.getByRole('group', { name: 'Keyboard skill' })
     const typescript = keyboard.getByRole('button', { name: /^TypeScript,/ })
     await typescript.click()
@@ -52,7 +52,7 @@ test('keyboard skill 3D tampil, atau keyboard CSS bila 3D tidak bisa dimuat', as
     if (!r.url().startsWith('http://localhost') && !/^(blob|data):/.test(r.url()))
       errors.push(`permintaan ke luar: ${r.url()}`)
   })
-  await page.goto('/id/skills')
+  await page.goto('/id')
   const stage = page.locator('[data-state]').filter({ has: page.locator('canvas.kb3d-canvas') })
   // sebelum ada interaksi, keyboard CSS yang tampil
   await expect(page.getByRole('group', { name: 'Keyboard skill' })).toBeVisible()
@@ -67,6 +67,12 @@ test('keyboard skill 3D tampil, atau keyboard CSS bila 3D tidak bisa dimuat', as
     await expect(page.getByRole('list', { name: 'Keyboard skill' })).toContainText('TypeScript')
   }
   expect(errors).toEqual([])
+})
+
+test('halaman skill lama diarahkan ke bagian skill di beranda', async ({ page }) => {
+  await page.goto('/en/skills')
+  await expect(page).toHaveURL(/\/en#skills$/)
+  await expect(page.getByRole('heading', { name: 'What I work with' })).toBeVisible()
 })
 
 test('filter pengalaman hanya menampilkan jenis yang dipilih', async ({ page }) => {
