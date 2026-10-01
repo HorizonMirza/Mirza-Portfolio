@@ -485,3 +485,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 - Menu utama memberi tipe transisi lewat `transitionTypes` pada Link (Next.js 16): `nav-forward` bila menu tujuan berada di kanan menu aktif, `nav-back` bila di kiri. `<ViewTransition update={...}>` di layout publik memetakan tipe itu ke kelas `.nav-forward` dan `.nav-back` (globals.css): halaman lama keluar 48 px ke arah berlawanan sambil memudar (150 ms), halaman baru masuk dari sisi menu tujuan (360 ms, muncul setelah 120 ms). Navigasi lain (tautan biasa, ganti bahasa, tombol mundur browser) tetap pudar 150 ms. Mati pada reduced-motion.
 - Ikon menu bawah HP: Beranda `House`, Tentang `User`, Pengalaman `BriefcaseBusiness`, Project `Code`, Kontak `Mail` (lucide).
+
+## 26. Kartu ID bertali di kontak, sosial di footer (2026-10-01)
+
+- Tombol bahasa memakai huruf yang sama dengan menu utama (Inter semibold), bukan mono.
+- Halaman kontak (desktop): kartu ID bertali di kiri form (`components/site/id-lanyard.tsx`), prinsip dari portofolio ibnuhakim.id (tidak ada aset atau teks yang disalin). Isi kartu dari profil: foto, nama, peran saat ini, status ketersediaan, barcode hiasan, dan host situs. Kartu bisa ditarik lalu berayun dan diam lagi (pegas teredam, tanpa library); ayunan kecil saat halaman dibuka. Tali dan label status memakai Azure versi gelap karena kartu selalu gelap. Kartu adalah hiasan (`aria-hidden`); reduced-motion mematikan ayunan dan tarikan. Di HP kartu tidak tampil.
+- Tautan sosial (GitHub, LinkedIn, Instagram, situs) pindah dari halaman kontak ke footer sebagai tombol ikon bulat. Logo GitHub dan Instagram dari Simple Icons; LinkedIn tidak ada di Simple Icons sehingga memakai tulisan "in"; situs memakai ikon globe. Halaman kontak tinggal kontak langsung (email, WhatsApp, kota).

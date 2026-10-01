@@ -39,7 +39,8 @@ export function LocaleSwitcher({ className }: { className?: string }) {
         }
       }}
       className={cn(
-        'inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface font-mono text-xs font-medium text-text uppercase transition-colors hover:bg-surface-2',
+        // huruf sama dengan menu utama (Inter semibold), bukan mono
+        'inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-sm font-semibold text-text uppercase transition-colors hover:bg-surface-2',
         className,
       )}
     >
