@@ -1,6 +1,6 @@
 'use client'
 
-import { Briefcase, House, LayoutGrid, Mail, User, Wrench } from 'lucide-react'
+import { BriefcaseBusiness, Code, House, Mail, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { ViewTransition } from 'react'
 
@@ -10,12 +10,12 @@ import { cn } from '@/lib/utils'
 
 import { isSiteNavActive, siteNav } from './nav-items'
 
+// ikon menu bawah HP (pilihan pemilik 2026-10-01)
 const icons = {
   home: House,
   about: User,
-  experience: Briefcase,
-  skills: Wrench,
-  projects: LayoutGrid,
+  experience: BriefcaseBusiness,
+  projects: Code,
   contact: Mail,
 } as const
 
@@ -41,9 +41,11 @@ function Lamp({ variant }: { variant: 'top' | 'bottom' }) {
 export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
   const t = useTranslations('Nav')
   const pathname = usePathname()
+  // arah geser halaman mengikuti urutan menu: ke kanan = maju, ke kiri = mundur (globals.css .nav-*)
+  const currentIndex = siteNav.findIndex((item) => isSiteNavActive(pathname, item.href))
   return (
     <ul className={cn('flex items-center', variant === 'top' ? 'gap-1' : 'gap-0.5')}>
-      {siteNav.map((item) => {
+      {siteNav.map((item, index) => {
         const active = isSiteNavActive(pathname, item.href)
         const Icon = icons[item.key]
         return (
@@ -51,6 +53,7 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
             <Link
               href={item.href}
               aria-current={active ? 'page' : undefined}
+              transitionTypes={[index < currentIndex ? 'nav-back' : 'nav-forward']}
               // menu yang sedang aktif tidak berpindah halaman, jadi tidak berbunyi
               onClick={active ? undefined : playNavSound}
               title={variant === 'bottom' ? t(item.key) : undefined}

@@ -70,8 +70,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             <div className="flex min-h-dvh flex-col pb-24 lg:pb-0">
               <SiteHeader locale={locale} />
               <main id="main" className="flex-1">
-                {/* Transisi antarhalaman: fade singkat lewat View Transitions (tanpa library) */}
-                <ViewTransition>{children}</ViewTransition>
+                {/* Transisi antarhalaman lewat View Transitions (tanpa library): dari menu utama
+                    halaman bergeser searah urutan menu, navigasi lain memakai pudar singkat. */}
+                <ViewTransition
+                  update={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', default: 'auto' }}
+                >
+                  {children}
+                </ViewTransition>
               </main>
               <SiteFooter locale={locale} />
             </div>

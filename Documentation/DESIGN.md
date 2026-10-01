@@ -478,3 +478,10 @@ Pemilik memilih dari dua demo berisi masing-masing 10 suara: tema nomor 5 (desir
 ## 24. Suara menu utama (2026-10-01)
 
 Pemilik memilih nomor 2 dari lima demo: **tik kaca** (dua sinus 2600 Hz dan 3950 Hz, 0,12 detik, lebih pelan dari suara tema dan bahasa karena menu paling sering ditekan). `playNavSound` di `lib/ui-sounds.ts`, dipanggil dari menu atas (desktop) dan menu bawah (HP). Menu yang sedang aktif tidak berbunyi karena halamannya tidak berpindah.
+
+## 25. Animasi pindah halaman dan ikon menu HP (2026-10-01)
+
+Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, Tentang 1, Pengalaman 2, Project 3, Kontak 1.
+
+- Menu utama memberi tipe transisi lewat `transitionTypes` pada Link (Next.js 16): `nav-forward` bila menu tujuan berada di kanan menu aktif, `nav-back` bila di kiri. `<ViewTransition update={...}>` di layout publik memetakan tipe itu ke kelas `.nav-forward` dan `.nav-back` (globals.css): halaman lama keluar 48 px ke arah berlawanan sambil memudar (150 ms), halaman baru masuk dari sisi menu tujuan (360 ms, muncul setelah 120 ms). Navigasi lain (tautan biasa, ganti bahasa, tombol mundur browser) tetap pudar 150 ms. Mati pada reduced-motion.
+- Ikon menu bawah HP: Beranda `House`, Tentang `User`, Pengalaman `BriefcaseBusiness`, Project `Code`, Kontak `Mail` (lucide).
