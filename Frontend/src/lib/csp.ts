@@ -16,8 +16,10 @@ const VERCEL_LIVE = 'https://vercel.live'
 export function buildCsp({ nonce, dev, preview, upgrade = false }: CspOptions): string {
   const script = nonce
     ? [`'self'`, `'nonce-${nonce}'`, `'strict-dynamic'`]
-    : [`'self'`, `'unsafe-inline'`]
-  if (dev) script.push(`'unsafe-eval'`)
+    : // unsafe-eval: runtime keyboard 3D (Spline) memakai new Function (msgpackr) dan WebAssembly.
+      // Halaman publik memang sudah 'unsafe-inline'; admin tetap ber-nonce tanpa eval.
+      [`'self'`, `'unsafe-inline'`, `'unsafe-eval'`]
+  if (dev && nonce) script.push(`'unsafe-eval'`)
   const connect = [`'self'`]
   const img = [`'self'`, 'data:', 'blob:', CLOUDINARY_IMG]
   const frame: string[] = []

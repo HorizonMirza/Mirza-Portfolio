@@ -108,10 +108,9 @@ describe('isBot dan isSameOrigin', () => {
 
 describe('buildCsp', async () => {
   const { buildCsp } = await import('@/lib/csp')
-  it('halaman publik: tanpa nonce, tanpa eval, tetap ketat untuk arahan lain', () => {
+  it('halaman publik: tanpa nonce, eval untuk keyboard 3D, tetap ketat untuk arahan lain', () => {
     const csp = buildCsp({ dev: false, preview: false, upgrade: true })
-    expect(csp).toContain("script-src 'self' 'unsafe-inline'")
-    expect(csp).not.toContain('unsafe-eval')
+    expect(csp).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'")
     expect(csp).toContain("frame-ancestors 'none'")
     expect(csp).toContain("object-src 'none'")
     expect(csp).toContain("img-src 'self' data: blob: https://res.cloudinary.com")
@@ -122,11 +121,12 @@ describe('buildCsp', async () => {
     const csp = buildCsp({ nonce: 'abc123', dev: false, preview: false })
     const script = csp.split('; ').find((d) => d.startsWith('script-src'))!
     expect(script).toBe("script-src 'self' 'nonce-abc123' 'strict-dynamic'")
+    expect(buildCsp({ nonce: 'abc123', dev: false, preview: false })).not.toContain('unsafe-eval')
     expect(csp).toContain("connect-src 'self' https://api.cloudinary.com")
   })
   it('preview mengizinkan toolbar Vercel, dev mengizinkan eval dan websocket', () => {
     expect(buildCsp({ dev: false, preview: true })).toContain('https://vercel.live')
-    const dev = buildCsp({ dev: true, preview: false })
+    const dev = buildCsp({ nonce: 'abc123', dev: true, preview: false })
     expect(dev).toContain("'unsafe-eval'")
     expect(dev).not.toContain('upgrade-insecure-requests')
     expect(buildCsp({ dev: false, preview: false })).not.toContain('upgrade-insecure-requests')

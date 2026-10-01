@@ -12,6 +12,8 @@ export type GenericGlyph = 'kanban' | 'users' | 'megaphone' | 'sheet'
 export type Keycap = {
   id: string
   name: string
+  // slug Simple Icons yang sudah dinormalkan (alias diterapkan), dipakai keyboard 3D untuk mencari tombolnya
+  slug: string
   category: string
   // warna tutup tombol dan warna logo/teks di atasnya (hitam atau putih, mana yang lebih kontras)
   color: string
@@ -85,6 +87,12 @@ function monogram(name: string) {
     : name.slice(0, 2)
 }
 
+// slug dari kolom icon bila diisi, selain itu dari nama skill; alias diterapkan
+export function skillSlug(name: string, icon: string | null) {
+  const slug = icon || iconSlug(name)
+  return ALIASES[slug] ?? slug
+}
+
 export function resolveIcon(name: string, icon: string | null) {
   const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
   for (const slug of candidates) {
@@ -107,6 +115,7 @@ export function toKeycaps(
       return {
         id: s.id,
         name: s.name,
+        slug: skillSlug(s.name, s.icon),
         category: loc(c, 'name', locale),
         color,
         ink: inkFor(color),

@@ -12,6 +12,7 @@ import { getPublicProfile } from '@/features/profile/public'
 import { ProjectCard } from '@/features/projects/components/public/project-card'
 import { getPublishedProjects } from '@/features/projects/public'
 import { SkillKeyboard } from '@/features/skills/components/skill-keyboard'
+import { SkillKeyboard3D } from '@/features/skills/components/skill-keyboard-3d'
 import { toKeycaps } from '@/features/skills/keycaps'
 import { getPublicSkills } from '@/features/skills/public'
 import { NewsletterForm } from '@/features/subscribers/components/newsletter-form'
@@ -84,6 +85,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const github = profile?.socials.github
   const cvHref = `/api/cv?locale=${locale}`
   const projectTitles = new Map(projects.map((p) => [p.slug, loc(p, 'title', locale)]))
+  const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
   const person = profile
@@ -304,13 +306,19 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </Link>
               }
             />
-            <SkillKeyboard
-              keycaps={toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)}
-              labels={{
-                keyboard: tKeyboard('label'),
-                hint: tKeyboard('hint'),
-                usedIn: tSkills('usedIn'),
-              }}
+            <SkillKeyboard3D
+              keycaps={skillKeycaps}
+              label={tKeyboard('label')}
+              fallback={
+                <SkillKeyboard
+                  keycaps={skillKeycaps}
+                  labels={{
+                    keyboard: tKeyboard('label'),
+                    hint: tKeyboard('hint'),
+                    usedIn: tSkills('usedIn'),
+                  }}
+                />
+              }
             />
           </Container>
         </section>

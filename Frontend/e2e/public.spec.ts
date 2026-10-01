@@ -25,23 +25,48 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
   await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
-test('keyboard skill: tombol menampilkan rincian skill dan bisa dipakai dengan keyboard', async ({
-  page,
-}) => {
+test.describe('keyboard skill CSS (cadangan saat gerak dikurangi atau tanpa WebGL)', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } })
+  test('tombol menampilkan rincian skill dan bisa dipakai dengan keyboard', async ({ page }) => {
+    await page.goto('/id/skills')
+    const keyboard = page.getByRole('group', { name: 'Keyboard skill' })
+    const typescript = keyboard.getByRole('button', { name: /^TypeScript,/ })
+    await typescript.click()
+    await expect(typescript).toHaveAttribute('aria-current', 'true')
+    const panel = page.locator(`[id="${await typescript.getAttribute('aria-controls')}"]`)
+    await expect(panel).toContainText('TypeScript')
+    // huruf melompat ke skill berawalan huruf itu, panah berpindah ke tombol berikutnya
+    await typescript.press('r')
+    const react = keyboard.getByRole('button', { name: /^React,/ })
+    await expect(react).toBeFocused()
+    await expect(panel).toContainText('React')
+    await react.press('ArrowRight')
+    await expect(react).not.toHaveAttribute('aria-current')
+  })
+})
+
+test('keyboard skill 3D tampil, atau keyboard CSS bila 3D tidak bisa dimuat', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (e) => errors.push(e.message))
+  page.on('request', (r) => {
+    if (!r.url().startsWith('http://localhost') && !/^(blob|data):/.test(r.url()))
+      errors.push(`permintaan ke luar: ${r.url()}`)
+  })
   await page.goto('/id/skills')
-  const keyboard = page.getByRole('group', { name: 'Keyboard skill' })
-  const typescript = keyboard.getByRole('button', { name: /^TypeScript,/ })
-  await typescript.click()
-  await expect(typescript).toHaveAttribute('aria-current', 'true')
-  const panel = page.locator(`[id="${await typescript.getAttribute('aria-controls')}"]`)
-  await expect(panel).toContainText('TypeScript')
-  // huruf melompat ke skill berawalan huruf itu, panah berpindah ke tombol berikutnya
-  await typescript.press('r')
-  const react = keyboard.getByRole('button', { name: /^React,/ })
-  await expect(react).toBeFocused()
-  await expect(panel).toContainText('React')
-  await react.press('ArrowRight')
-  await expect(react).not.toHaveAttribute('aria-current')
+  const stage = page.locator('[data-state]').filter({ has: page.locator('canvas.kb3d-canvas') })
+  // sebelum ada interaksi, keyboard CSS yang tampil
+  await expect(page.getByRole('group', { name: 'Keyboard skill' })).toBeVisible()
+  await stage.scrollIntoViewIfNeeded()
+  await page.mouse.move(10, 10)
+  await page.mouse.move(200, 200)
+  // setelah interaksi: scene 3D siap, atau tetap keyboard CSS bila browser tidak sanggup
+  await expect(page.locator('[data-state="ready"], [data-state="fallback"]')).toHaveCount(1, {
+    timeout: 30_000,
+  })
+  if ((await page.locator('[data-state="ready"]').count()) > 0) {
+    await expect(page.getByRole('list', { name: 'Keyboard skill' })).toContainText('TypeScript')
+  }
+  expect(errors).toEqual([])
 })
 
 test('filter pengalaman hanya menampilkan jenis yang dipilih', async ({ page }) => {

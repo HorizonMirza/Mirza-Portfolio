@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server'
 import { Chip, Container, PageIntro } from '@/components/site/section-heading'
 import { getPublishedProjects } from '@/features/projects/public'
 import { SkillKeyboard } from '@/features/skills/components/skill-keyboard'
+import { SkillKeyboard3D } from '@/features/skills/components/skill-keyboard-3d'
 import { toKeycaps } from '@/features/skills/keycaps'
 import { getPublicSkills } from '@/features/skills/public'
 import { Link } from '@/i18n/navigation'
@@ -43,10 +44,20 @@ export default async function SkillsPage({ params }: PageProps<'/[locale]/skills
         <p className="rounded-lg border border-dashed border-border p-6 text-muted">{t('none')}</p>
       ) : (
         <>
-          <SkillKeyboard
+          <SkillKeyboard3D
             keycaps={keycaps}
-            labels={{ keyboard: tKeyboard('label'), hint: tKeyboard('hint'), usedIn: t('usedIn') }}
+            label={tKeyboard('label')}
             className="mb-16"
+            fallback={
+              <SkillKeyboard
+                keycaps={keycaps}
+                labels={{
+                  keyboard: tKeyboard('label'),
+                  hint: tKeyboard('hint'),
+                  usedIn: t('usedIn'),
+                }}
+              />
+            }
           />
           <div className="divide-y divide-border border-y border-border">
             {categories.map((c, i) => (

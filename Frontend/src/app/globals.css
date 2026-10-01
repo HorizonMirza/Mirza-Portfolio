@@ -470,8 +470,9 @@
   }
 }
 
-/* Keyboard skill 3D (features/skills/components/skill-keyboard.tsx). Hanya pelat yang dimiringkan
-   (satu bidang 3D, tanpa preserve-3d: puluhan lapisan 3D membuat WebKit crash). Tebal tombol dibuat
+/* Keyboard skill 3D (features/skills/components/skill-keyboard.tsx). Pelat dimiringkan dengan transform
+   2D: rotasi lalu dipipihkan vertikal = proyeksi ortografis dari rotateX(50deg) rotateZ(-34deg), tanpa
+   lapisan 3D (transform 3D membuat WebKit di CI crash). Tebal tombol dibuat
    dengan bayangan bertumpuk searah "ke bawah layar" di bidang yang miring: arah (-0.56, 0.83) untuk
    rotateZ(-34deg). Tinggi tombol = --kb-lift; saat ditekan mengecil sehingga tombol turun.
    Warna tombol = warna brand (--cap), warna logo = --ink (hitam/putih paling kontras). */
@@ -484,7 +485,6 @@
   display: flex;
   justify-content: center;
   padding-block: 0.5rem 1rem;
-  perspective: 1600px;
 }
 @media (min-width: 640px) {
   .kb-stage {
@@ -509,8 +509,9 @@
     -3px 4px 0 var(--plate-side),
     -6px 9px 0 var(--plate-side),
     -9px 13px 0 var(--plate-side),
-    -30px 45px 50px rgb(0 0 0 / 0.5);
-  transform: rotateX(50deg) rotateZ(-34deg);
+    -24px 36px 32px rgb(0 0 0 / 0.45);
+  /* cos(50deg) = 0.643 */
+  transform: scaleY(0.643) rotate(-34deg);
 }
 @media (min-width: 640px) {
   .kb {
@@ -591,7 +592,7 @@
 }
 @media (min-width: 1024px) {
   .kb-panel {
-    transform: perspective(1600px) rotateX(28deg) rotateZ(-14deg);
+    transform: scaleY(0.88) rotate(-14deg);
     transform-origin: left center;
   }
   .kb-title {
