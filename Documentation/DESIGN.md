@@ -111,8 +111,7 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`).
 | Kebutuhan | Teknologi | Beban JS |
 |---|---|---|
 | Reveal saat scroll | `IntersectionObserver` sekali jalan (`components/site/reveal-observer.tsx`). Versi CSS scroll-driven dibatalkan di M4: elemen yang berhenti di tepi bawah layar tertahan setengah transparan dan gagal uji kontras (axe/Lighthouse) | < 1 KB |
-| Header padat saat digulir | CSS scroll-driven animation (`animation-timeline: scroll()`) | 0 KB |
-| Menu HP | atribut `popover` bawaan browser (Esc, fokus ditangani browser) | < 1 KB |
+| Lampu menu aktif bergeser antar halaman | React `<ViewTransition name>` (View Transitions bawaan browser), mati pada reduced-motion | 0 KB library |
 | Transisi antarhalaman | View Transitions (CSS + dukungan Next.js/React) | 0 KB |
 | Muncul/hilang elemen, hover, fokus | CSS `transition` + `@starting-style` | 0 KB |
 | Hero "Horizon" | Canvas 2D buatan sendiri (`components/site/horizon-canvas.tsx`) di atas latar CSS statis yang tampil lebih dulu | ±3 KB |
@@ -134,7 +133,7 @@ Berbasis shadcn/ui, disesuaikan dengan token di atas. Semua punya keadaan: defau
 |---|---|
 | **Button** | Varian `primary` (isi biru), `secondary` (bergaris), `ghost`. Tinggi minimal 44 px (target sentuh). Tiga tingkat hierarki seperti pada referensi |
 | **Link** | Bergaris bawah pada hover dan fokus, warna `--primary` |
-| **Navbar** | Tetap di atas, transparan di hero lalu berlatar `--surface` saat scroll. Di HP: tombol menu membuka panel layar penuh |
+| **Navbar** | Kapsul melayang di atas (gaya "tubelight"): foto profil bulat (inisial bila belum ada foto), menu teks dengan lampu di atas menu aktif, tombol bahasa bulat (menampilkan kode bahasa tujuan), tombol tema bulat (satu tombol terang/gelap), tombol Unduh CV bila ada. Di HP: kapsul atas hanya foto, bahasa, tema; menu jadi kapsul ikon tetap di bawah layar dengan label untuk pembaca layar |
 | **Language toggle** | Kontrol segmen "ID / EN" dengan `aria-label` |
 | **Theme toggle** | Terang / Gelap / Sistem |
 | **Card project** | Cover, judul, ringkasan, chip tech stack, metadata GitHub |
@@ -379,3 +378,7 @@ Aturan lain: target sentuh ≥ 44 × 44 px, tidak ada scroll horizontal, area am
 ## 12. Ganti font (2026-10-01)
 
 Pemilik memilih pilihan 14 dari demo 15 font: **Oswald** (judul, huruf kapital untuk `h1`/`h2`) + **Inter** (isi), label tetap **JetBrains Mono**. Plus Jakarta Sans tidak dipakai lagi. Ukuran `display`, `h1`, dan `h2` dinaikkan sekitar 15–20% karena Oswald condensed. Kalimat hero dibatasi 3 baris di laptop (`max-w-5xl`) agar tombol utama tetap terlihat tanpa scroll (PRD U1). Lighthouse mobile beranda 90–91 (sebelumnya 94) karena file Inter lebih besar, halaman lain 91–97, aksesibilitas tetap 100.
+
+## 13. Topbar "tubelight" (2026-10-01)
+
+Permintaan pemilik berdasarkan komponen Tubelight Navbar (21st.dev). Diterapkan tanpa `framer-motion`: animasi lampu memakai View Transitions bawaan browser, jadi tidak ada tambahan JavaScript (skor kecepatan beranda sudah tipis di 90–91). Pilihan "Sistem" pada tema dihapus karena tombol tema kini satu tombol terang/gelap. Panel menu HP (popover) diganti kapsul ikon di bawah layar, dan tombol WhatsApp dinaikkan di HP agar tidak menutupi menu.
