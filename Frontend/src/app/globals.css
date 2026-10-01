@@ -167,46 +167,6 @@
   }
 }
 
-/* Header publik: transparan di puncak halaman lalu padat saat digulir, tanpa JavaScript.
-   Browser tanpa scroll-driven animation tetap memakai latar padat. */
-@supports (animation-timeline: scroll()) {
-  .site-header {
-    animation: site-header-solid linear both;
-    animation-timeline: scroll();
-    animation-range: 0 96px;
-  }
-}
-
-@keyframes site-header-solid {
-  from {
-    background-color: transparent;
-    border-color: transparent;
-  }
-  to {
-    background-color: var(--surface);
-    border-color: var(--border);
-  }
-}
-
-/* Menu HP (popover): muncul halus, langsung tampil bila gerak dikurangi. */
-.site-menu:popover-open {
-  display: flex;
-  flex-direction: column;
-  transition:
-    opacity 150ms var(--ease-out-soft),
-    translate 150ms var(--ease-out-soft);
-  @starting-style {
-    opacity: 0;
-    translate: 0 -8px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-header {
-    animation: none;
-  }
-}
-
 /* Hero "Horizon" statis: warna dari --accent (dekoratif, bukan teks), kontras rendah. */
 .horizon-grid {
   background-image:

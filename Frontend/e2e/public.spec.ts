@@ -9,20 +9,20 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   await expect(page.getByRole('region', { name: 'Kabar project baru' })).toBeVisible()
 })
 
-test('menu HP membuka navigasi dan menutup setelah pindah halaman', async ({ page, isMobile }) => {
-  test.skip(!isMobile, 'khusus HP')
+test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
   await page.goto('/id')
-  await page.getByRole('button', { name: 'Buka menu' }).click()
-  const menu = page.locator('#site-menu')
-  await expect(menu).toBeVisible()
-  await menu.getByRole('link', { name: 'Pengalaman' }).click()
+  // desktop: kapsul atas berisi teks; HP: kapsul ikon di bawah layar (label untuk pembaca layar)
+  const nav = page.getByRole('navigation', { name: 'Navigasi utama' })
+  await expect(nav).toHaveCount(1)
+  if (isMobile) await expect(nav).toHaveCSS('position', 'fixed')
+  await expect(nav.getByRole('link', { name: 'Beranda' })).toHaveAttribute('aria-current', 'page')
+  await nav.getByRole('link', { name: 'Pengalaman' }).click()
   await expect(page).toHaveURL(/\/id\/experience$/)
-  await expect(menu).toBeHidden()
-  // Esc juga menutup menu (perilaku bawaan popover)
-  await page.getByRole('button', { name: 'Buka menu' }).click()
-  await expect(menu).toBeVisible()
-  await page.keyboard.press('Escape')
-  await expect(menu).toBeHidden()
+  await expect(nav.getByRole('link', { name: 'Pengalaman' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
 test('filter pengalaman hanya menampilkan jenis yang dipilih', async ({ page }) => {

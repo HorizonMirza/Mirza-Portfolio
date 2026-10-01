@@ -1,68 +1,87 @@
 import { Download } from 'lucide-react'
+import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
-import { Button } from '@/components/ui/button'
 import { getPublicProfile } from '@/features/profile/public'
 import type { AppLocale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
 
-import { MobileMenu } from './mobile-menu'
 import { NavLinks } from './nav-links'
 
+const pill =
+  'flex items-center gap-1 rounded-full border border-border bg-surface/90 p-1 shadow-lg backdrop-blur-lg'
+
+// Foto profil bulat (dari admin). Tanpa foto: inisial di lingkaran.
+function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
+  const initials = name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+  return (
+    <Link
+      href="/"
+      className="inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary font-mono text-xs font-medium text-primary-fg ring-1 ring-border"
+    >
+      {photoUrl ? (
+        <Image
+          src={photoUrl}
+          alt=""
+          width={80}
+          height={80}
+          sizes="40px"
+          className="size-full object-cover"
+        />
+      ) : (
+        <span aria-hidden="true">{initials}</span>
+      )}
+      <span className="sr-only">{name}</span>
+    </Link>
+  )
+}
+
+// Topbar "tubelight": kapsul melayang di atas. Desktop: foto, menu teks, bahasa, tema, CV.
+// HP: kapsul atas hanya foto, bahasa, tema. Menu pindah ke kapsul ikon di bawah layar.
 export async function SiteHeader({ locale }: { locale: AppLocale }) {
   const [t, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Nav' }),
     getPublicProfile(),
   ])
-  const cvHref = `/api/cv?locale=${locale}`
+  const name = profile?.name ?? 'Muhammad Mirza'
 
   return (
-    <header className="site-header sticky top-0 z-40 border-b border-border bg-bg">
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center font-mono text-sm font-medium tracking-wide"
-        >
-          MM
-          <span className="sr-only">{profile?.name ?? 'Muhammad Mirza'}</span>
-        </Link>
-        <nav aria-label={t('label')} className="hidden lg:block">
-          <NavLinks className="flex items-center gap-1" />
-        </nav>
-        <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-2 lg:flex">
-            <LocaleSwitcher />
-            <ThemeToggle />
-            {profile?.hasCv ? (
-              <Button asChild size="sm">
-                <a href={cvHref}>
-                  <Download aria-hidden="true" />
-                  {t('downloadCv')}
-                </a>
-              </Button>
-            ) : null}
-          </div>
-          <MobileMenu>
-            <nav aria-label={t('label')} className="mt-4">
-              <NavLinks className="flex flex-col gap-1" linkClassName="w-full text-h3 text-text" />
-            </nav>
-            <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6">
-              <LocaleSwitcher />
-              <ThemeToggle />
-            </div>
-            {profile?.hasCv ? (
-              <Button asChild className="mt-6 w-full">
-                <a href={cvHref}>
-                  <Download aria-hidden="true" />
-                  {t('downloadCv')}
-                </a>
-              </Button>
-            ) : null}
-          </MobileMenu>
+    <>
+      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 flex justify-center px-4 pt-3 lg:pt-4">
+        <div className={pill}>
+          <Avatar name={name} photoUrl={profile?.photo?.url} />
+          <nav aria-label={t('label')} className="hidden px-1 lg:block">
+            <NavLinks variant="top" />
+          </nav>
+          <span aria-hidden="true" className="mx-1 hidden h-6 w-px bg-border lg:block" />
+          <LocaleSwitcher />
+          <ThemeToggle />
+          {profile?.hasCv ? (
+            <a
+              href={`/api/cv?locale=${locale}`}
+              className="ml-1 hidden min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-fg transition-colors hover:bg-primary/90 lg:inline-flex"
+            >
+              <Download className="size-4" aria-hidden="true" />
+              {t('downloadCv')}
+            </a>
+          ) : null}
         </div>
-      </div>
-    </header>
+      </header>
+      <nav
+        aria-label={t('label')}
+        className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+      >
+        <div className={pill}>
+          <NavLinks variant="bottom" />
+        </div>
+      </nav>
+    </>
   )
 }

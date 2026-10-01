@@ -64,7 +64,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           disableTransitionOnChange
         >
           <NextIntlClientProvider>
-            <div className="flex min-h-dvh flex-col">
+            {/* pb: ruang untuk menu bawah di HP (fixed) agar footer tidak tertutup */}
+            <div className="flex min-h-dvh flex-col pb-24 lg:pb-0">
               <SiteHeader locale={locale} />
               <main id="main" className="flex-1">
                 {/* Transisi antarhalaman: fade singkat lewat View Transitions (tanpa library) */}

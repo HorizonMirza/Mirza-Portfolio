@@ -1,9 +1,4 @@
-import { expect, type Page, test, type Browser } from '@playwright/test'
-
-// Di HP, pilihan bahasa dan tema ada di dalam menu.
-async function openControls(page: Page, isMobile: boolean, label = 'Buka menu') {
-  if (isMobile) await page.getByRole('button', { name: label }).click()
-}
+import { expect, test, type Browser } from '@playwright/test'
 
 async function openRootWithLocale(browser: Browser, locale: string) {
   const context = await browser.newContext({ locale })
@@ -34,38 +29,35 @@ test('bahasa lain jatuh ke bahasa bawaan /id', async ({ browser }) => {
   await context.close()
 })
 
-test('pengganti bahasa berpindah ke versi Inggris di halaman yang sama', async ({
-  page,
-  isMobile,
-}) => {
+test('tombol bahasa berpindah ke versi Inggris di halaman yang sama', async ({ page }) => {
   await page.goto('/id/experience')
-  await openControls(page, isMobile)
-  await page
-    .getByRole('navigation', { name: 'Bahasa' })
-    .getByRole('link', { name: 'English' })
-    .click()
+  await page.getByRole('link', { name: 'Ganti bahasa ke English (EN)' }).click()
   await expect(page).toHaveURL(/\/en\/experience$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Experience & Education')
+  // tombol yang sama kembali ke bahasa Indonesia
+  await page.getByRole('link', { name: 'Switch language to Bahasa Indonesia (ID)' }).click()
+  await expect(page).toHaveURL(/\/id\/experience$/)
 })
 
-test('tema gelap dan terang bisa dipilih dan tersimpan', async ({ page, isMobile }) => {
+test('satu tombol tema membalik gelap dan terang, lalu tersimpan', async ({ page }) => {
   await page.goto('/id')
-  await openControls(page, isMobile)
   const html = page.locator('html')
-  const group = page.getByRole('group', { name: 'Tema' })
+  const toggle = page.getByRole('button', { name: 'Mode gelap' })
 
-  await group.getByRole('button', { name: 'Gelap' }).click()
+  // tampilan awal gelap (keputusan pemilik M4)
   await expect(html).toHaveClass(/dark/)
-  await expect(group.getByRole('button', { name: 'Gelap' })).toHaveAttribute('aria-pressed', 'true')
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
 
-  await page.reload()
-  await expect(html).toHaveClass(/dark/)
-  await openControls(page, isMobile)
-
-  await group.getByRole('button', { name: 'Terang' }).click()
+  await toggle.click()
   await expect(html).toHaveClass(/light/)
   await expect(html).not.toHaveClass(/dark/)
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false')
+
+  await page.reload()
+  await expect(html).toHaveClass(/light/)
+  await toggle.click()
+  await expect(html).toHaveClass(/dark/)
 })
 
 test('tautan lewati konten muncul saat difokus dengan keyboard', async ({ page }) => {
@@ -80,7 +72,7 @@ test('tautan lewati konten muncul saat difokus dengan keyboard', async ({ page }
 // "due to access control checks". Itu bukan kegagalan aplikasi.
 const abortedPrefetch = /\?_rsc=\S+ due to access control checks\.$/
 
-test('tidak ada error di console', async ({ page, isMobile, browserName }) => {
+test('tidak ada error di console', async ({ page, browserName }) => {
   const errors: string[] = []
   page.on('console', (message) => {
     if (message.type() !== 'error') return
@@ -89,8 +81,7 @@ test('tidak ada error di console', async ({ page, isMobile, browserName }) => {
   })
   page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/id')
-  await openControls(page, isMobile)
-  await page.getByRole('button', { name: 'Gelap' }).click()
+  await page.getByRole('button', { name: 'Mode gelap' }).click()
   for (const path of [
     '/en',
     '/en/about',

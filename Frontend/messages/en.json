@@ -9,15 +9,12 @@
     "openInNewTab": "(opens in a new tab)"
   },
   "Locale": {
-    "label": "Language",
-    "id": "Indonesia",
-    "en": "English"
+    "id": "Bahasa Indonesia",
+    "en": "English",
+    "switchTo": "Switch language to {language} ({code})"
   },
   "Theme": {
-    "label": "Theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
+    "darkMode": "Dark mode"
   },
   "NotFound": {
     "title": "Page not found",
@@ -33,8 +30,6 @@
     "skills": "Skills",
     "projects": "Projects",
     "contact": "Contact",
-    "openMenu": "Open menu",
-    "closeMenu": "Close menu",
     "downloadCv": "Download CV"
   },
   "Footer": {

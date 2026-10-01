@@ -9,15 +9,12 @@
     "openInNewTab": "(membuka tab baru)"
   },
   "Locale": {
-    "label": "Bahasa",
     "id": "Indonesia",
-    "en": "English"
+    "en": "English",
+    "switchTo": "Ganti bahasa ke {language} ({code})"
   },
   "Theme": {
-    "label": "Tema",
-    "light": "Terang",
-    "dark": "Gelap",
-    "system": "Sistem"
+    "darkMode": "Mode gelap"
   },
   "NotFound": {
     "title": "Halaman tidak ditemukan",
@@ -33,8 +30,6 @@
     "skills": "Skill",
     "projects": "Project",
     "contact": "Kontak",
-    "openMenu": "Buka menu",
-    "closeMenu": "Tutup menu",
     "downloadCv": "Unduh CV"
   },
   "Footer": {
