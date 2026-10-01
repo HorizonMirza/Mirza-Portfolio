@@ -409,3 +409,12 @@ Pilihan pemilik nomor 6 (Azure) dari demo 10 biru. Seluruh situs dan panel admin
 
 `--danger` dan `--success` tetap merah/hijau untuk pesan galat dan status di admin. Bagian 2.1 (palet lama biru tua) digantikan bagian ini.
 
+## 17. Revisi topbar dan login (2026-10-01)
+
+- Topbar tiga bagian: foto bulat di kiri, kapsul menu di tengah (desktop), tombol bahasa dan tema di kanan, masing-masing lingkaran sendiri. HP: menu tetap kapsul ikon di bawah layar.
+- Lampu menu aktif hitam/putih mengikuti warna teks tema (bukan Azure), latar menu aktif `--surface-2`.
+- Tombol tema: ikon matahari/bulan beranimasi (garis digambar ulang + skala, CSS dari komponen AnimatedThemeToggle tanpa framer-motion). Pergantian tema meluas melingkar dari tombol (View Transitions API + animasi `clip-path`); tanpa dukungan browser atau dengan reduced-motion langsung ganti. `disableTransitionOnChange` next-themes dimatikan agar animasi ikon berjalan.
+- Tombol bahasa: kode bahasa berputar keluar saat ditekan dan berputar masuk di halaman baru.
+- Foto lingkaran dipotong lebih jauh (kepala dan bahu).
+- Login: lingkaran foto diberi kilau berjalan yang sama dengan kolom, warna latar isi otomatis (autofill) browser dinetralkan, label "Super Admin" dan judul dirapikan (Inter berjarak lebar + Oswald semibold).
+
