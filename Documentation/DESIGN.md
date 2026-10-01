@@ -337,7 +337,7 @@ Mobile-first. Mayoritas pengunjung memakai HP.
 | `lg` | ≥ 1024 | Navbar horizontal, grid 3 kolom, sidebar admin tetap |
 | `xl` | ≥ 1280 | Kontainer 1200 px, jarak lebih longgar |
 
-Aturan lain: target sentuh ≥ 44 × 44 px, tidak ada scroll horizontal, area aman (safe-area) di iOS, teks bisa diperbesar sampai 200% tanpa kehilangan fungsi.
+Aturan lain: target sentuh ≥ 44 × 44 px di HP (desktop ≥ 38 px karena ukuran dasar 87,5%, bagian 27), tidak ada scroll horizontal, area aman (safe-area) di iOS, teks bisa diperbesar sampai 200% tanpa kehilangan fungsi.
 
 ## 8. Rencana Aksesibilitas (WCAG 2.2 AA)
 
@@ -491,3 +491,8 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Tombol bahasa memakai huruf yang sama dengan menu utama (Inter semibold), bukan mono.
 - Halaman kontak (desktop): kartu ID bertali di kiri form (`components/site/id-lanyard.tsx`), prinsip dari portofolio ibnuhakim.id (tidak ada aset atau teks yang disalin). Isi kartu dari profil: foto, nama, peran saat ini, status ketersediaan, barcode hiasan, dan host situs. Kartu bisa ditarik lalu berayun dan diam lagi (pegas teredam, tanpa library); ayunan kecil saat halaman dibuka. Tali dan label status memakai Azure versi gelap karena kartu selalu gelap. Kartu adalah hiasan (`aria-hidden`); reduced-motion mematikan ayunan dan tarikan. Di HP kartu tidak tampil.
 - Tautan sosial (GitHub, LinkedIn, Instagram, situs) pindah dari halaman kontak ke footer sebagai tombol ikon bulat. Logo GitHub dan Instagram dari Simple Icons; LinkedIn tidak ada di Simple Icons sehingga memakai tulisan "in"; situs memakai ikon globe. Halaman kontak tinggal kontak langsung (email, WhatsApp, kota).
+
+## 27. Ukuran lebih rapat di desktop, foto profil ke beranda (2026-10-01)
+
+- Pemilik menilai teks dan elemen terlalu besar (pembanding: ibnuhakim.id). Ukuran dasar `html` di desktop (≥ 1024 px) kini 87,5% (14 px bila browser 16 px), sehingga semua ukuran berbasis rem (teks, jarak, tombol) mengecil seragam 12,5%. Persen agar pengaturan ukuran huruf pengguna tetap berlaku. HP tetap 100%: teks terbaca dan isian form tidak memicu zoom iOS; target sentuh di HP tetap 44 px.
+- Foto profil di topbar (`HomeAvatarLink`): kembali ke beranda dengan suara tik kaca dan geser mundur seperti menu Beranda; di beranda tidak berbunyi.

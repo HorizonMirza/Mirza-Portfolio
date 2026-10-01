@@ -137,6 +137,15 @@
     color: var(--text);
     -webkit-text-size-adjust: 100%;
   }
+  /* Desktop lebih rapat (permintaan pemilik 2026-10-01): ukuran dasar 87,5% (14 px bila browser
+     16 px), jadi semua teks, jarak, dan tombol berbasis rem ikut mengecil seragam. Persen, bukan px,
+     agar pengaturan ukuran huruf pengguna tetap dihormati. HP tetap 100%: teks terbaca dan isian
+     form tidak membuat iOS memperbesar layar. */
+  @media (min-width: 1024px) {
+    html {
+      font-size: 87.5%;
+    }
+  }
 
   /* Judul: Oswald. h1 dan h2 huruf kapital (hanya tampilan, pembaca layar tetap membaca teks asli). */
   h1,
