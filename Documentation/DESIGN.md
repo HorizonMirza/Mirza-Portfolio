@@ -382,3 +382,12 @@ Pemilik memilih pilihan 14 dari demo 15 font: **Oswald** (judul, huruf kapital u
 ## 13. Topbar "tubelight" (2026-10-01)
 
 Permintaan pemilik berdasarkan komponen Tubelight Navbar (21st.dev). Diterapkan tanpa `framer-motion`: animasi lampu memakai View Transitions bawaan browser, jadi tidak ada tambahan JavaScript (skor kecepatan beranda sudah tipis di 90–91). Pilihan "Sistem" pada tema dihapus karena tombol tema kini satu tombol terang/gelap. Panel menu HP (popover) diganti kapsul ikon di bawah layar, dan tombol WhatsApp dinaikkan di HP agar tidak menutupi menu.
+
+## 14. Halaman login admin (2026-10-01)
+
+Permintaan pemilik berdasarkan komponen Interactive Neural Vortex dan sign-in-card-2 (21st.dev):
+- Latar: shader WebGL "neural vortex" (`components/admin/neural-vortex-background.tsx`), cahaya mengikuti kursor, DPR maks 1,5, berhenti saat tab tersembunyi, satu bingkai diam pada reduced-motion. Tanpa WebGL: latar hitam polos.
+- Halaman login **selalu hitam**, tidak mengikuti tema terang/gelap panel admin (warna ditulis langsung, bukan token tema).
+- Kartu login kaca **diam** (tanpa efek miring/geser 3D). Garis cahaya di tepi kartu memakai CSS, disembunyikan pada reduced-motion. Tanpa `framer-motion`.
+- Bagian contoh yang tidak dipakai karena fiturnya tidak ada: "Remember me", "Forgot password", "Sign in with Google", dan "Sign up" (satu admin, pendaftaran publik dimatikan). Ditambah tombol "Lihat sandi".
+
