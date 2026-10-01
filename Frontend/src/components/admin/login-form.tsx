@@ -1,17 +1,24 @@
 'use client'
 
+import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
+import { cn } from '@/lib/utils'
+
+// Kartu login kaca (gaya sign-in-card-2) tanpa efek miring/geser: kartu diam, hanya garis cahaya
+// di tepi yang bergerak (CSS, mati pada reduced-motion). Halaman login selalu gelap, jadi warna
+// ditulis langsung (putih di atas hitam), tidak memakai token tema.
+
+const inputClass =
+  'h-11 w-full rounded-lg border border-white/10 bg-white/5 pl-10 text-base text-white placeholder:text-white/40 transition-colors outline-none focus:border-white/30 focus:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/30 aria-invalid:border-red-400/70 md:text-sm'
 
 export function LoginForm({ redirectTo }: { redirectTo: string }) {
   const router = useRouter()
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -37,38 +44,136 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
     router.refresh()
   }
 
+  const describedBy = error ? 'login-error' : undefined
+
   return (
-    <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-5" noValidate>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="username"
-          required
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? 'login-error' : undefined}
-        />
+    <div className="relative w-full max-w-sm">
+      {/* garis cahaya yang berjalan di tepi kartu */}
+      <div aria-hidden="true" className="absolute -inset-px overflow-hidden rounded-2xl">
+        <span className="login-beam login-beam-top" />
+        <span className="login-beam login-beam-right" />
+        <span className="login-beam login-beam-bottom" />
+        <span className="login-beam login-beam-left" />
       </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          aria-invalid={error ? true : undefined}
-          aria-describedby={error ? 'login-error' : undefined}
+
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              'linear-gradient(135deg, white 0.5px, transparent 0.5px), linear-gradient(45deg, white 0.5px, transparent 0.5px)',
+            backgroundSize: '30px 30px',
+          }}
         />
+
+        <div className="relative">
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-full border border-white/15 bg-gradient-to-br from-white/15 to-transparent font-mono text-sm font-medium text-white">
+              MM
+            </div>
+            <p className="font-mono text-label tracking-widest text-white/60 uppercase">
+              Super Admin
+            </p>
+            <h1 className="mt-2 text-h3 font-bold text-white">Masuk ke panel admin</h1>
+          </div>
+
+          <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="email" className="text-sm font-medium text-white/80">
+                Email
+              </label>
+              <div className="relative">
+                <Mail
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/50"
+                  aria-hidden="true"
+                />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="username"
+                  required
+                  placeholder="nama@contoh.com"
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={describedBy}
+                  className={cn(inputClass, 'pr-3')}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="password" className="text-sm font-medium text-white/80">
+                Password
+              </label>
+              <div className="relative">
+                <Lock
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/50"
+                  aria-hidden="true"
+                />
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={describedBy}
+                  className={cn(inputClass, 'pr-11')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((value) => !value)}
+                  aria-pressed={showPassword}
+                  aria-controls="password"
+                  title="Lihat sandi"
+                  className="absolute top-1/2 right-1 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-white/60 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="size-4" aria-hidden="true" />
+                  ) : (
+                    <Eye className="size-4" aria-hidden="true" />
+                  )}
+                  <span className="sr-only">Lihat sandi</span>
+                </button>
+              </div>
+            </div>
+
+            <p
+              id="login-error"
+              role="alert"
+              aria-live="polite"
+              className="min-h-5 text-sm text-red-300"
+            >
+              {error}
+            </p>
+
+            <button
+              type="submit"
+              disabled={pending}
+              className="group inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:opacity-70"
+            >
+              {pending ? (
+                <>
+                  <span
+                    aria-hidden="true"
+                    className="size-4 animate-spin rounded-full border-2 border-black/70 border-t-transparent"
+                  />
+                  Memproses…
+                </>
+              ) : (
+                <>
+                  Masuk
+                  <ArrowRight
+                    className="size-4 transition-transform group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
-      <p id="login-error" role="alert" aria-live="polite" className="min-h-6 text-sm text-danger">
-        {error}
-      </p>
-      <Button type="submit" disabled={pending}>
-        {pending ? 'Memproses…' : 'Masuk'}
-      </Button>
-    </form>
+    </div>
   )
 }

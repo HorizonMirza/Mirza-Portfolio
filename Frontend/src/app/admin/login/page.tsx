@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/admin/login-form'
+import { NeuralVortexBackground } from '@/components/admin/neural-vortex-background'
 import { getAdminSession } from '@/lib/auth-guard'
 import { safeAdminRedirect } from '@/lib/safe-redirect'
 
@@ -14,13 +15,15 @@ export default async function LoginPage({ searchParams }: PageProps<'/admin/logi
   if (await getAdminSession()) redirect(target)
 
   return (
-    <main
-      id="main"
-      className="mx-auto flex min-h-dvh w-full max-w-sm flex-col justify-center px-4 py-12"
-    >
-      <p className="font-mono text-label tracking-widest text-muted uppercase">Super Admin</p>
-      <h1 className="mt-2 text-h2 font-bold">Masuk ke panel admin</h1>
-      <LoginForm redirectTo={target} />
-    </main>
+    // Selalu hitam (permintaan pemilik), tidak mengikuti tema terang/gelap panel admin.
+    <div className="relative min-h-dvh overflow-hidden bg-black text-white [color-scheme:dark]">
+      <NeuralVortexBackground />
+      <main
+        id="main"
+        className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-4 py-12"
+      >
+        <LoginForm redirectTo={target} />
+      </main>
+    </div>
   )
 }

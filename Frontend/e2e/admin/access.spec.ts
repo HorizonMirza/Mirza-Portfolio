@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 import { hasAdminEnv, login, uniqueIp } from './helpers'
@@ -73,7 +74,7 @@ test.describe('login dan logout', () => {
     await page.goto('/admin/skills')
     await expect(page).toHaveURL(/next=/)
     await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL!)
-    await page.getByLabel('Password').fill(process.env.ADMIN_PASSWORD!)
+    await page.getByLabel('Password', { exact: true }).fill(process.env.ADMIN_PASSWORD!)
     await page.getByRole('button', { name: 'Masuk' }).click()
     await expect(page).toHaveURL(/\/admin\/skills$/)
     if (isMobile) await page.getByRole('button', { name: /menu/i }).click()
@@ -82,4 +83,33 @@ test.describe('login dan logout', () => {
     await page.goto('/admin')
     await expect(page).toHaveURL(/\/admin\/login/)
   })
+})
+
+test.describe('tampilan halaman login', () => {
+  test.use({ contextOptions: { reducedMotion: 'reduce' } })
+
+  for (const theme of ['light', 'dark']) {
+    test(`selalu hitam walau tema ${theme}, tanpa pelanggaran aksesibilitas dan CSP`, async ({
+      page,
+    }) => {
+      const errors: string[] = []
+      page.on('console', (m) => {
+        if (m.type() === 'error') errors.push(m.text())
+      })
+      await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
+      await page.goto('/admin/login')
+      await expect(page.getByRole('heading', { name: 'Masuk ke panel admin' })).toBeVisible()
+      await expect(page.locator('main').locator('..')).toHaveCSS('background-color', 'rgb(0, 0, 0)')
+      // tombol lihat sandi membuka dan menutup isi kolom password
+      const password = page.getByLabel('Password', { exact: true })
+      await expect(password).toHaveAttribute('type', 'password')
+      await page.getByRole('button', { name: 'Lihat sandi' }).click()
+      await expect(password).toHaveAttribute('type', 'text')
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+        .analyze()
+      expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
+      expect(errors).toEqual([])
+    })
+  }
 })
