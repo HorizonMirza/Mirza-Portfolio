@@ -214,5 +214,10 @@
   "WhatsApp": {
     "label": "Chat on WhatsApp (opens in a new tab)",
     "prefill": "Hi Mirza, I saw your portfolio."
+  },
+  "SkillKeyboard": {
+    "label": "Skill keyboard",
+    "hint": "Press any key. On a keyboard: arrows to move, letters to jump.",
+    "credit": "Logos from Simple Icons. Git logo by Jason Long, CC BY 3.0."
   }
 }

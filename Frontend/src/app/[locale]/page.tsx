@@ -5,12 +5,14 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
-import { Chip, Container, SectionHeading } from '@/components/site/section-heading'
+import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { getPublicExperiences } from '@/features/experience/public'
 import { getPublicProfile } from '@/features/profile/public'
 import { ProjectCard } from '@/features/projects/components/public/project-card'
 import { getPublishedProjects } from '@/features/projects/public'
+import { SkillKeyboard } from '@/features/skills/components/skill-keyboard'
+import { toKeycaps } from '@/features/skills/keycaps'
 import { getPublicSkills } from '@/features/skills/public'
 import { NewsletterForm } from '@/features/subscribers/components/newsletter-form'
 import { Link } from '@/i18n/navigation'
@@ -49,18 +51,31 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
-  const [t, tNav, tAvail, tCommon, tExp, profile, projects, experiences, skills] =
-    await Promise.all([
-      getTranslations({ locale, namespace: 'Home' }),
-      getTranslations({ locale, namespace: 'Nav' }),
-      getTranslations({ locale, namespace: 'Availability' }),
-      getTranslations({ locale, namespace: 'Common' }),
-      getTranslations({ locale, namespace: 'Experience' }),
-      getPublicProfile(),
-      getPublishedProjects(),
-      getPublicExperiences(),
-      getPublicSkills(),
-    ])
+  const [
+    t,
+    tNav,
+    tAvail,
+    tCommon,
+    tExp,
+    tSkills,
+    tKeyboard,
+    profile,
+    projects,
+    experiences,
+    skills,
+  ] = await Promise.all([
+    getTranslations({ locale, namespace: 'Home' }),
+    getTranslations({ locale, namespace: 'Nav' }),
+    getTranslations({ locale, namespace: 'Availability' }),
+    getTranslations({ locale, namespace: 'Common' }),
+    getTranslations({ locale, namespace: 'Experience' }),
+    getTranslations({ locale, namespace: 'Skills' }),
+    getTranslations({ locale, namespace: 'SkillKeyboard' }),
+    getPublicProfile(),
+    getPublishedProjects(),
+    getPublicExperiences(),
+    getPublicSkills(),
+  ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
   const featured = (
@@ -68,6 +83,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   ).slice(0, 3)
   const github = profile?.socials.github
   const cvHref = `/api/cv?locale=${locale}`
+  const projectTitles = new Map(projects.map((p) => [p.slug, loc(p, 'title', locale)]))
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
   const person = profile
@@ -288,24 +304,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </Link>
               }
             />
-            <dl className="grid gap-6 md:grid-cols-3">
-              {skills.map((c) => (
-                <div key={c.id}>
-                  <dt className="font-mono text-label tracking-widest text-note uppercase">
-                    {loc(c, 'name', locale)}
-                  </dt>
-                  <dd className="mt-3">
-                    <ul className="flex flex-wrap gap-1.5">
-                      {c.skills.map((s) => (
-                        <li key={s.id}>
-                          <Chip>{s.name}</Chip>
-                        </li>
-                      ))}
-                    </ul>
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <SkillKeyboard
+              keycaps={toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)}
+              labels={{
+                keyboard: tKeyboard('label'),
+                hint: tKeyboard('hint'),
+                usedIn: tSkills('usedIn'),
+              }}
+            />
           </Container>
         </section>
       ) : null}

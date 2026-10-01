@@ -25,6 +25,25 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
   await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
+test('keyboard skill: tombol menampilkan rincian skill dan bisa dipakai dengan keyboard', async ({
+  page,
+}) => {
+  await page.goto('/id/skills')
+  const keyboard = page.getByRole('group', { name: 'Keyboard skill' })
+  const typescript = keyboard.getByRole('button', { name: /^TypeScript,/ })
+  await typescript.click()
+  await expect(typescript).toHaveAttribute('aria-current', 'true')
+  const panel = page.locator(`[id="${await typescript.getAttribute('aria-controls')}"]`)
+  await expect(panel).toContainText('TypeScript')
+  // huruf melompat ke skill berawalan huruf itu, panah berpindah ke tombol berikutnya
+  await typescript.press('r')
+  const react = keyboard.getByRole('button', { name: /^React,/ })
+  await expect(react).toBeFocused()
+  await expect(panel).toContainText('React')
+  await react.press('ArrowRight')
+  await expect(react).not.toHaveAttribute('aria-current')
+})
+
 test('filter pengalaman hanya menampilkan jenis yang dipilih', async ({ page }) => {
   await page.goto('/id/experience')
   const items = page.locator('ol > li[data-type]')

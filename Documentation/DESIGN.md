@@ -413,7 +413,7 @@ Pilihan pemilik nomor 6 (Azure) dari demo 10 biru. Seluruh situs dan panel admin
 
 - Topbar tiga bagian: foto bulat di kiri, kapsul menu di tengah (desktop), tombol bahasa dan tema di kanan, masing-masing lingkaran sendiri. HP: menu tetap kapsul ikon di bawah layar.
 - Lampu menu aktif hitam/putih mengikuti warna teks tema (bukan Azure), latar menu aktif `--surface-2`.
-- Tombol tema: ikon matahari/bulan beranimasi (garis digambar ulang + skala, CSS dari komponen AnimatedThemeToggle tanpa framer-motion). Pergantian tema meluas melingkar dari tombol (View Transitions API + animasi `clip-path`); tanpa dukungan browser atau dengan reduced-motion langsung ganti. `disableTransitionOnChange` next-themes dimatikan agar animasi ikon berjalan.
+- Tombol tema: ikon matahari/bulan beranimasi (garis digambar ulang + skala, CSS dari komponen AnimatedThemeToggle tanpa framer-motion). Pergantian tema meluas melingkar dari tombol (View Transitions API + animasi `clip-path`); tanpa dukungan browser atau dengan reduced-motion langsung ganti. `disableTransitionOnChange` next-themes tetap aktif (warna tidak beranimasi saat tema dipasang; tanpa opsi ini uji kontras WebKit gagal); state next-themes baru diperbarui setelah animasi ikon selesai agar animasinya tidak terpotong.
 - Tombol bahasa: kode bahasa berputar keluar saat ditekan dan berputar masuk di halaman baru.
 - Foto lingkaran dipotong lebih jauh (kepala dan bahu).
 - Login: lingkaran foto diberi kilau berjalan yang sama dengan kolom, warna latar isi otomatis (autofill) browser dinetralkan, label "Super Admin" dan judul dirapikan (Inter berjarak lebar + Oswald semibold).
@@ -426,3 +426,14 @@ Pilihan pemilik nomor 6 (Azure) dari demo 10 biru. Seluruh situs dan panel admin
 - Bahasa: React/Next mengambil alih transisi pada navigasi biasa, jadi tombol bahasa memuat halaman bahasa baru penuh dan browser menampilkannya lewat transisi antar-dokumen (`@view-transition { navigation: auto }` + skrip statis `pagereveal` di layout publik). Pemuatan penuh lain dilewati (`pageswap`). Browser tanpa dukungan (mis. Firefox saat ini) atau reduced-motion: navigasi biasa tanpa lingkaran.
 - Kode bahasa di tombol berubah seperti kata yang berganti (memudar, mengabur, mengecil keluar, lalu menajam masuk).
 
+## 19. Keyboard skill 3D (2026-10-01)
+
+Permintaan pemilik: bagian skill seperti keyboard 3D pada video referensi (portofolio Abhijit Zende, keyboard dari scene Spline). Repo referensi tidak berlisensi dan memakai Spline + three.js (lebih dari 1 MB JS), jadi yang diambil hanya prinsipnya. Tidak ada aset, scene, atau teks yang disalin.
+
+- Keyboard dibuat dengan CSS 3D murni (`.kb-*` di `globals.css`, `features/skills/components/skill-keyboard.tsx`). Pelat dimiringkan, tiap tombol punya tutup dan dua sisi yang ikut turun saat ditekan. Tidak ada dependency baru.
+- Satu tombol untuk satu skill dari database, urutan sesuai kategori dan urutan admin. **Warna tombol = warna brand** (keputusan pemilik, pengecualian dari palet hitam-putih). Warna logo hitam atau putih, mana yang kontrasnya lebih tinggi. Skill tanpa logo brand (non-teknis) memakai tombol netral `#262626` dengan ikon lucide atau singkatan.
+- Logo dari Simple Icons (CC0) disalin ke `features/skills/brand-icons.ts`, hanya diimpor di server. Ikon dicari dari kolom `icon` (slug Simple Icons), lalu dari nama skill dan alias. Ikon berlisensi NC/SA tidak dipakai. Logo Git (CC BY 3.0, Jason Long) diberi atribusi di halaman Skill.
+- Interaksi: arahkan kursor, fokus, atau tekan tombol untuk menampilkan kategori, nama skill (besar, miring searah keyboard di desktop), dan project yang memakainya (keputusan pemilik: hanya data yang sudah ada, tanpa deskripsi karangan). Keyboard fisik: panah berpindah tombol, huruf melompat ke skill berawalan huruf itu.
+- Dipasang di halaman Skill (di atas daftar per kategori) dan di bagian skill Home (menggantikan chip).
+- Aksesibilitas: tiap tombol `<button>` bernama "skill, kategori", tombol aktif `aria-current`, fokus terlihat (garis Azure di tutup tombol), reduced-motion mematikan transisi.
+- Belum dikerjakan: keyboard yang ikut berpindah antar-bagian saat scroll seperti di video. Itu perubahan besar di seluruh halaman dan butuh library 3D, jadi menunggu keputusan pemilik.
