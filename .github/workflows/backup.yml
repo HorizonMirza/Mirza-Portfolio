@@ -1,0 +1,100 @@
+name: Backup
+
+# Backup database production setiap hari: pg_dump, enkripsi AES-256 (gpg), simpan sebagai artifact
+# 30 hari, lalu langsung diuji pulih ke Postgres sementara. Artifact bisa diunduh siapa pun yang
+# punya akses ke repo, karena itu hanya file terenkripsi yang diunggah.
+# Secret (Settings → Secrets and variables → Actions): BACKUP_DATABASE_URL (koneksi Neon TANPA
+# pooler) dan BACKUP_PASSPHRASE. Tanpa keduanya workflow dilewati dengan pemberitahuan.
+
+on:
+  schedule:
+    - cron: "30 19 * * *" # 02.30 WIB
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Dump, enkripsi, uji pulih
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      restore:
+        image: postgres:17
+        env:
+          POSTGRES_USER: restore
+          POSTGRES_PASSWORD: restore-only-bukan-rahasia
+          POSTGRES_DB: restore
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U restore" --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+      RESTORE_URL: postgresql://restore:restore-only-bukan-rahasia@localhost:5432/restore
+    steps:
+      - name: Cek secret
+        id: check
+        run: |
+          if [ -z "$DATABASE_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::notice::BACKUP_DATABASE_URL atau BACKUP_PASSPHRASE belum diisi, backup dilewati."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dump dan enkripsi
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          umask 077
+          # pg_dump 17 dari image resmi (sama dengan versi Neon). Format custom sudah terkompresi.
+          docker run --rm --network host -e DATABASE_URL postgres:17 \
+            sh -c 'pg_dump --format=custom --compress=9 --no-owner --no-acl --schema=public "$DATABASE_URL"' \
+            > backup.dump
+          test -s backup.dump
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 \
+            --symmetric --cipher-algo AES256 --output backup.dump.gpg backup.dump <<< "$BACKUP_PASSPHRASE"
+          rm -f backup.dump
+          echo "NAME=portfolio-$(date -u +%Y%m%dT%H%MZ)" >> "$GITHUB_ENV"
+          ls -l backup.dump.gpg
+
+      - name: Uji pulih dari file terenkripsi
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          umask 077
+          gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 \
+            --decrypt --output restore.dump backup.dump.gpg <<< "$BACKUP_PASSPHRASE"
+          # dump berisi CREATE SCHEMA public, jadi skema bawaan database kosong dihapus dulu
+          docker run --rm --network host -e RESTORE_URL postgres:17 \
+            sh -c 'psql "$RESTORE_URL" -v ON_ERROR_STOP=1 -qc "DROP SCHEMA public CASCADE"'
+          docker run --rm --network host -v "$PWD:/b" postgres:17 \
+            pg_restore --no-owner --no-acl --exit-on-error --dbname "$RESTORE_URL" /b/restore.dump
+          rm -f restore.dump
+          # Hanya jumlah baris yang ditampilkan, bukan isi data.
+          docker run --rm --network host -e RESTORE_URL postgres:17 sh -c '
+            set -e
+            psql "$RESTORE_URL" -v ON_ERROR_STOP=1 -c "
+              SELECT relname AS tabel, n_live_tup AS baris FROM pg_stat_user_tables ORDER BY relname;"
+            profiles=$(psql "$RESTORE_URL" -tAc "SELECT count(*) FROM \"Profile\"")
+            admins=$(psql "$RESTORE_URL" -tAc "SELECT count(*) FROM \"User\" WHERE role = '"'"'SUPER_ADMIN'"'"'")
+            migrations=$(psql "$RESTORE_URL" -tAc "SELECT count(*) FROM _prisma_migrations")
+            echo "Profile=$profiles SuperAdmin=$admins migrasi=$migrations"
+            [ "$profiles" -ge 1 ] && [ "$admins" -ge 1 ] && [ "$migrations" -ge 1 ]'
+
+      - name: Simpan backup terenkripsi
+        if: steps.check.outputs.ready == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.NAME }}
+          path: backup.dump.gpg
+          retention-days: 30
+          if-no-files-found: error
+          compression-level: 0
