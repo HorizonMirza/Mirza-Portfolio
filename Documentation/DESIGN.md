@@ -391,3 +391,9 @@ Permintaan pemilik berdasarkan komponen Interactive Neural Vortex dan sign-in-ca
 - Kartu login kaca **diam** (tanpa efek miring/geser 3D). Garis cahaya di tepi kartu memakai CSS, disembunyikan pada reduced-motion. Tanpa `framer-motion`.
 - Bagian contoh yang tidak dipakai karena fiturnya tidak ada: "Remember me", "Forgot password", "Sign in with Google", dan "Sign up" (satu admin, pendaftaran publik dimatikan). Ditambah tombol "Lihat sandi".
 
+Revisi 2026-10-01 (pemilik): teks halaman login berbahasa Inggris ("Welcome Back King!", tombol "Login" tanpa panah, contoh email `mirzaganteng@gmail.com`), kolom email dan password diberi kilau berjalan mengelilingi kotak (gradien conic + `@property`, diam pada reduced-motion), lingkaran logo diganti foto pemilik.
+
+## 15. Foto profil bawaan (2026-10-01)
+
+Foto dari pemilik disimpan di `Frontend/src/assets/` (800×800 untuk halaman Tentang, potongan wajah 256×256 untuk lingkaran kecil), metadata kamera dibuang. Dipakai di topbar, halaman Tentang, login admin, dan JSON-LD selama belum ada foto yang diunggah lewat admin. Foto dari admin (Cloudinary) selalu didahulukan.
+
