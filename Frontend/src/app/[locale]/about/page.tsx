@@ -10,6 +10,7 @@ import { getPublicProfile } from '@/features/profile/public'
 import { SOCIAL_KEYS } from '@/features/profile/schema'
 import { Link } from '@/i18n/navigation'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
+import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { loc } from '@/lib/localized'
 import { pageMetadata, whatsappUrl } from '@/lib/seo'
 
@@ -81,7 +82,16 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
               priority
               className="aspect-[4/5] w-full max-w-72 rounded-lg border border-border object-cover"
             />
-          ) : null}
+          ) : (
+            <Image
+              src={DEFAULT_PROFILE_PHOTO}
+              alt={DEFAULT_PHOTO_ALT[locale]}
+              sizes="(min-width: 768px) 288px, 100vw"
+              priority
+              placeholder="blur"
+              className="aspect-[4/5] w-full max-w-72 rounded-lg border border-border object-cover"
+            />
+          )}
         </div>
         <div className="flex flex-col gap-10">
           {profile ? <MarkdownView source={loc(profile, 'bio', locale)} size="base" /> : null}

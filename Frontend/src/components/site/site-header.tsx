@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server'
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { getPublicProfile } from '@/features/profile/public'
+import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import type { AppLocale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
 
@@ -13,31 +14,21 @@ import { NavLinks } from './nav-links'
 const pill =
   'flex items-center gap-1 rounded-full border border-border bg-surface/90 p-1 shadow-lg backdrop-blur-lg'
 
-// Foto profil bulat (dari admin). Tanpa foto: inisial di lingkaran.
+// Foto profil bulat: foto dari admin bila ada, selain itu foto bawaan pemilik.
 function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
-  const initials = name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join('')
   return (
     <Link
       href="/"
-      className="inline-flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary font-mono text-xs font-medium text-primary-fg ring-1 ring-border"
+      className="inline-flex size-10 shrink-0 overflow-hidden rounded-full bg-surface-2 ring-1 ring-border"
     >
-      {photoUrl ? (
-        <Image
-          src={photoUrl}
-          alt=""
-          width={80}
-          height={80}
-          sizes="40px"
-          className="size-full object-cover"
-        />
-      ) : (
-        <span aria-hidden="true">{initials}</span>
-      )}
+      <Image
+        src={photoUrl ?? DEFAULT_PROFILE_AVATAR}
+        alt=""
+        width={80}
+        height={80}
+        sizes="40px"
+        className="size-full object-cover"
+      />
       <span className="sr-only">{name}</span>
     </Link>
   )

@@ -66,7 +66,7 @@ test.describe('login dan logout', () => {
 
   test('password salah menampilkan pesan umum', async ({ page }) => {
     await login(page, process.env.ADMIN_EMAIL, 'password-yang-salah-sekali')
-    await expect(page.locator('#login-error')).toHaveText('Email atau password salah.')
+    await expect(page.locator('#login-error')).toHaveText('Incorrect email or password.')
     await expect(page).toHaveURL(/\/admin\/login/)
   })
 
@@ -75,7 +75,7 @@ test.describe('login dan logout', () => {
     await expect(page).toHaveURL(/next=/)
     await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL!)
     await page.getByLabel('Password', { exact: true }).fill(process.env.ADMIN_PASSWORD!)
-    await page.getByRole('button', { name: 'Masuk' }).click()
+    await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL(/\/admin\/skills$/)
     if (isMobile) await page.getByRole('button', { name: /menu/i }).click()
     await page.getByRole('button', { name: 'Keluar' }).click()
@@ -98,12 +98,12 @@ test.describe('tampilan halaman login', () => {
       })
       await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
       await page.goto('/admin/login')
-      await expect(page.getByRole('heading', { name: 'Masuk ke panel admin' })).toBeVisible()
+      await expect(page.getByRole('heading', { name: 'Welcome Back King!' })).toBeVisible()
       await expect(page.locator('main').locator('..')).toHaveCSS('background-color', 'rgb(0, 0, 0)')
       // tombol lihat sandi membuka dan menutup isi kolom password
       const password = page.getByLabel('Password', { exact: true })
       await expect(password).toHaveAttribute('type', 'password')
-      await page.getByRole('button', { name: 'Lihat sandi' }).click()
+      await page.getByRole('button', { name: 'Show password' }).click()
       await expect(password).toHaveAttribute('type', 'text')
       const results = await new AxeBuilder({ page })
         .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])

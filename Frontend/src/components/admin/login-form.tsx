@@ -1,18 +1,22 @@
 'use client'
 
-import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail } from 'lucide-react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 import { authClient } from '@/lib/auth-client'
+import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import { cn } from '@/lib/utils'
 
 // Kartu login kaca (gaya sign-in-card-2) tanpa efek miring/geser: kartu diam, hanya garis cahaya
 // di tepi yang bergerak (CSS, mati pada reduced-motion). Halaman login selalu gelap, jadi warna
-// ditulis langsung (putih di atas hitam), tidak memakai token tema.
+// ditulis langsung (putih di atas hitam), tidak memakai token tema. Teks login berbahasa Inggris
+// (permintaan pemilik), panel admin di baliknya tetap berbahasa Indonesia.
 
+// Kolom berada di dalam bingkai .login-field yang memberi kilau berjalan mengelilingi kotak.
 const inputClass =
-  'h-11 w-full rounded-lg border border-white/10 bg-white/5 pl-10 text-base text-white placeholder:text-white/40 transition-colors outline-none focus:border-white/30 focus:bg-white/10 focus-visible:ring-2 focus-visible:ring-white/30 aria-invalid:border-red-400/70 md:text-sm'
+  'h-11 w-full rounded-[calc(0.5rem-1px)] border-0 bg-[#111117] pl-10 text-base text-white placeholder:text-white/40 transition-colors outline-none focus:bg-[#16161e] md:text-sm'
 
 export function LoginForm({ redirectTo }: { redirectTo: string }) {
   const router = useRouter()
@@ -34,8 +38,8 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
       // pesan yang sama untuk email maupun password salah
       setError(
         signInError.status === 429
-          ? 'Terlalu banyak percobaan. Coba lagi dalam 15 menit.'
-          : 'Email atau password salah.',
+          ? 'Too many attempts. Try again in 15 minutes.'
+          : 'Incorrect email or password.',
       )
       return
     }
@@ -47,7 +51,7 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
   const describedBy = error ? 'login-error' : undefined
 
   return (
-    <div className="relative w-full max-w-sm">
+    <div lang="en" className="relative w-full max-w-sm">
       {/* garis cahaya yang berjalan di tepi kartu */}
       <div aria-hidden="true" className="absolute -inset-px overflow-hidden rounded-2xl">
         <span className="login-beam login-beam-top" />
@@ -69,13 +73,19 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
 
         <div className="relative">
           <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-full border border-white/15 bg-gradient-to-br from-white/15 to-transparent font-mono text-sm font-medium text-white">
-              MM
-            </div>
+            <Image
+              src={DEFAULT_PROFILE_AVATAR}
+              alt=""
+              width={112}
+              height={112}
+              sizes="56px"
+              priority
+              className="mx-auto mb-4 size-14 rounded-full border border-white/15 object-cover"
+            />
             <p className="font-mono text-label tracking-widest text-white/60 uppercase">
               Super Admin
             </p>
-            <h1 className="mt-2 text-h3 font-bold text-white">Masuk ke panel admin</h1>
+            <h1 className="mt-2 text-h3 font-bold text-white">Welcome Back King!</h1>
           </div>
 
           <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
@@ -83,9 +93,9 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
               <label htmlFor="email" className="text-sm font-medium text-white/80">
                 Email
               </label>
-              <div className="relative">
+              <div className="login-field relative">
                 <Mail
-                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/50"
+                  className="pointer-events-none absolute top-1/2 left-3 z-10 size-4 -translate-y-1/2 text-white/50"
                   aria-hidden="true"
                 />
                 <input
@@ -94,7 +104,7 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
                   type="email"
                   autoComplete="username"
                   required
-                  placeholder="nama@contoh.com"
+                  placeholder="mirzaganteng@gmail.com"
                   aria-invalid={error ? true : undefined}
                   aria-describedby={describedBy}
                   className={cn(inputClass, 'pr-3')}
@@ -106,9 +116,9 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
               <label htmlFor="password" className="text-sm font-medium text-white/80">
                 Password
               </label>
-              <div className="relative">
+              <div className="login-field login-field-delay relative">
                 <Lock
-                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/50"
+                  className="pointer-events-none absolute top-1/2 left-3 z-10 size-4 -translate-y-1/2 text-white/50"
                   aria-hidden="true"
                 />
                 <input
@@ -126,15 +136,15 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
                   onClick={() => setShowPassword((value) => !value)}
                   aria-pressed={showPassword}
                   aria-controls="password"
-                  title="Lihat sandi"
-                  className="absolute top-1/2 right-1 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-white/60 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
+                  title="Show password"
+                  className="absolute top-1/2 right-1 z-10 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-white/60 transition-colors hover:text-white focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none"
                 >
                   {showPassword ? (
                     <EyeOff className="size-4" aria-hidden="true" />
                   ) : (
                     <Eye className="size-4" aria-hidden="true" />
                   )}
-                  <span className="sr-only">Lihat sandi</span>
+                  <span className="sr-only">Show password</span>
                 </button>
               </div>
             </div>
@@ -151,7 +161,7 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
             <button
               type="submit"
               disabled={pending}
-              className="group inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:opacity-70"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-lg bg-white text-sm font-semibold text-black transition-colors hover:bg-white/90 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black focus-visible:outline-none disabled:opacity-70"
             >
               {pending ? (
                 <>
@@ -159,16 +169,10 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
                     aria-hidden="true"
                     className="size-4 animate-spin rounded-full border-2 border-black/70 border-t-transparent"
                   />
-                  Memproses…
+                  Signing in…
                 </>
               ) : (
-                <>
-                  Masuk
-                  <ArrowRight
-                    className="size-4 transition-transform group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </>
+                'Login'
               )}
             </button>
           </form>

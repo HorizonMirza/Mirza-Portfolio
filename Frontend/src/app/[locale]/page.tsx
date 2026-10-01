@@ -15,6 +15,7 @@ import { getPublicSkills } from '@/features/skills/public'
 import { NewsletterForm } from '@/features/subscribers/components/newsletter-form'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
+import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
 import { formatMonth, loc } from '@/lib/localized'
@@ -77,7 +78,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         url: `${siteUrl()}/${locale}`,
         description: loc(profile, 'headline', locale),
         jobTitle: loc(profile, 'currentRole', locale) || undefined,
-        image: profile.photo?.url,
+        image: profile.photo?.url ?? new URL(DEFAULT_PROFILE_PHOTO.src, siteUrl()).toString(),
         sameAs: Object.values(profile.socials),
         address: profile.city
           ? { '@type': 'PostalAddress', addressLocality: profile.city, addressCountry: 'ID' }
