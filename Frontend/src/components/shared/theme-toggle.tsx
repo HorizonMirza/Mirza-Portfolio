@@ -6,6 +6,7 @@ import { type MouseEvent, useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
 
 import { canAnimateViewTransition, originOf, revealChange } from '@/lib/circle-reveal'
+import { playThemeSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 const subscribe = () => () => {}
@@ -52,7 +53,8 @@ function SolarSwitch() {
 }
 
 // Satu tombol bulat: menyala = mode gelap. Tema baru meluas melingkar dari tombol
-// (lib/circle-reveal.ts). Tanpa dukungan browser atau dengan reduced-motion: langsung ganti.
+// (lib/circle-reveal.ts), diiringi suara desir angin (lib/ui-sounds.ts). Tanpa dukungan browser atau
+// dengan reduced-motion: langsung ganti.
 export function ThemeToggle({ className }: { className?: string }) {
   const t = useTranslations('Theme')
   const { resolvedTheme, setTheme } = useTheme()
@@ -66,6 +68,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     const root = document.documentElement
     // baca dari DOM agar klik sebelum hydration selesai tetap membalik tema yang terlihat
     const next = root.classList.contains('dark') ? 'light' : 'dark'
+    playThemeSound(next === 'dark')
     const apply = () => {
       root.classList.remove('light', 'dark')
       root.classList.add(next)

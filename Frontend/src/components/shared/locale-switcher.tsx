@@ -5,12 +5,14 @@ import { useLocale, useTranslations } from 'next-intl'
 import { Link, usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { LANG_SCRAMBLE_KEY, visibleTexts } from '@/lib/text-scramble'
+import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 // Satu tombol bulat yang berpindah ke bahasa lain di halaman yang sama. Kode yang terlihat
 // (mis. "EN") adalah bahasa tujuan dan ikut tercantum di nama aksesibel.
 // Animasi: setelah halaman berganti bahasa, teks yang terlihat (termasuk kode di tombol ini) diacak
-// lalu terurai ke bahasa baru (lib/text-scramble.ts lewat LanguageScramble di layout).
+// lalu terurai ke bahasa baru (lib/text-scramble.ts lewat LanguageScramble di layout), diiringi
+// suara acak digital (lib/ui-sounds.ts).
 export function LocaleSwitcher({ className }: { className?: string }) {
   const t = useTranslations('Locale')
   const current = useLocale()
@@ -26,6 +28,7 @@ export function LocaleSwitcher({ className }: { className?: string }) {
       aria-label={label}
       title={label}
       onClick={() => {
+        playLanguageSound(target === 'en')
         try {
           sessionStorage.setItem(
             LANG_SCRAMBLE_KEY,

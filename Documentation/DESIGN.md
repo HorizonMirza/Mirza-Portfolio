@@ -458,3 +458,12 @@ Pemilik memilih animasi nomor 1 dari lima demo (acak huruf, gulung baris, papan 
 - `LanguageScramble` di layout publik, setelah halaman tampil dalam bahasa baru, mengacak teks yang terlihat di layar lalu menguraikannya menjadi teks bahasa baru dari kiri ke kanan (650 ms, berurutan per teks). Teks yang sama di kedua bahasa (nama, kota, GitHub) tidak diacak. Spasi dan tanda baca tetap, jadi susunan kata tidak melompat.
 - Hanya `nodeValue` node teks yang diubah dan nilai akhirnya selalu teks asli; bila React mengganti teks di tengah animasi, nilai React yang dipakai. Wilayah `aria-live`, isian form, dan teks tak terlihat tidak disentuh.
 - Reduced-motion: tanpa animasi. Skrip `pagereveal` dan `@view-transition` untuk bahasa dihapus.
+
+## 22. Suara tombol tema dan bahasa (2026-10-01)
+
+Pemilik memilih dari dua demo berisi masing-masing 10 suara: tema nomor 5 (desir angin), bahasa nomor 2 (acak digital).
+
+- `lib/ui-sounds.ts`, dibuat langsung dengan Web Audio: tanpa berkas audio, tanpa library, tanpa permintaan jaringan. Satu `AudioContext` dibuat saat tombol pertama kali ditekan.
+- Tema: derau tersaring yang menyapu turun saat ke gelap dan naik saat ke terang (0,38 detik).
+- Bahasa: 12 bip acak selama huruf diacak lalu satu nada penutup (sekitar 0,7 detik, selaras dengan animasi acak huruf). Ke English sedikit lebih tinggi.
+- Hanya berbunyi dari klik pengguna, volume pelan (0,4). Browser tanpa Web Audio atau yang menolaknya: tombol tetap bekerja tanpa suara. Belum ada tombol untuk mematikan suara (menunggu keputusan pemilik).
