@@ -434,24 +434,11 @@
   stroke-dashoffset: 0;
 }
 
-/* Ganti tema: tampilan baru meluas melingkar dari tombol (animasi clip-path di theme-toggle.tsx),
-   tanpa crossfade bawaan. */
-:root[data-theme-switch]::view-transition-old(root),
-:root[data-theme-switch]::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-:root[data-theme-switch]::view-transition-old(root) {
-  z-index: 1;
-}
-:root[data-theme-switch]::view-transition-new(root) {
-  z-index: 2;
-}
-
-/* Ganti bahasa: kode bahasa berputar keluar saat ditekan dan berputar masuk di halaman baru. */
+/* Ganti bahasa: kode bahasa berubah seperti kata yang berganti (memudar, mengabur, mengecil
+   keluar; kode baru menajam dan membesar masuk), senada dengan ikon tema. */
 .lang-code {
   display: inline-block;
-  animation: lang-in 450ms var(--ease-out-soft) both;
+  animation: lang-in 600ms var(--ease-out-soft) both;
 }
 .lang-code[data-leaving] {
   animation: lang-out 300ms var(--ease-out-soft) both;
@@ -459,13 +446,17 @@
 @keyframes lang-in {
   from {
     opacity: 0;
-    transform: translateY(70%) rotateX(-80deg);
+    filter: blur(6px);
+    transform: scale(0.4);
+    letter-spacing: 0.4em;
   }
 }
 @keyframes lang-out {
   to {
     opacity: 0;
-    transform: translateY(-70%) rotateX(80deg);
+    filter: blur(6px);
+    transform: scale(0.4);
+    letter-spacing: 0.4em;
   }
 }
 

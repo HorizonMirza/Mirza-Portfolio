@@ -14,6 +14,7 @@ import { SiteHeader } from '@/components/site/site-header'
 import { VercelInsights } from '@/components/site/vercel-insights'
 import { WhatsAppButton } from '@/components/site/whatsapp-button'
 import { routing } from '@/i18n/routing'
+import { LANG_REVEAL_SCRIPT } from '@/lib/circle-reveal'
 import { siteUrl } from '@/lib/env'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
@@ -49,6 +50,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
+      <head>
+        {/* Transisi antar-halaman hanya untuk ganti bahasa (lingkaran dari tombol bahasa).
+            Isi skrip dan gaya statis dari kode kita sendiri, bukan masukan pengguna. */}
+        <style>{'@view-transition { navigation: auto; }'}</style>
+        <script dangerouslySetInnerHTML={{ __html: LANG_REVEAL_SCRIPT }} />
+      </head>
       <body className="bg-bg text-text">
         <a
           href="#main"

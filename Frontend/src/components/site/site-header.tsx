@@ -15,20 +15,21 @@ import { NavLinks } from './nav-links'
 const floating = 'border border-border bg-surface/90 shadow-lg backdrop-blur-lg'
 const pill = `flex items-center gap-1 rounded-full p-1 ${floating}`
 
-// Foto profil bulat: foto dari admin bila ada, selain itu foto bawaan pemilik.
+// Foto profil bulat di dalam lingkaran berbingkai (sama seperti tombol bahasa dan tema):
+// foto dari admin bila ada, selain itu foto bawaan pemilik.
 function Avatar({ name, photoUrl }: { name: string; photoUrl?: string }) {
   return (
     <Link
       href="/"
-      className={`inline-flex size-11 shrink-0 overflow-hidden rounded-full ${floating}`}
+      className={`inline-flex size-11 shrink-0 items-center justify-center rounded-full p-1 ${floating}`}
     >
       <Image
         src={photoUrl ?? DEFAULT_PROFILE_AVATAR}
         alt=""
-        width={88}
-        height={88}
-        sizes="44px"
-        className="size-full object-cover"
+        width={72}
+        height={72}
+        sizes="36px"
+        className="size-full rounded-full object-cover"
       />
       <span className="sr-only">{name}</span>
     </Link>

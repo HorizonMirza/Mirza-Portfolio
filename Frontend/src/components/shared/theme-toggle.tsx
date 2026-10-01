@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes'
 import { type MouseEvent, useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
 
+import { canAnimateViewTransition, originOf, revealChange } from '@/lib/circle-reveal'
 import { cn } from '@/lib/utils'
 
 const subscribe = () => () => {}
@@ -48,8 +49,8 @@ function SolarSwitch() {
   )
 }
 
-// Satu tombol bulat: menyala = mode gelap. Tema baru meluas melingkar dari tombol lewat View
-// Transitions API bawaan browser. Tanpa dukungan browser atau dengan reduced-motion: langsung ganti.
+// Satu tombol bulat: menyala = mode gelap. Tema baru meluas melingkar dari tombol
+// (lib/circle-reveal.ts). Tanpa dukungan browser atau dengan reduced-motion: langsung ganti.
 export function ThemeToggle({ className }: { className?: string }) {
   const t = useTranslations('Theme')
   const { resolvedTheme, setTheme } = useTheme()
@@ -70,32 +71,11 @@ export function ThemeToggle({ className }: { className?: string }) {
       setTheme(next)
     }
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (!document.startViewTransition || reduceMotion) {
+    if (!canAnimateViewTransition()) {
       apply()
       return
     }
-
-    const rect = event.currentTarget.getBoundingClientRect()
-    const x = rect.left + rect.width / 2
-    const y = rect.top + rect.height / 2
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
-
-    root.dataset.themeSwitch = ''
-    const transition = document.startViewTransition(() => flushSync(apply))
-    transition.ready
-      .then(() =>
-        root.animate(
-          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-          {
-            duration: 550,
-            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-            pseudoElement: '::view-transition-new(root)',
-          },
-        ),
-      )
-      .catch(() => {})
-    transition.finished.finally(() => delete root.dataset.themeSwitch)
+    revealChange(originOf(event.currentTarget), () => flushSync(apply))
   }
 
   return (
