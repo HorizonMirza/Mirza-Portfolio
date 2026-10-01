@@ -64,7 +64,7 @@ function SidebarBody({ adminName, onNavigate }: { adminName: string; onNavigate?
   return (
     <>
       <div>
-        <p className="font-mono text-label tracking-widest text-muted uppercase">Super Admin</p>
+        <p className="font-mono text-label tracking-widest text-note uppercase">Super Admin</p>
         <p className="mt-1 truncate text-sm font-semibold">{adminName}</p>
       </div>
       <NavLinks onNavigate={onNavigate} />

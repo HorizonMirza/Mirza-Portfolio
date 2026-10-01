@@ -47,7 +47,7 @@ export default async function SkillsPage({ params }: PageProps<'/[locale]/skills
             >
               <h2 id={`skill-cat-${c.id}`} className="text-h3 font-semibold">
                 <span
-                  className="mb-1 block font-mono text-label tracking-widest text-muted"
+                  className="mb-1 block font-mono text-label tracking-widest text-note"
                   aria-hidden="true"
                 >
                   {String(i + 1).padStart(2, '0')}

@@ -99,7 +99,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
           <section aria-labelledby="about-contact">
             <h2
               id="about-contact"
-              className="font-mono text-label tracking-widest text-muted uppercase"
+              className="font-mono text-label tracking-widest text-note uppercase"
             >
               {t('contactHeading')}
             </h2>

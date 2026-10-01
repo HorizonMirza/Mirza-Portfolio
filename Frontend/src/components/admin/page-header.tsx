@@ -15,7 +15,7 @@ export function PageHeader({
     <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
         {eyebrow ? (
-          <p className="font-mono text-label tracking-widest text-muted uppercase">{eyebrow}</p>
+          <p className="font-mono text-label tracking-widest text-note uppercase">{eyebrow}</p>
         ) : null}
         <h1 className="mt-1 text-h1 font-bold">{title}</h1>
         {description ? <p className="mt-2 max-w-prose text-muted">{description}</p> : null}

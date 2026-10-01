@@ -43,7 +43,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
       ) : (
         <div className="experience-filter">
           <fieldset className="mb-10">
-            <legend className="mb-3 font-mono text-label tracking-widest text-muted uppercase">
+            <legend className="mb-3 font-mono text-label tracking-widest text-note uppercase">
               {t('filterLabel')}
             </legend>
             <div className="flex flex-wrap gap-2">
@@ -70,9 +70,9 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
               <li key={e.id} data-type={e.type} className="reveal relative">
                 <span
                   aria-hidden="true"
-                  className="absolute top-2 -left-[calc(1.5rem+5px)] size-2.5 rounded-full border-2 border-bg bg-primary md:-left-[calc(2.5rem+5px)]"
+                  className="absolute top-2 -left-[calc(1.5rem+5px)] size-2.5 rounded-full border-2 border-bg bg-note md:-left-[calc(2.5rem+5px)]"
                 />
-                <p className="font-mono text-sm text-muted tabular-nums">
+                <p className="font-mono text-sm text-note tabular-nums">
                   {formatMonth(e.start, locale)} –{' '}
                   {e.end ? formatMonth(e.end, locale) : tCommon('present')}
                   <span className="ml-3 text-label tracking-widest uppercase">{t(e.type)}</span>

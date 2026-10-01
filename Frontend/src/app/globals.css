@@ -8,22 +8,27 @@
  * Rasio kontras sudah dihitung di DESIGN.md. Ubah di sini saja, jangan menaruh warna acak di komponen.
  */
 :root {
-  --bg: #f6f9fc;
-  --surface: #ffffff;
-  --surface-2: #eaf0f8;
-  --text: #0b1220;
-  --text-muted: #475569;
-  --primary: #1d4fd7;
+  /* Hitam-putih (pilihan pemilik 2026-10-01). Biru Azure (--note) hanya untuk catatan kecil:
+     label, nomor bagian, tanggal, titik status, lampu menu, cincin fokus, grafik. */
+  --bg: #ffffff;
+  --surface: #f5f5f5;
+  --surface-2: #ebebeb;
+  --text: #0a0a0a;
+  --text-muted: #525252;
+  /* tombol utama dan tautan: hitam di tema terang, putih di tema gelap */
+  --primary: #0a0a0a;
   --primary-fg: #ffffff;
-  /* --border hanya untuk pemisah dekoratif, elemen interaktif pakai --border-strong */
-  --border: #cbd5e1;
-  --border-strong: #64748b;
+  /* --border hanya untuk pemisah dekoratif, elemen interaktif pakai --border-strong (>= 3:1) */
+  --border: #e5e5e5;
+  --border-strong: #8a8a8a;
   --danger: #b42318;
   --success: #0b7a3e;
-  /* --accent dekoratif saja, tidak untuk teks */
-  --accent: #0ea5e9;
-  /* warna seri grafik, divalidasi skrip dataviz (pita kecerahan + kontras) */
-  --chart-1: #1d4fd7;
+  /* Azure versi gelap untuk latar putih: 5,8:1 di putih, 5,3:1 di --surface */
+  --note: #1d5fd0;
+  /* --accent dekoratif saja (canvas hero), sama dengan --note */
+  --accent: #1d5fd0;
+  /* warna seri grafik */
+  --chart-1: #1d5fd0;
   /* warna merek WhatsApp untuk tombol melayang; ikon gelap di atasnya ±9:1 */
   --whatsapp: #25d366;
   --whatsapp-fg: #0b1220;
@@ -32,19 +37,21 @@
 }
 
 .dark {
-  --bg: #0a0f1c;
-  --surface: #111a2e;
-  --surface-2: #18233d;
-  --text: #e8eef9;
-  --text-muted: #a3b0c8;
-  --primary: #7ba1ff;
-  --primary-fg: #0a0f1c;
-  --border: #33415f;
-  --border-strong: #6b7a99;
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1f1f1f;
+  --text: #f5f5f5;
+  --text-muted: #a3a3a3;
+  --primary: #f5f5f5;
+  --primary-fg: #0a0a0a;
+  --border: #2a2a2a;
+  --border-strong: #6b6b6b;
   --danger: #ff8a80;
   --success: #5fd394;
-  --accent: #38bdf8;
-  --chart-1: #6690f5;
+  /* Azure terang untuk latar hitam: 7,5:1 di hitam, 7:1 di --surface */
+  --note: #4da3ff;
+  --accent: #4da3ff;
+  --chart-1: #4da3ff;
 
   color-scheme: dark;
 }
@@ -52,19 +59,21 @@
 /* Halaman tanpa next-themes (global-not-found) mengikuti preferensi sistem. */
 @media (prefers-color-scheme: dark) {
   :root:not(.light):not(.dark) {
-    --bg: #0a0f1c;
-    --surface: #111a2e;
-    --surface-2: #18233d;
-    --text: #e8eef9;
-    --text-muted: #a3b0c8;
-    --primary: #7ba1ff;
-    --primary-fg: #0a0f1c;
-    --border: #33415f;
-    --border-strong: #6b7a99;
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1f1f1f;
+    --text: #f5f5f5;
+    --text-muted: #a3a3a3;
+    --primary: #f5f5f5;
+    --primary-fg: #0a0a0a;
+    --border: #2a2a2a;
+    --border-strong: #6b6b6b;
     --danger: #ff8a80;
     --success: #5fd394;
-    --accent: #38bdf8;
-    --chart-1: #6690f5;
+    /* Azure terang untuk latar hitam: 7,5:1 di hitam, 7:1 di --surface */
+    --note: #4da3ff;
+    --accent: #4da3ff;
+    --chart-1: #4da3ff;
 
     color-scheme: dark;
   }
@@ -83,6 +92,7 @@
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-accent: var(--accent);
+  --color-note: var(--note);
   --color-chart-1: var(--chart-1);
   --color-whatsapp: var(--whatsapp);
   --color-whatsapp-fg: var(--whatsapp-fg);
@@ -90,7 +100,7 @@
   /* alias untuk komponen shadcn/ui */
   --color-background: var(--bg);
   --color-foreground: var(--text);
-  --color-ring: var(--primary);
+  --color-ring: var(--note);
   --color-input: var(--border-strong);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -151,7 +161,7 @@
 
   /* cincin fokus jelas untuk navigasi keyboard (DESIGN.md bagian 8) */
   :focus-visible {
-    outline: 2px solid var(--primary);
+    outline: 2px solid var(--note);
     outline-offset: 2px;
   }
 
@@ -191,7 +201,7 @@
     to right,
     transparent,
     color-mix(in oklab, var(--accent) 70%, transparent) 30%,
-    color-mix(in oklab, var(--primary) 80%, transparent) 50%,
+    color-mix(in oklab, var(--note) 80%, transparent) 50%,
     color-mix(in oklab, var(--accent) 70%, transparent) 70%,
     transparent
   );

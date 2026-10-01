@@ -32,7 +32,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
       <header>
-        <p className="font-mono text-label tracking-widest text-muted uppercase">Dashboard</p>
+        <p className="font-mono text-label tracking-widest text-note uppercase">Dashboard</p>
         <h1 className="mt-2 text-h1 font-bold">Halo, {admin.name.split(' ')[0]}.</h1>
       </header>
 

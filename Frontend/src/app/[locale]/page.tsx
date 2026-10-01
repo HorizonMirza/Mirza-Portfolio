@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
 }
 
 const availabilityDot = {
-  OPEN: 'bg-success',
+  OPEN: 'bg-note',
   BUSY: 'bg-danger',
   NOT_LOOKING: 'bg-border-strong',
 } as const
@@ -95,7 +95,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       <section aria-labelledby="hero-title" className="flex min-h-[calc(100svh-4rem)] flex-col">
         <Container className="flex flex-1 flex-col justify-center gap-8 pt-10 pb-8 md:pt-16">
           <div>
-            <p className="font-mono text-label tracking-widest text-muted uppercase">
+            <p className="font-mono text-label tracking-widest text-note uppercase">
               <span aria-hidden="true">01 — </span>
               {name}
             </p>
@@ -136,7 +136,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 aria-label={t('statusPlate')}
                 className="grid max-w-2xl gap-x-6 gap-y-3 rounded-lg border border-border bg-surface/80 p-4 text-sm sm:grid-cols-[auto_1fr] dark:bg-surface/60"
               >
-                <dt className="font-mono text-label tracking-widest text-muted uppercase">
+                <dt className="font-mono text-label tracking-widest text-note uppercase">
                   {t('statusLabel')}
                 </dt>
                 <dd className="flex items-center gap-2 font-medium">
@@ -153,7 +153,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </dd>
                 {profile.city ? (
                   <>
-                    <dt className="font-mono text-label tracking-widest text-muted uppercase">
+                    <dt className="font-mono text-label tracking-widest text-note uppercase">
                       {t('locationLabel')}
                     </dt>
                     <dd>{profile.city}</dd>
@@ -161,7 +161,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 ) : null}
                 {profile.campus ? (
                   <>
-                    <dt className="font-mono text-label tracking-widest text-muted uppercase">
+                    <dt className="font-mono text-label tracking-widest text-note uppercase">
                       {t('campusLabel')}
                     </dt>
                     <dd>
@@ -172,7 +172,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 ) : null}
                 {loc(profile, 'currentRole', locale) ? (
                   <>
-                    <dt className="font-mono text-label tracking-widest text-muted uppercase">
+                    <dt className="font-mono text-label tracking-widest text-note uppercase">
                       {t('nowLabel')}
                     </dt>
                     <dd>{loc(profile, 'currentRole', locale)}</dd>
@@ -253,7 +253,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   key={e.id}
                   className="grid gap-1 py-5 md:grid-cols-[12rem_1fr_auto] md:items-baseline md:gap-6"
                 >
-                  <p className="font-mono text-sm text-muted tabular-nums">
+                  <p className="font-mono text-sm text-note tabular-nums">
                     {formatMonth(e.start, locale)} –{' '}
                     {e.end ? formatMonth(e.end, locale) : tCommon('present')}
                   </p>
@@ -261,7 +261,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     <h3 className="font-semibold">{loc(e, 'title', locale)}</h3>
                     <p className="text-muted">{e.organization}</p>
                   </div>
-                  <p className="font-mono text-label tracking-widest text-muted uppercase">
+                  <p className="font-mono text-label tracking-widest text-note uppercase">
                     {tExp(e.type)}
                   </p>
                 </li>
@@ -291,7 +291,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             <dl className="grid gap-6 md:grid-cols-3">
               {skills.map((c) => (
                 <div key={c.id}>
-                  <dt className="font-mono text-label tracking-widest text-muted uppercase">
+                  <dt className="font-mono text-label tracking-widest text-note uppercase">
                     {loc(c, 'name', locale)}
                   </dt>
                   <dd className="mt-3">

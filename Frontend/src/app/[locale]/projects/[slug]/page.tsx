@@ -69,7 +69,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       </nav>
 
       <header className="pt-6 pb-10">
-        <p className="flex flex-wrap gap-x-2 font-mono text-label tracking-widest text-muted uppercase">
+        <p className="flex flex-wrap gap-x-2 font-mono text-label tracking-widest text-note uppercase">
           <span>{t(project.category)}</span>
           <span aria-hidden="true">·</span>
           <span>{project.year}</span>
@@ -164,7 +164,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
             <section aria-labelledby="project-stack">
               <h2
                 id="project-stack"
-                className="font-mono text-label tracking-widest text-muted uppercase"
+                className="font-mono text-label tracking-widest text-note uppercase"
               >
                 {t('stack')}
               </h2>
@@ -181,7 +181,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
             <section aria-labelledby="project-github">
               <h2
                 id="project-github"
-                className="font-mono text-label tracking-widest text-muted uppercase"
+                className="font-mono text-label tracking-widest text-note uppercase"
               >
                 {t('githubHeading')}
               </h2>

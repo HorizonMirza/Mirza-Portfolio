@@ -77,7 +77,7 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
         <aside aria-labelledby="contact-direct">
           <h2
             id="contact-direct"
-            className="font-mono text-label tracking-widest text-muted uppercase"
+            className="font-mono text-label tracking-widest text-note uppercase"
           >
             {t('directHeading')}
           </h2>

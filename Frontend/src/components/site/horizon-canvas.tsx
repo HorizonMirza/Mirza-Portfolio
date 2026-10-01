@@ -41,12 +41,12 @@ function hexToRgb(value: string, fallback: Rgb): Rgb {
 
 const rgba = ([r, g, b]: Rgb, a: number) => `rgba(${r}, ${g}, ${b}, ${a.toFixed(3)})`
 
-// Warna dari token desain (--accent, --primary) agar ikut tema terang/gelap.
+// Warna dari token desain (--accent, --note) agar ikut tema terang/gelap.
 function readColors() {
   const s = getComputedStyle(document.documentElement)
   return {
     accent: hexToRgb(s.getPropertyValue('--accent'), [56, 189, 248]),
-    primary: hexToRgb(s.getPropertyValue('--primary'), [29, 79, 215]),
+    primary: hexToRgb(s.getPropertyValue('--note'), [29, 95, 208]),
   }
 }
 

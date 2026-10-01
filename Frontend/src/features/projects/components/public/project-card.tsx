@@ -65,7 +65,7 @@ export async function ProjectCard({
         )}
       </div>
       <div className={cn('flex flex-1 flex-col gap-3 p-5', wide && 'md:p-8')}>
-        <p className="flex flex-wrap items-center gap-x-2 font-mono text-label tracking-widest text-muted uppercase">
+        <p className="flex flex-wrap items-center gap-x-2 font-mono text-label tracking-widest text-note uppercase">
           <span>{String(index + 1).padStart(2, '0')}</span>
           <span aria-hidden="true">·</span>
           <span>{t(project.category)}</span>
