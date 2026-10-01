@@ -104,6 +104,36 @@ Setelah deploy (pemilik akun):
 - **UptimeRobot** (gratis): monitor HTTP ke `https://<domain>/api/health` tiap 5 menit, notifikasi ke **email** dan **Telegram**.
 - Domain `.site` dihubungkan di Milestone 5.
 
+## Pemantauan dan Backup (Milestone 5)
+
+**Vercel Web Analytics dan Speed Insights.** Di project Vercel: tab **Analytics → Enable** dan tab **Speed Insights → Enable** (paket Hobby gratis). Skrip hanya dimuat di Vercel (`components/site/vercel-insights.tsx`) dan query string dibuang sebelum dikirim, jadi token newsletter tidak ikut tercatat.
+
+**Sentry (error server).** Buat project Sentry (platform Next.js), salin **DSN**, lalu tambahkan `SENTRY_DSN` di Vercel (Production, tipe Config). Error dikirim dari `src/instrumentation.ts` lewat HTTP tanpa SDK, tanpa header, cookie, IP, atau query string. Tanpa `SENTRY_DSN` tidak ada yang dikirim.
+
+**Backup harian** (`.github/workflows/backup.yml`, 02.30 WIB): `pg_dump` → enkripsi AES-256 (gpg) → artifact 30 hari → langsung diuji pulih ke Postgres sementara (jumlah Profile, Super Admin, dan migrasi dicek). Isi dua secret di **GitHub → Settings → Secrets and variables → Actions**:
+
+| Secret | Isi |
+|---|---|
+| `BACKUP_DATABASE_URL` | connection string Neon **tanpa pooler** (Neon Console → Connect → matikan *Connection pooling*) |
+| `BACKUP_PASSPHRASE` | kalimat sandi panjang (≥ 32 karakter). **Simpan juga di password manager**: tanpa ini backup tidak bisa dibuka |
+
+Jalankan sekali lewat **Actions → Backup → Run workflow** untuk memastikan hijau.
+
+**Memulihkan backup** (bila data production rusak):
+
+```bash
+# 1. Unduh artifact dari Actions → Backup → run terakhir, ekstrak backup.dump.gpg
+gpg --decrypt --output restore.dump backup.dump.gpg       # minta BACKUP_PASSPHRASE
+# 2. Paling aman: pulihkan ke branch Neon baru dulu, cek isinya, baru arahkan aplikasi ke sana.
+#    Untuk menimpa database yang sedang dipakai (data di dalamnya diganti isi backup):
+pg_restore --clean --if-exists --no-owner --no-acl --dbname "<URL Neon tanpa pooler>" restore.dump
+rm restore.dump
+```
+
+Neon juga punya pemulihan bawaan ke titik waktu tertentu (Neon Console → Restore), sebagai lapis kedua.
+
+**Rollback aplikasi:** Vercel → Deployments → deploy yang sehat → **Instant Rollback**. Bila deploy yang dibatalkan membawa migrasi database, pulihkan juga dari backup.
+
 ## Dokumen
 
 [PRD](Documentation/PRD.md) · [Desain](Documentation/DESIGN.md) · [Arsitektur](Documentation/ARCHITECTURE.md) · [Alur kerja](Documentation/WORKFLOW.md) · [Rencana](Documentation/TODO.md) · [Konten](Documentation/CONTENT.md) · [Referensi](Documentation/REFERENCES.md) · [Panduan Claude](CLAUDE.md)

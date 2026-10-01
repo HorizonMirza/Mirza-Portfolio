@@ -464,10 +464,10 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 
 ## 11. Monitoring, Logging, dan Backup
 
-- **Sentry:** error server dan client, tanpa data pribadi.
+- **Sentry:** error server lewat `onRequestError` di `src/instrumentation.ts`, dikirim ke envelope API Sentry dengan `fetch` (tanpa SDK), tanpa header, cookie, IP, dan query string. Error di browser belum dilaporkan (lihat ADR 18).
 - **Uptime monitor:** memeriksa `/api/health` (cek koneksi database). Notifikasi ke email dan Telegram.
-- **Vercel Analytics + Speed Insights:** tren traffic dan performa.
-- **Backup:** dump harian terenkripsi (retensi 30 hari) di luar Neon, ditambah fitur pemulihan bawaan Neon. Uji pemulihan minimal satu kali sebelum rilis dan tiap triwulan.
+- **Vercel Analytics + Speed Insights:** tren traffic dan Web Vitals lapangan, hanya dimuat di Vercel, query string dibuang lewat `beforeSend`.
+- **Backup:** `backup.yml` harian 02.30 WIB: `pg_dump` (Postgres 17) → gpg AES-256 → artifact 30 hari, lalu **diuji pulih otomatis setiap kali** ke Postgres sementara (jumlah Profile, Super Admin, migrasi). Ditambah pemulihan bawaan Neon. Langkah pemulihan manual di README.
 - **Log audit:** di database, hanya bisa dibaca admin.
 
 ## 12. Catatan Keputusan (ADR ringkas)
@@ -492,3 +492,5 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
 | 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
 | 17 | Notifikasi login baru ke email admin lewat hook Better Auth + `after()` Next.js | Tidak menunda login dan tetap terkirim di serverless | Final (M4, 2026-09-30) |
+| 18 | Sentry tanpa SDK, hanya error server | `@sentry/nextjs` menambah puluhan KB JavaScript klien dan OpenTelemetry di server, bertentangan dengan target Lighthouse dan aturan "jangan menambah JS klien tanpa alasan". Error klien bisa ditambah nanti bila perlu | Final (M5, 2026-10-01) |
+| 19 | Backup diuji pulih di setiap run | Backup yang tidak pernah dicoba pulih belum terbukti. Postgres sementara di runner gratis | Final (M5, 2026-10-01) |

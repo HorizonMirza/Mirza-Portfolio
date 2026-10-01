@@ -116,10 +116,12 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 - [x] Domain `mmirza.site` (Hostinger): A `@` dan CNAME `www` ke Vercel, `www` dialihkan 308 ke `mmirza.site`, HTTPS aktif, `NEXT_PUBLIC_SITE_URL` dan `BETTER_AUTH_URL` diisi (2026-10-01)
 - [ ] Verifikasi domain di Resend (SPF/DKIM)
 - [x] Variabel lingkungan production, Neon Singapura, migrasi production, seed admin (deploy pertama 2026-10-01)
-- [ ] Vercel Cron (`Frontend/vercel.json`): ringkas `PageView` ke `PageViewDaily`, hapus `PageView` > 90 hari dan `RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET`
-- [ ] Sentry, UptimeRobot (monitor `/api/health` tiap 5 menit, notifikasi email + Telegram), Vercel Analytics + Speed Insights
+- [x] Vercel Cron (`Frontend/vercel.json`): ringkas `PageView` ke `PageViewDaily`, hapus `PageView` > 90 hari dan `RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET` (dibuat di M3)
+- [x] Kode: laporan error server ke Sentry tanpa SDK (`src/instrumentation.ts`), Vercel Analytics + Speed Insights (hanya di Vercel, tanpa query string)
+- [ ] Pemilik: aktifkan Analytics dan Speed Insights di Vercel, buat project Sentry lalu isi `SENTRY_DSN`, UptimeRobot (monitor `/api/health` tiap 5 menit, notifikasi email + Telegram)
 - [ ] GitHub ruleset untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
-- [ ] Backup harian terenkripsi (`backup.yml`) dan uji pemulihan
+- [x] Backup harian terenkripsi (`backup.yml`) dengan uji pemulihan otomatis di setiap run (diuji lokal: dump → gpg → pulih → cek isi)
+- [ ] Pemilik: isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan Backup sekali lewat Actions
 - [ ] Uji rollback Vercel
 - [ ] Dokumentasi: README, panduan setup, panduan admin, catatan arsitektur final
 - [ ] Daftar periksa rilis (`WORKFLOW.md` bagian 7), uji di HP nyata
