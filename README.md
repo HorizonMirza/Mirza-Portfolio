@@ -140,4 +140,4 @@ Neon juga punya pemulihan bawaan ke titik waktu tertentu (Neon Console → Resto
 
 ## Lisensi
 
-Kode dan konten milik Muhammad Mirza Wirya, hak cipta dilindungi. Font Plus Jakarta Sans dan JetBrains Mono memakai SIL Open Font License (lihat `Frontend/src/fonts/`).
+Kode dan konten milik Muhammad Mirza Wirya, hak cipta dilindungi. Font Oswald, Inter, dan JetBrains Mono memakai SIL Open Font License (lihat `Frontend/src/fonts/`).

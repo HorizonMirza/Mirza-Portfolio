@@ -70,16 +70,17 @@ Aturan: **satu warna primer**, aksen sekunder hanya untuk dekorasi. Warna tidak 
 
 | Peran | Font | Bobot | Catatan |
 |---|---|---|---|
-| Judul dan isi | **Plus Jakarta Sans** | 400, 500, 600, 700 | Modern, rapi untuk Latin, hasil karya desainer Indonesia. Dimuat lewat `next/font` (self-host, tanpa permintaan ke pihak ketiga), hanya subset latin (27 KB) dan di-preload |
+| Judul (`h1`–`h3`) | **Oswald** | 600, 700 | Condensed dan tegas. `h1` dan `h2` huruf kapital lewat CSS (pembaca layar tetap membaca teks asli), tanpa tracking rapat. Self-host subset latin (28 KB), di-preload karena judul hero adalah elemen LCP |
+| Isi, navigasi, form | **Inter** | 400, 500, 600 | Netral dan sangat terbaca di layar kecil. Self-host subset latin (48 KB), tidak di-preload |
 | Kode, label teknis | **JetBrains Mono** | 400, 500 | Untuk tech stack, tanggal, label kecil. Tidak di-preload (bukan elemen LCP) |
 
 Skala (mobile → desktop), `clamp()` agar mulus:
 
 | Token | Ukuran | Tinggi baris | Pemakaian |
 |---|---|---|---|
-| `display` | 40 → 72 px | 1,05 | Nama di hero |
-| `h1` | 32 → 48 | 1,1 | Judul halaman |
-| `h2` | 24 → 32 | 1,2 | Judul bagian |
+| `display` | 48 → 80 px | 1 | Kalimat utama di hero |
+| `h1` | 37 → 55 | 1,05 | Judul halaman |
+| `h2` | 28 → 37 | 1,1 | Judul bagian |
 | `h3` | 18 → 22 | 1,3 | Judul kartu |
 | `body` | 16 → 18 | 1,65 | Isi |
 | `small` | 14 | 1,5 | Metadata |
@@ -374,3 +375,7 @@ Aturan lain: target sentuh ≥ 44 × 44 px, tidak ada scroll horizontal, area am
 - Hero "Horizon": canvas 2D. Tingkat perangkat: HP 24 garis, DPR 1, 30 fps tanpa miring kursor; tablet 32 garis; desktop 48 garis, DPR ≤ 2, miring mengikuti kursor. Bingkai statis bila `prefers-reduced-motion`, `saveData`, atau memori ≤ 2 GB. Berhenti saat tab tersembunyi atau hero keluar layar. Diinisialisasi saat idle.
 - Live chat diganti **tombol WhatsApp melayang** (tanpa skrip pihak ketiga), hanya tampil bila nomor WhatsApp diisi di admin.
 - Transisi halaman memakai `<ViewTransition>` React (fade 150 ms), dimatikan pada reduced-motion.
+
+## 12. Ganti font (2026-10-01)
+
+Pemilik memilih pilihan 14 dari demo 15 font: **Oswald** (judul, huruf kapital untuk `h1`/`h2`) + **Inter** (isi), label tetap **JetBrains Mono**. Plus Jakarta Sans tidak dipakai lagi. Ukuran `display`, `h1`, dan `h2` dinaikkan sekitar 15–20% karena Oswald condensed. Kalimat hero dibatasi 3 baris di laptop (`max-w-5xl`) agar tombol utama tetap terlihat tanpa scroll (PRD U1). Lighthouse mobile beranda 90–91 (sebelumnya 94) karena file Inter lebih besar, halaman lain 91–97, aksesibilitas tetap 100.
