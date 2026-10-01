@@ -418,3 +418,11 @@ Pilihan pemilik nomor 6 (Azure) dari demo 10 biru. Seluruh situs dan panel admin
 - Foto lingkaran dipotong lebih jauh (kepala dan bahu).
 - Login: lingkaran foto diberi kilau berjalan yang sama dengan kolom, warna latar isi otomatis (autofill) browser dinetralkan, label "Super Admin" dan judul dirapikan (Inter berjarak lebar + Oswald semibold).
 
+## 18. Animasi lingkaran tema dan bahasa (2026-10-01)
+
+- Lingkaran foto di topbar diberi bingkai seperti tombol bahasa dan tema (foto di dalam lingkaran berbingkai).
+- Ganti tema dan ganti bahasa memakai transisi yang sama: tampilan baru meluas melingkar **mulai dari ukuran tombol yang ditekan** sampai menutup layar, 750 ms (`lib/circle-reveal.ts`). Pencampuran `plus-lighter` bawaan dimatikan selama animasi agar tulisan lama dan baru tidak bertumpuk.
+- Tema: `document.startViewTransition` dijalankan sendiri.
+- Bahasa: React/Next mengambil alih transisi pada navigasi biasa, jadi tombol bahasa memuat halaman bahasa baru penuh dan browser menampilkannya lewat transisi antar-dokumen (`@view-transition { navigation: auto }` + skrip statis `pagereveal` di layout publik). Pemuatan penuh lain dilewati (`pageswap`). Browser tanpa dukungan (mis. Firefox saat ini) atau reduced-motion: navigasi biasa tanpa lingkaran.
+- Kode bahasa di tombol berubah seperti kata yang berganti (memudar, mengabur, mengecil keluar, lalu menajam masuk).
+
