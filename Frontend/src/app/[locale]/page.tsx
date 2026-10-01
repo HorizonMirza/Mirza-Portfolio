@@ -8,6 +8,8 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { getPublicExperiences } from '@/features/experience/public'
+import { GithubCalendar } from '@/features/profile/components/github-calendar'
+import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
 import { ProjectCard } from '@/features/projects/components/public/project-card'
 import { getPublishedProjects } from '@/features/projects/public'
@@ -83,6 +85,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     projects.some((p) => p.featured) ? projects.filter((p) => p.featured) : projects
   ).slice(0, 3)
   const github = profile?.socials.github
+  const login = githubLogin(github)
+  const contributions = login ? await getGithubContributions(login) : null
   const cvHref = `/api/cv?locale=${locale}`
   const projectTitles = new Map(projects.map((p) => [p.slug, loc(p, 'title', locale)]))
   const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
@@ -316,10 +320,44 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </section>
       ) : null}
 
+      {contributions && github ? (
+        <section aria-labelledby="github-title" className="border-t border-border py-16 md:py-24">
+          <Container className="reveal">
+            <SectionHeading
+              id="github-title"
+              index="05"
+              title={t('githubHeading')}
+              action={
+                <a
+                  href={github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  {t('githubProfile')}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                  <span className="sr-only">{tCommon('openInNewTab')}</span>
+                </a>
+              }
+            />
+            <GithubCalendar
+              calendar={contributions}
+              locale={locale}
+              labels={{
+                summary: t('githubTotal', { count: contributions.total }),
+                less: t('githubLess'),
+                more: t('githubMore'),
+                cell: (count, date) => t('githubCell', { count, date }),
+              }}
+            />
+          </Container>
+        </section>
+      ) : null}
+
       <section aria-labelledby="cta-title" className="border-t border-border py-16 md:py-24">
         <Container className="reveal grid gap-12 lg:grid-cols-[1.2fr_1fr]">
           <div>
-            <SectionHeading id="cta-title" index="05" title={t('ctaHeading')} className="mb-4" />
+            <SectionHeading id="cta-title" index="06" title={t('ctaHeading')} className="mb-4" />
             <p className="max-w-prose text-muted">{t('ctaBody')}</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button asChild>

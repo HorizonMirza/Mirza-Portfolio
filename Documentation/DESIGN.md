@@ -496,3 +496,13 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 - Pemilik menilai teks dan elemen terlalu besar (pembanding: ibnuhakim.id). Ukuran dasar `html` di desktop (≥ 1024 px) kini 87,5% (14 px bila browser 16 px), sehingga semua ukuran berbasis rem (teks, jarak, tombol) mengecil seragam 12,5%. Persen agar pengaturan ukuran huruf pengguna tetap berlaku. HP tetap 100%: teks terbaca dan isian form tidak memicu zoom iOS; target sentuh di HP tetap 44 px.
 - Foto profil di topbar (`HomeAvatarLink`): kembali ke beranda dengan suara tik kaca dan geser mundur seperti menu Beranda; di beranda tidak berbunyi.
+
+## 28. Kalender kontribusi GitHub di beranda (2026-10-01)
+
+- Permintaan pemilik: kotak-kotak hijau seperti di profil GitHub, di beranda setelah bagian skill (nomor 05, ajakan kontak menjadi 06).
+- Data dari GitHub GraphQL API (`contributionsCollection.contributionCalendar`) memakai `GITHUB_TOKEN` di server, disimpan 6 jam (`unstable_cache`). Nama pengguna diambil dari tautan GitHub di profil admin. Tanpa token, tanpa tautan GitHub, atau bila GitHub gagal, bagian ini tidak tampil sama sekali.
+- Digambar sebagai SVG di server, tanpa JavaScript klien. Kotak 11 px dengan jarak 3 px, sudut 2 px; di desktop SVG melebar mengisi kartu, di HP tetap ukuran asli dan bisa digulir dengan posisi awal di minggu terbaru (trik `direction: rtl`).
+- Warna level 1–4 memakai hijau khas GitHub (token `--gh-1` sampai `--gh-4`, versi terang dan gelap); level 0 memakai `--surface-2`. Ini pengecualian dari palet hitam-putih karena pemilik meminta tampilan seperti GitHub.
+- Label bulan (singkatan sesuai bahasa) dan hari Senin/Rabu/Jumat lewat `Intl`. Label bulan pertama yang hanya terlihat sebagian dibuang bila menabrak bulan berikutnya.
+- Aksesibilitas: SVG `aria-hidden`; pembaca layar mendapat ringkasan "N kontribusi dalam setahun terakhir". Tiap kotak punya `<title>` (jumlah dan tanggal) sebagai tooltip kursor. Tautan "Buka profil GitHub" membuka tab baru dengan keterangan untuk pembaca layar.
+

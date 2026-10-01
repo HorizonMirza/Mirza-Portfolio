@@ -32,6 +32,11 @@
   /* warna merek WhatsApp untuk tombol melayang; ikon gelap di atasnya ±9:1 */
   --whatsapp: #25d366;
   --whatsapp-fg: #0b1220;
+  /* kalender kontribusi GitHub (level 1-4, hijau khas GitHub; level 0 memakai --surface-2) */
+  --gh-1: #9be9a8;
+  --gh-2: #40c463;
+  --gh-3: #30a14e;
+  --gh-4: #216e39;
 
   color-scheme: light;
 }
@@ -52,6 +57,10 @@
   --note: #4da3ff;
   --accent: #4da3ff;
   --chart-1: #4da3ff;
+  --gh-1: #0e4429;
+  --gh-2: #006d32;
+  --gh-3: #26a641;
+  --gh-4: #39d353;
 
   color-scheme: dark;
 }
@@ -74,6 +83,10 @@
     --note: #4da3ff;
     --accent: #4da3ff;
     --chart-1: #4da3ff;
+    --gh-1: #0e4429;
+    --gh-2: #006d32;
+    --gh-3: #26a641;
+    --gh-4: #39d353;
 
     color-scheme: dark;
   }
@@ -609,4 +622,21 @@
   .kb-title {
     font-size: clamp(2.75rem, 1rem + 3.5vw, 4.5rem);
   }
+}
+
+/* Kalender kontribusi GitHub di beranda (DESIGN.md bagian 28). */
+.gh-0 {
+  fill: var(--surface-2);
+}
+.gh-1 {
+  fill: var(--gh-1);
+}
+.gh-2 {
+  fill: var(--gh-2);
+}
+.gh-3 {
+  fill: var(--gh-3);
+}
+.gh-4 {
+  fill: var(--gh-4);
 }
