@@ -449,3 +449,12 @@ Pemilik meminta bagian skill **sama persis** dengan repo referensi (Abhiz2411/3D
 - Performa: runtime (~1,5 MB) baru dimuat bila bagian skill hampir terlihat **dan** pengunjung sudah berinteraksi (kursor, sentuh, scroll, tombol). Sebelum itu, juga tanpa JavaScript, tanpa WebGL, atau dengan reduced-motion, keyboard CSS (bagian 19) yang tampil. Tinggi area sama, jadi tidak ada pergeseran tata letak. Lighthouse mobile tidak memicu muatan 3D; biaya nyata di ponsel setelah interaksi tetap ada.
 - CSP publik ditambah `'unsafe-eval'`: runtime memakai `new Function` (msgpackr) dan WebAssembly. Admin tetap ber-nonce tanpa eval (ARCHITECTURE ADR 20).
 - Aksesibilitas: canvas `aria-hidden`, daftar skill tersedia untuk pembaca layar; di halaman Skill daftar per kategori tetap ada.
+
+## 21. Animasi ganti bahasa: acak huruf (2026-10-01)
+
+Pemilik memilih animasi nomor 1 dari lima demo (acak huruf, gulung baris, papan bandara, ketik ulang, kabur per kata). Ganti bahasa tidak lagi memakai lingkaran yang meluas (bagian 18); lingkaran kini hanya untuk ganti tema.
+
+- Tombol bahasa berpindah lewat navigasi biasa next-intl (tanpa memuat ulang halaman). Sebelum pindah, tombol mencatat teks yang sedang terlihat di `sessionStorage`.
+- `LanguageScramble` di layout publik, setelah halaman tampil dalam bahasa baru, mengacak teks yang terlihat di layar lalu menguraikannya menjadi teks bahasa baru dari kiri ke kanan (650 ms, berurutan per teks). Teks yang sama di kedua bahasa (nama, kota, GitHub) tidak diacak. Spasi dan tanda baca tetap, jadi susunan kata tidak melompat.
+- Hanya `nodeValue` node teks yang diubah dan nilai akhirnya selalu teks asli; bila React mengganti teks di tengah animasi, nilai React yang dipakai. Wilayah `aria-live`, isian form, dan teks tak terlihat tidak disentuh.
+- Reduced-motion: tanpa animasi. Skrip `pagereveal` dan `@view-transition` untuk bahasa dihapus.

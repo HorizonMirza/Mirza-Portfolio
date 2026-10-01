@@ -6,6 +6,7 @@ import { ViewTransition } from 'react'
 
 import '@/app/globals.css'
 import { fontVariables } from '@/app/fonts'
+import { LanguageScramble } from '@/components/shared/language-scramble'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { PageViewTracker } from '@/components/site/page-view-tracker'
 import { RevealObserver } from '@/components/site/reveal-observer'
@@ -14,7 +15,6 @@ import { SiteHeader } from '@/components/site/site-header'
 import { VercelInsights } from '@/components/site/vercel-insights'
 import { WhatsAppButton } from '@/components/site/whatsapp-button'
 import { routing } from '@/i18n/routing'
-import { LANG_REVEAL_SCRIPT } from '@/lib/circle-reveal'
 import { siteUrl } from '@/lib/env'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
@@ -50,12 +50,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
-      <head>
-        {/* Transisi antar-halaman hanya untuk ganti bahasa (lingkaran dari tombol bahasa).
-            Isi skrip dan gaya statis dari kode kita sendiri, bukan masukan pengguna. */}
-        <style>{'@view-transition { navigation: auto; }'}</style>
-        <script dangerouslySetInnerHTML={{ __html: LANG_REVEAL_SCRIPT }} />
-      </head>
       <body className="bg-bg text-text">
         <a
           href="#main"
@@ -83,6 +77,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             </div>
             <WhatsAppButton locale={locale} />
             <RevealObserver />
+            <LanguageScramble />
             <PageViewTracker />
             {/* Hanya di Vercel: di luar Vercel skrip /_vercel/* tidak ada (404 di CI dan lokal) */}
             {process.env.VERCEL === '1' && <VercelInsights />}
