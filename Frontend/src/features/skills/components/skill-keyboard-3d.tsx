@@ -8,33 +8,34 @@ import { cn } from '@/lib/utils'
 
 import type { Keycap } from '../keycaps'
 
-// Nama tombol di scene keyboard 3D -> slug Simple Icons skill (features/skills/keycaps.ts).
+// Tombol di scene keyboard 3D: slug Simple Icons (untuk mencocokkan skill di database, features/skills/
+// keycaps.ts) dan nama yang ditampilkan. Semua tombol tampil seperti scene aslinya (keputusan pemilik).
 // Scene: "skills-keyboard" karya Naresh Khatri (https://github.com/Naresh-Khatri/3d-portfolio, MIT).
-const SCENE_KEYS: Record<string, string> = {
-  js: 'javascript',
-  ts: 'typescript',
-  html: 'html5',
-  css: 'css',
-  react: 'react',
-  vue: 'vuedotjs',
-  nextjs: 'nextdotjs',
-  tailwind: 'tailwindcss',
-  nodejs: 'nodedotjs',
-  express: 'express',
-  postgres: 'postgresql',
-  mongodb: 'mongodb',
-  git: 'git',
-  github: 'github',
-  prettier: 'prettier',
-  npm: 'npm',
-  firebase: 'firebase',
-  wordpress: 'wordpress',
-  linux: 'linux',
-  docker: 'docker',
-  nginx: 'nginx',
-  aws: 'amazonwebservices',
-  vim: 'vim',
-  vercel: 'vercel',
+const SCENE_KEYS: Record<string, { slug: string; name: string }> = {
+  js: { slug: 'javascript', name: 'JavaScript' },
+  ts: { slug: 'typescript', name: 'TypeScript' },
+  html: { slug: 'html5', name: 'HTML' },
+  css: { slug: 'css', name: 'CSS' },
+  react: { slug: 'react', name: 'React' },
+  vue: { slug: 'vuedotjs', name: 'Vue.js' },
+  nextjs: { slug: 'nextdotjs', name: 'Next.js' },
+  tailwind: { slug: 'tailwindcss', name: 'Tailwind CSS' },
+  nodejs: { slug: 'nodedotjs', name: 'Node.js' },
+  express: { slug: 'express', name: 'Express' },
+  postgres: { slug: 'postgresql', name: 'PostgreSQL' },
+  mongodb: { slug: 'mongodb', name: 'MongoDB' },
+  git: { slug: 'git', name: 'Git' },
+  github: { slug: 'github', name: 'GitHub' },
+  prettier: { slug: 'prettier', name: 'Prettier' },
+  npm: { slug: 'npm', name: 'npm' },
+  firebase: { slug: 'firebase', name: 'Firebase' },
+  wordpress: { slug: 'wordpress', name: 'WordPress' },
+  linux: { slug: 'linux', name: 'Linux' },
+  docker: { slug: 'docker', name: 'Docker' },
+  nginx: { slug: 'nginx', name: 'Nginx' },
+  aws: { slug: 'amazonwebservices', name: 'AWS' },
+  vim: { slug: 'vim', name: 'Vim' },
+  vercel: { slug: 'vercel', name: 'Vercel' },
 }
 
 const SCENE_URL = '/spline/skills-keyboard.spline'
@@ -66,9 +67,8 @@ function layoutFor(width: number) {
   }
 }
 
-// Keyboard 3D (Spline) di bagian skill. Hanya tombol untuk skill yang ada di database yang tampil:
-// tombol lain di scene disembunyikan agar tidak mengklaim skill yang tidak dimiliki. Arahkan kursor
-// atau tekan tombol untuk menampilkan nama skill dan kategorinya di dalam scene.
+// Keyboard 3D (Spline) di bagian skill dengan semua tombol scene asli. Arahkan kursor atau tekan tombol
+// untuk menampilkan nama skill di dalam scene, ditambah kategorinya bila skill itu ada di database.
 // Runtime dimuat hanya saat bagian ini hampir terlihat. Tanpa WebGL, dengan reduced-motion, atau bila
 // scene gagal dimuat: keyboard CSS (fallback) yang tampil. Canvas tidak terbaca pembaca layar, jadi
 // daftar skill disediakan sebagai teks tersembunyi.
@@ -99,17 +99,15 @@ export function SkillKeyboard3D({
   const bySceneKey = useMemo(
     () =>
       new Map(
-        Object.entries(SCENE_KEYS).flatMap(([sceneKey, slug]) => {
+        Object.entries(SCENE_KEYS).flatMap(([sceneKey, { slug }]) => {
           const keycap = keycaps.find((k) => k.slug === slug)
           return keycap ? [[sceneKey, keycap] as const] : []
         }),
       ),
     [keycaps],
   )
-  const hasSceneKeys = bySceneKey.size > 0
 
   useEffect(() => {
-    if (!hasSceneKeys) return
     const container = containerRef.current
     if (!container) return
     // Runtime 3D (~1,5 MB) baru dimuat bila bagian ini hampir terlihat DAN pengunjung sudah
@@ -142,7 +140,7 @@ export function SkillKeyboard3D({
     observer.observe(container)
     for (const name of events) window.addEventListener(name, onInteract, { passive: true })
     return cleanup
-  }, [hasSceneKeys])
+  }, [])
 
   useEffect(() => {
     if (!shouldLoad) return
@@ -182,11 +180,6 @@ export function SkillKeyboard3D({
           object.position.y = 50
         }
       }
-      // tombol skill yang tidak dimiliki disembunyikan
-      for (const sceneKey of Object.keys(SCENE_KEYS)) {
-        const key = app.findObjectByName(sceneKey)
-        if (key) key.visible = bySceneKey.has(sceneKey)
-      }
       applyLayout()
       app.setVariable('heading', '')
       app.setVariable('desc', '')
@@ -198,10 +191,11 @@ export function SkillKeyboard3D({
           app.setVariable('desc', '')
           return
         }
+        const key = SCENE_KEYS[name]
+        if (!key) return
         const keycap = bySceneKey.get(name)
-        if (!keycap) return
-        app.setVariable('heading', keycap.name)
-        app.setVariable('desc', keycap.category)
+        app.setVariable('heading', keycap?.name ?? key.name)
+        app.setVariable('desc', keycap?.category ?? '')
       }
       app.addEventListener('mouseHover', show)
       app.addEventListener('mouseDown', show)
@@ -241,8 +235,6 @@ export function SkillKeyboard3D({
     if (status !== 'ready' || !app || !canvas) return
     applyTextVisibility(app, layoutFor(canvas.clientWidth).mobile, resolvedTheme)
   }, [resolvedTheme, status])
-
-  if (!hasSceneKeys) return <div className={className}>{fallback}</div>
 
   // Keyboard CSS tampil lebih dulu (juga tanpa JavaScript), lalu diganti canvas begitu scene siap.
   // Tinggi minimum sama dengan canvas agar halaman tidak bergeser saat berganti.
