@@ -74,23 +74,21 @@ export function LoginForm({ redirectTo }: { redirectTo: string }) {
         <div className="relative">
           <div className="mb-6 text-center">
             {/* foto dengan kilau berjalan yang sama seperti kolom email dan password */}
-            <div className="login-field login-ring mx-auto mb-5 size-[72px]">
+            <div className="login-field login-ring mx-auto mb-4 size-[60px]">
               <Image
                 src={DEFAULT_PROFILE_AVATAR}
                 alt=""
-                width={144}
-                height={144}
-                sizes="72px"
+                width={112}
+                height={112}
+                sizes="56px"
                 priority
                 className="size-full rounded-full bg-black object-cover"
               />
             </div>
-            <p className="text-xs font-semibold tracking-[0.3em] text-white/50 uppercase">
+            <p className="font-mono text-label tracking-widest text-white/60 uppercase">
               Super Admin
             </p>
-            <h1 className="mt-2 text-[1.75rem] leading-tight font-semibold tracking-[0.04em] text-white">
-              Welcome Back King!
-            </h1>
+            <h1 className="mt-2 text-h3 font-bold text-white">Welcome Back King!</h1>
           </div>
 
           <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
