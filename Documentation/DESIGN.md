@@ -397,3 +397,15 @@ Revisi 2026-10-01 (pemilik): teks halaman login berbahasa Inggris ("Welcome Back
 
 Foto dari pemilik disimpan di `Frontend/src/assets/` (800×800 untuk halaman Tentang, potongan wajah 256×256 untuk lingkaran kecil), metadata kamera dibuang. Dipakai di topbar, halaman Tentang, login admin, dan JSON-LD selama belum ada foto yang diunggah lewat admin. Foto dari admin (Cloudinary) selalu didahulukan.
 
+## 16. Warna hitam-putih + Azure (2026-10-01)
+
+Pilihan pemilik nomor 6 (Azure) dari demo 10 biru. Seluruh situs dan panel admin hitam-putih: latar `#0a0a0a`/`#ffffff`, teks `#f5f5f5`/`#0a0a0a`, tombol utama dan tautan ikut warna teks. Biru `--note` hanya untuk catatan kecil: label mono (STATUS, LOKASI, eyebrow halaman), nomor bagian, tanggal pengalaman, titik status, titik timeline, lampu menu, cincin fokus, garis horizon, dan grafik admin.
+
+| Token | Tema gelap | Tema terang | Kontras teks kecil |
+|---|---|---|---|
+| `--note` | `#4da3ff` | `#1d5fd0` | 7,5:1 di hitam, 5,8:1 di putih |
+| `--text-muted` | `#a3a3a3` | `#525252` | ≥ 7:1 |
+| `--border-strong` | `#6b6b6b` | `#8a8a8a` | ≥ 3:1 (batas kolom form) |
+
+`--danger` dan `--success` tetap merah/hijau untuk pesan galat dan status di admin. Bagian 2.1 (palet lama biru tua) digantikan bagian ini.
+
