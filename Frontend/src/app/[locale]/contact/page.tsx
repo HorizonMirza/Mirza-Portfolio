@@ -7,7 +7,6 @@ import { ContactForm } from '@/features/messages/components/public/contact-form'
 import { getPublicProfile } from '@/features/profile/public'
 import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { siteUrl } from '@/lib/env'
-import { loc } from '@/lib/localized'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { pageMetadata } from '@/lib/seo'
 
@@ -27,12 +26,10 @@ export async function generateMetadata({
 
 export default async function ContactPage({ params }: PageProps<'/[locale]/contact'>) {
   const locale = await resolveLocale(params)
-  const [t, tAvail, profile] = await Promise.all([
+  const [t, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Contact' }),
-    getTranslations({ locale, namespace: 'Availability' }),
     getPublicProfile(),
   ])
-  const availability = profile?.availability ?? 'OPEN'
 
   // Pilihan pemilik 2026-10-03 (demo nomor 1, tanpa tombol cepat): kartu ID bertali di kiri,
   // judul, pengantar, dan form di kanan. Kontak langsung (email, WhatsApp, sosial, CV) ada di footer.
@@ -44,9 +41,7 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
         <IdLanyard
           className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
           name={profile?.name ?? 'Muhammad Mirza'}
-          role={profile ? loc(profile, 'currentRole', locale) || null : null}
-          status={tAvail(availability)}
-          open={availability === 'OPEN'}
+          role={t('cardRole')}
           photo={profile?.photo?.url ?? DEFAULT_PROFILE_PHOTO}
           site={new URL(siteUrl()).host}
         />

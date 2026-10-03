@@ -163,7 +163,8 @@
     "ticketSubject": "Subject",
     "ticketMessage": "Message",
     "ticketTime": "Time",
-    "another": "Write another message"
+    "another": "Write another message",
+    "cardRole": "Fullstack Developer"
   },
   "Newsletter": {
     "heading": "New project updates",

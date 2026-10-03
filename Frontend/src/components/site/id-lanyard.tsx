@@ -3,6 +3,7 @@
 import type { StaticImageData } from 'next/image'
 import { useEffect, useRef } from 'react'
 
+import { playLanyardSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 // Kartu ID bertali di samping form kontak (DESIGN.md bagian 36). Fisika ditulis sendiri tanpa
@@ -23,6 +24,7 @@ const DAMPING = 0.992
 const BOUNCE = 0.55
 // kanvas lebih lebar dari kolom agar kartu bebas berayun; klik di luar kartu tetap tembus
 const CANVAS_W = 560
+const PHOTO_H = 160
 // Tinggi dalam px, bukan rem: fisika memakai px, sedangkan rem menyusut di desktop (87,5%). Bila
 // kotak lebih pendek dari tali + kartu + jarak tepi, kartu menyentuh lantai dan diam miring.
 // jarak titik kartu dari tepi kanvas: setengah lebar kartu + ruang bayangan, agar sudut kartu dan
@@ -68,33 +70,15 @@ function roundRect(
 }
 
 // pecah teks menjadi baris yang muat di lebar tertentu
-function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, max: number) {
-  const lines: string[] = []
-  let line = ''
-  for (const word of text.split(/\s+/)) {
-    const next = line ? `${line} ${word}` : word
-    if (ctx.measureText(next).width > width && line) {
-      lines.push(line)
-      line = word
-    } else line = next
-  }
-  if (line) lines.push(line)
-  return lines.slice(0, max)
-}
-
 export function IdLanyard({
   name,
   role,
-  status,
-  open,
   photo,
   site,
   className,
 }: {
   name: string
-  role: string | null
-  status: string
-  open: boolean
+  role: string
   photo: string | StaticImageData
   site: string
   className?: string
@@ -338,42 +322,31 @@ export function IdLanyard({
       c.fill()
       // foto
       c.save()
-      roundRect(c, x + 12, 30, CARD_W - 24, 132, 8)
+      roundRect(c, x + 12, 30, CARD_W - 24, PHOTO_H, 8)
       c.clip()
       c.fillStyle = 'rgb(255 255 255 / 0.08)'
-      c.fillRect(x + 12, 30, CARD_W - 24, 132)
+      c.fillRect(x + 12, 30, CARD_W - 24, PHOTO_H)
       if (img.complete && img.naturalWidth) {
-        const s = Math.max((CARD_W - 24) / img.naturalWidth, 132 / img.naturalHeight)
+        const s = Math.max((CARD_W - 24) / img.naturalWidth, PHOTO_H / img.naturalHeight)
         const iw = img.naturalWidth * s
         const ih = img.naturalHeight * s
-        c.drawImage(img, x + 12 + (CARD_W - 24 - iw) / 2, 30 + (132 - ih) * 0.25, iw, ih)
+        c.drawImage(img, x + 12 + (CARD_W - 24 - iw) / 2, 30 + (PHOTO_H - ih) * 0.25, iw, ih)
       }
       c.restore()
-      // nama, peran, status
+      // nama satu baris (huruf mengecil bila tidak muat), peran di bawahnya (pilihan pemilik)
       c.textBaseline = 'top'
       c.fillStyle = ink
-      c.font = `700 19px ${fonts.display}`
-      let y = 172
-      for (const line of wrap(c, name.toUpperCase(), CARD_W - 24, 2)) {
-        c.fillText(line, x + 12, y)
-        y += 21
+      const label = name.toUpperCase()
+      let size = 19
+      c.font = `700 ${size}px ${fonts.display}`
+      while (size > 12 && c.measureText(label).width > CARD_W - 24) {
+        size -= 0.5
+        c.font = `700 ${size}px ${fonts.display}`
       }
-      if (role) {
-        c.fillStyle = sub
-        c.font = `500 10.5px ${fonts.sans}`
-        for (const line of wrap(c, role, CARD_W - 24, 2)) {
-          c.fillText(line, x + 12, y + 2)
-          y += 14
-        }
-      }
-      c.font = `500 9.5px ${fonts.mono}`
-      const label = status.toUpperCase()
-      const tw = c.measureText(label).width + 12
-      roundRect(c, x + 12, y + 8, tw, 16, 3)
-      c.fillStyle = open ? '#4da3ff' : 'rgb(255 255 255 / 0.14)'
-      c.fill()
-      c.fillStyle = open ? '#000000' : 'rgb(255 255 255 / 0.85)'
-      c.fillText(label, x + 18, y + 11.5)
+      c.fillText(label, x + 12, PHOTO_H + 42)
+      c.fillStyle = sub
+      c.font = `600 10.5px ${fonts.sans}`
+      c.fillText(role.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
       // barcode dan host di bagian bawah
       c.fillStyle = ink
       for (const b of bars) c.fillRect(x + 12 + b.x, CARD_H - 40, b.w, 18)
@@ -472,6 +445,7 @@ export function IdLanyard({
       e.preventDefault()
       grab = { p: t < 0.5 ? top : bot, tx: m.x, ty: m.y }
       root.style.cursor = 'grabbing'
+      playLanyardSound('grab')
       wake()
     }
     function onMove(e: PointerEvent) {
@@ -487,6 +461,7 @@ export function IdLanyard({
       if (!grab) return
       grab = null
       root.style.cursor = ''
+      playLanyardSound('release')
       wake()
     }
 
@@ -526,7 +501,7 @@ export function IdLanyard({
       window.removeEventListener('pointercancel', onUp)
       root.style.cursor = ''
     }
-  }, [name, role, status, open, photo, site])
+  }, [name, role, photo, site])
 
   return (
     <div

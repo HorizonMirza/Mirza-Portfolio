@@ -155,3 +155,41 @@ export function previewSound(level: number) {
     volumeOverride = null
   }
 }
+
+// Kartu ID di halaman kontak (pilihan pemilik 2026-10-03, demo suara nomor 6 "Pegas"): saat
+// diambil, nada segitiga naik singkat; saat dilepas, pegas bergetar yang makin pelan.
+export function playLanyardSound(kind: 'grab' | 'release') {
+  const a = audio()
+  if (!a) return
+  const { ctx, out } = a
+  const t = ctx.currentTime
+  const osc = ctx.createOscillator()
+  osc.type = 'triangle'
+  const gain = ctx.createGain()
+  if (kind === 'grab') {
+    osc.frequency.setValueAtTime(260, t)
+    osc.frequency.exponentialRampToValueAtTime(520, t + 0.125)
+    envelope(gain, t, 0.25, 0.005, 0.125)
+    osc.connect(gain)
+    gain.connect(out)
+    osc.start(t)
+    osc.stop(t + 0.18)
+    return
+  }
+  // getaran pegas: frekuensi dimodulasi LFO yang melambat dari 18 ke 6 Hz
+  osc.frequency.value = 330
+  const lfo = ctx.createOscillator()
+  lfo.frequency.setValueAtTime(18, t)
+  lfo.frequency.exponentialRampToValueAtTime(6, t + 0.5)
+  const depth = ctx.createGain()
+  depth.gain.value = 70
+  lfo.connect(depth)
+  depth.connect(osc.frequency)
+  envelope(gain, t, 0.32, 0.005, 0.505)
+  osc.connect(gain)
+  gain.connect(out)
+  osc.start(t)
+  lfo.start(t)
+  osc.stop(t + 0.6)
+  lfo.stop(t + 0.6)
+}

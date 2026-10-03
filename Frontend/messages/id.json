@@ -163,7 +163,8 @@
     "ticketSubject": "Subjek",
     "ticketMessage": "Pesan",
     "ticketTime": "Waktu",
-    "another": "Tulis pesan lain"
+    "another": "Tulis pesan lain",
+    "cardRole": "Fullstack Developer"
   },
   "Newsletter": {
     "heading": "Kabar project baru",
