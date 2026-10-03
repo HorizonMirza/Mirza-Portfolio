@@ -55,7 +55,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F9 | **Tema terang/gelap** (ikut sistem, bisa diganti manual) | P0 |
 | F10 | **Animasi**: hero, transisi halaman, reveal saat scroll. Menghormati `prefers-reduced-motion` | P0 |
 | F11 | **Statistik pengunjung**: pencatatan tanpa cookie, ditampilkan di dashboard admin | P0 |
-| F12 | **Kontak cepat**: tombol WhatsApp melayang (pengganti live chat, keputusan 2026-09-30) | P0 |
+| F12 | **Kontak cepat**: ~~tombol WhatsApp melayang~~ dihapus pemilik 2026-10-03; WhatsApp lewat kartu di footer dan halaman kontak | P0 |
 | F13 | **Newsletter**: form berlangganan dengan konfirmasi email (double opt-in) dan tautan berhenti | P0 |
 | F14 | **SEO & berbagi**: metadata per halaman, Open Graph, sitemap, robots.txt, data terstruktur `Person` | P0 |
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
@@ -138,7 +138,7 @@ Nomor merujuk ke `Documentation/00-discovery.md` bagian 6.
 |---|---|---|
 | 1 | ~~Halaman `/experience` berisi timeline kerja dan pendidikan~~ **Dikonfirmasi 2026-09-30:** satu halaman dengan filter Semua/Kerja/Organisasi/Pendidikan | Pisahkan menjadi dua halaman |
 | 2 | Blog dan sertifikat ditunda ke v2 | Masukkan ke v1 |
-| 3 | ~~Live chat: widget gratis~~ **Dikonfirmasi 2026-09-30:** tombol WhatsApp melayang, tanpa widget pihak ketiga | Hanya tombol WhatsApp |
+| 3 | ~~Live chat: widget gratis~~ **Dikonfirmasi 2026-09-30:** tombol WhatsApp melayang, tanpa widget pihak ketiga. **Revisi 2026-10-03:** tombol melayang dihapus, WhatsApp cukup di footer dan halaman kontak | Hanya tombol WhatsApp |
 | 4 | Newsletter: double opt-in, kirim broadcast dari admin lewat Resend. **Double opt-in dikonfirmasi 2026-09-30** (dikerjakan M3); broadcast masih menunggu | Kirim manual di luar sistem |
 | 5 | ~~Form kontak: honeypot + rate limit~~ **Dikonfirmasi 2026-09-30:** honeypot + rate limit 5 pesan per jam per IP (IP di-hash) | Tanpa proteksi, sesuai jawaban awal |
 | 6 | Secret tidak pernah di-commit, hanya `Frontend/.env.example` | — |

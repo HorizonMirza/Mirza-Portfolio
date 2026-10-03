@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { ViewTransition } from 'react'
 
 import { Link, usePathname } from '@/i18n/navigation'
+import { scrollToTop } from '@/lib/scroll'
 import { playNavSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
@@ -47,6 +48,8 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
     <ul className={cn('flex items-center', variant === 'top' ? 'gap-1' : 'gap-0.5')}>
       {siteNav.map((item, index) => {
         const active = isSiteNavActive(pathname, item.href)
+        // halaman menu itu sendiri (bukan halaman turunan seperti detail project)
+        const here = pathname === item.href
         const Icon = icons[item.key]
         return (
           <li key={item.href}>
@@ -54,8 +57,13 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
               href={item.href}
               aria-current={active ? 'page' : undefined}
               transitionTypes={[index < currentIndex ? 'nav-back' : 'nav-forward']}
-              // menu yang sedang aktif tidak berpindah halaman, jadi tidak berbunyi
-              onClick={active ? undefined : playNavSound}
+              // di halaman menu itu sendiri: tidak pindah halaman, cukup gulir ke bagian atas
+              onClick={(event) => {
+                playNavSound()
+                if (!here) return
+                event.preventDefault()
+                scrollToTop()
+              }}
               title={variant === 'bottom' ? t(item.key) : undefined}
               className={cn(
                 'relative inline-flex items-center justify-center rounded-full text-sm font-semibold text-muted transition-colors hover:text-text',

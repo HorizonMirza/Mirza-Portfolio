@@ -33,6 +33,12 @@ export function handleFromUrl(url: string) {
   }
 }
 
+// Permintaan pemilik: kartu email langsung membuka jendela tulis pesan Gmail di web (bukan mailto:,
+// yang bergantung pada aplikasi email di perangkat pengunjung).
+export function gmailComposeUrl(email: string) {
+  return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`
+}
+
 function hostOf(url: string) {
   try {
     return new URL(url).hostname.replace(/^www\./, '')
@@ -67,9 +73,9 @@ export function footerLinks(
   if (profile.email)
     links.push({
       key: 'email',
-      href: `mailto:${profile.email}`,
+      href: gmailComposeUrl(profile.email),
       value: profile.email,
-      external: false,
+      external: true,
     })
   if (socials.linkedin)
     links.push({

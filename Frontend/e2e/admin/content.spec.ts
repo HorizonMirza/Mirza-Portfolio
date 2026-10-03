@@ -17,6 +17,7 @@ const PAGES = [
   '/admin/messages',
   '/admin/subscribers',
   '/admin/audit',
+  '/admin/settings',
   '/admin/account',
 ]
 
@@ -140,4 +141,20 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   await first.click()
   await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
   await expect(page.getByText(/Kategori masih berisi \d+ skill/)).toBeVisible()
+})
+
+test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
+  await page.goto('/admin/settings')
+  const slider = page.getByLabel('Volume')
+  await slider.fill('35')
+  await expect(page.locator('output[for="soundVolume"]')).toHaveText('35%')
+  await page.getByRole('button', { name: 'Simpan' }).click()
+  await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
+  await page.goto('/id')
+  await expect(page.locator('html')).toHaveAttribute('data-sound-volume', '35')
+  // kembalikan ke bawaan agar tes lain tidak terpengaruh
+  await page.goto('/admin/settings')
+  await page.getByLabel('Volume').fill('80')
+  await page.getByRole('button', { name: 'Simpan' }).click()
+  await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
 })

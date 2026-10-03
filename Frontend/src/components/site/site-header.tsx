@@ -1,4 +1,3 @@
-import { Download } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
@@ -43,15 +42,6 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
             </div>
           </nav>
           <div className="col-start-3 flex items-center gap-2 justify-self-end">
-            {profile?.hasCv ? (
-              <a
-                href={`/api/cv?locale=${locale}`}
-                className="hidden min-h-11 items-center gap-2 rounded-full bg-primary px-4 text-sm font-semibold text-primary-fg shadow-lg transition-colors hover:bg-primary/90 lg:inline-flex"
-              >
-                <Download className="size-4" aria-hidden="true" />
-                {t('downloadCv')}
-              </a>
-            ) : null}
             <LocaleSwitcher className={`size-11 ${floating}`} />
             <ThemeToggle className={`size-11 ${floating}`} />
           </div>

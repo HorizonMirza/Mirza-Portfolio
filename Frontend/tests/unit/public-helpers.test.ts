@@ -38,6 +38,8 @@ describe('pageMetadata', () => {
 describe('whatsappUrl', () => {
   it('hanya angka', () =>
     expect(whatsappUrl('+62 812-3456-7890')).toBe('https://wa.me/6281234567890'))
+  it('awalan 0 diubah ke kode negara 62', () =>
+    expect(whatsappUrl('0812 3456 7890')).toBe('https://wa.me/6281234567890'))
 })
 
 describe('siteUrl', () => {

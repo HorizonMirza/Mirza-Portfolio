@@ -1,11 +1,21 @@
-// Suara tombol tema dan bahasa, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa library).
-// Hanya diputar dari klik pengguna, dengan volume pelan (DESIGN.md bagian 22).
+// Suara tombol tema, bahasa, dan menu, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa
+// library). Hanya diputar dari klik pengguna (DESIGN.md bagian 22 dan 31).
+// Volume diatur Super Admin di /admin/settings (0–100) dan dikirim lewat atribut
+// data-sound-volume di <html>; 0 berarti tanpa suara sama sekali.
 
-const VOLUME = 0.4
+export const DEFAULT_SOUND_VOLUME = 80
 
 let context: AudioContext | null = null
 let master: GainNode | null = null
 let noiseBuffer: AudioBuffer | null = null
+// dipakai tombol "Coba suara" di admin sebelum pengaturan disimpan
+let volumeOverride: number | null = null
+
+function volume() {
+  if (volumeOverride !== null) return volumeOverride
+  const raw = Number(document.documentElement.dataset.soundVolume)
+  return Number.isFinite(raw) ? Math.min(100, Math.max(0, raw)) : DEFAULT_SOUND_VOLUME
+}
 
 function audio() {
   if (typeof window === 'undefined') return null
@@ -13,16 +23,23 @@ function audio() {
     window.AudioContext ??
     (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!Ctor) return null
+  const level = volume()
+  if (level <= 0) return null
   try {
     if (!context) {
       context = new Ctor()
       master = context.createGain()
-      master.gain.value = VOLUME
-      master.connect(context.destination)
+      // kompresor menjaga suara tetap bersih (tidak pecah) di volume tinggi
+      const limiter = context.createDynamicsCompressor()
+      limiter.threshold.value = -6
+      limiter.ratio.value = 8
+      master.connect(limiter)
+      limiter.connect(context.destination)
       noiseBuffer = context.createBuffer(1, context.sampleRate, context.sampleRate)
       const data = noiseBuffer.getChannelData(0)
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
     }
+    master!.gain.value = level / 100
     if (context.state === 'suspended') void context.resume()
     return { ctx: context, out: master!, noise: noiseBuffer! }
   } catch {
@@ -119,9 +136,20 @@ function ping(ctx: AudioContext, out: GainNode, freq: number, dur: number, vol: 
 }
 
 // Menu utama: tik kaca, denting tipis dan pendek karena menu paling sering ditekan.
+// Dibuat lebih keras (permintaan pemilik 2026-10-03).
 export function playNavSound() {
   const a = audio()
   if (!a) return
-  ping(a.ctx, a.out, 2600, 0.12, 0.12)
-  ping(a.ctx, a.out, 3950, 0.08, 0.06)
+  ping(a.ctx, a.out, 2600, 0.14, 0.32)
+  ping(a.ctx, a.out, 3950, 0.1, 0.16)
+}
+
+// Tombol "Coba suara" di admin: memutar suara menu dengan volume yang sedang digeser.
+export function previewSound(level: number) {
+  volumeOverride = Math.min(100, Math.max(0, level))
+  try {
+    playNavSound()
+  } finally {
+    volumeOverride = null
+  }
 }

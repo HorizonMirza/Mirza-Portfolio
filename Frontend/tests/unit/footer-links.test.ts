@@ -51,7 +51,10 @@ describe('footer-links', () => {
       'cv',
     ])
     expect(links[0]).toMatchObject({ href: 'https://wa.me/6281200000000', external: true })
-    expect(links[1]).toMatchObject({ href: 'mailto:saya@contoh.com', external: false })
+    expect(links[1]).toMatchObject({
+      href: 'https://mail.google.com/mail/?view=cm&fs=1&to=saya%40contoh.com',
+      external: true,
+    })
     expect(links[4].value).toBe('@akun.saya')
     expect(links[5]).toMatchObject({ href: '/api/cv?locale=en', value: 'Google Drive' })
   })

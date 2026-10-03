@@ -34,12 +34,9 @@
   },
   "Footer": {
     "contactHeading": "Get in touch",
-    "contactLead": "Pick whichever channel suits you.",
     "cv": "Resume CV",
     "cvFile": "PDF",
-    "privacy": "Privacy Policy",
-    "copyright": "© {year} {name}",
-    "builtWith": "Built with Next.js, TypeScript, and PostgreSQL."
+    "copyright": "© {year} {name}"
   },
   "Availability": {
     "OPEN": "Open to work",
@@ -213,10 +210,6 @@
     "body": "This page failed to load. Please try again in a moment.",
     "retry": "Try again",
     "home": "Back to home"
-  },
-  "WhatsApp": {
-    "label": "Chat on WhatsApp (opens in a new tab)",
-    "prefill": "Hi Mirza, I saw your portfolio."
   },
   "SkillKeyboard": {
     "label": "Skill keyboard",

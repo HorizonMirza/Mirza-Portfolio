@@ -343,3 +343,11 @@ model CvDownload {
 
   @@index([createdAt])
 }
+
+// Pengaturan situs (satu baris, id = 1). Diubah dari /admin/settings.
+model SiteSetting {
+  id          Int      @id @default(1)
+  // volume suara tombol di situs publik (tema, bahasa, menu), 0 = tanpa suara, 100 = paling keras
+  soundVolume Int      @default(80)
+  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+}

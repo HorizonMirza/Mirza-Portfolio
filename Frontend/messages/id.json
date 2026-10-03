@@ -34,12 +34,9 @@
   },
   "Footer": {
     "contactHeading": "Hubungi saya",
-    "contactLead": "Pilih jalur yang paling nyaman untuk Anda.",
     "cv": "Resume CV",
     "cvFile": "PDF",
-    "privacy": "Kebijakan Privasi",
-    "copyright": "© {year} {name}",
-    "builtWith": "Dibangun dengan Next.js, TypeScript, dan PostgreSQL."
+    "copyright": "© {year} {name}"
   },
   "Availability": {
     "OPEN": "Terbuka untuk kerja",
@@ -213,10 +210,6 @@
     "body": "Halaman ini gagal dimuat. Coba lagi sebentar lagi.",
     "retry": "Coba lagi",
     "home": "Kembali ke beranda"
-  },
-  "WhatsApp": {
-    "label": "Chat lewat WhatsApp (membuka tab baru)",
-    "prefill": "Halo Mirza, saya melihat portofolio Anda."
   },
   "SkillKeyboard": {
     "label": "Keyboard skill",

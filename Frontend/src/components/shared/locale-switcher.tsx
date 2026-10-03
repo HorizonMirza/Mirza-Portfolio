@@ -25,6 +25,8 @@ export function LocaleSwitcher({ className }: { className?: string }) {
       href={pathname}
       locale={target}
       hrefLang={target}
+      // tetap di posisi gulir yang sama setelah ganti bahasa (permintaan pemilik 2026-10-03)
+      scroll={false}
       aria-label={label}
       title={label}
       onClick={() => {

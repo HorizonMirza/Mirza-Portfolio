@@ -4,6 +4,7 @@ export const CACHE_TAGS = {
   projects: 'projects',
   skills: 'skills',
   experience: 'experience',
+  settings: 'settings',
 } as const
 
 export type CacheTag = keyof typeof CACHE_TAGS

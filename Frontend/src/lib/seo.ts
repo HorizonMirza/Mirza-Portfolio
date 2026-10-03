@@ -34,6 +34,9 @@ export function pageMetadata({
   }
 }
 
+// wa.me butuh kode negara tanpa + atau 0 di depan. Nomor yang diisi dengan awalan 0 (format lokal
+// Indonesia, mis. 0812...) diubah ke 62812... agar langsung membuka chat ke nomor itu.
 export function whatsappUrl(number: string) {
-  return `https://wa.me/${number.replace(/[^0-9]/g, '')}`
+  const digits = number.replace(/[^0-9]/g, '')
+  return `https://wa.me/${digits.startsWith('0') ? `62${digits.slice(1)}` : digits}`
 }

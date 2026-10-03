@@ -13,9 +13,9 @@ import { RevealObserver } from '@/components/site/reveal-observer'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
 import { VercelInsights } from '@/components/site/vercel-insights'
-import { WhatsAppButton } from '@/components/site/whatsapp-button'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
+import { getSiteSettings } from '@/features/settings/public'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
 // Jangan set `dynamicParams = false` di sini. Dengan itu, render ulang ISR setelah admin menyimpan
@@ -46,10 +46,16 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   if (!hasLocale(routing.locales, locale)) notFound()
   // wajib untuk render statis dengan next-intl
   setRequestLocale(locale)
-  const t = await getTranslations('Common')
+  const [t, settings] = await Promise.all([getTranslations('Common'), getSiteSettings()])
 
   return (
-    <html lang={locale} className={fontVariables} suppressHydrationWarning>
+    <html
+      lang={locale}
+      className={fontVariables}
+      // volume suara tombol dari /admin/settings, dibaca lib/ui-sounds.ts
+      data-sound-volume={settings.soundVolume}
+      suppressHydrationWarning
+    >
       <body className="bg-bg text-text">
         <a
           href="#main"
@@ -80,7 +86,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
               </main>
               <SiteFooter locale={locale} />
             </div>
-            <WhatsAppButton locale={locale} />
             <RevealObserver />
             <LanguageScramble />
             <PageViewTracker />

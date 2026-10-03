@@ -302,6 +302,10 @@ erDiagram
       string locale
       datetime createdAt
     }
+    SiteSetting {
+      int id PK "singleton"
+      int soundVolume "0-100, atribut data-sound-volume"
+    }
 ```
 
 Catatan:
@@ -340,6 +344,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pelanggan | `/admin/subscribers` | `deleteSubscriber` |
 | Audit | `/admin/audit` | (baca saja) |
+| Pengaturan | `/admin/settings` | `saveSettings` (volume suara tombol situs publik) |
 | Akun | `/admin/account` | `changePassword` |
 
 **Unggah Cloudinary** (tanpa SDK): `signAssetUpload` membuat tanda tangan SHA-1 di server (secret tidak ke browser) → browser mengunggah langsung ke `api.cloudinary.com` → `attachUploadedAsset` memverifikasi tanda tangan respons (`public_id` + `version`), memeriksa ulang folder, tipe, format, ukuran, dan asal URL, lalu mencatat `Asset`. Berkas yang ditolak atau diganti dihapus dari Cloudinary. Tanpa kunci `CLOUDINARY_*`, form unggah diganti pesan "belum aktif". `next/image` hanya mengizinkan `res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/`.

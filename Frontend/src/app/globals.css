@@ -29,9 +29,6 @@
   --accent: #1d5fd0;
   /* warna seri grafik */
   --chart-1: #1d5fd0;
-  /* warna merek WhatsApp untuk tombol melayang; ikon gelap di atasnya ±9:1 */
-  --whatsapp: #25d366;
-  --whatsapp-fg: #0b1220;
   /* kalender kontribusi GitHub (level 1-4, hijau khas GitHub; level 0 memakai --surface-2) */
   --gh-1: #9be9a8;
   --gh-2: #40c463;
@@ -107,8 +104,6 @@
   --color-accent: var(--accent);
   --color-note: var(--note);
   --color-chart-1: var(--chart-1);
-  --color-whatsapp: var(--whatsapp);
-  --color-whatsapp-fg: var(--whatsapp-fg);
 
   /* alias untuk komponen shadcn/ui */
   --color-background: var(--bg);

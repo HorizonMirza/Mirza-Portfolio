@@ -4,7 +4,6 @@ import { getTranslations } from 'next-intl/server'
 import { getPublicProfile } from '@/features/profile/public'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import type { AppLocale } from '@/i18n/routing'
-import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 
 import { type FooterLinkKey, footerLinks, isDriveHost } from './footer-links'
@@ -46,7 +45,7 @@ function LinkIcon({ name, drive }: { name: FooterLinkKey; drive: boolean }) {
 
 // Footer (pilihan pemilik 2026-10-03, demo nomor 2; DESIGN.md bagian 29): kartu tautan berisi ikon,
 // nama, dan alamat untuk WhatsApp, Email, LinkedIn, GitHub, Instagram, dan Resume CV (kartu CV
-// disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta dan privasi.
+// disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta.
 export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const [t, tSocial, tCommon, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Footer' }),
@@ -63,15 +62,12 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
       <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8">
         {links.length > 0 ? (
           <nav aria-labelledby="footer-contact-title" className="mb-8">
-            <div className="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
-              <h2
-                id="footer-contact-title"
-                className="font-display text-h3 font-semibold uppercase"
-              >
-                {t('contactHeading')}
-              </h2>
-              <p className="text-sm text-muted">{t('contactLead')}</p>
-            </div>
+            <h2
+              id="footer-contact-title"
+              className="mb-4 font-display text-h3 font-semibold uppercase"
+            >
+              {t('contactHeading')}
+            </h2>
             <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
               {links.map((link) => {
                 const cv = link.key === 'cv'
@@ -118,18 +114,9 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
             </ul>
           </nav>
         ) : null}
-        <div className="flex flex-col gap-2 text-sm text-muted md:flex-row md:items-center md:justify-between">
-          <div>
-            <p>{t('copyright', { year: new Date().getFullYear(), name })}</p>
-            <p className="mt-1">{t('builtWith')}</p>
-          </div>
-          <Link
-            href="/privacy"
-            className="inline-flex min-h-11 items-center underline-offset-4 hover:text-text hover:underline"
-          >
-            {t('privacy')}
-          </Link>
-        </div>
+        <p className="text-sm text-muted">
+          {t('copyright', { year: new Date().getFullYear(), name })}
+        </p>
       </div>
     </footer>
   )

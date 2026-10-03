@@ -7,6 +7,7 @@ import {
   Mail,
   Sparkles,
   KeyRound,
+  Settings,
   UserRound,
 } from 'lucide-react'
 
@@ -19,6 +20,7 @@ export const adminNav = [
   { href: '/admin/messages', label: 'Pesan', icon: Inbox },
   { href: '/admin/subscribers', label: 'Pelanggan', icon: Mail },
   { href: '/admin/audit', label: 'Log audit', icon: History },
+  { href: '/admin/settings', label: 'Pengaturan', icon: Settings },
   { href: '/admin/account', label: 'Akun', icon: KeyRound },
 ] as const
 

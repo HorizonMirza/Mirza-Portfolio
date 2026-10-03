@@ -133,7 +133,7 @@ Berbasis shadcn/ui, disesuaikan dengan token di atas. Semua punya keadaan: defau
 |---|---|
 | **Button** | Varian `primary` (isi biru), `secondary` (bergaris), `ghost`. Tinggi minimal 44 px (target sentuh). Tiga tingkat hierarki seperti pada referensi |
 | **Link** | Bergaris bawah pada hover dan fokus, warna `--primary` |
-| **Navbar** | Kapsul melayang di atas (gaya "tubelight"): foto profil bulat (inisial bila belum ada foto), menu teks dengan lampu di atas menu aktif, tombol bahasa bulat (menampilkan kode bahasa tujuan), tombol tema bulat (satu tombol terang/gelap), tombol Unduh CV bila ada. Di HP: kapsul atas hanya foto, bahasa, tema; menu jadi kapsul ikon tetap di bawah layar dengan label untuk pembaca layar |
+| **Navbar** | Kapsul melayang di atas (gaya "tubelight"): foto profil bulat (inisial bila belum ada foto), menu teks dengan lampu di atas menu aktif, tombol bahasa bulat (menampilkan kode bahasa tujuan), tombol tema bulat (satu tombol terang/gelap). Tombol Unduh CV di topbar dihapus pemilik 2026-10-03 (CV tetap di hero, Tentang, dan footer). Di HP: kapsul atas hanya foto, bahasa, tema; menu jadi kapsul ikon tetap di bawah layar dengan label untuk pembaca layar |
 | **Language toggle** | Kontrol segmen "ID / EN" dengan `aria-label` |
 | **Theme toggle** | Terang / Gelap / Sistem |
 | **Card project** | Cover, judul, ringkasan, chip tech stack, metadata GitHub |
@@ -149,7 +149,7 @@ Berbasis shadcn/ui, disesuaikan dengan token di atas. Semua punya keadaan: defau
 
 ## 4. Peta Situs dan Navigasi
 
-Navigasi di atas. Urutan: **Home · About · Experience · Projects · Contact** (5 menu sejak 2026-10-01; Skills menjadi bagian beranda), di kanan: toggle bahasa, toggle tema, tombol "Unduh CV".
+Navigasi di atas. Urutan: **Home · About · Experience · Projects · Contact** (5 menu sejak 2026-10-01; Skills menjadi bagian beranda), di kanan: toggle bahasa, toggle tema (tombol "Unduh CV" di topbar dihapus 2026-10-03).
 
 ```
 /[locale]                 Home
@@ -372,7 +372,7 @@ Aturan lain: target sentuh ≥ 44 × 44 px di HP (desktop ≥ 38 px karena ukura
 - Desain tetap tenang seperti M3, tidak digeser ke nuansa ibnuhakim.id (pilihan pemilik).
 - Tema awal **gelap**; pengunjung tetap bisa memilih Terang/Sistem dan pilihannya tersimpan.
 - Hero "Horizon": canvas 2D. Tingkat perangkat: HP 24 garis, DPR 1, 30 fps tanpa miring kursor; tablet 32 garis; desktop 48 garis, DPR ≤ 2, miring mengikuti kursor. Bingkai statis bila `prefers-reduced-motion`, `saveData`, atau memori ≤ 2 GB. Berhenti saat tab tersembunyi atau hero keluar layar. Diinisialisasi saat idle.
-- Live chat diganti **tombol WhatsApp melayang** (tanpa skrip pihak ketiga), hanya tampil bila nomor WhatsApp diisi di admin.
+- Live chat diganti **tombol WhatsApp melayang** (tanpa skrip pihak ketiga), hanya tampil bila nomor WhatsApp diisi di admin. Dihapus pemilik 2026-10-03; WhatsApp cukup lewat kartu footer dan halaman kontak.
 - Transisi halaman memakai `<ViewTransition>` React (fade 150 ms), dimatikan pada reduced-motion.
 
 ## 12. Ganti font (2026-10-01)
@@ -466,7 +466,7 @@ Pemilik memilih dari dua demo berisi masing-masing 10 suara: tema nomor 5 (desir
 - `lib/ui-sounds.ts`, dibuat langsung dengan Web Audio: tanpa berkas audio, tanpa library, tanpa permintaan jaringan. Satu `AudioContext` dibuat saat tombol pertama kali ditekan.
 - Tema: derau tersaring yang menyapu turun saat ke gelap dan naik saat ke terang (0,38 detik).
 - Bahasa: 12 bip acak selama huruf diacak lalu satu nada penutup (sekitar 0,7 detik, selaras dengan animasi acak huruf). Ke English sedikit lebih tinggi.
-- Hanya berbunyi dari klik pengguna, volume pelan (0,4). Browser tanpa Web Audio atau yang menolaknya: tombol tetap bekerja tanpa suara. Belum ada tombol untuk mematikan suara (menunggu keputusan pemilik).
+- Hanya berbunyi dari klik pengguna. Volume utama diatur di admin (bagian 31; awalnya tetap 0,4). Browser tanpa Web Audio atau yang menolaknya: tombol tetap bekerja tanpa suara. Belum ada tombol untuk mematikan suara (menunggu keputusan pemilik).
 
 ## 23. Navbar lima menu (2026-10-01)
 
@@ -477,7 +477,7 @@ Pemilik memilih dari dua demo berisi masing-masing 10 suara: tema nomor 5 (desir
 
 ## 24. Suara menu utama (2026-10-01)
 
-Pemilik memilih nomor 2 dari lima demo: **tik kaca** (dua sinus 2600 Hz dan 3950 Hz, 0,12 detik, lebih pelan dari suara tema dan bahasa karena menu paling sering ditekan). `playNavSound` di `lib/ui-sounds.ts`, dipanggil dari menu atas (desktop) dan menu bawah (HP). Menu yang sedang aktif tidak berbunyi karena halamannya tidak berpindah.
+Pemilik memilih nomor 2 dari lima demo: **tik kaca** (dua sinus 2600 Hz dan 3950 Hz, 0,12 detik, lebih pelan dari suara tema dan bahasa karena menu paling sering ditekan). `playNavSound` di `lib/ui-sounds.ts`, dipanggil dari menu atas (desktop) dan menu bawah (HP). Menu yang sedang aktif tidak berbunyi karena halamannya tidak berpindah (diganti bagian 31: menu aktif kini berbunyi dan menggulir ke atas).
 
 ## 25. Animasi pindah halaman dan ikon menu HP (2026-10-01)
 
@@ -508,9 +508,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 ## 29. Footer kartu tautan (2026-10-03)
 
-- Pilihan pemilik dari lima demo: nomor 2, kartu tautan (prinsip dari portofolio nickh-portofolio.vercel.app; tidak ada aset atau teks yang disalin). Footer berisi judul "Hubungi saya" lalu kartu WhatsApp, Email, LinkedIn, GitHub, Instagram, situs (bila diisi), dan Resume CV, dengan urutan tetap. Di bawahnya hak cipta, keterangan stack, dan Kebijakan Privasi.
+- Pilihan pemilik dari lima demo: nomor 2, kartu tautan (prinsip dari portofolio nickh-portofolio.vercel.app; tidak ada aset atau teks yang disalin). Footer berisi judul "Hubungi saya" lalu kartu WhatsApp, Email, LinkedIn, GitHub, Instagram, situs (bila diisi), dan Resume CV, dengan urutan tetap. Di bawahnya hak cipta. Keterangan stack, tautan Kebijakan Privasi, dan kalimat "Pilih jalur yang paling nyaman" dihapus pemilik 2026-10-03 (halaman privasi tetap ada, ditautkan dari form kontak dan tercantum di sitemap).
 - Tiap kartu: ikon, nama, dan nilai (nomor, alamat, nama akun dari URL profil, atau host), panah ↗. Grid 1 kolom di HP, 2 di tablet, 3 di desktop. Kartu biasa `--surface` dengan border; hover menguatkan border dan naik 2 px (hanya bila gerak tidak dikurangi). Kartu CV disorot dengan warna `--primary` (hitam di tema terang, putih di tema gelap).
-- Data dari admin; kartu yang kosong tidak tampil, dan bila semuanya kosong hanya baris hak cipta yang tampil. Tautan luar membuka tab baru dengan keterangan untuk pembaca layar; email memakai `mailto:` di tab yang sama.
+- Data dari admin; kartu yang kosong tidak tampil, dan bila semuanya kosong hanya baris hak cipta yang tampil. Tautan luar membuka tab baru dengan keterangan untuk pembaca layar; email membuka jendela tulis pesan Gmail di web (`mail.google.com/mail/?view=cm`, revisi 2026-10-03; sebelumnya `mailto:`).
 - Ikon WhatsApp, GitHub, Instagram, dan Google Drive dari Simple Icons (CC0); LinkedIn memakai tulisan "in"; email, situs, dan CV selain Google Drive memakai ikon lucide.
 - Resume CV: kolom baru `Profile.cvUrl` ("Link CV" di admin, mis. Google Drive). Bila diisi, `/api/cv` (dipakai semua tombol CV: topbar, beranda, tentang, footer) mengarah ke link itu dan tetap mencatat jumlah unduhan; bila kosong, memakai PDF yang di-upload. Keterangan kartu: "Google Drive", host link lain, atau "PDF".
 
@@ -521,4 +521,12 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Bila server menolak, kolom password yang ditandai ("Incorrect password."). Server sengaja tidak membedakan email tak terdaftar dan password salah, jadi tanda ini muncul setiap kali login ditolak dengan email yang formatnya benar. Batas percobaan dan galat lain tampil di bawah form.
 - Teks tombol "Sign in" (kata kerja), "Signing in…" saat menunggu, lalu "Signed in" dengan centang sebelum pindah ke panel. Judul tab "Sign in".
 - Garis cahaya di tepi kartu kini satu bingkai gradien conic berputar yang dipotong mask (`.login-card::before`), sehingga mengikuti lengkung keempat sudut. Sebelumnya empat garis lurus yang terpotong di sudut (terlihat siku di Safari iPhone). Diam pada reduced-motion.
+
+## 31. Volume suara di admin, gulir ke atas, ganti bahasa tanpa melompat (2026-10-03)
+
+- Volume suara tombol tema, bahasa, dan menu diatur Super Admin di `/admin/settings` (penggeser 0–100, langkah 5, tombol "Coba suara"; 0 = tanpa suara). Disimpan di tabel `SiteSetting` (satu baris), dikirim ke halaman publik lewat `<html data-sound-volume>` dan dibaca `lib/ui-sounds.ts` setiap kali berbunyi. Bawaan 80 (dua kali volume lama 0,4). Kompresor di ujung rantai audio menjaga suara tidak pecah di volume tinggi.
+- Suara menu (tik kaca) dibuat lebih keras: puncak 0,32 dan 0,16 (sebelumnya 0,12 dan 0,06), sedikit lebih panjang.
+- Menekan menu yang halamannya sedang dibuka, atau foto profil saat di beranda, menggulir ke bagian paling atas halaman itu (halus; langsung bila gerak dikurangi) dan tetap berbunyi. Hash seperti `#skills` dibuang. Halaman turunan (detail project) tetap pindah ke halaman menu.
+- Ganti bahasa tidak lagi melompat ke atas: tautan bahasa memakai `scroll={false}` sehingga posisi gulir tetap.
+- Footer: kartu WhatsApp mengubah nomor berawalan 0 menjadi 62 (wa.me menolak awalan 0); kartu email membuka Gmail. Tombol WhatsApp melayang dan tombol Unduh CV di topbar dihapus.
 
