@@ -536,3 +536,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Daftar "Atau langsung" (email, WhatsApp, kota) di bawah form dihapus karena kontak langsung, sosial, dan CV sudah ada di footer kartu tautan (bagian 29). Pesan galat form kini menunjuk ke tautan di bagian bawah halaman.
 - Di HP kartu tetap tidak tampil; urutan judul, pengantar, lalu form.
 
+## 33. Kilau di kolom form kontak (2026-10-03)
+
+- Permintaan pemilik: kolom nama, email, subjek, dan pesan di halaman kontak diberi kilau berjalan mengelilingi kotak seperti login admin. Bedanya, warnanya ikut tema: kilau terang di tema gelap, kilau gelap di tema terang (`color-mix` dari `--text`). Saat kolom aktif kilau lebih tegas; saat salah kilau memakai `--danger`.
+- Dibuat sebagai bingkai bermask di atas border kolom (`.field-shine::after`, prop `shine` di `PublicField`), jadi border dan tanda salah bawaan tetap ada. Tiap kolom berselang 1,1 detik agar tidak bergerak serempak. Diam pada reduced-motion.
+- Kalimat "Data Anda hanya dipakai untuk membalas pesan ini. Kebijakan Privasi" di bawah form dihapus atas permintaan pemilik. Halaman `/privacy` tetap ada dan tercantum di sitemap.
+- Di HP `html` memakai `scroll-padding-bottom` setinggi menu ikon bawah, sehingga elemen yang digulir ke layar (fokus keyboard, tombol kirim, tautan #anchor) berhenti di atas menu dan tidak tertutup (WCAG 2.4.11). Ditemukan lewat tes E2E form kontak tanpa JavaScript.
+

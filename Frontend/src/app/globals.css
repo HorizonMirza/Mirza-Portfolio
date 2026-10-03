@@ -144,6 +144,14 @@
     background-color: var(--bg);
     color: var(--text);
     -webkit-text-size-adjust: 100%;
+    /* HP: menu ikon menempel di bawah layar. Elemen yang digulir ke layar (fokus keyboard, tautan
+       #anchor) berhenti di atas menu, tidak tertutup olehnya (WCAG 2.4.11). */
+    scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-bottom: 0;
+    }
   }
   /* Desktop lebih rapat (permintaan pemilik 2026-10-01): ukuran dasar 87,5% (14 px bila browser
      16 px), jadi semua teks, jarak, dan tombol berbasis rem ikut mengecil seragam. Persen, bukan px,
@@ -615,4 +623,60 @@
 }
 .gh-4 {
   fill: var(--gh-4);
+}
+
+/* Form kontak (DESIGN.md bagian 33): kilau berjalan mengelilingi kotak seperti di login admin,
+   tetapi warnanya ikut tema (gelap di tema terang, terang di tema gelap). Bingkai tipis bermask
+   di atas border kolom sehingga mengikuti sudut kotak; diam pada reduced-motion. */
+.field-shine {
+  position: relative;
+}
+/* textarea bawaan inline-block menyisakan celah di bawah kotak; block agar bingkai pas */
+.field-shine > input,
+.field-shine > textarea {
+  display: block;
+}
+.field-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 240deg,
+    color-mix(in srgb, var(--text) 80%, transparent) 300deg,
+    transparent 345deg 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: login-shine 4s linear var(--shine-delay, 0s) infinite;
+}
+.field-shine:focus-within::after {
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 220deg,
+    var(--text) 300deg,
+    transparent 345deg 360deg
+  );
+}
+.field-shine.field-shine-bad::after {
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 240deg,
+    var(--danger) 300deg,
+    transparent 345deg 360deg
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-shine::after {
+    animation: none;
+  }
 }

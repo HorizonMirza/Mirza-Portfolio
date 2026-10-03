@@ -8,7 +8,6 @@ import { Honeypot, PublicField } from '@/components/site/public-field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Link } from '@/i18n/navigation'
 import { initialFormState } from '@/lib/form-state'
 
 import { submitContact } from '../../public-actions'
@@ -62,7 +61,7 @@ export function ContactForm() {
         {state.status === 'error' && state.message ? t(state.message as 'error') : ''}
       </p>
       <div className="grid gap-5 sm:grid-cols-2">
-        <PublicField id="contact-name" label={t('name')} error={err('name')}>
+        <PublicField id="contact-name" shine={0} label={t('name')} error={err('name')}>
           {(a) => (
             <Input
               {...a}
@@ -74,7 +73,7 @@ export function ContactForm() {
             />
           )}
         </PublicField>
-        <PublicField id="contact-email" label={t('email')} error={err('email')}>
+        <PublicField id="contact-email" shine={1} label={t('email')} error={err('email')}>
           {(a) => (
             <Input
               {...a}
@@ -88,10 +87,10 @@ export function ContactForm() {
           )}
         </PublicField>
       </div>
-      <PublicField id="contact-subject" label={t('subject')} error={err('subject')}>
+      <PublicField id="contact-subject" shine={2} label={t('subject')} error={err('subject')}>
         {(a) => <Input {...a} name="subject" maxLength={150} defaultValue={v.subject ?? ''} />}
       </PublicField>
-      <PublicField id="contact-message" label={t('message')} error={err('message')}>
+      <PublicField id="contact-message" shine={3} label={t('message')} error={err('message')}>
         {(a) => (
           <Textarea
             {...a}
@@ -103,13 +102,7 @@ export function ContactForm() {
           />
         )}
       </PublicField>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-muted">
-          {t('privacyNote')}{' '}
-          <Link href="/privacy" className="text-primary underline underline-offset-4">
-            {t('privacyLink')}
-          </Link>
-        </p>
+      <div className="flex">
         <Button type="submit" disabled={pending}>
           {pending ? t('sending') : t('send')}
         </Button>

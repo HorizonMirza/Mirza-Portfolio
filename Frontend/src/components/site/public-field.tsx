@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
@@ -10,6 +10,7 @@ export function PublicField({
   error,
   hint,
   className,
+  shine,
   children,
 }: {
   id: string
@@ -17,6 +18,8 @@ export function PublicField({
   error?: string
   hint?: string
   className?: string
+  // urutan kolom untuk kilau berjalan di tepi kotak (form kontak); kosong = tanpa kilau
+  shine?: number
   children: (a: { id: string; 'aria-invalid'?: true; 'aria-describedby'?: string }) => ReactNode
 }) {
   const describedBy =
@@ -24,7 +27,21 @@ export function PublicField({
   return (
     <div className={cn('flex flex-col gap-2', className)}>
       <Label htmlFor={id}>{label}</Label>
-      {children({ id, 'aria-invalid': error ? true : undefined, 'aria-describedby': describedBy })}
+      {shine === undefined ? (
+        children({ id, 'aria-invalid': error ? true : undefined, 'aria-describedby': describedBy })
+      ) : (
+        <div
+          className={cn('field-shine rounded-md', error && 'field-shine-bad')}
+          // kilau tiap kolom berselang agar tidak bergerak serempak
+          style={{ '--shine-delay': `${-shine * 1.1}s` } as CSSProperties}
+        >
+          {children({
+            id,
+            'aria-invalid': error ? true : undefined,
+            'aria-describedby': describedBy,
+          })}
+        </div>
+      )}
       {hint ? (
         <p id={`${id}-hint`} className="text-xs text-muted">
           {hint}
