@@ -64,10 +64,29 @@ test.describe('login dan logout', () => {
   test.skip(!hasAdminEnv, 'butuh ADMIN_EMAIL dan ADMIN_PASSWORD')
   test.use({ extraHTTPHeaders: { 'x-forwarded-for': uniqueIp() } })
 
-  test('password salah menampilkan pesan umum', async ({ page }) => {
+  test('password salah menandai kolom password', async ({ page }) => {
     await login(page, process.env.ADMIN_EMAIL, 'password-yang-salah-sekali')
-    await expect(page.locator('#login-error')).toHaveText('Incorrect email or password.')
+    await expect(page.locator('#password-error')).toHaveText('Incorrect password.')
+    await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute(
+      'aria-invalid',
+      'true',
+    )
     await expect(page).toHaveURL(/\/admin\/login/)
+  })
+
+  test('email dengan domain lain ditandai tanpa bertanya ke server', async ({ page }) => {
+    const domain = process.env.ADMIN_EMAIL!.split('@')[1]
+    let signInCalls = 0
+    page.on('request', (r) => {
+      if (r.url().includes('/api/auth/sign-in')) signInCalls++
+    })
+    await login(page, 'admin@domain-lain.test', 'apa-saja')
+    await expect(page.locator('#email-error')).toHaveText(`Use your @${domain} address.`)
+    await expect(page.getByLabel('Email')).toHaveAttribute('aria-invalid', 'true')
+    // tanda hilang begitu emailnya dibetulkan
+    await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL!)
+    await expect(page.locator('#email-error')).toHaveCount(0)
+    expect(signInCalls).toBe(0)
   })
 
   test('login, kembali ke halaman tujuan, lalu logout', async ({ page, isMobile }) => {
@@ -75,7 +94,7 @@ test.describe('login dan logout', () => {
     await expect(page).toHaveURL(/next=/)
     await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL!)
     await page.getByLabel('Password', { exact: true }).fill(process.env.ADMIN_PASSWORD!)
-    await page.getByRole('button', { name: 'Login' }).click()
+    await page.getByRole('button', { name: 'Sign in' }).click()
     await expect(page).toHaveURL(/\/admin\/skills$/)
     if (isMobile) await page.getByRole('button', { name: /menu/i }).click()
     await page.getByRole('button', { name: 'Keluar' }).click()

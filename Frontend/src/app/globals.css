@@ -338,68 +338,6 @@
   }
 }
 
-/* Login admin: garis cahaya berjalan di tepi kartu (pengganti animasi framer-motion). */
-.login-beam {
-  position: absolute;
-  opacity: 0.6;
-  filter: blur(1.5px);
-}
-.login-beam-top,
-.login-beam-bottom {
-  height: 2px;
-  width: 50%;
-  background: linear-gradient(to right, transparent, white, transparent);
-}
-.login-beam-left,
-.login-beam-right {
-  width: 2px;
-  height: 50%;
-  background: linear-gradient(to bottom, transparent, white, transparent);
-}
-.login-beam-top {
-  top: 0;
-  left: -50%;
-  animation: login-beam-x 3.5s ease-in-out infinite;
-}
-.login-beam-bottom {
-  bottom: 0;
-  left: -50%;
-  animation: login-beam-x 3.5s ease-in-out 1.75s infinite reverse;
-}
-.login-beam-right {
-  right: 0;
-  top: -50%;
-  animation: login-beam-y 3.5s ease-in-out 0.9s infinite;
-}
-.login-beam-left {
-  left: 0;
-  top: -50%;
-  animation: login-beam-y 3.5s ease-in-out 2.6s infinite reverse;
-}
-@keyframes login-beam-x {
-  0% {
-    left: -50%;
-  }
-  70%,
-  100% {
-    left: 100%;
-  }
-}
-@keyframes login-beam-y {
-  0% {
-    top: -50%;
-  }
-  70%,
-  100% {
-    top: 100%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .login-beam {
-    display: none;
-  }
-}
-
 /* Login admin: kilau berjalan mengelilingi kotak email dan password. Bingkai 1px berupa
    gradien conic yang diputar lewat @property; browser tanpa @property memakai bingkai diam. */
 @property --shine-angle {
@@ -443,13 +381,56 @@
       rgb(255 255 255 / 0.45)
     );
 }
+/* Kolom yang salah (DESIGN.md bagian 30): kilau dan bingkai merah, ditambah cincin tipis. */
+.login-field.login-field-bad {
+  background:
+    conic-gradient(
+      from var(--shine-angle),
+      transparent 0deg 240deg,
+      rgb(252 165 165 / 1) 300deg,
+      transparent 345deg 360deg
+    ),
+    linear-gradient(rgb(252 165 165 / 0.7), rgb(252 165 165 / 0.7));
+  box-shadow: 0 0 0 3px rgb(252 165 165 / 0.12);
+}
+
+/* Login admin: garis cahaya mengelilingi kartu. Bingkai 1,5px berupa gradien conic yang diputar,
+   dipotong mask sehingga hanya tepinya yang terlihat dan selalu mengikuti lengkung keempat sudut
+   (pengganti empat garis lurus yang terpotong di sudut, terutama di Safari iPhone). */
+.login-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background:
+    conic-gradient(
+      from var(--shine-angle),
+      transparent 0deg 200deg,
+      rgb(255 255 255 / 0.95) 290deg,
+      transparent 340deg 360deg
+    ),
+    linear-gradient(rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.12));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: login-shine 5s linear infinite;
+}
 @keyframes login-shine {
   to {
     --shine-angle: 360deg;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .login-field {
+  .login-field,
+  .login-card::before {
     animation: none;
   }
 }

@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { cache } from 'react'
 
 import { getAuth } from '@/lib/auth'
+import { getDb } from '@/lib/db'
 
 export type AdminSession = {
   userId: string
@@ -40,4 +41,21 @@ export async function requireSuperAdmin(): Promise<AdminSession> {
   const admin = await getAdminSession()
   if (!admin) throw new UnauthorizedError()
   return admin
+}
+
+// Domain email Super Admin (mis. "gmail.com") untuk tanda di form login: email dengan domain lain
+// langsung ditandai tanpa bertanya ke server. Hanya domain yang dikirim ke browser, bukan alamatnya.
+// Null bila belum ada admin atau database tidak bisa dihubungi (form lalu hanya memeriksa format).
+export async function getAdminEmailDomain(): Promise<string | null> {
+  try {
+    const admin = await getDb().user.findFirst({
+      where: { role: 'SUPER_ADMIN' },
+      orderBy: { createdAt: 'asc' },
+      select: { email: true },
+    })
+    const domain = admin?.email.split('@')[1]?.toLowerCase()
+    return domain || null
+  } catch {
+    return null
+  }
 }

@@ -391,7 +391,7 @@ Permintaan pemilik berdasarkan komponen Interactive Neural Vortex dan sign-in-ca
 - Kartu login kaca **diam** (tanpa efek miring/geser 3D). Garis cahaya di tepi kartu memakai CSS, disembunyikan pada reduced-motion. Tanpa `framer-motion`.
 - Bagian contoh yang tidak dipakai karena fiturnya tidak ada: "Remember me", "Forgot password", "Sign in with Google", dan "Sign up" (satu admin, pendaftaran publik dimatikan). Ditambah tombol "Lihat sandi".
 
-Revisi 2026-10-01 (pemilik): teks halaman login berbahasa Inggris ("Welcome Back King!", tombol "Login" tanpa panah, contoh email `mirzaganteng@gmail.com`), kolom email dan password diberi kilau berjalan mengelilingi kotak (gradien conic + `@property`, diam pada reduced-motion), lingkaran logo diganti foto pemilik.
+Revisi 2026-10-01 (pemilik): teks halaman login berbahasa Inggris ("Welcome Back King!", tombol "Login" tanpa panah (diganti "Sign in" di bagian 30), contoh email `mirzaganteng@gmail.com`), kolom email dan password diberi kilau berjalan mengelilingi kotak (gradien conic + `@property`, diam pada reduced-motion), lingkaran logo diganti foto pemilik.
 
 ## 15. Foto profil bawaan (2026-10-01)
 
@@ -513,3 +513,12 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Data dari admin; kartu yang kosong tidak tampil, dan bila semuanya kosong hanya baris hak cipta yang tampil. Tautan luar membuka tab baru dengan keterangan untuk pembaca layar; email memakai `mailto:` di tab yang sama.
 - Ikon WhatsApp, GitHub, Instagram, dan Google Drive dari Simple Icons (CC0); LinkedIn memakai tulisan "in"; email, situs, dan CV selain Google Drive memakai ikon lucide.
 - Resume CV: kolom baru `Profile.cvUrl` ("Link CV" di admin, mis. Google Drive). Bila diisi, `/api/cv` (dipakai semua tombol CV: topbar, beranda, tentang, footer) mengarah ke link itu dan tetap mencatat jumlah unduhan; bila kosong, memakai PDF yang di-upload. Keterangan kartu: "Google Drive", host link lain, atau "PDF".
+
+## 30. Tanda salah di login admin dan garis keliling kartu (2026-10-03)
+
+- Pilihan pemilik dari lima demo: nomor 1, pesan di bawah kolom. Kolom yang salah mendapat bingkai dan kilau merah (`.login-field-bad`), ikon kolom ikut merah, dan pesan singkat berikon tepat di bawah kolom. Satu wilayah `role="alert"` tersembunyi membacakan pesan untuk pembaca layar; tiap kolom memakai `aria-invalid` dan `aria-describedby`.
+- Email diperiksa di browser saat kolom ditinggalkan dan saat dikirim: kosong, format salah, atau domain berbeda dari domain email Super Admin di database ("Use your @gmail.com address."). Email yang salah tidak dikirim ke server sehingga tidak menghabiskan jatah 5 percobaan per 15 menit. Domain diambil dari database (bukan ditulis mati) agar lingkungan lokal/CI dan penggantian email admin tetap jalan; hanya domain yang dikirim ke browser.
+- Bila server menolak, kolom password yang ditandai ("Incorrect password."). Server sengaja tidak membedakan email tak terdaftar dan password salah, jadi tanda ini muncul setiap kali login ditolak dengan email yang formatnya benar. Batas percobaan dan galat lain tampil di bawah form.
+- Teks tombol "Sign in" (kata kerja), "Signing in…" saat menunggu, lalu "Signed in" dengan centang sebelum pindah ke panel. Judul tab "Sign in".
+- Garis cahaya di tepi kartu kini satu bingkai gradien conic berputar yang dipotong mask (`.login-card::before`), sehingga mengikuti lengkung keempat sudut. Sebelumnya empat garis lurus yang terpotong di sudut (terlihat siku di Safari iPhone). Diam pada reduced-motion.
+
