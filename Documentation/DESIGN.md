@@ -546,7 +546,13 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 ## 34. Judul kontak, tombol kirim, dan pesan terima kasih (2026-10-03)
 
 - Judul pilihan pemilik: EN "Let’s work together" dengan pengantar "Let’s build something impactful together." lalu lanjutan yang menyebut tawaran kerja, project freelance, atau ide komunitas. ID memakai terjemahannya ("Mari bekerja sama", "Mari bangun sesuatu yang berdampak bersama."). Lanjutan kalimat ditulis sendiri, tidak disalin dari situs lain, dan tidak menjanjikan waktu balas.
-- Tombol kirim (demo nomor 5): bergaris dengan kilau berputar yang warnanya ikut tema, terisi saat disentuh. Saat mengirim menyusut jadi lingkaran berpemutar; saat terkirim menjadi hijau terang mengkilap (gradien, sorot atas, kilau menyapu, cahaya hijau) bertuliskan "Terkirim". Hijau ini sengaja sama di kedua tema dengan teks gelap (kontras tinggi).
+- Tombol kirim (demo nomor 5): bergaris dengan kilau berputar yang warnanya ikut tema, terisi saat disentuh. Saat mengirim menyusut jadi lingkaran berpemutar. (Fase hijau mengkilap dan kotak terima kasih diganti tiket ringkasan, bagian 35.)
 - Sekitar 1 detik kemudian form menyusut dan muncul kotak "Terima kasih, {nama}." dengan "Pesan sudah masuk. Coba lagi". "Coba lagi" memasang ulang form kosong (tanpa JavaScript: memuat ulang halaman). Urutan animasi murni CSS sehingga sama dengan atau tanpa JavaScript; dengan reduced-motion kotak langsung tampil.
 - Tanda salah seperti login admin: bingkai dan kilau merah dengan cincin tipis, pesan berikon di bawah kolom, dan tanda hilang begitu kolom diketik ulang. Ringkasan galat untuk pembaca layar tetap ada.
+
+## 35. Tiket ringkasan setelah pesan terkirim (2026-10-03)
+
+- Pilihan pemilik dari lima demo: nomor 3. Setelah terkirim, form memudar dan menyusut, lalu tiket terbuka dari atas: judul "Pesan terkirim" dengan lencana "Masuk", garis putus-putus dan lekukan di kedua sisi, lalu baris Dari, Balasan ke, Subjek (bila diisi), Pesan (maks. 3 baris), dan Waktu (WIB, zona Mirza, agar server dan browser menulis hal yang sama). Di bawahnya "Tulis pesan lain" untuk form kosong baru.
+- Pengantar kontak dipersingkat menjadi "Mari bangun sesuatu yang berdampak bersama. Saya balas ke email yang Anda tulis." dan tombol EN menjadi "Send Message".
+- Urutan animasi murni CSS sehingga sama dengan atau tanpa JavaScript; dengan reduced-motion tiket langsung tampil.
 

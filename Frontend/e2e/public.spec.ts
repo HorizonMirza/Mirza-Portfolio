@@ -121,7 +121,7 @@ test.describe('form kontak', () => {
     await page.getByLabel('Email').fill('visitor@example.com')
     await page.getByLabel('Message').fill('Hello, this is an automated end-to-end test message.')
     await page.getByRole('button', { name: 'Send Message' }).click()
-    await expect(page.getByRole('status')).toContainText('Your message is in')
+    await expect(page.getByRole('status')).toContainText('Message sent')
   })
 })
 
@@ -136,7 +136,7 @@ test('form kontak berfungsi tanpa JavaScript', async ({ browser, baseURL }) => {
   await page.getByLabel('Email').fill('nojs@example.com')
   await page.getByLabel('Pesan').fill('Pesan ini dikirim tanpa JavaScript.')
   await page.getByRole('button', { name: 'Kirim pesan' }).click()
-  await expect(page.getByText('Pesan sudah masuk')).toBeVisible()
+  await expect(page.getByText('Pesan terkirim')).toBeVisible()
   await context.close()
 })
 
@@ -149,7 +149,7 @@ test('rate limit kontak: pesan ke-6 dalam satu jam ditolak', async ({ browser, b
     await page.getByLabel('Email').fill('rate@example.com')
     await page.getByLabel('Pesan').fill('Pesan uji rate limit nomor ' + i)
     await page.getByRole('button', { name: 'Kirim pesan' }).click()
-    if (i < 5) await expect(page.getByText('Pesan sudah masuk')).toBeVisible()
+    if (i < 5) await expect(page.getByText('Pesan terkirim')).toBeVisible()
   }
   await expect(page.getByText('Terlalu banyak pesan dari jaringan ini')).toBeVisible()
   await context.close()

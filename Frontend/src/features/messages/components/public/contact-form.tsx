@@ -120,21 +120,16 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
       </PublicField>
       <div className="flex">
         {/* Tombol bergaris dengan kilau berputar (pilihan pemilik, demo nomor 5): menyusut jadi
-            lingkaran saat mengirim, lalu hijau terang mengkilap saat terkirim. */}
+            lingkaran berpemutar saat mengirim. */}
         <button
           type="submit"
           disabled={phase !== 'idle'}
           data-state={phase}
-          aria-label={phase === 'pending' ? t('sending') : undefined}
+          aria-label={phase !== 'idle' ? t('sending') : undefined}
           className="send-btn"
         >
-          {phase === 'pending' ? (
+          {phase !== 'idle' ? (
             <span className="send-btn-spin" aria-hidden="true" />
-          ) : phase === 'sent' ? (
-            <>
-              <Check className="size-[18px]" strokeWidth={2.75} aria-hidden="true" />
-              {t('sent')}
-            </>
           ) : (
             <>
               <Send className="size-[18px]" aria-hidden="true" />
@@ -148,41 +143,65 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
   if (!sent) return form
 
-  // Terkirim: tombol hijau tampil sebentar, lalu form menyusut dan kotak terima kasih muncul.
-  // Urutannya murni CSS (.contact-sent di globals.css) agar tetap jalan tanpa JavaScript.
+  // Terkirim (pilihan pemilik 2026-10-03, demo nomor 3): form memudar dan menyusut, lalu tiket
+  // ringkasan terbuka. Urutannya murni CSS (.contact-sent di globals.css) agar sama dengan atau
+  // tanpa JavaScript. Waktu memakai WIB (zona Mirza) agar server dan browser menulis hal yang sama.
+  const sentAt = v.sentAt
+    ? new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'id-ID', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+        timeZone: 'Asia/Jakarta',
+      }).format(new Date(v.sentAt)) + ' WIB'
+    : null
+  const rows: [string, string][] = [
+    ...(v.name ? ([[t('ticketFrom'), v.name]] as [string, string][]) : []),
+    ...(v.email ? ([[t('ticketReplyTo'), v.email]] as [string, string][]) : []),
+    ...(v.subject ? ([[t('ticketSubject'), v.subject]] as [string, string][]) : []),
+  ]
   return (
     <div className="contact-sent">
       <div className="contact-sent-form" aria-hidden="true">
         <div>{form}</div>
       </div>
-      <div
-        role="status"
-        className="contact-done flex items-start gap-3 rounded-xl border border-border bg-surface px-5 py-4"
-      >
-        <Check
-          className="mt-0.5 size-5 shrink-0 text-success"
-          strokeWidth={2.5}
-          aria-hidden="true"
-        />
-        <div>
-          <p className="font-semibold">
-            {v.name ? t('successTitle', { name: v.name }) : t('successTitleAnon')}
-          </p>
-          <p className="text-muted">
-            {t('success')}{' '}
-            {/* tanpa JavaScript: memuat ulang halaman kontak; dengan JavaScript: form dipasang ulang */}
-            <a
-              href={`/${locale}${pathname === '/' ? '' : pathname}`}
-              onClick={(event) => {
-                event.preventDefault()
-                onReset()
-              }}
-              className="text-text underline underline-offset-4 hover:no-underline"
-            >
-              {t('tryAgain')}
-            </a>
-          </p>
+      <div role="status" className="contact-ticket">
+        <div className="contact-ticket-head">
+          <p className="font-display text-h3 font-semibold uppercase">{t('sentTitle')}</p>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-success/45 px-2.5 py-0.5 text-[0.8125rem] font-semibold text-success">
+            <Check className="size-3.5" strokeWidth={2.75} aria-hidden="true" />
+            {t('sentBadge')}
+          </span>
         </div>
+        <dl className="contact-ticket-rows">
+          {rows.map(([label, value]) => (
+            <div key={label}>
+              <dt>{label}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))}
+          {v.message ? (
+            <div>
+              <dt>{t('ticketMessage')}</dt>
+              <dd className="line-clamp-3 text-muted">{v.message}</dd>
+            </div>
+          ) : null}
+          {sentAt ? (
+            <div>
+              <dt>{t('ticketTime')}</dt>
+              <dd>{sentAt}</dd>
+            </div>
+          ) : null}
+        </dl>
+        {/* tanpa JavaScript: memuat ulang halaman kontak; dengan JavaScript: form dipasang ulang */}
+        <a
+          href={`/${locale}${pathname === '/' ? '' : pathname}`}
+          onClick={(event) => {
+            event.preventDefault()
+            onReset()
+          }}
+          className="inline-flex min-h-11 items-center text-text underline underline-offset-4 hover:no-underline"
+        >
+          {t('another')}
+        </a>
       </div>
     </div>
   )
