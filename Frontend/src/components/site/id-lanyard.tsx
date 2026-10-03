@@ -25,7 +25,11 @@ const BOUNCE = 0.55
 const CANVAS_W = 560
 // Tinggi dalam px, bukan rem: fisika memakai px, sedangkan rem menyusut di desktop (87,5%). Bila
 // kotak lebih pendek dari tali + kartu + jarak tepi, kartu menyentuh lantai dan diam miring.
-const BOX_H = ROPE_LEN + CARD_H + CARD_W / 2 + 60
+// jarak titik kartu dari tepi kanvas: setengah lebar kartu + ruang bayangan, agar sudut kartu dan
+// bayangannya tidak pernah terpotong tepi kanvas (garis gelap di tepi)
+const CARD_EDGE = CARD_W / 2 + 28
+const BOX_H = ROPE_LEN + CARD_H + CARD_EDGE + 12
+const SHADOW_SHIFT = 4000
 
 type Point = { x: number; y: number; px: number; py: number; inv: number }
 
@@ -176,7 +180,6 @@ export function IdLanyard({
       b.x -= dx * diff * (b.inv / total)
       b.y -= dy * diff * (b.inv / total)
     }
-    // titik kartu diberi jarak setengah lebar kartu agar sudutnya tidak terpotong tepi kanvas
     function walls(p: Point, m = 6) {
       if (p.inv === 0) return
       if (p.x < m) {
@@ -223,8 +226,8 @@ export function IdLanyard({
         top.y -= dy * 0.3
         link(top, bot, CARD_H)
         for (const p of ropes) walls(p)
-        walls(top, CARD_W / 2)
-        walls(bot, CARD_W / 2)
+        walls(top, CARD_EDGE)
+        walls(bot, CARD_EDGE)
       }
       const ang = Math.atan2(bot.y - top.y, bot.x - top.x)
       let dA = ang - angPrev
@@ -392,17 +395,21 @@ export function IdLanyard({
       c.save()
       c.translate(top.x, top.y)
       c.rotate(ang)
-      // bayangan
+      c.scale(sx, 1)
+      // Bayangan memakai shadowBlur, bukan ctx.filter: filter blur meninggalkan garis sisa di
+      // sebagian GPU (Chrome Windows) dan tidak didukung Safari. Bentuk kartu digambar jauh di
+      // luar kanvas, lalu hanya bayangannya yang digeser masuk, agar kartu kaca tetap tembus pandang.
       c.save()
-      c.translate(10, 14)
-      c.scale(sx, 1)
+      const t = c.getTransform()
+      c.setTransform(t.a, t.b, t.c, t.d, t.e - SHADOW_SHIFT * dpr, t.f)
       roundRect(c, -CARD_W / 2, 0, CARD_W, CARD_H, 14)
-      c.fillStyle = dark ? 'rgb(0 0 0 / 0.45)' : 'rgb(0 0 0 / 0.22)'
-      c.filter = 'blur(10px)'
+      c.shadowColor = dark ? 'rgb(0 0 0 / 0.55)' : 'rgb(0 0 0 / 0.25)'
+      c.shadowBlur = 20 * dpr
+      c.shadowOffsetX = (SHADOW_SHIFT + 8) * dpr
+      c.shadowOffsetY = 12 * dpr
+      c.fillStyle = '#000'
       c.fill()
-      c.filter = 'none'
       c.restore()
-      c.scale(sx, 1)
       drawCard(dark, (Math.sin(turn) + 1) / 2)
       c.restore()
       // pengait logam

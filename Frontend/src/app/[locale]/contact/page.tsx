@@ -37,7 +37,7 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
   // Pilihan pemilik 2026-10-03 (demo nomor 1, tanpa tombol cepat): kartu ID bertali di kiri,
   // judul, pengantar, dan form di kanan. Kontak langsung (email, WhatsApp, sosial, CV) ada di footer.
   return (
-    <Container className="pb-20">
+    <Container className="pb-12">
       <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
         {/* tali mulai sejajar puncak huruf judul: jarak atas PageIntro (pt-20) + mt-3 h1, ditambah
             ruang kosong di atas huruf Oswald (sekitar 0,2 ukuran huruf judul) */}
