@@ -290,11 +290,12 @@
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2.75rem;
+  height: 2.75rem;
   overflow: hidden;
   border: 1px solid var(--border);
-  border-radius: 9999px;
+  /* persegi bersudut tumpul (demo nomor 9), bukan bulat */
+  border-radius: 12px;
   background: var(--surface);
   box-shadow: 0 0 0 6px var(--bg);
   font-family: var(--font-display);
@@ -306,7 +307,7 @@
     filter 300ms,
     opacity 300ms;
 }
-/* logo diberi latar putih agar logo berwarna gelap tetap terbaca di tema gelap */
+/* logo diberi latar putih persegi agar logo berwarna gelap tetap terbaca di tema gelap */
 .xp-node:has(img) {
   background: #fff;
 }
@@ -372,8 +373,8 @@
   .xp-node {
     grid-column: 2;
     justify-self: center;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 3.125rem;
+    height: 3.125rem;
   }
   .xp-side {
     grid-row: 1;
@@ -444,24 +445,32 @@
     color: var(--note);
   }
 }
-/* Fokus aktif: hanya saat JavaScript memasang data-focus. Entri lain meredup lewat warna teks
-   (tetap kontras AA) serta foto dan logo yang abu-abu; entri aktif penuh dengan logo membesar. */
-.xp-tl[data-focus] > li:not([data-active]) h2 {
-  color: var(--text-muted);
+/* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Seluruh entri
+   yang tidak aktif meredup dan menjadi abu-abu; logo dan foto sangat redup (0,35). Teks meredup
+   lewat warna, bukan opacity, agar kontras tetap AA (campuran 85% --text-muted). Entri aktif penuh
+   dengan logo membesar dan bergaris Azure. */
+.xp-tl > li {
+  transition: filter 350ms;
+}
+.xp-tl[data-focus] > li:not([data-active]) {
+  filter: grayscale(1);
+}
+.xp-tl[data-focus] > li:not([data-active]) .xp-main,
+.xp-tl[data-focus] > li:not([data-active]) .xp-main *,
+.xp-tl[data-focus] > li:not([data-active]) .xp-year,
+.xp-tl[data-focus] > li:not([data-active]) .xp-year * {
+  color: color-mix(in srgb, var(--text-muted) 85%, var(--bg));
 }
 .xp-tl[data-focus] > li:not([data-active]) .xp-photo,
 .xp-tl[data-focus] > li:not([data-active]) .xp-node {
-  filter: grayscale(1);
-  opacity: 0.45;
+  opacity: 0.35;
 }
 .xp-tl[data-focus] > li[data-active] .xp-node {
-  transform: scale(1.15);
+  transform: scale(1.18);
   border-color: var(--note);
-  box-shadow:
-    0 0 0 6px var(--bg),
-    0 0 0 8px var(--note);
 }
 @media (prefers-reduced-motion: reduce) {
+  .xp-tl > li,
   .xp-node,
   .xp-photo,
   .xp-tl > li h2 {
