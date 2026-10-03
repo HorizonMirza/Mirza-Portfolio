@@ -14,3 +14,12 @@ ignoredBuiltDependencies:
 overrides:
   mysql2: ^3.23.1
   deepmerge-ts: ^8.0.0
+
+# Advisory tanpa versi perbaikan (patched: <0.0.0) yang hanya ada di alat pengembangan:
+# braces lewat eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch
+# (GHSA-vfj7-8cjw-p6xm, DoS pola glob bersarang). Hanya dipakai ESLint dengan pola dari config
+# repo sendiri, tidak ikut ke production dan tidak menerima input pengguna. Hapus bila sudah ada
+# versi aman (cek: pnpm audit).
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm

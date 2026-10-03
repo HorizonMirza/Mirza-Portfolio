@@ -79,7 +79,11 @@ test('tidak ada error di console', async ({ page, browserName }) => {
     if (browserName === 'webkit' && abortedPrefetch.test(message.text())) return
     errors.push(message.text())
   })
-  page.on('pageerror', (error) => errors.push(error.message))
+  page.on('pageerror', (error) => {
+    // di WebKit prefetch yang dibatalkan kadang muncul sebagai pageerror, bukan console
+    if (browserName === 'webkit' && abortedPrefetch.test(error.message)) return
+    errors.push(error.message)
+  })
   await page.goto('/id')
   await page.getByRole('button', { name: 'Mode gelap' }).click()
   for (const path of [

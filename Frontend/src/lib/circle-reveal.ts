@@ -46,4 +46,8 @@ function animateReveal({ x, y, radius }: Origin) {
 export function revealChange(origin: Origin, update: () => void) {
   const transition = document.startViewTransition(update)
   transition.ready.then(() => animateReveal(origin)).catch(() => {})
+  // Pindah halaman saat animasi berjalan membatalkan transisi dan menolak janji-janjinya
+  // (Firefox: "InvalidStateError: Navigated away from page"); itu bukan galat aplikasi.
+  transition.finished.catch(() => {})
+  transition.updateCallbackDone.catch(() => {})
 }
