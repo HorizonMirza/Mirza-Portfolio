@@ -36,6 +36,25 @@ export const UPLOAD_TARGETS = {
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
+  // logo instansi di simpul timeline pengalaman (DESIGN.md bagian 38); PNG transparan paling rapi
+  'experience-logo': {
+    label: 'Logo instansi',
+    kind: 'IMAGE',
+    resourceType: 'image',
+    folder: 'portfolio/experience',
+    maxBytes: 2 * 1024 * 1024,
+    formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+    accept: 'image/jpeg,image/png,image/webp,image/avif',
+  },
+  'experience-photo': {
+    label: 'Foto kegiatan',
+    kind: 'IMAGE',
+    resourceType: 'image',
+    folder: 'portfolio/experience',
+    maxBytes: 5 * 1024 * 1024,
+    formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+    accept: 'image/jpeg,image/png,image/webp,image/avif',
+  },
 } as const
 
 export type UploadTarget = keyof typeof UPLOAD_TARGETS

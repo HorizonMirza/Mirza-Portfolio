@@ -230,6 +230,9 @@ model Experience {
   status         ContentStatus  @default(PUBLISHED)
   logoId         String?        @db.Uuid
   logo           Asset?         @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  // foto kegiatan di sisi seberang timeline (DESIGN.md bagian 38)
+  photoId        String?        @db.Uuid
+  photo          Asset?         @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
   createdAt      DateTime       @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
 
@@ -237,23 +240,24 @@ model Experience {
 }
 
 model Asset {
-  id            String         @id @default(uuid(7)) @db.Uuid
+  id               String         @id @default(uuid(7)) @db.Uuid
   // id di Cloudinary
-  publicId      String         @unique
-  url           String
-  kind          AssetKind
-  format        String?
-  bytes         Int?
-  width         Int?
-  height        Int?
-  alt_id        String?
-  alt_en        String?
-  createdAt     DateTime       @default(now()) @db.Timestamptz(3)
-  profilePhoto  Profile?       @relation("ProfilePhoto")
-  profileCv     Profile?       @relation("ProfileCv")
-  projectCovers Project[]      @relation("ProjectCover")
-  projectImages ProjectImage[]
-  experiences   Experience[]   @relation("ExperienceLogo")
+  publicId         String         @unique
+  url              String
+  kind             AssetKind
+  format           String?
+  bytes            Int?
+  width            Int?
+  height           Int?
+  alt_id           String?
+  alt_en           String?
+  createdAt        DateTime       @default(now()) @db.Timestamptz(3)
+  profilePhoto     Profile?       @relation("ProfilePhoto")
+  profileCv        Profile?       @relation("ProfileCv")
+  projectCovers    Project[]      @relation("ProjectCover")
+  projectImages    ProjectImage[]
+  experiences      Experience[]   @relation("ExperienceLogo")
+  experiencePhotos Experience[]   @relation("ExperiencePhoto")
 }
 
 model Message {

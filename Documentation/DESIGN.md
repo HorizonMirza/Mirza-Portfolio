@@ -154,7 +154,7 @@ Navigasi di atas. Urutan: **Home · About · Experience · Projects · Contact**
 ```
 /[locale]                 Home
 /[locale]/about           About
-/[locale]/experience      Pengalaman & Pendidikan
+/[locale]/experience      Pengalaman (kerja + organisasi)
 /[locale]/skills          dialihkan (308) ke /[locale]#skills
 /[locale]/projects        Daftar project
 /[locale]/projects/[slug] Detail project
@@ -236,13 +236,14 @@ Tombol "Unduh CV" harus terlihat tanpa scroll di 360 × 640 px.
 ### 5.3 Experience
 
 ```
-h1 Pengalaman & Pendidikan       Filter: [Semua] [Kerja] [Pendidikan]
-  │
-  ●─ 2024 – sekarang   Peran · Instansi · Kota
-  │   • uraian singkat
-  ●─ 2022 – 2024       ...
-  │
-  ●─ 2018 – 2022       Pendidikan · Universitas
+h1 Pengalaman                    Filter: [Semua] [Kerja] [Organisasi]
+                     │
+   Peran · Instansi (logo) [foto kegiatan]
+   • uraian       ───(L)───  2026
+                     │
+        2025  ───(L)─── Peran · Instansi
+                     │   • uraian
+   (timeline tengah, bergantian kiri-kanan; lihat bagian 38)
 ```
 
 ### 5.4 Skills
@@ -571,3 +572,12 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 - Pemilik tetap memakai desain kartu dan tali bagian 36 (kaca/logam + pita bertulis), dengan isi baru: nama lengkap satu baris (huruf mengecil otomatis bila tidak muat), di bawahnya "FULLSTACK DEVELOPER" (`Contact.cardRole`), lalu barcode hiasan dan host situs. Label status ketersediaan dihapus dari kartu. Foto dibuat lebih tinggi (132 → 160 px).
 - Suara tarik: pilihan pemilik dari sepuluh demo, nomor 6 "Pegas" (`playLanyardSound` di `lib/ui-sounds.ts`). Saat kartu diambil terdengar nada naik singkat; saat dilepas terdengar getaran pegas yang melambat. Ikut volume Super Admin (0 = senyap) dan hanya diputar dari tarikan pengguna.
+
+## 38. Halaman Pengalaman: timeline tengah "fokus aktif" (2026-10-03)
+
+- Pilihan pemilik dari sepuluh variasi timeline tengah: nomor 9 "Fokus aktif". Pendidikan tidak lagi tampil di halaman Pengalaman maupun di bagian perjalanan beranda; filter tinggal Semua, Kerja, Organisasi. Judul menjadi "Pengalaman" / "Experience". Data pendidikan tetap ada di admin dan dipakai halaman Tentang.
+- Tata letak (`.xp-tl` di globals.css): di layar >= 768 px garis di tengah, isi bergantian kiri-kanan, simpul di garis berisi logo instansi (atau inisial bila belum ada logo, mis. "PS" untuk PT PGAS Solution), dan sisi seberang berisi foto kegiatan (atau tahun mulai + durasi bila belum ada foto). Kolom kiri rata kanan dengan penanda poin di ujung kalimat. Saat filter dipakai, kiri-kanan dihitung ulang dari entri yang terlihat (`:nth-child(... of [data-type])`), jadi tetap bergantian. Di HP garis pindah ke kiri, foto di bawah teks, dan tahun besar disembunyikan karena tanggal sudah ada di atas judul.
+- Fokus aktif (`FocusTimeline`, komponen klien kecil): entri yang paling dekat dengan tengah layar diberi `data-active`; logonya membesar dengan cincin Azure. Entri lain meredup lewat warna judul `--text-muted` (kontras tetap AA, bukan opacity pada teks) serta logo dan foto abu-abu semi transparan. Di dasar halaman entri terakhir dianggap aktif. Tanpa JavaScript semua entri tampil penuh; reduced-motion mematikan transisinya.
+- Logo dan foto diunggah dari admin per pengalaman (halaman ubah pengalaman, slot "Logo instansi" maks. 2 MB dan "Foto kegiatan" maks. 5 MB, teks alternatif dua bahasa wajib) lewat alur Cloudinary yang sama dengan foto profil. Logo diberi latar putih bulat agar logo gelap tetap terbaca di tema gelap. Kolom baru: `Experience.photoId` (migrasi `experience_photo`); `logoId` sudah ada.
+- Koreksi catatan sebelumnya: garis timeline lama yang tampak memanjang di tangkapan layar bukan bug; entri di bawah layar masih menunggu animasi reveal.
+

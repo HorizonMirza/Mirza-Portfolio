@@ -38,3 +38,13 @@ export async function getProjectAssets(
   })
   return { cover: p?.cover ?? null, images: p?.images.map((i) => i.asset) ?? [] }
 }
+
+export async function getExperienceAssets(
+  experienceId: string,
+): Promise<{ logo: AssetView | null; photo: AssetView | null }> {
+  const e = await getDb().experience.findUnique({
+    where: { id: experienceId },
+    select: { logo: { select: assetSelect }, photo: { select: assetSelect } },
+  })
+  return { logo: e?.logo ?? null, photo: e?.photo ?? null }
+}

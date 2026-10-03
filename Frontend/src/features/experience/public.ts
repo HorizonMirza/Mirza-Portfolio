@@ -20,7 +20,19 @@ export type PublicExperience = {
   start: string
   end: string | null
   location: string | null
+  logo: PublicImage | null
+  photo: PublicImage | null
 }
+
+type PublicImage = {
+  url: string
+  alt_id: string | null
+  alt_en: string | null
+  width: number | null
+  height: number | null
+}
+
+const imageSelect = { url: true, alt_id: true, alt_en: true, width: true, height: true } as const
 
 // Terbaru di atas (PRD U2).
 export const getPublicExperiences = cache(
@@ -40,6 +52,8 @@ export const getPublicExperiences = cache(
           startDate: true,
           endDate: true,
           location: true,
+          logo: { select: imageSelect },
+          photo: { select: imageSelect },
         },
       })
       return rows.map(({ startDate, endDate, ...r }) => ({

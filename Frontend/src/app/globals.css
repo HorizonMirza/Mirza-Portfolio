@@ -251,10 +251,222 @@
 /* Filter timeline pengalaman tanpa JavaScript: radio yang dipilih menyembunyikan tipe lain. */
 .experience-filter:has(input[value='WORK']:checked) li[data-type]:not([data-type='WORK']),
 .experience-filter:has(input[value='ORGANIZATION']:checked)
-  li[data-type]:not([data-type='ORGANIZATION']),
-.experience-filter:has(input[value='EDUCATION']:checked)
-  li[data-type]:not([data-type='EDUCATION']) {
+  li[data-type]:not([data-type='ORGANIZATION']) {
   display: none;
+}
+
+/* Timeline tengah "fokus aktif" (DESIGN.md bagian 38). HP: garis di kiri, foto di bawah teks.
+   >= 768 px: garis di tengah, isi bergantian kiri-kanan, foto atau tahun di sisi seberang. */
+.xp-tl {
+  position: relative;
+  display: grid;
+  gap: 3rem;
+}
+.xp-tl::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 1.5rem;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--border);
+}
+.xp-tl > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1fr);
+  column-gap: 1.25rem;
+  row-gap: 1rem;
+  --xp-main: 2;
+  --xp-side: 2;
+  --xp-align: left;
+  --xp-side-align: left;
+  --xp-push: 0;
+}
+.xp-node {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--surface);
+  box-shadow: 0 0 0 6px var(--bg);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  transition:
+    transform 300ms var(--ease-out-soft),
+    border-color 300ms,
+    filter 300ms,
+    opacity 300ms;
+}
+/* logo diberi latar putih agar logo berwarna gelap tetap terbaca di tema gelap */
+.xp-node:has(img) {
+  background: #fff;
+}
+.xp-main {
+  grid-column: var(--xp-main);
+  grid-row: 1;
+  min-width: 0;
+  text-align: var(--xp-align);
+}
+.xp-side {
+  grid-column: var(--xp-side);
+  grid-row: 2;
+  min-width: 0;
+  text-align: var(--xp-side-align);
+}
+.xp-photo {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  margin-left: var(--xp-push);
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition:
+    filter 300ms,
+    opacity 300ms;
+}
+.xp-year {
+  color: var(--text-muted);
+}
+/* di HP tanggal sudah ada di atas judul; tahun besar hanya untuk layar lebar */
+@media (max-width: 767px) {
+  .xp-side:has(> .xp-year) {
+    display: none;
+  }
+}
+.xp-now {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  border-radius: 9999px;
+  background: var(--note);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--note) 22%, transparent);
+}
+.xp-tl > li h2 {
+  transition: color 300ms;
+}
+@media (min-width: 768px) {
+  .xp-tl {
+    gap: 3.5rem;
+  }
+  .xp-tl::before {
+    left: 50%;
+  }
+  .xp-tl > li {
+    grid-template-columns: minmax(0, 1fr) 6rem minmax(0, 1fr);
+    column-gap: 0;
+  }
+  .xp-node {
+    grid-column: 2;
+    justify-self: center;
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+  .xp-side {
+    grid-row: 1;
+    padding-top: 0.25rem;
+  }
+  /* entri ganjil: isi di kiri (rata kanan), sisi seberang di kanan */
+  .xp-tl > li,
+  .experience-filter:has(input[value='WORK']:checked)
+    .xp-tl
+    > li:nth-child(odd of [data-type='WORK']),
+  .experience-filter:has(input[value='ORGANIZATION']:checked)
+    .xp-tl
+    > li:nth-child(odd of [data-type='ORGANIZATION']) {
+    --xp-main: 1;
+    --xp-side: 3;
+    --xp-align: right;
+    --xp-side-align: left;
+    --xp-push: 0;
+  }
+  /* entri genap: bertukar sisi. Saat filter aktif, ganjil/genap dihitung dari entri yang terlihat */
+  .xp-tl > li:nth-child(even),
+  .experience-filter:has(input[value='WORK']:checked)
+    .xp-tl
+    > li:nth-child(even of [data-type='WORK']),
+  .experience-filter:has(input[value='ORGANIZATION']:checked)
+    .xp-tl
+    > li:nth-child(even of [data-type='ORGANIZATION']) {
+    --xp-main: 3;
+    --xp-side: 1;
+    --xp-align: left;
+    --xp-side-align: right;
+    --xp-push: auto;
+  }
+  /* poin di kolom rata kanan: penanda pindah ke ujung kalimat */
+  .xp-tl .xp-desc ul {
+    list-style: none;
+  }
+  .xp-tl .xp-desc li {
+    margin-left: 0;
+    padding-left: 0;
+  }
+  .xp-tl > li,
+  .experience-filter:has(input[value='WORK']:checked)
+    .xp-tl
+    > li:nth-child(odd of [data-type='WORK']),
+  .experience-filter:has(input[value='ORGANIZATION']:checked)
+    .xp-tl
+    > li:nth-child(odd of [data-type='ORGANIZATION']) {
+    --xp-bullet-before: '';
+    --xp-bullet-after: ' ·';
+  }
+  .xp-tl > li:nth-child(even),
+  .experience-filter:has(input[value='WORK']:checked)
+    .xp-tl
+    > li:nth-child(even of [data-type='WORK']),
+  .experience-filter:has(input[value='ORGANIZATION']:checked)
+    .xp-tl
+    > li:nth-child(even of [data-type='ORGANIZATION']) {
+    --xp-bullet-before: '· ';
+    --xp-bullet-after: '';
+  }
+  .xp-tl > li .xp-desc li::before {
+    content: var(--xp-bullet-before);
+    color: var(--note);
+  }
+  .xp-tl > li .xp-desc li::after {
+    content: var(--xp-bullet-after);
+    color: var(--note);
+  }
+}
+/* Fokus aktif: hanya saat JavaScript memasang data-focus. Entri lain meredup lewat warna teks
+   (tetap kontras AA) serta foto dan logo yang abu-abu; entri aktif penuh dengan logo membesar. */
+.xp-tl[data-focus] > li:not([data-active]) h2 {
+  color: var(--text-muted);
+}
+.xp-tl[data-focus] > li:not([data-active]) .xp-photo,
+.xp-tl[data-focus] > li:not([data-active]) .xp-node {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+.xp-tl[data-focus] > li[data-active] .xp-node {
+  transform: scale(1.15);
+  border-color: var(--note);
+  box-shadow:
+    0 0 0 6px var(--bg),
+    0 0 0 8px var(--note);
+}
+@media (prefers-reduced-motion: reduce) {
+  .xp-node,
+  .xp-photo,
+  .xp-tl > li h2 {
+    transition: none;
+  }
 }
 
 /* Latar statis disembunyikan begitu canvas siap agar grid tidak tampil ganda. */

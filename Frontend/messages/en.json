@@ -87,9 +87,9 @@
     "journeyLink": "See experience and education"
   },
   "Experience": {
-    "metaTitle": "Experience & Education",
-    "metaDescription": "Work, organization, and education history of Muhammad Mirza, newest first.",
-    "title": "Experience & Education",
+    "metaTitle": "Experience",
+    "metaDescription": "Work and organization experience of Muhammad Mirza, newest first.",
+    "title": "Experience",
     "intro": "From a gaming community in 2021 to my current fullstack internship, newest first.",
     "filterLabel": "Show",
     "all": "All",
@@ -97,7 +97,10 @@
     "ORGANIZATION": "Organizations",
     "EDUCATION": "Education",
     "empty": "Nothing in this category yet.",
-    "none": "No experience published yet."
+    "none": "No experience published yet.",
+    "durationYears": "{count} yr",
+    "durationMonths": "{count} mo",
+    "listLabel": "Experience history"
   },
   "Skills": {
     "usedIn": "Used in"

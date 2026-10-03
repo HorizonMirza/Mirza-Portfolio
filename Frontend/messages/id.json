@@ -87,9 +87,9 @@
     "journeyLink": "Lihat pengalaman dan pendidikan"
   },
   "Experience": {
-    "metaTitle": "Pengalaman & Pendidikan",
-    "metaDescription": "Pengalaman kerja, organisasi, dan pendidikan Muhammad Mirza, dari yang terbaru.",
-    "title": "Pengalaman & Pendidikan",
+    "metaTitle": "Pengalaman",
+    "metaDescription": "Pengalaman kerja dan organisasi Muhammad Mirza, dari yang terbaru.",
+    "title": "Pengalaman",
     "intro": "Dari komunitas gaming di 2021 sampai magang fullstack sekarang, diurutkan dari yang terbaru.",
     "filterLabel": "Tampilkan",
     "all": "Semua",
@@ -97,7 +97,10 @@
     "ORGANIZATION": "Organisasi",
     "EDUCATION": "Pendidikan",
     "empty": "Belum ada entri di kategori ini.",
-    "none": "Belum ada pengalaman yang diterbitkan."
+    "none": "Belum ada pengalaman yang diterbitkan.",
+    "durationYears": "{count} thn",
+    "durationMonths": "{count} bln",
+    "listLabel": "Riwayat pengalaman"
   },
   "Skills": {
     "usedIn": "Dipakai di"

@@ -34,7 +34,7 @@ test('tombol bahasa berpindah ke versi Inggris di halaman yang sama', async ({ p
   await page.getByRole('link', { name: 'Ganti bahasa ke English (EN)' }).click()
   await expect(page).toHaveURL(/\/en\/experience$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Experience & Education')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Experience')
   // tombol yang sama kembali ke bahasa Indonesia
   await page.getByRole('link', { name: 'Switch language to Bahasa Indonesia (ID)' }).click()
   await expect(page).toHaveURL(/\/id\/experience$/)

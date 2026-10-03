@@ -151,6 +151,7 @@ erDiagram
     Project }o--o{ Skill : "tech stack"
     SkillCategory ||--o{ Skill : "berisi"
     Experience ||--o| Asset : "logo"
+    Experience ||--o| Asset : "foto kegiatan"
 
     User {
       string id PK
@@ -238,6 +239,8 @@ erDiagram
       date endDate "null = sekarang"
       string location
       int order
+      string logoId FK
+      string photoId FK
     }
     Asset {
       string id PK
@@ -340,7 +343,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
-| Berkas | di Profil dan Project | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
+| Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pelanggan | `/admin/subscribers` | `deleteSubscriber` |
 | Audit | `/admin/audit` | (baca saja) |

@@ -252,7 +252,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </Container>
       </section>
 
-      {experiences.length > 0 ? (
+      {/* pendidikan tidak masuk perjalanan (sama dengan halaman Pengalaman) */}
+      {experiences.some((e) => e.type !== 'EDUCATION') ? (
         <section aria-labelledby="journey-title" className="border-t border-border py-16 md:py-24">
           <Container className="reveal">
             <SectionHeading
@@ -270,24 +271,27 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               }
             />
             <ol className="divide-y divide-border border-y border-border">
-              {experiences.slice(0, 3).map((e) => (
-                <li
-                  key={e.id}
-                  className="grid gap-1 py-5 md:grid-cols-[12rem_1fr_auto] md:items-baseline md:gap-6"
-                >
-                  <p className="font-mono text-sm text-note tabular-nums">
-                    {formatMonth(e.start, locale)} –{' '}
-                    {e.end ? formatMonth(e.end, locale) : tCommon('present')}
-                  </p>
-                  <div>
-                    <h3 className="font-semibold">{loc(e, 'title', locale)}</h3>
-                    <p className="text-muted">{e.organization}</p>
-                  </div>
-                  <p className="font-mono text-label tracking-widest text-note uppercase">
-                    {tExp(e.type)}
-                  </p>
-                </li>
-              ))}
+              {experiences
+                .filter((e) => e.type !== 'EDUCATION')
+                .slice(0, 3)
+                .map((e) => (
+                  <li
+                    key={e.id}
+                    className="grid gap-1 py-5 md:grid-cols-[12rem_1fr_auto] md:items-baseline md:gap-6"
+                  >
+                    <p className="font-mono text-sm text-note tabular-nums">
+                      {formatMonth(e.start, locale)} –{' '}
+                      {e.end ? formatMonth(e.end, locale) : tCommon('present')}
+                    </p>
+                    <div>
+                      <h3 className="font-semibold">{loc(e, 'title', locale)}</h3>
+                      <p className="text-muted">{e.organization}</p>
+                    </div>
+                    <p className="font-mono text-label tracking-widest text-note uppercase">
+                      {tExp(e.type)}
+                    </p>
+                  </li>
+                ))}
             </ol>
           </Container>
         </section>

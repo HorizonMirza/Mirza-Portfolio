@@ -48,7 +48,25 @@ const uploadResultSchema = z.object({
 })
 
 function revalidateFor(target: UploadTarget) {
-  revalidateContent(target.startsWith('profile') ? 'profile' : 'projects')
+  revalidateContent(
+    target.startsWith('profile')
+      ? 'profile'
+      : target.startsWith('experience')
+        ? 'experience'
+        : 'projects',
+  )
+}
+
+// Asal berkas menentukan cache publik mana yang perlu dibuang setelah berkas diubah atau dihapus.
+function usageOf(asset: {
+  profilePhoto: { id: number } | null
+  profileCv?: { id: number } | null
+  experiences: { id: string }[]
+  experiencePhotos: { id: string }[]
+}) {
+  if (asset.profilePhoto || asset.profileCv) return 'profile' as const
+  if (asset.experiences.length || asset.experiencePhotos.length) return 'experience' as const
+  return 'projects' as const
 }
 
 export async function signAssetUpload(target: unknown): Promise<ActionResult<UploadSignature>> {
@@ -136,6 +154,9 @@ export async function attachUploadedAsset(
     const needsProject = t.data === 'project-cover' || t.data === 'project-gallery'
     const projectId = needsProject ? idSchema.safeParse(targetId) : null
     if (projectId && !projectId.success) return reject('Project tidak valid.')
+    const needsExperience = t.data === 'experience-logo' || t.data === 'experience-photo'
+    const experienceId = needsExperience ? idSchema.safeParse(targetId) : null
+    if (experienceId && !experienceId.success) return reject('Pengalaman tidak valid.')
 
     const replaced = await getDb().$transaction(async (tx) => {
       const asset = await tx.asset.create({
@@ -167,6 +188,20 @@ export async function attachUploadedAsset(
         const data: Prisma.ProfileUncheckedUpdateInput =
           field === 'photo' ? { photoId: asset.id } : { cvId: asset.id }
         await tx.profile.update({ where: { id: 1 }, data })
+      } else if (t.data === 'experience-logo' || t.data === 'experience-photo') {
+        const isLogo = t.data === 'experience-logo'
+        const experience = await tx.experience.findUniqueOrThrow({
+          where: { id: experienceId!.data },
+          select: {
+            logo: { select: { id: true, publicId: true } },
+            photo: { select: { id: true, publicId: true } },
+          },
+        })
+        old = isLogo ? experience.logo : experience.photo
+        await tx.experience.update({
+          where: { id: experienceId!.data },
+          data: isLogo ? { logoId: asset.id } : { photoId: asset.id },
+        })
       } else if (t.data === 'project-cover') {
         const project = await tx.project.findUniqueOrThrow({
           where: { id: projectId!.data },
@@ -198,7 +233,7 @@ export async function attachUploadedAsset(
         before: old ? { target: t.data, replaced: old.publicId } : null,
         after: {
           target: t.data,
-          targetId: projectId?.data ?? null,
+          targetId: projectId?.data ?? experienceId?.data ?? null,
           publicId: asset.publicId,
           bytes: asset.bytes,
         },
@@ -230,7 +265,13 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
     const usage = await getDb().$transaction(async (tx) => {
       const before = await tx.asset.findUniqueOrThrow({
         where: { id: id.data },
-        select: { alt_id: true, alt_en: true, profilePhoto: { select: { id: true } } },
+        select: {
+          alt_id: true,
+          alt_en: true,
+          profilePhoto: { select: { id: true } },
+          experiences: { select: { id: true } },
+          experiencePhotos: { select: { id: true } },
+        },
       })
       const after = await tx.asset.update({
         where: { id: id.data },
@@ -245,7 +286,7 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
         before: { alt_id: before.alt_id, alt_en: before.alt_en },
         after,
       })
-      return before.profilePhoto ? 'profile' : 'projects'
+      return usageOf(before)
     })
     revalidateContent(usage)
     return ok('Teks alternatif disimpan.')
@@ -267,6 +308,8 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           kind: true,
           profilePhoto: { select: { id: true } },
           profileCv: { select: { id: true } },
+          experiences: { select: { id: true } },
+          experiencePhotos: { select: { id: true } },
         },
       })
       // Relasi ke profil/project menjadi null, baris galeri ikut terhapus (onDelete di skema).
@@ -281,7 +324,7 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
       return before
     })
     await destroyRemoteAsset(removed.publicId, removed.kind === 'DOCUMENT' ? 'raw' : 'image')
-    revalidateContent(removed.profilePhoto || removed.profileCv ? 'profile' : 'projects')
+    revalidateContent(usageOf(removed))
     return ok('Berkas dihapus.')
   } catch (error) {
     return toActionError(error)
