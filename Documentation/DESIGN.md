@@ -490,7 +490,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 - Tombol bahasa memakai huruf yang sama dengan menu utama (Inter semibold), bukan mono.
 - Halaman kontak (desktop): kartu ID bertali di kiri form (`components/site/id-lanyard.tsx`), prinsip dari portofolio ibnuhakim.id (tidak ada aset atau teks yang disalin). Isi kartu dari profil: foto, nama, peran saat ini, status ketersediaan, barcode hiasan, dan host situs. Kartu bisa ditarik lalu berayun dan diam lagi (pegas teredam, tanpa library); ayunan kecil saat halaman dibuka. Tali dan label status memakai Azure versi gelap karena kartu selalu gelap. Kartu adalah hiasan (`aria-hidden`); reduced-motion mematikan ayunan dan tarikan. Di HP kartu tidak tampil.
-- Tautan sosial (GitHub, LinkedIn, Instagram, situs) pindah dari halaman kontak ke footer sebagai tombol ikon bulat. Logo GitHub dan Instagram dari Simple Icons; LinkedIn tidak ada di Simple Icons sehingga memakai tulisan "in"; situs memakai ikon globe. Halaman kontak tinggal kontak langsung (email, WhatsApp, kota).
+- Tautan sosial (GitHub, LinkedIn, Instagram, situs) pindah dari halaman kontak ke footer sebagai tombol ikon bulat (diganti kartu tautan di bagian 29). Logo GitHub dan Instagram dari Simple Icons; LinkedIn tidak ada di Simple Icons sehingga memakai tulisan "in"; situs memakai ikon globe. Halaman kontak tinggal kontak langsung (email, WhatsApp, kota).
 
 ## 27. Ukuran lebih rapat di desktop, foto profil ke beranda (2026-10-01)
 
@@ -506,3 +506,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Label bulan (singkatan sesuai bahasa) dan hari Senin/Rabu/Jumat lewat `Intl`. Label bulan pertama yang hanya terlihat sebagian dibuang bila menabrak bulan berikutnya.
 - Aksesibilitas: SVG `aria-hidden`; pembaca layar mendapat ringkasan "N kontribusi dalam setahun terakhir". Tiap kotak punya `<title>` (jumlah dan tanggal) sebagai tooltip kursor. Tautan "Buka profil GitHub" membuka tab baru dengan keterangan untuk pembaca layar.
 
+## 29. Footer kartu tautan (2026-10-03)
+
+- Pilihan pemilik dari lima demo: nomor 2, kartu tautan (prinsip dari portofolio nickh-portofolio.vercel.app; tidak ada aset atau teks yang disalin). Footer berisi judul "Hubungi saya" lalu kartu WhatsApp, Email, LinkedIn, GitHub, Instagram, situs (bila diisi), dan Resume CV, dengan urutan tetap. Di bawahnya hak cipta, keterangan stack, dan Kebijakan Privasi.
+- Tiap kartu: ikon, nama, dan nilai (nomor, alamat, nama akun dari URL profil, atau host), panah ↗. Grid 1 kolom di HP, 2 di tablet, 3 di desktop. Kartu biasa `--surface` dengan border; hover menguatkan border dan naik 2 px (hanya bila gerak tidak dikurangi). Kartu CV disorot dengan warna `--primary` (hitam di tema terang, putih di tema gelap).
+- Data dari admin; kartu yang kosong tidak tampil, dan bila semuanya kosong hanya baris hak cipta yang tampil. Tautan luar membuka tab baru dengan keterangan untuk pembaca layar; email memakai `mailto:` di tab yang sama.
+- Ikon WhatsApp, GitHub, Instagram, dan Google Drive dari Simple Icons (CC0); LinkedIn memakai tulisan "in"; email, situs, dan CV selain Google Drive memakai ikon lucide.
+- Resume CV: kolom baru `Profile.cvUrl` ("Link CV" di admin, mis. Google Drive). Bila diisi, `/api/cv` (dipakai semua tombol CV: topbar, beranda, tentang, footer) mengarah ke link itu dan tetap mencatat jumlah unduhan; bila kosong, memakai PDF yang di-upload. Keterangan kartu: "Google Drive", host link lain, atau "PDF".

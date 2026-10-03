@@ -33,7 +33,10 @@
     "downloadCv": "Download CV"
   },
   "Footer": {
-    "social": "Social links",
+    "contactHeading": "Get in touch",
+    "contactLead": "Pick whichever channel suits you.",
+    "cv": "Resume CV",
+    "cvFile": "PDF",
     "privacy": "Privacy Policy",
     "copyright": "© {year} {name}",
     "builtWith": "Built with Next.js, TypeScript, and PostgreSQL."

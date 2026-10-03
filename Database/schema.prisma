@@ -149,6 +149,8 @@ model Profile {
   photo               Asset?       @relation("ProfilePhoto", fields: [photoId], references: [id], onDelete: SetNull)
   cvId                String?      @unique @db.Uuid
   cv                  Asset?       @relation("ProfileCv", fields: [cvId], references: [id], onDelete: SetNull)
+  // link CV di luar (mis. Google Drive); bila diisi, /api/cv mengarah ke sini, bukan ke berkas upload
+  cvUrl               String?
   updatedAt           DateTime     @updatedAt @db.Timestamptz(3)
 }
 

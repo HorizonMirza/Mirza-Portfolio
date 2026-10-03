@@ -22,6 +22,7 @@ export async function getProfileForEdit(): Promise<ProfileInput> {
     city: p.city ?? '',
     email: p.email ?? '',
     whatsapp: p.whatsapp ?? '',
+    cvUrl: p.cvUrl ?? '',
     socials: Object.fromEntries(
       SOCIAL_KEYS.map((k) => [k, typeof socials[k] === 'string' ? socials[k] : '']),
     ) as ProfileInput['socials'],

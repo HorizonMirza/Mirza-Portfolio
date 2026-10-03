@@ -1,33 +1,52 @@
-import { Globe } from 'lucide-react'
+import { ArrowUpRight, FileText, Globe, Mail } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
-import { SOCIAL_KEYS } from '@/features/profile/schema'
 import { getPublicProfile } from '@/features/profile/public'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import type { AppLocale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/utils'
 
-type SocialKey = (typeof SOCIAL_KEYS)[number]
+import { type FooterLinkKey, footerLinks, isDriveHost } from './footer-links'
 
-// Ikon tautan sosial: logo Simple Icons bila ada; LinkedIn tidak tersedia di Simple Icons
-// (alasan merek), jadi memakai tulisan "in"; situs pribadi memakai ikon globe.
-function SocialIcon({ name }: { name: SocialKey }) {
-  if (name === 'website') return <Globe className="size-[18px]" aria-hidden="true" />
-  if (name === 'linkedin')
-    return (
-      <span className="text-[15px] leading-none font-bold" aria-hidden="true">
-        in
-      </span>
-    )
+function BrandIcon({ slug }: { slug: string }) {
   return (
-    <svg viewBox="0 0 24 24" className="size-[18px]" fill="currentColor" aria-hidden="true">
-      <path d={BRAND_ICONS[name].path} />
+    <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
+      <path d={BRAND_ICONS[slug].path} />
     </svg>
   )
 }
 
-// Footer: hak cipta di kiri; di kanan tautan sosial berupa tombol ikon bulat (seperti tombol topbar)
-// dan tautan kebijakan privasi.
+// Ikon kartu: logo Simple Icons bila ada; LinkedIn tidak tersedia di Simple Icons (alasan merek),
+// jadi memakai tulisan "in"; email, situs, dan CV selain Google Drive memakai ikon lucide.
+function LinkIcon({ name, drive }: { name: FooterLinkKey; drive: boolean }) {
+  switch (name) {
+    case 'whatsapp':
+    case 'github':
+    case 'instagram':
+      return <BrandIcon slug={name} />
+    case 'linkedin':
+      return (
+        <span className="w-5 text-center text-[17px] leading-none font-bold" aria-hidden="true">
+          in
+        </span>
+      )
+    case 'email':
+      return <Mail className="size-5" aria-hidden="true" />
+    case 'website':
+      return <Globe className="size-5" aria-hidden="true" />
+    case 'cv':
+      return drive ? (
+        <BrandIcon slug="googledrive" />
+      ) : (
+        <FileText className="size-5" aria-hidden="true" />
+      )
+  }
+}
+
+// Footer (pilihan pemilik 2026-10-03, demo nomor 2; DESIGN.md bagian 29): kartu tautan berisi ikon,
+// nama, dan alamat untuk WhatsApp, Email, LinkedIn, GitHub, Instagram, dan Resume CV (kartu CV
+// disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta dan privasi.
 export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const [t, tSocial, tCommon, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Footer' }),
@@ -36,43 +55,77 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
     getPublicProfile(),
   ])
   const name = profile?.name ?? 'Muhammad Mirza'
-  const socials = SOCIAL_KEYS.flatMap((key) =>
-    profile?.socials[key] ? [{ key, url: profile.socials[key]! }] : [],
-  )
+  const links = profile ? footerLinks(profile, { locale, fileLabel: t('cvFile') }) : []
+  const drive = isDriveHost(profile?.cvHost ?? null)
 
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex max-w-[1200px] flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-        <div className="text-sm text-muted">
-          <p>{t('copyright', { year: new Date().getFullYear(), name })}</p>
-          <p className="mt-1">{t('builtWith')}</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-          {socials.length > 0 ? (
-            <nav aria-label={t('social')}>
-              <ul className="flex flex-wrap items-center gap-2">
-                {socials.map((s) => (
-                  <li key={s.key}>
+      <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8">
+        {links.length > 0 ? (
+          <nav aria-labelledby="footer-contact-title" className="mb-8">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-x-6 gap-y-1">
+              <h2
+                id="footer-contact-title"
+                className="font-display text-h3 font-semibold uppercase"
+              >
+                {t('contactHeading')}
+              </h2>
+              <p className="text-sm text-muted">{t('contactLead')}</p>
+            </div>
+            <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+              {links.map((link) => {
+                const cv = link.key === 'cv'
+                return (
+                  <li key={link.key}>
                     <a
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title={tSocial(s.key)}
-                      className="inline-flex size-11 items-center justify-center rounded-full border border-border bg-surface text-muted transition-colors hover:bg-surface-2 hover:text-text"
+                      href={link.href}
+                      {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className={cn(
+                        'group grid min-h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border px-4 py-3 transition-[border-color,background-color,translate] motion-safe:hover:-translate-y-0.5',
+                        cv
+                          ? 'border-primary bg-primary text-primary-fg hover:bg-primary/90'
+                          : 'border-border bg-surface hover:border-border-strong',
+                      )}
                     >
-                      <SocialIcon name={s.key} />
-                      <span className="sr-only">
-                        {tSocial(s.key)} {tCommon('openInNewTab')}
+                      <LinkIcon name={link.key} drive={drive} />
+                      <span className="grid min-w-0">
+                        <span className="text-sm font-semibold">
+                          {link.key === 'cv' ? t('cv') : tSocial(link.key)}
+                        </span>
+                        <span
+                          className={cn(
+                            'truncate text-[0.8125rem]',
+                            cv ? 'text-primary-fg/75' : 'text-muted',
+                          )}
+                        >
+                          {link.value}
+                        </span>
                       </span>
+                      <ArrowUpRight
+                        className={cn(
+                          'size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5',
+                          cv ? 'text-primary-fg/75' : 'text-muted',
+                        )}
+                        aria-hidden="true"
+                      />
+                      {link.external ? (
+                        <span className="sr-only">{tCommon('openInNewTab')}</span>
+                      ) : null}
                     </a>
                   </li>
-                ))}
-              </ul>
-            </nav>
-          ) : null}
+                )
+              })}
+            </ul>
+          </nav>
+        ) : null}
+        <div className="flex flex-col gap-2 text-sm text-muted md:flex-row md:items-center md:justify-between">
+          <div>
+            <p>{t('copyright', { year: new Date().getFullYear(), name })}</p>
+            <p className="mt-1">{t('builtWith')}</p>
+          </div>
           <Link
             href="/privacy"
-            className="inline-flex min-h-11 items-center text-sm text-muted underline-offset-4 hover:text-text hover:underline"
+            className="inline-flex min-h-11 items-center underline-offset-4 hover:text-text hover:underline"
           >
             {t('privacy')}
           </Link>

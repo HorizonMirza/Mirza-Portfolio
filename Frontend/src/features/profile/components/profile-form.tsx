@@ -133,6 +133,16 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         >
           {(a) => <Input type="tel" inputMode="tel" {...a} {...register('whatsapp')} />}
         </Field>
+        <Field
+          id="cvUrl"
+          label="Link CV (opsional)"
+          hint={
+            'Mis. link Google Drive dengan akses "Siapa saja yang memiliki link". Bila diisi, semua tombol CV membuka link ini; bila kosong, memakai PDF yang di-upload.'
+          }
+          error={errors.cvUrl?.message}
+        >
+          {(a) => <Input type="url" inputMode="url" {...a} {...register('cvUrl')} />}
+        </Field>
         {SOCIAL_KEYS.map((key) => (
           <Field
             key={key}

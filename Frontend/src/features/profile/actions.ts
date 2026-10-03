@@ -31,6 +31,7 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
       city: emptyToNull(v.city),
       email: emptyToNull(v.email),
       whatsapp: emptyToNull(v.whatsapp),
+      cvUrl: emptyToNull(v.cvUrl),
       socials,
     }
     await getDb().$transaction(async (tx) => {

@@ -192,6 +192,7 @@ erDiagram
       string availabilityNote_en
       string currentRole_id "posisi sekarang untuk pelat status"
       string currentRole_en
+      string cvUrl "link CV di luar (Google Drive), didahulukan /api/cv"
     }
     Project {
       string id PK

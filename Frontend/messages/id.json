@@ -33,7 +33,10 @@
     "downloadCv": "Unduh CV"
   },
   "Footer": {
-    "social": "Tautan sosial",
+    "contactHeading": "Hubungi saya",
+    "contactLead": "Pilih jalur yang paling nyaman untuk Anda.",
+    "cv": "Resume CV",
+    "cvFile": "PDF",
     "privacy": "Kebijakan Privasi",
     "copyright": "© {year} {name}",
     "builtWith": "Dibangun dengan Next.js, TypeScript, dan PostgreSQL."

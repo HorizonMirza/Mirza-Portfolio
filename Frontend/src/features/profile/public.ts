@@ -34,8 +34,18 @@ export type PublicProfile = {
   socials: Partial<Record<(typeof SOCIAL_KEYS)[number], string>>
   photo: PublicImage | null
   hasCv: boolean
+  // host link CV di luar (mis. drive.google.com) bila diisi di admin; null bila memakai PDF upload
+  cvHost: string | null
   // pendidikan terbaru yang terbit, untuk pelat status "Kampus"
   campus: { organization: string; title_id: string; title_en: string } | null
+}
+
+function urlHost(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return null
+  }
 }
 
 // Data hasil unstable_cache diserialisasi JSON, jadi hanya berisi nilai sederhana (tanpa Date).
@@ -77,7 +87,8 @@ const load = unstable_cache(
       whatsapp: p.whatsapp,
       socials,
       photo: safeImage(p.photo),
-      hasCv: Boolean(p.cv),
+      hasCv: Boolean(p.cvUrl || p.cv),
+      cvHost: p.cvUrl ? urlHost(p.cvUrl) : null,
       campus,
     }
   },
@@ -87,11 +98,12 @@ const load = unstable_cache(
 
 export const getPublicProfile = cache(load)
 
-// URL CV terbaru untuk /api/cv (tidak di-cache agar selalu versi terakhir).
+// URL CV terbaru untuk /api/cv (tidak di-cache agar selalu versi terakhir). Link di luar
+// (Google Drive) yang diisi di admin didahulukan daripada PDF yang di-upload.
 export async function getCvUrl(): Promise<string | null> {
   const p = await getDb().profile.findUnique({
     where: { id: 1 },
-    select: { cv: { select: { url: true } } },
+    select: { cvUrl: true, cv: { select: { url: true } } },
   })
-  return p?.cv?.url ?? null
+  return p?.cvUrl ?? p?.cv?.url ?? null
 }

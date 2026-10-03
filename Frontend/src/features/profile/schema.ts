@@ -43,6 +43,7 @@ export const profileSchema = z.object({
       (v) => v === '' || /^\+?[0-9]{8,15}$/.test(v),
       'Nomor WhatsApp: 8–15 angka, boleh diawali +',
     ),
+  cvUrl: optionalUrl('Link CV'),
   socials: z.object({
     linkedin: optionalUrl('LinkedIn'),
     github: optionalUrl('GitHub'),
@@ -67,5 +68,6 @@ export const emptyProfile: ProfileInput = {
   city: '',
   email: '',
   whatsapp: '',
+  cvUrl: '',
   socials: { linkedin: '', github: '', instagram: '', website: '' },
 }
