@@ -146,15 +146,23 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
 test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
   await page.goto('/admin/settings')
   const slider = page.getByLabel('Volume')
-  await slider.fill('35')
-  await expect(page.locator('output[for="soundVolume"]')).toHaveText('35%')
+  const output = page.locator('output[for="soundVolume"]')
+  // Safari iPhone kadang menerima isian sebelum React selesai hidrasi, sehingga label tidak ikut
+  // berubah; ulangi sampai form benar-benar membaca nilainya
+  await expect(async () => {
+    await slider.fill('35')
+    await expect(output).toHaveText('35%', { timeout: 1000 })
+  }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
   await page.goto('/id')
   await expect(page.locator('html')).toHaveAttribute('data-sound-volume', '35')
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
   await page.goto('/admin/settings')
-  await page.getByLabel('Volume').fill('80')
+  await expect(async () => {
+    await page.getByLabel('Volume').fill('80')
+    await expect(output).toHaveText('80%', { timeout: 1000 })
+  }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
 })
