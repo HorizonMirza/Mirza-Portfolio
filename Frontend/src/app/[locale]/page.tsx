@@ -8,6 +8,7 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { getPublicExperiences } from '@/features/experience/public'
+import { sortByLatest } from '@/features/experience/schema'
 import { GithubCalendar } from '@/features/profile/components/github-calendar'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
@@ -271,8 +272,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               }
             />
             <ol className="divide-y divide-border border-y border-border">
-              {experiences
-                .filter((e) => e.type !== 'EDUCATION')
+              {sortByLatest(experiences.filter((e) => e.type !== 'EDUCATION'))
                 .slice(0, 3)
                 .map((e) => (
                   <li

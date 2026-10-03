@@ -6,6 +6,7 @@ import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
 import { getPublicExperiences, type PublicExperience } from '@/features/experience/public'
+import { sortByLatest } from '@/features/experience/schema'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
@@ -59,7 +60,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
     getTranslations({ locale, namespace: 'Common' }),
     getPublicExperiences(),
   ])
-  const items = all.filter((e) => (SHOWN as readonly string[]).includes(e.type))
+  const items = sortByLatest(all.filter((e) => (SHOWN as readonly string[]).includes(e.type)))
 
   const duration = (e: PublicExperience) => {
     const n = monthsBetween(e.start, e.end)
@@ -75,7 +76,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
 
   return (
     <Container className="pb-20">
-      <PageIntro title={t('title')} />
+      <PageIntro title={t('title')} align="center" />
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-6 text-muted">{t('none')}</p>
       ) : (
@@ -103,7 +104,6 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                     {e.end ? null : <span className="xp-now" aria-hidden="true" />}
                     {formatMonth(e.start, locale)} –{' '}
                     {e.end ? formatMonth(e.end, locale) : tCommon('present')}
-                    <span className="ml-3 text-label tracking-widest uppercase">{t(e.type)}</span>
                   </p>
                   <h2 className="mt-2 text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
                   <p className="text-muted">

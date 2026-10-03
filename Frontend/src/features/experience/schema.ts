@@ -47,6 +47,17 @@ export const emptyExperience: ExperienceInput = {
   status: 'PUBLISHED',
 }
 
+// Urutan tampil: yang masih berjalan paling atas, lalu yang paling akhir selesai menjabat;
+// bila bulan selesainya sama, yang mulai lebih akhir di atas (permintaan pemilik 2026-10-04).
+export function sortByLatest<T extends { start: string; end: string | null }>(items: T[]): T[] {
+  return [...items].sort((a, b) => {
+    const ea = a.end ?? '9999-12'
+    const eb = b.end ?? '9999-12'
+    if (ea !== eb) return ea < eb ? 1 : -1
+    return a.start < b.start ? 1 : a.start > b.start ? -1 : 0
+  })
+}
+
 export function monthToDate(month: string): Date {
   return new Date(`${month}-01T00:00:00.000Z`)
 }
