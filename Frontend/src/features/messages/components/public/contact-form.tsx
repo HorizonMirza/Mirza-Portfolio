@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { usePathname } from '@/i18n/navigation'
 import { initialFormState, type PublicFormState } from '@/lib/form-state'
+import { cn } from '@/lib/utils'
 
 import { submitContact } from '../../public-actions'
 
@@ -72,7 +73,11 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
         ref={summary}
         tabIndex={-1}
         role="alert"
-        className="rounded-md text-sm text-danger empty:hidden focus-visible:outline-offset-4"
+        className={cn(
+          'rounded-md text-sm text-danger empty:hidden focus-visible:outline-offset-4',
+          // "Periksa kembali isian yang ditandai" cukup untuk pembaca layar; tanda per kolom sudah terlihat
+          state.message === 'invalid' && 'sr-only',
+        )}
       >
         {state.status === 'error' && state.message ? t(state.message as 'error') : ''}
       </p>

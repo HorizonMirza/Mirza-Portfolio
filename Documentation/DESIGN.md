@@ -555,4 +555,5 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Pilihan pemilik dari lima demo: nomor 3. Setelah terkirim, form memudar dan menyusut, lalu tiket terbuka dari atas: judul "Pesan terkirim" dengan lencana "Masuk", garis putus-putus dan lekukan di kedua sisi, lalu baris Dari, Balasan ke, Subjek (bila diisi), Pesan (maks. 3 baris), dan Waktu (WIB, zona Mirza, agar server dan browser menulis hal yang sama). Di bawahnya "Tulis pesan lain" untuk form kosong baru.
 - Pengantar kontak dipersingkat menjadi "Mari bangun sesuatu yang berdampak bersama. Saya balas ke email yang Anda tulis." dan tombol EN menjadi "Send Message".
 - Urutan animasi murni CSS sehingga sama dengan atau tanpa JavaScript; dengan reduced-motion tiket langsung tampil.
+- Revisi pemilik: ringkasan "Periksa kembali isian yang ditandai" tidak lagi terlihat (tetap dibacakan pembaca layar dan menerima fokus); tanda per kolom sudah cukup. Galat lain (batas kiriman, gagal simpan) tetap terlihat. Kotak kartu ID dinaikkan ke 42rem agar kartu yang tergantung tidak menempel ke footer saat isi di sampingnya pendek.
 

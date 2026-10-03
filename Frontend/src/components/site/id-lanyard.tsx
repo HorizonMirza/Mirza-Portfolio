@@ -123,7 +123,9 @@ export function IdLanyard({
   const bars = barcode(name + site)
 
   return (
-    <div aria-hidden="true" className={cn('relative z-10 h-[34rem] select-none', className)}>
+    // tinggi kotak menampung tali + kartu (±39rem) agar kartu tidak menempel ke footer saat isi
+    // di sampingnya pendek (mis. tiket setelah pesan terkirim)
+    <div aria-hidden="true" className={cn('relative z-10 h-[42rem] select-none', className)}>
       <div
         ref={rig}
         className="absolute top-0 left-1/2 flex origin-top -translate-x-1/2 flex-col items-center"
