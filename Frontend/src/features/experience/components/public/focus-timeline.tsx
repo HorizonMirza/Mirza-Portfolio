@@ -21,8 +21,6 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
       let best: HTMLElement | null = null
       let bestDistance = Infinity
       for (const li of ol!.querySelectorAll<HTMLElement>(':scope > li')) {
-        // entri yang disembunyikan filter (display: none) tidak punya kotak
-        if (!li.offsetParent) continue
         if (atBottom) {
           best = li
           continue
@@ -46,14 +44,10 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
     update()
     window.addEventListener('scroll', schedule, { passive: true })
     window.addEventListener('resize', schedule)
-    // filter radio mengubah entri yang terlihat
-    const filter = ol.closest('.experience-filter')
-    filter?.addEventListener('change', schedule)
     return () => {
       if (frame) cancelAnimationFrame(frame)
       window.removeEventListener('scroll', schedule)
       window.removeEventListener('resize', schedule)
-      filter?.removeEventListener('change', schedule)
       delete ol.dataset.focus
     }
   }, [])

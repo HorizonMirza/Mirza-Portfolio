@@ -75,18 +75,13 @@ test('halaman skill lama diarahkan ke bagian skill di beranda', async ({ page })
   await expect(page.getByRole('heading', { name: 'What I work with' })).toBeVisible()
 })
 
-test('filter pengalaman hanya menampilkan jenis yang dipilih', async ({ page }) => {
+test('halaman pengalaman: timeline tanpa filter dan tanpa pendidikan', async ({ page }) => {
   await page.goto('/id/experience')
-  const items = page.locator('ol > li[data-type]')
-  const total = await items.count()
-  expect(total).toBeGreaterThan(1)
-  // pendidikan tidak tampil di halaman Pengalaman (pilihan pemilik 2026-10-03)
+  // revisi pemilik 2026-10-03: tanpa filter, tanpa kalimat pengantar, pendidikan tidak tampil
+  await expect(page.locator('ol.xp-tl > li[data-type]').first()).toBeVisible()
+  expect(await page.locator('ol.xp-tl > li[data-type]').count()).toBeGreaterThan(1)
   await expect(page.locator('li[data-type="EDUCATION"]')).toHaveCount(0)
-  await page.locator('fieldset').getByText('Organisasi', { exact: true }).click()
-  await expect(page.locator('li[data-type="ORGANIZATION"]').first()).toBeVisible()
-  await expect(page.locator('li[data-type="WORK"]').first()).toBeHidden()
-  await page.locator('fieldset').getByText('Semua', { exact: true }).click()
-  await expect(page.locator('li[data-type="WORK"]').first()).toBeVisible()
+  await expect(page.locator('fieldset')).toHaveCount(0)
 })
 
 test('halaman project tanpa project terbit menampilkan keadaan kosong atau kartu', async ({

@@ -27,7 +27,6 @@ export async function generateMetadata({
 // Halaman ini hanya pengalaman kerja dan organisasi; pendidikan tidak ditampilkan (pilihan
 // pemilik 2026-10-03). Data pendidikan tetap dipakai halaman Tentang.
 const SHOWN = ['WORK', 'ORGANIZATION'] as const
-const FILTERS = ['all', ...SHOWN] as const
 
 function monthsBetween(start: string, end: string | null) {
   const [sy, sm] = start.split('-').map(Number)
@@ -51,8 +50,8 @@ function initials(organization: string) {
   )
 }
 
-// Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03, DESIGN.md bagian 38). Filter memakai
-// radio + CSS :has() (globals.css), jadi tetap bekerja tanpa JavaScript dan halaman tetap statis.
+// Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03, DESIGN.md bagian 38): hitam-putih,
+// tanpa kalimat pengantar dan tanpa filter (revisi pemilik).
 export default async function ExperiencePage({ params }: PageProps<'/[locale]/experience'>) {
   const locale = await resolveLocale(params)
   const [t, tCommon, all] = await Promise.all([
@@ -61,7 +60,6 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
     getPublicExperiences(),
   ])
   const items = all.filter((e) => (SHOWN as readonly string[]).includes(e.type))
-  const present = new Set(items.map((i) => i.type))
 
   const duration = (e: PublicExperience) => {
     const n = monthsBetween(e.start, e.end)
@@ -77,99 +75,72 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
 
   return (
     <Container className="pb-20">
-      <PageIntro title={t('title')} intro={t('intro')} />
+      <PageIntro title={t('title')} />
       {items.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-6 text-muted">{t('none')}</p>
       ) : (
-        <div className="experience-filter">
-          {present.size > 1 ? (
-            <fieldset className="mb-12">
-              <legend className="mb-3 font-mono text-label tracking-widest text-note uppercase">
-                {t('filterLabel')}
-              </legend>
-              <div className="flex flex-wrap gap-2">
-                {FILTERS.filter((f) => f === 'all' || present.has(f)).map((f) => (
-                  <label
-                    key={f}
-                    className="inline-flex min-h-11 cursor-pointer items-center rounded-md border border-border-strong px-4 text-sm font-medium has-checked:border-primary has-checked:bg-primary has-checked:text-primary-fg has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
-                  >
-                    <input
-                      type="radio"
-                      name="experience-filter"
-                      value={f}
-                      defaultChecked={f === 'all'}
-                      className="sr-only"
+        <FocusTimeline label={t('listLabel')}>
+          {items.map((e) => {
+            const logoAlt = e.logo ? loc(e.logo, 'alt', locale) || e.organization : ''
+            return (
+              <li key={e.id} data-type={e.type} data-current={e.end ? undefined : ''}>
+                <div className="xp-node" aria-hidden={e.logo ? undefined : true}>
+                  {e.logo ? (
+                    <Image
+                      src={e.logo.url}
+                      alt={logoAlt}
+                      width={112}
+                      height={112}
+                      sizes="56px"
+                      className="size-full object-cover"
                     />
-                    {t(f)}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-          ) : null}
-
-          <FocusTimeline label={t('listLabel')}>
-            {items.map((e) => {
-              const logoAlt = e.logo ? loc(e.logo, 'alt', locale) || e.organization : ''
-              return (
-                <li key={e.id} data-type={e.type} data-current={e.end ? undefined : ''}>
-                  <div className="xp-node" aria-hidden={e.logo ? undefined : true}>
-                    {e.logo ? (
-                      <Image
-                        src={e.logo.url}
-                        alt={logoAlt}
-                        width={112}
-                        height={112}
-                        sizes="56px"
-                        className="size-full object-contain p-1.5"
-                      />
-                    ) : (
-                      <span>{initials(e.organization)}</span>
-                    )}
-                  </div>
-                  <div className="xp-main">
-                    <p className="font-mono text-sm text-note tabular-nums">
-                      {e.end ? null : <span className="xp-now" aria-hidden="true" />}
-                      {formatMonth(e.start, locale)} –{' '}
-                      {e.end ? formatMonth(e.end, locale) : tCommon('present')}
-                      <span className="ml-3 text-label tracking-widest uppercase">{t(e.type)}</span>
-                    </p>
-                    <h2 className="mt-2 text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
-                    <p className="text-muted">
-                      {e.organization}
-                      {e.location ? ` · ${e.location}` : ''}
-                    </p>
-                    <MarkdownView
-                      source={loc(e, 'description', locale)}
-                      size="base"
-                      className="xp-desc mt-3 text-muted"
+                  ) : (
+                    <span>{initials(e.organization)}</span>
+                  )}
+                </div>
+                <div className="xp-main">
+                  <p className="font-mono text-sm text-muted tabular-nums">
+                    {e.end ? null : <span className="xp-now" aria-hidden="true" />}
+                    {formatMonth(e.start, locale)} –{' '}
+                    {e.end ? formatMonth(e.end, locale) : tCommon('present')}
+                    <span className="ml-3 text-label tracking-widest uppercase">{t(e.type)}</span>
+                  </p>
+                  <h2 className="mt-2 text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
+                  <p className="text-muted">
+                    {e.organization}
+                    {e.location ? ` · ${e.location}` : ''}
+                  </p>
+                  <MarkdownView
+                    source={loc(e, 'description', locale)}
+                    size="base"
+                    className="xp-desc mt-3 text-muted"
+                  />
+                </div>
+                <div className="xp-side">
+                  {e.photo ? (
+                    <Image
+                      src={e.photo.url}
+                      alt={loc(e.photo, 'alt', locale)}
+                      width={e.photo.width ?? 800}
+                      height={e.photo.height ?? 600}
+                      sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
+                      className="xp-photo"
                     />
-                  </div>
-                  <div className="xp-side">
-                    {e.photo ? (
-                      <Image
-                        src={e.photo.url}
-                        alt={loc(e.photo, 'alt', locale)}
-                        width={e.photo.width ?? 800}
-                        height={e.photo.height ?? 600}
-                        sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
-                        className="xp-photo"
-                      />
-                    ) : (
-                      <p className="xp-year">
-                        <span className="font-display text-[2.75rem] leading-none font-bold">
-                          {e.start.slice(0, 4)}
-                        </span>
-                        <span className="mt-2 block font-mono text-label tracking-widest uppercase">
-                          {duration(e)}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </li>
-              )
-            })}
-          </FocusTimeline>
-        </div>
+                  ) : (
+                    <p className="xp-year">
+                      <span className="font-display text-[2.75rem] leading-none font-bold">
+                        {e.start.slice(0, 4)}
+                      </span>
+                      <span className="mt-2 block font-mono text-label tracking-widest uppercase">
+                        {duration(e)}
+                      </span>
+                    </p>
+                  )}
+                </div>
+              </li>
+            )
+          })}
+        </FocusTimeline>
       )}
     </Container>
   )

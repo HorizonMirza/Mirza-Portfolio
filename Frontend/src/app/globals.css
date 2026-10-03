@@ -248,13 +248,6 @@
   background-size: 32px 32px;
 }
 
-/* Filter timeline pengalaman tanpa JavaScript: radio yang dipilih menyembunyikan tipe lain. */
-.experience-filter:has(input[value='WORK']:checked) li[data-type]:not([data-type='WORK']),
-.experience-filter:has(input[value='ORGANIZATION']:checked)
-  li[data-type]:not([data-type='ORGANIZATION']) {
-  display: none;
-}
-
 /* Timeline tengah "fokus aktif" (DESIGN.md bagian 38). HP: garis di kiri, foto di bawah teks.
    >= 768 px: garis di tengah, isi bergantian kiri-kanan, foto atau tahun di sisi seberang. */
 .xp-tl {
@@ -307,10 +300,6 @@
     filter 300ms,
     opacity 300ms;
 }
-/* logo diberi latar putih persegi agar logo berwarna gelap tetap terbaca di tema gelap */
-.xp-node:has(img) {
-  background: #fff;
-}
 .xp-main {
   grid-column: var(--xp-main);
   grid-row: 1;
@@ -353,8 +342,8 @@
   margin-right: 0.5rem;
   vertical-align: middle;
   border-radius: 9999px;
-  background: var(--note);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--note) 22%, transparent);
+  background: var(--text);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--text) 20%, transparent);
 }
 .xp-tl > li h2 {
   transition: color 300ms;
@@ -381,27 +370,15 @@
     padding-top: 0.25rem;
   }
   /* entri ganjil: isi di kiri (rata kanan), sisi seberang di kanan */
-  .xp-tl > li,
-  .experience-filter:has(input[value='WORK']:checked)
-    .xp-tl
-    > li:nth-child(odd of [data-type='WORK']),
-  .experience-filter:has(input[value='ORGANIZATION']:checked)
-    .xp-tl
-    > li:nth-child(odd of [data-type='ORGANIZATION']) {
+  .xp-tl > li {
     --xp-main: 1;
     --xp-side: 3;
     --xp-align: right;
     --xp-side-align: left;
     --xp-push: 0;
   }
-  /* entri genap: bertukar sisi. Saat filter aktif, ganjil/genap dihitung dari entri yang terlihat */
-  .xp-tl > li:nth-child(even),
-  .experience-filter:has(input[value='WORK']:checked)
-    .xp-tl
-    > li:nth-child(even of [data-type='WORK']),
-  .experience-filter:has(input[value='ORGANIZATION']:checked)
-    .xp-tl
-    > li:nth-child(even of [data-type='ORGANIZATION']) {
+  /* entri genap: bertukar sisi */
+  .xp-tl > li:nth-child(even) {
     --xp-main: 3;
     --xp-side: 1;
     --xp-align: left;
@@ -416,39 +393,28 @@
     margin-left: 0;
     padding-left: 0;
   }
-  .xp-tl > li,
-  .experience-filter:has(input[value='WORK']:checked)
-    .xp-tl
-    > li:nth-child(odd of [data-type='WORK']),
-  .experience-filter:has(input[value='ORGANIZATION']:checked)
-    .xp-tl
-    > li:nth-child(odd of [data-type='ORGANIZATION']) {
+  .xp-tl > li {
     --xp-bullet-before: '';
     --xp-bullet-after: ' ·';
   }
-  .xp-tl > li:nth-child(even),
-  .experience-filter:has(input[value='WORK']:checked)
-    .xp-tl
-    > li:nth-child(even of [data-type='WORK']),
-  .experience-filter:has(input[value='ORGANIZATION']:checked)
-    .xp-tl
-    > li:nth-child(even of [data-type='ORGANIZATION']) {
+  .xp-tl > li:nth-child(even) {
     --xp-bullet-before: '· ';
     --xp-bullet-after: '';
   }
   .xp-tl > li .xp-desc li::before {
     content: var(--xp-bullet-before);
-    color: var(--note);
+    color: var(--text-muted);
   }
   .xp-tl > li .xp-desc li::after {
     content: var(--xp-bullet-after);
-    color: var(--note);
+    color: var(--text-muted);
   }
 }
 /* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Seluruh entri
    yang tidak aktif meredup dan menjadi abu-abu; logo dan foto sangat redup (0,35). Teks meredup
    lewat warna, bukan opacity, agar kontras tetap AA (campuran 85% --text-muted). Entri aktif penuh
-   dengan logo membesar dan bergaris Azure. */
+   dengan logo membesar dan kilau berputar di tepinya seperti kartu login, hitam-putih mengikuti
+   tema (putih di gelap, hitam di terang). Halaman ini sengaja tanpa Azure (revisi pemilik). */
 .xp-tl > li {
   transition: filter 350ms;
 }
@@ -467,9 +433,36 @@
 }
 .xp-tl[data-focus] > li[data-active] .xp-node {
   transform: scale(1.18);
-  border-color: var(--note);
+  border-color: color-mix(in oklab, var(--text) 25%, transparent);
+}
+.xp-tl[data-focus] > li[data-active] .xp-node::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 200deg,
+    color-mix(in oklab, var(--text) 95%, transparent) 290deg,
+    transparent 340deg 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: login-shine 4s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
+  .xp-tl[data-focus] > li[data-active] .xp-node::before {
+    animation: none;
+  }
   .xp-tl > li,
   .xp-node,
   .xp-photo,
