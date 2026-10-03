@@ -6,7 +6,7 @@ import { NeuralVortexBackground } from '@/components/admin/neural-vortex-backgro
 import { getAdminEmailDomain, getAdminSession } from '@/lib/auth-guard'
 import { safeAdminRedirect } from '@/lib/safe-redirect'
 
-export const metadata: Metadata = { title: 'Sign in' }
+export const metadata: Metadata = { title: 'Login' }
 
 export default async function LoginPage({ searchParams }: PageProps<'/admin/login'>) {
   const { next } = await searchParams

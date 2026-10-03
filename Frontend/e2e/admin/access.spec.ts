@@ -94,7 +94,7 @@ test.describe('login dan logout', () => {
     await expect(page).toHaveURL(/next=/)
     await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL!)
     await page.getByLabel('Password', { exact: true }).fill(process.env.ADMIN_PASSWORD!)
-    await page.getByRole('button', { name: 'Sign in' }).click()
+    await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL(/\/admin\/skills$/)
     if (isMobile) await page.getByRole('button', { name: /menu/i }).click()
     await page.getByRole('button', { name: 'Keluar' }).click()

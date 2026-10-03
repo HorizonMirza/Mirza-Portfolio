@@ -234,15 +234,15 @@ export function LoginForm({
                     aria-hidden="true"
                     className="size-4 animate-spin rounded-full border-2 border-black/70 border-t-transparent"
                   />
-                  Signing in…
+                  Logging in…
                 </>
               ) : status === 'done' ? (
                 <>
                   <Check className="size-4" aria-hidden="true" />
-                  Signed in
+                  Logged in
                 </>
               ) : (
-                'Sign in'
+                'Login'
               )}
             </button>
           </form>
