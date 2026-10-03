@@ -203,7 +203,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
             event.preventDefault()
             onReset()
           }}
-          className="inline-flex min-h-11 items-center text-text underline underline-offset-4 hover:no-underline"
+          className="inline-flex min-h-11 items-center text-[0.9375rem] text-text underline underline-offset-4 hover:no-underline"
         >
           {t('another')}
         </a>

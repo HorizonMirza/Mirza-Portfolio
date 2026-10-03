@@ -39,8 +39,9 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
   return (
     <Container className="pb-20">
       <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
+        {/* tali mulai sejajar judul: margin atas sama dengan jarak atas PageIntro (md:pt-20) */}
         <IdLanyard
-          className="hidden lg:block"
+          className="hidden lg:mt-20 lg:block"
           name={profile?.name ?? 'Muhammad Mirza'}
           role={profile ? loc(profile, 'currentRole', locale) || null : null}
           status={tAvail(availability)}
