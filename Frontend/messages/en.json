@@ -148,7 +148,7 @@
     "send": "Send message",
     "sending": "Sending…",
     "success": "Thanks, your message is in. I'll reply to the email address you gave.",
-    "error": "Your message wasn't sent. Please try again, or reach me directly through the links alongside.",
+    "error": "Your message wasn't sent. Please try again, or reach me directly through the links at the bottom of the page.",
     "rateLimited": "Too many messages from this network. Please try again in an hour.",
     "invalid": "Please check the highlighted fields.",
     "nameRequired": "Name is required",
@@ -157,7 +157,6 @@
     "subjectTooLong": "Subject can be at most 150 characters",
     "messageShort": "Message must be at least 10 characters",
     "messageLong": "Message can be at most 5,000 characters",
-    "directHeading": "Or reach me directly",
     "privacyNote": "Your details are only used to reply to this message.",
     "privacyLink": "Privacy Policy"
   },

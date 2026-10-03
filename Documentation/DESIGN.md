@@ -530,3 +530,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Ganti bahasa tidak lagi melompat ke atas: tautan bahasa memakai `scroll={false}` sehingga posisi gulir tetap.
 - Footer: kartu WhatsApp mengubah nomor berawalan 0 menjadi 62 (wa.me menolak awalan 0); kartu email membuka Gmail. Tombol WhatsApp melayang dan tombol Unduh CV di topbar dihapus.
 
+## 32. Halaman kontak: kartu ID di samping judul (2026-10-03)
+
+- Pilihan pemilik dari sepuluh demo: nomor 1 tanpa tombol cepat. Kartu ID bertali di kolom kiri (desktop), sedangkan judul "Hubungi saya", pengantar, dan form di kolom kanan, sehingga kartu tergantung sejajar dengan judul.
+- Daftar "Atau langsung" (email, WhatsApp, kota) di bawah form dihapus karena kontak langsung, sosial, dan CV sudah ada di footer kartu tautan (bagian 29). Pesan galat form kini menunjuk ke tautan di bagian bawah halaman.
+- Di HP kartu tetap tidak tampil; urutan judul, pengantar, lalu form.
+
