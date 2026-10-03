@@ -120,7 +120,7 @@ test.describe('form kontak', () => {
     await page.getByLabel('Name').fill(`E2E visitor ${testInfo.project.name}`)
     await page.getByLabel('Email').fill('visitor@example.com')
     await page.getByLabel('Message').fill('Hello, this is an automated end-to-end test message.')
-    await page.getByRole('button', { name: 'Send message' }).click()
+    await page.getByRole('button', { name: 'Send Message' }).click()
     await expect(page.getByRole('status')).toContainText('Your message is in')
   })
 })
