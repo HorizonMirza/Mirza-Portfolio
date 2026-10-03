@@ -82,7 +82,9 @@ export async function submitContact(
         console.warn('[contact] notifikasi email gagal')
       }
     }
-    return { status: 'success', message: 'success' }
+    // isian dikembalikan agar form tetap terlihat saat tombol berubah hijau, dan nama dipakai
+    // untuk sapaan "Terima kasih, {nama}." di kotak sukses
+    return { status: 'success', message: 'success', values }
   } catch {
     console.error('[contact] gagal menyimpan pesan')
     return { status: 'error', message: 'error', values }

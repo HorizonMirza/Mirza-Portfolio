@@ -543,3 +543,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Kalimat "Data Anda hanya dipakai untuk membalas pesan ini. Kebijakan Privasi" di bawah form dihapus atas permintaan pemilik. Halaman `/privacy` tetap ada dan tercantum di sitemap.
 - Di HP `html` memakai `scroll-padding-bottom` setinggi menu ikon bawah, sehingga elemen yang digulir ke layar (fokus keyboard, tombol kirim, tautan #anchor) berhenti di atas menu dan tidak tertutup (WCAG 2.4.11). Ditemukan lewat tes E2E form kontak tanpa JavaScript.
 
+## 34. Judul kontak, tombol kirim, dan pesan terima kasih (2026-10-03)
+
+- Judul pilihan pemilik: EN "Let’s work together" dengan pengantar "Let’s build something impactful together." lalu lanjutan yang menyebut tawaran kerja, project freelance, atau ide komunitas. ID memakai terjemahannya ("Mari bekerja sama", "Mari bangun sesuatu yang berdampak bersama."). Lanjutan kalimat ditulis sendiri, tidak disalin dari situs lain, dan tidak menjanjikan waktu balas.
+- Tombol kirim (demo nomor 5): bergaris dengan kilau berputar yang warnanya ikut tema, terisi saat disentuh. Saat mengirim menyusut jadi lingkaran berpemutar; saat terkirim menjadi hijau terang mengkilap (gradien, sorot atas, kilau menyapu, cahaya hijau) bertuliskan "Terkirim". Hijau ini sengaja sama di kedua tema dengan teks gelap (kontras tinggi).
+- Sekitar 1 detik kemudian form menyusut dan muncul kotak "Terima kasih, {nama}." dengan "Pesan sudah masuk. Coba lagi". "Coba lagi" memasang ulang form kosong (tanpa JavaScript: memuat ulang halaman). Urutan animasi murni CSS sehingga sama dengan atau tanpa JavaScript; dengan reduced-motion kotak langsung tampil.
+- Tanda salah seperti login admin: bingkai dan kilau merah dengan cincin tipis, pesan berikon di bawah kolom, dan tanda hilang begitu kolom diketik ulang. Ringkasan galat untuk pembaca layar tetap ada.
+

@@ -1,3 +1,4 @@
+import { CircleAlert } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 
 import { Label } from '@/components/ui/label'
@@ -48,7 +49,17 @@ export function PublicField({
         </p>
       ) : null}
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-danger">
+        // kolom berkilau (form kontak): gaya tanda salah sama dengan login admin, berikon
+        <p
+          id={`${id}-error`}
+          className={cn(
+            'text-danger',
+            shine === undefined ? 'text-sm' : 'flex items-center gap-1.5 text-[0.8125rem]',
+          )}
+        >
+          {shine === undefined ? null : (
+            <CircleAlert className="size-3.5 shrink-0" aria-hidden="true" />
+          )}
           {error}
         </p>
       ) : null}

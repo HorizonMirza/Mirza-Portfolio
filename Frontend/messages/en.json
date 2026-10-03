@@ -138,8 +138,8 @@
   "Contact": {
     "metaTitle": "Contact",
     "metaDescription": "Send Muhammad Mirza a message about a job or a project.",
-    "title": "Get in touch",
-    "intro": "For job offers, projects, or just to say hi. Messages go straight to my inbox.",
+    "title": "Let’s work together",
+    "intro": "Let’s build something impactful together. Job offers, freelance projects, or an idea for a community: tell me what you have in mind and I’ll reply to the email you leave.",
     "name": "Name",
     "email": "Email",
     "subject": "Subject (optional)",
@@ -147,7 +147,7 @@
     "honeypot": "Leave this field empty",
     "send": "Send message",
     "sending": "Sending…",
-    "success": "Thanks, your message is in. I'll reply to the email address you gave.",
+    "success": "Your message is in.",
     "error": "Your message wasn't sent. Please try again, or reach me directly through the links at the bottom of the page.",
     "rateLimited": "Too many messages from this network. Please try again in an hour.",
     "invalid": "Please check the highlighted fields.",
@@ -156,7 +156,11 @@
     "emailInvalid": "Enter a valid email address",
     "subjectTooLong": "Subject can be at most 150 characters",
     "messageShort": "Message must be at least 10 characters",
-    "messageLong": "Message can be at most 5,000 characters"
+    "messageLong": "Message can be at most 5,000 characters",
+    "successTitle": "Thank you, {name}.",
+    "successTitleAnon": "Thank you.",
+    "sent": "Sent",
+    "tryAgain": "Try again"
   },
   "Newsletter": {
     "heading": "New project updates",
