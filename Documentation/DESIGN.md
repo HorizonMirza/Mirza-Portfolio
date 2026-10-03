@@ -558,6 +558,8 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Urutan animasi murni CSS sehingga sama dengan atau tanpa JavaScript; dengan reduced-motion tiket langsung tampil.
 - Revisi pemilik: ringkasan "Periksa kembali isian yang ditandai" tidak lagi terlihat (tetap dibacakan pembaca layar dan menerima fokus); tanda per kolom sudah cukup. Galat lain (batas kiriman, gagal simpan) tetap terlihat. Kotak kartu ID dinaikkan ke 42rem agar kartu yang tergantung tidak menempel ke footer saat isi di sampingnya pendek.
 
+- Revisi pemilik: di desktop kotak tiket selebar kalimat pengantar di atasnya, sehingga ujung kanannya sejajar dengan akhir kalimat (kolom `contact-col` menjadi `fit-content` saat terkirim; tiket memakai `contain: inline-size` agar tidak ikut menentukan lebar). Form sebelum terkirim dan tampilan HP tidak berubah.
+
 ## 36. Kartu ID kanvas: kaca, logam, dan pita bertulis (2026-10-03)
 
 - Pilihan pemilik dari sepuluh demo: tema gelap memakai kartu kaca (demo 5: isi tembus pandang, garis tepi terang, kilau yang bergeser saat kartu miring); tema terang memakai kartu logam (demo 6: gradasi abu tua ke hitam). Tali di kedua tema berupa pita bertulis seperti demo 10 dengan host situs berulang: pita putih bertulisan hitam di tema gelap, pita hitam bertulisan putih di tema terang. Tema dibaca dari kelas `dark` di `html` dan kanvas digambar ulang saat tema berganti.

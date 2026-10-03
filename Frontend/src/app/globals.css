@@ -980,6 +980,21 @@
 }
 /* Setelah terkirim (DESIGN.md bagian 35): form memudar dan menyusut, lalu tiket ringkasan terbuka
    dari atas. Murni CSS agar urutannya sama dengan atau tanpa JavaScript. */
+/* Desktop: setelah terkirim, kolom kanan selebar kalimat pengantar sehingga kotak tiket berakhir
+   di ujung kalimat itu (permintaan pemilik). Tiket tidak ikut menentukan lebar (contain), hanya
+   mengisi lebar kolom; form sebelum terkirim tetap selebar kolom penuh. */
+@media (min-width: 1024px) {
+  .contact-col:has(.contact-sent) {
+    width: fit-content;
+    max-width: 100%;
+  }
+  .contact-sent {
+    contain: inline-size;
+  }
+  .contact-col .contact-ticket {
+    max-width: none;
+  }
+}
 .contact-sent-form {
   display: grid;
   grid-template-rows: 1fr;

@@ -45,7 +45,8 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
           photo={profile?.photo?.url ?? DEFAULT_PROFILE_PHOTO}
           site={new URL(siteUrl()).host}
         />
-        <div>
+        {/* contact-col: setelah terkirim, kotak tiket selebar kalimat pengantar (globals.css) */}
+        <div className="contact-col">
           <PageIntro title={t('title')} intro={t('intro')} />
           <ContactForm />
         </div>
