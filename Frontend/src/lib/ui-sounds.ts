@@ -40,7 +40,9 @@ function audio() {
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
     }
     master!.gain.value = level / 100
-    if (context.state === 'suspended') void context.resume()
+    // resume() ditolak (InvalidStateError) bila halaman berpindah sebelum audio siap, mis. tombol
+    // tema ditekan lalu langsung pindah halaman; itu bukan galat, cukup diabaikan
+    if (context.state === 'suspended') context.resume().catch(() => {})
     return { ctx: context, out: master!, noise: noiseBuffer! }
   } catch {
     // browser menolak audio: tombol tetap bekerja tanpa suara
