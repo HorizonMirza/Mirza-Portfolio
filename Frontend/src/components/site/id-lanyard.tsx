@@ -23,6 +23,9 @@ const DAMPING = 0.992
 const BOUNCE = 0.55
 // kanvas lebih lebar dari kolom agar kartu bebas berayun; klik di luar kartu tetap tembus
 const CANVAS_W = 560
+// Tinggi dalam px, bukan rem: fisika memakai px, sedangkan rem menyusut di desktop (87,5%). Bila
+// kotak lebih pendek dari tali + kartu + jarak tepi, kartu menyentuh lantai dan diam miring.
+const BOX_H = ROPE_LEN + CARD_H + CARD_W / 2 + 60
 
 type Point = { x: number; y: number; px: number; py: number; inv: number }
 
@@ -119,6 +122,7 @@ export function IdLanyard({
     let frame = 0
     let visible = true
     let sleeping = false
+    let still = 0
 
     // ===== fisika =====
     let ropes: Point[] = []
@@ -420,7 +424,11 @@ export function IdLanyard({
         acc -= dt
       }
       draw()
-      if (!grab && energy() < 0.02) {
+      // berhenti hanya setelah diam ~0,5 detik berturut-turut: di puncak ayunan kecepatan sesaat nol,
+      // dan berhenti di situ membuat kartu membeku miring
+      still = !grab && energy() < 0.02 ? still + 1 : 0
+      if (still > 30) {
+        still = 0
         sleeping = true
         frame = 0
         last = 0
@@ -517,7 +525,8 @@ export function IdLanyard({
     <div
       ref={box}
       aria-hidden="true"
-      className={cn('relative z-10 h-[42rem] select-none', className)}
+      className={cn('relative z-10 select-none', className)}
+      style={{ height: BOX_H }}
     >
       <canvas
         ref={canvas}

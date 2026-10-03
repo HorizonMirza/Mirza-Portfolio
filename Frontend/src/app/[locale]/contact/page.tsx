@@ -39,9 +39,10 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
   return (
     <Container className="pb-20">
       <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
-        {/* tali mulai sejajar judul: margin atas sama dengan jarak atas PageIntro (md:pt-20) */}
+        {/* tali mulai sejajar puncak huruf judul: jarak atas PageIntro (pt-20) + mt-3 h1, ditambah
+            ruang kosong di atas huruf Oswald (sekitar 0,2 ukuran huruf judul) */}
         <IdLanyard
-          className="hidden lg:mt-20 lg:block"
+          className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
           name={profile?.name ?? 'Muhammad Mirza'}
           role={profile ? loc(profile, 'currentRole', locale) || null : null}
           status={tAvail(availability)}
