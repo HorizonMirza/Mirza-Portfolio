@@ -59,9 +59,9 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
 
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto max-w-[1200px] px-4 py-10 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1200px] px-4 pt-8 pb-6 sm:px-6 lg:px-8">
         {links.length > 0 ? (
-          <nav aria-labelledby="footer-contact-title" className="mb-8">
+          <nav aria-labelledby="footer-contact-title" className="mb-4">
             <h2
               id="footer-contact-title"
               className="mb-4 font-display text-h3 font-semibold uppercase"
