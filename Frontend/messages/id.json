@@ -100,7 +100,19 @@
     "none": "Belum ada pengalaman yang diterbitkan.",
     "durationYears": "{count} thn",
     "durationMonths": "{count} bln",
-    "listLabel": "Riwayat pengalaman"
+    "listLabel": "Riwayat pengalaman",
+    "employment": {
+      "FULL_TIME": "Penuh waktu",
+      "PART_TIME": "Paruh waktu",
+      "SELF_EMPLOYED": "Usaha sendiri",
+      "FREELANCE": "Freelance",
+      "CONTRACT": "Kontrak",
+      "INTERNSHIP": "Magang",
+      "APPRENTICESHIP": "Pemagangan",
+      "SEASONAL": "Musiman",
+      "VOLUNTEER": "Relawan"
+    },
+    "present": "Sekarang"
   },
   "Skills": {
     "usedIn": "Dipakai di"

@@ -72,6 +72,13 @@ describe('experienceSchema', () => {
       'startMonth',
     )
   })
+  it('jenis pekerjaan opsional: kosong atau salah satu jenis LinkedIn', () => {
+    expect(experienceSchema.safeParse({ ...base, employmentType: 'INTERNSHIP' }).success).toBe(true)
+    expect(experienceSchema.safeParse({ ...base, employmentType: '' }).success).toBe(true)
+    expect(fieldsOf(experienceSchema.safeParse({ ...base, employmentType: 'MAGANG' }))).toContain(
+      'employmentType',
+    )
+  })
   it('konversi bulan ke tanggal dan balik tanpa bergeser zona waktu', () => {
     expect(dateToMonth(monthToDate('2025-07'))).toBe('2025-07')
   })

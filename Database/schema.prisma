@@ -34,6 +34,19 @@ enum ExperienceType {
   ORGANIZATION
 }
 
+// Jenis pekerjaan seperti di LinkedIn, tampil di baris instansi ("PT PGAS Solution · Internship")
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  SELF_EMPLOYED
+  FREELANCE
+  CONTRACT
+  INTERNSHIP
+  APPRENTICESHIP
+  SEASONAL
+  VOLUNTEER
+}
+
 enum AssetKind {
   IMAGE
   DOCUMENT
@@ -215,26 +228,27 @@ model Skill {
 }
 
 model Experience {
-  id             String         @id @default(uuid(7)) @db.Uuid
+  id             String          @id @default(uuid(7)) @db.Uuid
   type           ExperienceType
   organization   String
   title_id       String
   title_en       String
-  description_id String         @db.Text
-  description_en String         @db.Text
-  startDate      DateTime       @db.Date
+  description_id String          @db.Text
+  description_en String          @db.Text
+  startDate      DateTime        @db.Date
   // null = masih berlangsung
-  endDate        DateTime?      @db.Date
+  endDate        DateTime?       @db.Date
   location       String?
-  order          Int            @default(0)
-  status         ContentStatus  @default(PUBLISHED)
-  logoId         String?        @db.Uuid
-  logo           Asset?         @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  employmentType EmploymentType?
+  order          Int             @default(0)
+  status         ContentStatus   @default(PUBLISHED)
+  logoId         String?         @db.Uuid
+  logo           Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
   // foto kegiatan di sisi seberang timeline (DESIGN.md bagian 38)
-  photoId        String?        @db.Uuid
-  photo          Asset?         @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
-  createdAt      DateTime       @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime       @updatedAt @db.Timestamptz(3)
+  photoId        String?         @db.Uuid
+  photo          Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
 
   @@index([type, startDate])
 }

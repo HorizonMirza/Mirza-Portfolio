@@ -10,6 +10,31 @@ export const experienceTypeLabel: Record<(typeof EXPERIENCE_TYPES)[number], stri
   ORGANIZATION: 'Organisasi',
 }
 
+// Jenis pekerjaan seperti di LinkedIn ("PT PGAS Solution · Internship"); opsional.
+export const EMPLOYMENT_TYPES = [
+  'FULL_TIME',
+  'PART_TIME',
+  'SELF_EMPLOYED',
+  'FREELANCE',
+  'CONTRACT',
+  'INTERNSHIP',
+  'APPRENTICESHIP',
+  'SEASONAL',
+  'VOLUNTEER',
+] as const
+
+export const employmentTypeLabel: Record<(typeof EMPLOYMENT_TYPES)[number], string> = {
+  FULL_TIME: 'Full-time (penuh waktu)',
+  PART_TIME: 'Part-time (paruh waktu)',
+  SELF_EMPLOYED: 'Self-employed (usaha sendiri)',
+  FREELANCE: 'Freelance',
+  CONTRACT: 'Contract (kontrak)',
+  INTERNSHIP: 'Internship (magang)',
+  APPRENTICESHIP: 'Apprenticeship (pemagangan)',
+  SEASONAL: 'Seasonal (musiman)',
+  VOLUNTEER: 'Volunteer (relawan)',
+}
+
 // Periode disimpan per bulan (seperti di CV): "2025-07" → 2025-07-01.
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/
 
@@ -24,6 +49,7 @@ export const experienceSchema = z
     startMonth: z.string().regex(MONTH, 'Bulan mulai wajib diisi'),
     endMonth: z.string().refine((v) => v === '' || MONTH.test(v), 'Bulan selesai tidak valid'),
     location: optionalText('Lokasi', 120),
+    employmentType: z.union([z.enum(EMPLOYMENT_TYPES), z.literal('')]),
     status: z.enum(['DRAFT', 'PUBLISHED']),
   })
   // Format YYYY-MM bisa dibandingkan sebagai teks.
@@ -44,6 +70,7 @@ export const emptyExperience: ExperienceInput = {
   startMonth: '',
   endMonth: '',
   location: '',
+  employmentType: '',
   status: 'PUBLISHED',
 }
 

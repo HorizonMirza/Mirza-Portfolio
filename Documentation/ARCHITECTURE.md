@@ -238,6 +238,7 @@ erDiagram
       date startDate
       date endDate "null = sekarang"
       string location
+      enum employmentType "FULL_TIME | ... | INTERNSHIP | VOLUNTEER, opsional"
       int order
       string logoId FK
       string photoId FK

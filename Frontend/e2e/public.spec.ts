@@ -82,6 +82,9 @@ test('halaman pengalaman: timeline tanpa filter dan tanpa pendidikan', async ({ 
   expect(await page.locator('ol.xp-tl > li[data-type]').count()).toBeGreaterThan(1)
   await expect(page.locator('li[data-type="EDUCATION"]')).toHaveCount(0)
   await expect(page.locator('fieldset')).toHaveCount(0)
+  // format seperti LinkedIn: instansi · jenis pekerjaan, lalu periode · durasi
+  await expect(page.getByText('PT PGAS Solution · Magang')).toBeVisible()
+  await expect(page.getByText(/^Jul 2026 - Sekarang · \d+ (bln|thn)/)).toBeVisible()
 })
 
 test('halaman project tanpa project terbit menampilkan keadaan kosong atau kartu', async ({

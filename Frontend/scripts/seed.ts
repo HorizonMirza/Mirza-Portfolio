@@ -80,6 +80,7 @@ async function main() {
           startDate: new Date(item.startDate),
           endDate: item.endDate ? new Date(item.endDate) : null,
           location: item.location,
+          employmentType: item.employmentType ?? null,
           order: index,
         },
       })

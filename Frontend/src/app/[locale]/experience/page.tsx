@@ -55,9 +55,8 @@ function initials(organization: string) {
 // tanpa kalimat pengantar dan tanpa filter (revisi pemilik).
 export default async function ExperiencePage({ params }: PageProps<'/[locale]/experience'>) {
   const locale = await resolveLocale(params)
-  const [t, tCommon, all] = await Promise.all([
+  const [t, all] = await Promise.all([
     getTranslations({ locale, namespace: 'Experience' }),
-    getTranslations({ locale, namespace: 'Common' }),
     getPublicExperiences(),
   ])
   const items = sortByLatest(all.filter((e) => (SHOWN as readonly string[]).includes(e.type)))
@@ -100,15 +99,16 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                   )}
                 </div>
                 <div className="xp-main">
-                  <p className="font-mono text-sm text-muted tabular-nums">
-                    {e.end ? null : <span className="xp-now" aria-hidden="true" />}
-                    {formatMonth(e.start, locale)} –{' '}
-                    {e.end ? formatMonth(e.end, locale) : tCommon('present')}
-                  </p>
-                  <h2 className="mt-2 text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
-                  <p className="text-muted">
+                  {/* format seperti LinkedIn (permintaan pemilik 2026-10-04):
+                      Peran / Instansi · Jenis pekerjaan / Mulai - Selesai · Durasi */}
+                  <h2 className="text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
+                  <p className="mt-1">
                     {e.organization}
-                    {e.location ? ` · ${e.location}` : ''}
+                    {e.employmentType ? ` · ${t(`employment.${e.employmentType}`)}` : ''}
+                  </p>
+                  <p className="mt-1 text-sm text-muted tabular-nums">
+                    {formatMonth(e.start, locale)} -{' '}
+                    {e.end ? formatMonth(e.end, locale) : t('present')} · {duration(e)}
                   </p>
                   <MarkdownView
                     source={loc(e, 'description', locale)}

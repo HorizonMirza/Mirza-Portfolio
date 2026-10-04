@@ -335,16 +335,6 @@
     display: none;
   }
 }
-.xp-now {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-right: 0.5rem;
-  vertical-align: middle;
-  border-radius: 9999px;
-  background: var(--text);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--text) 20%, transparent);
-}
 .xp-tl > li h2 {
   transition: color 300ms;
 }

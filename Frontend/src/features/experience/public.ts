@@ -6,7 +6,7 @@ import { cache } from 'react'
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
 
-import { dateToMonth } from './schema'
+import { dateToMonth, type EMPLOYMENT_TYPES } from './schema'
 
 export type PublicExperience = {
   id: string
@@ -20,6 +20,7 @@ export type PublicExperience = {
   start: string
   end: string | null
   location: string | null
+  employmentType: (typeof EMPLOYMENT_TYPES)[number] | null
   logo: PublicImage | null
   photo: PublicImage | null
 }
@@ -52,6 +53,7 @@ export const getPublicExperiences = cache(
           startDate: true,
           endDate: true,
           location: true,
+          employmentType: true,
           logo: { select: imageSelect },
           photo: { select: imageSelect },
         },

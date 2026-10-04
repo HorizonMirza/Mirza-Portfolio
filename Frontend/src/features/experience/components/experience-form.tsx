@@ -15,7 +15,12 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 
 import { saveExperience } from '../actions'
-import { type ExperienceInput, experienceSchema, experienceTypeLabel } from '../schema'
+import {
+  employmentTypeLabel,
+  type ExperienceInput,
+  experienceSchema,
+  experienceTypeLabel,
+} from '../schema'
 
 type Lang = 'id' | 'en'
 
@@ -102,6 +107,23 @@ export function ExperienceForm({
           error={errors.endMonth?.message}
         >
           {(a) => <Input type="month" {...a} {...register('endMonth')} />}
+        </Field>
+        <Field
+          id="employmentType"
+          label="Jenis pekerjaan (opsional)"
+          hint='Tampil di samping instansi, mis. "PT PGAS Solution · Internship".'
+          error={errors.employmentType?.message}
+        >
+          {(a) => (
+            <NativeSelect {...a} {...register('employmentType')}>
+              <option value="">Tidak ditampilkan</option>
+              {Object.entries(employmentTypeLabel).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </NativeSelect>
+          )}
         </Field>
         <Field id="location" label="Lokasi (opsional)" error={errors.location?.message}>
           {(a) => <Input {...a} {...register('location')} />}

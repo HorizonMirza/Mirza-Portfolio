@@ -98,9 +98,21 @@
     "EDUCATION": "Education",
     "empty": "Nothing in this category yet.",
     "none": "No experience published yet.",
-    "durationYears": "{count} yr",
-    "durationMonths": "{count} mo",
-    "listLabel": "Experience history"
+    "durationYears": "{count, plural, one {# yr} other {# yrs}}",
+    "durationMonths": "{count, plural, one {# mo} other {# mos}}",
+    "listLabel": "Experience history",
+    "employment": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "SELF_EMPLOYED": "Self-employed",
+      "FREELANCE": "Freelance",
+      "CONTRACT": "Contract",
+      "INTERNSHIP": "Internship",
+      "APPRENTICESHIP": "Apprenticeship",
+      "SEASONAL": "Seasonal",
+      "VOLUNTEER": "Volunteer"
+    },
+    "present": "Present"
   },
   "Skills": {
     "usedIn": "Used in"
