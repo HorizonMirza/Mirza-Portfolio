@@ -36,6 +36,13 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
         if (li === best) li.dataset.active = ''
         else delete li.dataset.active
       }
+      // posisi tengah logo entri aktif, untuk cahaya di garis (globals.css .xp-tl::after)
+      const node = best?.querySelector<HTMLElement>('.xp-node')
+      if (node) {
+        const top = ol!.getBoundingClientRect().top
+        const box = node.getBoundingClientRect()
+        ol!.style.setProperty('--xp-fill', `${box.top + box.height / 2 - top}px`)
+      }
     }
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update)

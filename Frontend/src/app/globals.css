@@ -312,19 +312,26 @@
   min-width: 0;
   text-align: var(--xp-side-align);
 }
-.xp-photo {
+/* A5 (pilihan pemilik 2026-10-05): bingkai logam perak di sekeliling foto kegiatan */
+.xp-frame {
   display: block;
   width: 100%;
   max-width: 20rem;
+  margin-left: var(--xp-push);
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
+}
+.xp-photo {
+  display: block;
+  width: 100%;
   height: auto;
   aspect-ratio: 4 / 3;
-  margin-left: var(--xp-push);
   object-fit: cover;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   transition:
-    filter 300ms,
-    opacity 300ms;
+    filter 450ms,
+    opacity 450ms;
 }
 .xp-year {
   color: var(--text-muted);
@@ -400,16 +407,23 @@
     color: var(--text-muted);
   }
 }
-/* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Seluruh entri
-   yang tidak aktif meredup dan menjadi abu-abu; logo dan foto sangat redup (0,35). Teks meredup
-   lewat warna, bukan opacity, agar kontras tetap AA (campuran 85% --text-muted). Entri aktif penuh
-   dengan logo membesar dan kilau berputar di tepinya seperti kartu login, hitam-putih mengikuti
-   tema (putih di gelap, hitam di terang). Halaman ini sengaja tanpa Azure (revisi pemilik). */
+/* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Pilihan efek pemilik
+   2026-10-05: E4 entri tidak aktif buram lalu tajam saat aktif; D10 logo aktif hanya membesar;
+   C1 kilau abu menyapu judul aktif; B9 cahaya di garis mengikuti entri aktif. Teks redup memakai
+   warna, bukan opacity, agar kontras tetap AA. Halaman ini tanpa Azure. */
 .xp-tl > li {
   transition: filter 350ms;
 }
+.xp-tl > li .xp-main,
+.xp-tl > li .xp-side {
+  transition: filter 450ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 .xp-tl[data-focus] > li:not([data-active]) {
   filter: grayscale(1);
+}
+.xp-tl[data-focus] > li:not([data-active]) .xp-main,
+.xp-tl[data-focus] > li:not([data-active]) .xp-side {
+  filter: blur(2px);
 }
 .xp-tl[data-focus] > li:not([data-active]) .xp-main,
 .xp-tl[data-focus] > li:not([data-active]) .xp-main *,
@@ -419,40 +433,58 @@
 }
 .xp-tl[data-focus] > li:not([data-active]) .xp-photo,
 .xp-tl[data-focus] > li:not([data-active]) .xp-node {
-  opacity: 0.35;
+  opacity: 0.4;
 }
 .xp-tl[data-focus] > li[data-active] .xp-node {
-  transform: scale(1.18);
+  transform: scale(1.12);
   border-color: color-mix(in oklab, var(--text) 25%, transparent);
 }
-.xp-tl[data-focus] > li[data-active] .xp-node::before {
+.xp-tl[data-focus] > li[data-active] h2 {
+  background: linear-gradient(
+      110deg,
+      var(--text) 35%,
+      color-mix(in srgb, var(--text) 40%, var(--bg)) 50%,
+      var(--text) 65%
+    )
+    0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: xp-title-shine 2.6s linear infinite;
+}
+@keyframes xp-title-shine {
+  to {
+    background-position: -250% 0;
+  }
+}
+/* cahaya di garis berpusat di logo entri aktif (--xp-fill diisi FocusTimeline) */
+.xp-tl[data-focus]::after {
   content: '';
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  padding: 2px;
+  left: 1.5rem;
+  /* tidak naik melewati awal garis (entri pertama) */
+  top: max(0px, calc(var(--xp-fill, 0px) - 7.5rem));
+  z-index: 0;
+  width: 2px;
+  height: 15rem;
+  margin-left: -1px;
   pointer-events: none;
-  background: conic-gradient(
-    from var(--shine-angle),
-    transparent 0deg 200deg,
-    color-mix(in oklab, var(--text) 95%, transparent) 290deg,
-    transparent 340deg 360deg
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  animation: login-shine 4s linear infinite;
+  background: linear-gradient(transparent, var(--text), transparent);
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--text) 70%, transparent));
+  transition: top 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (min-width: 768px) {
+  .xp-tl[data-focus]::after {
+    left: 50%;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xp-tl[data-focus] > li[data-active] .xp-node::before {
+  .xp-tl[data-focus] > li[data-active] h2 {
     animation: none;
   }
+  .xp-tl[data-focus]::after,
+  .xp-tl > li .xp-main,
+  .xp-tl > li .xp-side,
   .xp-tl > li,
   .xp-node,
   .xp-photo,

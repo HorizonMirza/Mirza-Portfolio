@@ -118,14 +118,16 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                 </div>
                 <div className="xp-side">
                   {e.photo ? (
-                    <Image
-                      src={e.photo.url}
-                      alt={loc(e.photo, 'alt', locale)}
-                      width={e.photo.width ?? 800}
-                      height={e.photo.height ?? 600}
-                      sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
-                      className="xp-photo"
-                    />
+                    <span className="xp-frame">
+                      <Image
+                        src={e.photo.url}
+                        alt={loc(e.photo, 'alt', locale)}
+                        width={e.photo.width ?? 800}
+                        height={e.photo.height ?? 600}
+                        sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
+                        className="xp-photo"
+                      />
+                    </span>
                   ) : (
                     <p className="xp-year">
                       <span className="font-display text-[2.75rem] leading-none font-bold">
