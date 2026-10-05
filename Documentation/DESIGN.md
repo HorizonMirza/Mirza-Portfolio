@@ -222,15 +222,20 @@ Tombol "Unduh CV" harus terlihat tanpa scroll di 360 × 640 px.
 
 ### 5.2 About
 
+Rancangan C sejak 2026-10-05 (bagian 39):
+
 ```
-┌───────────────────────────────┐
-│ h1 Tentang saya               │
-│ ┌──────────┐  Bio personal    │
-│ │  foto    │  (3–4 paragraf)  │
-│ └──────────┘  Kota · Email · WhatsApp · Sosial │
-│ Nilai kerja / cara saya bekerja (daftar singkat) │
-│ [Unduh CV]                    │
-└───────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│ ████ pita hitam ████████████████████████████ │
+│ ████ ┌────────┐ TENTANG SAYA ███████████████ │
+│ ████ │ kartu  │ MUHAMMAD MIRZA █████████████ │
+│ ████ │ foto   │ headline · [Unduh CV] ██████ │
+│ ─────│        │───────────────────────────── │
+│      └────────┘ PENDIDIKAN                    │
+│ TENTANG SAYA    ┌─────────┐ ┌─────────┐       │
+│ bio             │ SMA     │ │ BINUS   │       │
+│                 └─────────┘ └─────────┘       │
+└──────────────────────────────────────────────┘
 ```
 
 ### 5.3 Experience
@@ -589,3 +594,12 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Revisi pemilik (2026-10-05 sore): judul tanpa efek kilau; durasi bahasa Inggris selalu "yrs" (contoh "1 yrs", permintaan pemilik); durasi di bawah tahun besar dihapus (durasi tetap di baris tanggal); garis tidak lagi tampak menembus kotak logo (entri berada di atas garis, redup hanya pada isi kotak, latar kotak tetap pekat); bingkai foto lebih tipis (2,5 px).
 - Logo C10 (pilihan pemilik 2026-10-05): kilau putih menyapu logo satu kali saat entri menjadi aktif. Kotak logo memakai garis tepi 1 px yang redup dan menyala saat entri aktif (demo garis logo nomor 3). Tepi digambar sebagai lapisan `::before` di atas gambar (bukan `border`) agar tidak ada celah hitam-putih di sudut. Bingkai foto mode terang didominasi hitam (revisi pemilik). Sisi atas foto dan kotak logo sejajar satu baris di layar lebar (padding atas sisi foto dihapus, logo aktif membesar ke bawah dari sisi atasnya). Warnanya mengikuti garis timeline (revisi pemilik): saat redup sama dengan garis dasar (`--border`), saat aktif sama dengan inti cahaya garis (`--xp-line-core`, putih di gelap dan hitam di terang) setebal 2 px dengan pendar `--xp-line-glow`, dan garis timeline menyentuh kotak logo tanpa celah (cincin latar 6 px dihapus). Mode terang hanya mengganti warna, desain sama dengan mode gelap: garis inti `#171717` berpendar abu muda (A4), bingkai foto perak gelap (B1). Warna ada di variabel `--xp-line-core`, `--xp-line-glow`, dan `--xp-silver`.
 
+
+## 39. Halaman Tentang: rancangan C (2026-10-05)
+
+- Pilihan pemilik dari 50 demo dan 5 gabungan (nomor 7 Lembar CV dan 36 Dua kartu pendidikan): **C**. Isi halaman hanya tiga hal: bio, pendidikan (SMA dan kuliah), dan tombol Unduh CV. Daftar kontak (email, WhatsApp, sosial, kota) dan tautan "Lihat pengalaman" dihapus dari halaman ini; kontak tetap ada di halaman Kontak dan footer.
+- **Pita hitam** (`.ab-band`): latar `--text` dan teks `--bg`, jadi otomatis putih di tema gelap. Berisi label "Tentang saya", nama (h1), headline, dan tombol Unduh CV (`.ab-cv`, terbalik dari pita). Tombol hanya tampil bila CV sudah diunggah atau tautannya diisi di admin.
+- **Kartu foto menggantung** (`.ab-pc`, komponen `AboutPhotoCard`): bingkai gelap 3 px dengan cincin terang di luar supaya terlihat di atas pita dan di bawahnya, siku bidik di empat sudut, chip kampus di sudut atas kanan (logo dan nama), pil semester di bawah, dan chip bendera Indonesia (hiasan, `aria-hidden`). Foto dari admin (Cloudinary) didahulukan, bila belum ada dipakai foto bawaan.
+- **Pendidikan** (`.ab-edu`): kartu besar berisi logo, nama instansi, jurusan atau program, dan periode. Datanya dari entri Pengalaman bertipe **Pendidikan** (tidak ada tabel baru): urut dari yang paling lama ke terbaru, jadi SMA lalu kuliah. Tambah SMA lewat admin: Pengalaman baru, tipe Pendidikan, isi instansi dan program, unggah logo.
+- **Chip kampus dan pil semester** diambil dari pendidikan yang masih berjalan (bila tidak ada, yang terbaru, dan pilnya disembunyikan). Nomor semester **dihitung otomatis** dari bulan mulai (`semesterNumber`, 6 bulan per semester): Sep 2024 pada Okt 2026 menjadi "Semester 5" / "5th semester". Ini perkiraan, bukan data resmi kampus.
+- Mobile (di bawah 860 px): kartu foto berada di dalam pita tanpa menggantung, bio dan kartu pendidikan bertumpuk.

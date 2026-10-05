@@ -45,7 +45,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | ID | Fitur | Prioritas |
 |---|---|---|
 | F1 | **Home**: hero layar penuh dengan animasi, nama, posisi yang dicari, CTA Unduh CV + GitHub, ringkasan project unggulan | P0 |
-| F2 | **About**: bio personal, foto, data kontak yang boleh ditampilkan | P0 |
+| F2 | **About**: bio personal, kartu foto, pendidikan (SMA dan kuliah, dari entri Pengalaman bertipe Pendidikan), dan tombol Unduh CV. Kontak tidak ditampilkan di sini sejak 2026-10-05 (keputusan pemilik) | P0 |
 | F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan filter, logo instansi, dan foto kegiatan. Pendidikan tidak ditampilkan di sini sejak 2026-10-03 (keputusan pemilik); data pendidikan tetap dipakai halaman About | P0 |
 | F4 | **Skills**: dikelompokkan (Frontend, Backend, Database, Tools/DevOps), tanpa progress bar persen **[ASUMSI]** | P0 |
 | F5 | **Projects**: daftar + halaman detail (galeri, tech stack, demo, repo, tahun, studi kasus) + metadata GitHub otomatis | P0 |

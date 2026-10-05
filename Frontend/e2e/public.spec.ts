@@ -226,6 +226,17 @@ test.describe('route handler publik', () => {
   })
 })
 
+test('halaman Tentang menampilkan nama, bio, pendidikan, dan label semester', async ({ page }) => {
+  await page.goto('/id/about')
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Muhammad Mirza')
+  await expect(page.getByRole('heading', { name: 'Pendidikan', level: 2 })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'BINUS University', level: 3 })).toBeVisible()
+  await expect(page.getByText(/^Semester \d+$/)).toBeVisible()
+  await page.goto('/en/about')
+  await expect(page.getByRole('heading', { name: 'Education', level: 2 })).toBeVisible()
+  await expect(page.getByText(/^\d+(st|nd|rd|th) semester$/)).toBeVisible()
+})
+
 test('header keamanan ada dan tidak ada pelanggaran CSP di halaman publik', async ({
   page,
   request,

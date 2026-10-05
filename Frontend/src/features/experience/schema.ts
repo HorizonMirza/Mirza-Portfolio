@@ -92,3 +92,26 @@ export function monthToDate(month: string): Date {
 export function dateToMonth(date: Date): string {
   return date.toISOString().slice(0, 7)
 }
+
+// Inisial instansi untuk kotak logo bila logo belum diunggah ("PT PGAS Solution" → "PS").
+export function initials(organization: string): string {
+  const words = organization
+    .replace(/^PT\s+/i, '')
+    .replace(/,.*$/, '')
+    .split(/\s+/)
+    .filter((w) => /^[A-Z0-9]/.test(w))
+  return (
+    words
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join('') || organization.slice(0, 2).toUpperCase()
+  )
+}
+
+// Semester ke berapa untuk pendidikan yang masih berjalan, dihitung dari bulan mulai
+// ("2024-09" lalu Oktober 2026 → 5). Satu semester dihitung 6 bulan; perkiraan, bukan data resmi kampus.
+export function semesterNumber(start: string, now: Date = new Date()): number {
+  const [sy, sm] = start.split('-').map(Number)
+  const months = (now.getUTCFullYear() - sy) * 12 + (now.getUTCMonth() + 1 - sm)
+  return Math.max(1, Math.floor(months / 6) + 1)
+}

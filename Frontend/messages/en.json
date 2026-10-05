@@ -79,12 +79,12 @@
   },
   "About": {
     "metaTitle": "About me",
-    "metaDescription": "Background, contact details, and CV of Muhammad Mirza.",
+    "metaDescription": "Background, education, and CV of Muhammad Mirza.",
     "title": "About me",
-    "contactHeading": "Contact",
-    "city": "City",
-    "downloadCv": "Download CV",
-    "journeyLink": "See experience and education"
+    "educationHeading": "Education",
+    "semester": "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} semester",
+    "noEducation": "No education history has been published yet.",
+    "downloadCv": "Download CV"
   },
   "Experience": {
     "metaTitle": "Experience",

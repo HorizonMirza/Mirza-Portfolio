@@ -6,7 +6,7 @@ import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
 import { getPublicExperiences, type PublicExperience } from '@/features/experience/public'
-import { sortByLatest } from '@/features/experience/schema'
+import { initials, sortByLatest } from '@/features/experience/schema'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
@@ -34,21 +34,6 @@ function monthsBetween(start: string, end: string | null) {
   const now = new Date()
   const [ey, em] = end ? end.split('-').map(Number) : [now.getUTCFullYear(), now.getUTCMonth() + 1]
   return Math.max(1, (ey - sy) * 12 + (em - sm) + 1)
-}
-
-// Inisial instansi untuk simpul timeline bila logo belum diunggah ("PT PGAS Solution" → "PS").
-function initials(organization: string) {
-  const words = organization
-    .replace(/^PT\s+/i, '')
-    .replace(/,.*$/, '')
-    .split(/\s+/)
-    .filter((w) => /^[A-Z0-9]/.test(w))
-  return (
-    words
-      .slice(0, 2)
-      .map((w) => w[0])
-      .join('') || organization.slice(0, 2).toUpperCase()
-  )
 }
 
 // Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03, DESIGN.md bagian 38): hitam-putih,

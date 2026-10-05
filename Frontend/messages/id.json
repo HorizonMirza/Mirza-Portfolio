@@ -79,12 +79,12 @@
   },
   "About": {
     "metaTitle": "Tentang saya",
-    "metaDescription": "Latar belakang, kontak, dan CV Muhammad Mirza.",
+    "metaDescription": "Latar belakang, pendidikan, dan CV Muhammad Mirza.",
     "title": "Tentang saya",
-    "contactHeading": "Kontak",
-    "city": "Kota",
-    "downloadCv": "Unduh CV",
-    "journeyLink": "Lihat pengalaman dan pendidikan"
+    "educationHeading": "Pendidikan",
+    "semester": "Semester {n}",
+    "noEducation": "Belum ada riwayat pendidikan yang diterbitkan.",
+    "downloadCv": "Unduh CV"
   },
   "Experience": {
     "metaTitle": "Pengalaman",
