@@ -172,6 +172,23 @@ export const experiences: SeedExperience[] = [
     location: "Tangerang",
   },
   {
+    key: "smas-budi-luhur",
+    type: "EDUCATION",
+    organization: "SMAS Budi Luhur",
+    title: {
+      id: "SMA IPA",
+      en: "Senior High School, SMA IPA",
+    },
+    // dari LinkedIn pemilik (2026-10-05): hanya tahun yang diketahui, bulan 07 dan 06 hanya untuk urutan
+    description: {
+      id: "Nilai: 88,3",
+      en: "Grade: 88.3",
+    },
+    startDate: "2021-07-01",
+    endDate: "2024-06-01",
+    location: "Tangerang",
+  },
+  {
     key: "binus-university",
     type: "EDUCATION",
     organization: "BINUS University",

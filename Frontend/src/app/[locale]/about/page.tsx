@@ -11,7 +11,7 @@ import { AboutPhotoCard } from '@/features/profile/components/about-photo-card'
 import { getPublicProfile } from '@/features/profile/public'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
-import { formatMonth, loc } from '@/lib/localized'
+import { loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
 
 export async function generateMetadata({
@@ -142,8 +142,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                     </h3>
                     <p className="mt-1 text-muted">{loc(e, 'title', locale)}</p>
                     <p className="text-sm text-muted tabular-nums">
-                      {formatMonth(e.start, locale)} –{' '}
-                      {e.end ? formatMonth(e.end, locale) : tCommon('present')}
+                      {e.start.slice(0, 4)} – {e.end ? e.end.slice(0, 4) : tCommon('present')}
                     </p>
                     <MarkdownView
                       source={loc(e, 'description', locale)}

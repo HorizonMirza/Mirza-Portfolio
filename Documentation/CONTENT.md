@@ -69,7 +69,10 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 
 | Instansi | Program | Periode | Catatan |
 |---|---|---|---|
+| SMAS Budi Luhur, Tangerang | SMA IPA | 2021 – 2024 | Nilai 88,3 (dari LinkedIn pemilik 2026-10-05; tidak ada di CV). Hanya tahun yang diketahui |
 | BINUS University, Tangerang | S1 Computer Science – Artificial Intelligence | September 2024 – sekarang | IPK kumulatif 3,41/4,0 (sampai semester 5). Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering |
+
+**Catatan IPK:** LinkedIn pemilik mencantumkan 3,5, sedangkan CV 3,41/4,0 (sampai semester 5); situs memakai angka CV, bisa diubah dari admin.
 
 **Diputuskan 2026-10-05:** IPK 3,41/4,0 (sampai semester 5) ditampilkan di kartu pendidikan halaman Tentang, sesuai CV terbaru yang dikirim pemilik. Angkanya perlu diperbarui tiap semester lewat admin (deskripsi entri Pendidikan). Pendidikan sebelum BINUS (SMA) tidak ada di CV.
 
