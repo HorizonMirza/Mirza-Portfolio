@@ -98,7 +98,7 @@
     "EDUCATION": "Education",
     "empty": "Nothing in this category yet.",
     "none": "No experience published yet.",
-    "durationYears": "{count, plural, one {# yr} other {# yrs}}",
+    "durationYears": "{count} yrs",
     "durationMonths": "{count, plural, one {# mo} other {# mos}}",
     "listLabel": "Experience history",
     "employment": {

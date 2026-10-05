@@ -318,7 +318,7 @@
   width: 100%;
   max-width: 20rem;
   margin-left: var(--xp-push);
-  padding: 4px;
+  padding: 2.5px;
   border-radius: var(--radius-lg);
   background: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
 }
@@ -409,9 +409,11 @@
 }
 /* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Pilihan efek pemilik
    2026-10-05: E4 entri tidak aktif buram lalu tajam saat aktif; D10 logo aktif hanya membesar;
-   C1 kilau abu menyapu judul aktif; B9 cahaya di garis mengikuti entri aktif. Teks redup memakai
+   B9 cahaya di garis mengikuti entri aktif. Judul tanpa efek (revisi pemilik). Teks redup memakai
    warna, bukan opacity, agar kontras tetap AA. Halaman ini tanpa Azure. */
 .xp-tl > li {
+  /* entri di atas garis dasar dan cahaya garis, agar garis berhenti rapi di tepi kotak logo */
+  z-index: 1;
   transition: filter 350ms;
 }
 .xp-tl > li .xp-main,
@@ -431,31 +433,16 @@
 .xp-tl[data-focus] > li:not([data-active]) .xp-year * {
   color: color-mix(in srgb, var(--text-muted) 85%, var(--bg));
 }
+.xp-node > * {
+  transition: opacity 300ms;
+}
 .xp-tl[data-focus] > li:not([data-active]) .xp-photo,
-.xp-tl[data-focus] > li:not([data-active]) .xp-node {
+.xp-tl[data-focus] > li:not([data-active]) .xp-node > * {
   opacity: 0.4;
 }
 .xp-tl[data-focus] > li[data-active] .xp-node {
   transform: scale(1.12);
   border-color: color-mix(in oklab, var(--text) 25%, transparent);
-}
-.xp-tl[data-focus] > li[data-active] h2 {
-  background: linear-gradient(
-      110deg,
-      var(--text) 35%,
-      color-mix(in srgb, var(--text) 40%, var(--bg)) 50%,
-      var(--text) 65%
-    )
-    0 0 / 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: xp-title-shine 2.6s linear infinite;
-}
-@keyframes xp-title-shine {
-  to {
-    background-position: -250% 0;
-  }
 }
 /* cahaya di garis berpusat di logo entri aktif (--xp-fill diisi FocusTimeline) */
 .xp-tl[data-focus]::after {
@@ -479,14 +466,12 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xp-tl[data-focus] > li[data-active] h2 {
-    animation: none;
-  }
   .xp-tl[data-focus]::after,
   .xp-tl > li .xp-main,
   .xp-tl > li .xp-side,
   .xp-tl > li,
   .xp-node,
+  .xp-node > *,
   .xp-photo,
   .xp-tl > li h2 {
     transition: none;

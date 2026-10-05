@@ -133,9 +133,6 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                       <span className="font-display text-[2.75rem] leading-none font-bold">
                         {e.start.slice(0, 4)}
                       </span>
-                      <span className="mt-2 block font-mono text-label tracking-widest uppercase">
-                        {duration(e)}
-                      </span>
                     </p>
                   )}
                 </div>
