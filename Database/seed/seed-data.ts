@@ -50,8 +50,8 @@ export const profile: SeedProfile = {
     en: "AI student at BINUS who builds software and communities.",
   },
   bio: {
-    id: "Saya mahasiswa Computer Science (Artificial Intelligence) di BINUS University. Saya membangun aplikasi fullstack dan komunitas, dari komunitas gaming dan turnamen hingga komunitas padel dengan lebih dari 1.000 anggota.",
-    en: "I am a Computer Science (Artificial Intelligence) student at BINUS University. I build fullstack applications and communities, from gaming communities and tournaments to a padel community with over 1,000 members.",
+    id: "Mahasiswa Computer Science di Bina Nusantara University dengan peminatan Artificial Intelligence dan minat besar pada inovasi teknologi. Saya telah membangun fondasi yang kuat di Full-Stack Development dan teknologi AI, sambil aktif menjelajahi ekosistem kripto. Di luar latar belakang teknis, saya adalah pembangun komunitas yang telah mengembangkan berbagai inisiatif, mulai dari bisnis voucher game digital hingga komunitas padel dengan lebih dari 1.000 anggota.",
+    en: "Computer Science student at Bina Nusantara University, specializing in Artificial Intelligence with a deep passion for technological innovation. I have built a strong foundation in both Full-Stack Development and AI technologies, while actively exploring the cryptocurrency ecosystem. Beyond my technical background, I am a proven community builder who has successfully grown various initiatives, ranging from a digital game voucher business to a padel community with over 1,000 members.",
   },
   city: "Tangerang",
   socials: {
@@ -179,10 +179,10 @@ export const experiences: SeedExperience[] = [
       id: "S1 Computer Science – Artificial Intelligence",
       en: "Bachelor of Computer Science – Artificial Intelligence",
     },
-    // TODO(konten): tampilkan IPK atau tidak masih ditanyakan, jadi tidak dimasukkan
+    // IPK dan mata kuliah dari CV terbaru pemilik (2026-10-05)
     description: {
-      id: "Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering.",
-      en: "Relevant coursework: Web Application Development, Artificial Intelligence, Software Engineering.",
+      id: "IPK kumulatif (sampai semester 5): 3,41/4,0\n\nMata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering.",
+      en: "Cumulative GPA (up to the 5th semester): 3.41/4.0\n\nRelevant coursework: Web Application Development, Artificial Intelligence, Software Engineering.",
     },
     startDate: "2024-09-01",
     endDate: null,

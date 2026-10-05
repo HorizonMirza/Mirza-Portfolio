@@ -226,13 +226,20 @@ test.describe('route handler publik', () => {
   })
 })
 
-test('halaman Tentang menampilkan nama, bio, pendidikan, dan label semester', async ({ page }) => {
+test('halaman Tentang menampilkan judul, nama, peran, bio, pendidikan, dan label semester', async ({
+  page,
+}) => {
   await page.goto('/id/about')
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Muhammad Mirza')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tentang saya')
+  await expect(page.getByRole('heading', { name: 'Muhammad Mirza Wirya', level: 2 })).toBeVisible()
+  await expect(page.getByText('Fullstack Developer | Community Manager')).toBeVisible()
+  await expect(page.getByText(/Bina Nusantara University/)).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Pendidikan', level: 2 })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'BINUS University', level: 3 })).toBeVisible()
+  await expect(page.getByText(/IPK kumulatif \(sampai semester 5\): 3,41\/4,0/)).toBeVisible()
   await expect(page.getByText(/^Semester \d+$/)).toBeVisible()
   await page.goto('/en/about')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('About me')
   await expect(page.getByRole('heading', { name: 'Education', level: 2 })).toBeVisible()
   await expect(page.getByText(/^\d+(st|nd|rd|th) semester$/)).toBeVisible()
 })

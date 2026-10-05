@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
-import { Container } from '@/components/site/section-heading'
+import { Container, PageIntro } from '@/components/site/section-heading'
 import { getPublicExperiences } from '@/features/experience/public'
 import { initials, semesterNumber } from '@/features/experience/schema'
 import { AboutPhotoCard } from '@/features/profile/components/about-photo-card'
@@ -68,7 +68,8 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
   )
 
   return (
-    <Container className="pt-8 pb-20">
+    <Container className="pb-20">
+      <PageIntro title={t('title')} align="center" />
       <div className="ab-band">
         <AboutPhotoCard
           photo={photo}
@@ -86,13 +87,10 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
           }
         />
         <div className="ab-band-text">
-          <p className="font-mono text-label tracking-widest uppercase opacity-65">{t('title')}</p>
-          <h1 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
+          <h2 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
             {profile?.name ?? 'Muhammad Mirza'}
-          </h1>
-          {profile ? (
-            <p className="text-lg opacity-80">{loc(profile, 'headline', locale)}</p>
-          ) : null}
+          </h2>
+          <p className="text-lg tracking-wide uppercase opacity-80">{t('roles')}</p>
           {profile?.hasCv ? (
             <div>
               <a href={`/api/cv?locale=${locale}`} className="ab-cv">
@@ -105,7 +103,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
       </div>
 
       <div className="ab-body">
-        <section aria-labelledby="about-bio" className="ab-body-l">
+        <section aria-labelledby="about-bio">
           <h2 id="about-bio" className="ab-label">
             {t('title')}
           </h2>
@@ -147,6 +145,11 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                       {formatMonth(e.start, locale)} –{' '}
                       {e.end ? formatMonth(e.end, locale) : tCommon('present')}
                     </p>
+                    <MarkdownView
+                      source={loc(e, 'description', locale)}
+                      size="sm"
+                      className="mt-3 text-muted"
+                    />
                   </div>
                 </li>
               ))}

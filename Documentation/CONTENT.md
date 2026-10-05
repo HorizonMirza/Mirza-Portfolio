@@ -71,7 +71,7 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 |---|---|---|---|
 | BINUS University, Tangerang | S1 Computer Science – Artificial Intelligence | September 2024 – sekarang | IPK kumulatif 3,41/4,0 (sampai semester 5). Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering |
 
-**[TANYA]** Tampilkan IPK di situs? Sebaiknya perbarui angkanya tiap semester (bisa diubah dari admin).
+**Diputuskan 2026-10-05:** IPK 3,41/4,0 (sampai semester 5) ditampilkan di kartu pendidikan halaman Tentang, sesuai CV terbaru yang dikirim pemilik. Angkanya perlu diperbarui tiap semester lewat admin (deskripsi entri Pendidikan). Pendidikan sebelum BINUS (SMA) tidak ada di CV.
 
 ## 6. Skills (dikelompokkan, tanpa angka/persen)
 

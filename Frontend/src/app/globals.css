@@ -555,15 +555,15 @@
   border-top: 0;
   border-radius: 0 0 12px 12px;
 }
-/* kolom bio mulai di bawah kartu foto yang menggantung dari pita */
-.ab-body-l {
+/* bio dan pendidikan sama-sama mulai di bawah kartu foto yang menggantung dari pita, jadi
+   judul "Tentang saya" dan "Pendidikan" sejajar satu baris (revisi pemilik 2026-10-05) */
+.ab-body > section {
   display: grid;
   gap: 14px;
   align-content: start;
   padding-top: 140px;
 }
 .ab-label {
-  margin-bottom: 14px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--text);
   color: var(--text-muted);
@@ -572,9 +572,6 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-}
-.ab-body-l .ab-label {
-  margin-bottom: 0;
 }
 .ab-cv {
   display: inline-flex;
@@ -784,7 +781,7 @@
     grid-template-columns: minmax(0, 1fr);
     padding: 24px 20px;
   }
-  .ab-body-l {
+  .ab-body > section {
     padding-top: 0;
   }
   .ab-edu {
