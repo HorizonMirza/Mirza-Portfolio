@@ -299,7 +299,6 @@
   /* persegi bersudut tumpul (demo nomor 9), bukan bulat */
   border-radius: 12px;
   background: var(--surface);
-  box-shadow: 0 0 0 6px var(--bg);
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
