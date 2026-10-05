@@ -258,17 +258,11 @@
   --xp-silver: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
   --xp-line-core: var(--text);
   --xp-line-glow: color-mix(in oklab, var(--text) 70%, transparent);
-  --xp-ring: #2a2a2a;
-  --xp-ring-on: #f5f5f5;
-  --xp-ring-halo: rgb(245 245 245 / 0.35);
 }
 :root:not(.dark) .xp-tl {
   --xp-silver: linear-gradient(135deg, #e5e5e5, #6b6b6b 30%, #d4d4d4 50%, #4a4a4a 70%, #a3a3a3);
   --xp-line-core: #171717;
   --xp-line-glow: rgb(163 163 163 / 0.6);
-  --xp-ring: #e0e0e0;
-  --xp-ring-on: #0a0a0a;
-  --xp-ring-halo: rgb(0 0 0 / 0.18);
 }
 .xp-tl::before {
   content: '';
@@ -302,7 +296,8 @@
   height: 2.75rem;
   overflow: hidden;
   /* garis tepi redup yang menyala saat entri aktif (demo garis logo nomor 3, pilihan pemilik) */
-  border: 1px solid var(--xp-ring);
+  /* warna tepi sama dengan garis timeline: redup = garis dasar, aktif = inti cahaya garis */
+  border: 1px solid var(--border);
   /* persegi bersudut tumpul (demo nomor 9), bukan bulat */
   border-radius: 12px;
   background: var(--surface);
@@ -458,8 +453,11 @@
 }
 .xp-tl[data-focus] > li[data-active] .xp-node {
   transform: scale(1.12);
-  border-color: var(--xp-ring-on);
-  box-shadow: 0 0 12px 1px var(--xp-ring-halo);
+  border-color: var(--xp-line-core);
+  /* 1 px tambahan agar tebalnya sama dengan garis 2 px, pendar sama dengan garis */
+  box-shadow:
+    0 0 0 1px var(--xp-line-core),
+    0 0 6px var(--xp-line-glow);
 }
 /* C10: kilau putih menyapu logo satu kali saat entri menjadi aktif */
 .xp-node::after {
