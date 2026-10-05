@@ -254,6 +254,8 @@
   position: relative;
   display: grid;
   gap: 3rem;
+  --xp-silver: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
+  --xp-edge: linear-gradient(135deg, #e8e8e8, #8f8f8f 50%, #d4d4d4);
 }
 .xp-tl::before {
   content: '';
@@ -286,17 +288,19 @@
   width: 2.75rem;
   height: 2.75rem;
   overflow: hidden;
-  border: 1px solid var(--border);
+  /* C10 (pilihan pemilik 2026-10-05): tepi perak tipis lewat latar border-box, bukan garis abu */
+  border: 1.5px solid transparent;
   /* persegi bersudut tumpul (demo nomor 9), bukan bulat */
   border-radius: 12px;
-  background: var(--surface);
+  background:
+    linear-gradient(var(--surface), var(--surface)) padding-box,
+    var(--xp-edge) border-box;
   box-shadow: 0 0 0 6px var(--bg);
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   transition:
     transform 300ms var(--ease-out-soft),
-    border-color 300ms,
     filter 300ms,
     opacity 300ms;
 }
@@ -320,7 +324,7 @@
   margin-left: var(--xp-push);
   padding: 2.5px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
+  background: var(--xp-silver);
 }
 .xp-photo {
   display: block;
@@ -442,7 +446,24 @@
 }
 .xp-tl[data-focus] > li[data-active] .xp-node {
   transform: scale(1.12);
-  border-color: color-mix(in oklab, var(--text) 25%, transparent);
+}
+/* C10: kilau putih menyapu logo satu kali saat entri menjadi aktif */
+.xp-node::after {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgb(255 255 255 / 0.7) 50%, transparent 62%);
+  transform: translateX(-120%);
+}
+.xp-tl[data-focus] > li[data-active] .xp-node::after {
+  animation: xp-glint 1.1s 0.15s ease-out both;
+}
+@keyframes xp-glint {
+  to {
+    transform: translateX(120%);
+  }
 }
 /* cahaya di garis berpusat di logo entri aktif (--xp-fill diisi FocusTimeline) */
 .xp-tl[data-focus]::after {
@@ -466,6 +487,9 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .xp-tl[data-focus] > li[data-active] .xp-node::after {
+    animation: none;
+  }
   .xp-tl[data-focus]::after,
   .xp-tl > li .xp-main,
   .xp-tl > li .xp-side,
