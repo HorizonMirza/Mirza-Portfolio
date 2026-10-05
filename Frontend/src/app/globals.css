@@ -254,8 +254,15 @@
   position: relative;
   display: grid;
   gap: 3rem;
+  /* warna mode gelap; mode terang hanya mengganti warna (pilihan pemilik A4, B1) */
   --xp-silver: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
-  --xp-edge: linear-gradient(135deg, #e8e8e8, #8f8f8f 50%, #d4d4d4);
+  --xp-line-core: var(--text);
+  --xp-line-glow: color-mix(in oklab, var(--text) 70%, transparent);
+}
+:root:not(.dark) .xp-tl {
+  --xp-silver: linear-gradient(135deg, #e5e5e5, #6b6b6b 30%, #d4d4d4 50%, #4a4a4a 70%, #a3a3a3);
+  --xp-line-core: #171717;
+  --xp-line-glow: rgb(163 163 163 / 0.6);
 }
 .xp-tl::before {
   content: '';
@@ -288,13 +295,10 @@
   width: 2.75rem;
   height: 2.75rem;
   overflow: hidden;
-  /* C10 (pilihan pemilik 2026-10-05): tepi perak tipis lewat latar border-box, bukan garis abu */
-  border: 1.5px solid transparent;
+  /* tanpa garis tepi di kedua tema (revisi pemilik 2026-10-05) */
   /* persegi bersudut tumpul (demo nomor 9), bukan bulat */
   border-radius: 12px;
-  background:
-    linear-gradient(var(--surface), var(--surface)) padding-box,
-    var(--xp-edge) border-box;
+  background: var(--surface);
   box-shadow: 0 0 0 6px var(--bg);
   font-family: var(--font-display);
   font-size: 1rem;
@@ -477,8 +481,8 @@
   height: 15rem;
   margin-left: -1px;
   pointer-events: none;
-  background: linear-gradient(transparent, var(--text), transparent);
-  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--text) 70%, transparent));
+  background: linear-gradient(transparent, var(--xp-line-core), transparent);
+  filter: drop-shadow(0 0 6px var(--xp-line-glow));
   transition: top 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 @media (min-width: 768px) {
