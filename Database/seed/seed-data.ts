@@ -196,10 +196,10 @@ export const experiences: SeedExperience[] = [
       id: "S1 Computer Science – Artificial Intelligence",
       en: "Bachelor of Computer Science – Artificial Intelligence",
     },
-    // IPK dan mata kuliah dari CV terbaru pemilik (2026-10-05)
+    // IPK dari CV terbaru pemilik (2026-10-05); mata kuliah relevan dihapus atas permintaan pemilik
     description: {
-      id: "IPK kumulatif (sampai semester 5): 3,41/4,0\n\nMata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering.",
-      en: "Cumulative GPA (up to the 5th semester): 3.41/4.0\n\nRelevant coursework: Web Application Development, Artificial Intelligence, Software Engineering.",
+      id: "IPK kumulatif (sampai semester 5): 3,41/4,0",
+      en: "Cumulative GPA (up to the 5th semester): 3.41/4.0",
     },
     startDate: "2024-09-01",
     endDate: null,

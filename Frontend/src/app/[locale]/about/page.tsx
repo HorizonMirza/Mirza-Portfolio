@@ -107,7 +107,9 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
           <h2 id="about-bio" className="ab-label">
             {t('title')}
           </h2>
-          {profile ? <MarkdownView source={loc(profile, 'bio', locale)} size="base" /> : null}
+          {profile ? (
+            <MarkdownView source={loc(profile, 'bio', locale)} size="base" className="ab-bio" />
+          ) : null}
         </section>
 
         <section aria-labelledby="about-edu">

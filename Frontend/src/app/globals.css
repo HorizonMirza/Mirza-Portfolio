@@ -532,10 +532,10 @@
    kartu pendidikan. Pita memakai warna teks sebagai latar sehingga otomatis terbalik di tema gelap. */
 .ab-band {
   display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
   gap: 40px;
   align-items: end;
-  padding: 44px 44px 0;
+  padding: 24px 44px 0;
   border: 1px solid var(--text);
   border-radius: 12px 12px 0 0;
   background: var(--text);
@@ -548,7 +548,8 @@
 }
 .ab-body {
   display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  /* kolom bio lebih lebar dari kartu foto agar teks rata kiri-kanan tidak berjarak lebar */
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
   gap: 40px;
   padding: 44px;
   border: 1px solid var(--border);
@@ -561,17 +562,23 @@
   display: grid;
   gap: 14px;
   align-content: start;
-  padding-top: 140px;
+  padding-top: 125px;
 }
 .ab-label {
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--text);
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
   text-transform: uppercase;
+}
+/* teks tentang saya rata kiri-kanan supaya tepi kanan rapi (revisi pemilik) */
+.ab-bio p {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
 }
 .ab-cv {
   display: inline-flex;
@@ -624,7 +631,7 @@
 .ab-pc {
   position: relative;
   z-index: 2;
-  margin: 0 0 -130px;
+  margin: 0 0 -110px;
   padding: 14px 0 14px 14px;
 }
 .ab-pc-frame {
@@ -764,6 +771,19 @@
   border-radius: 50%;
   background: linear-gradient(180deg, #d9323f 50%, #fff 50%);
 }
+/* tema terang: foto berlatar terang menyatu dengan halaman, jadi bingkai, chip, dan bendera diberi garis dan bayangan yang lebih tegas */
+:root:not(.dark) .ab-pc-frame {
+  box-shadow:
+    0 0 0 5px var(--bg),
+    0 0 0 7px var(--text),
+    0 30px 40px -28px rgb(0 0 0 / 0.55);
+}
+:root:not(.dark) .ab-pc-chip,
+:root:not(.dark) .ab-pc-flag {
+  box-shadow:
+    0 14px 30px -12px rgb(0 0 0 / 0.5),
+    0 0 0 2px var(--text);
+}
 @media (max-width: 860px) {
   .ab-band {
     grid-template-columns: minmax(0, 1fr);
@@ -788,7 +808,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
   /* di layar sempit foto berada di atas pita hitam tanpa menggantung, jadi cincin terang dilepas */
-  .ab-pc-frame {
+  .ab-pc-frame,
+  :root:not(.dark) .ab-pc-frame {
     border-color: var(--bg);
     box-shadow: none;
   }
