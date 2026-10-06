@@ -9,11 +9,13 @@ ignoredBuiltDependencies:
   - unrs-resolver
 
 # Paksa versi aman untuk dependency milik Prisma CLI yang punya celah keamanan
-# (mysql2: GHSA-rgwj-5xj2-c3m3 dan lainnya, deepmerge-ts: stack exhaustion).
-# Hapus bila Prisma sudah memakai versi aman sendiri.
+# (mysql2: GHSA-rgwj-5xj2-c3m3 dan lainnya, deepmerge-ts: stack exhaustion), dan source-map-js dari
+# Tailwind/PostCSS (GHSA-68fv-2mgg-jv7q, DoS pada source map; aman di >=1.2.2).
+# Hapus bila dependency induknya sudah memakai versi aman sendiri.
 overrides:
   mysql2: ^3.23.1
   deepmerge-ts: ^8.0.0
+  source-map-js: ^1.2.2
 
 # Advisory tanpa versi perbaikan (patched: <0.0.0) yang hanya ada di alat pengembangan:
 # braces lewat eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch
