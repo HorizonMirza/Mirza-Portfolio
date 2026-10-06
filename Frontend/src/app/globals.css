@@ -771,6 +771,15 @@
   border-radius: 50%;
   background: linear-gradient(180deg, #d9323f 50%, #fff 50%);
 }
+/* kotak Tentang berbingkai 3 px warna teks (pilihan B pemilik, 2026-10-06), sama tebal dengan bingkai
+   foto: hitam di tema terang, putih di tema gelap, supaya bagian bawah tidak menyatu dengan halaman. */
+.ab-band {
+  border-width: 3px;
+}
+.ab-body {
+  border: 3px solid var(--text);
+  border-top: 0;
+}
 /* tema terang: foto berlatar terang menyatu dengan halaman, jadi bingkai, chip, dan bendera diberi garis dan bayangan yang lebih tegas */
 :root:not(.dark) .ab-pc-frame {
   box-shadow:
