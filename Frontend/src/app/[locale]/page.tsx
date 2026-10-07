@@ -8,7 +8,7 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { getPublicExperiences } from '@/features/experience/public'
-import { sortByLatest } from '@/features/experience/schema'
+import { organizationName, sortByLatest } from '@/features/experience/schema'
 import { GithubCalendar } from '@/features/profile/components/github-calendar'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
@@ -107,7 +107,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           ? { '@type': 'PostalAddress', addressLocality: profile.city, addressCountry: 'ID' }
           : undefined,
         alumniOf: profile.campus
-          ? { '@type': 'CollegeOrUniversity', name: profile.campus.organization }
+          ? { '@type': 'CollegeOrUniversity', name: organizationName(profile.campus, locale) }
           : undefined,
       }
     : null
@@ -188,7 +188,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                       {t('campusLabel')}
                     </dt>
                     <dd>
-                      {profile.campus.organization}
+                      {organizationName(profile.campus, locale)}
                       <span className="text-muted"> · {loc(profile.campus, 'title', locale)}</span>
                     </dd>
                   </>
@@ -285,7 +285,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     </p>
                     <div>
                       <h3 className="font-semibold">{loc(e, 'title', locale)}</h3>
-                      <p className="text-muted">{e.organization}</p>
+                      <p className="text-muted">{organizationName(e, locale)}</p>
                     </div>
                     <p className="font-mono text-label tracking-widest text-note uppercase">
                       {tExp(e.type)}

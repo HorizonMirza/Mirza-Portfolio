@@ -233,15 +233,29 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, pendidikan, dan label
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tentang saya')
   await expect(page.getByRole('heading', { name: 'Muhammad Mirza Wirya', level: 2 })).toBeVisible()
   await expect(page.getByText('Fullstack Developer | Community Manager')).toBeVisible()
-  await expect(page.getByText(/Bina Nusantara University/)).toBeVisible()
+  await expect(page.getByText(/Universitas Bina Nusantara dengan peminatan/)).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Pendidikan', level: 2 })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'BINUS University', level: 3 })).toBeVisible()
-  await expect(page.getByText(/IPK kumulatif \(sampai semester 5\): 3,41\/4,0/)).toBeVisible()
+  // nama instansi dan jurusan mengikuti bahasa (organization / organization_en)
+  await expect(
+    page.getByRole('heading', { name: 'Universitas Bina Nusantara', level: 3 }),
+  ).toBeVisible()
+  await expect(page.getByText('S1 Ilmu Komputer – Kecerdasan Buatan')).toBeVisible()
+  await expect(page.getByText('IPK kumulatif: 3,41/4,0')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'SMAS Budi Luhur', level: 3 })).toBeVisible()
   await expect(page.getByText('Nilai: 88,3')).toBeVisible()
   await expect(page.getByText('2021 – 2024')).toBeVisible()
+  await expect(page.getByText('2024 – Sekarang')).toBeVisible()
   await expect(page.getByText(/^Semester \d+$/)).toBeVisible()
+  // tombol CV dihapus dari halaman ini (CV tetap ada di footer bila diisi)
+  await expect(page.getByRole('main').getByRole('link', { name: /Unduh CV/ })).toHaveCount(0)
   await page.goto('/en/about')
+  await expect(
+    page.getByRole('heading', { name: 'Budi Luhur Senior High School', level: 3 }),
+  ).toBeVisible()
+  await expect(
+    page.getByRole('heading', { name: 'Bina Nusantara University', level: 3 }),
+  ).toBeVisible()
+  await expect(page.getByText('Cumulative GPA: 3.41/4.0')).toBeVisible()
   await expect(page.getByText('Grade: 88.3')).toBeVisible()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('About me')
   await expect(page.getByRole('heading', { name: 'Education', level: 2 })).toBeVisible()

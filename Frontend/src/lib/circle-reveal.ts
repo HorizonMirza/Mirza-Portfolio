@@ -2,17 +2,15 @@
 // Memakai View Transitions API bawaan browser + Web Animations (tanpa library). Tampilan lama diam
 // di bawah, tampilan baru tampil lewat lingkaran yang tumbuh dari ukuran tombol sampai menutup layar.
 
+import { nativeStartViewTransition, prefersReducedMotion } from './view-transition'
+
 const DURATION = 750
 const EASING = 'cubic-bezier(0.65, 0, 0.35, 1)'
 
 type Origin = { x: number; y: number; radius: number }
 
 export function canAnimateViewTransition() {
-  return (
-    typeof document !== 'undefined' &&
-    typeof document.startViewTransition === 'function' &&
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
+  return nativeStartViewTransition() !== null && !prefersReducedMotion()
 }
 
 // titik tengah dan jari-jari tombol, diukur saat ditekan (sebelum DOM berubah)
@@ -44,7 +42,12 @@ function animateReveal({ x, y, radius }: Origin) {
 
 // Untuk perubahan yang kita jalankan sendiri (ganti tema).
 export function revealChange(origin: Origin, update: () => void) {
-  const transition = document.startViewTransition(update)
+  const start = nativeStartViewTransition()
+  if (!start) {
+    update()
+    return
+  }
+  const transition = start(update)
   transition.ready.then(() => animateReveal(origin)).catch(() => {})
   // Pindah halaman saat animasi berjalan membatalkan transisi dan menolak janji-janjinya
   // (Firefox: "InvalidStateError: Navigated away from page"); itu bukan galat aplikasi.

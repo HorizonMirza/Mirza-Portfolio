@@ -7,6 +7,7 @@ import { ContactForm } from '@/features/messages/components/public/contact-form'
 import { getPublicProfile } from '@/features/profile/public'
 import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { siteUrl } from '@/lib/env'
+import { loc } from '@/lib/localized'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { pageMetadata } from '@/lib/seo'
 
@@ -41,7 +42,8 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
         <IdLanyard
           className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
           name={profile?.name ?? 'Muhammad Mirza'}
-          role={t('cardRole')}
+          // peran diatur di admin (Profil); teks bawaan bila kosong
+          role={(profile && loc(profile, 'cardRole', locale)) || t('cardRole')}
           photo={profile?.photo?.url ?? DEFAULT_PROFILE_PHOTO}
           site={new URL(siteUrl()).host}
         />

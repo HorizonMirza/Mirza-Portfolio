@@ -11,12 +11,16 @@ export type SeedProfile = {
   city: string;
   socials: Record<string, string>;
   currentRole: Bilingual;
+  aboutRoles: Bilingual;
+  cardRole: Bilingual;
 };
 
 export type SeedExperience = {
   key: string;
   type: "WORK" | "EDUCATION" | "ORGANIZATION";
   organization: string;
+  // nama bahasa Inggris bila berbeda (mis. "Bina Nusantara University")
+  organizationEn?: string;
   title: Bilingual;
   description: Bilingual;
   startDate: string;
@@ -50,8 +54,8 @@ export const profile: SeedProfile = {
     en: "AI student at BINUS who builds software and communities.",
   },
   bio: {
-    id: "Mahasiswa Computer Science di Bina Nusantara University dengan peminatan Artificial Intelligence dan minat besar pada inovasi teknologi. Saya telah membangun fondasi yang kuat di Full-Stack Development dan teknologi AI, sambil aktif menjelajahi ekosistem kripto. Di luar latar belakang teknis, saya adalah pembangun komunitas yang telah mengembangkan berbagai inisiatif, mulai dari bisnis voucher game digital hingga komunitas padel dengan lebih dari 1.000 anggota.",
-    en: "Computer Science student at Bina Nusantara University, specializing in Artificial Intelligence with a deep passion for technological innovation. I have built a strong foundation in both Full-Stack Development and AI technologies, while actively exploring the cryptocurrency ecosystem. Beyond my technical background, I am a proven community builder who has successfully grown various initiatives, ranging from a digital game voucher business to a padel community with over 1,000 members.",
+    id: "Mahasiswa Ilmu Komputer di Universitas Bina Nusantara dengan peminatan Artificial Intelligence dan minat besar pada inovasi teknologi. Di usia 20 tahun, saya telah membangun fondasi yang kuat di Full-Stack Development dan teknologi AI, sambil aktif menjelajahi ekosistem kripto. Di luar latar belakang teknis, saya adalah pembangun komunitas yang telah mengembangkan berbagai inisiatif, mulai dari bisnis voucher game digital hingga komunitas padel dengan lebih dari 1.000 anggota.",
+    en: "Computer Science student at Bina Nusantara University, specializing in Artificial Intelligence with a deep passion for technological innovation. At 20 years old, I have built a strong foundation in both Full-Stack Development and AI technologies, while actively exploring the cryptocurrency ecosystem. Beyond my technical background, I am a proven community builder who has successfully grown various initiatives, ranging from a digital game voucher business to a padel community with over 1,000 members.",
   },
   city: "Tangerang",
   socials: {
@@ -63,6 +67,11 @@ export const profile: SeedProfile = {
     id: "Fullstack Developer & Asset Management Intern di PT PGAS Solution",
     en: "Fullstack Developer & Asset Management Intern at PT PGAS Solution",
   },
+  aboutRoles: {
+    id: "Fullstack Developer | Community Manager",
+    en: "Fullstack Developer | Community Manager",
+  },
+  cardRole: { id: "Fullstack Developer", en: "Fullstack Developer" },
 };
 
 export const experiences: SeedExperience[] = [
@@ -94,7 +103,7 @@ export const experiences: SeedExperience[] = [
     },
     description: {
       id: "- Mencapai 300+ anggota aktif di WhatsApp.\n- Meraih rating 5,0/5,0 di platform Ayo.\n- Mencapai 1.000+ anggota di Reclub.",
-      en: "- Reached 300+ active members on WhatsApp.\n- Achieved a 5.0/5.0 rating on the Ayo platform.\n- Reached 1,000+ members on Reclub.",
+      en: "- Reached 300+ active members on WhatsApp.\n- Achieved 5.0/5.0 rating on Ayo platform.\n- Reached 1,000+ members on Reclub.",
     },
     startDate: "2025-05-01",
     endDate: "2026-04-30",
@@ -107,7 +116,7 @@ export const experiences: SeedExperience[] = [
     title: { id: "Student Tutor", en: "Student Tutor" },
     description: {
       id: "- Mendaftarkan 30+ siswa ke program bootcamp.\n- Membimbing siswa membangun pemahaman awal materi Ilmu Komputer semester pertama.",
-      en: "- Enrolled 30+ students in the bootcamp program.\n- Mentored students in building an early understanding of first-semester Computer Science material.",
+      en: "- Enrolled 30+ students in the bootcamp program.\n- Mentored students in building early understanding of first-semester Computer Science materials.",
     },
     startDate: "2025-07-01",
     endDate: "2025-09-30",
@@ -122,8 +131,8 @@ export const experiences: SeedExperience[] = [
       en: "Founder & Tournament Organizer",
     },
     description: {
-      id: "- Menyelenggarakan turnamen dengan 128+ peserta per acara.\n- Mendapatkan kerja sama sponsor tingkat sekolah.",
-      en: "- Organized tournaments with 128+ participants per event.\n- Secured school-level sponsorship collaborations.",
+      id: "- Berhasil menyelenggarakan turnamen dengan 128+ peserta per acara.\n- Mendapatkan kerja sama sponsor tingkat sekolah.",
+      en: "- Successfully organized tournaments with 128+ participants per event.\n- Secured school level sponsorship collaborations.",
     },
     startDate: "2023-05-01",
     endDate: "2023-10-31",
@@ -151,8 +160,8 @@ export const experiences: SeedExperience[] = [
       en: "Freshmen Partner & Freshman Leader",
     },
     description: {
-      id: "- Sebagai Freshmen Partner, mendampingi mahasiswa baru sepanjang tahun pertama (Semester 1–2).\n- Sebagai Freshman Leader, membimbing mahasiswa baru selama First Year Program (FYP).",
-      en: "- As a Freshmen Partner, mentored and supported new students throughout their first academic year (Semesters 1–2).\n- As a Freshman Leader, guided new students during the First Year Program (FYP).",
+      id: "- Sebagai Freshman Partner, mendampingi dan mendukung mahasiswa baru sepanjang tahun akademik pertama (Semester 1–2).\n- Sebagai Freshman Leader, mendampingi dan membimbing mahasiswa baru selama First Year Program (FYP).",
+      en: "- As a Freshman Partner to mentor and support new students throughout their first academic year (Semester 1–2).\n- As a Freshman Leader to mentor and guide new students during the First Year Program (FYP).",
     },
     startDate: "2025-08-01",
     endDate: "2026-01-31",
@@ -162,10 +171,10 @@ export const experiences: SeedExperience[] = [
     key: "budi-luhur-reader-ambassador",
     type: "ORGANIZATION",
     organization: "Budi Luhur",
-    // judul sama di kedua bahasa (permintaan pemilik 2026-10-07)
+    // judul sama di kedua bahasa, tanpa koma (permintaan pemilik 2026-10-07)
     title: {
-      id: "Chairman, Reader Ambassador",
-      en: "Chairman, Reader Ambassador",
+      id: "Chairman Reader Ambassador",
+      en: "Chairman Reader Ambassador",
     },
     description: {
       id: "- Memimpin dan mengoordinasikan tim Reader Ambassador.",
@@ -179,9 +188,10 @@ export const experiences: SeedExperience[] = [
     key: "smas-budi-luhur",
     type: "EDUCATION",
     organization: "SMAS Budi Luhur",
+    organizationEn: "Budi Luhur Senior High School",
     title: {
-      id: "SMA IPA",
-      en: "Senior High School, SMA IPA",
+      id: "SMA, Jurusan IPA",
+      en: "Senior High School, Natural Sciences",
     },
     // dari LinkedIn pemilik (2026-10-05): hanya tahun yang diketahui, bulan 07 dan 06 hanya untuk urutan
     description: {
@@ -195,15 +205,17 @@ export const experiences: SeedExperience[] = [
   {
     key: "binus-university",
     type: "EDUCATION",
-    organization: "BINUS University",
+    // "Bina Nusantara", bukan "BINUS" (permintaan pemilik 2026-10-07)
+    organization: "Universitas Bina Nusantara",
+    organizationEn: "Bina Nusantara University",
     title: {
-      id: "S1 Computer Science – Artificial Intelligence",
+      id: "S1 Ilmu Komputer – Kecerdasan Buatan",
       en: "Bachelor of Computer Science – Artificial Intelligence",
     },
-    // IPK dari CV terbaru pemilik (2026-10-05); mata kuliah relevan dihapus atas permintaan pemilik
+    // IPK dari CV terbaru pemilik (2026-10-05); keterangan semester dihapus agar satu baris
     description: {
-      id: "IPK kumulatif (sampai semester 5): 3,41/4,0",
-      en: "Cumulative GPA (up to the 5th semester): 3.41/4.0",
+      id: "IPK kumulatif: 3,41/4,0",
+      en: "Cumulative GPA: 3.41/4.0",
     },
     startDate: "2024-09-01",
     endDate: null,

@@ -97,6 +97,14 @@ export function ExperienceForm({
         <Field id="organization" label="Instansi" error={errors.organization?.message}>
           {(a) => <Input {...a} {...register('organization')} />}
         </Field>
+        <Field
+          id="organization_en"
+          label="Instansi dalam bahasa Inggris (opsional)"
+          hint='Isi bila nama di halaman English berbeda, mis. "Bina Nusantara University". Kosong = sama.'
+          error={errors.organization_en?.message}
+        >
+          {(a) => <Input {...a} {...register('organization_en')} />}
+        </Field>
         <Field id="startMonth" label="Mulai" error={errors.startMonth?.message}>
           {(a) => <Input type="month" {...a} {...register('startMonth')} />}
         </Field>

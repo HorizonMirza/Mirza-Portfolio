@@ -45,6 +45,10 @@ async function main() {
         socials: profile.socials,
         currentRole_id: profile.currentRole.id,
         currentRole_en: profile.currentRole.en,
+        aboutRoles_id: profile.aboutRoles.id,
+        aboutRoles_en: profile.aboutRoles.en,
+        cardRole_id: profile.cardRole.id,
+        cardRole_en: profile.cardRole.en,
       },
     })
 
@@ -73,6 +77,7 @@ async function main() {
           id,
           type: item.type,
           organization: item.organization,
+          organization_en: item.organizationEn ?? null,
           title_id: item.title.id,
           title_en: item.title.en,
           description_id: item.description.id,

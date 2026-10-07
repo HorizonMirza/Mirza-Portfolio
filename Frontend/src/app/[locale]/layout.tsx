@@ -8,6 +8,7 @@ import '@/app/globals.css'
 import { fontVariables } from '@/app/fonts'
 import { LanguageScramble } from '@/components/shared/language-scramble'
 import { ThemeProvider } from '@/components/shared/theme-provider'
+import { PageTransitions } from '@/components/site/page-transitions'
 import { PageViewTracker } from '@/components/site/page-view-tracker'
 import { RevealObserver } from '@/components/site/reveal-observer'
 import { SiteFooter } from '@/components/site/site-footer'
@@ -86,6 +87,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
               </main>
               <SiteFooter locale={locale} />
             </div>
+            <PageTransitions />
             <RevealObserver />
             <LanguageScramble />
             <PageViewTracker />

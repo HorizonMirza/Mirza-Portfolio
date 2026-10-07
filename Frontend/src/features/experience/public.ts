@@ -12,6 +12,7 @@ export type PublicExperience = {
   id: string
   type: 'WORK' | 'EDUCATION' | 'ORGANIZATION'
   organization: string
+  organization_en: string | null
   title_id: string
   title_en: string
   description_id: string
@@ -46,6 +47,7 @@ export const getPublicExperiences = cache(
           id: true,
           type: true,
           organization: true,
+          organization_en: true,
           title_id: true,
           title_en: true,
           description_id: true,

@@ -71,6 +71,32 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
           {(a) => <Input {...a} {...register(`currentRole_${lang}`)} />}
         </Field>
         <Field
+          id={`aboutRoles_${lang}`}
+          label={id ? 'Peran di halaman Tentang (opsional)' : 'Roles on the About page (optional)'}
+          hint={
+            id
+              ? 'Baris di bawah nama pada pita hitam, mis. "Fullstack Developer | Community Manager".'
+              : 'Line under the name in the black band.'
+          }
+          error={errors[`aboutRoles_${lang}`]?.message}
+        >
+          {(a) => <Input {...a} {...register(`aboutRoles_${lang}`)} />}
+        </Field>
+        <Field
+          id={`cardRole_${lang}`}
+          label={
+            id ? 'Peran di kartu ID Kontak (opsional)' : 'Role on the Contact ID card (optional)'
+          }
+          hint={
+            id
+              ? 'Tulisan di bawah nama pada kartu bertali halaman Kontak, mis. "Fullstack Developer".'
+              : 'Text under the name on the Contact page lanyard card.'
+          }
+          error={errors[`cardRole_${lang}`]?.message}
+        >
+          {(a) => <Input {...a} {...register(`cardRole_${lang}`)} />}
+        </Field>
+        <Field
           id={`availabilityNote_${lang}`}
           label={id ? 'Catatan ketersediaan (opsional)' : 'Availability note (optional)'}
           hint={id ? 'Contoh: mulai Januari 2027.' : 'Example: from January 2027.'}

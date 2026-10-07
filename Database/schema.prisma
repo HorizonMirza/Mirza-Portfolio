@@ -158,6 +158,12 @@ model Profile {
   availabilityNote_en String?
   currentRole_id      String?
   currentRole_en      String?
+  // baris peran di pita halaman Tentang, mis. "Fullstack Developer | Community Manager"
+  aboutRoles_id       String?
+  aboutRoles_en       String?
+  // peran di kartu ID bertali halaman Kontak, mis. "Fullstack Developer"
+  cardRole_id         String?
+  cardRole_en         String?
   photoId             String?      @unique @db.Uuid
   photo               Asset?       @relation("ProfilePhoto", fields: [photoId], references: [id], onDelete: SetNull)
   cvId                String?      @unique @db.Uuid
@@ -228,27 +234,30 @@ model Skill {
 }
 
 model Experience {
-  id             String          @id @default(uuid(7)) @db.Uuid
-  type           ExperienceType
-  organization   String
-  title_id       String
-  title_en       String
-  description_id String          @db.Text
-  description_en String          @db.Text
-  startDate      DateTime        @db.Date
+  id              String          @id @default(uuid(7)) @db.Uuid
+  type            ExperienceType
+  // nama instansi; organization_en hanya diisi bila nama bahasa Inggrisnya berbeda
+  // (mis. "Universitas Bina Nusantara" / "Bina Nusantara University")
+  organization    String
+  organization_en String?
+  title_id        String
+  title_en        String
+  description_id  String          @db.Text
+  description_en  String          @db.Text
+  startDate       DateTime        @db.Date
   // null = masih berlangsung
-  endDate        DateTime?       @db.Date
-  location       String?
-  employmentType EmploymentType?
-  order          Int             @default(0)
-  status         ContentStatus   @default(PUBLISHED)
-  logoId         String?         @db.Uuid
-  logo           Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  endDate         DateTime?       @db.Date
+  location        String?
+  employmentType  EmploymentType?
+  order           Int             @default(0)
+  status          ContentStatus   @default(PUBLISHED)
+  logoId          String?         @db.Uuid
+  logo            Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
   // foto kegiatan di sisi seberang timeline (DESIGN.md bagian 38)
-  photoId        String?         @db.Uuid
-  photo          Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
-  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
+  photoId         String?         @db.Uuid
+  photo           Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
+  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
 
   @@index([type, startDate])
 }

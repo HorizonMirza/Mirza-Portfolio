@@ -6,7 +6,7 @@ import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
 import { getPublicExperiences, type PublicExperience } from '@/features/experience/public'
-import { initials, sortByLatest } from '@/features/experience/schema'
+import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
@@ -66,7 +66,8 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
       ) : (
         <FocusTimeline label={t('listLabel')}>
           {items.map((e) => {
-            const logoAlt = e.logo ? loc(e.logo, 'alt', locale) || e.organization : ''
+            const org = organizationName(e, locale)
+            const logoAlt = e.logo ? loc(e.logo, 'alt', locale) || org : ''
             return (
               <li key={e.id} data-type={e.type} data-current={e.end ? undefined : ''}>
                 <div className="xp-node" aria-hidden={e.logo ? undefined : true}>
@@ -88,7 +89,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                       Peran / Instansi · Jenis pekerjaan / Mulai - Selesai · Durasi */}
                   <h2 className="text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
                   <p className="mt-1">
-                    {e.organization}
+                    {org}
                     {e.employmentType ? ` · ${t(`employment.${e.employmentType}`)}` : ''}
                   </p>
                   <p className="mt-1 text-sm text-muted tabular-nums">

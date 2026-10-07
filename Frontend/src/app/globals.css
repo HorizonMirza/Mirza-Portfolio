@@ -395,8 +395,9 @@
     --xp-push: auto;
   }
   /* poin tanpa penanda titik (revisi pemilik 2026-10-07): tiap poin dibatasi lebarnya dan dibagi
-     seimbang (text-wrap: balance) sehingga umumnya dua baris dengan jumlah kata yang hampir sama,
-     lalu rata kiri-kanan. Poin menempel ke sisi garis tengah timeline. */
+     seimbang (text-wrap: balance) sehingga umumnya dua baris dengan jumlah kata yang hampir sama.
+     Rata ke sisi garis tengah (bukan rata kiri-kanan) agar jarak antarkata tetap normal (revisi
+     pemilik 2026-10-07 malam: spasi rata kiri-kanan terlalu lebar). */
   .xp-tl .xp-desc ul {
     list-style: none;
   }
@@ -404,8 +405,7 @@
     max-width: 27rem;
     margin-left: var(--xp-text-push);
     padding-left: 0;
-    text-align: justify;
-    text-align-last: var(--xp-align);
+    text-align: var(--xp-align);
     text-wrap: balance;
   }
   .xp-tl > li {
@@ -540,12 +540,16 @@
 .ab-band-text {
   display: grid;
   gap: 14px;
-  padding-bottom: 40px;
+  /* tanpa tombol CV, nama dan peran berada di tengah pita (revisi pemilik 2026-10-07 malam) */
+  align-self: center;
+  justify-items: center;
+  padding-bottom: 24px;
+  text-align: center;
 }
 .ab-body {
   display: grid;
   /* kolom bio lebih lebar dari kartu foto agar teks rata kiri-kanan tidak berjarak lebar */
-  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
   gap: 40px;
   padding: 44px;
   border: 1px solid var(--border);
@@ -576,35 +580,16 @@
   text-justify: inter-word;
   hyphens: auto;
 }
-.ab-cv {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 200ms var(--ease-out-soft);
-}
-.ab-cv:hover {
-  transform: translateY(-2px);
-}
-.ab-cv:focus-visible {
-  outline: 3px solid var(--bg);
-  outline-offset: 3px;
-}
 .ab-edu {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
+/* satu kartu per baris, logo di kiri: jurusan dan IPK muat satu baris, dan jenjang baru (mis. S2)
+   otomatis tampil di bawah (revisi pemilik 2026-10-07 malam) */
 .ab-edu-card {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  gap: 20px;
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -623,12 +608,44 @@
   font-size: 1.25rem;
   font-weight: 700;
 }
-/* kartu foto: bingkai gelap dengan cincin terang di luar supaya terlihat di atas pita dan di bawahnya */
-.ab-pc {
+/* kartu foto bisa dimiringkan (PhotoTilt, revisi pemilik 2026-10-07 malam): .ab-tilt memberi
+   perspektif dan menerima kursor, .ab-pc yang miring. Hanya transform (GPU). */
+.ab-tilt {
   position: relative;
   z-index: 2;
   margin: 0 0 -110px;
+  perspective: 1000px;
+  cursor: grab;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+.ab-tilt:active {
+  cursor: grabbing;
+}
+/* kartu foto: bingkai gelap dengan cincin terang di luar supaya terlihat di atas pita dan di bawahnya */
+.ab-pc {
+  position: relative;
   padding: 14px 0 14px 14px;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-s, 1));
+  transform-style: preserve-3d;
+  transition: transform 700ms var(--ease-out-soft);
+}
+/* saat diikuti kursor geraknya singkat agar terasa menempel, saat dilepas kembali perlahan */
+.ab-tilt[data-tilt='on'] .ab-pc {
+  transition: transform 120ms ease-out;
+}
+.ab-pc-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 30%),
+    rgb(255 255 255 / 0.32),
+    transparent 55%
+  );
+  opacity: var(--glare-o, 0);
+  pointer-events: none;
+  transition: opacity 400ms var(--ease-out-soft);
 }
 .ab-pc-frame {
   position: relative;
@@ -703,6 +720,8 @@
   box-shadow:
     0 14px 30px -12px rgb(0 0 0 / 0.45),
     0 0 0 1px var(--border);
+  /* melayang lebih dekat dari foto saat kartu dimiringkan */
+  transform: translateZ(40px);
 }
 .ab-pc-logo {
   display: grid;
@@ -734,7 +753,7 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   white-space: nowrap;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(28px);
   backdrop-filter: blur(6px);
 }
 .ab-pc-pill::before {
@@ -758,6 +777,7 @@
   box-shadow:
     0 10px 24px -10px rgb(0 0 0 / 0.5),
     0 0 0 1px var(--border);
+  transform: translateZ(34px);
 }
 .ab-pc-flag i {
   display: block;
@@ -796,7 +816,7 @@
     gap: 24px;
     padding: 28px 20px 0;
   }
-  .ab-band .ab-pc {
+  .ab-band .ab-tilt {
     width: min(100%, 300px);
     margin: 0 auto;
   }
@@ -812,14 +832,24 @@
   .ab-body > section {
     padding-top: 0;
   }
-  .ab-edu {
-    grid-template-columns: minmax(0, 1fr);
+  .ab-edu-card {
+    align-items: flex-start;
+    padding: 20px;
   }
   /* di layar sempit foto berada di atas pita hitam tanpa menggantung, jadi cincin terang dilepas */
   .ab-pc-frame,
   :root:not(.dark) .ab-pc-frame {
     border-color: var(--bg);
     box-shadow: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ab-tilt {
+    cursor: auto;
+  }
+  .ab-pc {
+    transform: none;
+    transition: none;
   }
 }
 

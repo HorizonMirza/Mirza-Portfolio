@@ -23,9 +23,10 @@ export async function saveExperience(
       return fail('Data tidak valid.')
     const parsed = experienceSchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
-    const { startMonth, endMonth, location, employmentType, ...rest } = parsed.data
+    const { startMonth, endMonth, location, employmentType, organization_en, ...rest } = parsed.data
     const data = {
       ...rest,
+      organization_en: emptyToNull(organization_en),
       location: emptyToNull(location),
       employmentType: employmentType || null,
       startDate: monthToDate(startMonth),

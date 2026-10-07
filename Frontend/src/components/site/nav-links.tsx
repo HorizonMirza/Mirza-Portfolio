@@ -20,26 +20,52 @@ const icons = {
   contact: Mail,
 } as const
 
-// Lampu hitam/putih (ikut warna teks tema) di atas menu aktif. Saat pindah halaman, React <ViewTransition> dengan nama yang sama
-// menggeser lampu dari menu lama ke menu baru (View Transitions bawaan browser, tanpa library).
-// Nama dibedakan per varian agar tidak ada dua elemen dengan nama yang sama di satu halaman.
-function Lamp({ variant }: { variant: 'top' | 'bottom' }) {
+// Lampu hitam/putih (ikut warna teks tema) di atas menu aktif.
+function LampGlow({ className }: { className?: string }) {
   return (
-    <ViewTransition name={`nav-lamp-${variant}`} share="auto" default="none">
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-[5px] left-1/2 h-1 w-8 -translate-x-1/2 rounded-t-full bg-text"
-      >
-        <span className="absolute -top-2 -left-2 h-6 w-12 rounded-full bg-text/20 blur-md" />
-        <span className="absolute -top-1 h-6 w-8 rounded-full bg-text/20 blur-md" />
-        <span className="absolute top-0 left-2 size-4 rounded-full bg-text/20 blur-sm" />
-      </span>
+    <span
+      aria-hidden="true"
+      className={cn(
+        'pointer-events-none absolute -top-[5px] left-1/2 h-1 w-8 -translate-x-1/2 rounded-t-full bg-text',
+        className,
+      )}
+    >
+      <span className="absolute -top-2 -left-2 h-6 w-12 rounded-full bg-text/20 blur-md" />
+      <span className="absolute -top-1 h-6 w-8 rounded-full bg-text/20 blur-md" />
+      <span className="absolute top-0 left-2 size-4 rounded-full bg-text/20 blur-sm" />
+    </span>
+  )
+}
+
+// Kapsul atas (desktop): saat pindah halaman, React <ViewTransition> dengan nama yang sama menggeser
+// lampu dari menu lama ke menu baru (View Transitions bawaan browser, tanpa library).
+function TopLamp() {
+  return (
+    <ViewTransition name="nav-lamp-top" share="auto" default="none">
+      <LampGlow />
     </ViewTransition>
   )
 }
 
-// top: teks di kapsul atas (desktop). bottom: bilah bawah HP berisi ikon besar dengan label di bawahnya
-// (revisi pemilik 2026-10-07, seperti bilah tab aplikasi).
+// Bilah bawah HP: lima kolom sama lebar, jadi lampu cukup satu elemen yang digeser per kolom lewat
+// transform (dikerjakan GPU). Di HP View Transitions dimatikan untuk pindah halaman
+// (page-transitions.tsx), sehingga lampu tidak bisa memakai cara kapsul atas.
+// Lebar satu kolom = (lebar daftar - 4 celah) / 5; geser = indeks x (kolom + celah).
+function BottomLamp({ index }: { index: number }) {
+  if (index < 0) return null
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute top-0 left-0 w-[calc((100%-4*var(--nav-gap))/5)] transition-transform duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+      style={{ transform: `translateX(calc(${index} * (100% + var(--nav-gap))))` }}
+    >
+      <LampGlow />
+    </span>
+  )
+}
+
+// top: teks di kapsul atas (desktop). bottom: bilah bawah HP berisi ikon besar saja, seperti bilah
+// tab aplikasi (revisi pemilik 2026-10-07); nama menu tetap ada untuk pembaca layar.
 export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
   const t = useTranslations('Nav')
   const pathname = usePathname()
@@ -48,9 +74,12 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
   return (
     <ul
       className={cn(
-        variant === 'top' ? 'flex items-center gap-1' : 'grid w-full grid-cols-5 gap-1',
+        variant === 'top'
+          ? 'flex items-center gap-1'
+          : 'relative grid w-full grid-cols-5 gap-(--nav-gap) [--nav-gap:0.25rem]',
       )}
     >
+      {variant === 'bottom' ? <BottomLamp index={currentIndex} /> : null}
       {siteNav.map((item, index) => {
         const active = isSiteNavActive(pathname, item.href)
         // halaman menu itu sendiri (bukan halaman turunan seperti detail project)
@@ -71,9 +100,7 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
               }}
               className={cn(
                 'relative inline-flex items-center justify-center rounded-full text-sm font-semibold text-muted transition-colors hover:text-text',
-                variant === 'top'
-                  ? 'min-h-10 px-4'
-                  : 'h-[3.75rem] w-full flex-col gap-1 px-1 text-[0.65625rem] leading-none',
+                variant === 'top' ? 'min-h-10 px-4' : 'h-[3.75rem] w-full',
                 active && 'bg-surface-2 text-text',
               )}
             >
@@ -81,11 +108,11 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
                 t(item.key)
               ) : (
                 <>
-                  <Icon className="size-6" strokeWidth={2.25} aria-hidden="true" />
-                  <span className="max-w-full truncate">{t(item.key)}</span>
+                  <Icon className="size-7" strokeWidth={2} aria-hidden="true" />
+                  <span className="sr-only">{t(item.key)}</span>
                 </>
               )}
-              {active ? <Lamp variant={variant} /> : null}
+              {active && variant === 'top' ? <TopLamp /> : null}
             </Link>
           </li>
         )

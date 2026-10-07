@@ -51,7 +51,9 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
         aria-label={t('label')}
         className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
       >
-        <div className={`${pill} w-full max-w-md p-1.5`}>
+        {/* tanpa backdrop-blur: latar sudah 95% pekat, sedangkan blur di elemen fixed dihitung ulang
+            setiap frame saat halaman bergerak di belakangnya (berat di HP) */}
+        <div className="flex w-full max-w-md items-center rounded-full border border-border bg-surface/95 p-1.5 shadow-lg">
           <NavLinks variant="bottom" />
         </div>
       </nav>

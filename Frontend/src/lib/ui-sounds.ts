@@ -50,6 +50,12 @@ function audio() {
   }
 }
 
+// Membuat AudioContext lebih awal (sentuhan/klik pertama di halaman, lewat PageTransitions) agar
+// tombol pertama yang berbunyi tidak tersendat menunggu perangkat audio disiapkan.
+export function warmUpAudio() {
+  audio()
+}
+
 function envelope(gain: GainNode, t: number, peak: number, attack: number, dur: number) {
   gain.gain.setValueAtTime(0.0001, t)
   gain.gain.exponentialRampToValueAtTime(peak, t + attack)

@@ -23,6 +23,8 @@ export function AboutPhotoCard({
     <figure className="ab-pc">
       <div className="ab-pc-frame">
         {photo}
+        {/* cahaya yang mengikuti kursor saat kartu dimiringkan (PhotoTilt) */}
+        <span className="ab-pc-glare" aria-hidden="true" />
         <i className="ab-pc-corner ab-pc-a" aria-hidden="true" />
         <i className="ab-pc-corner ab-pc-b" aria-hidden="true" />
         <i className="ab-pc-corner ab-pc-c" aria-hidden="true" />

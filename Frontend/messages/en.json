@@ -79,13 +79,13 @@
   },
   "About": {
     "metaTitle": "About me",
-    "metaDescription": "Background, education, and CV of Muhammad Mirza.",
+    "metaDescription": "Background and education of Muhammad Mirza.",
     "title": "About me",
     "roles": "Fullstack Developer | Community Manager",
     "educationHeading": "Education",
     "semester": "{n, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} semester",
     "noEducation": "No education history has been published yet.",
-    "downloadCv": "Download CV"
+    "present": "Present"
   },
   "Experience": {
     "metaTitle": "Experience",

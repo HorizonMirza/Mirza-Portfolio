@@ -42,6 +42,7 @@ export const experienceSchema = z
   .object({
     type: z.enum(EXPERIENCE_TYPES),
     organization: requiredText('Instansi', 120),
+    organization_en: optionalText('Instansi (EN)', 120).default(''),
     title_id: requiredText('Peran', 120),
     title_en: requiredText('Role', 120),
     description_id: requiredText('Uraian', 3000),
@@ -63,6 +64,7 @@ export type ExperienceInput = z.input<typeof experienceSchema>
 export const emptyExperience: ExperienceInput = {
   type: 'WORK',
   organization: '',
+  organization_en: '',
   title_id: '',
   title_en: '',
   description_id: '',
@@ -91,6 +93,15 @@ export function monthToDate(month: string): Date {
 
 export function dateToMonth(date: Date): string {
   return date.toISOString().slice(0, 7)
+}
+
+// Nama instansi sesuai bahasa: organization_en dipakai di halaman bahasa Inggris bila diisi
+// ("Universitas Bina Nusantara" / "Bina Nusantara University"), selain itu organization.
+export function organizationName(
+  row: { organization: string; organization_en?: string | null },
+  locale: 'id' | 'en',
+): string {
+  return locale === 'en' && row.organization_en ? row.organization_en : row.organization
 }
 
 // Inisial instansi untuk kotak logo bila logo belum diunggah ("PT PGAS Solution" → "PS").

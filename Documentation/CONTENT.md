@@ -69,12 +69,14 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 
 | Instansi | Program | Periode | Catatan |
 |---|---|---|---|
-| SMAS Budi Luhur, Tangerang | SMA IPA | 2021 – 2024 | Nilai 88,3 (dari LinkedIn pemilik 2026-10-05; tidak ada di CV). Hanya tahun yang diketahui |
-| BINUS University, Tangerang | S1 Computer Science – Artificial Intelligence | September 2024 – sekarang | IPK kumulatif 3,41/4,0 (sampai semester 5). Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering |
+| SMAS Budi Luhur (EN: Budi Luhur Senior High School), Tangerang | SMA, Jurusan IPA (EN: Senior High School, Natural Sciences) | 2021 – 2024 | Nilai 88,3 (dari LinkedIn pemilik 2026-10-05; tidak ada di CV). Hanya tahun yang diketahui |
+| Universitas Bina Nusantara (EN: Bina Nusantara University), Tangerang | S1 Ilmu Komputer – Kecerdasan Buatan (EN: Bachelor of Computer Science – Artificial Intelligence) | September 2024 – sekarang | IPK kumulatif 3,41/4,0 (sampai semester 5; keterangan semester tidak ditampilkan sejak 2026-10-07). Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering |
 
 **Catatan IPK:** LinkedIn pemilik mencantumkan 3,5, sedangkan CV 3,41/4,0 (sampai semester 5); situs memakai angka CV, bisa diubah dari admin.
 
 **Diputuskan 2026-10-05:** IPK 3,41/4,0 (sampai semester 5) ditampilkan di kartu pendidikan halaman Tentang, sesuai CV terbaru yang dikirim pemilik. Angkanya perlu diperbarui tiap semester lewat admin (deskripsi entri Pendidikan). Pendidikan sebelum BINUS (SMA) tidak ada di CV.
+
+**Diputuskan 2026-10-07 (pemilik):** nama kampus ditulis "Bina Nusantara", bukan "BINUS", dan nama instansi serta jurusan pendidikan mengikuti bahasa. Bio halaman Tentang memakai teks SUMMARY CV lengkap yang dikirim pemilik, termasuk "At 20 years old" (perlu diperbarui lewat admin saat usia berubah).
 
 ## 6. Skills (dikelompokkan, tanpa angka/persen)
 

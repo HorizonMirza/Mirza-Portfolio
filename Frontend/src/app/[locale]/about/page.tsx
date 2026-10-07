@@ -1,4 +1,3 @@
-import { Download } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
@@ -6,8 +5,9 @@ import { getTranslations } from 'next-intl/server'
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { getPublicExperiences } from '@/features/experience/public'
-import { initials, semesterNumber } from '@/features/experience/schema'
+import { initials, organizationName, semesterNumber } from '@/features/experience/schema'
 import { AboutPhotoCard } from '@/features/profile/components/about-photo-card'
+import { PhotoTilt } from '@/features/profile/components/photo-tilt'
 import { getPublicProfile } from '@/features/profile/public'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
@@ -29,18 +29,18 @@ export async function generateMetadata({
 }
 
 // Halaman Tentang memakai rancangan C (pilihan pemilik 2026-10-05, DESIGN.md bagian 39): pita
-// hitam dengan nama dan tombol CV, kartu foto menggantung, lalu bio di kiri dan kartu pendidikan
-// di kanan. Isinya hanya bio, pendidikan, dan CV; kontak ada di halaman Kontak dan footer.
+// hitam dengan nama dan peran, kartu foto menggantung yang bisa dimiringkan, lalu bio di kiri dan
+// pendidikan di kanan. Semua isi diatur dari admin: nama, foto, bio, dan peran di Profil;
+// pendidikan sebagai entri Pengalaman berjenis Pendidikan. CV ada di footer.
 export default async function AboutPage({ params }: PageProps<'/[locale]/about'>) {
   const locale = await resolveLocale(params)
-  const [t, tCommon, profile, experiences] = await Promise.all([
+  const [t, profile, experiences] = await Promise.all([
     getTranslations({ locale, namespace: 'About' }),
-    getTranslations({ locale, namespace: 'Common' }),
     getPublicProfile(),
     getPublicExperiences(),
   ])
 
-  // dari yang paling lama ke terbaru, jadi SMA lalu kuliah
+  // dari yang paling lama ke terbaru: SMA, kuliah, lalu jenjang berikutnya (mis. S2) di bawahnya
   const education = experiences
     .filter((e) => e.type === 'EDUCATION')
     .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0))
@@ -71,34 +71,31 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
     <Container className="pb-20">
       <PageIntro title={t('title')} align="center" />
       <div className="ab-band">
-        <AboutPhotoCard
-          photo={photo}
-          chip={
-            current
-              ? {
-                  name: current.organization,
-                  initials: initials(current.organization),
-                  logo: current.logo,
-                }
-              : null
-          }
-          pill={
-            current && !current.end ? t('semester', { n: semesterNumber(current.start) }) : null
-          }
-        />
+        <PhotoTilt>
+          <AboutPhotoCard
+            photo={photo}
+            chip={
+              current
+                ? {
+                    name: organizationName(current, locale),
+                    initials: initials(current.organization),
+                    logo: current.logo,
+                  }
+                : null
+            }
+            pill={
+              current && !current.end ? t('semester', { n: semesterNumber(current.start) }) : null
+            }
+          />
+        </PhotoTilt>
+        {/* tombol CV dihapus (revisi pemilik 2026-10-07 malam); nama dan peran di tengah pita */}
         <div className="ab-band-text">
           <h2 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
             {profile?.name ?? 'Muhammad Mirza'}
           </h2>
-          <p className="text-lg tracking-wide uppercase opacity-80">{t('roles')}</p>
-          {profile?.hasCv ? (
-            <div>
-              <a href={`/api/cv?locale=${locale}`} className="ab-cv">
-                <Download className="size-4" aria-hidden="true" />
-                {t('downloadCv')}
-              </a>
-            </div>
-          ) : null}
+          <p className="text-lg tracking-wide uppercase opacity-80">
+            {(profile && loc(profile, 'aboutRoles', locale)) || t('roles')}
+          </p>
         </div>
       </div>
 
@@ -138,13 +135,14 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                       initials(e.organization)
                     )}
                   </span>
-                  <div>
+                  <div className="ab-edu-text">
                     <h3 className="font-display text-2xl leading-[1.1] font-bold uppercase">
-                      {e.organization}
+                      {organizationName(e, locale)}
                     </h3>
+                    {/* jurusan dan IPK masing-masing satu baris (revisi pemilik 2026-10-07 malam) */}
                     <p className="mt-1 text-muted">{loc(e, 'title', locale)}</p>
                     <p className="text-sm text-muted tabular-nums">
-                      {e.start.slice(0, 4)} – {e.end ? e.end.slice(0, 4) : tCommon('present')}
+                      {e.start.slice(0, 4)} – {e.end ? e.end.slice(0, 4) : t('present')}
                     </p>
                     <MarkdownView
                       source={loc(e, 'description', locale)}

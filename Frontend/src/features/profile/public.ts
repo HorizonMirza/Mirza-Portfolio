@@ -25,6 +25,10 @@ export type PublicProfile = {
   bio_en: string
   currentRole_id: string | null
   currentRole_en: string | null
+  aboutRoles_id: string | null
+  aboutRoles_en: string | null
+  cardRole_id: string | null
+  cardRole_en: string | null
   availability: 'OPEN' | 'BUSY' | 'NOT_LOOKING'
   availabilityNote_id: string | null
   availabilityNote_en: string | null
@@ -37,7 +41,12 @@ export type PublicProfile = {
   // host link CV di luar (mis. drive.google.com) bila diisi di admin; null bila memakai PDF upload
   cvHost: string | null
   // pendidikan terbaru yang terbit, untuk pelat status "Kampus"
-  campus: { organization: string; title_id: string; title_en: string } | null
+  campus: {
+    organization: string
+    organization_en: string | null
+    title_id: string
+    title_en: string
+  } | null
 }
 
 function urlHost(url: string) {
@@ -63,7 +72,7 @@ const load = unstable_cache(
       db.experience.findFirst({
         where: { type: 'EDUCATION', status: 'PUBLISHED' },
         orderBy: { startDate: 'desc' },
-        select: { organization: true, title_id: true, title_en: true },
+        select: { organization: true, organization_en: true, title_id: true, title_en: true },
       }),
     ])
     if (!p) return null
@@ -79,6 +88,10 @@ const load = unstable_cache(
       bio_en: p.bio_en,
       currentRole_id: p.currentRole_id,
       currentRole_en: p.currentRole_en,
+      aboutRoles_id: p.aboutRoles_id,
+      aboutRoles_en: p.aboutRoles_en,
+      cardRole_id: p.cardRole_id,
+      cardRole_en: p.cardRole_en,
       availability: p.availability,
       availabilityNote_id: p.availabilityNote_id,
       availabilityNote_en: p.availabilityNote_en,

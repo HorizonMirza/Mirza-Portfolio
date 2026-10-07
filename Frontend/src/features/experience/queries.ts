@@ -26,6 +26,7 @@ export async function getExperienceForEdit(id: string): Promise<ExperienceInput 
   return {
     type: e.type,
     organization: e.organization,
+    organization_en: e.organization_en ?? '',
     title_id: e.title_id,
     title_en: e.title_en,
     description_id: e.description_id,
