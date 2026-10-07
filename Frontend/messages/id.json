@@ -99,8 +99,8 @@
     "EDUCATION": "Pendidikan",
     "empty": "Belum ada entri di kategori ini.",
     "none": "Belum ada pengalaman yang diterbitkan.",
-    "durationYears": "{count} thn",
-    "durationMonths": "{count} bln",
+    "durationYears": "{count} Tahun",
+    "durationMonths": "{count} Bulan",
     "listLabel": "Riwayat pengalaman",
     "employment": {
       "FULL_TIME": "Penuh waktu",

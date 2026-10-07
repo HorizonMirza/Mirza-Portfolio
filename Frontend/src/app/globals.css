@@ -394,29 +394,25 @@
     --xp-side-align: right;
     --xp-push: auto;
   }
-  /* poin di kolom rata kanan: penanda pindah ke ujung kalimat */
+  /* poin tanpa penanda titik (revisi pemilik 2026-10-07): tiap poin dibatasi lebarnya dan dibagi
+     seimbang (text-wrap: balance) sehingga umumnya dua baris dengan jumlah kata yang hampir sama,
+     lalu rata kiri-kanan. Poin menempel ke sisi garis tengah timeline. */
   .xp-tl .xp-desc ul {
     list-style: none;
   }
   .xp-tl .xp-desc li {
-    margin-left: 0;
+    max-width: 27rem;
+    margin-left: var(--xp-text-push);
     padding-left: 0;
+    text-align: justify;
+    text-align-last: var(--xp-align);
+    text-wrap: balance;
   }
   .xp-tl > li {
-    --xp-bullet-before: '';
-    --xp-bullet-after: ' ·';
+    --xp-text-push: auto;
   }
   .xp-tl > li:nth-child(even) {
-    --xp-bullet-before: '· ';
-    --xp-bullet-after: '';
-  }
-  .xp-tl > li .xp-desc li::before {
-    content: var(--xp-bullet-before);
-    color: var(--text-muted);
-  }
-  .xp-tl > li .xp-desc li::after {
-    content: var(--xp-bullet-after);
-    color: var(--text-muted);
+    --xp-text-push: 0;
   }
 }
 /* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Pilihan efek pemilik
@@ -805,7 +801,9 @@
     margin: 0 auto;
   }
   .ab-band-text {
+    justify-items: center;
     padding-bottom: 28px;
+    text-align: center;
   }
   .ab-body {
     grid-template-columns: minmax(0, 1fr);

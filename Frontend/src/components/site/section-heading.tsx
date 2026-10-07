@@ -65,16 +65,16 @@ export function PageIntro({
   align?: 'start' | 'center'
 }) {
   return (
-    // center: rata tengah mulai layar sedang (desktop), tetap rata kiri di HP
-    <header className={cn('pt-12 pb-10 md:pt-20', align === 'center' && 'md:text-center')}>
+    // center: rata tengah di semua ukuran layar (revisi pemilik 2026-10-07: HP juga di tengah)
+    <header className={cn('pt-12 pb-10 md:pt-20', align === 'center' && 'text-center')}>
       {eyebrow ? (
         <p className="font-mono text-label tracking-widest text-note uppercase">{eyebrow}</p>
       ) : null}
-      <h1 className={cn('mt-3 max-w-3xl text-h1 font-bold', align === 'center' && 'md:mx-auto')}>
+      <h1 className={cn('mt-3 max-w-3xl text-h1 font-bold', align === 'center' && 'mx-auto')}>
         {title}
       </h1>
       {intro ? (
-        <p className={cn('mt-4 max-w-prose text-muted', align === 'center' && 'md:mx-auto')}>
+        <p className={cn('mt-4 max-w-prose text-muted', align === 'center' && 'mx-auto')}>
           {intro}
         </p>
       ) : null}

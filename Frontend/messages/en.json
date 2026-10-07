@@ -99,8 +99,8 @@
     "EDUCATION": "Education",
     "empty": "Nothing in this category yet.",
     "none": "No experience published yet.",
-    "durationYears": "{count} yrs",
-    "durationMonths": "{count, plural, one {# mo} other {# mos}}",
+    "durationYears": "{count, plural, one {# Year} other {# Years}}",
+    "durationMonths": "{count, plural, one {# Month} other {# Months}}",
     "listLabel": "Experience history",
     "employment": {
       "FULL_TIME": "Full-time",

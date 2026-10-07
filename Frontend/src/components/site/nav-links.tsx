@@ -38,21 +38,26 @@ function Lamp({ variant }: { variant: 'top' | 'bottom' }) {
   )
 }
 
-// top: teks di kapsul atas (desktop). bottom: ikon di kapsul bawah (HP), label untuk pembaca layar.
+// top: teks di kapsul atas (desktop). bottom: bilah bawah HP berisi ikon besar dengan label di bawahnya
+// (revisi pemilik 2026-10-07, seperti bilah tab aplikasi).
 export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
   const t = useTranslations('Nav')
   const pathname = usePathname()
   // arah geser halaman mengikuti urutan menu: ke kanan = maju, ke kiri = mundur (globals.css .nav-*)
   const currentIndex = siteNav.findIndex((item) => isSiteNavActive(pathname, item.href))
   return (
-    <ul className={cn('flex items-center', variant === 'top' ? 'gap-1' : 'gap-0.5')}>
+    <ul
+      className={cn(
+        variant === 'top' ? 'flex items-center gap-1' : 'grid w-full grid-cols-5 gap-1',
+      )}
+    >
       {siteNav.map((item, index) => {
         const active = isSiteNavActive(pathname, item.href)
         // halaman menu itu sendiri (bukan halaman turunan seperti detail project)
         const here = pathname === item.href
         const Icon = icons[item.key]
         return (
-          <li key={item.href}>
+          <li key={item.href} className={variant === 'bottom' ? 'min-w-0' : undefined}>
             <Link
               href={item.href}
               aria-current={active ? 'page' : undefined}
@@ -64,10 +69,11 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
                 event.preventDefault()
                 scrollToTop()
               }}
-              title={variant === 'bottom' ? t(item.key) : undefined}
               className={cn(
                 'relative inline-flex items-center justify-center rounded-full text-sm font-semibold text-muted transition-colors hover:text-text',
-                variant === 'top' ? 'min-h-10 px-4' : 'size-11',
+                variant === 'top'
+                  ? 'min-h-10 px-4'
+                  : 'h-[3.75rem] w-full flex-col gap-1 px-1 text-[0.65625rem] leading-none',
                 active && 'bg-surface-2 text-text',
               )}
             >
@@ -75,8 +81,8 @@ export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
                 t(item.key)
               ) : (
                 <>
-                  <Icon className="size-[18px]" strokeWidth={2.25} aria-hidden="true" />
-                  <span className="sr-only">{t(item.key)}</span>
+                  <Icon className="size-6" strokeWidth={2.25} aria-hidden="true" />
+                  <span className="max-w-full truncate">{t(item.key)}</span>
                 </>
               )}
               {active ? <Lamp variant={variant} /> : null}

@@ -147,8 +147,8 @@ export const experiences: SeedExperience[] = [
     type: "ORGANIZATION",
     organization: "Student Support, BINUS University",
     title: {
-      id: "Freshmen Partner & Freshman Leader (Relawan)",
-      en: "Freshmen Partner & Freshman Leader (Volunteer)",
+      id: "Freshmen Partner & Freshman Leader",
+      en: "Freshmen Partner & Freshman Leader",
     },
     description: {
       id: "- Sebagai Freshmen Partner, mendampingi mahasiswa baru sepanjang tahun pertama (Semester 1–2).\n- Sebagai Freshman Leader, membimbing mahasiswa baru selama First Year Program (FYP).",
@@ -162,7 +162,11 @@ export const experiences: SeedExperience[] = [
     key: "budi-luhur-reader-ambassador",
     type: "ORGANIZATION",
     organization: "Budi Luhur",
-    title: { id: "Ketua Reader Ambassador", en: "Chairman, Reader Ambassador" },
+    // judul sama di kedua bahasa (permintaan pemilik 2026-10-07)
+    title: {
+      id: "Chairman, Reader Ambassador",
+      en: "Chairman, Reader Ambassador",
+    },
     description: {
       id: "- Memimpin dan mengoordinasikan tim Reader Ambassador.",
       en: "- Led and coordinated the Reader Ambassador team.",

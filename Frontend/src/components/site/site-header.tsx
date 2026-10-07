@@ -51,7 +51,7 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
         aria-label={t('label')}
         className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
       >
-        <div className={pill}>
+        <div className={`${pill} w-full max-w-md p-1.5`}>
           <NavLinks variant="bottom" />
         </div>
       </nav>
