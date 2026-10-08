@@ -202,3 +202,15 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 **Project contoh (2026-10-08, permintaan pemilik):** migrasi `20261008120000_sample_projects` menambahkan 6 project berjudul "Contoh Project 1–6" / "Sample Project 1–6" (terbit, 3 pertama unggulan) agar pemilik bisa melihat tampilan halaman Project dan beranda. Isinya kerangka, bukan fakta; pemilik mengganti judul, ringkasan, uraian, foto, dan tautan lewat Admin → Project, atau menghapusnya. Tidak ditambahkan ke seed.
 
 **Project contoh dilengkapi (2026-10-08, "buat lengkap demonya"):** migrasi `20261008130000_sample_projects_media` menambahkan untuk tiap project contoh: gambar sampul dan 2 gambar galeri (mockup buatan sendiri bertanda "CONTOH · SAMPLE" di `Frontend/public/demo/projects/`, bukan foto orang lain), studi kasus kerangka dua bahasa, tautan demo (`https://mmirza.site`) dan GitHub (profil pemilik), serta metadata repo GitHub di project 1 (`HorizonMirza/Mirza-Portfolio`). Kolom yang sudah diisi pemilik tidak ditimpa. Gambar contoh memakai publicId berawalan `local-demo/` sehingga tidak pernah dikirim ke Cloudinary saat diganti/dihapus; begitu pemilik mengunggah gambar sendiri, yang dipakai gambar Cloudinary. Folder `public/demo/projects` boleh dihapus setelah semua project contoh diganti.
+
+**Project dari PDF portofolio (2026-10-08, permintaan pemilik):** migrasi `20261008150000_projects_from_portfolio_pdf` menghapus project contoh yang belum diubah (judul masih "Contoh Project") dan menambahkan lima project dari PDF "Portofolio - Muhammad Mirza Wirya" (Canva, 12 halaman). Isi hanya dari teks PDF; tangkapan layar diambil dari PDF ke `Frontend/public/images/projects`. Tahun dikonfirmasi pemilik.
+
+| Urutan | Project | Tahun | Peran (PDF) | Tautan |
+|---|---|---|---|---|
+| 1 (unggulan, "best project") | CatFin-R: Catering Finance (project kelompok Software Engineering) | 2026 | Front-End Developer | catering-finance-report-se.vercel.app |
+| 2 | RIPE.AI (project kelompok Computer Vision) | 2026 | Front-End Developer | fruit-classifier-mu.vercel.app |
+| 3 | Crypto Pedia | 2026 | Frontend Developer | huggingface.co/spaces/donut12345/ML_LSTM_BTC |
+| 4 | MR Coffee (project pribadi) | 2025 | — | — |
+| 5 | Swarna Creation (project pribadi untuk usaha EO teman) | 2026 | — | — |
+
+Teknologi semua project: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Catatan: PDF mencantumkan IPK 3,5/4,0 (CV: 3,41); situs belum diubah, menunggu keputusan pemilik.
