@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react'
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
@@ -40,20 +41,22 @@ export default async function ProjectsPage({ params }: PageProps<'/[locale]/proj
       <PageIntro title={t('title')} align="center" />
       {projects.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-6 text-muted">{t('empty')}</p>
-      ) : projects.length === 1 ? (
-        <ProjectCard
-          project={projects[0]!}
-          index={0}
-          locale={locale}
-          variant="wide"
-          headingLevel="h2"
-        />
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        // Pilihan pemilik 2026-10-08 (demo 3): satu kolom kartu yang menempel dan menumpuk saat
+        // digulir (globals.css .pj-stack), di HP maupun laptop.
+        <ol className="pj-stack">
           {projects.map((p, i) => (
-            <ProjectCard key={p.slug} project={p} index={i} locale={locale} headingLevel="h2" />
+            <li key={p.slug} style={{ '--i': i } as CSSProperties}>
+              <ProjectCard
+                project={p}
+                index={i}
+                locale={locale}
+                variant="stack"
+                headingLevel="h2"
+              />
+            </li>
           ))}
-        </div>
+        </ol>
       )}
 
       {projects.length > 0 && projects.length < 3 ? (

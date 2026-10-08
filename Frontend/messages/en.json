@@ -149,7 +149,9 @@
     "previous": "Previous",
     "next": "Next",
     "otherProjects": "Other projects",
-    "readMoreShort": "Read more"
+    "readMoreShort": "Read more",
+    "category": "Category",
+    "year": "Year"
   },
   "Contact": {
     "metaTitle": "Contact",

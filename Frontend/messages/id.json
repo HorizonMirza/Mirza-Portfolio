@@ -149,7 +149,9 @@
     "previous": "Sebelumnya",
     "next": "Berikutnya",
     "otherProjects": "Project lain",
-    "readMoreShort": "Baca detail"
+    "readMoreShort": "Baca detail",
+    "category": "Kategori",
+    "year": "Tahun"
   },
   "Contact": {
     "metaTitle": "Kontak",
