@@ -22,7 +22,7 @@ export type PublicProjectSummary = {
   repoUrl: string | null
   githubRepo: string | null
   cover: PublicImage | null
-  skills: { id: string; name: string }[]
+  skills: { id: string; name: string; icon: string | null }[]
 }
 
 export type PublicProject = PublicProjectSummary & {
@@ -54,7 +54,10 @@ const summarySelect = {
   repoUrl: true,
   githubRepo: true,
   cover: { select: imageSelect },
-  skills: { select: { id: true, name: true }, orderBy: [{ order: 'asc' }, { name: 'asc' }] },
+  skills: {
+    select: { id: true, name: true, icon: true },
+    orderBy: [{ order: 'asc' }, { name: 'asc' }],
+  },
 } satisfies Prisma.ProjectSelect
 
 // Hanya project berstatus terbit, urut sesuai urutan di admin.

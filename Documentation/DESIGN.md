@@ -680,3 +680,14 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Tiap project satu baris (`ProjectRow`): gambar 16:10 dan teks berdampingan di layar ≥ 768 px, sisi gambar bergantian (ganjil kiri, genap kanan); di HP gambar di atas teks. Jarak antar baris 4 rem (6 rem di layar lebar). Teks: nomor · kategori · tahun, judul (`h2`), ringkasan, chip teknologi, "Baca detail →". Seluruh baris bisa diklik (satu tautan di judul).
 - Animasi lewat reveal yang sudah ada: gambar masuk 32 px dari sisinya (600 ms; di HP naik 12 px), teks menyusul 120 ms kemudian. Saat disorot gambar membesar pelan dan panah bergeser. Reduced-motion mematikan semuanya.
 - `ProjectCard` (varian grid/wide/stack) dan CSS `.pj-stack`/`.pj-card` dihapus karena tidak dipakai lagi.
+
+## 49. Efek halaman Project (2026-10-08)
+
+- Pilihan pemilik dari 10 demo efek: **1, 4, 6, 7, 8, 10**.
+- **1. Gambar miring + kilau berbunyi:** `PhotoTilt` (komponen foto Tentang) kini bisa dipakai ulang lewat prop `className`, `maxTilt`, dan `touch`. Gambar di daftar miring sampai 8° dengan pantulan cahaya dan bunyi kilau yang sama dengan foto Tentang. Gambar besar di detail miring 4° (diperbesar 1,05× agar tepi tidak terlihat) dan hanya untuk mouse, agar tidak bentrok dengan geser jari. Gambar di daftar dibungkus tautan kedua (`tabIndex=-1`, `aria-hidden`) agar bisa dimiringkan dan tetap bisa diklik; pembaca layar memakai tautan judul.
+- **4. Nomor besar:** nomor project (01, 02, …) bergaris tipis biru (32%) di belakang teks tiap baris, 6–12 rem. Bergerak 80 px lebih lambat dari gulir lewat CSS `animation-timeline: view()` (tanpa JavaScript; browser tanpa dukungan dan reduced-motion menampilkannya diam).
+- **6. Gambar terbang ke detail:** React `<ViewTransition name="project-{slug}" share="morph">` di gambar daftar dan gambar besar detail; grup morph 450 ms. Ikut aturan transisi yang ada: di HP (pointer kasar) View Transitions dimatikan (bagian 40), jadi halaman berganti seperti biasa.
+- **7. Logo di chip teknologi** (`TechChips`): logo Simple Icons yang sama dengan keyboard skill, diambil dari kolom ikon/nama skill. Logo abu-abu dan berwarna brand saat chip atau baris disorot; logo brand yang sangat gelap (Next.js) memakai warna teks.
+- **8. Galeri geser:** gambar besar detail berganti lewat geser jari (≥ 40 px, geser dari atas tombol diabaikan), tombol panah bulat di kiri-kanan (muncul saat disorot di laptop, selalu terlihat di HP), tombol panah keyboard, atau gambar kecil. Tiap ganti gambar berbunyi desir lembut (`playSlideSound`, naik ke berikutnya dan turun ke sebelumnya).
+- **10. Tombol berkilau + bunyi klik:** Buka demo / Lihat kode memiliki kilau yang menyapu saat disorot (biru di tombol utama), sedikit mengecil saat ditekan, dan berbunyi "tik kaca" yang sama dengan menu utama (`ClickSound`).
+- Semua suara ikut volume di Admin → Pengaturan dan tidak berbunyi sebelum ada interaksi pengunjung.

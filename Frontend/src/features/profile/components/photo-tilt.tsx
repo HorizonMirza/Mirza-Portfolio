@@ -4,7 +4,7 @@ import { type PointerEvent, type ReactNode, useRef } from 'react'
 
 import { playPhotoShimmerSound } from '@/lib/ui-sounds'
 
-// Kemiringan maksimum kartu (derajat) saat kursor di tepi kartu.
+// Kemiringan maksimum kartu (derajat) saat kursor di tepi kartu (bawaan; bisa diubah lewat prop).
 const MAX_TILT = 12
 // Suara kilau saat kursor bergeser di kartu: satu nada tiap 190 ms (lambat dan halus, revisi
 // pemilik 2026-10-08) selama kursor berpindah minimal 6 px; nada berikutnya melanjutkan urutan.
@@ -23,7 +23,19 @@ function reducedMotion() {
 // Hanya mengubah variabel CSS lewat requestAnimationFrame (transform dikerjakan GPU, globals.css
 // .ab-tilt). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
 // demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
-export function PhotoTilt({ children }: { children: ReactNode }) {
+// Dipakai juga untuk gambar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan kelas
+// pembungkus sendiri; `touch={false}` mematikan kemiringan di layar sentuh (mis. galeri yang digeser).
+export function PhotoTilt({
+  children,
+  className = 'ab-tilt',
+  maxTilt = MAX_TILT,
+  touch = true,
+}: {
+  children: ReactNode
+  className?: string
+  maxTilt?: number
+  touch?: boolean
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const rect = useRef<DOMRect | null>(null)
   const frame = useRef(0)
@@ -49,7 +61,7 @@ export function PhotoTilt({ children }: { children: ReactNode }) {
   }
 
   function follow(event: PointerEvent<HTMLDivElement>) {
-    if (event.pointerType === 'touch' && !pressed.current) return
+    if (event.pointerType === 'touch' && (!touch || !pressed.current)) return
     shimmer(event)
     if (reducedMotion()) return
     const r = (rect.current ??= event.currentTarget.getBoundingClientRect())
@@ -57,8 +69,8 @@ export function PhotoTilt({ children }: { children: ReactNode }) {
     const y = Math.min(1, Math.max(0, (event.clientY - r.top) / r.height))
     if (ref.current) ref.current.dataset.tilt = 'on'
     apply({
-      '--tilt-x': `${((0.5 - y) * 2 * MAX_TILT).toFixed(2)}deg`,
-      '--tilt-y': `${((x - 0.5) * 2 * MAX_TILT).toFixed(2)}deg`,
+      '--tilt-x': `${((0.5 - y) * 2 * maxTilt).toFixed(2)}deg`,
+      '--tilt-y': `${((x - 0.5) * 2 * maxTilt).toFixed(2)}deg`,
       '--glare-x': `${(x * 100).toFixed(1)}%`,
       '--glare-y': `${(y * 100).toFixed(1)}%`,
       '--glare-o': '1',
@@ -75,7 +87,7 @@ export function PhotoTilt({ children }: { children: ReactNode }) {
   return (
     <div
       ref={ref}
-      className="ab-tilt"
+      className={className}
       data-tilt="off"
       onPointerEnter={(e) => {
         rect.current = e.currentTarget.getBoundingClientRect()
@@ -83,6 +95,7 @@ export function PhotoTilt({ children }: { children: ReactNode }) {
       }}
       onPointerMove={follow}
       onPointerDown={(e) => {
+        if (e.pointerType === 'touch' && !touch) return
         if (e.pointerType === 'touch') shimmer(e, true)
         if (reducedMotion()) return
         pressed.current = true

@@ -137,7 +137,9 @@
     "next": "Next",
     "otherProjects": "Other projects",
     "readMoreShort": "Read more",
-    "image": "Image"
+    "image": "Image",
+    "previousImage": "Previous image",
+    "nextImage": "Next image"
   },
   "Contact": {
     "metaTitle": "Contact",

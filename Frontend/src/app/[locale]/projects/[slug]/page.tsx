@@ -3,10 +3,12 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
+import { ClickSound } from '@/components/shared/click-sound'
 import { MarkdownView } from '@/components/shared/markdown-view'
-import { Chip, Container } from '@/components/site/section-heading'
+import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { ProjectSplit } from '@/features/projects/components/public/project-split'
+import { TechChips } from '@/features/projects/components/public/tech-chips'
 import { getPublishedProject, getPublishedProjects } from '@/features/projects/public'
 import { Link } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
@@ -77,7 +79,11 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
           ringkasan, tombol, teknologi, dan gambar. Uraian menyusul di bawah, tanpa ubin; studi kasus
           tidak ditampilkan (permintaan pemilik 2026-10-08). */}
       <div className="mt-6">
-        <ProjectSplit images={images} thumbLabel={t('image')}>
+        <ProjectSplit
+          slug={project.slug}
+          images={images}
+          labels={{ thumb: t('image'), previous: t('previousImage'), next: t('nextImage') }}
+        >
           <p className="flex flex-wrap gap-x-2 font-mono text-label tracking-widest text-note uppercase">
             <span>{t(project.category)}</span>
             <span aria-hidden="true">·</span>
@@ -86,36 +92,30 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
           <h1 className="mt-3 text-h1 font-bold text-balance">{loc(project, 'title', locale)}</h1>
           <p className="mt-4 max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
           {project.demoUrl || project.repoUrl ? (
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              {project.demoUrl ? (
-                <Button asChild>
-                  <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink aria-hidden="true" />
-                    {t('demo')}
-                    <span className="sr-only">{tCommon('openInNewTab')}</span>
-                  </a>
-                </Button>
-              ) : null}
-              {project.repoUrl ? (
-                <Button asChild variant="secondary">
-                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                    <Code2 aria-hidden="true" />
-                    {t('repo')}
-                    <span className="sr-only">{tCommon('openInNewTab')}</span>
-                  </a>
-                </Button>
-              ) : null}
-            </div>
+            <ClickSound>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                {project.demoUrl ? (
+                  <Button asChild className="pj-shine pj-shine-solid">
+                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink aria-hidden="true" />
+                      {t('demo')}
+                      <span className="sr-only">{tCommon('openInNewTab')}</span>
+                    </a>
+                  </Button>
+                ) : null}
+                {project.repoUrl ? (
+                  <Button asChild variant="secondary" className="pj-shine">
+                    <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                      <Code2 aria-hidden="true" />
+                      {t('repo')}
+                      <span className="sr-only">{tCommon('openInNewTab')}</span>
+                    </a>
+                  </Button>
+                ) : null}
+              </div>
+            </ClickSound>
           ) : null}
-          {project.skills.length > 0 ? (
-            <ul aria-label={t('stack')} className="mt-6 flex flex-wrap gap-1.5">
-              {project.skills.map((s) => (
-                <li key={s.id}>
-                  <Chip>{s.name}</Chip>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+          <TechChips skills={project.skills} label={t('stack')} className="mt-6" />
         </ProjectSplit>
       </div>
 

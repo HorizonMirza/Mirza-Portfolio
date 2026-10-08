@@ -236,3 +236,28 @@ export function playLanyardSound(kind: 'grab' | 'release') {
   osc.stop(t + 0.6)
   lfo.stop(t + 0.6)
 }
+
+// Galeri detail project (pilihan pemilik 2026-10-08, demo efek nomor 8): desir lembut saat gambar
+// berganti, naik ke gambar berikutnya dan turun ke gambar sebelumnya. Lebih pendek dan lebih pelan
+// dari desir tombol tema karena bisa ditekan beruntun.
+export function playSlideSound(forward: boolean) {
+  const a = audio()
+  if (!a) return
+  const { ctx, out, noise } = a
+  const t = ctx.currentTime
+  const dur = 0.26
+  const source = ctx.createBufferSource()
+  source.buffer = noise
+  const filter = ctx.createBiquadFilter()
+  filter.type = 'bandpass'
+  filter.Q.value = 1.2
+  filter.frequency.setValueAtTime(forward ? 600 : 2400, t)
+  filter.frequency.exponentialRampToValueAtTime(forward ? 2400 : 600, t + dur)
+  const gain = ctx.createGain()
+  envelope(gain, t, 0.22, 0.05, dur)
+  source.connect(filter)
+  filter.connect(gain)
+  gain.connect(out)
+  source.start(t, Math.random() * 0.5)
+  source.stop(t + dur + 0.05)
+}

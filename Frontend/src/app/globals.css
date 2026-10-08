@@ -1511,17 +1511,10 @@
   }
 }
 .pd-media img {
-  transition:
-    opacity 500ms var(--ease-out-soft),
-    transform 6s linear;
+  transition: opacity 500ms var(--ease-out-soft);
 }
 .pd-media img[data-active='false'] {
   opacity: 0;
-}
-@media (hover: hover) {
-  .pd-media:hover img {
-    transform: scale(1.04);
-  }
 }
 .pd-text {
   display: flex;
@@ -1802,6 +1795,219 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .gh-ticker-list {
+    transition: none;
+  }
+}
+
+/* Efek halaman Project, pilihan pemilik 2026-10-08 (demo efek 1, 4, 6, 7, 8, 10; DESIGN.md
+   bagian 49). Semua gerak hanya transform/opacity dan mati pada reduced-motion. */
+
+/* 1. gambar miring + kilau (PhotoTilt dengan kelas sendiri; suara kilau dari PhotoTilt) */
+.pj-tilt {
+  perspective: 1000px;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+.pj-tilt-in {
+  position: relative;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-s, 1));
+  transform-style: preserve-3d;
+  transition: transform 700ms var(--ease-out-soft);
+}
+.pj-tilt[data-tilt='on'] .pj-tilt-in {
+  transition: transform 120ms ease-out;
+}
+.pj-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 30%),
+    rgb(255 255 255 / 0.28),
+    transparent 55%
+  );
+  opacity: var(--glare-o, 0);
+  pointer-events: none;
+  transition: opacity 400ms var(--ease-out-soft);
+}
+/* detail: gambar mengisi setengah kartu, jadi sedikit diperbesar agar tepinya tidak terlihat saat miring */
+.pd-tilt,
+.pd-tilt .pj-tilt-in {
+  height: 100%;
+}
+.pd-tilt .pj-tilt-in {
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.05);
+}
+
+/* 4. nomor besar bergaris di belakang teks, bergerak lebih lambat saat digulir */
+.pj-bignum {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 0;
+  translate: 0 -50%;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 4rem + 9vw, 12rem);
+  font-weight: 700;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--note) 32%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .pj-bignum {
+      animation: pj-bignum linear both;
+      animation-timeline: view();
+    }
+  }
+}
+@keyframes pj-bignum {
+  from {
+    translate: 0 calc(-50% + 40px);
+  }
+  to {
+    translate: 0 calc(-50% - 40px);
+  }
+}
+
+/* 6. gambar daftar "terbang" ke detail (React <ViewTransition share="morph">) */
+::view-transition-group(.morph) {
+  animation-duration: 450ms;
+  animation-timing-function: var(--ease-out-soft);
+}
+::view-transition-old(.morph),
+::view-transition-new(.morph) {
+  animation-duration: 450ms;
+}
+
+/* 7. chip teknologi dengan logo */
+.pj-tech {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  padding: 0.1875rem 0.625rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  transition:
+    border-color 250ms,
+    translate 300ms var(--ease-out-soft);
+}
+.pj-tech svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: var(--text-muted);
+  transition:
+    fill 250ms,
+    rotate 400ms var(--ease-out-soft),
+    scale 400ms var(--ease-out-soft);
+}
+@media (hover: hover) {
+  .pj-tech:hover {
+    border-color: color-mix(in srgb, var(--brand) 60%, var(--border));
+    translate: 0 -2px;
+  }
+  .pj-tech:hover svg {
+    fill: var(--brand);
+    rotate: -8deg;
+    scale: 1.12;
+  }
+}
+/* chip di baris daftar ada di bawah tautan selebar baris; logo ikut berwarna saat baris disorot */
+@media (hover: hover) {
+  .pj-zz:hover .pj-tech svg {
+    fill: var(--brand);
+  }
+}
+
+/* 8. panah galeri detail */
+.pd-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  translate: 0 -50%;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.45);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  transition:
+    opacity 250ms,
+    background 200ms;
+}
+.pd-arrow:hover {
+  background: rgb(0 0 0 / 0.65);
+}
+.pd-arrow:focus-visible {
+  outline: 2px solid var(--note);
+  outline-offset: 2px;
+}
+.pd-arrow svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.pd-arrow-prev {
+  left: 0.75rem;
+}
+.pd-arrow-next {
+  right: 0.75rem;
+}
+@media (hover: hover) {
+  .pd-arrow {
+    opacity: 0;
+  }
+  .pd-media:hover .pd-arrow,
+  .pd-arrow:focus-visible {
+    opacity: 1;
+  }
+}
+
+/* 10. tombol berkilau (bunyi klik dari ClickSound) */
+.pj-shine {
+  position: relative;
+  overflow: hidden;
+}
+.pj-shine::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.5) 50%, transparent 65%);
+  translate: -120% 0;
+  pointer-events: none;
+}
+.pj-shine-solid::after {
+  background: linear-gradient(
+    110deg,
+    transparent 35%,
+    color-mix(in srgb, var(--note) 55%, transparent) 50%,
+    transparent 65%
+  );
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .pj-shine:hover::after {
+    translate: 120% 0;
+    transition: translate 800ms var(--ease-out-soft);
+  }
+}
+.pj-shine:active {
+  scale: 0.97;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pj-tilt-in,
+  .pj-glare,
+  .pj-tech,
+  .pj-tech svg,
+  .pd-arrow {
     transition: none;
   }
 }
