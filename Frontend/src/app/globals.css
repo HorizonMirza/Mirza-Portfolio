@@ -574,8 +574,10 @@
   line-height: 1.1;
   text-transform: uppercase;
 }
-/* teks tentang saya rata kiri-kanan supaya tepi kanan rapi (revisi pemilik) */
-.ab-bio p {
+/* teks tentang saya dan ringkasan di daftar project rata kiri-kanan supaya tepi kanan rapi (revisi
+   pemilik; ringkasan project 2026-10-08 "seperti About me rapihnya") */
+.ab-bio p,
+.pj-summary {
   text-align: justify;
   text-justify: inter-word;
   /* Safari (iPhone) baru memenggal kata dengan awalan -webkit-; pemenggalan memperkecil celah

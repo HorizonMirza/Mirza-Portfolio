@@ -107,7 +107,7 @@ export async function ProjectRow({
               {loc(project, 'title', locale)}
             </Link>
           </h2>
-          <p className="max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
+          <p className="pj-summary max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
           <TechChips skills={project.skills} label={t('stack')} />
         </div>
         <span aria-hidden="true" className="pj-bignum">
