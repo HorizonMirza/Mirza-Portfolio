@@ -128,7 +128,6 @@
     "demo": "Open demo",
     "repo": "View code",
     "stack": "Tech stack",
-    "gallery": "Gallery",
     "caseStudy": "Case study",
     "overview": "Overview",
     "stars": "{count, plural, =0 {No stars yet} one {# star} other {# stars}}",
@@ -139,8 +138,7 @@
     "next": "Next",
     "otherProjects": "Other projects",
     "readMoreShort": "Read more",
-    "category": "Category",
-    "year": "Year"
+    "image": "Image"
   },
   "Contact": {
     "metaTitle": "Contact",

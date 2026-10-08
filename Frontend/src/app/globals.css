@@ -1461,8 +1461,8 @@
 }
 
 /* Halaman Project, pilihan pemilik 2026-10-08 (demo 3, DESIGN.md bagian 43).
-   Daftar: satu kolom kartu yang menempel dan menumpuk saat digulir. Detail: judul di atas sampul,
-   baris info, ubin bento. Hanya transform/opacity yang beranimasi. */
+   Daftar: satu kolom kartu yang menempel dan menumpuk saat digulir. Hanya transform/opacity yang
+   beranimasi. */
 .pj-stack {
   max-width: 48rem;
   margin: 0 auto;
@@ -1493,180 +1493,101 @@
   }
 }
 
-.pj-hero {
-  position: relative;
-  display: grid;
-  align-items: end;
-  min-height: min(78vh, 40rem);
-  overflow: hidden;
-  border-radius: 1.75rem;
-  isolation: isolate;
-  color: #fff;
-}
-.pj-hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(180deg, rgb(0 0 0 / 0.05) 25%, rgb(0 0 0 / 0.85));
-}
-.pj-hero-img {
-  z-index: -2;
-  transform: scale(1.06);
-}
-/* gambar sampul membesar pelan saat halaman digulir (CSS scroll-driven, tanpa JavaScript;
-   browser tanpa dukungan menampilkan gambar diam) */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .pj-hero-img {
-      animation: pj-zoom linear both;
-      animation-timeline: view();
-      animation-range: exit 0% exit 100%;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .pj-card {
+    transition: none;
   }
-}
-@keyframes pj-zoom {
-  from {
-    transform: scale(1.06);
-  }
-  to {
-    transform: scale(1.2);
-  }
-}
-.pj-hero-in {
-  padding: clamp(1.5rem, 4vw, 2.75rem);
-}
-.pj-eyebrow {
-  color: var(--note);
-}
-.pj-summary {
-  color: var(--text-muted);
-}
-.pj-hero .pj-eyebrow {
-  color: #cfd8ff;
-}
-.pj-hero .pj-summary {
-  color: rgb(255 255 255 / 0.85);
-}
-.pj-hero .pj-btn-solid {
-  border-color: #fff;
-  background: #fff;
-  color: #0a0a0a;
-}
-.pj-hero .pj-btn-ghost {
-  border-color: rgb(255 255 255 / 0.7);
-  background: transparent;
-  color: #fff;
-}
-.pj-hero .pj-btn-ghost:hover {
-  background: rgb(255 255 255 / 0.12);
 }
 
-.pj-meta {
+/* Detail project, pilihan pemilik 2026-10-08 (demo 10 "belah dua", DESIGN.md bagian 47).
+   Laptop: gambar penuh di kiri, teks di kanan; gambar kecil mengganti gambar besar.
+   HP: gambar di atas, teks di bawah. */
+.pd-split {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 1px;
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  background: var(--border);
-}
-.pj-meta > div {
-  display: grid;
-  gap: 0.25rem;
-  padding: 1rem 1.125rem;
-  background: var(--bg);
-}
-.pj-meta dt,
-.pj-label {
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.pj-meta dd {
-  margin: 0;
-}
-
-.pj-bento {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0.875rem;
-}
-.pj-tile {
-  min-width: 0;
-  margin: 0;
-  padding: 1.5rem;
   border: 1px solid var(--border);
   border-radius: 1.25rem;
-  background: var(--surface);
-  transition:
-    transform 350ms var(--ease-out-soft),
-    box-shadow 350ms;
+  background: var(--bg);
 }
-@media (hover: hover) {
-  .pj-tile:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px -28px rgb(0 0 0 / 0.5);
+@media (min-width: 900px) {
+  .pd-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: min(80vh, 38rem);
   }
 }
-.pj-tile-title {
-  margin-bottom: 0.875rem;
-  font-family: var(--font-display);
-  font-size: 1.625rem;
-  font-weight: 700;
-  line-height: 1.1;
-  text-transform: uppercase;
-}
-.pj-inv {
-  border-color: var(--text);
-  background: var(--text);
-  color: var(--bg);
-}
-.pj-inv .pj-label,
-.pj-inv .text-muted {
-  color: color-mix(in srgb, var(--bg) 70%, transparent);
-}
-.pj-pic {
+.pd-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
-  padding: 0;
+  background: var(--surface);
 }
-.pj-pic img {
-  transition: transform 800ms var(--ease-out-soft);
+@media (min-width: 900px) {
+  .pd-media {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+}
+.pd-media img {
+  transition:
+    opacity 500ms var(--ease-out-soft),
+    transform 6s linear;
+}
+.pd-media img[data-active='false'] {
+  opacity: 0;
 }
 @media (hover: hover) {
-  .pj-pic:hover img {
+  .pd-media:hover img {
     transform: scale(1.04);
   }
 }
-.pj-s2 {
-  grid-column: span 2;
+.pd-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.75rem 1.25rem 2rem;
 }
-.pj-s3 {
-  grid-column: span 3;
-}
-.pj-s4 {
-  grid-column: span 4;
-}
-.pj-s6 {
-  grid-column: span 6;
-}
-@media (max-width: 767px) {
-  .pj-bento {
-    grid-template-columns: minmax(0, 1fr);
+@media (min-width: 640px) {
+  .pd-text {
+    padding: 2.5rem;
   }
-  .pj-bento > * {
-    grid-column: auto;
+}
+@media (min-width: 1100px) {
+  .pd-text {
+    padding: 3rem 3.5rem;
   }
-  .pj-pic img {
-    aspect-ratio: 16 / 10;
-  }
+}
+.pd-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.75rem;
+}
+.pd-thumbs button {
+  position: relative;
+  width: 4.5rem;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 0.5rem;
+  opacity: 0.7;
+  transition:
+    opacity 200ms,
+    border-color 200ms;
+}
+.pd-thumbs button:hover,
+.pd-thumbs button[aria-pressed='true'] {
+  opacity: 1;
+}
+.pd-thumbs button[aria-pressed='true'] {
+  border-color: var(--note);
+}
+.pd-thumbs button:focus-visible {
+  outline: 2px solid var(--note);
+  outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .pj-card,
-  .pj-tile,
-  .pj-pic img {
+  .pd-media img,
+  .pd-thumbs button {
     transition: none;
   }
 }
