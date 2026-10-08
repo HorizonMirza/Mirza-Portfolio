@@ -149,6 +149,7 @@ export function SkillKeyboard3D({
     let disposed = false
     let removeListeners = () => {}
     let resizeObserver: ResizeObserver | undefined
+    let visibilityObserver: IntersectionObserver | undefined
 
     async function start() {
       const { Application } = await import('@splinetool/runtime')
@@ -210,6 +211,15 @@ export function SkillKeyboard3D({
         app.requestRender()
       })
       resizeObserver.observe(canvas)
+      // Scene beranimasi terus: hentikan render saat keyboard di luar layar agar scroll di
+      // bagian lain (grafik GitHub, footer) tidak tersendat, lanjutkan begitu terlihat lagi.
+      visibilityObserver = new IntersectionObserver(([entry]) => {
+        if (entry?.isIntersecting) {
+          if (app.isStopped) app.play()
+          app.requestRender()
+        } else if (!app.isStopped) app.stop()
+      })
+      visibilityObserver.observe(canvas)
       app.requestRender()
       setStatus('ready')
     }
@@ -224,6 +234,7 @@ export function SkillKeyboard3D({
       disposed = true
       removeListeners()
       resizeObserver?.disconnect()
+      visibilityObserver?.disconnect()
       appRef.current?.dispose()
       appRef.current = null
     }

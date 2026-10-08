@@ -67,18 +67,9 @@
     "nowLabel": "Sekarang",
     "viewProjects": "Lihat project",
     "github": "GitHub",
-    "featuredHeading": "Project pilihan",
-    "allProjects": "Semua project",
-    "noProjects": "Tulisan project pertama sedang disiapkan. Sementara itu, kode saya ada di GitHub.",
-    "journeyHeading": "Perjalanan terbaru",
-    "journeyMore": "Lihat seluruh perjalanan",
     "stackHeading": "Yang saya pakai",
     "githubHeading": "Aktivitas di GitHub",
-    "githubProfile": "Buka profil GitHub",
-    "ctaHeading": "Ada yang ingin dibangun?",
-    "ctaBody": "Tawaran kerja, project, atau pertanyaan soal komunitas. Tulis saja, pesannya langsung masuk ke kotak masuk saya.",
-    "ctaMessage": "Kirim pesan",
-    "ctaWhatsapp": "WhatsApp"
+    "githubProfile": "Buka profil GitHub"
   },
   "About": {
     "metaTitle": "Tentang Saya",

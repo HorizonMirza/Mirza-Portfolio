@@ -67,18 +67,9 @@
     "nowLabel": "Now",
     "viewProjects": "View projects",
     "github": "GitHub",
-    "featuredHeading": "Selected work",
-    "allProjects": "All projects",
-    "noProjects": "My first project write-up is on its way. In the meantime, my code is on GitHub.",
-    "journeyHeading": "Recent journey",
-    "journeyMore": "See the full journey",
     "stackHeading": "What I work with",
     "githubHeading": "Activity on GitHub",
-    "githubProfile": "Open GitHub profile",
-    "ctaHeading": "Have something to build?",
-    "ctaBody": "Job offers, projects, or questions about community building. Write to me and it lands straight in my inbox.",
-    "ctaMessage": "Send a message",
-    "ctaWhatsapp": "WhatsApp"
+    "githubProfile": "Open GitHub profile"
   },
   "About": {
     "metaTitle": "About Me",

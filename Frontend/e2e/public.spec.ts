@@ -5,8 +5,11 @@ import { uniqueIp } from './admin/helpers'
 test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', async ({ page }) => {
   await page.goto('/id')
   await expect(page.getByRole('link', { name: 'Lihat project' })).toBeInViewport()
-  await expect(page.getByRole('heading', { name: 'Perjalanan terbaru' })).toBeVisible()
-  await expect(page.getByRole('region', { name: 'Kabar project baru' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Yang saya pakai' })).toBeVisible()
+  // dihapus atas permintaan pemilik 2026-10-08: Project pilihan, Perjalanan terbaru, ajakan + newsletter
+  for (const name of ['Project pilihan', 'Perjalanan terbaru', 'Ada yang ingin dibangun?']) {
+    await expect(page.getByRole('heading', { name })).toHaveCount(0)
+  }
 })
 
 test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
@@ -153,15 +156,6 @@ test('rate limit kontak: pesan ke-6 dalam satu jam ditolak', async ({ browser, b
   }
   await expect(page.getByText('Terlalu banyak pesan dari jaringan ini')).toBeVisible()
   await context.close()
-})
-
-test('newsletter tanpa Resend menampilkan pesan belum aktif', async ({ page }) => {
-  test.skip(Boolean(process.env.RESEND_API_KEY), 'Resend aktif')
-  await page.goto('/id')
-  const form = page.getByRole('region', { name: 'Kabar project baru' })
-  await form.getByLabel('Email').fill('pembaca@example.com')
-  await form.getByRole('button', { name: 'Berlangganan' }).click()
-  await expect(form.getByText('Newsletter belum aktif')).toBeVisible()
 })
 
 test('tautan konfirmasi newsletter tidak langsung mengubah data dan token palsu ditolak', async ({

@@ -1,4 +1,4 @@
-import { ArrowRight, Download, MessageSquare } from 'lucide-react'
+import { ArrowRight, Download } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
@@ -8,24 +8,21 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
-import { getPublicExperiences } from '@/features/experience/public'
-import { organizationName, sortByLatest } from '@/features/experience/schema'
+import { organizationName } from '@/features/experience/schema'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
-import { ProjectCard } from '@/features/projects/components/public/project-card'
 import { getPublishedProjects } from '@/features/projects/public'
 import { SkillKeyboard } from '@/features/skills/components/skill-keyboard'
 import { SkillKeyboard3D } from '@/features/skills/components/skill-keyboard-3d'
 import { toKeycaps } from '@/features/skills/keycaps'
 import { getPublicSkills } from '@/features/skills/public'
-import { NewsletterForm } from '@/features/subscribers/components/newsletter-form'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
 import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
-import { formatMonth, loc } from '@/lib/localized'
-import { pageMetadata, whatsappUrl } from '@/lib/seo'
+import { loc } from '@/lib/localized'
+import { pageMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
@@ -55,38 +52,21 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
-  const [
-    t,
-    tNav,
-    tAvail,
-    tCommon,
-    tExp,
-    tSkills,
-    tKeyboard,
-    tSkyline,
-    profile,
-    projects,
-    experiences,
-    skills,
-  ] = await Promise.all([
-    getTranslations({ locale, namespace: 'Home' }),
-    getTranslations({ locale, namespace: 'Nav' }),
-    getTranslations({ locale, namespace: 'Availability' }),
-    getTranslations({ locale, namespace: 'Common' }),
-    getTranslations({ locale, namespace: 'Experience' }),
-    getTranslations({ locale, namespace: 'Skills' }),
-    getTranslations({ locale, namespace: 'SkillKeyboard' }),
-    getTranslations({ locale, namespace: 'Skyline' }),
-    getPublicProfile(),
-    getPublishedProjects(),
-    getPublicExperiences(),
-    getPublicSkills(),
-  ])
+  const [t, tNav, tAvail, tCommon, tSkills, tKeyboard, tSkyline, profile, projects, skills] =
+    await Promise.all([
+      getTranslations({ locale, namespace: 'Home' }),
+      getTranslations({ locale, namespace: 'Nav' }),
+      getTranslations({ locale, namespace: 'Availability' }),
+      getTranslations({ locale, namespace: 'Common' }),
+      getTranslations({ locale, namespace: 'Skills' }),
+      getTranslations({ locale, namespace: 'SkillKeyboard' }),
+      getTranslations({ locale, namespace: 'Skyline' }),
+      getPublicProfile(),
+      getPublishedProjects(),
+      getPublicSkills(),
+    ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
-  const featured = (
-    projects.some((p) => p.featured) ? projects.filter((p) => p.featured) : projects
-  ).slice(0, 3)
   const github = profile?.socials.github
   const login = githubLogin(github)
   const contributions = login ? await getGithubContributions(login) : null
@@ -243,95 +223,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <HorizonBackdrop />
       </section>
 
-      <section aria-labelledby="featured-title" className="py-16 md:py-24">
-        <Container className="reveal">
-          <SectionHeading
-            id="featured-title"
-            index="02"
-            title={t('featuredHeading')}
-            action={
-              projects.length > 1 ? (
-                <Link
-                  href="/projects"
-                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  {t('allProjects')}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              ) : null
-            }
-          />
-          {featured.length === 0 ? (
-            <p className="max-w-prose rounded-lg border border-dashed border-border p-6 text-muted">
-              {t('noProjects')}{' '}
-              {github ? (
-                <a
-                  href={github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary underline underline-offset-4"
-                >
-                  GitHub
-                  <span className="sr-only"> {tCommon('openInNewTab')}</span>
-                </a>
-              ) : null}
-            </p>
-          ) : featured.length === 1 ? (
-            <ProjectCard project={featured[0]!} index={0} locale={locale} variant="wide" />
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {featured.map((project, i) => (
-                <ProjectCard key={project.slug} project={project} index={i} locale={locale} />
-              ))}
-            </div>
-          )}
-        </Container>
-      </section>
-
-      {/* pendidikan tidak masuk perjalanan (sama dengan halaman Pengalaman) */}
-      {experiences.some((e) => e.type !== 'EDUCATION') ? (
-        <section aria-labelledby="journey-title" className="border-t border-border py-16 md:py-24">
-          <Container className="reveal">
-            <SectionHeading
-              id="journey-title"
-              index="03"
-              title={t('journeyHeading')}
-              action={
-                <Link
-                  href="/experience"
-                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  {t('journeyMore')}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              }
-            />
-            <ol className="divide-y divide-border border-y border-border">
-              {sortByLatest(experiences.filter((e) => e.type !== 'EDUCATION'))
-                .slice(0, 3)
-                .map((e) => (
-                  <li
-                    key={e.id}
-                    className="grid gap-1 py-5 md:grid-cols-[12rem_1fr_auto] md:items-baseline md:gap-6"
-                  >
-                    <p className="font-mono text-sm text-note tabular-nums">
-                      {formatMonth(e.start, locale)} –{' '}
-                      {e.end ? formatMonth(e.end, locale) : tCommon('present')}
-                    </p>
-                    <div>
-                      <h3 className="font-semibold">{loc(e, 'title', locale)}</h3>
-                      <p className="text-muted">{organizationName(e, locale)}</p>
-                    </div>
-                    <p className="font-mono text-label tracking-widest text-note uppercase">
-                      {tExp(e.type)}
-                    </p>
-                  </li>
-                ))}
-            </ol>
-          </Container>
-        </section>
-      ) : null}
-
       {skills.length > 0 ? (
         <section
           id="skills"
@@ -339,7 +230,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           className="scroll-mt-24 border-t border-border py-16 md:py-24"
         >
           <Container className="reveal">
-            <SectionHeading id="stack-title" index="04" title={t('stackHeading')} />
+            <SectionHeading id="stack-title" index="02" title={t('stackHeading')} />
             <SkillKeyboard3D
               keycaps={skillKeycaps}
               label={tKeyboard('label')}
@@ -364,7 +255,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           <Container className="reveal">
             <SectionHeading
               id="github-title"
-              index="05"
+              index="03"
               title={t('githubHeading')}
               action={
                 <a
@@ -387,32 +278,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           </Container>
         </section>
       ) : null}
-
-      <section aria-labelledby="cta-title" className="border-t border-border py-16 md:py-24">
-        <Container className="reveal grid gap-12 lg:grid-cols-[1.2fr_1fr]">
-          <div>
-            <SectionHeading id="cta-title" index="06" title={t('ctaHeading')} className="mb-4" />
-            <p className="max-w-prose text-muted">{t('ctaBody')}</p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Button asChild>
-                <Link href="/contact">
-                  <MessageSquare aria-hidden="true" />
-                  {t('ctaMessage')}
-                </Link>
-              </Button>
-              {profile?.whatsapp ? (
-                <Button asChild variant="secondary">
-                  <a href={whatsappUrl(profile.whatsapp)} target="_blank" rel="noopener noreferrer">
-                    {t('ctaWhatsapp')}
-                    <span className="sr-only">{tCommon('openInNewTab')}</span>
-                  </a>
-                </Button>
-              ) : null}
-            </div>
-          </div>
-          <NewsletterForm />
-        </Container>
-      </section>
     </>
   )
 }

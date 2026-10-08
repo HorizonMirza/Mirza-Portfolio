@@ -56,7 +56,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F10 | **Animasi**: hero, transisi halaman, reveal saat scroll. Menghormati `prefers-reduced-motion` | P0 |
 | F11 | **Statistik pengunjung**: pencatatan tanpa cookie, ditampilkan di dashboard admin | P0 |
 | F12 | **Kontak cepat**: ~~tombol WhatsApp melayang~~ dihapus pemilik 2026-10-03; WhatsApp lewat kartu di footer dan halaman kontak | P0 |
-| F13 | **Newsletter**: form berlangganan dengan konfirmasi email (double opt-in) dan tautan berhenti | P0 |
+| F13 | **Newsletter**: form berlangganan dengan konfirmasi email (double opt-in) dan tautan berhenti. **2026-10-08:** form dihapus dari beranda atas permintaan pemilik; halaman konfirmasi/berhenti dan admin tetap ada, saat ini tidak ada tempat mendaftar (DESIGN.md bagian 45) | P0 |
 | F14 | **SEO & berbagi**: metadata per halaman, Open Graph, sitemap, robots.txt, data terstruktur `Person` | P0 |
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
 | F16 | **API publik** read-only (project, skill, profil) | P1 |
