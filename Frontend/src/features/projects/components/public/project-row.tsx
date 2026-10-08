@@ -32,6 +32,10 @@ export async function ProjectRow({
   const flip = index % 2 === 1
   const number = String(index + 1).padStart(2, '0')
   const href = `/projects/${project.slug}`
+  // isi bilah alamat: tautan demo bila ada, selain itu alamat halaman project di situs ini
+  const address = project.demoUrl
+    ? project.demoUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+    : `mmirza.site/projects/${project.slug}`
 
   return (
     <article className="pj-zz group relative grid items-center gap-5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-8 has-[a:focus-visible]:outline-primary md:grid-cols-2 md:gap-12">
@@ -46,28 +50,40 @@ export async function ProjectRow({
         <Link href={href} tabIndex={-1} aria-hidden="true" className="block">
           <PhotoTilt className="pj-tilt" maxTilt={8}>
             <div className="pj-tilt-in">
-              <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
-                <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-surface-2">
-                  {project.cover ? (
-                    <Image
-                      src={project.cover.url}
-                      alt=""
-                      fill
-                      sizes="(min-width: 768px) 560px, 100vw"
-                      priority={index === 0}
-                      className="object-cover object-top"
-                    />
-                  ) : (
-                    // Tanpa sampul: bidang tipografi dengan nomor project, bukan ilustrasi generik.
-                    <div className="project-cover-fallback absolute inset-0 flex items-end p-5">
-                      <span className="font-mono text-display leading-none font-bold text-border-strong/40">
-                        {number}
-                      </span>
-                    </div>
-                  )}
-                  <span className="pj-glare" />
+              {/* bingkai jendela browser (pilihan pemilik 2026-10-08, demo bingkai nomor 1); warna dari
+                  token tema sehingga ikut mode gelap/terang */}
+              <div className="pj-browser">
+                <div className="pj-browser-bar" aria-hidden="true">
+                  <span className="pj-browser-dots">
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="pj-browser-url">{address}</span>
                 </div>
-              </ViewTransition>
+                <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
+                  <div className="relative aspect-video overflow-hidden bg-surface-2">
+                    {project.cover ? (
+                      <Image
+                        src={project.cover.url}
+                        alt=""
+                        fill
+                        sizes="(min-width: 768px) 560px, 100vw"
+                        priority={index === 0}
+                        className="object-cover object-top"
+                      />
+                    ) : (
+                      // Tanpa sampul: bidang tipografi dengan nomor project, bukan ilustrasi generik.
+                      <div className="project-cover-fallback absolute inset-0 flex items-end p-5">
+                        <span className="font-mono text-display leading-none font-bold text-border-strong/40">
+                          {number}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </ViewTransition>
+                <span className="pj-glare" />
+              </div>
             </div>
           </PhotoTilt>
         </Link>
