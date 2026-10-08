@@ -133,6 +133,8 @@ Sumber: dokumen di repo GAAS (publik), laporan alur kerja di sesi Claude Code GA
 
 **Yang tidak boleh masuk portofolio tanpa izin:** README repo menyatakan *"Proyek internal PGN Solution, tidak untuk didistribusikan di luar organisasi"*, padahal repo GitHub-nya **publik**. Isi laporan audit (temuan bug, keamanan, dan jumlah akun) juga tidak boleh dipublikasikan. Lihat pertanyaan 5 di bagian 10.
 
+**Diterbitkan 2026-10-08 (permintaan pemilik: "publish GAAS (General Affair Aplication Support), cek di github saya untuk penjelasannya"):** migrasi `20261008180000_publish_gaas`. Nama dipakai sesuai pemilik: **GAAS: General Affair Application Support**. Peran "Fullstack Developer" (judul magang di CV). Ringkasan dan uraian dua bahasa disusun dari README dan `Documentation/PRD.md` repo: modul, alur persetujuan, fitur, teknologi; tanpa angka dampak, isi audit, nama klien di README, atau penyebutan asisten AI. Unggulan, urutan 0. Tautan repo diisi tetapi **tombol GitHub dimatikan** karena README repo menyebut "tidak untuk didistribusikan di luar organisasi"; pemilik bisa menyalakannya di admin. Tidak ada demo. Foto menyusul dari pemilik.
+
 #### Draf studi kasus (menunggu persetujuan, klaim hanya dari repo/CV)
 
 | | ID | EN |

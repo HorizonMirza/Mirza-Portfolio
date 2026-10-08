@@ -246,11 +246,15 @@ export const skillCategories: SeedSkillCategory[] = [
   },
 ];
 
-// Status DRAFT: izin publikasi GAAS belum dikonfirmasi (Documentation/CONTENT.md bagian 10 no. 5).
+// Seed membuat GAAS sebagai DRAFT bila belum ada. Versi terbit (isi lengkap, peran, repo) dibuat oleh
+// migrasi 20261008180000_publish_gaas atas permintaan pemilik 2026-10-08.
 export const projects: SeedProject[] = [
   {
     slug: "gaas",
-    title: { id: "GAAS", en: "GAAS" },
+    title: {
+      id: "GAAS: General Affair Application Support",
+      en: "GAAS: General Affair Application Support",
+    },
     summary: {
       id: "Platform internal multi-modul untuk operasional General Affair: pengiriman barang, pemesanan ruang dan kendaraan, permintaan ATK, perbaikan sarana, dan pemindahan arsip, dengan persetujuan berjenjang dan chat real-time di tiap pengajuan.",
       en: "An internal multi-module platform for General Affair operations: shipments, room and vehicle booking, office-supply requests, facility repairs, and archive relocation, with tiered approvals and per-request real-time chat.",
