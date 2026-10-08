@@ -85,9 +85,16 @@ describe('safeImage', () => {
     ).toBeNull()
     expect(safeImage({ ...img, url: 'https://evil.example/a.png' })).toBeNull()
   })
-  it('tanpa nama cloud semua gambar dilewati', () => {
+  it('tanpa nama cloud semua gambar Cloudinary dilewati', () => {
     vi.stubEnv('CLOUDINARY_CLOUD_NAME', '')
     expect(safeImage(img)).toBeNull()
+  })
+  it('gambar contoh project bawaan repo diterima, path lain tidak', () => {
+    vi.stubEnv('CLOUDINARY_CLOUD_NAME', '')
+    const demo = { ...img, url: '/demo/projects/project-1-cover.jpg' }
+    expect(safeImage(demo)).toBe(demo)
+    expect(safeImage({ ...img, url: '/demo/projects/../../secret.png' })).toBeNull()
+    expect(safeImage({ ...img, url: '/uploads/a.png' })).toBeNull()
   })
 })
 

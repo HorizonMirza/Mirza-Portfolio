@@ -633,3 +633,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Data GitHub dari server (`getGithubContributions`, sama dengan beranda, butuh `GITHUB_TOKEN`), bukan diambil browser dari API pihak ketiga seperti komponen aslinya (juga akan diblokir CSP). Tanpa token kartu GitHub hanya menampilkan nama akun.
 - Komponen: `components/ui/contact-cards.tsx` (klien, tanpa dependency baru); warna memakai token tema, animasi di globals.css (`.cc-in`, `.cc-out`, `.cc-day`).
 - Judul tab: pemisah **"—" diganti "·"** di semua halaman publik, sama dengan admin ("Login · Admin"), termasuk teks alternatif gambar Open Graph project. Judul halaman Tentang memakai huruf kapital di awal tiap kata: **"About Me"** / **"Tentang Saya"** (permintaan pemilik).
+
+## 42. Halaman Project: judul tengah, tanpa pengantar dan filter (2026-10-08)
+
+- Revisi pemilik: judul "Project" / "Projects" **di tengah** (seperti Tentang dan Pengalaman), kalimat pengantar ("Software yang saya bangun...") **dihapus**, dan **semua filter dihapus** (kategori dan teknologi); semua project tampil dalam grid 3 kolom (2 di tablet, 1 di HP). Komponen `ProjectFilter` dan teks terjemahannya dihapus. Kartu project mengisi tinggi baris agar sejajar.
+- Gambar project: halaman publik menerima gambar dari akun Cloudinary dan gambar contoh bawaan repo di `/demo/projects/` (`lib/public-image.ts`), dipakai 6 project contoh (CONTENT.md).
+
