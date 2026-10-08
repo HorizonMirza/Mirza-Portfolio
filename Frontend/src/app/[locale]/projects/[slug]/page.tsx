@@ -117,8 +117,6 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
           labels={{
             gallery: t('gallery', { title }),
             thumb: t('image'),
-            previous: t('previousImage'),
-            next: t('nextImage'),
             imageOf: t('imageOf', { current: '{current}', total: '{total}' }),
           }}
         />

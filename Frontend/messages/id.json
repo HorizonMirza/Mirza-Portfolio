@@ -130,8 +130,6 @@
     "language": "Bahasa utama",
     "githubHeading": "Di GitHub",
     "image": "Gambar",
-    "previousImage": "Gambar sebelumnya",
-    "nextImage": "Gambar berikutnya",
     "gallery": "Foto aplikasi {title}",
     "imageOf": "Gambar {current} dari {total}"
   },

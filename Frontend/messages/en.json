@@ -130,8 +130,6 @@
     "language": "Main language",
     "githubHeading": "On GitHub",
     "image": "Image",
-    "previousImage": "Previous image",
-    "nextImage": "Next image",
     "gallery": "Screenshots of {title}",
     "imageOf": "Image {current} of {total}"
   },

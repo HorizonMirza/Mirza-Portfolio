@@ -1,6 +1,5 @@
 'use client'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { type KeyboardEvent, type PointerEvent, useRef, useState, ViewTransition } from 'react'
 
@@ -9,17 +8,17 @@ import { playSlideSound } from '@/lib/ui-sounds'
 
 export type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
 
-// geser jari minimal sejauh ini (px) agar dianggap ganti gambar
+// geser (jari atau tarik mouse) minimal sejauh ini (px) agar dianggap ganti gambar
 const SWIPE_MIN = 40
 
 // Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08, DESIGN.md bagian 47): satu
 // foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan
 // layar laptop maupun HP tidak terpotong. Semua gambar sudah ada di HTML sehingga
 // tanpa JavaScript foto pertama tetap tampil.
-// Efek yang dipertahankan dari pilihan efek sebelumnya (DESIGN.md bagian 49): geser dengan jari,
-// tombol panah, atau tombol panah keyboard dengan bunyi desir; dan gambar dari daftar "terbang" ke
-// sini lewat View Transition bernama sama (`project-{slug}`). Foto sendiri gambar biasa: tidak
-// miring, tidak berkilau, dan tidak bisa difokus/ditekan (revisi pemilik 2026-10-08).
+// Ganti foto: geser foto besar (jari atau tarik mouse), tekan gambar kecil, atau tombol panah keyboard,
+// dengan bunyi desir. Tombol panah di atas foto dihapus (revisi pemilik 2026-10-08). Gambar dari
+// daftar "terbang" ke sini lewat View Transition bernama sama (`project-{slug}`). Foto sendiri gambar
+// biasa: tidak miring, tidak berkilau, dan tidak bisa difokus/ditekan.
 export function ProjectGallery({
   slug,
   address,
@@ -31,7 +30,7 @@ export function ProjectGallery({
   address: string
   images: GalleryImage[]
   // thumb: "Gambar" tanpa angka; imageOf memakai {current} dan {total}
-  labels: { gallery: string; thumb: string; previous: string; next: string; imageOf: string }
+  labels: { gallery: string; thumb: string; imageOf: string }
 }) {
   const [active, setActive] = useState(0)
   const start = useRef<number | null>(null)
@@ -55,8 +54,7 @@ export function ProjectGallery({
   }
 
   function onPointerDown(event: PointerEvent<HTMLDivElement>) {
-    // geser dari atas tombol panah diabaikan; tombolnya sendiri yang bekerja lewat klik
-    if (event.pointerType === 'mouse' || (event.target as HTMLElement).closest('button')) return
+    if (!many || (event.pointerType === 'mouse' && event.button !== 0)) return
     start.current = event.clientX
   }
 
@@ -86,6 +84,7 @@ export function ProjectGallery({
         </div>
         <div
           className="pd-stage"
+          data-swipe={many || undefined}
           style={{ aspectRatio: imageRatio(images[0]) }}
           onPointerDown={onPointerDown}
           onPointerUp={onPointerUp}
@@ -109,26 +108,6 @@ export function ProjectGallery({
               ))}
             </div>
           </ViewTransition>
-          {many ? (
-            <>
-              <button
-                type="button"
-                className="pd-arrow pd-arrow-prev"
-                aria-label={labels.previous}
-                onClick={() => go(active - 1)}
-              >
-                <ChevronLeft aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                className="pd-arrow pd-arrow-next"
-                aria-label={labels.next}
-                onClick={() => go(active + 1)}
-              >
-                <ChevronRight aria-hidden="true" />
-              </button>
-            </>
-          ) : null}
         </div>
       </div>
       {many ? (
