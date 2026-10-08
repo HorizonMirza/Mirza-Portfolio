@@ -1476,8 +1476,9 @@ export default function ContributionSkyline({
               </span>
             ))}
           </span>
-          <div className="flex items-center gap-1.5" onMouseLeave={() => setLegendLevel(-1)}>
-            <span className="mr-0.5">{labels.less}</span>
+          {/* tiap kotak legenda punya area sentuh 24 px (WCAG 2.5.8), kotak warnanya tetap 11 px */}
+          <div className="flex items-center" onMouseLeave={() => setLegendLevel(-1)}>
+            <span className="mr-1">{labels.less}</span>
             {theme.swatches.map((c, i) => (
               <button
                 key={i}
@@ -1489,11 +1490,16 @@ export default function ContributionSkyline({
                 onFocus={() => setLegendLevel(i)}
                 onBlur={() => setLegendLevel(-1)}
                 onClick={() => setLegendLevel((l) => (l === i ? -1 : i))}
-                className="h-[11px] w-[11px] cursor-pointer rounded-[2px] border-0 p-0 transition-[background-color,transform] duration-500 hover:scale-125 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-text motion-reduce:transition-none"
-                style={{ background: c, boxShadow: 'inset 0 0 0 1px rgba(127,127,127,0.12)' }}
-              />
+                className="group grid h-[24px] w-[24px] cursor-pointer place-items-center rounded-[4px] border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-text"
+              >
+                <span
+                  aria-hidden="true"
+                  className="block h-[11px] w-[11px] rounded-[2px] transition-[background-color,transform] duration-500 group-hover:scale-125 motion-reduce:transition-none"
+                  style={{ background: c, boxShadow: 'inset 0 0 0 1px rgba(127,127,127,0.12)' }}
+                />
+              </button>
             ))}
-            <span className="ml-0.5">{labels.more}</span>
+            <span className="ml-1">{labels.more}</span>
           </div>
         </div>
       </div>

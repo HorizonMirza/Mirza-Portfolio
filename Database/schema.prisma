@@ -256,10 +256,31 @@ model Experience {
   // foto kegiatan di sisi seberang timeline (DESIGN.md bagian 38)
   photoId         String?         @db.Uuid
   photo           Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
+  // titik di garis cerita "Dari komunitas ke software" di beranda (DESIGN.md bagian 46)
+  inStory         Boolean         @default(false)
   createdAt       DateTime        @default(now()) @db.Timestamptz(3)
   updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
 
   @@index([type, startDate])
+}
+
+// Angka pencapaian di beranda ("1.000+ anggota di Reclub"). Hanya angka dari CV atau yang
+// dikonfirmasi pemilik (CONTENT.md bagian 7).
+model Highlight {
+  id        String        @id @default(uuid(7)) @db.Uuid
+  value     Int
+  // ditulis setelah angka, mis. "+" atau "%"
+  suffix    String        @default("")
+  label_id  String
+  label_en  String
+  // asal angka, mis. nama komunitas; sama di kedua bahasa
+  source    String?
+  order     Int           @default(0)
+  status    ContentStatus @default(PUBLISHED)
+  createdAt DateTime      @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime      @updatedAt @db.Timestamptz(3)
+
+  @@index([status, order])
 }
 
 model Asset {

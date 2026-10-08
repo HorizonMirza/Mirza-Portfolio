@@ -22,6 +22,7 @@ export type PublicExperience = {
   end: string | null
   location: string | null
   employmentType: (typeof EMPLOYMENT_TYPES)[number] | null
+  inStory: boolean
   logo: PublicImage | null
   photo: PublicImage | null
 }
@@ -56,6 +57,7 @@ export const getPublicExperiences = cache(
           endDate: true,
           location: true,
           employmentType: true,
+          inStory: true,
           logo: { select: imageSelect },
           photo: { select: imageSelect },
         },

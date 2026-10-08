@@ -1670,3 +1670,234 @@
     transition: none;
   }
 }
+
+/* Beranda: angka, garis cerita, dan aktivitas GitHub (DESIGN.md bagian 46). */
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--border);
+}
+.home-stats > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--bg);
+  padding: 1.25rem;
+}
+@media (min-width: 768px) {
+  .home-stats > li {
+    padding: 1.5rem;
+  }
+}
+.home-stat-value {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.9rem + 2.4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.home-stat-label {
+  color: var(--text-muted);
+}
+.home-stat-source {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--note);
+}
+
+/* Garis cerita: mendatar di layar lebar, menurun di HP. Garis dan titik digambar saat bagian
+   ini muncul lewat reveal (data-reveal="shown"); tanpa reveal semua langsung terlihat. */
+.home-story {
+  --dot: 0.75rem;
+  position: relative;
+  display: grid;
+  gap: 1.25rem;
+  padding-left: 1.75rem;
+}
+.home-story::before,
+.home-story::after {
+  content: '';
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: calc(var(--dot) / 2 - 1px);
+  width: 2px;
+  background: var(--border);
+}
+.home-story::after {
+  background: var(--note);
+  transform-origin: top;
+}
+.home-story > li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.home-story > li::before {
+  content: '';
+  position: absolute;
+  top: 0.3rem;
+  left: -1.75rem;
+  width: var(--dot);
+  height: var(--dot);
+  border: 2px solid var(--note);
+  border-radius: 50%;
+  background: var(--bg);
+}
+.home-story > li.is-now::before {
+  background: var(--note);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--note) 25%, transparent);
+}
+.home-story-year {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--note);
+  font-variant-numeric: tabular-nums;
+}
+.home-story-org {
+  font-weight: 600;
+  margin-top: 0.125rem;
+}
+.home-story-role {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+@media (min-width: 768px) {
+  .home-story {
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 1rem;
+    padding-left: 0;
+    padding-top: 2rem;
+  }
+  .home-story::before,
+  .home-story::after {
+    top: calc(var(--dot) / 2 - 1px);
+    bottom: auto;
+    left: calc(50% / var(--n));
+    right: calc(50% / var(--n));
+    width: auto;
+    height: 2px;
+  }
+  .home-story::after {
+    --story-from: 0 1;
+    transform-origin: left;
+  }
+  .home-story > li {
+    align-items: center;
+    text-align: center;
+  }
+  .home-story > li::before {
+    top: -2rem;
+    left: calc(50% - var(--dot) / 2);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reveal[data-reveal='shown'] .home-story::after {
+    animation: home-story-line 1.6s var(--ease-out-soft) both;
+  }
+  .reveal[data-reveal='shown'] .home-story > li {
+    animation: home-story-node 0.5s var(--ease-out-soft) both;
+    animation-delay: calc(var(--i) * 1.4s / max(1, var(--n) - 1) + 0.1s);
+  }
+}
+/* sumbu garis berbeda di HP (menurun) dan layar lebar (mendatar) */
+@keyframes home-story-line {
+  from {
+    scale: var(--story-from, 1 0);
+  }
+}
+@keyframes home-story-node {
+  from {
+    opacity: 0.15;
+    translate: 0 6px;
+  }
+}
+
+/* Aktivitas GitHub: satu baris berganti di atas grafik kontribusi. */
+.gh-ticker {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  height: 3.25rem;
+}
+.gh-ticker-list {
+  flex: 1;
+  min-width: 0;
+  transition: transform 600ms var(--ease-out-soft);
+}
+.gh-ticker-list > li {
+  height: 3.25rem;
+}
+.gh-ticker-list a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 100%;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+}
+.gh-ticker-list a:hover .gh-ticker-text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.gh-ticker-list a:focus-visible {
+  outline: 2px solid var(--note);
+  outline-offset: -2px;
+}
+.gh-ticker-badge {
+  flex: none;
+  border-radius: 0.25rem;
+  background: var(--note);
+  color: var(--bg);
+  padding: 0.125rem 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+}
+.gh-ticker-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gh-ticker-time {
+  flex: none;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.gh-ticker-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  border-left: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.gh-ticker-toggle:hover {
+  color: var(--text);
+}
+.gh-ticker-toggle:focus-visible {
+  outline: 2px solid var(--note);
+  outline-offset: -2px;
+}
+.gh-ticker-toggle svg {
+  width: 1rem;
+  height: 1rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gh-ticker-list {
+    transition: none;
+  }
+}

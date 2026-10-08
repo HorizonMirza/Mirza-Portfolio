@@ -240,8 +240,19 @@ erDiagram
       string location
       enum employmentType "FULL_TIME | ... | INTERNSHIP | VOLUNTEER, opsional"
       int order
+      bool inStory "titik garis cerita beranda"
       string logoId FK
       string photoId FK
+    }
+    Highlight {
+      string id PK
+      int value
+      string suffix "mis. +"
+      string label_id
+      string label_en
+      string source "asal angka, opsional"
+      int order
+      enum status
     }
     Asset {
       string id PK
@@ -344,6 +355,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
+| Angka beranda | `/admin/highlights`, `/new`, `/[id]` | `saveHighlight`, `deleteHighlight` |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pelanggan | `/admin/subscribers` | `deleteSubscriber` |

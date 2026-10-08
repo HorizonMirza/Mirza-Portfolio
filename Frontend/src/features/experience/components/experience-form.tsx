@@ -136,6 +136,10 @@ export function ExperienceForm({
         <Field id="location" label="Lokasi (opsional)" error={errors.location?.message}>
           {(a) => <Input {...a} {...register('location')} />}
         </Field>
+        <label className="flex min-h-11 items-center gap-3 md:col-span-2">
+          <input type="checkbox" className="size-5 accent-primary" {...register('inStory')} />
+          <span>Tampilkan sebagai titik di garis cerita beranda (Dari komunitas ke software)</span>
+        </label>
         <Field
           id="status"
           label="Status"

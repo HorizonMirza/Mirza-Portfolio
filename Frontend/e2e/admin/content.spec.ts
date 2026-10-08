@@ -14,6 +14,8 @@ const PAGES = [
   '/admin/skills',
   '/admin/experience',
   '/admin/experience/new',
+  '/admin/highlights',
+  '/admin/highlights/new',
   '/admin/messages',
   '/admin/subscribers',
   '/admin/audit',
@@ -133,6 +135,44 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
     const response = await page.goto(`/${locale}`)
     expect(response?.status(), `/${locale}`).toBe(200)
   }
+})
+
+test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit', async ({
+  page,
+}, testInfo) => {
+  const label = `angka E2E ${testInfo.project.name}-${Date.now()}`
+  await page.goto('/admin/highlights/new')
+  await page.getByRole('button', { name: 'Tambah angka' }).click()
+  await expect(page.getByText('Keterangan wajib diisi')).toBeVisible()
+
+  await page.getByLabel('Angka', { exact: true }).fill('4321')
+  await page.getByLabel('Keterangan (ID)').fill(label)
+  await page.getByLabel('Keterangan (EN)').fill(`${label} en`)
+  await page.getByLabel('Urutan').fill('999')
+  await page.getByRole('button', { name: 'Tambah angka' }).click()
+  await expect(page.getByText('Angka ditambahkan.')).toBeVisible()
+  await expect(page).toHaveURL(/\/admin\/highlights\/[0-9a-f-]{36}$/)
+
+  await page.goto('/id')
+  const stats = page.getByRole('region', { name: 'Dalam angka' })
+  await expect(stats.getByText(label)).toBeVisible()
+  await expect(stats.getByText('4.321+')).toBeVisible()
+  await page.goto('/en')
+  await expect(page.getByText('4,321+')).toBeVisible()
+
+  await page.goto('/admin/highlights')
+  await page
+    .getByRole('button', { name: `Hapus 4.321+ ${label}` })
+    .locator('visible=true')
+    .first()
+    .click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
+  await expect(page.getByText('Angka dihapus.')).toBeVisible()
+
+  await page.goto('/id')
+  await expect(page.getByText(label)).toHaveCount(0)
+  await page.goto('/admin/audit?entity=Highlight')
+  await expect(page.locator('main ol > li').first()).toContainText('hapus')
 })
 
 test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => {

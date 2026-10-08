@@ -35,6 +35,7 @@ export async function getExperienceForEdit(id: string): Promise<ExperienceInput 
     endMonth: e.endDate ? dateToMonth(e.endDate) : '',
     location: e.location ?? '',
     employmentType: e.employmentType ?? '',
+    inStory: e.inStory,
     status: e.status,
   }
 }

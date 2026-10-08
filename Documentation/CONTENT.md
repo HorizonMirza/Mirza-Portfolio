@@ -104,6 +104,8 @@ Catatan: stack rencana situs ini (Next.js, TypeScript, PostgreSQL) sesuai dengan
 
 Aturan: tidak boleh menambah angka baru tanpa sumber dari Mirza. Angka pada pelat status hero harus dari daftar ini.
 
+**2026-10-08:** empat angka pertama (1.000+, 300+, 128+, 30+) menjadi isi awal bagian "Dalam angka" di beranda (tabel `Highlight`, Admin → Angka). Rating 5,0 dan IPK tidak dimasukkan; bisa ditambah pemilik lewat admin.
+
 ## 8. Project
 
 **Keputusan 2026-09-30:** saat peluncuran, hanya **GAAS** yang dimasukkan sebagai project. Project lain ditambahkan sendiri oleh Mirza lewat admin nanti (jawaban sebelumnya menyebut ada 6, tetapi CV tidak memuat satu pun dan GitHub tidak dapat dibaca dari sesi ini).

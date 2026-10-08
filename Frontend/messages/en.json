@@ -69,7 +69,9 @@
     "github": "GitHub",
     "stackHeading": "What I work with",
     "githubHeading": "Activity on GitHub",
-    "githubProfile": "Open GitHub profile"
+    "githubProfile": "Open GitHub profile",
+    "highlightsHeading": "In numbers",
+    "storyHeading": "From communities to software"
   },
   "About": {
     "metaTitle": "About Me",
@@ -251,5 +253,29 @@
     "flat": "Flat heat map",
     "skyline": "3D skyline",
     "keys": "Use the arrow keys to read individual days."
+  },
+  "GithubActivity": {
+    "region": "Latest GitHub activity",
+    "pause": "Pause rotating activity",
+    "play": "Resume rotating activity",
+    "push": "Pushed to {repo} · {branch}",
+    "createRepo": "Created repository {repo}",
+    "createBranch": "Created branch {ref} in {repo}",
+    "createTag": "Created tag {ref} in {repo}",
+    "release": "Released {tag} in {repo}",
+    "pullOpened": "Opened PR #{number} in {repo}",
+    "pullMerged": "Merged PR #{number} in {repo}",
+    "public": "Made {repo} public",
+    "star": "Starred {repo}",
+    "fork": "Forked {repo}",
+    "badgePush": "PUSH",
+    "badgeRepo": "REPO",
+    "badgeBranch": "BRANCH",
+    "badgeTag": "TAG",
+    "badgeRelease": "RELEASE",
+    "badgePull": "PR",
+    "badgePublic": "PUBLIC",
+    "badgeStar": "STAR",
+    "badgeFork": "FORK"
   }
 }

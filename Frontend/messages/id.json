@@ -69,7 +69,9 @@
     "github": "GitHub",
     "stackHeading": "Yang saya pakai",
     "githubHeading": "Aktivitas di GitHub",
-    "githubProfile": "Buka profil GitHub"
+    "githubProfile": "Buka profil GitHub",
+    "highlightsHeading": "Dalam angka",
+    "storyHeading": "Dari komunitas ke software"
   },
   "About": {
     "metaTitle": "Tentang Saya",
@@ -251,5 +253,29 @@
     "flat": "Peta panas datar",
     "skyline": "Skyline 3D",
     "keys": "Gunakan tombol panah untuk membaca tiap hari."
+  },
+  "GithubActivity": {
+    "region": "Aktivitas GitHub terakhir",
+    "pause": "Jeda aktivitas berganti",
+    "play": "Lanjutkan aktivitas berganti",
+    "push": "Push ke {repo} · {branch}",
+    "createRepo": "Membuat repo {repo}",
+    "createBranch": "Membuat branch {ref} di {repo}",
+    "createTag": "Membuat tag {ref} di {repo}",
+    "release": "Merilis {tag} di {repo}",
+    "pullOpened": "Membuka PR #{number} di {repo}",
+    "pullMerged": "Menggabungkan PR #{number} di {repo}",
+    "public": "Menjadikan {repo} publik",
+    "star": "Memberi bintang ke {repo}",
+    "fork": "Mem-fork {repo}",
+    "badgePush": "PUSH",
+    "badgeRepo": "REPO",
+    "badgeBranch": "BRANCH",
+    "badgeTag": "TAG",
+    "badgeRelease": "RILIS",
+    "badgePull": "PR",
+    "badgePublic": "PUBLIK",
+    "badgeStar": "STAR",
+    "badgeFork": "FORK"
   }
 }

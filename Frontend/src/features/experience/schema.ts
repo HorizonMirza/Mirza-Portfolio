@@ -51,6 +51,7 @@ export const experienceSchema = z
     endMonth: z.string().refine((v) => v === '' || MONTH.test(v), 'Bulan selesai tidak valid'),
     location: optionalText('Lokasi', 120),
     employmentType: z.union([z.enum(EMPLOYMENT_TYPES), z.literal('')]),
+    inStory: z.boolean().default(false),
     status: z.enum(['DRAFT', 'PUBLISHED']),
   })
   // Format YYYY-MM bisa dibandingkan sebagai teks.
@@ -73,6 +74,7 @@ export const emptyExperience: ExperienceInput = {
   endMonth: '',
   location: '',
   employmentType: '',
+  inStory: false,
   status: 'PUBLISHED',
 }
 
