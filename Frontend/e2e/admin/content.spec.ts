@@ -141,11 +141,16 @@ test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit'
   page,
 }, testInfo) => {
   const label = `angka E2E ${testInfo.project.name}-${Date.now()}`
+  // angka acak per tes: proyek browser berjalan paralel dan berbagi satu database, angka yang sama
+  // akan muncul dua kali di beranda
+  const value = 10_000 + Math.floor(Math.random() * 89_999)
+  const idText = `${new Intl.NumberFormat('id-ID').format(value)}+`
+  const enText = `${new Intl.NumberFormat('en-US').format(value)}+`
   await page.goto('/admin/highlights/new')
   await page.getByRole('button', { name: 'Tambah angka' }).click()
   await expect(page.getByText('Keterangan wajib diisi')).toBeVisible()
 
-  await page.getByLabel('Angka', { exact: true }).fill('4321')
+  await page.getByLabel('Angka', { exact: true }).fill(String(value))
   await page.getByLabel('Keterangan (ID)').fill(label)
   await page.getByLabel('Keterangan (EN)').fill(`${label} en`)
   await page.getByLabel('Urutan').fill('999')
@@ -156,13 +161,13 @@ test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit'
   await page.goto('/id')
   const stats = page.getByRole('region', { name: 'Dalam angka' })
   await expect(stats.getByText(label)).toBeVisible()
-  await expect(stats.getByText('4.321+')).toBeVisible()
+  await expect(stats.getByText(idText)).toBeVisible()
   await page.goto('/en')
-  await expect(page.getByText('4,321+')).toBeVisible()
+  await expect(page.getByText(enText)).toBeVisible()
 
   await page.goto('/admin/highlights')
   await page
-    .getByRole('button', { name: `Hapus 4.321+ ${label}` })
+    .getByRole('button', { name: `Hapus ${idText} ${label}` })
     .locator('visible=true')
     .first()
     .click()
