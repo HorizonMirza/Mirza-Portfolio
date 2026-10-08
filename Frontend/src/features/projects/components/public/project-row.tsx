@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 import { ViewTransition } from 'react'
@@ -15,6 +14,8 @@ import { TechChips } from './tech-chips'
 // Satu baris di halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag", DESIGN.md bagian 48):
 // gambar dan teks berdampingan, sisi gambar bergantian tiap baris di layar lebar; di HP gambar di
 // atas teks. Gambar masuk dari sisinya dan teks menyusul (reveal); seluruh baris bisa diklik.
+// Revisi pemilik 2026-10-08: gambar 16:9 seperti layar desktop; baris nomor/kategori/tahun dan
+// "Baca detail" dihapus.
 // Efek pilihan pemilik (demo efek 1, 4, 6, 7): gambar miring + kilau berbunyi, nomor besar bergaris
 // di belakang teks yang bergerak lebih lambat saat digulir, gambar "terbang" ke halaman detail
 // (View Transition bernama sama), dan logo di chip teknologi.
@@ -46,7 +47,7 @@ export async function ProjectRow({
           <PhotoTilt className="pj-tilt" maxTilt={8}>
             <div className="pj-tilt-in">
               <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
-                <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border bg-surface-2">
+                <div className="relative aspect-video overflow-hidden rounded-xl border border-border bg-surface-2">
                   {project.cover ? (
                     <Image
                       src={project.cover.url}
@@ -54,7 +55,7 @@ export async function ProjectRow({
                       fill
                       sizes="(min-width: 768px) 560px, 100vw"
                       priority={index === 0}
-                      className="object-cover"
+                      className="object-cover object-top"
                     />
                   ) : (
                     // Tanpa sampul: bidang tipografi dengan nomor project, bukan ilustrasi generik.
@@ -75,13 +76,6 @@ export async function ProjectRow({
         <span aria-hidden="true" className="pj-bignum">
           {number}
         </span>
-        <p className="flex flex-wrap items-center gap-x-2 font-mono text-label tracking-widest text-note uppercase">
-          <span>{number}</span>
-          <span aria-hidden="true">·</span>
-          <span>{t(project.category)}</span>
-          <span aria-hidden="true">·</span>
-          <span>{project.year}</span>
-        </p>
         <h2 className="text-h3 font-semibold md:text-h2">
           {/* seluruh baris dapat diklik lewat pseudo-element; tautan tetap satu untuk pembaca layar */}
           <Link
@@ -93,13 +87,6 @@ export async function ProjectRow({
         </h2>
         <p className="max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
         <TechChips skills={project.skills} label={t('stack')} />
-        <span
-          className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-primary"
-          aria-hidden="true"
-        >
-          {t('readMoreShort')}
-          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" />
-        </span>
       </div>
     </article>
   )
