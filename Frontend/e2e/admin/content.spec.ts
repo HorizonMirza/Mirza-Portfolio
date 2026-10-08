@@ -169,8 +169,9 @@ test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit'
   await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
   await expect(page.getByText('Angka dihapus.')).toBeVisible()
 
-  await page.goto('/id')
-  await expect(page.getByText(label)).toHaveCount(0)
+  // dicek langsung ke server: Firefox/WebKit bisa menyajikan beranda lama dari cache browser
+  // (lihat catatan serupa di tes CRUD project)
+  await expect.poll(async () => (await page.request.get('/id')).text()).not.toContain(label)
   await page.goto('/admin/audit?entity=Highlight')
   await expect(page.locator('main ol > li').first()).toContainText('hapus')
 })
@@ -195,8 +196,10 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
-  await page.goto('/id')
-  await expect(page.locator('html')).toHaveAttribute('data-sound-volume', '35')
+  // dicek langsung ke server agar cache browser WebKit/Firefox tidak menyajikan halaman lama
+  await expect
+    .poll(async () => (await page.request.get('/id')).text())
+    .toContain('data-sound-volume="35"')
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
   await page.goto('/admin/settings')
   await expect(async () => {

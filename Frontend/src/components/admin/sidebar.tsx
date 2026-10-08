@@ -86,7 +86,11 @@ export function AdminMobileBar({ adminName }: { adminName: string }) {
             <Menu aria-hidden="true" />
           </Button>
         </SheetTrigger>
-        <SheetContent aria-describedby={undefined} className="gap-6">
+        {/* bisa digulir: di HP pendek tombol Keluar di dasar menu tetap terjangkau */}
+        <SheetContent
+          aria-describedby={undefined}
+          className="gap-6 overflow-y-auto overscroll-contain"
+        >
           <SheetTitle className="sr-only">Menu admin</SheetTitle>
           <SidebarBody adminName={adminName} />
         </SheetContent>
