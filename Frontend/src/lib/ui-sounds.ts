@@ -152,13 +152,14 @@ export function playNavSound() {
   ping(a.ctx, a.out, 3950, 0.1, 0.16)
 }
 
-// Timeline Pengalaman (pilihan pemilik 2026-10-08, demo A3 "Bip digital"): bip kotak pendek dan
-// pelan setiap kali entri aktif berganti saat digulir. Bisa berbunyi beberapa kali dalam satu
-// gulir, jadi sengaja singkat (45 ms).
+// Timeline Pengalaman (pilihan pemilik 2026-10-08, demo A3 "Bip digital"): bip kotak pendek
+// setiap kali entri aktif berganti saat digulir. Bisa berbunyi beberapa kali dalam satu
+// gulir, jadi sengaja singkat (60 ms).
 export function playTimelineStepSound() {
   const a = audio()
   if (!a) return
-  blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.045, vol: 0.07, type: 'square' })
+  // dibuat lebih keras (revisi pemilik 2026-10-08): 0,07 -> 0,2, sedikit lebih panjang
+  blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.06, vol: 0.2, type: 'square' })
 }
 
 // Kartu foto halaman Tentang (pilihan pemilik 2026-10-08, demo B1 "Kilau", lalu diperhalus atas

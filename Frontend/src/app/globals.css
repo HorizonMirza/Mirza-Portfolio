@@ -578,6 +578,9 @@
 .ab-bio p {
   text-align: justify;
   text-justify: inter-word;
+  /* Safari (iPhone) baru memenggal kata dengan awalan -webkit-; pemenggalan memperkecil celah
+     antarkata pada kolom sempit */
+  -webkit-hyphens: auto;
   hyphens: auto;
 }
 .ab-edu {
@@ -756,6 +759,14 @@
     width: min(100%, 300px);
     margin: 0 auto;
   }
+  /* jarak kiri-kanan kartu sama agar foto tepat di tengah (revisi pemilik 2026-10-08); chip kampus
+     dan bendera menonjol sama jauh di kanan dan kiri */
+  .ab-band .ab-pc {
+    padding: 14px;
+  }
+  .ab-band .ab-pc-chip {
+    right: 0;
+  }
   .ab-band-text {
     justify-items: center;
     padding-bottom: 28px;
@@ -775,8 +786,8 @@
   .ab-body > section {
     padding-top: 0;
   }
-  /* HP (revisi pemilik 2026-10-08, "kurang rapih"): logo tidak ikut menyempit, judul lebih kecil,
-     bio rata kiri tanpa pemenggalan kata karena kolomnya sempit */
+  /* HP (revisi pemilik 2026-10-08, "kurang rapih"): logo tidak ikut menyempit, judul lebih kecil
+     (bio tetap rata kiri-kanan seperti desktop, revisi pemilik 2026-10-08) */
   .ab-edu-card {
     align-items: flex-start;
     gap: 16px;
@@ -789,10 +800,6 @@
   }
   .ab-edu-card h3 {
     font-size: 1.375rem;
-  }
-  .ab-bio p {
-    text-align: left;
-    hyphens: manual;
   }
 }
 @media (prefers-reduced-motion: reduce) {
