@@ -135,6 +135,8 @@ Sumber: dokumen di repo GAAS (publik), laporan alur kerja di sesi Claude Code GA
 
 **Diterbitkan 2026-10-08 (permintaan pemilik: "publish GAAS (General Affair Aplication Support), cek di github saya untuk penjelasannya"):** migrasi `20261008180000_publish_gaas`. Nama dipakai sesuai pemilik: **GAAS: General Affair Application Support**. Peran "Fullstack Developer" (judul magang di CV). Ringkasan dan uraian dua bahasa disusun dari README dan `Documentation/PRD.md` repo: modul, alur persetujuan, fitur, teknologi; tanpa angka dampak, isi audit, nama klien di README, atau penyebutan asisten AI. Unggulan, urutan 0. Tautan repo diisi tetapi **tombol GitHub dimatikan** karena README repo menyebut "tidak untuk didistribusikan di luar organisasi"; pemilik bisa menyalakannya di admin. Tidak ada demo. Foto menyusul dari pemilik.
 
+**Foto GAAS (2026-10-08, dari pemilik):** lima tangkapan layar berdata uji ("Uji Coba") di `Frontend/public/images/projects/gaas-*.jpg`, migrasi `20261008190000_gaas_photos`: Dashboard (sampul), Expedition, Room Booking, kalender ruang, dan profil tema gelap. **Nomor telepon dan email pribadi di foto profil disamarkan** sebelum disimpan (aturan: data pribadi tidak masuk repo). Logo perusahaan di sidebar tetap seperti kiriman pemilik.
+
 #### Draf studi kasus (menunggu persetujuan, klaim hanya dari repo/CV)
 
 | | ID | EN |
