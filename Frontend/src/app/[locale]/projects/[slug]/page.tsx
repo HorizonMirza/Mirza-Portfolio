@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server'
 import { ClickSound } from '@/components/shared/click-sound'
 import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
+import { browserAddress } from '@/features/projects/browser-address'
 import { ProjectGallery } from '@/features/projects/components/public/project-gallery'
 import { getPublishedProject, getPublishedProjects } from '@/features/projects/public'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
@@ -109,6 +110,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       <div className="mx-auto mt-10 max-w-6xl">
         <ProjectGallery
           slug={project.slug}
+          address={browserAddress(project)}
           images={images}
           labels={{
             gallery: t('gallery', { title }),

@@ -680,6 +680,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - Efek dari bagian 49 tetap: geser jari, panah, tombol keyboard, bunyi desir, miring 4° untuk mouse (tanpa pembesaran 1,05× lagi karena foto utuh), View Transition dari daftar, tombol berkilau.
   - **Revisi pemilik 2026-10-08:** foto di detail kini gambar biasa: tanpa miring, kilau, dan fokus keyboard pada foto. Ganti foto tetap lewat panah, gambar kecil, geser jari, atau tombol panah keyboard bila ada lebih dari satu foto.
   - **Gaya peran (pilihan pemilik dari 10 demo gaya peran: nomor 2 "pil bergaris"):** `.pj-role` berupa kapsul bergaris tipis (`--border`, latar `--surface`), huruf biasa 13 px berwarna teks, tidak kapital, senada chip teknologi. Di detail kapsul berada di tengah di atas judul.
+  - **Revisi pemilik 2026-10-08 (bingkai + foto utuh):** foto besar di detail dibungkus bingkai jendela browser yang sama dengan daftar (`.pj-browser`, alamat dari `browserAddress`). Rasio bingkai foto di daftar dan detail mengikuti ukuran asli foto (`imageRatio`, 16:9 bila tidak diketahui) dengan `object-contain`, jadi tangkapan layar tampil utuh tanpa terpotong; foto galeri lain menyesuaikan di dalam bingkai detail. Gambar kecil selalu satu baris (menyusut di HP, bisa digeser bila sangat banyak).
   - Daftar: peran tampil di atas judul tiap baris bila diisi. Peran dari PDF untuk CatFin-R, RIPE.AI, dan Crypto Pedia; MR Coffee dan Swarna Creation menunggu pemilik.
 
 ## 48. Daftar project zig-zag (2026-10-08)

@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 import { ViewTransition } from 'react'
 
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
+import { browserAddress, imageRatio } from '@/features/projects/browser-address'
 import type { PublicProjectSummary } from '@/features/projects/public'
 import type { AppLocale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
@@ -32,10 +33,7 @@ export async function ProjectRow({
   const flip = index % 2 === 1
   const number = String(index + 1).padStart(2, '0')
   const href = `/projects/${project.slug}`
-  // isi bilah alamat: tautan demo bila ada, selain itu alamat halaman project di situs ini
-  const address = project.demoUrl
-    ? project.demoUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
-    : `mmirza.site/projects/${project.slug}`
+  const address = browserAddress(project)
 
   return (
     <article className="pj-zz group relative grid items-center gap-5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-8 has-[a:focus-visible]:outline-primary md:grid-cols-2 md:gap-12">
@@ -62,7 +60,11 @@ export async function ProjectRow({
                   <span className="pj-browser-url">{address}</span>
                 </div>
                 <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
-                  <div className="relative aspect-video overflow-hidden bg-surface-2">
+                  {/* rasio mengikuti foto agar tampil utuh (revisi pemilik 2026-10-08) */}
+                  <div
+                    className="relative overflow-hidden bg-surface-2"
+                    style={{ aspectRatio: imageRatio(project.cover) }}
+                  >
                     {project.cover ? (
                       <Image
                         src={project.cover.url}
@@ -70,7 +72,7 @@ export async function ProjectRow({
                         fill
                         sizes="(min-width: 768px) 560px, 100vw"
                         priority={index === 0}
-                        className="object-cover object-top"
+                        className="object-contain"
                       />
                     ) : (
                       // Tanpa sampul: bidang tipografi dengan nomor project, bukan ilustrasi generik.

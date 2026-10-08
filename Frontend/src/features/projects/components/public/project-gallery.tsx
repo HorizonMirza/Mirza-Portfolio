@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { type KeyboardEvent, type PointerEvent, useRef, useState, ViewTransition } from 'react'
 
+import { imageRatio } from '@/features/projects/browser-address'
 import { playSlideSound } from '@/lib/ui-sounds'
 
 export type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
@@ -21,10 +22,13 @@ const SWIPE_MIN = 40
 // miring, tidak berkilau, dan tidak bisa difokus/ditekan (revisi pemilik 2026-10-08).
 export function ProjectGallery({
   slug,
+  address,
   images,
   labels,
 }: {
   slug: string
+  // isi kolom alamat bingkai browser, sama dengan di daftar project
+  address: string
   images: GalleryImage[]
   // thumb: "Gambar" tanpa angka; imageOf memakai {current} dan {total}
   labels: { gallery: string; thumb: string; previous: string; next: string; imageOf: string }
@@ -69,50 +73,63 @@ export function ProjectGallery({
 
   return (
     <div role="region" aria-label={labels.gallery} onKeyDown={onKeyDown}>
-      <div
-        className="pd-stage"
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        onPointerCancel={() => (start.current = null)}
-      >
-        <ViewTransition name={`project-${slug}`} share="morph" default="none">
-          <div className="absolute inset-0">
-            {images.map((img, i) => (
-              <Image
-                key={img.url}
-                src={img.url}
-                alt={i === active ? img.alt : ''}
-                aria-hidden={i === active ? undefined : true}
-                data-active={i === active}
-                fill
-                sizes="(min-width: 1280px) 1200px, 100vw"
-                priority={i === 0}
-                draggable={false}
-                className="object-contain"
-              />
-            ))}
-          </div>
-        </ViewTransition>
-        {many ? (
-          <>
-            <button
-              type="button"
-              className="pd-arrow pd-arrow-prev"
-              aria-label={labels.previous}
-              onClick={() => go(active - 1)}
-            >
-              <ChevronLeft aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="pd-arrow pd-arrow-next"
-              aria-label={labels.next}
-              onClick={() => go(active + 1)}
-            >
-              <ChevronRight aria-hidden="true" />
-            </button>
-          </>
-        ) : null}
+      {/* bingkai jendela browser seperti di daftar project; rasio foto mengikuti foto pertama agar
+          tampil utuh, foto lain menyesuaikan di dalamnya (revisi pemilik 2026-10-08) */}
+      <div className="pj-browser">
+        <div className="pj-browser-bar" aria-hidden="true">
+          <span className="pj-browser-dots">
+            <i />
+            <i />
+            <i />
+          </span>
+          <span className="pj-browser-url">{address}</span>
+        </div>
+        <div
+          className="pd-stage"
+          style={{ aspectRatio: imageRatio(images[0]) }}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => (start.current = null)}
+        >
+          <ViewTransition name={`project-${slug}`} share="morph" default="none">
+            <div className="absolute inset-0">
+              {images.map((img, i) => (
+                <Image
+                  key={img.url}
+                  src={img.url}
+                  alt={i === active ? img.alt : ''}
+                  aria-hidden={i === active ? undefined : true}
+                  data-active={i === active}
+                  fill
+                  sizes="(min-width: 1280px) 1200px, 100vw"
+                  priority={i === 0}
+                  draggable={false}
+                  className="object-contain"
+                />
+              ))}
+            </div>
+          </ViewTransition>
+          {many ? (
+            <>
+              <button
+                type="button"
+                className="pd-arrow pd-arrow-prev"
+                aria-label={labels.previous}
+                onClick={() => go(active - 1)}
+              >
+                <ChevronLeft aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="pd-arrow pd-arrow-next"
+                aria-label={labels.next}
+                onClick={() => go(active + 1)}
+              >
+                <ChevronRight aria-hidden="true" />
+              </button>
+            </>
+          ) : null}
+        </div>
       </div>
       {many ? (
         <>
