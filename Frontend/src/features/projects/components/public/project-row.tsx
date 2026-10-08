@@ -90,25 +90,29 @@ export async function ProjectRow({
           </PhotoTilt>
         </Link>
       </div>
-      <div className="pj-zz-text reveal relative isolate flex flex-col gap-3">
+      {/* revisi pemilik 2026-10-08: teks dan nomor besar berdampingan (nomor tidak lagi di belakang
+          teks), blok teks berjarak sama di kiri dan kanan */}
+      <div className="pj-zz-text reveal relative grid grid-cols-[minmax(0,1fr)_auto] items-center">
+        <div className="flex flex-col gap-3 pe-4 md:px-6">
+          {/* peran di awal, di atas judul (permintaan pemilik 2026-10-08) */}
+          {loc(project, 'role', locale) ? (
+            <p className="pj-role">{loc(project, 'role', locale)}</p>
+          ) : null}
+          <h2 className="text-h3 font-semibold">
+            {/* seluruh baris dapat diklik lewat pseudo-element; tautan tetap satu untuk pembaca layar */}
+            <Link
+              href={href}
+              className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
+            >
+              {loc(project, 'title', locale)}
+            </Link>
+          </h2>
+          <p className="max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
+          <TechChips skills={project.skills} label={t('stack')} />
+        </div>
         <span aria-hidden="true" className="pj-bignum">
           {number}
         </span>
-        {/* peran di awal, di atas judul (permintaan pemilik 2026-10-08) */}
-        {loc(project, 'role', locale) ? (
-          <p className="pj-role">{loc(project, 'role', locale)}</p>
-        ) : null}
-        <h2 className="text-h3 font-semibold md:text-h2">
-          {/* seluruh baris dapat diklik lewat pseudo-element; tautan tetap satu untuk pembaca layar */}
-          <Link
-            href={href}
-            className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none"
-          >
-            {loc(project, 'title', locale)}
-          </Link>
-        </h2>
-        <p className="max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
-        <TechChips skills={project.skills} label={t('stack')} />
       </div>
     </article>
   )

@@ -221,6 +221,8 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 
 **Semua project dihapus (2026-10-08, permintaan pemilik "untuk semua project di hapus dulu", dikonfirmasi: hapus semua data):** migrasi `20261008170000_delete_all_projects` menghapus semua project (termasuk draf GAAS bila ada), galeri, kaitan skill, dan gambar bawaan repo `local-demo/projects/*`. Isi kelima project di atas tetap tercatat di tabel ini dan tangkapan layarnya tetap ada di `Frontend/public/images/projects` bila ingin dipakai lagi. Project baru ditambahkan lewat Admin → Project. Catatan: `pnpm db:seed` masih membuat GAAS sebagai draf.
 
+**Lima project PDF ditambahkan lagi (2026-10-08, "tambahkan project dari pdf saya tadi nanti saya edit sendiri"):** migrasi `20261008210000_restore_pdf_projects`, isi sama dengan tabel di atas, terbit, urutan 1–5 di bawah GAAS; hanya GAAS yang unggulan. Pemilik menyunting sendiri lewat admin.
+
 Peran ditampilkan di atas judul (kolom `role_id`/`role_en`, migrasi `20261008160000_project_role_buttons`): CatFin-R dan RIPE.AI "Front-End Developer", Crypto Pedia "Frontend Developer" (sesuai ejaan PDF). **[TANYA]** peran untuk MR Coffee dan Swarna Creation.
 
 Teknologi semua project: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Catatan: PDF mencantumkan IPK 3,5/4,0 (CV: 3,41); situs belum diubah, menunggu keputusan pemilik.

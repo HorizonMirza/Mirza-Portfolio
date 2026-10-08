@@ -66,7 +66,8 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       <nav aria-label="breadcrumb" className="pt-8">
         <Link
           href="/projects"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted hover:text-text"
+          // huruf display situs (Oswald) seperti judul bagian (revisi pemilik 2026-10-08)
+          className="inline-flex min-h-11 items-center gap-2 font-display text-base font-medium tracking-wide text-muted uppercase hover:text-text"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           {t('back')}
@@ -78,7 +79,8 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
           uraian, dan studi kasus tidak ditampilkan di sini. */}
       <header className="pd-head mt-6">
         {role ? <p className="pj-role">{role}</p> : null}
-        <h1 className="text-h1 font-bold text-balance">{title}</h1>
+        {/* lebih kecil dari text-h1 agar judul panjang tidak terlalu besar (revisi pemilik 2026-10-08) */}
+        <h1 className="text-h2 font-bold text-balance">{title}</h1>
         {project.demoUrl || project.repoUrl ? (
           <ClickSound>
             <div className="mt-6 flex flex-wrap justify-center gap-3">

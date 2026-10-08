@@ -1830,18 +1830,17 @@
 }
 .pd-head .pj-role {
   align-self: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.875rem;
+  /* di detail lebih besar (revisi pemilik 2026-10-08) */
+  padding: 0.5625rem 1.125rem;
+  font-size: 1rem;
 }
 
-/* 4. nomor besar bergaris di belakang teks, bergerak lebih lambat saat digulir */
+/* 4. nomor besar bergaris, bergerak lebih lambat saat digulir */
+/* revisi pemilik 2026-10-08: nomor berada di kolomnya sendiri di samping teks, tidak menimpa teks */
 .pj-bignum {
-  position: absolute;
-  z-index: -1;
-  top: 50%;
-  right: 0;
-  translate: 0 -50%;
   font-family: var(--font-display);
-  font-size: clamp(6rem, 4rem + 9vw, 12rem);
+  font-size: clamp(3.5rem, 2rem + 5vw, 7.5rem);
   font-weight: 700;
   line-height: 1;
   color: transparent;
@@ -1859,10 +1858,10 @@
 }
 @keyframes pj-bignum {
   from {
-    translate: 0 calc(-50% + 40px);
+    translate: 0 30px;
   }
   to {
-    translate: 0 calc(-50% - 40px);
+    translate: 0 -30px;
   }
 }
 
