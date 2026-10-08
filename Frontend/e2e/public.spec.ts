@@ -230,7 +230,9 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', asyn
   await page.goto('/id/about')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tentang Saya')
   await expect(page.getByRole('heading', { name: 'Muhammad Mirza Wirya', level: 2 })).toBeVisible()
-  await expect(page.getByText('Fullstack Developer | Community Manager')).toBeVisible()
+  await expect(
+    page.getByRole('main').getByText('Fullstack Developer | Community Manager'),
+  ).toBeVisible()
   await expect(page.getByText(/Universitas Bina Nusantara dengan peminatan/)).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Pendidikan', level: 2 })).toBeVisible()
   // nama instansi dan jurusan mengikuti bahasa (organization / organization_en)

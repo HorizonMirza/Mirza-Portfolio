@@ -196,3 +196,5 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 13. Boleh menulis bahwa GAAS dikembangkan dengan bantuan AI coding assistant (Claude Code, Antigravity, Codex)? Dan porsi pekerjaan Anda sendiri?
 14. Status pemakaian GAAS: sudah dipakai pengguna nyata, masih uji coba, atau prototipe? (Untuk bagian "hasil", tanpa angka karangan.)
 15. Tambahkan C#/ASP.NET Core, EF Core, SignalR, Tailwind, Playwright, dan GitHub Actions ke halaman Skills (dan CV)?
+
+**Project contoh (2026-10-08, permintaan pemilik):** migrasi `20261008120000_sample_projects` menambahkan 6 project berjudul "Contoh Project 1–6" / "Sample Project 1–6" (terbit, 3 pertama unggulan) agar pemilik bisa melihat tampilan halaman Project dan beranda. Isinya kerangka, bukan fakta; pemilik mengganti judul, ringkasan, uraian, foto, dan tautan lewat Admin → Project, atau menghapusnya. Tidak ditambahkan ke seed.
