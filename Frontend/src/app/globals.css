@@ -673,37 +673,6 @@
   object-fit: cover;
   object-position: 50% 22%;
 }
-.ab-pc-corner {
-  position: absolute;
-  z-index: 2;
-  width: 16px;
-  height: 16px;
-  border: 0 solid rgb(255 255 255 / 0.85);
-}
-.ab-pc-a {
-  top: 14px;
-  left: 14px;
-  border-top-width: 1.5px;
-  border-left-width: 1.5px;
-}
-.ab-pc-b {
-  top: 14px;
-  right: 14px;
-  border-top-width: 1.5px;
-  border-right-width: 1.5px;
-}
-.ab-pc-c {
-  bottom: 14px;
-  left: 14px;
-  border-bottom-width: 1.5px;
-  border-left-width: 1.5px;
-}
-.ab-pc-d {
-  right: 14px;
-  bottom: 14px;
-  border-right-width: 1.5px;
-  border-bottom-width: 1.5px;
-}
 .ab-pc-chip {
   position: absolute;
   top: 0;
@@ -715,14 +684,14 @@
   align-items: center;
   gap: 10px;
   padding: 7px 14px 7px 7px;
-  border: 1px solid rgb(255 255 255 / 0.18);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   border-radius: 14px;
-  /* kaca gelap agak bening seperti contoh pemilik (2026-10-08), sama di kedua tema */
-  background: rgb(18 18 18 / 0.55);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  font-weight: 500;
+  /* kaca 82% (revisi pemilik 2026-10-08: kurang bening, warna ikut tema, font aplikasi):
+     gelap di tema gelap, terang di tema terang */
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
   box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.5);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -739,6 +708,7 @@
   border-radius: 9px;
   background: #fff;
   color: #111;
+  box-shadow: 0 0 0 1px var(--border);
   font-family: var(--font-display);
   font-size: 0.8125rem;
 }
@@ -750,9 +720,9 @@
   display: grid;
   place-items: center;
   padding: 7px 11px;
-  border: 1px solid rgb(255 255 255 / 0.18);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   border-radius: 999px;
-  background: rgb(18 18 18 / 0.55);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
   box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.5);
   backdrop-filter: blur(12px) saturate(140%);
   -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -762,7 +732,7 @@
   display: block;
   width: 22px;
   height: 22px;
-  border: 1px solid rgb(255 255 255 / 0.35);
+  border: 1px solid var(--border);
   border-radius: 50%;
   background: linear-gradient(180deg, #d9323f 50%, #fff 50%);
 }
@@ -1453,4 +1423,49 @@
   .contact-ticket {
     animation: none;
   }
+}
+
+/* Kartu kontak footer (components/ui/contact-cards.tsx, permintaan pemilik 2026-10-08): kartu masuk
+   dan keluar searah gerakan kursor (--cc-dir), dan kotak kontribusi GitHub memakai warna kalender
+   beranda. */
+@keyframes cc-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--cc-dir, 1) * 64px)) scale(0.97);
+    filter: blur(6px);
+  }
+}
+@keyframes cc-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--cc-dir, 1) * -64px)) scale(0.97);
+    filter: blur(6px);
+  }
+}
+.cc-in {
+  animation: cc-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) backwards;
+}
+.cc-out {
+  animation: cc-out 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-in,
+  .cc-out {
+    animation: none;
+  }
+}
+.cc-day {
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+.cc-day[data-level='1'] {
+  background: var(--gh-1);
+}
+.cc-day[data-level='2'] {
+  background: var(--gh-2);
+}
+.cc-day[data-level='3'] {
+  background: var(--gh-3);
+}
+.cc-day[data-level='4'] {
+  background: var(--gh-4);
 }

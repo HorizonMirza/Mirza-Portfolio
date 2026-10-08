@@ -161,23 +161,31 @@ export function playTimelineStepSound() {
   blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.045, vol: 0.07, type: 'square' })
 }
 
-// Kartu foto halaman Tentang (pilihan pemilik 2026-10-08, demo B1 "Kilau"): empat nada tinggi
-// berurutan seperti cahaya berkilat. Diputar saat kursor masuk dan terus selama kursor bergeser
-// di atas kartu (dibatasi di PhotoTilt agar tidak menumpuk).
+// Kartu foto halaman Tentang (pilihan pemilik 2026-10-08, demo B1 "Kilau", lalu diperhalus atas
+// permintaan pemilik): satu nada lembut per langkah dari urutan nada yang naik-turun. Tiap panggilan
+// melanjutkan ke nada berikutnya (tidak mulai dari awal), jadi selama kursor bergeser di kartu
+// terdengar satu kilau yang mengalir. Tempo diatur oleh PhotoTilt.
+const SHIMMER_NOTES = [1318.51, 1567.98, 1760, 1975.53, 2349.32, 1975.53, 1760, 1567.98]
+let shimmerStep = 0
+
 export function playPhotoShimmerSound() {
   const a = audio()
   if (!a) return
-  ;[1568, 1976, 2349, 3136].forEach((freq, i) => {
-    const t = a.ctx.currentTime + i * 0.045
+  const freq = SHIMMER_NOTES[shimmerStep % SHIMMER_NOTES.length]
+  shimmerStep += 1
+  const t = a.ctx.currentTime
+  // dua sinus yang sedikit berbeda nada (+4 sen) agar terdengar berkilau, bukan bip
+  for (const detune of [0, 4]) {
     const osc = a.ctx.createOscillator()
     osc.frequency.value = freq
+    osc.detune.value = detune
     const gain = a.ctx.createGain()
-    envelope(gain, t, 0.09, 0.004, 0.18)
+    envelope(gain, t, 0.035, 0.03, 0.7)
     osc.connect(gain)
     gain.connect(a.out)
     osc.start(t)
-    osc.stop(t + 0.23)
-  })
+    osc.stop(t + 0.75)
+  }
 }
 
 // Tombol "Coba suara" di admin: memutar suara menu dengan volume yang sedang digeser.

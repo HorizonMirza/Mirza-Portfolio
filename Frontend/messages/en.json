@@ -1,6 +1,6 @@
 {
   "Metadata": {
-    "title": "Muhammad Mirza — Portfolio",
+    "title": "Muhammad Mirza · Portfolio",
     "description": "Portfolio of Muhammad Mirza, a Computer Science (Artificial Intelligence) student at BINUS University and fullstack developer."
   },
   "Common": {
@@ -36,7 +36,16 @@
     "contactHeading": "Get in touch",
     "cv": "Resume CV",
     "cvFile": "PDF",
-    "copyright": "© {year} {name}"
+    "copyright": "© {year} {name}",
+    "copyEmail": "Copy my email",
+    "emailCopied": "Email copied!",
+    "contributions": "{count, plural, one {# contribution} other {# contributions}} in the last year",
+    "contributionOne": "# contribution",
+    "contributionOther": "# contributions",
+    "whatsappHint": "Chat with me on WhatsApp",
+    "emailHint": "Opens a new Gmail message",
+    "cvHint": "Open or download my CV",
+    "githubHint": "GitHub profile"
   },
   "Availability": {
     "OPEN": "Open to work",
@@ -52,7 +61,7 @@
     "whatsapp": "WhatsApp"
   },
   "Home": {
-    "metaTitle": "Muhammad Mirza — Fullstack developer and community builder",
+    "metaTitle": "Muhammad Mirza · Fullstack developer and community builder",
     "statusPlate": "Current status",
     "statusLabel": "Status",
     "locationLabel": "Location",

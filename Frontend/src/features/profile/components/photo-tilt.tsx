@@ -6,10 +6,10 @@ import { playPhotoShimmerSound } from '@/lib/ui-sounds'
 
 // Kemiringan maksimum kartu (derajat) saat kursor di tepi kartu.
 const MAX_TILT = 12
-// Suara kilau saat kursor bergeser di kartu: paling sering tiap 250 ms dan hanya bila kursor
-// berpindah minimal 16 px sejak bunyi terakhir, agar tidak menumpuk menjadi bising.
-const SOUND_GAP_MS = 250
-const SOUND_MIN_MOVE = 16
+// Suara kilau saat kursor bergeser di kartu: satu nada tiap 190 ms (lambat dan halus, revisi
+// pemilik 2026-10-08) selama kursor berpindah minimal 6 px; nada berikutnya melanjutkan urutan.
+const SOUND_GAP_MS = 190
+const SOUND_MIN_MOVE = 6
 
 function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -22,7 +22,7 @@ function reducedMotion() {
 // disentuh/digeser ke samping; geser ke atas-bawah tetap menggulir halaman.
 // Hanya mengubah variabel CSS lewat requestAnimationFrame (transform dikerjakan GPU, globals.css
 // .ab-tilt). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
-// demo B1) berbunyi saat kursor masuk dan terus selama kursor bergeser di kartu.
+// demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
 export function PhotoTilt({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const rect = useRef<DOMRect | null>(null)

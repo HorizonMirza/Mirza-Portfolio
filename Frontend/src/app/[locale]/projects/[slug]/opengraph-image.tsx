@@ -7,7 +7,7 @@ import { horizonCard, OG_SIZE } from '@/lib/og/card'
 
 export const size = OG_SIZE
 export const contentType = 'image/png'
-export const alt = 'Project — Muhammad Mirza'
+export const alt = 'Project · Muhammad Mirza'
 
 export default async function Image({
   params,
@@ -19,7 +19,7 @@ export default async function Image({
   const project = await getPublishedProject(slug)
   const summary = project ? loc(project, 'summary', locale) : ''
   return horizonCard({
-    eyebrow: `Project${project ? ` · ${project.year}` : ''} — Muhammad Mirza`,
+    eyebrow: `Project${project ? ` · ${project.year}` : ''} · Muhammad Mirza`,
     title: project ? loc(project, 'title', locale) : 'Project',
     subtitle: summary.length > 140 ? `${summary.slice(0, 137)}…` : summary || undefined,
   })

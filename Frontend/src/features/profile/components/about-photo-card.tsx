@@ -7,8 +7,8 @@ export type PhotoCardChip = {
   logo: { url: string } | null
 }
 
-// Kartu foto halaman Tentang (pilihan C, DESIGN.md bagian 39): foto tanpa bingkai tebal, siku bidik
-// di empat sudut, chip kampus di sudut atas, dan chip bendera, keduanya kaca gelap agak bening.
+// Kartu foto halaman Tentang (pilihan C, DESIGN.md bagian 39): foto tanpa bingkai tebal dan tanpa
+// siku bidik, chip kampus di sudut atas, dan chip bendera (kaca, warnanya ikut tema).
 // Chip kampus hanya tampil bila datanya ada; fotonya dipasang oleh halaman lewat `photo`.
 export function AboutPhotoCard({ photo, chip }: { photo: ReactNode; chip: PhotoCardChip | null }) {
   return (
@@ -17,10 +17,6 @@ export function AboutPhotoCard({ photo, chip }: { photo: ReactNode; chip: PhotoC
         {photo}
         {/* cahaya yang mengikuti kursor saat kartu dimiringkan (PhotoTilt) */}
         <span className="ab-pc-glare" aria-hidden="true" />
-        <i className="ab-pc-corner ab-pc-a" aria-hidden="true" />
-        <i className="ab-pc-corner ab-pc-b" aria-hidden="true" />
-        <i className="ab-pc-corner ab-pc-c" aria-hidden="true" />
-        <i className="ab-pc-corner ab-pc-d" aria-hidden="true" />
       </div>
       {chip ? (
         <div className="ab-pc-chip">
