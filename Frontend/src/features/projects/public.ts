@@ -15,6 +15,8 @@ export type PublicProjectSummary = {
   title_en: string
   summary_id: string
   summary_en: string
+  role_id: string | null
+  role_en: string | null
   year: number
   category: 'SOFTWARE' | 'COMMUNITY_BUSINESS'
   featured: boolean
@@ -47,11 +49,15 @@ const summarySelect = {
   title_en: true,
   summary_id: true,
   summary_en: true,
+  role_id: true,
+  role_en: true,
   year: true,
   category: true,
   featured: true,
   demoUrl: true,
   repoUrl: true,
+  showDemo: true,
+  showRepo: true,
   githubRepo: true,
   cover: { select: imageSelect },
   skills: {
@@ -59,6 +65,15 @@ const summarySelect = {
     orderBy: [{ order: 'asc' }, { name: 'asc' }],
   },
 } satisfies Prisma.ProjectSelect
+
+// Tombol yang dimatikan Super Admin diperlakukan seperti tautan kosong di seluruh situs publik dan API.
+function withButtons<T extends { demoUrl: string | null; repoUrl: string | null }>({
+  showDemo,
+  showRepo,
+  ...p
+}: T & { showDemo: boolean; showRepo: boolean }) {
+  return { ...p, demoUrl: showDemo ? p.demoUrl : null, repoUrl: showRepo ? p.repoUrl : null }
+}
 
 // Hanya project berstatus terbit, urut sesuai urutan di admin.
 export const getPublishedProjects = cache(
@@ -69,7 +84,7 @@ export const getPublishedProjects = cache(
         orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
         select: summarySelect,
       })
-      return rows.map((p) => ({ ...p, cover: safeImage(p.cover) }))
+      return rows.map((p) => ({ ...withButtons(p), cover: safeImage(p.cover) }))
     },
     ['public-projects'],
     { tags: [CACHE_TAGS.projects], revalidate: PUBLIC_CACHE_SECONDS },
@@ -94,7 +109,7 @@ export const getPublishedProject = cache(
       if (!p) return null
       const { images, updatedAt, ...rest } = p
       return {
-        ...rest,
+        ...withButtons(rest),
         cover: safeImage(rest.cover),
         images: images.flatMap((i) => safeImage(i.asset) ?? []),
         updatedAt: updatedAt.toISOString(),

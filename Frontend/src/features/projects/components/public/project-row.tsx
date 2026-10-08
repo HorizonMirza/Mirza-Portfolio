@@ -92,6 +92,10 @@ export async function ProjectRow({
         <span aria-hidden="true" className="pj-bignum">
           {number}
         </span>
+        {/* peran di awal, di atas judul (permintaan pemilik 2026-10-08) */}
+        {loc(project, 'role', locale) ? (
+          <p className="pj-role">{loc(project, 'role', locale)}</p>
+        ) : null}
         <h2 className="text-h3 font-semibold md:text-h2">
           {/* seluruh baris dapat diklik lewat pseudo-element; tautan tetap satu untuk pembaca layar */}
           <Link

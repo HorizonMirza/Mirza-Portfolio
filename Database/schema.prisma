@@ -180,6 +180,9 @@ model Project {
   title_en       String
   summary_id     String
   summary_en     String
+  // peran pemilik di project, tampil di atas judul pada daftar dan detail (opsional)
+  role_id        String?
+  role_en        String?
   description_id String          @db.Text
   description_en String          @db.Text
   caseStudy_id   String?         @db.Text
@@ -188,6 +191,10 @@ model Project {
   category       ProjectCategory @default(SOFTWARE)
   demoUrl        String?
   repoUrl        String?
+  // Super Admin memilih tombol yang tampil di detail: keduanya, salah satu, atau tidak ada.
+  // Tombol hanya muncul bila tautannya juga diisi.
+  showDemo       Boolean         @default(true)
+  showRepo       Boolean         @default(true)
   // format "owner/repo" untuk metadata GitHub otomatis
   githubRepo     String?
   featured       Boolean         @default(false)

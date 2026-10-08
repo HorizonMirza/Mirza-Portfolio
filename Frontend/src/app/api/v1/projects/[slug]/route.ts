@@ -15,6 +15,7 @@ export async function GET(request: Request, { params }: RouteContext<'/api/v1/pr
       slug: p.slug,
       title: text(p, 'title', locale),
       summary: text(p, 'summary', locale),
+      role: text(p, 'role', locale),
       description: text(p, 'description', locale),
       caseStudy: text(p, 'caseStudy', locale),
       year: p.year,

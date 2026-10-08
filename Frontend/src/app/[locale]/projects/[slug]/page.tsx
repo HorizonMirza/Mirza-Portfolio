@@ -1,15 +1,14 @@
-import { ArrowLeft, ArrowRight, Code2, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
 
 import { ClickSound } from '@/components/shared/click-sound'
-import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
-import { ProjectSplit } from '@/features/projects/components/public/project-split'
-import { TechChips } from '@/features/projects/components/public/tech-chips'
+import { ProjectGallery } from '@/features/projects/components/public/project-gallery'
 import { getPublishedProject, getPublishedProjects } from '@/features/projects/public'
+import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import { Link } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -44,17 +43,15 @@ export async function generateMetadata({
 export default async function ProjectPage({ params }: PageProps<'/[locale]/projects/[slug]'>) {
   const locale = await resolveLocale(params)
   const { slug } = await params
-  const [t, tCommon, project, all] = await Promise.all([
+  const [t, tCommon, project] = await Promise.all([
     getTranslations({ locale, namespace: 'Projects' }),
     getTranslations({ locale, namespace: 'Common' }),
     getPublishedProject(slug),
-    getPublishedProjects(),
   ])
   if (!project) notFound()
 
-  const index = all.findIndex((p) => p.slug === slug)
-  const prev = index > 0 ? all[index - 1] : null
-  const next = index >= 0 && index < all.length - 1 ? all[index + 1] : null
+  const title = loc(project, 'title', locale)
+  const role = loc(project, 'role', locale)
   // sampul lalu galeri; semuanya bisa dipilih lewat gambar kecil
   const images = [...(project.cover ? [project.cover] : []), ...project.images].map((img) => ({
     url: img.url,
@@ -75,88 +72,53 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         </Link>
       </nav>
 
-      {/* Pilihan pemilik 2026-10-08 (demo 10 "belah dua", DESIGN.md bagian 47): hanya judul,
-          ringkasan, tombol, teknologi, dan gambar. Uraian menyusul di bawah, tanpa ubin; studi kasus
-          tidak ditampilkan (permintaan pemilik 2026-10-08). */}
-      <div className="mt-6">
-        <ProjectSplit
+      {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip", DESIGN.md bagian 47): hanya
+          peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
+          uraian, dan studi kasus tidak ditampilkan di sini. */}
+      <header className="pd-head mt-6">
+        {role ? <p className="pj-role">{role}</p> : null}
+        <h1 className="text-h1 font-bold text-balance">{title}</h1>
+        {project.demoUrl || project.repoUrl ? (
+          <ClickSound>
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              {project.demoUrl ? (
+                <Button asChild className="pj-shine pj-shine-solid">
+                  <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink aria-hidden="true" />
+                    {t('demo')}
+                    <span className="sr-only">{tCommon('openInNewTab')}</span>
+                  </a>
+                </Button>
+              ) : null}
+              {project.repoUrl ? (
+                <Button asChild variant="secondary" className="pj-shine">
+                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                      <path d={BRAND_ICONS.github.path} />
+                    </svg>
+                    {t('repo')}
+                    <span className="sr-only">{tCommon('openInNewTab')}</span>
+                  </a>
+                </Button>
+              ) : null}
+            </div>
+          </ClickSound>
+        ) : null}
+      </header>
+
+      <div className="mx-auto mt-10 max-w-6xl">
+        <ProjectGallery
           slug={project.slug}
           images={images}
-          labels={{ thumb: t('image'), previous: t('previousImage'), next: t('nextImage') }}
-        >
-          <p className="flex flex-wrap gap-x-2 font-mono text-label tracking-widest text-note uppercase">
-            <span>{t(project.category)}</span>
-            <span aria-hidden="true">·</span>
-            <span>{project.year}</span>
-          </p>
-          <h1 className="mt-3 text-h1 font-bold text-balance">{loc(project, 'title', locale)}</h1>
-          <p className="mt-4 max-w-prose text-muted">{loc(project, 'summary', locale)}</p>
-          {project.demoUrl || project.repoUrl ? (
-            <ClickSound>
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                {project.demoUrl ? (
-                  <Button asChild className="pj-shine pj-shine-solid">
-                    <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink aria-hidden="true" />
-                      {t('demo')}
-                      <span className="sr-only">{tCommon('openInNewTab')}</span>
-                    </a>
-                  </Button>
-                ) : null}
-                {project.repoUrl ? (
-                  <Button asChild variant="secondary" className="pj-shine">
-                    <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                      <Code2 aria-hidden="true" />
-                      {t('repo')}
-                      <span className="sr-only">{tCommon('openInNewTab')}</span>
-                    </a>
-                  </Button>
-                ) : null}
-              </div>
-            </ClickSound>
-          ) : null}
-          <TechChips skills={project.skills} label={t('stack')} className="mt-6" />
-        </ProjectSplit>
+          labels={{
+            gallery: t('gallery', { title }),
+            thumb: t('image'),
+            previous: t('previousImage'),
+            next: t('nextImage'),
+            imageOf: t('imageOf', { current: '{current}', total: '{total}' }),
+          }}
+        />
       </div>
-
-      <div className="reveal mt-12 max-w-prose">
-        <h2 className="sr-only">{t('overview')}</h2>
-        <MarkdownView source={loc(project, 'description', locale)} size="base" />
-      </div>
-
-      {prev || next ? (
-        <nav
-          aria-label={t('otherProjects')}
-          className="mt-16 grid gap-4 border-t border-border pt-8 sm:grid-cols-2"
-        >
-          {prev ? (
-            <Link
-              href={`/projects/${prev.slug}`}
-              className="group flex min-h-11 flex-col rounded-md p-2 hover:bg-surface-2"
-            >
-              <span className="inline-flex items-center gap-1 text-sm text-muted">
-                <ArrowLeft className="size-4" aria-hidden="true" />
-                {t('previous')}
-              </span>
-              <span className="font-semibold">{loc(prev, 'title', locale)}</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-          {next ? (
-            <Link
-              href={`/projects/${next.slug}`}
-              className="group flex min-h-11 flex-col items-end rounded-md p-2 text-right hover:bg-surface-2"
-            >
-              <span className="inline-flex items-center gap-1 text-sm text-muted">
-                {t('next')}
-                <ArrowRight className="size-4" aria-hidden="true" />
-              </span>
-              <span className="font-semibold">{loc(next, 'title', locale)}</span>
-            </Link>
-          ) : null}
-        </nav>
-      ) : null}
     </Container>
   )
 }

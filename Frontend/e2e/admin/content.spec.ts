@@ -66,12 +66,17 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
 
   await page.getByLabel('Judul', { exact: true }).fill(titleId)
   await page.getByLabel('Ringkasan', { exact: true }).fill('Ringkasan untuk tes E2E.')
+  await page.getByLabel('Peran saya (opsional)').fill('Peran E2E')
   await page.locator('#description_id').fill('Deskripsi **E2E**.')
   await page.getByRole('tab', { name: /English/ }).click()
   await page.getByLabel('Title', { exact: true }).fill(`E2E project ${suffix}`)
   await page.getByLabel('Summary', { exact: true }).fill('Summary for the E2E test.')
   await page.locator('#description_en').fill('Description.')
   await page.getByLabel('Slug').fill(`e2e-${suffix}`.toLowerCase())
+  // tombol detail: demo tampil, GitHub dimatikan Super Admin walau URL-nya diisi
+  await page.getByLabel('URL demo (opsional)').fill('https://example.com/demo')
+  await page.getByLabel('URL repo (opsional)').fill('https://github.com/example/repo')
+  await page.getByLabel('Tampilkan tombol "GitHub" (URL repo)').uncheck()
   // satu skill agar halaman Skill publik menampilkan tautan "Dipakai di"
   await page
     .locator('fieldset')
@@ -92,6 +97,13 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   const detail = await page.goto(`/id/projects/${slug}`)
   expect(detail?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(titleId)
+  await expect(page.getByText('Peran E2E')).toBeVisible()
+  const main = page.getByRole('main')
+  await expect(main.getByRole('link', { name: /Lihat aplikasi/ })).toHaveAttribute(
+    'href',
+    'https://example.com/demo',
+  )
+  await expect(main.getByRole('link', { name: /GitHub/ })).toHaveCount(0)
   await page.goto('/en/projects')
   await expect(page.getByRole('link', { name: `E2E project ${suffix}` })).toBeVisible()
 

@@ -202,6 +202,8 @@ erDiagram
       string title_en
       string summary_id
       string summary_en
+      string role_id "opsional"
+      string role_en "opsional"
       text description_id
       text description_en
       text caseStudy_id
@@ -210,6 +212,8 @@ erDiagram
       enum category "SOFTWARE | COMMUNITY_BUSINESS"
       string demoUrl
       string repoUrl
+      bool showDemo "tombol Lihat aplikasi"
+      bool showRepo "tombol GitHub"
       string githubRepo "owner/repo"
       bool featured
       int order

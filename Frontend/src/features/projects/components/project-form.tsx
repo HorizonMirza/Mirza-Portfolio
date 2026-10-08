@@ -107,6 +107,18 @@ export function ProjectForm({
         {(a) => <Input {...a} {...register(`title_${lang}`, { onBlur: fillSlug })} />}
       </Field>
       <Field
+        id={`role_${lang}`}
+        label={lang === 'id' ? 'Peran saya (opsional)' : 'My role (optional)'}
+        hint={
+          lang === 'id'
+            ? 'Tampil di atas judul, mis. Front-End Developer. Kosongkan bila tidak ada.'
+            : 'Shown above the title, e.g. Front-End Developer.'
+        }
+        error={errors[`role_${lang}`]?.message}
+      >
+        {(a) => <Input autoComplete="off" {...a} {...register(`role_${lang}`)} />}
+      </Field>
+      <Field
         id={`summary_${lang}`}
         label={lang === 'id' ? 'Ringkasan' : 'Summary'}
         hint={
@@ -123,8 +135,8 @@ export function ProjectForm({
         label={lang === 'id' ? 'Deskripsi' : 'Description'}
         hint={
           lang === 'id'
-            ? 'Masalah, peran saya, teknologi, hasil.'
-            : 'Problem, my role, stack, outcome.'
+            ? 'Masalah, peran saya, teknologi, hasil. Saat ini tidak tampil di halaman detail (hanya foto dan tombol, keputusan pemilik 2026-10-08), tetap dipakai API.'
+            : 'Problem, my role, stack, outcome. Not shown on the detail page for now.'
         }
         error={errors[`description_${lang}`]?.message}
       >
@@ -249,6 +261,21 @@ export function ProjectForm({
         <Field id="repoUrl" label="URL repo (opsional)" error={errors.repoUrl?.message}>
           {(a) => <Input type="url" inputMode="url" {...a} {...register('repoUrl')} />}
         </Field>
+        <fieldset className="flex flex-col gap-1 md:col-span-2">
+          <legend className="text-sm font-medium">Tombol di halaman detail</legend>
+          <p className="text-sm text-muted">
+            Pilih keduanya, salah satu, atau tidak sama sekali. Tombol hanya tampil bila URL-nya
+            diisi.
+          </p>
+          <label className="flex min-h-11 items-center gap-3">
+            <input type="checkbox" className="size-5 accent-primary" {...register('showDemo')} />
+            <span>Tampilkan tombol &quot;Lihat aplikasi&quot; (URL demo)</span>
+          </label>
+          <label className="flex min-h-11 items-center gap-3">
+            <input type="checkbox" className="size-5 accent-primary" {...register('showRepo')} />
+            <span>Tampilkan tombol &quot;GitHub&quot; (URL repo)</span>
+          </label>
+        </fieldset>
         <label className="flex min-h-11 items-center gap-3 md:col-span-2">
           <input type="checkbox" className="size-5 accent-primary" {...register('featured')} />
           <span>Tampilkan sebagai project unggulan di beranda</span>
