@@ -4,7 +4,6 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { type KeyboardEvent, type PointerEvent, useRef, useState, ViewTransition } from 'react'
 
-import { PhotoTilt } from '@/features/profile/components/photo-tilt'
 import { playSlideSound } from '@/lib/ui-sounds'
 
 export type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
@@ -17,9 +16,9 @@ const SWIPE_MIN = 40
 // layar laptop maupun HP tidak terpotong. Semua gambar sudah ada di HTML sehingga
 // tanpa JavaScript foto pertama tetap tampil.
 // Efek yang dipertahankan dari pilihan efek sebelumnya (DESIGN.md bagian 49): geser dengan jari,
-// tombol panah, atau tombol panah keyboard dengan bunyi desir; sedikit miring + kilau mengikuti
-// kursor (mouse saja); dan gambar dari daftar "terbang" ke sini lewat View Transition bernama sama
-// (`project-{slug}`).
+// tombol panah, atau tombol panah keyboard dengan bunyi desir; dan gambar dari daftar "terbang" ke
+// sini lewat View Transition bernama sama (`project-{slug}`). Foto sendiri gambar biasa: tidak
+// miring, tidak berkilau, dan tidak bisa difokus/ditekan (revisi pemilik 2026-10-08).
 export function ProjectGallery({
   slug,
   images,
@@ -72,32 +71,26 @@ export function ProjectGallery({
     <div role="region" aria-label={labels.gallery} onKeyDown={onKeyDown}>
       <div
         className="pd-stage"
-        tabIndex={many ? 0 : undefined}
         onPointerDown={onPointerDown}
         onPointerUp={onPointerUp}
         onPointerCancel={() => (start.current = null)}
       >
         <ViewTransition name={`project-${slug}`} share="morph" default="none">
           <div className="absolute inset-0">
-            <PhotoTilt className="pj-tilt pd-tilt" maxTilt={4} touch={false}>
-              <div className="pj-tilt-in">
-                {images.map((img, i) => (
-                  <Image
-                    key={img.url}
-                    src={img.url}
-                    alt={i === active ? img.alt : ''}
-                    aria-hidden={i === active ? undefined : true}
-                    data-active={i === active}
-                    fill
-                    sizes="(min-width: 1280px) 1200px, 100vw"
-                    priority={i === 0}
-                    draggable={false}
-                    className="object-contain"
-                  />
-                ))}
-                <span className="pj-glare" />
-              </div>
-            </PhotoTilt>
+            {images.map((img, i) => (
+              <Image
+                key={img.url}
+                src={img.url}
+                alt={i === active ? img.alt : ''}
+                aria-hidden={i === active ? undefined : true}
+                data-active={i === active}
+                fill
+                sizes="(min-width: 1280px) 1200px, 100vw"
+                priority={i === 0}
+                draggable={false}
+                className="object-contain"
+              />
+            ))}
           </div>
         </ViewTransition>
         {many ? (

@@ -1807,31 +1807,26 @@
   pointer-events: none;
   transition: opacity 400ms var(--ease-out-soft);
 }
-/* detail: gambar mengisi bingkai foto; foto utuh (contain) sehingga tidak perlu diperbesar */
-.pd-tilt,
-.pd-tilt .pj-tilt-in {
-  height: 100%;
-}
 
-/* peran pemilik di atas judul project (daftar dan detail), gaya label nomor bagian beranda */
+/* peran pemilik di atas judul project (daftar dan detail). Pilihan pemilik 2026-10-08 dari 10 demo
+   gaya peran: nomor 2 "pil bergaris", kapsul bergaris tipis dengan huruf biasa, senada chip teknologi. */
 .pj-role {
   display: inline-flex;
   align-items: center;
-  gap: 0.625rem;
+  align-self: flex-start;
   margin-bottom: 0.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1.3;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--note);
+  padding: 0.4375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
 }
-.pj-role::before {
-  content: '';
-  flex: none;
-  width: 1.5rem;
-  height: 1.5px;
-  background: currentColor;
+.pd-head .pj-role {
+  align-self: center;
+  margin-bottom: 0.75rem;
 }
 
 /* 4. nomor besar bergaris di belakang teks, bergerak lebih lambat saat digulir */
