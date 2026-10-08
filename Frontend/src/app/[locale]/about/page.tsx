@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
+import { Fragment } from 'react'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { getPublicExperiences } from '@/features/experience/public'
-import { initials, organizationName, semesterNumber } from '@/features/experience/schema'
+import { initials, organizationName } from '@/features/experience/schema'
 import { AboutPhotoCard } from '@/features/profile/components/about-photo-card'
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
 import { getPublicProfile } from '@/features/profile/public'
@@ -46,6 +47,11 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
     .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0))
   const current = education.find((e) => !e.end) ?? education.at(-1) ?? null
 
+  const roles = ((profile && loc(profile, 'aboutRoles', locale)) || t('roles'))
+    .split('|')
+    .map((r) => r.trim())
+    .filter(Boolean)
+
   const photo = profile?.photo ? (
     <Image
       src={profile.photo.url}
@@ -83,18 +89,22 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                   }
                 : null
             }
-            pill={
-              current && !current.end ? t('semester', { n: semesterNumber(current.start) }) : null
-            }
           />
         </PhotoTilt>
-        {/* tombol CV dihapus (revisi pemilik 2026-10-07 malam); nama dan peran di tengah pita */}
+        {/* tombol CV dihapus (revisi pemilik 2026-10-07 malam); nama dan peran rata kiri, di tengah
+            tinggi pita (revisi 2026-10-08) */}
         <div className="ab-band-text">
           <h2 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
             {profile?.name ?? 'Muhammad Mirza'}
           </h2>
-          <p className="text-lg tracking-wide uppercase opacity-80">
-            {(profile && loc(profile, 'aboutRoles', locale)) || t('roles')}
+          {/* tiap peran dipisah "|"; di HP peran tampil per baris tanpa garis pemisah (globals.css) */}
+          <p className="ab-roles text-lg tracking-wide uppercase opacity-80">
+            {roles.map((role, i) => (
+              <Fragment key={i}>
+                {i > 0 ? <span className="ab-roles-sep"> | </span> : null}
+                <span className="ab-role">{role}</span>
+              </Fragment>
+            ))}
           </p>
         </div>
       </div>

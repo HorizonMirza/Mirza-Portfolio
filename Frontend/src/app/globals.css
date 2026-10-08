@@ -540,11 +540,11 @@
 .ab-band-text {
   display: grid;
   gap: 14px;
-  /* tanpa tombol CV, nama dan peran berada di tengah pita (revisi pemilik 2026-10-07 malam) */
+  /* tanpa tombol CV: nama dan peran di tengah tinggi pita, rata kiri (revisi pemilik 2026-10-08) */
   align-self: center;
-  justify-items: center;
+  justify-items: start;
   padding-bottom: 24px;
-  text-align: center;
+  text-align: left;
 }
 .ab-body {
   display: grid;
@@ -597,6 +597,7 @@
 }
 .ab-edu-logo {
   display: grid;
+  flex: none;
   place-items: center;
   width: 4rem;
   height: 4rem;
@@ -647,16 +648,17 @@
   pointer-events: none;
   transition: opacity 400ms var(--ease-out-soft);
 }
+/* bingkai tebal dan cincin dihapus (revisi pemilik 2026-10-08); tersisa tepi tipis samar seperti
+   contoh pemilik dan bayangan lembut. Warna tepi = warna halaman, jadi terang di atas pita gelap
+   (tema terang) dan gelap di atas pita terang (tema gelap). */
 .ab-pc-frame {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border: 3px solid var(--text);
+  border: 1px solid color-mix(in srgb, var(--bg) 35%, transparent);
   border-radius: 26px;
   background: var(--surface);
-  box-shadow:
-    0 0 0 5px var(--bg),
-    0 0 0 6px var(--border);
+  box-shadow: 0 30px 50px -30px rgb(0 0 0 / 0.55);
 }
 .ab-pc-frame::after {
   content: '';
@@ -708,18 +710,22 @@
   right: -14px;
   z-index: 4;
   display: flex;
-  max-width: calc(100% - 20px);
+  /* nama kampus selalu satu baris; chip boleh melewati tepi kanan kartu */
+  white-space: nowrap;
   align-items: center;
   gap: 10px;
-  padding: 8px 16px 8px 8px;
-  border-radius: 16px;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 0.875rem;
-  font-weight: 600;
-  box-shadow:
-    0 14px 30px -12px rgb(0 0 0 / 0.45),
-    0 0 0 1px var(--border);
+  padding: 7px 14px 7px 7px;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  border-radius: 14px;
+  /* kaca gelap agak bening seperti contoh pemilik (2026-10-08), sama di kedua tema */
+  background: rgb(18 18 18 / 0.55);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   /* melayang lebih dekat dari foto saat kartu dimiringkan */
   transform: translateZ(40px);
 }
@@ -730,39 +736,11 @@
   width: 2.25rem;
   height: 2.25rem;
   overflow: hidden;
-  border-radius: 10px;
-  background: var(--text);
-  color: var(--bg);
+  border-radius: 9px;
+  background: #fff;
+  color: #111;
   font-family: var(--font-display);
   font-size: 0.8125rem;
-}
-.ab-pc-pill {
-  position: absolute;
-  bottom: 30px;
-  left: calc(50% + 7px);
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 18px;
-  border-radius: 999px;
-  background: rgb(10 10 10 / 0.84);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  transform: translateX(-50%) translateZ(28px);
-  backdrop-filter: blur(6px);
-}
-.ab-pc-pill::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgb(255 255 255 / 0.25);
 }
 .ab-pc-flag {
   position: absolute;
@@ -771,19 +749,20 @@
   z-index: 4;
   display: grid;
   place-items: center;
-  padding: 7px 12px;
+  padding: 7px 11px;
+  border: 1px solid rgb(255 255 255 / 0.18);
   border-radius: 999px;
-  background: var(--bg);
-  box-shadow:
-    0 10px 24px -10px rgb(0 0 0 / 0.5),
-    0 0 0 1px var(--border);
+  background: rgb(18 18 18 / 0.55);
+  box-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   transform: translateZ(34px);
 }
 .ab-pc-flag i {
   display: block;
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--border);
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgb(255 255 255 / 0.35);
   border-radius: 50%;
   background: linear-gradient(180deg, #d9323f 50%, #fff 50%);
 }
@@ -796,19 +775,6 @@
 :root:not(.dark) .ab-body {
   border: 3px solid var(--text);
   border-top: 0;
-}
-/* tema terang: foto berlatar terang menyatu dengan halaman, jadi bingkai, chip, dan bendera diberi garis dan bayangan yang lebih tegas */
-:root:not(.dark) .ab-pc-frame {
-  box-shadow:
-    0 0 0 5px var(--bg),
-    0 0 0 7px var(--text),
-    0 30px 40px -28px rgb(0 0 0 / 0.55);
-}
-:root:not(.dark) .ab-pc-chip,
-:root:not(.dark) .ab-pc-flag {
-  box-shadow:
-    0 14px 30px -12px rgb(0 0 0 / 0.5),
-    0 0 0 2px var(--text);
 }
 @media (max-width: 860px) {
   .ab-band {
@@ -825,6 +791,13 @@
     padding-bottom: 28px;
     text-align: center;
   }
+  /* HP: satu peran per baris, tanpa garis pemisah */
+  .ab-role {
+    display: block;
+  }
+  .ab-roles-sep {
+    display: none;
+  }
   .ab-body {
     grid-template-columns: minmax(0, 1fr);
     padding: 24px 20px;
@@ -832,15 +805,24 @@
   .ab-body > section {
     padding-top: 0;
   }
+  /* HP (revisi pemilik 2026-10-08, "kurang rapih"): logo tidak ikut menyempit, judul lebih kecil,
+     bio rata kiri tanpa pemenggalan kata karena kolomnya sempit */
   .ab-edu-card {
     align-items: flex-start;
-    padding: 20px;
+    gap: 16px;
+    padding: 18px;
   }
-  /* di layar sempit foto berada di atas pita hitam tanpa menggantung, jadi cincin terang dilepas */
-  .ab-pc-frame,
-  :root:not(.dark) .ab-pc-frame {
-    border-color: var(--bg);
-    box-shadow: none;
+  .ab-edu-logo {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 14px;
+  }
+  .ab-edu-card h3 {
+    font-size: 1.375rem;
+  }
+  .ab-bio p {
+    text-align: left;
+    hyphens: manual;
   }
 }
 @media (prefers-reduced-motion: reduce) {

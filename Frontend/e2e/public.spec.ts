@@ -226,9 +226,7 @@ test.describe('route handler publik', () => {
   })
 })
 
-test('halaman Tentang menampilkan judul, nama, peran, bio, pendidikan, dan label semester', async ({
-  page,
-}) => {
+test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', async ({ page }) => {
   await page.goto('/id/about')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tentang saya')
   await expect(page.getByRole('heading', { name: 'Muhammad Mirza Wirya', level: 2 })).toBeVisible()
@@ -245,7 +243,8 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, pendidikan, dan label
   await expect(page.getByText('Nilai: 88,3')).toBeVisible()
   await expect(page.getByText('2021 – 2024')).toBeVisible()
   await expect(page.getByText('2024 – Sekarang')).toBeVisible()
-  await expect(page.getByText(/^Semester \d+$/)).toBeVisible()
+  // label semester dihapus (revisi pemilik 2026-10-08)
+  await expect(page.getByText(/^Semester \d+$/)).toHaveCount(0)
   // tombol CV dihapus dari halaman ini (CV tetap ada di footer bila diisi)
   await expect(page.getByRole('main').getByRole('link', { name: /Unduh CV/ })).toHaveCount(0)
   await page.goto('/en/about')
@@ -259,7 +258,6 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, pendidikan, dan label
   await expect(page.getByText('Grade: 88.3')).toBeVisible()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('About me')
   await expect(page.getByRole('heading', { name: 'Education', level: 2 })).toBeVisible()
-  await expect(page.getByText(/^\d+(st|nd|rd|th) semester$/)).toBeVisible()
 })
 
 test('header keamanan ada dan tidak ada pelanggaran CSP di halaman publik', async ({

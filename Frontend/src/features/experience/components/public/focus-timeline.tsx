@@ -2,9 +2,13 @@
 
 import { type ReactNode, useEffect, useRef } from 'react'
 
+import { playTimelineStepSound } from '@/lib/ui-sounds'
+
 // Timeline "fokus aktif" (pilihan pemilik 2026-10-03, demo nomor 9): entri yang paling dekat dengan
 // tengah layar diberi data-active, entri lain meredup (gaya di globals.css .xp-tl). Isi daftar tetap
 // dirender server; tanpa JavaScript semua entri tampil penuh karena data-focus tidak dipasang.
+// Saat entri aktif berganti karena digulir, berbunyi bip pendek (lib/ui-sounds.ts). Browser baru
+// mengizinkan suara setelah pengunjung menekan/menyentuh halaman, jadi gulir pertama bisa sunyi.
 export function FocusTimeline({ label, children }: { label: string; children: ReactNode }) {
   const list = useRef<HTMLOListElement>(null)
 
@@ -12,7 +16,8 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
     const ol = list.current
     if (!ol) return
     let frame = 0
-    function update() {
+    let current: HTMLElement | null = null
+    function update(fromScroll = false) {
       frame = 0
       const mid = window.innerHeight * 0.5
       // di dasar halaman entri terakhir tidak bisa mencapai tengah layar: pilih entri terakhir
@@ -36,6 +41,8 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
         if (li === best) li.dataset.active = ''
         else delete li.dataset.active
       }
+      if (fromScroll && best && current && best !== current) playTimelineStepSound()
+      current = best
       // posisi tengah logo entri aktif, untuk cahaya di garis (globals.css .xp-tl::after)
       const node = best?.querySelector<HTMLElement>('.xp-node')
       if (node) {
@@ -45,15 +52,18 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
       }
     }
     const schedule = () => {
-      if (!frame) frame = requestAnimationFrame(update)
+      if (!frame) frame = requestAnimationFrame(() => update(false))
+    }
+    const scheduleScroll = () => {
+      if (!frame) frame = requestAnimationFrame(() => update(true))
     }
     ol.dataset.focus = ''
     update()
-    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('scroll', scheduleScroll, { passive: true })
     window.addEventListener('resize', schedule)
     return () => {
       if (frame) cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('scroll', scheduleScroll)
       window.removeEventListener('resize', schedule)
       delete ol.dataset.focus
     }

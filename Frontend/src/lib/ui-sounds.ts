@@ -152,6 +152,34 @@ export function playNavSound() {
   ping(a.ctx, a.out, 3950, 0.1, 0.16)
 }
 
+// Timeline Pengalaman (pilihan pemilik 2026-10-08, demo A3 "Bip digital"): bip kotak pendek dan
+// pelan setiap kali entri aktif berganti saat digulir. Bisa berbunyi beberapa kali dalam satu
+// gulir, jadi sengaja singkat (45 ms).
+export function playTimelineStepSound() {
+  const a = audio()
+  if (!a) return
+  blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.045, vol: 0.07, type: 'square' })
+}
+
+// Kartu foto halaman Tentang (pilihan pemilik 2026-10-08, demo B1 "Kilau"): empat nada tinggi
+// berurutan seperti cahaya berkilat. Diputar saat kursor masuk dan terus selama kursor bergeser
+// di atas kartu (dibatasi di PhotoTilt agar tidak menumpuk).
+export function playPhotoShimmerSound() {
+  const a = audio()
+  if (!a) return
+  ;[1568, 1976, 2349, 3136].forEach((freq, i) => {
+    const t = a.ctx.currentTime + i * 0.045
+    const osc = a.ctx.createOscillator()
+    osc.frequency.value = freq
+    const gain = a.ctx.createGain()
+    envelope(gain, t, 0.09, 0.004, 0.18)
+    osc.connect(gain)
+    gain.connect(a.out)
+    osc.start(t)
+    osc.stop(t + 0.23)
+  })
+}
+
 // Tombol "Coba suara" di admin: memutar suara menu dengan volume yang sedang digeser.
 export function previewSound(level: number) {
   volumeOverride = Math.min(100, Math.max(0, level))

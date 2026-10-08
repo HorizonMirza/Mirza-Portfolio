@@ -2,25 +2,42 @@
 
 import { type PointerEvent, type ReactNode, useRef } from 'react'
 
+import { playPhotoShimmerSound } from '@/lib/ui-sounds'
+
 // Kemiringan maksimum kartu (derajat) saat kursor di tepi kartu.
 const MAX_TILT = 12
+// Suara kilau saat kursor bergeser di kartu: paling sering tiap 250 ms dan hanya bila kursor
+// berpindah minimal 16 px sejak bunyi terakhir, agar tidak menumpuk menjadi bising.
+const SOUND_GAP_MS = 250
+const SOUND_MIN_MOVE = 16
 
 function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 // Kartu foto halaman Tentang yang bisa "dipegang" (revisi pemilik 2026-10-07, mengikuti video
-// contoh): kartu miring 3D mengikuti kursor, cahaya lembut ikut bergerak di atas foto, chip kampus,
-// pil semester, dan bendera melayang lebih dekat (translateZ), dan kartu sedikit mengecil saat
+// contoh): kartu miring 3D mengikuti kursor, cahaya lembut ikut bergerak di atas foto, chip kampus
+// dan bendera melayang lebih dekat (translateZ), dan kartu sedikit mengecil saat
 // ditekan. Saat kursor keluar, kartu kembali tegak perlahan. Di layar sentuh kartu bereaksi saat
 // disentuh/digeser ke samping; geser ke atas-bawah tetap menggulir halaman.
 // Hanya mengubah variabel CSS lewat requestAnimationFrame (transform dikerjakan GPU, globals.css
-// .ab-tilt). Reduced-motion: kartu diam.
+// .ab-tilt). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
+// demo B1) berbunyi saat kursor masuk dan terus selama kursor bergeser di kartu.
 export function PhotoTilt({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const rect = useRef<DOMRect | null>(null)
   const frame = useRef(0)
   const pressed = useRef(false)
+  const lastSound = useRef({ at: 0, x: 0, y: 0 })
+
+  function shimmer(event: PointerEvent<HTMLDivElement>, force = false) {
+    const last = lastSound.current
+    const now = performance.now()
+    const moved = Math.hypot(event.clientX - last.x, event.clientY - last.y)
+    if (!force && (now - last.at < SOUND_GAP_MS || moved < SOUND_MIN_MOVE)) return
+    lastSound.current = { at: now, x: event.clientX, y: event.clientY }
+    playPhotoShimmerSound()
+  }
 
   function apply(vars: Record<string, string>) {
     cancelAnimationFrame(frame.current)
@@ -32,8 +49,9 @@ export function PhotoTilt({ children }: { children: ReactNode }) {
   }
 
   function follow(event: PointerEvent<HTMLDivElement>) {
-    if (reducedMotion()) return
     if (event.pointerType === 'touch' && !pressed.current) return
+    shimmer(event)
+    if (reducedMotion()) return
     const r = (rect.current ??= event.currentTarget.getBoundingClientRect())
     const x = Math.min(1, Math.max(0, (event.clientX - r.left) / r.width))
     const y = Math.min(1, Math.max(0, (event.clientY - r.top) / r.height))
@@ -61,9 +79,11 @@ export function PhotoTilt({ children }: { children: ReactNode }) {
       data-tilt="off"
       onPointerEnter={(e) => {
         rect.current = e.currentTarget.getBoundingClientRect()
+        if (e.pointerType !== 'touch') shimmer(e, true)
       }}
       onPointerMove={follow}
       onPointerDown={(e) => {
+        if (e.pointerType === 'touch') shimmer(e, true)
         if (reducedMotion()) return
         pressed.current = true
         rect.current = e.currentTarget.getBoundingClientRect()
