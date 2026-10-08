@@ -1853,24 +1853,8 @@
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1.5px color-mix(in srgb, var(--note) 45%, transparent);
-  /* pilihan pemilik 2026-10-08 (demo gaya nomor 8): terisi biru dari bawah saat baris disorot */
-  background: linear-gradient(
-    0deg,
-    color-mix(in srgb, var(--note) 30%, transparent) 50%,
-    transparent 50%
-  );
-  background-size: 100% 200%;
-  background-position: 0 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  transition: background-position 800ms var(--ease-out-soft);
   pointer-events: none;
   user-select: none;
-}
-@media (hover: hover) {
-  .pj-zz:hover .pj-bignum {
-    background-position: 0 100%;
-  }
 }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
@@ -2021,7 +2005,6 @@
 @media (prefers-reduced-motion: reduce) {
   .pj-tilt-in,
   .pj-glare,
-  .pj-bignum,
   .pj-tech,
   .pj-tech svg,
   .pd-arrow {
