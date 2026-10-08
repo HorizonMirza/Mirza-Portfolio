@@ -3,7 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { z } from 'zod'
 
-// Kalender kontribusi GitHub untuk beranda (DESIGN.md bagian 28). Data dari GitHub GraphQL API,
+// Kalender kontribusi GitHub untuk beranda (DESIGN.md bagian 28 dan 44). Data dari GitHub GraphQL API,
 // yang selalu butuh token: memakai GITHUB_TOKEN (fine-grained, tanpa izin tambahan cukup untuk data
 // publik). Tanpa token atau bila GitHub gagal, hasilnya null dan bagian ini tidak tampil.
 

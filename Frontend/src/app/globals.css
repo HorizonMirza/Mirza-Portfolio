@@ -1163,23 +1163,6 @@
   }
 }
 
-/* Kalender kontribusi GitHub di beranda (DESIGN.md bagian 28). */
-.gh-0 {
-  fill: var(--surface-2);
-}
-.gh-1 {
-  fill: var(--gh-1);
-}
-.gh-2 {
-  fill: var(--gh-2);
-}
-.gh-3 {
-  fill: var(--gh-3);
-}
-.gh-4 {
-  fill: var(--gh-4);
-}
-
 /* Form kontak (DESIGN.md bagian 33): kilau berjalan mengelilingi kotak seperti di login admin,
    tetapi warnanya ikut tema (gelap di tema terang, terang di tema gelap). Bingkai tipis bermask
    di atas border kolom sehingga mengikuti sudut kotak; diam pada reduced-motion. */

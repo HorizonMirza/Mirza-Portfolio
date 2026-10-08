@@ -7,9 +7,9 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
+import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
 import { getPublicExperiences } from '@/features/experience/public'
 import { organizationName, sortByLatest } from '@/features/experience/schema'
-import { GithubCalendar } from '@/features/profile/components/github-calendar'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
 import { ProjectCard } from '@/features/projects/components/public/project-card'
@@ -63,6 +63,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     tExp,
     tSkills,
     tKeyboard,
+    tSkyline,
     profile,
     projects,
     experiences,
@@ -75,6 +76,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     getTranslations({ locale, namespace: 'Experience' }),
     getTranslations({ locale, namespace: 'Skills' }),
     getTranslations({ locale, namespace: 'SkillKeyboard' }),
+    getTranslations({ locale, namespace: 'Skyline' }),
     getPublicProfile(),
     getPublishedProjects(),
     getPublicExperiences(),
@@ -89,6 +91,39 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const login = githubLogin(github)
   const contributions = login ? await getGithubContributions(login) : null
   const cvHref = `/api/cv?locale=${locale}`
+  // Teks grafik kontribusi dua bahasa (komponen klien hanya menerima string, bukan fungsi).
+  const skylineKeys = [
+    'unit',
+    'unitPlural',
+    'none',
+    'inLastYear',
+    'on',
+    'total',
+    'busiest',
+    'longest',
+    'current',
+    'day',
+    'days',
+    'hint2d',
+    'hint3d',
+    'less',
+    'more',
+    'level1',
+    'level2',
+    'level3',
+    'level4',
+    'highlight',
+    'view',
+    'flat',
+    'skyline',
+    'keys',
+  ] as const satisfies readonly (keyof SkylineLabels)[]
+  const skylineLabels = Object.fromEntries(
+    skylineKeys.map((key) => [key, tSkyline(key)]),
+  ) as SkylineLabels
+  const contributionDays = contributions
+    ? contributions.weeks.flat().map((day) => ({ date: day.date, count: day.count }))
+    : []
   const projectTitles = new Map(projects.map((p) => [p.slug, loc(p, 'title', locale)]))
   const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
@@ -344,15 +379,10 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </a>
               }
             />
-            <GithubCalendar
-              calendar={contributions}
-              locale={locale}
-              labels={{
-                summary: t('githubTotal', { count: contributions.total }),
-                less: t('githubLess'),
-                more: t('githubMore'),
-                cell: (count, date) => t('githubCell', { count, date }),
-              }}
+            <ContributionSkyline
+              data={contributionDays}
+              locale={locale === 'id' ? 'id-ID' : 'en-US'}
+              labels={skylineLabels}
             />
           </Container>
         </section>

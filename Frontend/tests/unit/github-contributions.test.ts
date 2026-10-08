@@ -1,6 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { monthLabels } from '@/features/profile/components/github-calendar'
 import { githubLogin, toCalendar } from '@/features/profile/github-contributions'
 
 vi.mock('next/cache', () => ({ unstable_cache: (fn: unknown) => fn }))
@@ -76,33 +75,5 @@ describe('github-contributions', () => {
     expect(await getGithubContributions('HorizonMirza')).toBeNull()
     expect(fetchSpy).not.toHaveBeenCalled()
     fetchSpy.mockRestore()
-  })
-
-  it('label bulan muncul di minggu pertama tiap bulan, bulan awal yang terpotong dibuang', () => {
-    const weeks = [
-      '2026-08-30',
-      '2026-09-06',
-      '2026-09-13',
-      '2026-09-20',
-      '2026-09-27',
-      '2026-10-04',
-    ].map((date) => [{ date, count: 0, level: 0 as const }])
-    const labels = monthLabels({ total: 0, weeks }, 'en').map((l) => l.text)
-    // Agustus hanya di kolom 0 lalu September di kolom 1: Agustus dibuang, Oktober di kolom 5
-    expect(labels).toEqual(['Sep', 'Oct'])
-  })
-
-  it('label yang rapat di tengah kalender dilewati', () => {
-    const weeks = [
-      '2026-01-04',
-      '2026-01-11',
-      '2026-01-18',
-      '2026-01-25',
-      '2026-02-01',
-      '2026-02-22',
-      '2026-03-01',
-    ].map((date) => [{ date, count: 0, level: 0 as const }])
-    // Februari di kolom 4, Maret di kolom 6 terlalu rapat sehingga dilewati
-    expect(monthLabels({ total: 0, weeks }, 'en').map((l) => l.text)).toEqual(['Jan', 'Feb'])
   })
 })
