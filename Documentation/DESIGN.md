@@ -639,7 +639,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Revisi pemilik: judul "Project" / "Projects" **di tengah** (seperti Tentang dan Pengalaman), kalimat pengantar ("Software yang saya bangun...") **dihapus**, dan **semua filter dihapus** (kategori dan teknologi); semua project tampil dalam grid 3 kolom (2 di tablet, 1 di HP). Komponen `ProjectFilter` dan teks terjemahannya dihapus. Kartu project mengisi tinggi baris agar sejajar.
 - Gambar project: halaman publik menerima gambar dari akun Cloudinary dan gambar contoh bawaan repo di `/demo/projects/` (`lib/public-image.ts`), dipakai 6 project contoh (CONTENT.md).
 
-## 43. Halaman Project: kartu bertumpuk dan detail bento (2026-10-08, detail diganti di bagian 47)
+## 43. Halaman Project: kartu bertumpuk dan detail bento (2026-10-08, detail diganti di bagian 47, daftar di bagian 48)
 
 - Pilihan pemilik dari 10 demo kedua (arah demo 10 "kartu bertumpuk" + 8 "zig-zag" + kartu sekarang): **nomor 3**, disesuaikan dengan data admin Project.
 - **Daftar** (`/projects`): satu kolom (maks. 48 rem) kartu gaya situs sekarang (`ProjectCard variant="stack"`): sampul 21:9 (16:10 di HP), nomor · kategori · tahun, judul, ringkasan, teknologi, metadata GitHub, "Baca detail". Tiap kartu `position: sticky` sedikit lebih rendah dari kartu sebelumnya (`.pj-stack`, 1,25 rem; 0,75 rem di HP) sehingga kartu menumpuk saat digulir, di HP maupun laptop. Sampul membesar pelan dan kartu terangkat 4 px saat disorot (hanya perangkat dengan hover). Kartu muncul lewat reveal yang sudah ada.
@@ -673,3 +673,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Pemilik merasa detail bento (bagian 43) terlalu banyak informasi dan berantakan, terutama judul yang menimpa gambar sampul. Dari 10 demo detail ringkas, pemilik memilih **nomor 10 "Belah dua"**.
 - Satu kartu (`ProjectSplit`, `.pd-split`): di layar ≥ 900 px gambar mengisi setengah kiri dan teks di kanan; di HP gambar 4:3 di atas, teks di bawah. Teks hanya kategori · tahun, judul (`text-h1`), ringkasan, tombol Buka demo / Lihat kode, chip teknologi, dan gambar kecil. Gambar kecil (sampul lalu galeri) mengganti gambar besar dengan fade 500 ms; gambar besar sedikit membesar saat disorot. Tanpa JavaScript gambar pertama tetap tampil.
 - Dibuang dari detail: baris info (Kategori/Tahun/Teknologi/Di GitHub), ubin teknologi dengan tahun besar, metadata GitHub, dan galeri ubin. Uraian (Markdown) tetap ada di bawah kartu dalam satu kolom sempit tanpa ubin; Studi kasus hanya tampil bila diisi. Navigasi Sebelumnya/Berikutnya tetap.
+
+## 48. Daftar project zig-zag (2026-10-08)
+
+- Pemilik merasa kartu bertumpuk (bagian 43) merepotkan: kartu saling menutupi dan teks tertutup kartu berikutnya. Dari 10 demo daftar baru, pemilik memilih **nomor 6 "Zig-zag"**.
+- Tiap project satu baris (`ProjectRow`): gambar 16:10 dan teks berdampingan di layar ≥ 768 px, sisi gambar bergantian (ganjil kiri, genap kanan); di HP gambar di atas teks. Jarak antar baris 4 rem (6 rem di layar lebar). Teks: nomor · kategori · tahun, judul (`h2`), ringkasan, chip teknologi, "Baca detail →". Seluruh baris bisa diklik (satu tautan di judul).
+- Animasi lewat reveal yang sudah ada: gambar masuk 32 px dari sisinya (600 ms; di HP naik 12 px), teks menyusul 120 ms kemudian. Saat disorot gambar membesar pelan dan panah bergeser. Reduced-motion mematikan semuanya.
+- `ProjectCard` (varian grid/wide/stack) dan CSS `.pj-stack`/`.pj-card` dihapus karena tidak dipakai lagi.

@@ -1,11 +1,10 @@
 import { ArrowUpRight } from 'lucide-react'
 import type { Metadata } from 'next'
-import type { CSSProperties } from 'react'
 import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { getPublicProfile } from '@/features/profile/public'
-import { ProjectCard } from '@/features/projects/components/public/project-card'
+import { ProjectRow } from '@/features/projects/components/public/project-row'
 import { getPublishedProjects } from '@/features/projects/public'
 import { Link } from '@/i18n/navigation'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -42,18 +41,11 @@ export default async function ProjectsPage({ params }: PageProps<'/[locale]/proj
       {projects.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border p-6 text-muted">{t('empty')}</p>
       ) : (
-        // Pilihan pemilik 2026-10-08 (demo 3): satu kolom kartu yang menempel dan menumpuk saat
-        // digulir (globals.css .pj-stack), di HP maupun laptop.
-        <ol className="pj-stack">
+        // Pilihan pemilik 2026-10-08 (demo 6): gambar dan teks zig-zag, tanpa kartu bertumpuk.
+        <ol className="flex flex-col gap-16 md:gap-24">
           {projects.map((p, i) => (
-            <li key={p.slug} style={{ '--i': i } as CSSProperties}>
-              <ProjectCard
-                project={p}
-                index={i}
-                locale={locale}
-                variant="stack"
-                headingLevel="h2"
-              />
+            <li key={p.slug}>
+              <ProjectRow project={p} index={i} locale={locale} />
             </li>
           ))}
         </ol>

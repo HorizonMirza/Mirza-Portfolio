@@ -1460,43 +1460,26 @@
   background: var(--gh-4);
 }
 
-/* Halaman Project, pilihan pemilik 2026-10-08 (demo 3, DESIGN.md bagian 43).
-   Daftar: satu kolom kartu yang menempel dan menumpuk saat digulir. Hanya transform/opacity yang
-   beranimasi. */
-.pj-stack {
-  max-width: 48rem;
-  margin: 0 auto;
-  padding-bottom: 12vh;
+/* Halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag", DESIGN.md bagian 48).
+   Gambar masuk dari sisinya (menggantikan geser 12 px bawaan .reveal), teks menyusul 120 ms. */
+.pj-zz-from-left.reveal[data-reveal='pending'] {
+  translate: -32px 0;
 }
-.pj-stack > li {
-  position: sticky;
-  /* di bawah topbar (sticky), tiap kartu sedikit lebih rendah agar tepi atas kartu sebelumnya
-     tetap terlihat seperti tumpukan */
-  top: calc(5.25rem + var(--i) * 1.25rem);
-  margin-bottom: 2.25rem;
+.pj-zz-from-right.reveal[data-reveal='pending'] {
+  translate: 32px 0;
 }
-.pj-card {
-  box-shadow: 0 -22px 44px -30px rgb(0 0 0 / 0.5);
-  transition:
-    transform 350ms var(--ease-out-soft),
-    border-color 200ms;
+.pj-zz-text.reveal[data-reveal] {
+  transition-delay: 120ms;
 }
-@media (hover: hover) {
-  .pj-card:hover {
-    transform: translateY(-4px);
+@media (max-width: 767px) {
+  /* di HP gambar di atas teks: cukup naik dari bawah seperti reveal biasa */
+  .pj-zz-from-left.reveal[data-reveal='pending'],
+  .pj-zz-from-right.reveal[data-reveal='pending'] {
+    translate: 0 12px;
   }
 }
-@media (max-width: 639px) {
-  .pj-stack > li {
-    top: calc(4.5rem + var(--i) * 0.75rem);
-    margin-bottom: 1.5rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pj-card {
-    transition: none;
-  }
+.pj-zz-img.reveal[data-reveal] {
+  transition-duration: 600ms;
 }
 
 /* Detail project, pilihan pemilik 2026-10-08 (demo 10 "belah dua", DESIGN.md bagian 47).
