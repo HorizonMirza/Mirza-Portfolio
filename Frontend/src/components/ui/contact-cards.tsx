@@ -12,56 +12,62 @@ import {
 
 import { cn } from '@/lib/utils'
 
-// Baris kontak footer (permintaan pemilik 2026-10-08, diadaptasi dari komponen ContactCards yang
-// dikirim pemilik): tombol salin email lalu ikon tautan. Saat ikon disorot atau difokus, kartu
-// detailnya muncul di atas baris; berpindah antarikon menggeser kartu searah gerakan sementara
-// wadahnya berubah ukuran dan posisi, sehingga terasa satu benda, bukan beberapa popup.
-// Perbedaan dari aslinya: warna memakai token tema situs, animasi di globals.css (.cc-*), data
-// GitHub dikirim dari server (tanpa fetch dari browser ke API pihak ketiga, yang juga diblokir CSP),
-// dan semua teks dua bahasa dari footer.
+// Kartu kontak footer dengan kartu detail saat disorot (permintaan pemilik 2026-10-08, diadaptasi
+// dari komponen ContactCards yang dikirim pemilik). Daftar kartu tetap seperti footer sebelumnya;
+// yang baru hanya saat kursor berada di atas sebuah kartu: kartu detailnya muncul di atasnya, dan
+// berpindah antarkartu menggeser isinya searah gerakan sementara wadahnya berubah ukuran dan
+// posisi, sehingga terasa satu benda, bukan beberapa popup. Hanya untuk perangkat dengan hover
+// (HP tidak berubah). Warna memakai token tema situs, animasi di globals.css (.cc-*).
 
 export type ContactCardLink = {
   key: string
-  label: string
   href: string
   external: boolean
-  icon: ReactNode
-  /** Kartu yang tampil saat tautan ini disorot. Beri lebar tetap. */
+  /** Isi kartu di daftar (ikon, nama, nilai) dan kelas tautannya. */
+  trigger: ReactNode
+  className: string
+  /** Kartu detail yang tampil saat kartu ini disorot. Beri lebar tetap. */
   card: ReactNode
-  /** Disorot seperti kartu CV di footer lama. */
-  primary?: boolean
 }
 
-type Props = {
-  email?: string | null
+function canHover() {
+  return window.matchMedia('(hover: hover)').matches
+}
+
+export function ContactCards({
+  links,
+  className,
+}: {
   links: ContactCardLink[]
-  labels: { copy: string; copied: string; newTab: string }
   className?: string
-}
-
-export function ContactCards({ email, links, labels, className }: Props) {
+}) {
   const [open, setOpen] = useState(false)
   const [index, setIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   // kartu yang sedang diganti, tetap dipasang sampai animasi keluarnya selesai
   const [outgoing, setOutgoing] = useState<{ index: number; direction: number; key: number }>()
   const [entryKey, setEntryKey] = useState(0)
-  const [box, setBox] = useState({ left: 0, width: 0, height: 0 })
+  const [box, setBox] = useState({ left: 0, top: 0, width: 0, height: 0 })
   // kartu pertama langsung tampil di tempat; baru kartu berikutnya yang berubah dari ukuran sebelumnya
   const [morphing, setMorphing] = useState(false)
 
   const contentRef = useRef<HTMLDivElement>(null)
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
 
+  // kartu detail berada di atas kartu yang disorot, tengahnya sejajar tengah kartu itu, dan tidak
+  // keluar dari tepi daftar
   useLayoutEffect(() => {
     const content = contentRef.current
     const link = linkRefs.current[index]
-    if (!open || !content || !link) return
-    setBox({
-      left: link.offsetLeft + link.offsetWidth / 2,
-      width: content.offsetWidth,
-      height: content.offsetHeight,
-    })
+    const list = link?.closest('ul')
+    if (!open || !content || !link || !list) return
+    const width = content.offsetWidth
+    const center = link.offsetLeft + link.offsetWidth / 2
+    const left = Math.min(
+      Math.max(center, width / 2),
+      Math.max(width / 2, list.clientWidth - width / 2),
+    )
+    setBox({ left, top: link.offsetTop, width, height: content.offsetHeight })
   }, [open, index])
 
   // animationend tidak terpicu saat tab tersembunyi atau gerak dikurangi, jadi kartu lama juga
@@ -73,6 +79,7 @@ export function ContactCards({ email, links, labels, className }: Props) {
   }, [outgoing])
 
   function enter(next: number) {
+    if (!canHover()) return
     if (open && next === index) return
     if (open) {
       setOutgoing({ index, direction: Math.sign(next - index) || 1, key: entryKey })
@@ -91,150 +98,76 @@ export function ContactCards({ email, links, labels, className }: Props) {
   }
 
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      {email ? <CopyEmailButton email={email} labels={labels} /> : null}
+    <div
+      className={cn('relative', className)}
+      onMouseLeave={close}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close()
+      }}
+    >
+      <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        {links.map((link, linkIndex) => (
+          <li key={link.key}>
+            <a
+              ref={(node) => {
+                linkRefs.current[linkIndex] = node
+              }}
+              href={link.href}
+              {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              onMouseEnter={() => enter(linkIndex)}
+              onFocus={() => enter(linkIndex)}
+              className={link.className}
+            >
+              {link.trigger}
+            </a>
+          </li>
+        ))}
+      </ul>
 
       <div
-        className="relative flex"
-        onMouseLeave={close}
-        onBlur={(event) => {
-          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) close()
+        aria-hidden="true"
+        // contain: paint menjaga sudut membulat tetap memotong kartu yang beranimasi blur
+        style={{
+          left: box.left,
+          top: box.top,
+          width: box.width,
+          height: box.height,
+          contain: 'paint',
         }}
+        className={cn(
+          'pointer-events-none absolute z-20 flex origin-bottom items-end overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl',
+          morphing
+            ? 'transition-[left,top,width,height,opacity,transform] duration-400 ease-[cubic-bezier(0.32,0.72,0,1)]'
+            : 'transition-[opacity,transform] duration-200 ease-out',
+          // naik setinggi kartunya sendiri ditambah jarak 8 px dari kartu yang disorot
+          open
+            ? '-translate-x-1/2 -translate-y-[calc(100%+0.5rem)] scale-100 opacity-100'
+            : '-translate-x-1/2 -translate-y-[calc(100%+0.25rem)] scale-[0.97] opacity-0',
+          'motion-reduce:transition-none',
+        )}
       >
-        {links.map((link, linkIndex) => (
-          <a
-            key={link.key}
-            ref={(node) => {
-              linkRefs.current[linkIndex] = node
-            }}
-            href={link.href}
-            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-            onMouseEnter={() => enter(linkIndex)}
-            onFocus={() => enter(linkIndex)}
-            className={cn(
-              'relative z-10 grid size-11 place-items-center rounded-full transition-colors',
-              link.primary ? 'text-text' : 'text-muted hover:text-text focus-visible:text-text',
-            )}
-          >
-            {link.icon}
-            <span className="sr-only">
-              {link.label}
-              {link.external ? ` ${labels.newTab}` : ''}
-            </span>
-          </a>
-        ))}
-
-        <div
-          aria-hidden="true"
-          // contain: paint menjaga sudut membulat tetap memotong kartu yang beranimasi blur
-          style={{ left: box.left, width: box.width, height: box.height, contain: 'paint' }}
-          className={cn(
-            'absolute bottom-[calc(100%+0.5rem)] z-20 flex origin-bottom items-end overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl',
-            morphing
-              ? 'transition-[left,width,height,opacity,transform] duration-400 ease-[cubic-bezier(0.32,0.72,0,1)]'
-              : 'transition-[opacity,transform] duration-200 ease-out',
-            open
-              ? '-translate-x-1/2 scale-100 opacity-100'
-              : 'pointer-events-none -translate-x-1/2 translate-y-1 scale-[0.97] opacity-0',
-            'motion-reduce:transition-none',
-          )}
-        >
-          {outgoing ? (
-            <div
-              key={`out-${outgoing.key}`}
-              onAnimationEnd={(event) => {
-                if (event.target === event.currentTarget) setOutgoing(undefined)
-              }}
-              style={{ '--cc-dir': outgoing.direction } as CSSProperties}
-              className="cc-out absolute"
-            >
-              {links[outgoing.index]?.card}
-            </div>
-          ) : null}
+        {outgoing ? (
           <div
-            key={`in-${entryKey}`}
-            ref={contentRef}
-            style={{ '--cc-dir': direction } as CSSProperties}
-            className={cn('absolute', morphing && 'cc-in')}
+            key={`out-${outgoing.key}`}
+            onAnimationEnd={(event) => {
+              if (event.target === event.currentTarget) setOutgoing(undefined)
+            }}
+            style={{ '--cc-dir': outgoing.direction } as CSSProperties}
+            className="cc-out absolute"
           >
-            {links[index]?.card}
+            {links[outgoing.index]?.card}
           </div>
+        ) : null}
+        <div
+          key={`in-${entryKey}`}
+          ref={contentRef}
+          style={{ '--cc-dir': direction } as CSSProperties}
+          className={cn('absolute', morphing && 'cc-in')}
+        >
+          {links[index]?.card}
         </div>
-
-        {/* jembatan kursor, agar kartu tetap terbuka saat kursor bergerak ke arahnya */}
-        <div className="absolute inset-0 -top-2" aria-hidden="true" />
       </div>
     </div>
-  )
-}
-
-// Menyalin tanpa meninggalkan halaman: clipboard API dulu, lalu execCommand (masih bekerja saat
-// clipboard API diblokir), dan bila keduanya gagal tombol menampilkan alamatnya untuk disalin manual.
-async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text)
-    return true
-  } catch {
-    // lanjut ke cara lama
-  }
-  try {
-    const field = document.createElement('textarea')
-    field.value = text
-    field.setAttribute('readonly', '')
-    field.style.cssText = 'position:fixed;top:0;left:0;opacity:0'
-    document.body.append(field)
-    field.select()
-    const copied = document.execCommand('copy')
-    field.remove()
-    return copied
-  } catch {
-    return false
-  }
-}
-
-export function CopyEmailButton({
-  email,
-  labels,
-}: {
-  email: string
-  labels: { copy: string; copied: string }
-}) {
-  const [state, setState] = useState<'idle' | 'copied' | 'manual'>('idle')
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined)
-
-  useEffect(() => () => clearTimeout(timeout.current), [])
-
-  async function copy() {
-    const copied = await copyText(email)
-    setState(copied ? 'copied' : 'manual')
-    clearTimeout(timeout.current)
-    timeout.current = setTimeout(() => setState('idle'), copied ? 3000 : 8000)
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={copy}
-      className="relative flex min-h-11 cursor-pointer items-center justify-center rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-fg transition-[background-color,scale] hover:bg-primary/90 active:scale-95"
-    >
-      <span
-        className={cn(
-          'transition-[opacity,filter] duration-500',
-          state !== 'idle' && 'opacity-0 blur-[2px]',
-        )}
-      >
-        {labels.copy}
-      </span>
-      <span
-        aria-live="polite"
-        className={cn(
-          'absolute transition-[opacity,filter] duration-500',
-          state === 'idle' && 'opacity-0 blur-[2px]',
-        )}
-      >
-        {state === 'manual' ? email : state === 'copied' ? labels.copied : ''}
-      </span>
-    </button>
   )
 }
 

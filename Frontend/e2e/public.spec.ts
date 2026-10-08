@@ -228,7 +228,7 @@ test.describe('route handler publik', () => {
 
 test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', async ({ page }) => {
   await page.goto('/id/about')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tentang saya')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tentang Saya')
   await expect(page.getByRole('heading', { name: 'Muhammad Mirza Wirya', level: 2 })).toBeVisible()
   await expect(page.getByText('Fullstack Developer | Community Manager')).toBeVisible()
   await expect(page.getByText(/Universitas Bina Nusantara dengan peminatan/)).toBeVisible()
@@ -256,7 +256,7 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', asyn
   ).toBeVisible()
   await expect(page.getByText('Cumulative GPA: 3.41/4.0')).toBeVisible()
   await expect(page.getByText('Grade: 88.3')).toBeVisible()
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('About me')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('About Me')
   await expect(page.getByRole('heading', { name: 'Education', level: 2 })).toBeVisible()
 })
 

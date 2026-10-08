@@ -37,8 +37,6 @@
     "cv": "Resume CV",
     "cvFile": "PDF",
     "copyright": "© {year} {name}",
-    "copyEmail": "Copy my email",
-    "emailCopied": "Email copied!",
     "contributions": "{count, plural, one {# contribution} other {# contributions}} in the last year",
     "contributionOne": "# contribution",
     "contributionOther": "# contributions",
@@ -87,9 +85,9 @@
     "ctaWhatsapp": "WhatsApp"
   },
   "About": {
-    "metaTitle": "About me",
+    "metaTitle": "About Me",
     "metaDescription": "Background and education of Muhammad Mirza.",
-    "title": "About me",
+    "title": "About Me",
     "roles": "Fullstack Developer | Community Manager",
     "educationHeading": "Education",
     "noEducation": "No education history has been published yet.",

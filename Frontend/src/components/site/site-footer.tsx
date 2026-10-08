@@ -28,16 +28,8 @@ function BrandIcon({ slug, className = 'size-5' }: { slug: string; className?: s
 
 // Ikon kartu: logo Simple Icons bila ada; LinkedIn tidak tersedia di Simple Icons (alasan merek),
 // jadi memakai tulisan "in"; email, situs, dan CV selain Google Drive memakai ikon lucide.
-function LinkIcon({
-  name,
-  drive,
-  large = false,
-}: {
-  name: FooterLinkKey
-  drive: boolean
-  large?: boolean
-}) {
-  const size = large ? 'size-6' : 'size-5'
+function LinkIcon({ name, drive }: { name: FooterLinkKey; drive: boolean }) {
+  const size = 'size-5'
   switch (name) {
     case 'whatsapp':
     case 'github':
@@ -45,13 +37,7 @@ function LinkIcon({
       return <BrandIcon slug={name} className={size} />
     case 'linkedin':
       return (
-        <span
-          className={cn(
-            'text-center leading-none font-bold',
-            large ? 'w-6 text-xl' : 'w-5 text-[17px]',
-          )}
-          aria-hidden="true"
-        >
+        <span className="w-5 text-center text-[17px] leading-none font-bold" aria-hidden="true">
           in
         </span>
       )
@@ -97,10 +83,10 @@ function SimpleCard({
 // Footer (pilihan pemilik 2026-10-03, demo nomor 2; DESIGN.md bagian 29): kartu tautan berisi ikon,
 // nama, dan alamat untuk WhatsApp, Email, LinkedIn, GitHub, Instagram, dan Resume CV (kartu CV
 // disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta.
-// Desktop (permintaan pemilik 2026-10-08): kartu diganti satu baris berisi tombol salin email dan
-// ikon tautan; detail tiap tautan muncul di kartu yang bergeser di atas ikon saat disorot
+// Revisi pemilik 2026-10-08: daftar kartu tetap seperti sebelumnya; saat sebuah kartu disorot,
+// kartu detailnya muncul di atasnya dan bergeser mengikuti kartu yang disorot
 // (components/ui/contact-cards.tsx). Kartu GitHub memuat kalender kontribusi yang sama dengan
-// beranda. HP tidak punya hover, jadi tetap memakai daftar kartu.
+// beranda. HP tidak punya hover, jadi tidak berubah.
 export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const [t, tSocial, tCommon, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Footer' }),
@@ -183,14 +169,44 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
     }
   }
 
-  const cardLinks: ContactCardLink[] = links.map((link) => ({
-    key: link.key,
-    label: link.key === 'cv' ? t('cv') : tSocial(link.key),
-    href: link.href,
-    external: link.external,
-    icon: <LinkIcon name={link.key} drive={drive} large />,
-    card: cardFor(link),
-  }))
+  const cardLinks: ContactCardLink[] = links.map((link) => {
+    const cv = link.key === 'cv'
+    return {
+      key: link.key,
+      href: link.href,
+      external: link.external,
+      className: cn(
+        'group grid min-h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border px-4 py-3 transition-[border-color,background-color,translate] motion-safe:hover:-translate-y-0.5',
+        cv
+          ? 'border-primary bg-primary text-primary-fg hover:bg-primary/90'
+          : 'border-border bg-surface hover:border-border-strong',
+      ),
+      trigger: (
+        <>
+          <LinkIcon name={link.key} drive={drive} />
+          <span className="grid min-w-0">
+            <span className="text-sm font-semibold">
+              {link.key === 'cv' ? t('cv') : tSocial(link.key)}
+            </span>
+            <span
+              className={cn('truncate text-[0.8125rem]', cv ? 'text-primary-fg/75' : 'text-muted')}
+            >
+              {link.value}
+            </span>
+          </span>
+          <ArrowUpRight
+            className={cn(
+              'size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5',
+              cv ? 'text-primary-fg/75' : 'text-muted',
+            )}
+            aria-hidden="true"
+          />
+          {link.external ? <span className="sr-only">{tCommon('openInNewTab')}</span> : null}
+        </>
+      ),
+      card: cardFor(link),
+    }
+  })
 
   return (
     <footer className="border-t border-border">
@@ -203,60 +219,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
             >
               {t('contactHeading')}
             </h2>
-            <ContactCards
-              className="hidden pt-1 md:flex"
-              email={profile?.email}
-              links={cardLinks}
-              labels={{
-                copy: t('copyEmail'),
-                copied: t('emailCopied'),
-                newTab: tCommon('openInNewTab'),
-              }}
-            />
-            <ul className="grid gap-2.5 sm:grid-cols-2 md:hidden">
-              {links.map((link) => {
-                const cv = link.key === 'cv'
-                return (
-                  <li key={link.key}>
-                    <a
-                      href={link.href}
-                      {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className={cn(
-                        'group grid min-h-16 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-xl border px-4 py-3 transition-[border-color,background-color,translate] motion-safe:hover:-translate-y-0.5',
-                        cv
-                          ? 'border-primary bg-primary text-primary-fg hover:bg-primary/90'
-                          : 'border-border bg-surface hover:border-border-strong',
-                      )}
-                    >
-                      <LinkIcon name={link.key} drive={drive} />
-                      <span className="grid min-w-0">
-                        <span className="text-sm font-semibold">
-                          {link.key === 'cv' ? t('cv') : tSocial(link.key)}
-                        </span>
-                        <span
-                          className={cn(
-                            'truncate text-[0.8125rem]',
-                            cv ? 'text-primary-fg/75' : 'text-muted',
-                          )}
-                        >
-                          {link.value}
-                        </span>
-                      </span>
-                      <ArrowUpRight
-                        className={cn(
-                          'size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5',
-                          cv ? 'text-primary-fg/75' : 'text-muted',
-                        )}
-                        aria-hidden="true"
-                      />
-                      {link.external ? (
-                        <span className="sr-only">{tCommon('openInNewTab')}</span>
-                      ) : null}
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
+            <ContactCards links={cardLinks} />
           </nav>
         ) : null}
         <p className="text-sm text-muted">

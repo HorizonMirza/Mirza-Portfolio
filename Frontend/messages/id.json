@@ -37,8 +37,6 @@
     "cv": "Resume CV",
     "cvFile": "PDF",
     "copyright": "© {year} {name}",
-    "copyEmail": "Salin email",
-    "emailCopied": "Email disalin!",
     "contributions": "{count} kontribusi dalam setahun terakhir",
     "contributionOne": "# kontribusi",
     "contributionOther": "# kontribusi",
@@ -87,9 +85,9 @@
     "ctaWhatsapp": "WhatsApp"
   },
   "About": {
-    "metaTitle": "Tentang saya",
+    "metaTitle": "Tentang Saya",
     "metaDescription": "Latar belakang dan pendidikan Muhammad Mirza.",
-    "title": "Tentang saya",
+    "title": "Tentang Saya",
     "roles": "Fullstack Developer | Community Manager",
     "educationHeading": "Pendidikan",
     "noEducation": "Belum ada riwayat pendidikan yang diterbitkan.",
