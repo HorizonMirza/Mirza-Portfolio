@@ -672,7 +672,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 - Pemilik merasa detail bento (bagian 43) terlalu banyak informasi dan berantakan, terutama judul yang menimpa gambar sampul. Dari 10 demo detail ringkas, pemilik memilih **nomor 10 "Belah dua"**.
 - Satu kartu (`ProjectSplit`, `.pd-split`): di layar ≥ 900 px gambar mengisi setengah kiri dan teks di kanan; di HP gambar 4:3 di atas, teks di bawah. Teks hanya kategori · tahun, judul (`text-h1`), ringkasan, tombol Buka demo / Lihat kode, chip teknologi, dan gambar kecil. Gambar kecil (sampul lalu galeri) mengganti gambar besar dengan fade 500 ms; gambar besar sedikit membesar saat disorot. Tanpa JavaScript gambar pertama tetap tampil.
-- Dibuang dari detail: baris info (Kategori/Tahun/Teknologi/Di GitHub), ubin teknologi dengan tahun besar, metadata GitHub, dan galeri ubin. Uraian (Markdown) tetap ada di bawah kartu dalam satu kolom sempit tanpa ubin; Studi kasus hanya tampil bila diisi. Navigasi Sebelumnya/Berikutnya tetap.
+- Dibuang dari detail: baris info (Kategori/Tahun/Teknologi/Di GitHub), ubin teknologi dengan tahun besar, metadata GitHub, dan galeri ubin. Uraian (Markdown) tetap ada di bawah kartu dalam satu kolom sempit tanpa ubin. Studi kasus tidak ditampilkan (permintaan pemilik 2026-10-08); kolomnya tetap ada di admin dengan keterangan. Navigasi Sebelumnya/Berikutnya tetap.
 
 ## 48. Daftar project zig-zag (2026-10-08)
 

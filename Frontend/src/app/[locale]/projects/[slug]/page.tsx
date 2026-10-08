@@ -53,7 +53,6 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
   const index = all.findIndex((p) => p.slug === slug)
   const prev = index > 0 ? all[index - 1] : null
   const next = index >= 0 && index < all.length - 1 ? all[index + 1] : null
-  const caseStudy = loc(project, 'caseStudy', locale)
   // sampul lalu galeri; semuanya bisa dipilih lewat gambar kecil
   const images = [...(project.cover ? [project.cover] : []), ...project.images].map((img) => ({
     url: img.url,
@@ -75,7 +74,8 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       </nav>
 
       {/* Pilihan pemilik 2026-10-08 (demo 10 "belah dua", DESIGN.md bagian 47): hanya judul,
-          ringkasan, tombol, teknologi, dan gambar. Uraian menyusul di bawah, tanpa ubin. */}
+          ringkasan, tombol, teknologi, dan gambar. Uraian menyusul di bawah, tanpa ubin; studi kasus
+          tidak ditampilkan (permintaan pemilik 2026-10-08). */}
       <div className="mt-6">
         <ProjectSplit images={images} thumbLabel={t('image')}>
           <p className="flex flex-wrap gap-x-2 font-mono text-label tracking-widest text-note uppercase">
@@ -122,14 +122,6 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       <div className="reveal mt-12 max-w-prose">
         <h2 className="sr-only">{t('overview')}</h2>
         <MarkdownView source={loc(project, 'description', locale)} size="base" />
-        {caseStudy ? (
-          <>
-            <h2 className="mt-10 text-h3 font-semibold">{t('caseStudy')}</h2>
-            <div className="mt-3">
-              <MarkdownView source={caseStudy} size="base" />
-            </div>
-          </>
-        ) : null}
       </div>
 
       {prev || next ? (

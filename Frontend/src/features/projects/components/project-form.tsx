@@ -139,6 +139,7 @@ export function ProjectForm({
       <Field
         id={`caseStudy_${lang}`}
         label={lang === 'id' ? 'Studi kasus (opsional)' : 'Case study (optional)'}
+        hint="Saat ini tidak ditampilkan di halaman detail project (keputusan pemilik 2026-10-08)."
         error={errors[`caseStudy_${lang}`]?.message}
       >
         {(a) => (

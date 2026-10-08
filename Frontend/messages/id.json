@@ -128,7 +128,6 @@
     "demo": "Buka demo",
     "repo": "Lihat kode",
     "stack": "Teknologi",
-    "caseStudy": "Studi kasus",
     "overview": "Gambaran",
     "stars": "{count, plural, =0 {Belum ada bintang} other {# bintang}}",
     "updated": "Diperbarui {date}",
