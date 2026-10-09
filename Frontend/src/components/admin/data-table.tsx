@@ -99,12 +99,16 @@ export function DataTable<T extends Record<string, unknown>>({
         </p>
       ) : (
         <>
-          <ul className="flex flex-col gap-3 md:hidden">
+          {/* Kartu sampai 1279 px (dua kolom di tablet): di bawah itu ruang konten (layar dikurangi
+              sidebar) terlalu sempit untuk tabel berkolom banyak, kolom aksi sampai terpotong. */}
+          <ul className="grid gap-3 md:grid-cols-2 xl:hidden">
             {rows.map((row) => (
-              <li key={row.id}>{renderCard(row.original)}</li>
+              <li key={row.id} className="[&>*]:h-full [&>*]:justify-between">
+                {renderCard(row.original)}
+              </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
+          <div className="hidden overflow-x-auto rounded-lg border border-border xl:block">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-2 text-muted">
                 {table.getHeaderGroups().map((group) => (
