@@ -2,8 +2,8 @@ import { ArrowLeft, ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
+import type { CSSProperties } from 'react'
 
-import { ClickSound } from '@/components/shared/click-sound'
 import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { browserAddress } from '@/features/projects/browser-address'
@@ -77,35 +77,38 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip", DESIGN.md bagian 47): hanya
           peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
           uraian, dan studi kasus tidak ditampilkan di sini. */}
-      <header className="pd-head mt-6">
+      <header className="pd-head pj-title-box mt-6">
         {role ? <p className="pj-role">{role}</p> : null}
-        {/* lebih kecil dari text-h1 agar judul panjang tidak terlalu besar (revisi pemilik 2026-10-08) */}
-        <h1 className="text-h2 font-bold text-balance">{title}</h1>
+        {/* selalu satu baris di HP dan laptop: ukuran mengikuti lebar kolom (revisi pemilik 2026-10-09) */}
+        <h1
+          className="pj-title-fit pd-title font-bold"
+          style={{ '--chars': title.length } as CSSProperties}
+        >
+          {title}
+        </h1>
         {project.demoUrl || project.repoUrl ? (
-          <ClickSound>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
-              {project.demoUrl ? (
-                <Button asChild className="pj-shine pj-shine-solid">
-                  <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink aria-hidden="true" />
-                    {t('demo')}
-                    <span className="sr-only">{tCommon('openInNewTab')}</span>
-                  </a>
-                </Button>
-              ) : null}
-              {project.repoUrl ? (
-                <Button asChild variant="secondary" className="pj-shine">
-                  <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d={BRAND_ICONS.github.path} />
-                    </svg>
-                    {t('repo')}
-                    <span className="sr-only">{tCommon('openInNewTab')}</span>
-                  </a>
-                </Button>
-              ) : null}
-            </div>
-          </ClickSound>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            {project.demoUrl ? (
+              <Button asChild className="pj-shine pj-shine-solid">
+                <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink aria-hidden="true" />
+                  {t('demo')}
+                  <span className="sr-only">{tCommon('openInNewTab')}</span>
+                </a>
+              </Button>
+            ) : null}
+            {project.repoUrl ? (
+              <Button asChild variant="secondary" className="pj-shine">
+                <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d={BRAND_ICONS.github.path} />
+                  </svg>
+                  {t('repo')}
+                  <span className="sr-only">{tCommon('openInNewTab')}</span>
+                </a>
+              </Button>
+            ) : null}
+          </div>
         ) : null}
       </header>
 

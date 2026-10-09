@@ -1850,8 +1850,9 @@
   pointer-events: none;
   user-select: none;
 }
+/* hanya laptop/tablet (≥ 768 px): di HP nomor diam (revisi pemilik 2026-10-09) */
 @supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
     .pj-bignum {
       animation: pj-bignum linear both;
       animation-timeline: view();
@@ -1919,13 +1920,9 @@
   }
 }
 
-/* 8. galeri detail digeser (jari atau tarik mouse); panah dihapus (revisi pemilik 2026-10-08) */
-.pd-stage[data-swipe] {
-  cursor: grab;
+/* 8. galeri detail: klik separuh kiri/kanan foto tanpa tanda (revisi pemilik 2026-10-09) */
+.pd-stage {
   user-select: none;
-}
-.pd-stage[data-swipe]:active {
-  cursor: grabbing;
 }
 
 /* 10. tombol berkilau (bunyi klik dari ClickSound) */
@@ -2140,4 +2137,25 @@
     animation: none;
     transition: none;
   }
+}
+
+/* Judul project selalu satu baris di HP dan laptop (revisi pemilik 2026-10-09): ukuran huruf
+   mengikuti lebar kolomnya (container query), dibatasi ukuran judul biasa; judul yang sangat panjang
+   dipotong dengan elipsis sebagai pengaman. */
+.pj-title-box {
+  container-type: inline-size;
+}
+.pj-title-fit {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 1.15;
+}
+.pj-row-title {
+  /* --chars = panjang judul; huruf Oswald kapital rata-rata ±0,5 em: judul pendek tetap ukuran penuh */
+  font-size: min(var(--text-h3), calc(100cqi / (var(--chars, 24) * 0.52)));
+}
+.pd-title {
+  max-width: 100%;
+  font-size: min(var(--text-h2), calc(100cqi / (var(--chars, 24) * 0.54)));
 }

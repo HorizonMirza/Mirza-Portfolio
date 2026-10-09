@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
-import { ViewTransition } from 'react'
+import { type CSSProperties, ViewTransition } from 'react'
 
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
 import { browserAddress, imageRatio } from '@/features/projects/browser-address'
@@ -93,12 +93,15 @@ export async function ProjectRow({
       {/* revisi pemilik 2026-10-08: teks dan nomor besar berdampingan (nomor tidak lagi di belakang
           teks), blok teks berjarak sama di kiri dan kanan */}
       <div className="pj-zz-text reveal relative grid grid-cols-[minmax(0,1fr)_auto] items-center">
-        <div className="flex flex-col gap-3 pe-4 md:px-6">
+        <div className="pj-title-box flex flex-col gap-3 pe-4 md:px-6">
           {/* peran di awal, di atas judul (permintaan pemilik 2026-10-08) */}
           {loc(project, 'role', locale) ? (
             <p className="pj-role">{loc(project, 'role', locale)}</p>
           ) : null}
-          <h2 className="text-h3 font-semibold">
+          <h2
+            className="pj-title-fit pj-row-title font-semibold"
+            style={{ '--chars': loc(project, 'title', locale).length } as CSSProperties}
+          >
             {/* seluruh baris dapat diklik lewat pseudo-element; tautan tetap satu untuk pembaca layar */}
             <Link
               href={href}

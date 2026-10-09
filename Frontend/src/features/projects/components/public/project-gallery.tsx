@@ -1,22 +1,20 @@
 'use client'
 
 import Image from 'next/image'
-import { type KeyboardEvent, type PointerEvent, useRef, useState, ViewTransition } from 'react'
+import { type KeyboardEvent, type MouseEvent, useState, ViewTransition } from 'react'
 
 import { imageRatio } from '@/features/projects/browser-address'
 import { playSlideSound } from '@/lib/ui-sounds'
 
 export type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
 
-// geser (jari atau tarik mouse) minimal sejauh ini (px) agar dianggap ganti gambar
-const SWIPE_MIN = 40
-
 // Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08, DESIGN.md bagian 47): satu
 // foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan
 // layar laptop maupun HP tidak terpotong. Semua gambar sudah ada di HTML sehingga
 // tanpa JavaScript foto pertama tetap tampil.
-// Ganti foto: geser foto besar (jari atau tarik mouse), tekan gambar kecil, atau tombol panah keyboard,
-// dengan bunyi desir. Tombol panah di atas foto dihapus (revisi pemilik 2026-10-08). Gambar dari
+// Ganti foto: klik separuh kiri/kanan foto besar, tekan gambar kecil, atau tombol panah keyboard,
+// dengan bunyi desir. Tombol panah di atas foto dihapus (revisi pemilik 2026-10-08), geser diganti
+// klik kiri/kanan (2026-10-09). Gambar dari
 // daftar "terbang" ke sini lewat View Transition bernama sama (`project-{slug}`). Foto sendiri gambar
 // biasa: tidak miring, tidak berkilau, dan tidak bisa difokus/ditekan.
 export function ProjectGallery({
@@ -33,7 +31,6 @@ export function ProjectGallery({
   labels: { gallery: string; thumb: string; imageOf: string }
 }) {
   const [active, setActive] = useState(0)
-  const start = useRef<number | null>(null)
   const many = images.length > 1
 
   if (images.length === 0) return null
@@ -53,16 +50,12 @@ export function ProjectGallery({
     event.preventDefault()
   }
 
-  function onPointerDown(event: PointerEvent<HTMLDivElement>) {
-    if (!many || (event.pointerType === 'mouse' && event.button !== 0)) return
-    start.current = event.clientX
-  }
-
-  function onPointerUp(event: PointerEvent<HTMLDivElement>) {
-    if (start.current === null) return
-    const dx = event.clientX - start.current
-    start.current = null
-    if (many && Math.abs(dx) >= SWIPE_MIN) go(active + (dx < 0 ? 1 : -1))
+  // Klik/ketuk separuh kiri foto = sebelumnya, separuh kanan = berikutnya, tanpa tanda apa pun di
+  // foto (revisi pemilik 2026-10-09: geser dihapus). Gambar kecil dan tombol panah keyboard tetap.
+  function onStageClick(event: MouseEvent<HTMLDivElement>) {
+    if (!many) return
+    const box = event.currentTarget.getBoundingClientRect()
+    go(active + (event.clientX - box.left < box.width / 2 ? -1 : 1))
   }
 
   const counter = labels.imageOf
@@ -82,13 +75,11 @@ export function ProjectGallery({
           </span>
           <span className="pj-browser-url">{address}</span>
         </div>
+        {/* keyboard memakai tombol panah (onKeyDown di region) dan gambar kecil */}
         <div
           className="pd-stage"
-          data-swipe={many || undefined}
           style={{ aspectRatio: imageRatio(images[0]) }}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          onPointerCancel={() => (start.current = null)}
+          onClick={onStageClick}
         >
           <ViewTransition name={`project-${slug}`} share="morph" default="none">
             <div className="absolute inset-0">
@@ -125,7 +116,10 @@ export function ProjectGallery({
               </button>
             ))}
           </div>
-          <p className="mt-3 text-center font-mono text-sm text-muted" aria-live="polite">
+          <p
+            className="mt-3 text-center font-display text-base font-medium tracking-wide text-muted"
+            aria-live="polite"
+          >
             <span className="sr-only">{counter}</span>
             <span aria-hidden="true">
               {active + 1} / {images.length}
