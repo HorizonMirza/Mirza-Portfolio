@@ -105,8 +105,8 @@ for (const path of ['/id/halaman-yang-tidak-ada', '/en/missing-page']) {
   test(`URL tidak dikenal ${path} menampilkan 404 dua bahasa`, async ({ page }) => {
     const response = await page.goto(path)
     expect(response?.status()).toBe(404)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Halaman tidak ditemukan')
-    await expect(page.getByText('Page not found')).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Boo! Halamannya hilang.')
+    await expect(page.getByText('Boo! Page missing.')).toBeVisible()
     await expect(page.getByRole('link', { name: /Beranda/ })).toHaveAttribute('href', '/id')
   })
 }

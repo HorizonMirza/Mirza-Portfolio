@@ -101,6 +101,14 @@ test('halaman project tanpa project terbit menampilkan keadaan kosong atau kartu
 test('detail project yang tidak ada mengembalikan 404', async ({ page }) => {
   const response = await page.goto('/id/projects/tidak-ada-sama-sekali')
   expect(response?.status()).toBe(404)
+  // halaman 404 "hantu" di dalam situs: judul, tombol ke beranda, dan penjelasan 404
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Boo! Halamannya hilang.')
+  await expect(page.getByRole('link', { name: 'Kembali ke beranda' })).toHaveAttribute(
+    'href',
+    '/id',
+  )
+  await page.getByText('Apa itu 404?').click()
+  await expect(page.getByText(/alamat yang Anda buka tidak ada/)).toBeVisible()
 })
 
 test.describe('form kontak', () => {

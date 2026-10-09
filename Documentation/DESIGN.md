@@ -713,3 +713,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **HP dan tablet (< 1024 px):** bilah atas menempel dengan foto bulat (ke Dashboard), "Super Admin", nama halaman aktif, dan tombol menu; menu laci memakai isi sidebar yang sama dan menutup sendiri setelah memilih halaman.
 - **Tabel admin:** tampil sebagai kartu sampai 1279 px (dua kolom mulai 768 px) karena di bawah itu ruang konten (layar dikurangi sidebar) terlalu sempit dan kolom aksi terpotong; tabel mulai 1280 px. Tombol aksi kartu selalu di dasar kartu.
 - **Judul halaman:** `text-h2` di HP, `text-h1` mulai 640 px, agar judul panjang (mis. nama project) tidak memakan layar.
+
+## 51. Halaman 404 "hantu" (2026-10-09)
+
+- Permintaan pemilik: pasang komponen 21st.dev `ghost-404-page` (dengan `flow-button`). Dipakai di dua 404: `app/[locale]/not-found.tsx` (dua bahasa lewat `messages` `NotFound`) dan `app/global-not-found.tsx` (URL di luar `/id`/`/en`, ID + EN sekaligus).
+- Disesuaikan dengan aturan repo: animasi framer-motion diganti CSS (`.g404-*` di globals.css; tanpa dependency baru dan tanpa JavaScript klien, mati pada reduced-motion); gambar hantu dari CDN luar diganti ikon `Ghost` lucide (CSP); warna dari token (ikut terang/gelap), angka dan judul memakai Oswald; tautan "What means 404?" (`href="#"`) diganti penjelasan `<details>`; tombol "Find shelter" ke domain luar diganti "Kembali ke beranda".
+- `FlowButton` (`components/ui/flow-button.tsx`): warna dari token, bisa dipakai sebagai tautan lewat `flowButtonClassName` + `FlowButtonContent`, garis fokus biru.
+- Tidak dipakai dari kode contoh: `tailwind.config.js` (Tailwind 4 berbasis CSS) dan tambahan globals.css, karena berisi `html, body { position: fixed; overflow: hidden }` yang mematikan gulir seluruh situs, impor Google Fonts (CSP), dan token warna yang bentrok dengan token situs.

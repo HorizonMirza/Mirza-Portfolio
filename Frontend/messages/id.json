@@ -16,10 +16,11 @@
     "darkMode": "Mode gelap"
   },
   "NotFound": {
-    "title": "Halaman tidak ditemukan",
-    "body": "Alamat ini tidak ada atau sudah dipindahkan.",
+    "title": "Boo! Halamannya hilang.",
+    "body": "Sepertinya halaman ini hantu: dicari ada, dibuka tidak ada.",
     "home": "Kembali ke beranda",
-    "projects": "Lihat project"
+    "whatIs": "Apa itu 404?",
+    "whatIsBody": "404 berarti alamat yang Anda buka tidak ada di situs ini. Mungkin tautannya salah ketik, atau halamannya sudah dipindahkan."
   },
   "Nav": {
     "label": "Navigasi utama",

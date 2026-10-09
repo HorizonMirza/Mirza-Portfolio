@@ -16,10 +16,11 @@
     "darkMode": "Dark mode"
   },
   "NotFound": {
-    "title": "Page not found",
-    "body": "This address doesn't exist or has moved.",
+    "title": "Boo! Page missing.",
+    "body": "This page must be a ghost: it is not here.",
     "home": "Back to home",
-    "projects": "View projects"
+    "whatIs": "What does 404 mean?",
+    "whatIsBody": "404 means the address you opened does not exist on this site. The link may have a typo, or the page has moved."
   },
   "Nav": {
     "label": "Main navigation",

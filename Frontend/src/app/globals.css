@@ -2048,3 +2048,96 @@
     --pj-browser-shadow: 0 34px 60px -24px rgb(0 0 0 / 0.75);
   }
 }
+
+/* Halaman 404 "hantu" (components/ui/ghost-404-page.tsx): animasi pengganti framer-motion.
+   Kurva easing sama dengan komponen asli. Semua gerak mati pada prefers-reduced-motion. */
+.g404 {
+  --g404-ease: cubic-bezier(0.43, 0.13, 0.23, 0.96);
+  animation: g404-up 700ms var(--g404-ease) both;
+  --g404-rise: 30px;
+}
+.g404-item {
+  --g404-rise: 20px;
+  animation: g404-up 600ms var(--g404-ease) both;
+  animation-delay: calc(200ms + var(--i, 0) * 100ms);
+}
+.g404-num {
+  opacity: 0.7;
+  animation: g404-num 800ms var(--g404-ease) 100ms both;
+}
+.g404-num-l {
+  --dir: -1;
+}
+.g404-num-r {
+  --dir: 1;
+}
+/* pembungkus luar melayang naik-turun; dalam: muncul membesar, lalu bergoyang saat disorot */
+.g404-float {
+  display: inline-block;
+  animation: g404-float 2s ease-in-out 600ms infinite alternate;
+}
+.g404-ghost {
+  display: inline-block;
+  animation: g404-pop 600ms var(--g404-ease) 100ms backwards;
+  transition:
+    scale 800ms ease-in-out,
+    translate 800ms ease-in-out;
+}
+.g404-ghost:hover {
+  scale: 1.1;
+  translate: 0 -10px;
+  animation: g404-wiggle 2s linear infinite alternate;
+}
+@keyframes g404-up {
+  from {
+    opacity: 0;
+    translate: 0 var(--g404-rise);
+  }
+}
+@keyframes g404-num {
+  from {
+    opacity: 0;
+    translate: calc(var(--dir) * 40px) 15px;
+    rotate: calc(var(--dir) * 5deg);
+  }
+}
+@keyframes g404-pop {
+  from {
+    opacity: 0;
+    scale: 0.8;
+    translate: 0 15px;
+    rotate: -5deg;
+  }
+}
+@keyframes g404-float {
+  from {
+    translate: 0 -5px;
+  }
+  to {
+    translate: 0 5px;
+  }
+}
+@keyframes g404-wiggle {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  25%,
+  75% {
+    rotate: -5deg;
+  }
+  50% {
+    rotate: 5deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g404,
+  .g404-item,
+  .g404-num,
+  .g404-float,
+  .g404-ghost,
+  .g404-ghost:hover {
+    animation: none;
+    transition: none;
+  }
+}
