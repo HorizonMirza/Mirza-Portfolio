@@ -46,7 +46,7 @@ export async function ProjectRow({
         {/* tautan kedua khusus mouse/sentuh agar gambar bisa dimiringkan dan tetap bisa diklik;
             pembaca layar dan keyboard memakai tautan di judul */}
         <Link href={href} tabIndex={-1} aria-hidden="true" className="block">
-          <PhotoTilt className="pj-tilt" maxTilt={8}>
+          <PhotoTilt className="pj-tilt" maxTilt={8} sound={false}>
             <div className="pj-tilt-in">
               {/* bingkai jendela browser (pilihan pemilik 2026-10-08, demo bingkai nomor 1); warna dari
                   token tema sehingga ikut mode gelap/terang */}

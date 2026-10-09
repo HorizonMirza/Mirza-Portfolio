@@ -721,3 +721,13 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Disesuaikan dengan aturan repo: animasi framer-motion diganti CSS (`.g404-*` di globals.css; tanpa dependency baru dan tanpa JavaScript klien, mati pada reduced-motion); gambar hantu dari CDN luar diganti ikon `Ghost` lucide (CSP); warna dari token (ikut terang/gelap), angka dan judul memakai Oswald; tautan "What means 404?" (`href="#"`) diganti penjelasan `<details>`; tombol "Find shelter" ke domain luar diganti "Kembali ke beranda".
 - `FlowButton` (`components/ui/flow-button.tsx`): warna dari token, bisa dipakai sebagai tautan lewat `flowButtonClassName` + `FlowButtonContent`, garis fokus biru.
 - Tidak dipakai dari kode contoh: `tailwind.config.js` (Tailwind 4 berbasis CSS) dan tambahan globals.css, karena berisi `html, body { position: fixed; overflow: hidden }` yang mematikan gulir seluruh situs, impor Google Fonts (CSP), dan token warna yang bentrok dengan token situs.
+
+## 52. Daftar project "lampu sorot", gambar tanpa suara (2026-10-09)
+
+- **Hover tanpa suara (revisi pemilik):** gambar di daftar project tetap miring, tetapi tanpa bunyi kilau (`PhotoTilt sound={false}`). Foto halaman Tentang tetap berbunyi.
+- **Efek gulir "lampu sorot"** (pilihan pemilik dari 10 demo efek gulir: nomor 7, **tanpa cahaya biru**). `ProjectSpotlight` (komponen klien kecil, pola yang sama dengan `FocusTimeline` di Experience, tanpa suara) menandai baris yang paling dekat dengan tengah layar (`data-active`; di dasar halaman: baris terakhir). Baris lain:
+  - hampir gelap: foto 8%;
+  - sedikit mengecil (`scale: 0.96`);
+  - transisi 700 ms.
+- **Kontras:** teks baris redup (judul, peran, ringkasan, chip, alamat di bilah browser) diredupkan lewat warna `color-mix(--text-muted 85%, --bg)`, bukan opacity, agar tetap lolos WCAG AA (axe). Opacity 8% pada seluruh baris sempat menggagalkan cek kontras. Chip teknologi kehilangan latar abu-abunya; nomor besar meredup lewat warna garis tepinya.
+- **Fallback:** baris yang difokus keyboard selalu terang. Tanpa JavaScript semua baris terang. Reduced-motion: tanpa transisi dan tanpa mengecil.

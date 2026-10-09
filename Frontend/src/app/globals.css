@@ -2159,3 +2159,54 @@
   max-width: 100%;
   font-size: min(var(--text-h2), calc(100cqi / (var(--chars, 24) * 0.54)));
 }
+
+/* Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo efek gulir 7 tanpa cahaya biru):
+   hanya baris di tengah layar yang terang; di baris lain gambar hampir gelap dan baris sedikit
+   mengecil. Teks diredupkan lewat warna (bukan opacity) sampai batas kontras WCAG AA, sama seperti
+   timeline Experience, agar tetap terbaca. Baris yang difokus keyboard selalu terang. Hanya aktif
+   setelah JavaScript memasang data-focus. */
+.pj-spot[data-focus] > li,
+.pj-spot[data-focus] > li .pj-browser *,
+.pj-spot[data-focus] > li .pj-zz-text * {
+  transition:
+    opacity 700ms var(--ease-out-soft),
+    scale 700ms var(--ease-out-soft),
+    color 700ms var(--ease-out-soft),
+    border-color 700ms var(--ease-out-soft),
+    background-color 700ms var(--ease-out-soft),
+    -webkit-text-stroke-color 700ms var(--ease-out-soft);
+}
+.pj-spot[data-focus] > li:not([data-active]):not(:focus-within) {
+  scale: 0.96;
+}
+.pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-browser-bar ~ *,
+.pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-browser-dots {
+  opacity: 0.08;
+}
+.pj-spot[data-focus]
+  > li:not([data-active]):not(:focus-within)
+  :is(.pj-zz-text :not(.pj-bignum), .pj-browser-url) {
+  color: color-mix(in srgb, var(--text-muted) 85%, var(--bg));
+  border-color: color-mix(in srgb, var(--border) 50%, var(--bg));
+}
+.pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-zz-text svg {
+  opacity: 0.15;
+}
+/* chip teknologi kehilangan latar abu-abunya agar teks redup tetap di atas warna latar halaman */
+.pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-tech {
+  background-color: transparent;
+}
+/* angka besar hanya garis tepi (dekoratif): yang diredupkan warna garisnya */
+.pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-bignum {
+  -webkit-text-stroke-color: color-mix(in srgb, var(--note) 12%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pj-spot[data-focus] > li,
+  .pj-spot[data-focus] > li .pj-browser *,
+  .pj-spot[data-focus] > li .pj-zz-text * {
+    transition: none;
+  }
+  .pj-spot[data-focus] > li:not([data-active]):not(:focus-within) {
+    scale: 1;
+  }
+}

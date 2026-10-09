@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { ProjectRow } from '@/features/projects/components/public/project-row'
+import { ProjectSpotlight } from '@/features/projects/components/public/project-spotlight'
 import { getPublishedProjects } from '@/features/projects/public'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { pageMetadata } from '@/lib/seo'
@@ -36,13 +37,14 @@ export default async function ProjectsPage({ params }: PageProps<'/[locale]/proj
         <p className="rounded-lg border border-dashed border-border p-6 text-muted">{t('empty')}</p>
       ) : (
         // Pilihan pemilik 2026-10-08 (demo 6): gambar dan teks zig-zag, tanpa kartu bertumpuk.
-        <ol className="flex flex-col gap-16 md:gap-24">
+        // Efek gulir "lampu sorot" (pilihan pemilik 2026-10-09): project di tengah layar terang.
+        <ProjectSpotlight className="flex flex-col gap-16 md:gap-24">
           {projects.map((p, i) => (
             <li key={p.slug}>
               <ProjectRow project={p} index={i} locale={locale} />
             </li>
           ))}
-        </ol>
+        </ProjectSpotlight>
       )}
       {/* kalimat "Project lain sedang dalam pengerjaan" + tautan GitHub/perjalanan dihapus (revisi
           pemilik 2026-10-08) */}

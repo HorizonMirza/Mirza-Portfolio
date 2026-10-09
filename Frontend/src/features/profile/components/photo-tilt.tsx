@@ -24,15 +24,17 @@ function reducedMotion() {
 // .ab-tilt). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
 // demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
 // Dipakai juga untuk gambar di daftar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan
-// kelas pembungkus sendiri.
+// kelas pembungkus sendiri; di sana tanpa suara (`sound={false}`, revisi pemilik 2026-10-09).
 export function PhotoTilt({
   children,
   className = 'ab-tilt',
   maxTilt = MAX_TILT,
+  sound = true,
 }: {
   children: ReactNode
   className?: string
   maxTilt?: number
+  sound?: boolean
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const rect = useRef<DOMRect | null>(null)
@@ -41,6 +43,7 @@ export function PhotoTilt({
   const lastSound = useRef({ at: 0, x: 0, y: 0 })
 
   function shimmer(event: PointerEvent<HTMLDivElement>, force = false) {
+    if (!sound) return
     const last = lastSound.current
     const now = performance.now()
     const moved = Math.hypot(event.clientX - last.x, event.clientY - last.y)
