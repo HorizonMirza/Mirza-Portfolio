@@ -78,9 +78,16 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
               <SiteHeader locale={locale} />
               <main id="main" className="flex-1">
                 {/* Transisi antarhalaman lewat View Transitions (tanpa library): dari menu utama
-                    halaman bergeser searah urutan menu, navigasi lain memakai pudar singkat. */}
+                    halaman bergeser searah urutan menu, daftar project ↔ detail memudar pelan mengikuti
+                    gambar yang terbang, navigasi lain memakai pudar singkat. */}
                 <ViewTransition
-                  update={{ 'nav-forward': 'nav-forward', 'nav-back': 'nav-back', default: 'auto' }}
+                  update={{
+                    'nav-forward': 'nav-forward',
+                    'nav-back': 'nav-back',
+                    'project-open': 'project-page',
+                    'project-close': 'project-page',
+                    default: 'auto',
+                  }}
                 >
                   {children}
                 </ViewTransition>

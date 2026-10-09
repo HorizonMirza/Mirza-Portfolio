@@ -27,6 +27,13 @@ if (typeof document !== 'undefined' && touchFirstDevice()) {
 
 const SLIDE_PX = 40
 
+// pindah antara daftar project dan detailnya (ke dua arah)
+function isProjectHop(from: string, to: string) {
+  const list = /^\/projects\/?$/
+  const detail = /^\/projects\/[^/]+$/
+  return (list.test(from) && detail.test(to)) || (detail.test(from) && list.test(to))
+}
+
 function menuIndex(pathname: string) {
   return siteNav.findIndex((item) => isSiteNavActive(pathname, item.href))
 }
@@ -44,6 +51,17 @@ export function PageTransitions() {
     if (from === pathname || !touchFirstDevice() || prefersReducedMotion()) return
     const main = document.getElementById('main')
     if (!main) return
+    // daftar project ↔ detail: muncul lebih pelan sambil sedikit naik (revisi pemilik 2026-10-09)
+    if (isProjectHop(from, pathname)) {
+      main.animate(
+        [
+          { opacity: 0, transform: 'translate3d(0, 16px, 0)' },
+          { opacity: 1, transform: 'none' },
+        ],
+        { duration: 560, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' },
+      )
+      return
+    }
     const a = menuIndex(from)
     const b = menuIndex(pathname)
     const shift = a < 0 || b < 0 || a === b ? 0 : b > a ? SLIDE_PX : -SLIDE_PX

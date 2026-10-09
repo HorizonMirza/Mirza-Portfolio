@@ -13,6 +13,7 @@ export function BackToProjects({ slug, label }: { slug: string; label: string })
     <Link
       href="/projects"
       scroll={false}
+      transitionTypes={['project-close']}
       onClick={() => markReturnToList(slug)}
       // huruf display situs (Oswald) seperti judul bagian (revisi pemilik 2026-10-08)
       className="inline-flex min-h-11 items-center gap-2 font-display text-base font-medium tracking-wide text-muted uppercase hover:text-text"

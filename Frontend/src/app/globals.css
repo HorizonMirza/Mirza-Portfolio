@@ -1882,14 +1882,24 @@
   }
 }
 
-/* 6. gambar daftar "terbang" ke detail (React <ViewTransition share="morph">) */
+/* 6. gambar daftar "terbang" ke detail dan kembali (React <ViewTransition share="morph">).
+   Diperlambat dan dihaluskan (revisi pemilik 2026-10-09): 800 ms dengan kurva pelan di awal dan di
+   akhir. Isi halaman lain memudar lebih pelan dan masuk setelah gambar mulai bergerak, agar
+   tidak ada yang berganti tiba-tiba (transitionTypes project-open / project-close). */
 ::view-transition-group(.morph) {
-  animation-duration: 450ms;
-  animation-timing-function: var(--ease-out-soft);
+  animation-duration: 800ms;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
 }
 ::view-transition-old(.morph),
 ::view-transition-new(.morph) {
-  animation-duration: 450ms;
+  animation-duration: 800ms;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
+}
+::view-transition-old(.project-page) {
+  animation: 320ms ease-in both page-fade reverse;
+}
+::view-transition-new(.project-page) {
+  animation: 560ms var(--ease-out-soft) 260ms both page-fade;
 }
 
 /* 7. chip teknologi dengan logo */
