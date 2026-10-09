@@ -170,12 +170,20 @@ test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit'
   await expect(page.getByText('Angka ditambahkan.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/highlights\/[0-9a-f-]{36}$/)
 
-  await page.goto('/id')
+  // Proyek browser berjalan paralel dan berbagi satu database: penghapusan angka oleh proyek lain
+  // bisa memicu render ulang beranda dengan data yang dibaca sebelum angka ini tersimpan, sehingga
+  // satu kali muat bisa masih lama. Muat ulang sampai angka baru tampil (tetap gagal bila tidak
+  // pernah tampil).
   const stats = page.getByRole('region', { name: 'Dalam angka' })
-  await expect(stats.getByText(label)).toBeVisible()
+  await expect(async () => {
+    await page.goto('/id')
+    await expect(stats.getByText(label)).toBeVisible({ timeout: 2000 })
+  }).toPass({ timeout: 15_000 })
   await expect(stats.getByText(idText)).toBeVisible()
-  await page.goto('/en')
-  await expect(page.getByText(enText)).toBeVisible()
+  await expect(async () => {
+    await page.goto('/en')
+    await expect(page.getByText(enText)).toBeVisible({ timeout: 2000 })
+  }).toPass({ timeout: 15_000 })
 
   await page.goto('/admin/highlights')
   await page
