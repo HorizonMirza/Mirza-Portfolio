@@ -52,7 +52,7 @@ Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI d
 - [x] Rate limit login bawaan Better Auth (penyimpanan database)
 - [x] Tabel `RateLimit` + helper `lib/rate-limit.ts` untuk form publik
 - [x] Seed akun admin dari environment, skrip `admin:reset-password`
-- [x] Komponen UI: Dialog, Sheet, Toast, DropdownMenu, Tabs (dari M1)
+- [x] Komponen UI: Dialog, Sheet, Toast, DropdownMenu, Tabs (dari M1). DropdownMenu dan `@radix-ui/react-dropdown-menu` dihapus 2026-10-09 karena tidak pernah dipakai
 - [x] Layout admin (sidebar, responsif) dan dashboard awal. `app/admin/layout.tsx` menjadi root layout kedua (merender `<html>` sendiri)
 - [x] Modul CRUD (pola di `SKILL.md`): Project, Skill + kategori, Experience, Profile/hero
 - [x] Unggah bertanda tangan ke Cloudinary (gambar, foto, CV) dengan alt text dua bahasa. Diuji dengan respons Cloudinary tiruan; uji dengan akun asli menunggu kunci dari pemilik

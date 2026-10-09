@@ -26,7 +26,3 @@ export function formatDateShort(iso: string, locale: AppLocale): string {
     timeZone: 'Asia/Jakarta',
   }).format(new Date(iso))
 }
-
-export function formatNumber(value: number, locale: AppLocale): string {
-  return new Intl.NumberFormat(intlLocale[locale]).format(value)
-}

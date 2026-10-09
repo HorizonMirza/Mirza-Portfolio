@@ -204,9 +204,6 @@ export const project = (c: Cam, x: number, y: number, z: number): [number, numbe
   (x * c.sn + y * c.cs) * c.se - z * c.ce,
 ]
 
-/** Kedalaman painter untuk yaw 0°-90°: makin besar makin dekat, jadi digambar menaik. */
-export const depthOf = (c: Cam, x: number, y: number): number => x * c.sn + y * c.cs
-
 export const mixRGB = (a: RGB, b: RGB, t: number): RGB => [
   a[0] + (b[0] - a[0]) * t,
   a[1] + (b[1] - a[1]) * t,

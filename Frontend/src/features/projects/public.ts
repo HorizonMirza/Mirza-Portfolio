@@ -22,7 +22,6 @@ export type PublicProjectSummary = {
   featured: boolean
   demoUrl: string | null
   repoUrl: string | null
-  githubRepo: string | null
   cover: PublicImage | null
   skills: { id: string; name: string; icon: string | null }[]
 }
@@ -58,7 +57,6 @@ const summarySelect = {
   repoUrl: true,
   showDemo: true,
   showRepo: true,
-  githubRepo: true,
   cover: { select: imageSelect },
   skills: {
     select: { id: true, name: true, icon: true },

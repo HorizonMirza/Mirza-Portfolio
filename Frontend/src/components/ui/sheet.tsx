@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils'
 // Panel geser dari samping (menu admin di HP). Dibangun di atas Radix Dialog.
 export const Sheet = DialogPrimitive.Root
 export const SheetTrigger = DialogPrimitive.Trigger
-export const SheetClose = DialogPrimitive.Close
 export const SheetTitle = DialogPrimitive.Title
 
 export function SheetContent({

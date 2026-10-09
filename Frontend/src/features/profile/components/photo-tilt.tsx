@@ -23,18 +23,16 @@ function reducedMotion() {
 // Hanya mengubah variabel CSS lewat requestAnimationFrame (transform dikerjakan GPU, globals.css
 // .ab-tilt). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
 // demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
-// Dipakai juga untuk gambar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan kelas
-// pembungkus sendiri; `touch={false}` mematikan kemiringan di layar sentuh (mis. galeri yang digeser).
+// Dipakai juga untuk gambar di daftar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan
+// kelas pembungkus sendiri.
 export function PhotoTilt({
   children,
   className = 'ab-tilt',
   maxTilt = MAX_TILT,
-  touch = true,
 }: {
   children: ReactNode
   className?: string
   maxTilt?: number
-  touch?: boolean
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const rect = useRef<DOMRect | null>(null)
@@ -61,7 +59,7 @@ export function PhotoTilt({
   }
 
   function follow(event: PointerEvent<HTMLDivElement>) {
-    if (event.pointerType === 'touch' && (!touch || !pressed.current)) return
+    if (event.pointerType === 'touch' && !pressed.current) return
     shimmer(event)
     if (reducedMotion()) return
     const r = (rect.current ??= event.currentTarget.getBoundingClientRect())
@@ -95,7 +93,6 @@ export function PhotoTilt({
       }}
       onPointerMove={follow}
       onPointerDown={(e) => {
-        if (e.pointerType === 'touch' && !touch) return
         if (e.pointerType === 'touch') shimmer(e, true)
         if (reducedMotion()) return
         pressed.current = true

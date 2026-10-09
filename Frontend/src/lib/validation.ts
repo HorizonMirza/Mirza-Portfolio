@@ -41,9 +41,6 @@ export const githubRepoSchema = z
     'Format: pemilik/nama-repo',
   )
 
-export const dateOnlySchema = (label: string) =>
-  z.string().regex(/^\d{4}-\d{2}-\d{2}$/, `${label} tidak valid`)
-
 export function emptyToNull(value: string): string | null {
   return value.trim() === '' ? null : value.trim()
 }

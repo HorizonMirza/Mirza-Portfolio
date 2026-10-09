@@ -49,7 +49,8 @@ export function verifyUploadSignature(
 }
 
 // Hapus berkas di Cloudinary. Gagal tidak menggagalkan aksi admin, cukup dicatat tanpa detail.
-// Gambar contoh bawaan repo (public/demo) tidak ada di Cloudinary, jadi tidak pernah dikirim.
+// Gambar bawaan repo (public/images/projects, publicId `local-demo/...`) tidak ada di Cloudinary,
+// jadi tidak pernah dikirim.
 export const LOCAL_DEMO_PUBLIC_ID_PREFIX = 'local-demo/'
 
 export async function destroyRemoteAsset(publicId: string, resourceType: 'image' | 'raw') {

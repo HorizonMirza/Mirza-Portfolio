@@ -7,11 +7,6 @@ const dateTimeFormatter = new Intl.DateTimeFormat('id-ID', {
   timeStyle: 'short',
 })
 
-const dateFormatter = new Intl.DateTimeFormat('id-ID', {
-  timeZone: DISPLAY_TIME_ZONE,
-  dateStyle: 'medium',
-})
-
 const shortDayFormatter = new Intl.DateTimeFormat('id-ID', {
   timeZone: 'UTC',
   day: 'numeric',
@@ -20,10 +15,6 @@ const shortDayFormatter = new Intl.DateTimeFormat('id-ID', {
 
 export function formatDateTime(date: Date): string {
   return `${dateTimeFormatter.format(date)} WIB`
-}
-
-export function formatDate(date: Date): string {
-  return dateFormatter.format(date)
 }
 
 // Kunci hari kalender (YYYY-MM-DD) menurut Asia/Jakarta.

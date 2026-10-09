@@ -89,11 +89,13 @@ describe('safeImage', () => {
     vi.stubEnv('CLOUDINARY_CLOUD_NAME', '')
     expect(safeImage(img)).toBeNull()
   })
-  it('gambar contoh project bawaan repo diterima, path lain tidak', () => {
+  it('tangkapan layar project bawaan repo diterima, path lain tidak', () => {
     vi.stubEnv('CLOUDINARY_CLOUD_NAME', '')
-    const demo = { ...img, url: '/demo/projects/project-1-cover.jpg' }
-    expect(safeImage(demo)).toBe(demo)
-    expect(safeImage({ ...img, url: '/demo/projects/../../secret.png' })).toBeNull()
+    const shot = { ...img, url: '/images/projects/gaas-dashboard.jpg' }
+    expect(safeImage(shot)).toBe(shot)
+    expect(safeImage({ ...img, url: '/images/projects/../../secret.png' })).toBeNull()
+    // gambar project contoh lama sudah dihapus dari repo
+    expect(safeImage({ ...img, url: '/demo/projects/project-1-cover.jpg' })).toBeNull()
     expect(safeImage({ ...img, url: '/uploads/a.png' })).toBeNull()
   })
 })

@@ -9,6 +9,4 @@ export const contactSchema = z.object({
   locale: z.enum(['id', 'en']),
 })
 
-export type ContactInput = z.infer<typeof contactSchema>
-
 export const CONTACT_RATE_LIMIT = { window: 3600, max: 5 }

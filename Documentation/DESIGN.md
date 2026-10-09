@@ -637,7 +637,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 ## 42. Halaman Project: judul tengah, tanpa pengantar dan filter (2026-10-08)
 
 - Revisi pemilik: judul "Project" / "Projects" **di tengah** (seperti Tentang dan Pengalaman), kalimat pengantar ("Software yang saya bangun...") **dihapus**, dan **semua filter dihapus** (kategori dan teknologi); semua project tampil dalam grid 3 kolom (2 di tablet, 1 di HP). Komponen `ProjectFilter` dan teks terjemahannya dihapus. Kartu project mengisi tinggi baris agar sejajar.
-- Gambar project: halaman publik menerima gambar dari akun Cloudinary dan gambar contoh bawaan repo di `/demo/projects/` (`lib/public-image.ts`), dipakai 6 project contoh (CONTENT.md).
+- Gambar project: halaman publik menerima gambar dari akun Cloudinary dan gambar contoh bawaan repo di `/demo/projects/` (`lib/public-image.ts`), dipakai 6 project contoh (CONTENT.md). **2026-10-09:** gambar contoh dan prefiks `/demo/projects/` dihapus (pembersihan repo); yang diterima kini hanya Cloudinary dan `/images/projects/`.
 
 ## 43. Halaman Project: kartu bertumpuk dan detail bento (2026-10-08, detail diganti di bagian 47, daftar di bagian 48)
 
