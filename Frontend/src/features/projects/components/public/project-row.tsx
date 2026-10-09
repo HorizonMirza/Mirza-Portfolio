@@ -36,7 +36,7 @@ export async function ProjectRow({
   const address = browserAddress(project)
 
   return (
-    <article className="pj-zz group relative grid items-center gap-5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-8 has-[a:focus-visible]:outline-primary md:grid-cols-2 md:gap-12">
+    <article className="pj-zz group relative grid grid-cols-1 items-center gap-5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-8 has-[a:focus-visible]:outline-primary md:grid-cols-2 md:gap-12">
       <div
         className={cn(
           'pj-zz-img reveal relative z-10',
