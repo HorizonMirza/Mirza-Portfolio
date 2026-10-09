@@ -1832,10 +1832,18 @@
 }
 .pd-head .pj-role {
   align-self: center;
-  margin-bottom: 0.875rem;
-  /* di detail lebih besar (revisi pemilik 2026-10-08) */
-  padding: 0.5625rem 1.125rem;
-  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  /* di HP seukuran label daftar (revisi pemilik 2026-10-09); di laptop lebih besar (revisi
+     pemilik 2026-10-08) */
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.8125rem;
+}
+@media (min-width: 768px) {
+  .pd-head .pj-role {
+    margin-bottom: 0.875rem;
+    padding: 0.5625rem 1.125rem;
+    font-size: 1rem;
+  }
 }
 
 /* 4. nomor besar bergaris, bergerak lebih lambat saat digulir */
@@ -1850,7 +1858,13 @@
   pointer-events: none;
   user-select: none;
 }
-/* hanya laptop/tablet (≥ 768 px): di HP nomor diam (revisi pemilik 2026-10-09) */
+/* di HP nomor tidak ditampilkan (revisi pemilik 2026-10-09) */
+@media (max-width: 767px) {
+  .pj-bignum {
+    display: none;
+  }
+}
+/* hanya laptop/tablet (≥ 768 px): nomor bergerak pelan saat digulir */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) and (min-width: 768px) {
     .pj-bignum {
@@ -1937,14 +1951,6 @@
   background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.5) 50%, transparent 65%);
   translate: -120% 0;
   pointer-events: none;
-}
-.pj-shine-solid::after {
-  background: linear-gradient(
-    110deg,
-    transparent 35%,
-    color-mix(in srgb, var(--note) 55%, transparent) 50%,
-    transparent 65%
-  );
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .pj-shine:hover::after {

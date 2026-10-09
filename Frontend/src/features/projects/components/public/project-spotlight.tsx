@@ -1,7 +1,8 @@
 'use client'
 
-import { type ReactNode, useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useLayoutEffect, useRef } from 'react'
 
+import { rememberListPosition, takeReturnPosition } from '@/features/projects/list-return'
 import { playProjectSpotlightSound } from '@/lib/ui-sounds'
 
 // Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo efek gulir nomor 7, tanpa cahaya
@@ -19,6 +20,14 @@ export function ProjectSpotlight({
   children: ReactNode
 }) {
   const list = useRef<HTMLOListElement>(null)
+
+  // Kembali dari detail lewat "Semua project": langsung ke posisi terakhir sebelum project ditekan
+  // (revisi pemilik 2026-10-09). Dikerjakan sebelum layar digambar agar tidak terlihat melompat
+  // dan gambar terbang (View Transition) mendarat di barisnya.
+  useLayoutEffect(() => {
+    const y = takeReturnPosition()
+    if (y !== null) window.scrollTo({ top: y, behavior: 'instant' })
+  }, [])
 
   useEffect(() => {
     const ol = list.current
@@ -59,14 +68,22 @@ export function ProjectSpotlight({
     const scheduleScroll = () => {
       if (!frame) frame = requestAnimationFrame(() => update(true))
     }
+    // simpan posisi gulir saat project ditekan (tautan gambar atau judul)
+    const remember = (event: MouseEvent) => {
+      const link = (event.target as Element).closest<HTMLAnchorElement>('a[href]')
+      const slug = link?.pathname.split('/').pop()
+      if (slug) rememberListPosition(slug, window.scrollY)
+    }
     ol.dataset.focus = ''
     update()
+    ol.addEventListener('click', remember)
     window.addEventListener('scroll', scheduleScroll, { passive: true })
     window.addEventListener('resize', schedule)
     return () => {
       if (frame) cancelAnimationFrame(frame)
       window.removeEventListener('scroll', scheduleScroll)
       window.removeEventListener('resize', schedule)
+      ol.removeEventListener('click', remember)
       delete ol.dataset.focus
     }
   }, [])

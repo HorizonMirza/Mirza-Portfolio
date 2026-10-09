@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
@@ -7,10 +7,10 @@ import type { CSSProperties } from 'react'
 import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import { browserAddress } from '@/features/projects/browser-address'
+import { BackToProjects } from '@/features/projects/components/public/back-to-projects'
 import { ProjectGallery } from '@/features/projects/components/public/project-gallery'
 import { getPublishedProject, getPublishedProjects } from '@/features/projects/public'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
-import { Link } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { loc } from '@/lib/localized'
@@ -64,14 +64,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
   return (
     <Container className="pb-20">
       <nav aria-label="breadcrumb" className="pt-8">
-        <Link
-          href="/projects"
-          // huruf display situs (Oswald) seperti judul bagian (revisi pemilik 2026-10-08)
-          className="inline-flex min-h-11 items-center gap-2 font-display text-base font-medium tracking-wide text-muted uppercase hover:text-text"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          {t('back')}
-        </Link>
+        <BackToProjects slug={project.slug} label={t('back')} />
       </nav>
 
       {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip", DESIGN.md bagian 47): hanya
@@ -89,7 +82,9 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         {project.demoUrl || project.repoUrl ? (
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             {project.demoUrl ? (
-              <Button asChild className="pj-shine pj-shine-solid">
+              // warna sama dengan tombol GitHub: gelap di mode gelap, terang di mode terang (revisi
+              // pemilik 2026-10-09)
+              <Button asChild variant="secondary" className="pj-shine">
                 <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink aria-hidden="true" />
                   {t('demo')}
