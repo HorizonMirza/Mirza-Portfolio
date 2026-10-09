@@ -162,6 +162,25 @@ export function playTimelineStepSound() {
   blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.06, vol: 0.2, type: 'square' })
 }
 
+// Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo suara A7 "Gelembung"): "blup"
+// kecil yang naik cepat setiap kali project yang menyala berganti saat digulir.
+export function playProjectSpotlightSound() {
+  const a = audio()
+  if (!a) return
+  const { ctx, out } = a
+  const t = ctx.currentTime
+  const dur = 0.1
+  const osc = ctx.createOscillator()
+  osc.frequency.setValueAtTime(320, t)
+  osc.frequency.exponentialRampToValueAtTime(980, t + dur * 0.8)
+  const gain = ctx.createGain()
+  envelope(gain, t, 0.26, 0.004, dur)
+  osc.connect(gain)
+  gain.connect(out)
+  osc.start(t)
+  osc.stop(t + dur + 0.05)
+}
+
 // Kartu foto halaman Tentang (pilihan pemilik 2026-10-08, demo B1 "Kilau", lalu diperhalus atas
 // permintaan pemilik): satu nada lembut per langkah dari urutan nada yang naik-turun. Tiap panggilan
 // melanjutkan ke nada berikutnya (tidak mulai dari awal), jadi selama kursor bergeser di kartu
