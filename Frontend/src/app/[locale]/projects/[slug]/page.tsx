@@ -63,14 +63,14 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
 
   return (
     <Container className="pb-20">
-      <nav aria-label="breadcrumb" className="pt-8">
+      <nav aria-label="breadcrumb" className="pt-4 md:pt-8">
         <BackToProjects slug={project.slug} label={t('back')} />
       </nav>
 
       {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip", DESIGN.md bagian 47): hanya
           peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
           uraian, dan studi kasus tidak ditampilkan di sini. */}
-      <header className="pd-head pj-title-box mt-6">
+      <header className="pd-head pj-title-box mt-2 md:mt-6">
         {role ? <p className="pj-role">{role}</p> : null}
         {/* selalu satu baris di HP dan laptop: ukuran mengikuti lebar kolom (revisi pemilik 2026-10-09) */}
         <h1
@@ -79,12 +79,18 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         >
           {title}
         </h1>
+        {/* di HP tombol lebih kecil dan jarak lebih rapat agar foto naik ke atas (revisi pemilik
+            2026-10-10) */}
         {project.demoUrl || project.repoUrl ? (
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
             {project.demoUrl ? (
               // warna sama dengan tombol GitHub: gelap di mode gelap, terang di mode terang (revisi
               // pemilik 2026-10-09)
-              <Button asChild variant="secondary" className="pj-shine">
+              <Button
+                asChild
+                variant="secondary"
+                className="pj-shine max-md:min-h-9 max-md:px-3.5 max-md:text-[0.8125rem] max-md:[&_svg]:size-3.5"
+              >
                 <a href={project.demoUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink aria-hidden="true" />
                   {t('demo')}
@@ -93,7 +99,11 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
               </Button>
             ) : null}
             {project.repoUrl ? (
-              <Button asChild variant="secondary" className="pj-shine">
+              <Button
+                asChild
+                variant="secondary"
+                className="pj-shine max-md:min-h-9 max-md:px-3.5 max-md:text-[0.8125rem] max-md:[&_svg]:size-3.5"
+              >
                 <a href={project.repoUrl} target="_blank" rel="noopener noreferrer">
                   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d={BRAND_ICONS.github.path} />
@@ -107,7 +117,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         ) : null}
       </header>
 
-      <div className="mx-auto mt-10 max-w-6xl">
+      <div className="mx-auto mt-6 max-w-6xl md:mt-10">
         <ProjectGallery
           slug={project.slug}
           address={browserAddress(project)}

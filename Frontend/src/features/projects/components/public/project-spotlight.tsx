@@ -1,6 +1,15 @@
 'use client'
 
-import { type ReactNode, useEffect, useLayoutEffect, useRef } from 'react'
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from 'react'
 
 import { rememberListPosition, takeReturnPosition } from '@/features/projects/list-return'
 import { playProjectSpotlightSound } from '@/lib/ui-sounds'
@@ -10,8 +19,9 @@ import { playProjectSpotlightSound } from '@/lib/ui-sounds'
 // hampir gelap dan sedikit mengecil (globals.css .pj-spot). Logika sama dengan timeline Experience.
 // Saat baris aktif berganti karena digulir, berbunyi "blup" gelembung (pilihan pemilik 2026-10-09,
 // demo suara A7, lib/ui-sounds.ts); browser baru mengizinkan suara setelah pengunjung menekan atau
-// menyentuh halaman. Isi daftar tetap dirender server; tanpa JavaScript semua baris tampil penuh
-// karena data-focus tidak dipasang.
+// menyentuh halaman. Isi daftar tetap dirender server, sudah dengan keadaan awal (baris pertama
+// menyala, sisanya redup) agar baris di bawah tidak sempat menyala saat halaman dibuka (revisi
+// pemilik 2026-10-10); tanpa JavaScript semua baris tampil penuh (globals.css @media scripting).
 export function ProjectSpotlight({
   className,
   children,
@@ -74,23 +84,31 @@ export function ProjectSpotlight({
       const slug = link?.pathname.split('/').pop()
       if (slug) rememberListPosition(slug, window.scrollY)
     }
-    ol.dataset.focus = ''
     update()
+    // transisi baru dinyalakan setelah koreksi pertama digambar, jadi keadaan awal tidak beranimasi
+    const ready = requestAnimationFrame(() => {
+      ol.dataset.focus = 'on'
+    })
     ol.addEventListener('click', remember)
     window.addEventListener('scroll', scheduleScroll, { passive: true })
     window.addEventListener('resize', schedule)
     return () => {
       if (frame) cancelAnimationFrame(frame)
+      cancelAnimationFrame(ready)
       window.removeEventListener('scroll', scheduleScroll)
       window.removeEventListener('resize', schedule)
       ol.removeEventListener('click', remember)
-      delete ol.dataset.focus
+      ol.dataset.focus = 'pending'
     }
   }, [])
 
   return (
-    <ol ref={list} className={className ? `pj-spot ${className}` : 'pj-spot'}>
-      {children}
+    <ol ref={list} data-focus="pending" className={className ? `pj-spot ${className}` : 'pj-spot'}>
+      {Children.map(children, (child, index) =>
+        index === 0 && isValidElement(child)
+          ? cloneElement(child as ReactElement<{ 'data-active'?: string }>, { 'data-active': '' })
+          : child,
+      )}
     </ol>
   )
 }
