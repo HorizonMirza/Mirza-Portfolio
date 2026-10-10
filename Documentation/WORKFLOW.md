@@ -31,6 +31,7 @@ Rencana (TODO.md) → Kerjakan di main → Cek lokal lengkap → Push ke main �
 - Hanya ada branch `main`, dan `main` selalu dapat dideploy. Tidak ada `dev`, branch fitur, atau PR.
 - Tidak ada force push dan tidak ada penulisan ulang riwayat di `main`.
 - **Commit:** awalan `[CLAUDIA]` untuk commit dari Claude (pola repo GAAS), lalu format Conventional Commits dengan tipe bahasa Inggris dan deskripsi bahasa Indonesia. Tanpa baris atribusi AI (`Co-Authored-By`, `Claude-Session`), sesuai permintaan pemilik. Commit manual pemilik tanpa awalan.
+- **Zona waktu commit:** commit dari sesi cloud Claude dibuat dengan `TZ=Asia/Jakarta` (WIB). Server cloud memakai UTC, sehingga commit lewat tengah malam WIB sebelumnya tercatat di tanggal kemarin pada grafik kontribusi GitHub (keputusan pemilik 2026-10-11).
 
   ```
   [CLAUDIA] feat(projects): tambah halaman detail project

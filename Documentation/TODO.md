@@ -123,7 +123,7 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 - [x] Backup harian terenkripsi (`backup.yml`) dengan uji pemulihan otomatis di setiap run (diuji lokal: dump → gpg → pulih → cek isi)
 - [ ] Pemilik: isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan Backup sekali lewat Actions
 - [ ] Uji rollback Vercel
-- [ ] Dokumentasi: README, panduan setup, panduan admin, catatan arsitektur final
+- [ ] Dokumentasi: panduan admin, catatan arsitektur final. README sudah diperbarui 2026-10-11 (tautan situs, tangkapan layar halaman awal, daftar fitur), panduan setup ada di README
 - [ ] Daftar periksa rilis (`WORKFLOW.md` bagian 7), uji di HP nyata
 - [ ] Kirim situs ke Search Console, cek preview link di WhatsApp dan LinkedIn
 
