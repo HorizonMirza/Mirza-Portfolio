@@ -2,11 +2,38 @@
 
 Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk mengelola konten.
 
-**Status:** Milestone 1–4 selesai: situs publik dua bahasa dari database, panel admin di `/admin`, kontak, newsletter, API publik, SEO, dan header keamanan. Berikutnya Milestone 5 (deploy dan domain), lihat [`Documentation/TODO.md`](Documentation/TODO.md).
+**Live:** [mmirza.site](https://mmirza.site) · [Bahasa Indonesia](https://mmirza.site/id) · [English](https://mmirza.site/en)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Documentation/screenshots/home-dark.webp">
+  <img src="Documentation/screenshots/home-light.webp" alt="Halaman awal mmirza.site: judul besar Mahasiswa AI BINUS yang membangun software dan komunitas, pelat status, tombol Unduh CV dan Lihat project, dengan latar garis cakrawala biru" width="100%">
+</picture>
+
+<p align="center">
+  <img src="Documentation/screenshots/home-mobile.webp" alt="Halaman awal mmirza.site di HP, mode gelap, dengan menu ikon di bawah layar" width="270">
+</p>
+
+<sub>Tangkapan layar halaman awal (10 Oktober 2026). Gambar besar mengikuti tema GitHub Anda: gelap atau terang.</sub>
+
+**Status:** live di `mmirza.site` sejak 1 Oktober 2026 (Vercel + Neon Singapura). Milestone 1–4 selesai, Milestone 5 tinggal tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) dan uji akhir rilis. Lihat [`Documentation/TODO.md`](Documentation/TODO.md).
+
+## Fitur
+
+**Situs publik** (semua teks dua bahasa, tema gelap dan terang, mobile-first)
+- **Beranda:** hero "Horizon" (canvas), pelat status, angka ringkas, aktivitas GitHub, ajakan kontak.
+- **Tentang:** bio, pendidikan, kartu foto yang bisa dimiringkan.
+- **Pengalaman:** timeline yang menyorot entri di tengah layar saat digulir.
+- **Project:** daftar "lampu sorot" (project di tengah layar menyala, sisanya redup), gambar dalam bingkai browser yang terbang ke halaman detail. Detail berisi peran, tombol View App/GitHub yang dipilih admin, dan galeri foto.
+- **Kontak:** form dengan rate limit dan honeypot, tombol WhatsApp, newsletter double opt-in.
+- **Lainnya:** halaman privasi, 404 "hantu", SEO (sitemap, Open Graph dinamis, JSON-LD), API publik `/api/v1`, suara antarmuka yang volumenya diatur admin.
+
+**Panel Super Admin** (`/admin`): profil, project (impor dari GitHub, unggah Cloudinary, urutan, draf/terbit), skill, pengalaman, sorotan beranda, kotak masuk pesan, pelanggan newsletter, log audit, pengaturan, dan akun. Semua aksi divalidasi Zod di server, memeriksa role `SUPER_ADMIN`, dan dicatat di log audit.
+
+**Kualitas:** WCAG 2.2 AA (axe bersih di semua halaman, terang/gelap, ID/EN, desktop/HP), `prefers-reduced-motion` dihormati, CSP ketat, backup database harian terenkripsi.
 
 ## Stack
 
-Node.js 24 · Next.js 16 (App Router, Turbopack) · React 19 · TypeScript 6 (strict) · Tailwind CSS 4 · next-intl · next-themes · PostgreSQL (Neon) + Prisma 7 · Zod · Vitest · Playwright + axe · pnpm · Vercel · GitHub Actions.
+Node.js 24 · Next.js 16 (App Router, Turbopack) · React 19 · TypeScript 6 (strict) · Tailwind CSS 4 · next-intl · next-themes · PostgreSQL (Neon) + Prisma 7 · Better Auth · Zod · Cloudinary · Resend · Vitest · Playwright + axe · pnpm · Vercel · GitHub Actions.
 Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTURE.md).
 
 ## Struktur
@@ -16,7 +43,7 @@ Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTUR
 | [`Frontend/`](Frontend) | Aplikasi Next.js: halaman publik, panel admin `/admin`, route handler (`/api/v1`, `/api/cv`, `/api/track`, `/api/cron`), tes |
 | [`Backend/`](Backend) | Peta lokasi kode server. Backend berjalan di dalam Next.js (Opsi A, tanpa server terpisah) |
 | [`Database/`](Database) | Skema Prisma, migrasi SQL, dan data seed dari CV |
-| [`Documentation/`](Documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi |
+| [`Documentation/`](Documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi, tangkapan layar README |
 
 Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI, wajib di akar) dan `.agents/` (skill untuk agen AI).
 
@@ -36,7 +63,7 @@ pnpm dev                      # http://localhost:3000 -> diarahkan ke /id atau /
 
 **Panel admin:** buka `http://localhost:3000/admin` lalu masuk dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD`. Buat `BETTER_AUTH_SECRET` dengan `openssl rand -base64 32`. Password yang lupa bisa diganti dari terminal: `ADMIN_NEW_PASSWORD=... pnpm admin:reset-password` (semua sesi ikut dicabut). Login dibatasi 5 percobaan per 15 menit per IP.
 
-Unggah foto, CV, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (opsional, token *fine-grained* tanpa izin tambahan) menaikkan batas impor dari GitHub.
+Variabel lain ada di `Frontend/.env.example` (tanpa nilai). Unggah foto, CV, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (opsional, token *fine-grained* tanpa izin tambahan) menaikkan batas impor dari GitHub.
 
 Contoh Postgres lokal dengan Docker:
 
@@ -70,6 +97,8 @@ Bila Playwright tidak bisa mengunduh browser (misalnya di sandbox), arahkan ke C
 
 ## Deploy ke Vercel (dilakukan pemilik akun)
 
+Situs sudah live di `mmirza.site`, jadi langkah di bawah hanya diperlukan bila project Vercel dipasang ulang dari nol. Setiap push ke `main` langsung di-deploy otomatis.
+
 Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, Ignored Build Step, dan Vercel Cron harian. Deploy production pertama otomatis menjalankan migrasi, lalu mengisi konten dari CV dan membuat akun admin bila database masih kosong. Tidak perlu menjalankan apa pun dari komputer sendiri.
 
 1. **Vercel → Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Klik **Edit** di Root Directory lalu pilih `Frontend`. Framework terdeteksi Next.js, build command dan region terbaca dari `vercel.json`. Klik **Deploy**. Deploy pertama ini **akan gagal** karena database belum ada, itu wajar.
@@ -102,7 +131,7 @@ Setelah deploy (pemilik akun):
 
 - **GitHub → Settings → Rules → Rulesets → New branch ruleset** untuk `main`: aktifkan *Block force pushes* dan *Restrict deletions*. Jangan aktifkan *Require a pull request*, karena semua pekerjaan langsung di `main` (tanpa branch lain).
 - **UptimeRobot** (gratis): monitor HTTP ke `https://<domain>/api/health` tiap 5 menit, notifikasi ke **email** dan **Telegram**.
-- Domain `.site` dihubungkan di Milestone 5.
+- Domain `mmirza.site` (Hostinger) sudah terhubung: A `@` dan CNAME `www` ke Vercel, `www` dialihkan ke `mmirza.site`.
 
 ## Pemantauan dan Backup (Milestone 5)
 
