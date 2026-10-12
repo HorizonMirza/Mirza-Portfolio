@@ -57,10 +57,17 @@ export function IntroNotice({
   children: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
+  // true saat pengunjung mengganti bahasa dari dalam kartu: halaman berpindah ke bahasa lain dan
+  // pemberitahuan harus tetap tampil, jadi penutupan yang terjadi selama perpindahan itu (Firefox
+  // sempat menutup dialog di CI) tidak dihitung "sudah dilihat"
+  const switchingLocale = useRef(false)
   const locale = useLocale()
   const pathname = usePathname()
 
+  // Dibuka setelah halaman tampil, dan dibuka lagi setelah bahasa diganti dari dalam kartu bila
+  // browser sempat menutupnya selama perpindahan (Firefox). Setelah itu penutupan kembali dihitung.
   useEffect(() => {
+    switchingLocale.current = false
     const dialog = ref.current
     // otomatisasi (tes E2E, Lighthouse) tidak perlu melihat pemberitahuan
     if (!dialog || dialog.open || navigator.webdriver || alreadySeen()) return
@@ -70,12 +77,12 @@ export function IntroNotice({
     dialog
       .querySelector<HTMLElement>('[data-intro-primary]')
       ?.focus({ focusVisible: false } as FocusOptions)
-  }, [])
+  }, [locale])
 
   function close() {
     const dialog = ref.current
     if (!dialog?.open) return
-    markSeen()
+    if (!switchingLocale.current) markSeen()
     if (prefersReducedMotion()) {
       dialog.close()
       return
@@ -123,6 +130,9 @@ export function IntroNotice({
               hrefLang={l}
               scroll={false}
               aria-current={l === locale ? 'true' : undefined}
+              onClick={() => {
+                switchingLocale.current = true
+              }}
             >
               {l.toUpperCase()}
             </Link>
