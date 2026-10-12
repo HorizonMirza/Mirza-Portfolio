@@ -3,6 +3,9 @@ import { expect, test } from '@playwright/test'
 
 // Pemberitahuan pembuka (DESIGN.md bagian 53). Situs menyembunyikannya untuk browser otomatis
 // (navigator.webdriver), jadi tes ini berpura-pura sebagai pengunjung biasa.
+// Tanpa animasi: kartu yang masih masuk (transparan dan bergeser) membuat cek kontras salah baca dan
+// klik di Firefox meleset (CI 2026-10-12).
+test.use({ contextOptions: { reducedMotion: 'reduce' } })
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(Navigator.prototype, 'webdriver', { get: () => false })
