@@ -15,6 +15,13 @@
   "Theme": {
     "darkMode": "Mode gelap"
   },
+  "Intro": {
+    "eyebrow": "Portofolio · {name}",
+    "language": "Bahasa",
+    "downloadCv": "Unduh CV",
+    "projects": "Lihat project",
+    "enter": "Masuk ke situs"
+  },
   "NotFound": {
     "title": "Boo! Halamannya hilang.",
     "body": "Sepertinya halaman ini hantu: dicari ada, dibuka tidak ada.",

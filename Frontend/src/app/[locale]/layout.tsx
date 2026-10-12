@@ -16,6 +16,7 @@ import { SiteHeader } from '@/components/site/site-header'
 import { VercelInsights } from '@/components/site/vercel-insights'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
+import { IntroNoticeSlot } from '@/features/settings/components/public/intro-notice-slot'
 import { getSiteSettings } from '@/features/settings/public'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
@@ -98,6 +99,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             <RevealObserver />
             <LanguageScramble />
             <PageViewTracker />
+            {/* pemberitahuan pembuka dari /admin/settings, sekali setiap situs dibuka */}
+            {settings.intro ? <IntroNoticeSlot locale={locale} intro={settings.intro} /> : null}
             {/* Hanya di Vercel: di luar Vercel skrip /_vercel/* tidak ada (404 di CI dan lokal) */}
             {process.env.VERCEL === '1' && <VercelInsights />}
           </NextIntlClientProvider>

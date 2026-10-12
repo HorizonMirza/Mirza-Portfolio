@@ -401,8 +401,14 @@ model CvDownload {
 
 // Pengaturan situs (satu baris, id = 1). Diubah dari /admin/settings.
 model SiteSetting {
-  id          Int      @id @default(1)
+  id            Int      @id @default(1)
   // volume suara tombol di situs publik (tema, bahasa, menu), 0 = tanpa suara, 100 = paling keras
-  soundVolume Int      @default(80)
-  updatedAt   DateTime @updatedAt @db.Timestamptz(3)
+  soundVolume   Int      @default(80)
+  // pemberitahuan pembuka: kartu sebelum masuk situs, sekali setiap situs dibuka (per sesi browser)
+  introEnabled  Boolean  @default(true)
+  introTitle_id String?
+  introTitle_en String?
+  introBody_id  String?  @db.Text
+  introBody_en  String?  @db.Text
+  updatedAt     DateTime @updatedAt @db.Timestamptz(3)
 }

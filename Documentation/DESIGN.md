@@ -742,3 +742,17 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **Revisi pemilik 2026-10-10:**
   - **Keadaan awal lampu sorot:** saat halaman Project pertama dibuka, project di bawah langsung redup tanpa sempat menyala. Keadaan awal ikut HTML dari server (`data-focus="pending"`, baris pertama `data-active`). Transisi 700 ms baru dipasang setelah JavaScript mengambil alih (`data-focus="on"`). Semua peredupan dibungkus `@media (scripting: enabled)`, jadi tanpa JavaScript semua baris tetap tampil penuh.
   - **Detail di HP (< 768 px):** tombol View App/GitHub lebih kecil (tinggi 36 px, teks 13 px). Jarak di atas tombol kembali, judul, tombol, dan foto dirapatkan agar foto naik dan halaman tidak terlalu panjang. Tampilan laptop tidak berubah.
+
+## 53. Pemberitahuan pembuka (2026-10-12)
+
+- **Pilihan pemilik:** demo 1 "Kartu tengah" dari 10 demo, muncul **sekali setiap situs dibuka**. Penanda disimpan di `sessionStorage`, jadi pemberitahuan muncul lagi di tab baru, tetapi tidak saat berpindah halaman di tab yang sama.
+- **Tampilan:** kartu `<dialog>` di tengah layar dengan latar buram. Isinya:
+  - label mono "Portofolio · nama";
+  - pilihan ID/EN (membuka halaman yang sama di bahasa lain, pemberitahuan tampil lagi di bahasa itu);
+  - judul Oswald;
+  - isi Markdown (huruf tebal didukung, disanitasi);
+  - tombol Unduh CV (hanya bila CV ada), Lihat project, dan Masuk ke situs.
+- **Perilaku:** dibuka setelah halaman tampil, jadi isi situs tetap dirender server dan terbaca mesin pencari. Fokus ke tombol utama. Esc, tombol Masuk ke situs, atau klik di luar kartu menutupnya. Halaman tidak bisa digulir selama terbuka. Animasi masuk 600 ms dan keluar 320 ms; reduced-motion tanpa animasi.
+- **Admin → Pengaturan → Pemberitahuan pembuka:** nyala/mati, judul dan isi ID/EN (wajib keduanya saat aktif, isi maksimal 600 karakter). Kolom di `SiteSetting` (`introEnabled`, `introTitle_*`, `introBody_*`). Migrasi `20261012090000_intro_notice` mengisi teks awal dari data profil yang sudah tampil di situs (kampus, posisi sekarang, terbuka untuk kerja).
+- **Browser otomatis** (`navigator.webdriver`: tes E2E, Lighthouse) tidak diberi pemberitahuan. Tes `e2e/intro.spec.ts` menimpa penanda itu untuk menguji pemberitahuannya.
+- Tidak muncul di halaman Admin (layout terpisah).

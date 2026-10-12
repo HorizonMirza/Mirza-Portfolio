@@ -15,6 +15,13 @@
   "Theme": {
     "darkMode": "Dark mode"
   },
+  "Intro": {
+    "eyebrow": "Portfolio · {name}",
+    "language": "Language",
+    "downloadCv": "Download CV",
+    "projects": "View projects",
+    "enter": "Enter site"
+  },
   "NotFound": {
     "title": "Boo! Page missing.",
     "body": "This page must be a ghost: it is not here.",

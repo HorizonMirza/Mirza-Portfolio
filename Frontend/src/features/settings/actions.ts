@@ -13,7 +13,15 @@ export async function saveSettings(input: unknown): Promise<ActionResult> {
     const admin = await requireSuperAdmin()
     const parsed = settingsSchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
-    const data = parsed.data
+    const { introTitle_id, introTitle_en, introBody_id, introBody_en, ...rest } = parsed.data
+    // isian kosong disimpan sebagai null
+    const data = {
+      ...rest,
+      introTitle_id: introTitle_id || null,
+      introTitle_en: introTitle_en || null,
+      introBody_id: introBody_id || null,
+      introBody_en: introBody_en || null,
+    }
     await getDb().$transaction(async (tx) => {
       const before = await tx.siteSetting.findUnique({ where: { id: 1 } })
       const after = await tx.siteSetting.upsert({
