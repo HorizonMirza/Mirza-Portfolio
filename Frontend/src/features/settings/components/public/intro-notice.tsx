@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl'
 import { type MouseEvent, type ReactNode, useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { Link, usePathname } from '@/i18n/navigation'
+import { getPathname, Link, usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
@@ -57,15 +57,15 @@ export function IntroNotice({
   children: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
-  // true saat pengunjung mengganti bahasa dari dalam kartu: halaman berpindah ke bahasa lain dan
-  // pemberitahuan harus tetap tampil, jadi penutupan yang terjadi selama perpindahan itu (Firefox
-  // sempat menutup dialog di CI) tidak dihitung "sudah dilihat"
+  // true saat pengunjung mengganti bahasa dari dalam kartu: halaman dimuat ulang di bahasa lain dan
+  // pemberitahuan harus tampil lagi, jadi penutupan yang terjadi saat halaman ditinggalkan tidak
+  // dihitung "sudah dilihat"
   const switchingLocale = useRef(false)
   const locale = useLocale()
   const pathname = usePathname()
 
-  // Dibuka setelah halaman tampil, dan dibuka lagi setelah bahasa diganti dari dalam kartu bila
-  // browser sempat menutupnya selama perpindahan (Firefox). Setelah itu penutupan kembali dihitung.
+  // Dibuka setelah halaman tampil. Bila bahasa berganti tanpa memuat ulang (tombol bahasa di
+  // header), kartu yang belum ditutup tetap terbuka atau dibuka lagi.
   useEffect(() => {
     switchingLocale.current = false
     const dialog = ref.current
@@ -119,23 +119,23 @@ export function IntroNotice({
     >
       <div className="flex items-start justify-between gap-4">
         <p className="font-mono text-label tracking-widest text-note uppercase">{eyebrow}</p>
-        {/* ganti bahasa: halaman yang sama dibuka di bahasa lain, pemberitahuan tampil lagi di
-            bahasa itu karena belum ditutup */}
+        {/* Ganti bahasa: tautan biasa yang memuat ulang halaman yang sama di bahasa lain (bukan
+            navigasi klien: di Firefox perpindahan klien dari dalam dialog modal tidak andal, CI
+            2026-10-12). Pemberitahuan tampil lagi di bahasa itu karena belum ditutup. */}
         <nav aria-label={labels.language} className="intro-lang">
           {routing.locales.map((l) => (
-            <Link
+            <a
               key={l}
-              href={pathname}
-              locale={l}
+              href={getPathname({ href: pathname, locale: l })}
               hrefLang={l}
-              scroll={false}
+              lang={l}
               aria-current={l === locale ? 'true' : undefined}
               onClick={() => {
                 switchingLocale.current = true
               }}
             >
               {l.toUpperCase()}
-            </Link>
+            </a>
           ))}
         </nav>
       </div>
