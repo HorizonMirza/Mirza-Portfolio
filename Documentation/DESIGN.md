@@ -748,7 +748,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **Pilihan pemilik:** demo 1 "Kartu tengah" dari 10 demo, muncul **sekali setiap situs dibuka**. Penanda disimpan di `sessionStorage`, jadi pemberitahuan muncul lagi di tab baru, tetapi tidak saat berpindah halaman di tab yang sama.
 - **Tampilan:** kartu `<dialog>` di tengah layar dengan latar buram. Isinya:
   - label mono "Portofolio · nama";
-  - pilihan ID/EN (membuka halaman yang sama di bahasa lain, pemberitahuan tampil lagi di bahasa itu);
+  - pilihan ID/EN: tautan biasa yang memuat ulang halaman yang sama di bahasa lain, lalu pemberitahuan tampil lagi di bahasa itu. Bukan navigasi klien, karena di Firefox perpindahan klien dari dalam dialog modal tidak andal (CI 2026-10-12). Penutupan saat bahasa diganti tidak dihitung "sudah dilihat";
   - judul Oswald;
   - isi Markdown (huruf tebal didukung, disanitasi);
   - tombol Unduh CV (hanya bila CV ada), Lihat project, dan Masuk ke situs.
