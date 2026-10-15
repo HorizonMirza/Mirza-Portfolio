@@ -226,3 +226,5 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 Peran ditampilkan di atas judul (kolom `role_id`/`role_en`, migrasi `20261008160000_project_role_buttons`): CatFin-R dan RIPE.AI "Front-End Developer", Crypto Pedia "Frontend Developer" (sesuai ejaan PDF). **[TANYA]** peran untuk MR Coffee dan Swarna Creation.
 
 Teknologi semua project: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Catatan: PDF mencantumkan IPK 3,5/4,0 (CV: 3,41); situs belum diubah, menunggu keputusan pemilik.
+
+**Catatan ketersediaan di beranda (2026-10-15, audit Home nomor 2, permintaan pemilik "eksekusi 1 dan 2"):** migrasi `20261015100000_availability_note` mengisi `availabilityNote_id` "Mencari peluang Fullstack Developer" dan `availabilityNote_en` "Looking for Fullstack Developer opportunities", diambil dari kalimat pemilik di pemberitahuan pembuka. Tampil di pelat status: "Terbuka untuk kerja · Mencari peluang Fullstack Developer". Hanya mengisi kolom yang masih kosong; pemilik bisa mengubahnya di Admin → Profil.

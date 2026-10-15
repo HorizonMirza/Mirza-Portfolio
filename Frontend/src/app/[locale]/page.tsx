@@ -222,17 +222,25 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 <dt className="font-mono text-label tracking-widest text-note uppercase">
                   {t('statusLabel')}
                 </dt>
-                <dd className="flex items-center gap-2 font-medium">
+                <dd className="flex items-start gap-2 font-medium">
+                  {/* titik setinggi baris pertama; status dan catatan mengalir sebagai satu kalimat
+                      agar di HP tidak terbelah menjadi dua kolom sempit */}
                   <span
                     aria-hidden="true"
-                    className={cn('size-2 rounded-full', availabilityDot[profile.availability])}
+                    className={cn(
+                      'mt-[0.45em] size-2 shrink-0 rounded-full',
+                      availabilityDot[profile.availability],
+                    )}
                   />
-                  {tAvail(profile.availability)}
-                  {loc(profile, 'availabilityNote', locale) ? (
-                    <span className="font-normal text-muted">
-                      · {loc(profile, 'availabilityNote', locale)}
-                    </span>
-                  ) : null}
+                  <span>
+                    {tAvail(profile.availability)}
+                    {loc(profile, 'availabilityNote', locale) ? (
+                      <span className="font-normal text-muted">
+                        {' '}
+                        · {loc(profile, 'availabilityNote', locale)}
+                      </span>
+                    ) : null}
+                  </span>
                 </dd>
                 {profile.city ? (
                   <>
