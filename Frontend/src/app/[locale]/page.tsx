@@ -1,5 +1,6 @@
 import { ArrowRight, Download } from 'lucide-react'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
@@ -9,7 +10,6 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
-import { TiltedGridHero } from '@/components/ui/tilted-grid-hero'
 import { getPublicExperiences } from '@/features/experience/public'
 import { organizationName } from '@/features/experience/schema'
 import { CountUp } from '@/features/highlights/components/count-up'
@@ -154,16 +154,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   // Project pilihan (audit Home 2026-10-15): yang bertanda unggulan di depan, lalu urutan admin.
   // Pita gambar butuh minimal dua sampul agar ada yang mengalir.
   const showcase = [...projects.filter((p) => p.featured), ...projects.filter((p) => !p.featured)]
-  const showcaseImages = showcase.flatMap((p) =>
-    p.cover
-      ? [{ src: p.cover.url, alt: loc(p.cover, 'alt', locale) || loc(p, 'title', locale) }]
-      : [],
+  const showcaseCovers = showcase.flatMap((p) =>
+    p.cover ? [{ slug: p.slug, url: p.cover.url, title: loc(p, 'title', locale) }] : [],
   )
 
   // Nomor bagian dihitung dari bagian yang benar-benar tampil, agar tidak melompat bila satu bagian
   // kosong (mis. semua angka dihapus di admin). 01 selalu bagian pembuka.
   const sections = [
-    showcaseImages.length > 1 && 'projects',
+    showcaseCovers.length > 1 && 'projects',
     highlights.length > 0 && 'numbers',
     story.length > 1 && 'story',
     skills.length > 0 && 'stack',
@@ -314,13 +312,22 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               }
             />
           </Container>
-          {/* pita gambar dekoratif selebar layar (aria-hidden di dalam komponen); tautannya di bawah */}
-          <TiltedGridHero
-            images={showcaseImages}
-            axis={50}
-            tileHeight={52}
-            className="h-[230px] w-full sm:h-[320px] lg:h-[400px]"
-          />
+          {/* Pita sampul datar yang berjalan pelan (pilihan pemilik 2026-10-15, demo ringan nomor 1):
+              dekoratif dan tidak bisa difokus; tautannya di deretan nama di bawah. Deret diulang dua
+              kali agar putarannya tidak terputus; satu animasi CSS, tanpa JavaScript. */}
+          <div className="home-marquee" aria-hidden="true">
+            <div
+              className="home-marquee-track"
+              style={{ '--n': showcaseCovers.length } as CSSProperties}
+            >
+              {[...showcaseCovers, ...showcaseCovers].map((c, i) => (
+                <figure key={`${c.slug}-${i}`}>
+                  <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
+                  <figcaption>{c.title}</figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
           <Container>
             <ul aria-label={t('projectList')} className="home-project-links">
               {showcase.map((p) => (

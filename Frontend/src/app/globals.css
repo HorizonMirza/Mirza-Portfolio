@@ -1551,8 +1551,72 @@
 }
 
 /* Beranda: angka, garis cerita, dan aktivitas GitHub (DESIGN.md bagian 46). */
-/* Project pilihan di beranda (audit Home 2026-10-15): pita gambar melengkung (TiltedGridHero) lalu
-   deretan nama project sebagai tautan ke halaman detailnya. */
+/* Project pilihan di beranda (audit Home 2026-10-15, DESIGN.md bagian 54): pita sampul datar yang
+   berjalan pelan, lalu deretan nama project sebagai tautan ke halaman detailnya. Pita hanya memakai
+   transform (compositor), memudar di kedua ujung, berhenti saat disorot, diam pada reduced-motion. */
+.home-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+.home-marquee-track {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  /* kecepatan tetap per sampul, berapa pun jumlah project */
+  animation: home-marquee calc(var(--n) * 8s) linear infinite;
+}
+.home-marquee:hover .home-marquee-track {
+  animation-play-state: paused;
+}
+.home-marquee figure {
+  position: relative;
+  flex: none;
+  width: 360px;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-2);
+  aspect-ratio: 16 / 9;
+}
+.home-marquee img {
+  object-fit: cover;
+  object-position: top;
+}
+.home-marquee figcaption {
+  position: absolute;
+  left: 0.625rem;
+  bottom: 0.625rem;
+  max-width: calc(100% - 1.25rem);
+  overflow: hidden;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 0.375rem;
+  background: rgb(0 0 0 / 0.65);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+@keyframes home-marquee {
+  to {
+    /* setengah lebar = satu deret (deret diulang dua kali); jarak 1rem ikut separuhnya */
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+@media (max-width: 639px) {
+  .home-marquee figure {
+    width: 240px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-marquee-track {
+    animation: none;
+  }
+}
 .home-project-links {
   display: flex;
   flex-wrap: wrap;
