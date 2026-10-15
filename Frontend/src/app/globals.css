@@ -2415,12 +2415,15 @@ html:has(.intro[open]) {
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* dialog hanya memudar (tanpa geser), agar kanvas fixed di dalamnya tetap menempel layar */
+  /* Dialog hanya memudar (tanpa geser), agar kanvas fixed di dalamnya tetap menempel layar.
+     Mode isi "backwards", bukan "both": animasi opacity yang terus menahan nilai akhirnya membuat
+     Chrome menjadikan kartu batas latar, sehingga blur kaca .intro-panel tidak lagi mengaburkan
+     cahaya vortex di belakangnya (revisi pemilik 2026-10-15). */
   .intro[open] {
-    animation: intro-fade 400ms ease-out both;
+    animation: intro-fade 400ms ease-out backwards;
   }
   .intro[open] .intro-card {
-    animation: intro-rise 600ms var(--ease-out-soft) 120ms both;
+    animation: intro-rise 600ms var(--ease-out-soft) 120ms backwards;
   }
   .intro[data-leaving] {
     animation: intro-fade 320ms ease-in reverse both;
