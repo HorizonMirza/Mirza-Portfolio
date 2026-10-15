@@ -78,7 +78,7 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
     // internalnya sendiri (juggler FrameTree.js: "domWindow() is undefined") dan tidak melaporkan
     // halaman pengganti (CI 2026-10-15, dua run). Tombol bahasa di header lolos di Firefox; bedanya
     // tes ini memakai addInitScript. Jadi bukti tibanya di /en adalah navigasi frame utama yang tercatat
-    // atau halaman mana pun di sesi browser, lalu bahasa halaman diperiksa selama halaman masih terbaca.
+    // atau halaman mana pun di sesi browser.
     const enProjects = /\/en\/projects$/
     await expect
       .poll(
@@ -91,9 +91,14 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
         { timeout: 10_000 },
       )
       .toBe(true)
-    if (!page.isClosed()) {
+    // Di Chromium/WebKit halaman tetap terbaca dan bahasanya harus sudah Inggris. Di Firefox CI "close"
+    // datang beberapa milidetik setelah navigasi, jadi pemeriksaan ini bisa membaca URL kosong (CI
+    // 9c4dd34); kegagalan hanya diterima bila halaman memang sudah ditutup driver.
+    try {
       await expect(page).toHaveURL(enProjects)
       await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+    } catch (error) {
+      if (!page.isClosed()) throw error
     }
   } catch (error) {
     console.log(`[intro ID/EN] kejadian browser:\n${events.join('\n')}`)
