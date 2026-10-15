@@ -52,8 +52,11 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
   page.on('console', (m) => {
     if (m.type() === 'error' || m.type() === 'warning') events.push(`${m.type()}: ${m.text()}`)
   })
+  const navigated: string[] = []
   page.on('framenavigated', (f) => {
-    if (f === page.mainFrame()) events.push(`nav: ${f.url()}`)
+    if (f !== page.mainFrame()) return
+    navigated.push(f.url())
+    events.push(`nav: ${f.url()}`)
   })
   page.on('requestfailed', (r) =>
     events.push(`requestfailed: ${r.url()} ${r.failure()?.errorText}`),
@@ -70,22 +73,28 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
     await expect(page).toHaveURL(/\/id\/projects$/)
     await page.keyboard.press('Escape')
     await expect(dialog).toBeHidden()
-    // Firefox: bila pindah bahasa menjadi muat ulang penuh, header Cross-Origin-Opener-Policy membuat
-    // Firefox memindahkan halaman ke proses baru dan Playwright melaporkan objek halaman lama
-    // "close" (CI 2026-10-15: "nav: /en/projects" lalu "close"). Pengunjung tetap sampai di /en,
-    // jadi yang diperiksa adalah halaman mana pun di sesi browser ini.
+    // Firefox CI: pindah bahasa adalah muat ulang penuh (layout akar per bahasa). Frame utama tercatat
+    // sampai di /en/projects, lalu driver Playwright untuk Firefox kehilangan halaman itu dengan galat
+    // internalnya sendiri (juggler FrameTree.js: "domWindow() is undefined") dan tidak melaporkan
+    // halaman pengganti (CI 2026-10-15, dua run). Tombol bahasa di header lolos di Firefox; bedanya
+    // tes ini memakai addInitScript. Jadi bukti tibanya di /en adalah navigasi frame utama yang tercatat
+    // atau halaman mana pun di sesi browser, lalu bahasa halaman diperiksa selama halaman masih terbaca.
+    const enProjects = /\/en\/projects$/
     await expect
       .poll(
         () =>
+          navigated.some((url) => enProjects.test(url)) ||
           page
             .context()
             .pages()
-            .some((p) => /\/en\/projects$/.test(p.url())),
-        {
-          timeout: 10_000,
-        },
+            .some((p) => enProjects.test(p.url())),
+        { timeout: 10_000 },
       )
       .toBe(true)
+    if (!page.isClosed()) {
+      await expect(page).toHaveURL(enProjects)
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+    }
   } catch (error) {
     console.log(`[intro ID/EN] kejadian browser:\n${events.join('\n')}`)
     throw error
