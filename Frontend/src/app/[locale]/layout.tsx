@@ -87,7 +87,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
                     'nav-back': 'nav-back',
                     'project-open': 'project-page',
                     'project-close': 'project-page',
-                    // tombol Beranda di pemberitahuan pembuka: kotak-kotak sudah menjadi transisinya
+                    // tombol Beranda di pemberitahuan pembuka: transisinya sendiri (intro-home-reveal.ts)
                     'intro-home': 'none',
                     default: 'auto',
                   }}

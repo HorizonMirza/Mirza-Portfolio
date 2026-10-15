@@ -17,7 +17,7 @@ import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
-import { playTileReveal } from './intro-tile-reveal'
+import { playHomeReveal, suckIntoButton } from './intro-home-reveal'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -34,8 +34,6 @@ export type IntroNoticeVersion = {
 const SEEN_KEY = 'intro-notice-seen'
 // sama dengan durasi animasi .intro[data-leaving] di globals.css
 const LEAVE_MS = 320
-// tombol Beranda: kartu (380 ms) dan cahaya vortex (500 ms) memudar dulu sebelum kotak-kotak terbuka
-const HOME_LEAVE_MS = 500
 
 function alreadySeen() {
   try {
@@ -115,15 +113,15 @@ export function IntroNotice({
     // sudah sedang ditutup: Esc atau klik kedua tidak memulai ulang
     if (!dialog?.open || dialog.dataset.leaving !== undefined) return
     markSeen()
-    // Beranda (dengan animasi): transisi kotak-kotak yang menyebar dari tombol Beranda
-    const tiles = goHome && !prefersReducedMotion()
+    // Beranda (dengan animasi): vortex dan kartu terhisap ke tombol Beranda (intro-home-reveal.ts)
+    const suck = goHome && !prefersReducedMotion()
     const button = homeRef.current?.getBoundingClientRect()
     const origin = button
       ? { x: button.left + button.width / 2, y: button.top + button.height / 2 }
       : { x: window.innerWidth / 2, y: window.innerHeight / 2 }
     const finish = () => {
-      // kotak hitam dipasang sebelum dialog ditutup, jadi layar tetap tertutup tanpa celah
-      if (tiles) playTileReveal(origin, getPathname({ href: '/', locale: shown }))
+      // layar hitam dipasang sebelum dialog ditutup, jadi layar tetap tertutup tanpa celah
+      if (suck) playHomeReveal(origin, getPathname({ href: '/', locale: shown }))
       dialog.close()
       delete dialog.dataset.leaving
       setActive(false)
@@ -147,7 +145,7 @@ export function IntroNotice({
         router.push(target, {
           locale: shown,
           scroll: goHome,
-          ...(tiles ? { transitionTypes: ['intro-home'] } : {}),
+          ...(suck ? { transitionTypes: ['intro-home'] } : {}),
         })
       void (escReleased.current ?? Promise.resolve()).then(() => window.setTimeout(go, 0))
     }
@@ -155,8 +153,13 @@ export function IntroNotice({
       finish()
       return
     }
-    dialog.dataset.leaving = tiles ? 'home' : ''
-    window.setTimeout(finish, tiles ? HOME_LEAVE_MS : LEAVE_MS)
+    if (suck) {
+      dialog.dataset.leaving = 'home'
+      void suckIntoButton(dialog, origin).then(finish)
+      return
+    }
+    dialog.dataset.leaving = ''
+    window.setTimeout(finish, LEAVE_MS)
   }
 
   // dialog memenuhi layar; klik di luar kartu (di latar vortex) ikut menutup
