@@ -2275,12 +2275,11 @@ html:has(.intro[open]) {
     white-space: nowrap;
   }
 }
-/* satu baris selebar kartu; ukuran pasti dihitung skrip (intro-notice.tsx), ini titik awalnya */
 .intro-title {
+  /* ukuran wajar, tidak sampai memenuhi lebar kartu (revisi pemilik 2026-10-15) */
   margin: 1rem 0 0.875rem;
-  overflow: hidden;
   font-family: var(--font-display);
-  font-size: min(2.75rem, calc(100cqi / (var(--chars, 18) * 0.5)));
+  font-size: clamp(1.75rem, 1.35rem + 1.2vw, 2.25rem);
   font-weight: 700;
   line-height: 1.05;
   text-transform: uppercase;

@@ -768,3 +768,8 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - judul selalu satu baris selebar kartu. Ukurannya diukur skrip (`offsetWidth` teks dibanding lebar kartu, 99%, maksimal 72 px) dan dihitung ulang saat bahasa berganti, ukuran layar berubah, atau font selesai dimuat. Pengukuran tidak boleh memakai `getBoundingClientRect`, karena kartu masih mengecil 98% selama animasi masuk;
   - isi rata kiri-kanan (`text-align: justify`);
   - tombol Unduh CV dan Beranda sejajar selebar kartu (grid 1,4 : 1, tinggi 48 px).
+- **Revisi pemilik 2026-10-15 (ketiga):**
+  - label nama berwarna abu-abu (`text-muted`);
+  - judul kembali ke ukuran wajar (`clamp(1.75rem, …, 2.25rem)`, satu baris, tidak memenuhi lebar kartu). Pengukuran judul dengan skrip dihapus;
+  - tombol CV berlabel **Resume ATS** (ID dan EN) dengan ikon dokumen;
+  - teks Inggris diganti menjadi "I am currently looking for Fullstack Developer opportunities. My resume is the most concise summary of my experience, skills, and background." (migrasi `20261015090000_intro_notice_en_text`). Dari beberapa susunan kalimat, ini yang celah antarkatanya paling kecil saat rata kiri-kanan di lebar laptop dan HP kecil. Di sebagian lebar HP (±390–412 px) baris pertama masih sedikit renggang, karena susunan baris rata kiri-kanan ikut lebar layar.
