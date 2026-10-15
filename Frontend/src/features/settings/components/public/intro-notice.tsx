@@ -1,7 +1,15 @@
 'use client'
 
 import { Download, House } from 'lucide-react'
-import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react'
+import {
+  type CSSProperties,
+  type MouseEvent,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 
 import { Button } from '@/components/ui/button'
 import { usePathname, useRouter } from '@/i18n/navigation'
@@ -13,6 +21,7 @@ import { prefersReducedMotion } from '@/lib/view-transition'
 type Locale = (typeof routing.locales)[number]
 
 export type IntroNoticeVersion = {
+  eyebrow: string
   title: string
   body: ReactNode
   cvHref: string | null
@@ -24,6 +33,8 @@ export type IntroNoticeVersion = {
 const SEEN_KEY = 'intro-notice-seen'
 // sama dengan durasi animasi .intro[data-leaving] di globals.css
 const LEAVE_MS = 320
+// batas ukuran judul agar judul pendek tidak menjadi raksasa
+const MAX_TITLE_PX = 72
 
 function alreadySeen() {
   try {
@@ -73,6 +84,37 @@ export function IntroNotice({
       .querySelector<HTMLElement>('[data-intro-primary]')
       ?.focus({ focusVisible: false } as FocusOptions)
   }, [])
+
+  // Judul satu baris selebar kartu (revisi pemilik 2026-10-15): ukuran huruf disesuaikan dengan
+  // lebar teks yang diukur, dihitung ulang saat bahasa berganti atau ukuran layar berubah. Ukuran
+  // dari CSS (.intro-title) menjadi titik awal sekaligus cadangan bila skrip belum berjalan.
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  useLayoutEffect(() => {
+    const title = titleRef.current
+    if (!title) return
+    const fit = () => {
+      const text = title.firstElementChild as HTMLElement | null
+      title.style.fontSize = ''
+      const box = title.clientWidth
+      // lebar teks sebenarnya (span inline), bukan lebar blok judul. offsetWidth, bukan
+      // getBoundingClientRect: kartu masih mengecil 98% selama animasi masuk dan ukuran itu tidak
+      // boleh ikut terhitung
+      const width = text?.offsetWidth ?? 0
+      if (!box || !width) return
+      const base = parseFloat(getComputedStyle(title).fontSize)
+      title.style.fontSize = `${Math.min(base * (box / width) * 0.99, MAX_TITLE_PX).toFixed(2)}px`
+    }
+    fit()
+    // ukur ulang setelah font Oswald selesai dimuat: font baru diminta saat kartu tampil, dan font
+    // cadangan lebih sempit sehingga judul akan terpotong bila tidak diukur ulang
+    document.fonts?.addEventListener('loadingdone', fit)
+    const observer = new ResizeObserver(fit)
+    observer.observe(title.parentElement ?? title)
+    return () => {
+      document.fonts?.removeEventListener('loadingdone', fit)
+      observer.disconnect()
+    }
+  }, [shown])
 
   // efek acak huruf setelah teks kartu berganti bahasa
   useEffect(() => {
@@ -145,38 +187,49 @@ export function IntroNotice({
       }}
       onClick={onDialogClick}
     >
-      <div className="flex items-start justify-between gap-4">
-        <h2 id="intro-title" className="intro-title">
-          {v.title}
-        </h2>
-        <div role="group" aria-label={v.labels.language} className="intro-lang">
-          {routing.locales.map((l) => (
-            <button key={l} type="button" aria-pressed={l === shown} onClick={() => switchTo(l)}>
-              {l.toUpperCase()}
-            </button>
-          ))}
+      <div className="intro-box">
+        <div className="flex items-center justify-between gap-4">
+          <p className="intro-eyebrow font-mono text-note uppercase">{v.eyebrow}</p>
+          <div role="group" aria-label={v.labels.language} className="intro-lang">
+            {routing.locales.map((l) => (
+              <button key={l} type="button" aria-pressed={l === shown} onClick={() => switchTo(l)}>
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="intro-body">{v.body}</div>
-      <div className="mt-7 flex flex-wrap gap-3">
-        {v.cvHref ? (
-          <Button asChild data-intro-primary="">
-            <a href={v.cvHref} target="_blank" rel="noopener noreferrer" onClick={() => close()}>
-              <Download aria-hidden="true" />
-              {v.labels.downloadCv}
-              <span className="sr-only">{v.labels.newTab}</span>
-            </a>
-          </Button>
-        ) : null}
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => close(true)}
-          {...(v.cvHref ? {} : { 'data-intro-primary': '' })}
+        {/* selalu satu baris selebar kartu: ukuran huruf mengikuti panjang judul (revisi pemilik
+            2026-10-15) */}
+        <h2
+          ref={titleRef}
+          id="intro-title"
+          className="intro-title"
+          style={{ '--chars': v.title.length } as CSSProperties}
         >
-          <House aria-hidden="true" />
-          {v.labels.home}
-        </Button>
+          <span>{v.title}</span>
+        </h2>
+        <div className="intro-body">{v.body}</div>
+        <div className={v.cvHref ? 'intro-actions intro-actions-2' : 'intro-actions'}>
+          {v.cvHref ? (
+            <Button asChild data-intro-primary="" className="min-h-12">
+              <a href={v.cvHref} target="_blank" rel="noopener noreferrer" onClick={() => close()}>
+                <Download aria-hidden="true" />
+                {v.labels.downloadCv}
+                <span className="sr-only">{v.labels.newTab}</span>
+              </a>
+            </Button>
+          ) : null}
+          <Button
+            type="button"
+            variant="secondary"
+            className="min-h-12"
+            onClick={() => close(true)}
+            {...(v.cvHref ? {} : { 'data-intro-primary': '' })}
+          >
+            <House aria-hidden="true" />
+            {v.labels.home}
+          </Button>
+        </div>
       </div>
     </dialog>
   )

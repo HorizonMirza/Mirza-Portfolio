@@ -29,6 +29,7 @@ export async function IntroNoticeSlot({
       return [
         l,
         {
+          eyebrow: t('eyebrow', { name: profile?.name ?? 'Muhammad Mirza' }),
           title: l === 'en' ? intro.title_en : intro.title_id,
           body: <MarkdownView source={l === 'en' ? intro.body_en : intro.body_id} size="base" />,
           cvHref: profile?.hasCv ? `/api/cv?locale=${l}` : null,

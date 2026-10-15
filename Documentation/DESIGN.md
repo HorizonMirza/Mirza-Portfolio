@@ -763,3 +763,8 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - tombol tinggal **Unduh CV** dan **Beranda/Home** (Lihat project dan Masuk ke situs dihapus);
   - kartu lebih ramping (lebar 520 px, sebelumnya 620 px).
 - **Ganti bahasa di kartu** kini tanpa muat ulang. Tombol ID/EN mengganti teks kartu di tempat dengan efek acak huruf dan suara yang sama seperti tombol bahasa di header. Isi kedua bahasa sudah dirender server. Bahasa situs ikut berganti setelah kartu ditutup (Esc, klik di luar, atau Beranda), dengan efek acak huruf seperti biasa. Navigasi tidak dijalankan dari dalam dialog yang masih terbuka, karena tidak andal di Firefox. Ini menggantikan tautan muat ulang yang dicatat di atas.
+- **Revisi pemilik 2026-10-15 (kedua):**
+  - label mono "Portofolio - Muhammad Mirza Wirya" dikembalikan, sebaris dengan tombol ID/EN. Di HP ukurannya menyesuaikan sisa lebar, paling kecil 9 px, agar tetap satu baris;
+  - judul selalu satu baris selebar kartu. Ukurannya diukur skrip (`offsetWidth` teks dibanding lebar kartu, 99%, maksimal 72 px) dan dihitung ulang saat bahasa berganti, ukuran layar berubah, atau font selesai dimuat. Pengukuran tidak boleh memakai `getBoundingClientRect`, karena kartu masih mengecil 98% selama animasi masuk;
+  - isi rata kiri-kanan (`text-align: justify`);
+  - tombol Unduh CV dan Beranda sejajar selebar kartu (grid 1,4 : 1, tinggi 48 px).

@@ -16,6 +16,7 @@
     "darkMode": "Mode gelap"
   },
   "Intro": {
+    "eyebrow": "Portofolio - {name}",
     "language": "Bahasa",
     "downloadCv": "Unduh CV",
     "home": "Beranda"

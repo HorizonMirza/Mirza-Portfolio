@@ -16,6 +16,7 @@
     "darkMode": "Dark mode"
   },
   "Intro": {
+    "eyebrow": "Portfolio - {name}",
     "language": "Language",
     "downloadCv": "Download CV",
     "home": "Home"
