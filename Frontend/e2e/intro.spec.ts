@@ -58,19 +58,15 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
 test.describe('dengan animasi', () => {
   test.use({ contextOptions: { reducedMotion: 'no-preference' } })
 
-  test('Beranda: vortex terhisap ke tombol, layar hitam memudar ke Home', async ({ page }) => {
+  test('Beranda menutup kartu dengan memudar dan pindah ke Home', async ({ page }) => {
     await page.goto('/id/about')
     const dialog = page.getByRole('dialog', { name: 'Informasi Penting' })
     await expect(dialog).toBeVisible()
     // tunggu animasi masuk kartu selesai agar tombol diam saat diklik
     await page.waitForTimeout(900)
     await dialog.getByRole('button', { name: 'Beranda' }).click()
-    // layar hitam dipasang setelah vortex dan kartu terhisap (± 1,15 detik)
-    await expect(page.locator('.intro-veil')).toHaveCount(1)
     await expect(dialog).toBeHidden()
     await expect(page).toHaveURL(/\/id$/)
-    // layar hitam memudar lalu lapisannya dilepas
-    await expect(page.locator('.intro-veil')).toHaveCount(0, { timeout: 8000 })
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 })

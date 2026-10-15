@@ -11,13 +11,11 @@ import {
 } from 'react'
 
 import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
-import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
+import { usePathname, useRouter } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
-
-import { playHomeReveal, suckIntoButton } from './intro-home-reveal'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -34,6 +32,8 @@ export type IntroNoticeVersion = {
 const SEEN_KEY = 'intro-notice-seen'
 // sama dengan durasi animasi .intro[data-leaving] di globals.css
 const LEAVE_MS = 320
+// sama dengan durasi animasi .intro[data-leaving='home'] (memudar dan buram)
+const HOME_LEAVE_MS = 450
 
 function alreadySeen() {
   try {
@@ -68,7 +68,6 @@ export function IntroNotice({
   versions: Record<Locale, IntroNoticeVersion>
 }) {
   const ref = useRef<HTMLDialogElement>(null)
-  const homeRef = useRef<HTMLButtonElement>(null)
   // selesai saat tombol Esc yang menutup kartu sudah dilepas (lihat catatan Firefox di close)
   const escReleased = useRef<Promise<void> | null>(null)
   const router = useRouter()
@@ -113,15 +112,7 @@ export function IntroNotice({
     // sudah sedang ditutup: Esc atau klik kedua tidak memulai ulang
     if (!dialog?.open || dialog.dataset.leaving !== undefined) return
     markSeen()
-    // Beranda (dengan animasi): vortex dan kartu terhisap ke tombol Beranda (intro-home-reveal.ts)
-    const suck = goHome && !prefersReducedMotion()
-    const button = homeRef.current?.getBoundingClientRect()
-    const origin = button
-      ? { x: button.left + button.width / 2, y: button.top + button.height / 2 }
-      : { x: window.innerWidth / 2, y: window.innerHeight / 2 }
     const finish = () => {
-      // layar hitam dipasang sebelum dialog ditutup, jadi layar tetap tertutup tanpa celah
-      if (suck) playHomeReveal(origin, getPathname({ href: '/', locale: shown }))
       dialog.close()
       delete dialog.dataset.leaving
       setActive(false)
@@ -141,25 +132,16 @@ export function IntroNotice({
       // Dimulai setelah tombol Esc dilepas: di Firefox, Esc juga berarti "hentikan pemuatan" dan
       // bisa memutus permintaan halaman yang dimulai di antara tombol ditekan dan dilepas. CI
       // 2026-10-15: bahasa situs tetap ID, lalu halaman kosong saat navigasi dimulai di antaranya.
-      const go = () =>
-        router.push(target, {
-          locale: shown,
-          scroll: goHome,
-          ...(suck ? { transitionTypes: ['intro-home'] } : {}),
-        })
+      const go = () => router.push(target, { locale: shown, scroll: goHome })
       void (escReleased.current ?? Promise.resolve()).then(() => window.setTimeout(go, 0))
     }
     if (prefersReducedMotion()) {
       finish()
       return
     }
-    if (suck) {
-      dialog.dataset.leaving = 'home'
-      void suckIntoButton(dialog, origin).then(finish)
-      return
-    }
-    dialog.dataset.leaving = ''
-    window.setTimeout(finish, LEAVE_MS)
+    // Beranda: kartu dan latar memudar sambil makin buram (pilihan pemilik 2026-10-15)
+    dialog.dataset.leaving = goHome ? 'home' : ''
+    window.setTimeout(finish, goHome ? HOME_LEAVE_MS : LEAVE_MS)
   }
 
   // dialog memenuhi layar; klik di luar kartu (di latar vortex) ikut menutup
@@ -237,7 +219,6 @@ export function IntroNotice({
                 </a>
               ) : null}
               <button
-                ref={homeRef}
                 type="button"
                 className="intro-btn intro-btn-secondary"
                 onClick={() => close(true)}

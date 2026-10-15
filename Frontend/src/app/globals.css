@@ -2428,10 +2428,26 @@ html:has(.intro[open]) {
   .intro[data-leaving] .intro-card {
     animation: intro-leave 320ms ease-in both;
   }
-  /* Tombol Beranda: layar tetap hitam; vortex dan kartu dianimasikan intro-home-reveal.ts */
-  .intro[data-leaving='home'],
+  /* latar hitam ikut memudar, jadi halaman di belakang muncul perlahan, tidak tiba-tiba */
+  .intro[data-leaving]::backdrop {
+    animation: intro-fade 320ms ease-in reverse both;
+  }
+  /* Tombol Beranda: kartu dan latar memudar sambil makin buram, lalu pindah ke Home seperti
+     perpindahan halaman biasa (pilihan pemilik 2026-10-15, menggantikan transisi khusus) */
+  .intro[data-leaving='home'] {
+    animation: intro-blur-out 450ms ease-in both;
+  }
   .intro[data-leaving='home'] .intro-card {
     animation: none;
+  }
+  .intro[data-leaving='home']::backdrop {
+    animation: intro-fade 450ms ease-in reverse both;
+  }
+}
+@keyframes intro-blur-out {
+  to {
+    opacity: 0;
+    filter: blur(16px);
   }
 }
 @keyframes intro-rise {
@@ -2451,26 +2467,4 @@ html:has(.intro[open]) {
     opacity: 0;
     translate: 0 14px;
   }
-}
-/* Transisi tombol Beranda ke Home (pilihan pemilik 2026-10-15, demo transisi set ketiga nomor 4
-   "Terhisap ke tombol"). Layar hitam dan pendar di titik tombol dibuat intro-home-reveal.ts; lapisan
-   berada di atas seluruh situs dan tidak menangkap klik. Selalu gelap seperti latar kartu. */
-.intro-veil {
-  position: fixed;
-  inset: 0;
-  z-index: 2147483000;
-  overflow: hidden;
-  background: #000;
-  pointer-events: none;
-}
-.intro-veil i {
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  border: 2px solid rgb(200 190 255 / 0.9);
-  border-radius: 50%;
-  box-shadow:
-    0 0 30px 8px rgb(120 100 255 / 0.6),
-    inset 0 0 30px 4px rgb(120 100 255 / 0.4);
-  opacity: 0;
 }

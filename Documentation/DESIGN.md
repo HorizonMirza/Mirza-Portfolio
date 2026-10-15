@@ -782,10 +782,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - fokus awal ada di dialog itu sendiri, bukan di tombol. Chromium menampilkan garis fokus untuk fokus dari skrip sebelum ada interaksi, sehingga tombol tampak "terpilih". Tab menuju tombol pertama dengan garis fokus;
   - animasi masuk memakai mode isi `backwards`, bukan `both`. Animasi opacity yang terus menahan nilai akhirnya membuat Chrome menjadikan kartu batas latar, sehingga blur kaca tidak mengaburkan cahaya di belakang kartu (pemilik membandingkan dengan login, 2026-10-15). Animasi keluar tetap `both` agar kartu tidak muncul sesaat sebelum ditutup;
   - Esc ditangani sendiri (aksi bawaan dicegah), dan pindah bahasa setelah kartu ditutup baru dimulai setelah tombol Esc dilepas (paling lama 400 ms). Di Firefox, Esc juga berarti "hentikan pemuatan" dan bisa memutus permintaan halaman yang dimulai di antara tombol ditekan dan dilepas (CI 2026-10-15: mula-mula bahasa situs tetap ID, lalu halaman kosong saat navigasi dimulai tepat setelah keydown).
-- **Transisi tombol Beranda** (pilihan pemilik 2026-10-15). Kotak-kotak (demo set pertama nomor 9) sempat dipasang lalu dibatalkan pemilik. Penggantinya, setelah dua set demo lagi, adalah set ketiga nomor 4 "Terhisap ke tombol" (`intro-home-reveal.ts`):
-  - cahaya vortex berputar 240° sambil mengecil ke titik tombol Beranda (1.150 ms). Kartu ikut mengecil ke titik yang sama (800 ms, mulai 120 ms);
-  - lalu lapisan hitam (`.intro-veil`) dengan pendar cincin ungu di titik tombol dipasang tepat sebelum dialog ditutup, jadi tidak ada celah. Lapisan dibuat langsung di `<body>`, bukan oleh React, karena saat bahasa ikut berganti layout `[locale]` dipasang ulang;
-  - setelah alamat berganti ke Home (paling lama menunggu 1,5 detik), lapisan hitam memudar 600 ms lalu dilepas;
-  - navigasi ini memakai tipe transisi `intro-home` yang dipetakan ke `none` di layout, agar View Transition halaman tidak bertabrakan dengan transisi ini (saat kotak-kotak dicoba, sempat terlihat layar putih sesaat);
-  - reduced-motion: tanpa animasi, langsung ke Home. Esc, klik di luar kartu, dan Resume ATS tetap memakai animasi tutup biasa;
+- **Tombol Beranda tanpa transisi khusus** (keputusan akhir pemilik 2026-10-15). Kotak-kotak (demo set pertama nomor 9) dan "Terhisap ke tombol" (set ketiga nomor 4) sempat dipasang lalu dibatalkan. Sekarang:
+  - kartu dan latar vortex memudar sambil makin buram (`blur` 0 → 16 px, 450 ms), latar hitam ikut memudar;
+  - lalu pindah ke Home seperti perpindahan halaman biasa (View Transition bawaan situs);
+  - Esc, klik di luar kartu, dan Resume ATS memakai animasi tutup biasa (memudar 320 ms, latar hitam ikut memudar);
+  - reduced-motion: tanpa animasi, langsung ke Home;
   - tombol ID/EN di kartu tetap hanya mengganti bahasa kartu di tempat; kartu tetap terbuka (ditegaskan pemilik 2026-10-15).
