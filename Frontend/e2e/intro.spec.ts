@@ -20,6 +20,8 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   const dialog = page.getByRole('dialog', { name: 'Informasi Penting' })
   await expect(dialog).toBeVisible()
   await expect(dialog.getByRole('button', { name: 'Beranda' })).toBeVisible()
+  // latar neural vortex (seperti login admin) hanya terpasang selama kartu terbuka
+  await expect(page.locator('dialog.intro canvas')).toHaveCount(1)
 
   const results = await new AxeBuilder({ page })
     .include('dialog.intro')
@@ -30,6 +32,7 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   await dialog.getByRole('button', { name: 'Beranda' }).click()
   await expect(dialog).toBeHidden()
   await expect(page).toHaveURL(/\/id$/)
+  await expect(page.locator('dialog.intro canvas')).toHaveCount(0)
   await page.goto('/id/projects')
   // beri waktu efek klien berjalan; pemberitahuan tetap tertutup
   await page.waitForTimeout(800)

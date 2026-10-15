@@ -2,8 +2,10 @@
 
 import { useEffect, useRef } from 'react'
 
-// Latar halaman login admin: shader "neural vortex" (WebGL, tanpa library). Cahaya mengikuti
-// kursor/sentuhan. Berhenti saat tab tersembunyi, satu bingkai diam bila prefers-reduced-motion.
+import { cn } from '@/lib/utils'
+
+// Latar halaman login admin dan pemberitahuan pembuka situs: shader "neural vortex" (WebGL, tanpa
+// library). Cahaya mengikuti kursor/sentuhan. Berhenti saat tab tersembunyi, satu bingkai diam bila prefers-reduced-motion.
 // Tanpa WebGL: canvas kosong, latar hitam tetap tampil.
 
 const VERTEX = `
@@ -75,7 +77,7 @@ function compile(gl: WebGLRenderingContext, source: string, type: number) {
   return shader
 }
 
-export function NeuralVortexBackground() {
+export function NeuralVortexBackground({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -169,7 +171,7 @@ export function NeuralVortexBackground() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 size-full opacity-95"
+      className={cn('pointer-events-none fixed inset-0 z-0 size-full opacity-95', className)}
     />
   )
 }

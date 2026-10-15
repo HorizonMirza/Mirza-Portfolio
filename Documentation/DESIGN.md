@@ -392,7 +392,7 @@ Permintaan pemilik berdasarkan komponen Tubelight Navbar (21st.dev). Diterapkan 
 ## 14. Halaman login admin (2026-10-01)
 
 Permintaan pemilik berdasarkan komponen Interactive Neural Vortex dan sign-in-card-2 (21st.dev):
-- Latar: shader WebGL "neural vortex" (`components/admin/neural-vortex-background.tsx`), cahaya mengikuti kursor, DPR maks 1,5, berhenti saat tab tersembunyi, satu bingkai diam pada reduced-motion. Tanpa WebGL: latar hitam polos.
+- Latar: shader WebGL "neural vortex" (`components/shared/neural-vortex-background.tsx`, juga dipakai pemberitahuan pembuka, bagian 53), cahaya mengikuti kursor, DPR maks 1,5, berhenti saat tab tersembunyi, satu bingkai diam pada reduced-motion. Tanpa WebGL: latar hitam polos.
 - Halaman login **selalu hitam**, tidak mengikuti tema terang/gelap panel admin (warna ditulis langsung, bukan token tema).
 - Kartu login kaca **diam** (tanpa efek miring/geser 3D). Garis cahaya di tepi kartu memakai CSS, disembunyikan pada reduced-motion. Tanpa `framer-motion`.
 - Bagian contoh yang tidak dipakai karena fiturnya tidak ada: "Remember me", "Forgot password", "Sign in with Google", dan "Sign up" (satu admin, pendaftaran publik dimatikan). Ditambah tombol "Lihat sandi".
@@ -773,3 +773,11 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - judul kembali ke ukuran wajar (`clamp(1.75rem, …, 2.25rem)`, satu baris, tidak memenuhi lebar kartu). Pengukuran judul dengan skrip dihapus;
   - tombol CV berlabel **Resume ATS** (ID dan EN) dengan ikon dokumen;
   - teks Inggris diganti menjadi "I am currently looking for Fullstack Developer opportunities. My resume is the most concise summary of my experience, skills, and background." (migrasi `20261015090000_intro_notice_en_text`). Dari beberapa susunan kalimat, ini yang celah antarkatanya paling kecil saat rata kiri-kanan di lebar laptop dan HP kecil. Di sebagian lebar HP (±390–412 px) baris pertama masih sedikit renggang, karena susunan baris rata kiri-kanan ikut lebar layar.
+- **Revisi pemilik 2026-10-15 (keempat), latar seperti login Super Admin** (demo latar 11 dari 12):
+  - latar situs yang diburamkan diganti hitam penuh dengan shader neural vortex yang sama dengan halaman login. Komponennya dipindah ke `components/shared/neural-vortex-background.tsx` dan dipakai keduanya. Cahaya mengikuti kursor/sentuhan, berhenti saat tab tersembunyi, satu bingkai diam pada reduced-motion, dan tanpa WebGL tinggal hitam polos;
+  - shader hanya dipasang selama kartu terbuka, lalu dilepas saat kartu ditutup. Pengunjung yang sudah melihat kartu tidak memuat WebGL sama sekali;
+  - kartu disamakan dengan kartu login: kaca gelap (hitam 50% + blur), pola garis miring tipis, garis cahaya berputar di tepi (`.login-card`). Resume ATS putih penuh seperti tombol Login, Beranda kotak gelap berbingkai kilau seperti kolom email/password (`.login-field`);
+  - selalu gelap di tema terang maupun gelap (pemilik menerima bahwa latar ini tidak mengikuti tema). Warna ditulis langsung seperti login, tidak memakai token;
+  - `<dialog>` memenuhi layar dan hanya memudar. Animasi naik dipindah ke kartu, karena dialog yang digeser ikut menggeser kanvas `fixed` di dalamnya. Klik di area hitam di luar kartu menutup;
+  - fokus awal ada di dialog itu sendiri, bukan di tombol. Chromium menampilkan garis fokus untuk fokus dari skrip sebelum ada interaksi, sehingga tombol tampak "terpilih". Tab menuju tombol pertama dengan garis fokus;
+  - Esc ditangani sendiri (aksi bawaan dicegah), dan pindah bahasa setelah kartu ditutup dimulai sesudah penanganan tombol selesai. Di Firefox, Esc juga berarti "hentikan pemuatan" dan bisa memutus permintaan halaman yang dimulai bersamaan (CI 2026-10-15: kartu tertutup, tetapi bahasa situs tetap ID).

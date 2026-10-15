@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/admin/login-form'
-import { NeuralVortexBackground } from '@/components/admin/neural-vortex-background'
+import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
 import { getAdminEmailDomain, getAdminSession } from '@/lib/auth-guard'
 import { safeAdminRedirect } from '@/lib/safe-redirect'
 
