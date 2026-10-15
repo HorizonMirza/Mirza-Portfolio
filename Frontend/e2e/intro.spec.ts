@@ -54,3 +54,22 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
   await expect(dialog).toBeHidden()
   await expect(page).toHaveURL(/\/en\/projects$/)
 })
+
+test.describe('dengan animasi', () => {
+  test.use({ contextOptions: { reducedMotion: 'no-preference' } })
+
+  test('Beranda membuka Home lewat kotak-kotak yang lalu hilang sendiri', async ({ page }) => {
+    await page.goto('/id/about')
+    const dialog = page.getByRole('dialog', { name: 'Informasi Penting' })
+    await expect(dialog).toBeVisible()
+    // tunggu animasi masuk kartu selesai agar tombol diam saat diklik
+    await page.waitForTimeout(900)
+    await dialog.getByRole('button', { name: 'Beranda' }).click()
+    await expect(page.locator('.intro-tiles')).toHaveCount(1)
+    await expect(dialog).toBeHidden()
+    await expect(page).toHaveURL(/\/id$/)
+    // kotak terbuka lalu lapisannya dilepas (± 2,3 detik)
+    await expect(page.locator('.intro-tiles')).toHaveCount(0, { timeout: 8000 })
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  })
+})

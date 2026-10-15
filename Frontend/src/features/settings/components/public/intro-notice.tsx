@@ -11,11 +11,13 @@ import {
 } from 'react'
 
 import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
-import { usePathname, useRouter } from '@/i18n/navigation'
+import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
+
+import { playTileReveal } from './intro-tile-reveal'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -32,6 +34,8 @@ export type IntroNoticeVersion = {
 const SEEN_KEY = 'intro-notice-seen'
 // sama dengan durasi animasi .intro[data-leaving] di globals.css
 const LEAVE_MS = 320
+// tombol Beranda: kartu (380 ms) dan cahaya vortex (500 ms) memudar dulu sebelum kotak-kotak terbuka
+const HOME_LEAVE_MS = 500
 
 function alreadySeen() {
   try {
@@ -66,6 +70,9 @@ export function IntroNotice({
   versions: Record<Locale, IntroNoticeVersion>
 }) {
   const ref = useRef<HTMLDialogElement>(null)
+  const homeRef = useRef<HTMLButtonElement>(null)
+  // selesai saat tombol Esc yang menutup kartu sudah dilepas (lihat catatan Firefox di close)
+  const escReleased = useRef<Promise<void> | null>(null)
   const router = useRouter()
   const pathname = usePathname()
   const [shown, setShown] = useState<Locale>(locale)
@@ -108,7 +115,15 @@ export function IntroNotice({
     // sudah sedang ditutup: Esc atau klik kedua tidak memulai ulang
     if (!dialog?.open || dialog.dataset.leaving !== undefined) return
     markSeen()
+    // Beranda (dengan animasi): transisi kotak-kotak yang menyebar dari tombol Beranda
+    const tiles = goHome && !prefersReducedMotion()
+    const button = homeRef.current?.getBoundingClientRect()
+    const origin = button
+      ? { x: button.left + button.width / 2, y: button.top + button.height / 2 }
+      : { x: window.innerWidth / 2, y: window.innerHeight / 2 }
     const finish = () => {
+      // kotak hitam dipasang sebelum dialog ditutup, jadi layar tetap tertutup tanpa celah
+      if (tiles) playTileReveal(origin, getPathname({ href: '/', locale: shown }))
       dialog.close()
       delete dialog.dataset.leaving
       setActive(false)
@@ -125,16 +140,23 @@ export function IntroNotice({
           // sessionStorage diblokir: tetap pindah, hanya tanpa animasi
         }
       }
-      // Dimulai setelah penanganan tombol selesai: di Firefox, Esc juga berarti "hentikan pemuatan"
-      // dan bisa memutus permintaan halaman yang dimulai di saat yang sama (CI 2026-10-15).
-      window.setTimeout(() => router.push(target, { locale: shown, scroll: goHome }), 0)
+      // Dimulai setelah tombol Esc dilepas: di Firefox, Esc juga berarti "hentikan pemuatan" dan
+      // bisa memutus permintaan halaman yang dimulai di antara tombol ditekan dan dilepas. CI
+      // 2026-10-15: bahasa situs tetap ID, lalu halaman kosong saat navigasi dimulai di antaranya.
+      const go = () =>
+        router.push(target, {
+          locale: shown,
+          scroll: goHome,
+          ...(tiles ? { transitionTypes: ['intro-home'] } : {}),
+        })
+      void (escReleased.current ?? Promise.resolve()).then(() => window.setTimeout(go, 0))
     }
     if (prefersReducedMotion()) {
       finish()
       return
     }
-    dialog.dataset.leaving = ''
-    window.setTimeout(finish, LEAVE_MS)
+    dialog.dataset.leaving = tiles ? 'home' : ''
+    window.setTimeout(finish, tiles ? HOME_LEAVE_MS : LEAVE_MS)
   }
 
   // dialog memenuhi layar; klik di luar kartu (di latar vortex) ikut menutup
@@ -146,6 +168,15 @@ export function IntroNotice({
   function onDialogKeyDown(event: KeyboardEvent<HTMLDialogElement>) {
     if (event.key !== 'Escape') return
     event.preventDefault()
+    escReleased.current = new Promise((resolve) => {
+      const done = () => {
+        window.removeEventListener('keyup', done, true)
+        resolve()
+      }
+      window.addEventListener('keyup', done, true)
+      // tombol tidak pernah dilepas di halaman ini (mis. jendela berpindah): tetap lanjut
+      window.setTimeout(done, 400)
+    })
     close()
   }
 
@@ -203,6 +234,7 @@ export function IntroNotice({
                 </a>
               ) : null}
               <button
+                ref={homeRef}
                 type="button"
                 className="intro-btn intro-btn-secondary"
                 onClick={() => close(true)}

@@ -2428,6 +2428,17 @@ html:has(.intro[open]) {
   .intro[data-leaving] .intro-card {
     animation: intro-leave 320ms ease-in both;
   }
+  /* Tombol Beranda: layar tetap hitam, kartu mengecil dan cahaya vortex memudar, lalu kotak-kotak
+     (.intro-tiles) membuka halaman Home */
+  .intro[data-leaving='home'] {
+    animation: none;
+  }
+  .intro[data-leaving='home'] .intro-card {
+    animation: intro-shrink 380ms ease-in both;
+  }
+  .intro[data-leaving='home'] > canvas {
+    animation: intro-fade 500ms ease-in reverse both;
+  }
 }
 @keyframes intro-rise {
   from {
@@ -2446,4 +2457,25 @@ html:has(.intro[open]) {
     opacity: 0;
     translate: 0 14px;
   }
+}
+@keyframes intro-shrink {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+/* Transisi kotak-kotak ke Home (pilihan pemilik 2026-10-15, demo transisi 9). Kotak dibuat dan
+   dianimasikan oleh intro-tile-reveal.ts; lapisan berada di atas seluruh situs dan tidak menangkap
+   klik. Selalu hitam-ungu seperti latar kartu. */
+.intro-tiles {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  overflow: hidden;
+  pointer-events: none;
+}
+.intro-tiles i {
+  display: block;
+  background: #000;
 }
