@@ -42,17 +42,35 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
 test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setelah ditutup', async ({
   page,
 }) => {
-  await page.goto('/id/projects')
-  const dialog = page.locator('dialog.intro')
-  await expect(page.getByRole('dialog', { name: 'Informasi Penting' })).toBeVisible()
-  await dialog.getByRole('button', { name: 'EN' }).click()
-  await expect(page.getByRole('dialog', { name: 'Important Information' })).toBeVisible()
-  await expect(dialog.getByRole('button', { name: 'Home' })).toBeVisible()
-  // halaman di belakang belum berganti bahasa
-  await expect(page).toHaveURL(/\/id\/projects$/)
-  await page.keyboard.press('Escape')
-  await expect(dialog).toBeHidden()
-  await expect(page).toHaveURL(/\/en\/projects$/)
+  // Catatan kejadian browser, dicetak ke log CI bila tes gagal: tes ini berulang kali gagal hanya di
+  // Firefox CI dengan halaman yang tidak terbaca lagi (URL kosong), dan artefak trace tidak bisa
+  // dibuka dari sesi kerja (2026-10-15).
+  const events: string[] = []
+  page.on('crash', () => events.push('crash'))
+  page.on('close', () => events.push('close'))
+  page.on('pageerror', (e) => events.push(`pageerror: ${e.message}`))
+  page.on('console', (m) => {
+    if (m.type() === 'error' || m.type() === 'warning') events.push(`${m.type()}: ${m.text()}`)
+  })
+  page.on('framenavigated', (f) => {
+    if (f === page.mainFrame()) events.push(`nav: ${f.url()}`)
+  })
+  try {
+    await page.goto('/id/projects')
+    const dialog = page.locator('dialog.intro')
+    await expect(page.getByRole('dialog', { name: 'Informasi Penting' })).toBeVisible()
+    await dialog.getByRole('button', { name: 'EN' }).click()
+    await expect(page.getByRole('dialog', { name: 'Important Information' })).toBeVisible()
+    await expect(dialog.getByRole('button', { name: 'Home' })).toBeVisible()
+    // halaman di belakang belum berganti bahasa
+    await expect(page).toHaveURL(/\/id\/projects$/)
+    await page.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+    await expect(page).toHaveURL(/\/en\/projects$/)
+  } catch (error) {
+    console.log(`[intro ID/EN] kejadian browser:\n${events.join('\n')}`)
+    throw error
+  }
 })
 
 test.describe('dengan animasi', () => {
