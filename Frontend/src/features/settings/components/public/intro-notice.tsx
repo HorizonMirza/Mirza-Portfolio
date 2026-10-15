@@ -11,7 +11,7 @@ import {
 } from 'react'
 
 import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
-import { usePathname, useRouter } from '@/i18n/navigation'
+import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
@@ -34,6 +34,9 @@ const SEEN_KEY = 'intro-notice-seen'
 const LEAVE_MS = 320
 // sama dengan durasi animasi .intro[data-leaving='home'] (memudar dan buram)
 const HOME_LEAVE_MS = 450
+// Pindah bahasa lewat navigasi klien kadang macet di Firefox (CI 2026-10-12 s.d. 2026-10-15, juga tombol
+// bahasa di header). Bila alamat belum berganti setelah waktu ini, halaman dimuat biasa ke bahasa tujuan.
+const LOCALE_FALLBACK_MS = 1500
 
 function alreadySeen() {
   try {
@@ -132,7 +135,14 @@ export function IntroNotice({
       // Dimulai setelah tombol Esc dilepas: di Firefox, Esc juga berarti "hentikan pemuatan" dan
       // bisa memutus permintaan halaman yang dimulai di antara tombol ditekan dan dilepas. CI
       // 2026-10-15: bahasa situs tetap ID, lalu halaman kosong saat navigasi dimulai di antaranya.
-      const go = () => router.push(target, { locale: shown, scroll: goHome })
+      const go = () => {
+        router.push(target, { locale: shown, scroll: goHome })
+        if (shown === locale) return
+        const destination = getPathname({ href: target, locale: shown })
+        window.setTimeout(() => {
+          if (window.location.pathname !== destination) window.location.assign(destination)
+        }, LOCALE_FALLBACK_MS)
+      }
       void (escReleased.current ?? Promise.resolve()).then(() => window.setTimeout(go, 0))
     }
     if (prefersReducedMotion()) {

@@ -788,3 +788,4 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - Esc, klik di luar kartu, dan Resume ATS memakai animasi tutup biasa (memudar 320 ms, latar hitam ikut memudar);
   - reduced-motion: tanpa animasi, langsung ke Home;
   - tombol ID/EN di kartu tetap hanya mengganti bahasa kartu di tempat; kartu tetap terbuka (ditegaskan pemilik 2026-10-15).
+  - cadangan pindah bahasa: setelah kartu ditutup dengan bahasa lain, situs mencoba navigasi klien seperti biasa. Bila dalam 1,5 detik alamat belum berganti, halaman dimuat biasa (`location.assign`) ke bahasa tujuan. Alasannya, navigasi klien ganti bahasa kadang macet di Firefox CI (lolos dan gagal bergantian sejak 2026-10-12; tombol bahasa header juga pernah flaky). Dalam kondisi normal tidak ada muat ulang (diuji di Chromium); saat permintaan RSC diblokir, halaman tetap sampai di bahasa tujuan.
