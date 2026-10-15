@@ -1551,6 +1551,39 @@
 }
 
 /* Beranda: angka, garis cerita, dan aktivitas GitHub (DESIGN.md bagian 46). */
+/* Project pilihan di beranda (audit Home 2026-10-15): pita gambar melengkung (TiltedGridHero) lalu
+   deretan nama project sebagai tautan ke halaman detailnya. */
+.home-project-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.home-project-links a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    border-color 150ms ease-out,
+    background-color 150ms ease-out;
+}
+.home-project-links a:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+.home-project-links li:first-child a {
+  border-color: var(--text);
+}
 .home-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));

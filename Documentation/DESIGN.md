@@ -789,3 +789,12 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - reduced-motion: tanpa animasi, langsung ke Home;
   - tombol ID/EN di kartu tetap hanya mengganti bahasa kartu di tempat; kartu tetap terbuka (ditegaskan pemilik 2026-10-15).
   - cadangan pindah bahasa: setelah kartu ditutup dengan bahasa lain, situs mencoba navigasi klien seperti biasa. Bila dalam 1,5 detik alamat belum berganti, halaman dimuat biasa (`location.assign`) ke bahasa tujuan. Alasannya, navigasi klien ganti bahasa kadang macet di Firefox CI (lolos dan gagal bergantian sejak 2026-10-12; tombol bahasa header juga pernah flaky). Dalam kondisi normal tidak ada muat ulang (diuji di Chromium); saat permintaan RSC diblokir, halaman tetap sampai di bahasa tujuan.
+
+## 54. Beranda: Project pilihan dengan pita gambar melengkung (2026-10-15)
+
+- Audit Home nomor 3: tujuan utama PRD (recruiter langsung menemukan project) tidak terpenuhi sejak Project pilihan dihapus (bagian 45). Pemilik memilih tampilan seperti komponen 21st.dev "Tilted Grid Hero" (kode dari pemilik), sebagai bagian **02 Project pilihan** tepat setelah pembuka.
+- `components/ui/tilted-grid-hero.tsx`: satu baris gambar mengalir dari kanan ke kiri di sisi dalam silinder; tengah lurus, ujung melengkung mendekat dan memudar. Tiap tile dipotong 16 strip 3D; hanya transform (compositor) dan satu ResizeObserver. Logika disalin apa adanya; penyesuaian hanya komentar berbahasa Indonesia dan latar placeholder `bg-surface-2` (di situs ini `bg-muted` warna teks). Tanpa dependency baru.
+- Isi dari Admin → Project: sampul project terbit, yang bertanda unggulan di depan lalu urutan admin. Alt gambar memakai alt sampul dua bahasa. Bagian tidak tampil bila sampul kurang dari dua.
+- Pita selebar layar (tinggi 230 / 320 / 400 px untuk HP / tablet / desktop, tile 52% tinggi pita), bersifat dekoratif (`aria-hidden`, tidak bisa diklik). Navigasinya: tautan "Semua project (n)" di judul bagian dan deretan nama project (pil, yang pertama berbingkai tegas) menuju halaman detail masing-masing.
+- Reduced-motion: pita berhenti sebagai gambar diam yang utuh.
+- **Nomor bagian beranda kini dihitung otomatis** (audit nomor 7) dari bagian yang benar-benar tampil: 02 Project pilihan, 03 Dalam angka, 04 Dari komunitas ke software, 05 Yang saya pakai, 06 Aktivitas di GitHub. Bila satu bagian kosong, nomor berikutnya tidak melompat.

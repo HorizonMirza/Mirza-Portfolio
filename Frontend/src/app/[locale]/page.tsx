@@ -9,6 +9,7 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
+import { TiltedGridHero } from '@/components/ui/tilted-grid-hero'
 import { getPublicExperiences } from '@/features/experience/public'
 import { organizationName } from '@/features/experience/schema'
 import { CountUp } from '@/features/highlights/components/count-up'
@@ -150,6 +151,25 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     ? contributions.weeks.flat().map((day) => ({ date: day.date, count: day.count }))
     : []
   const projectTitles = new Map(projects.map((p) => [p.slug, loc(p, 'title', locale)]))
+  // Project pilihan (audit Home 2026-10-15): yang bertanda unggulan di depan, lalu urutan admin.
+  // Pita gambar butuh minimal dua sampul agar ada yang mengalir.
+  const showcase = [...projects.filter((p) => p.featured), ...projects.filter((p) => !p.featured)]
+  const showcaseImages = showcase.flatMap((p) =>
+    p.cover
+      ? [{ src: p.cover.url, alt: loc(p.cover, 'alt', locale) || loc(p, 'title', locale) }]
+      : [],
+  )
+
+  // Nomor bagian dihitung dari bagian yang benar-benar tampil, agar tidak melompat bila satu bagian
+  // kosong (mis. semua angka dihapus di admin). 01 selalu bagian pembuka.
+  const sections = [
+    showcaseImages.length > 1 && 'projects',
+    highlights.length > 0 && 'numbers',
+    story.length > 1 && 'story',
+    skills.length > 0 && 'stack',
+    contributions && github && 'github',
+  ].filter((key): key is string => Boolean(key))
+  const sectionIndex = (key: string) => String(sections.indexOf(key) + 2).padStart(2, '0')
   const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
@@ -276,10 +296,51 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <HorizonBackdrop />
       </section>
 
-      {highlights.length > 0 ? (
+      {sections.includes('projects') ? (
+        <section aria-labelledby="projects-title" className="border-t border-border py-16 md:py-24">
+          <Container className="reveal">
+            <SectionHeading
+              id="projects-title"
+              index={sectionIndex('projects')}
+              title={t('projectsHeading')}
+              action={
+                <Link
+                  href="/projects"
+                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  {t('allProjects', { count: projects.length })}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              }
+            />
+          </Container>
+          {/* pita gambar dekoratif selebar layar (aria-hidden di dalam komponen); tautannya di bawah */}
+          <TiltedGridHero
+            images={showcaseImages}
+            axis={50}
+            tileHeight={52}
+            className="h-[230px] w-full sm:h-[320px] lg:h-[400px]"
+          />
+          <Container>
+            <ul aria-label={t('projectList')} className="home-project-links">
+              {showcase.map((p) => (
+                <li key={p.slug}>
+                  <Link href={`/projects/${p.slug}`}>{loc(p, 'title', locale)}</Link>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
+
+      {sections.includes('numbers') ? (
         <section aria-labelledby="numbers-title" className="border-t border-border py-16 md:py-24">
           <Container className="reveal">
-            <SectionHeading id="numbers-title" index="02" title={t('highlightsHeading')} />
+            <SectionHeading
+              id="numbers-title"
+              index={sectionIndex('numbers')}
+              title={t('highlightsHeading')}
+            />
             <ul className="home-stats">
               {highlights.map((h) => (
                 <li key={h.id}>
@@ -298,10 +359,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </section>
       ) : null}
 
-      {story.length > 1 ? (
+      {sections.includes('story') ? (
         <section aria-labelledby="story-title" className="border-t border-border py-16 md:py-24">
           <Container className="reveal">
-            <SectionHeading id="story-title" index="03" title={t('storyHeading')} />
+            <SectionHeading
+              id="story-title"
+              index={sectionIndex('story')}
+              title={t('storyHeading')}
+            />
             <ol className="home-story" style={{ '--n': story.length } as CSSProperties}>
               {story.map((e, i) => (
                 <li
@@ -319,14 +384,18 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </section>
       ) : null}
 
-      {skills.length > 0 ? (
+      {sections.includes('stack') ? (
         <section
           id="skills"
           aria-labelledby="stack-title"
           className="scroll-mt-24 border-t border-border py-16 md:py-24"
         >
           <Container className="reveal">
-            <SectionHeading id="stack-title" index="04" title={t('stackHeading')} />
+            <SectionHeading
+              id="stack-title"
+              index={sectionIndex('stack')}
+              title={t('stackHeading')}
+            />
             <SkillKeyboard3D
               keycaps={skillKeycaps}
               label={tKeyboard('label')}
@@ -346,12 +415,12 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </section>
       ) : null}
 
-      {contributions && github ? (
+      {sections.includes('github') ? (
         <section aria-labelledby="github-title" className="border-t border-border py-16 md:py-24">
           <Container className="reveal">
             <SectionHeading
               id="github-title"
-              index="05"
+              index={sectionIndex('github')}
               title={t('githubHeading')}
               action={
                 <a

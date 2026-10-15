@@ -6,10 +6,20 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   await page.goto('/id')
   await expect(page.getByRole('link', { name: 'Lihat project' })).toBeInViewport()
   await expect(page.getByRole('heading', { name: 'Yang saya pakai' })).toBeVisible()
-  // dihapus atas permintaan pemilik 2026-10-08: Project pilihan, Perjalanan terbaru, ajakan + newsletter
-  for (const name of ['Project pilihan', 'Perjalanan terbaru', 'Ada yang ingin dibangun?']) {
+  // Project pilihan kembali (audit Home 2026-10-15, DESIGN.md bagian 54): pita gambar dekoratif dan
+  // tautan nama project ke halaman detail
+  const projects = page.getByRole('list', { name: 'Daftar project' })
+  await expect(page.getByRole('heading', { name: 'Project pilihan' })).toBeVisible()
+  await expect(projects.getByRole('link').first()).toHaveAttribute('href', /\/id\/projects\/.+/)
+  // tetap dihapus atas permintaan pemilik 2026-10-08: Perjalanan terbaru, ajakan + newsletter
+  for (const name of ['Perjalanan terbaru', 'Ada yang ingin dibangun?']) {
     await expect(page.getByRole('heading', { name })).toHaveCount(0)
   }
+  // nomor bagian berurutan tanpa lompatan, mulai 02 setelah pembuka
+  const numbers = await page.locator('main h2 > span[aria-hidden="true"]').allTextContents()
+  expect(numbers.map((n) => n.trim())).toEqual(
+    numbers.map((_, i) => `${String(i + 2).padStart(2, '0')} —`),
+  )
 })
 
 test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
