@@ -2345,7 +2345,7 @@ html:has(.intro[open]) {
 .intro-actions-2 {
   grid-template-columns: 1.4fr 1fr;
 }
-/* tombol seperti tombol Login: putih penuh, dan kotak gelap berbingkai kilau */
+/* tombol seperti tombol Login: putih penuh, dan kotak gelap berbingkai tipis */
 .intro-btn {
   display: inline-flex;
   width: 100%;
@@ -2375,12 +2375,9 @@ html:has(.intro[open]) {
 .intro-btn-primary:hover {
   background: rgb(255 255 255 / 0.9);
 }
-.intro-btn-frame {
-  display: block;
-}
 .intro-btn-secondary {
-  min-height: calc(3rem - 2px);
-  border-radius: calc(0.5rem - 1px);
+  /* bingkai tipis diam, tanpa kilau berjalan (revisi pemilik 2026-10-15) */
+  border: 1px solid rgb(255 255 255 / 0.15);
   background: #111117;
   color: #fff;
   cursor: pointer;

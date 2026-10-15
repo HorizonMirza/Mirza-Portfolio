@@ -202,17 +202,14 @@ export function IntroNotice({
                   <span className="sr-only">{v.labels.newTab}</span>
                 </a>
               ) : null}
-              {/* bingkai berkilau yang sama dengan kolom email/password di login */}
-              <span className="login-field login-field-delay intro-btn-frame">
-                <button
-                  type="button"
-                  className="intro-btn intro-btn-secondary"
-                  onClick={() => close(true)}
-                >
-                  <House aria-hidden="true" />
-                  {v.labels.home}
-                </button>
-              </span>
+              <button
+                type="button"
+                className="intro-btn intro-btn-secondary"
+                onClick={() => close(true)}
+              >
+                <House aria-hidden="true" />
+                {v.labels.home}
+              </button>
             </div>
           </div>
         </div>
