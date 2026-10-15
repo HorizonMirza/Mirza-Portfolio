@@ -164,9 +164,8 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
       gl.deleteShader(vertex)
       gl.deleteShader(fragment)
       gl.deleteBuffer(buffer)
-      // Konteks dilepas tegas saat kanvas dibongkar, bukan menunggu pembersih memori browser: kartu
-      // pembuka membongkar kanvas bersamaan dengan pindah bahasa (layout dipasang ulang), dan di
-      // Firefox CI tab sempat crash pada saat itu (2026-10-15).
+      // Konteks dilepas tegas saat kanvas dibongkar, bukan menunggu pembersih memori browser
+      // (kartu pembuka memasang dan membongkar kanvas ini setiap sesi).
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
   }, [])

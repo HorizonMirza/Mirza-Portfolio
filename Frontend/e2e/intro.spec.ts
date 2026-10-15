@@ -55,6 +55,10 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
   page.on('framenavigated', (f) => {
     if (f === page.mainFrame()) events.push(`nav: ${f.url()}`)
   })
+  page.on('requestfailed', (r) =>
+    events.push(`requestfailed: ${r.url()} ${r.failure()?.errorText}`),
+  )
+  page.context().on('page', (p) => events.push(`page baru: ${p.url()}`))
   try {
     await page.goto('/id/projects')
     const dialog = page.locator('dialog.intro')
@@ -66,7 +70,22 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
     await expect(page).toHaveURL(/\/id\/projects$/)
     await page.keyboard.press('Escape')
     await expect(dialog).toBeHidden()
-    await expect(page).toHaveURL(/\/en\/projects$/)
+    // Firefox: bila pindah bahasa menjadi muat ulang penuh, header Cross-Origin-Opener-Policy membuat
+    // Firefox memindahkan halaman ke proses baru dan Playwright melaporkan objek halaman lama
+    // "close" (CI 2026-10-15: "nav: /en/projects" lalu "close"). Pengunjung tetap sampai di /en,
+    // jadi yang diperiksa adalah halaman mana pun di sesi browser ini.
+    await expect
+      .poll(
+        () =>
+          page
+            .context()
+            .pages()
+            .some((p) => /\/en\/projects$/.test(p.url())),
+        {
+          timeout: 10_000,
+        },
+      )
+      .toBe(true)
   } catch (error) {
     console.log(`[intro ID/EN] kejadian browser:\n${events.join('\n')}`)
     throw error
