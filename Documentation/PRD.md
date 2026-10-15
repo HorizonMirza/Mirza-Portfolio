@@ -44,7 +44,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 
 | ID | Fitur | Prioritas |
 |---|---|---|
-| F1 | **Home**: hero layar penuh dengan animasi, nama, posisi yang dicari, CTA Unduh CV + GitHub, ringkasan project unggulan | P0 |
+| F1 | **Home**: hero layar penuh dengan animasi, nama, posisi yang dicari, CTA Unduh CV + GitHub, ringkasan project unggulan. **Susunan sekarang (2026-10-15):** 01 pembuka (judul, pelat status dengan posisi yang dicari, tombol Unduh CV, Lihat project, GitHub), 02 Project pilihan (pita sampul berjalan, unggulan di depan, tautan ke detail), 03 Dalam angka, 04 Dari komunitas ke software, 05 Yang saya pakai (keyboard skill), 06 Aktivitas di GitHub. Nomor bagian dihitung otomatis dari bagian yang tampil. Project pilihan sempat dihapus 2026-10-08 dan dikembalikan 2026-10-15; Perjalanan terbaru dan ajakan kontak + newsletter tetap dihapus (DESIGN.md bagian 45, 46, 54) | P0 |
 | F2 | **About**: bio personal, kartu foto, pendidikan (SMA dan kuliah, dari entri Pengalaman bertipe Pendidikan), dan tombol Unduh CV. Kontak tidak ditampilkan di sini sejak 2026-10-05 (keputusan pemilik) | P0 |
 | F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan filter, logo instansi, dan foto kegiatan. Pendidikan tidak ditampilkan di sini sejak 2026-10-03 (keputusan pemilik); data pendidikan tetap dipakai halaman About | P0 |
 | F4 | **Skills**: dikelompokkan (Frontend, Backend, Database, Tools/DevOps), tanpa progress bar persen **[ASUMSI]** | P0 |
@@ -60,7 +60,8 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F14 | **SEO & berbagi**: metadata per halaman, Open Graph, sitemap, robots.txt, data terstruktur `Person` | P0 |
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
 | F16 | **API publik** read-only (project, skill, profil) | P1 |
-| F17 | **Pelat status di hero** yang dapat diubah admin (status ketersediaan, lokasi, posisi sekarang) **[USULAN, dari referensi utama]** | P0 |
+| F17 | **Pelat status di hero** yang dapat diubah admin (status ketersediaan, lokasi, posisi sekarang) **[USULAN, dari referensi utama]**. Catatan ketersediaan memuat posisi yang dicari: "Terbuka untuk kerja · Mencari peluang Fullstack Developer" (2026-10-15, CONTENT.md) | P0 |
+| F19 | **Pemberitahuan pembuka**: kartu "Informasi Penting" sekali per sesi browser (tab baru), teks dua bahasa dari Admin → Pengaturan, tombol Resume ATS dan Beranda. ID/EN mengganti bahasa kartu di tempat; bahasa situs ikut setelah kartu ditutup. Latar neural vortex seperti login Super Admin, selalu gelap (keputusan pemilik 2026-10-12 s.d. 2026-10-15, DESIGN.md bagian 53) | P0 |
 | F18 | **Kategori project**: Software dan Komunitas & Bisnis **[USULAN, dari CV]** | P0 |
 
 ### 5.2 Super Admin (satu akun, email + password)
@@ -88,7 +89,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | U4 | Sebagai **developer**, saya ingin membuka repo project, agar bisa menilai kode. | Kartu project menampilkan bahasa, bintang, dan waktu update terakhir dari GitHub. |
 | U5 | Sebagai **pengunjung**, saya ingin mengganti bahasa dan tema, agar nyaman membaca. | Pilihan tersimpan. Semua teks (UI dan konten) berganti tanpa kehilangan halaman. |
 | U6 | Sebagai **pengunjung**, saya ingin mengirim pesan, agar bisa menghubungi Mirza. | Form memvalidasi input, menampilkan status berhasil/gagal yang jelas, dan pesan masuk di admin. |
-| U7 | Sebagai **pengunjung**, saya ingin berlangganan newsletter dan berhenti kapan saja. | Email konfirmasi terkirim. Tautan berhenti berfungsi tanpa login. |
+| U7 | Sebagai **pengunjung**, saya ingin berlangganan newsletter dan berhenti kapan saja. | Email konfirmasi terkirim. Tautan berhenti berfungsi tanpa login. **2026-10-08:** form berlangganan dihapus dari beranda (F13); alur konfirmasi dan berhenti tetap berfungsi, tetapi saat ini tidak ada tempat mendaftar. |
 | U8 | Sebagai **Super Admin**, saya ingin menambah project baru dalam dua bahasa, agar konten cepat diperbarui. | Project baru tampil di situs dalam ≤ 1 menit setelah disimpan (revalidate). |
 | U9 | Sebagai **Super Admin**, saya ingin mengganti file CV, agar semua orang mendapat versi terbaru. | Tautan unduh selalu mengarah ke CV terbaru. |
 | U10 | Sebagai **Super Admin**, saya ingin melihat log perubahan, agar tahu riwayat konten dan mendeteksi akses tak wajar. | Setiap tulis/ubah/hapus tercatat dengan waktu dan aktor. |
