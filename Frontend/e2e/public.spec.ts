@@ -5,6 +5,10 @@ import { uniqueIp } from './admin/helpers'
 test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', async ({ page }) => {
   await page.goto('/id')
   await expect(page.getByRole('link', { name: 'Lihat project' })).toBeInViewport()
+  // foto potret hero (DESIGN.md bagian 55): bulat kecil di HP, potret di kolom kanan laptop
+  const portrait = page.locator('section[aria-labelledby="hero-title"] figure img')
+  await expect(portrait).toBeInViewport()
+  await expect(portrait).toHaveAttribute('alt', /.+/)
   await expect(page.getByRole('heading', { name: 'Yang saya pakai' })).toBeVisible()
   // Project pilihan kembali (audit Home 2026-10-15, DESIGN.md bagian 54): pita gambar dekoratif dan
   // tautan nama project ke halaman detail

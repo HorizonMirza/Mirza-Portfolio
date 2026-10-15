@@ -28,7 +28,7 @@ import { toKeycaps } from '@/features/skills/keycaps'
 import { getPublicSkills } from '@/features/skills/public'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
-import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
+import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
 import { loc } from '@/lib/localized'
@@ -190,105 +190,150 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       }
     : null
 
+  // Foto potret hero: foto dari admin bila ada, selain itu foto bawaan pemilik.
+  const portraitSizes = '(min-width: 1024px) 400px, 64px'
+  const portrait = profile?.photo ? (
+    <Image
+      src={profile.photo.url}
+      alt={loc(profile.photo, 'alt', locale)}
+      width={profile.photo.width ?? 480}
+      height={profile.photo.height ?? 600}
+      sizes={portraitSizes}
+      loading="eager"
+      className="home-portrait-img"
+    />
+  ) : (
+    <Image
+      src={DEFAULT_PROFILE_PHOTO}
+      alt={DEFAULT_PHOTO_ALT[locale]}
+      sizes={portraitSizes}
+      loading="eager"
+      placeholder="blur"
+      className="home-portrait-img"
+    />
+  )
+  // keterangan di bawah foto (hanya laptop): kota dan kampus dari profil
+  const portraitCaption = [
+    profile?.city,
+    profile?.campus ? organizationName(profile.campus, locale) : null,
+  ].filter((part): part is string => Boolean(part))
+
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
       <section aria-labelledby="hero-title" className="flex min-h-[calc(100svh-4rem)] flex-col">
-        <Container className="flex flex-1 flex-col justify-center gap-8 pt-10 pb-8 md:pt-16">
-          <div>
-            <p className="font-mono text-label tracking-widest text-note uppercase">
-              <span aria-hidden="true">01 — </span>
-              {name}
-            </p>
-            <h1 id="hero-title" className="mt-4 max-w-5xl text-display font-bold text-balance">
-              {profile ? loc(profile, 'headline', locale) : name}
-            </h1>
-          </div>
-
-          {/* Di HP tombol tampil sebelum pelat status agar "Unduh CV" terlihat tanpa scroll (PRD U1). */}
-          <div className="flex flex-col gap-8 lg:flex-col-reverse">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              {profile?.hasCv ? (
-                <Button asChild>
-                  <a href={cvHref}>
-                    <Download aria-hidden="true" />
-                    {tNav('downloadCv')}
-                  </a>
-                </Button>
-              ) : null}
-              <Button asChild variant="secondary">
-                <Link href="/projects">
-                  {t('viewProjects')}
-                  <ArrowRight aria-hidden="true" />
-                </Link>
-              </Button>
-              {github ? (
-                <Button asChild variant="ghost">
-                  <a href={github} target="_blank" rel="noopener noreferrer">
-                    {t('github')}
-                    <span className="sr-only">{tCommon('openInNewTab')}</span>
-                  </a>
-                </Button>
-              ) : null}
+        {/* Laptop: teks di kiri, foto potret di kanan (audit Home nomor 2, pilihan pemilik 2026-10-15
+            demo 1). HP: foto bulat kecil di atas nama. */}
+        <Container className="grid flex-1 content-center gap-6 pt-10 pb-8 md:pt-16 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:items-center lg:gap-14">
+          <figure className="home-portrait lg:order-last">
+            <div className="home-portrait-frame">{portrait}</div>
+            {portraitCaption.length > 0 ? (
+              <figcaption className="home-portrait-cap">
+                {portraitCaption.map((part) => (
+                  <span key={part}>{part}</span>
+                ))}
+              </figcaption>
+            ) : null}
+          </figure>
+          <div className="flex min-w-0 flex-col gap-8">
+            <div>
+              <p className="font-mono text-label tracking-widest text-note uppercase">
+                <span aria-hidden="true">01 — </span>
+                {name}
+              </p>
+              <h1 id="hero-title" className="mt-4 max-w-5xl text-display font-bold text-balance">
+                {profile ? loc(profile, 'headline', locale) : name}
+              </h1>
             </div>
 
-            {profile ? (
-              <dl
-                aria-label={t('statusPlate')}
-                className="grid max-w-2xl gap-x-6 gap-y-3 rounded-lg border border-border bg-surface/80 p-4 text-sm sm:grid-cols-[auto_1fr] dark:bg-surface/60"
-              >
-                <dt className="font-mono text-label tracking-widest text-note uppercase">
-                  {t('statusLabel')}
-                </dt>
-                <dd className="flex items-start gap-2 font-medium">
-                  {/* titik setinggi baris pertama; status dan catatan mengalir sebagai satu kalimat
+            {/* Di HP tombol tampil sebelum pelat status agar "Unduh CV" terlihat tanpa scroll (PRD U1). */}
+            <div className="flex flex-col gap-8 lg:flex-col-reverse">
+              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                {profile?.hasCv ? (
+                  <Button asChild>
+                    <a href={cvHref}>
+                      <Download aria-hidden="true" />
+                      {tNav('downloadCv')}
+                    </a>
+                  </Button>
+                ) : null}
+                <Button asChild variant="secondary">
+                  <Link href="/projects">
+                    {t('viewProjects')}
+                    <ArrowRight aria-hidden="true" />
+                  </Link>
+                </Button>
+                {github ? (
+                  <Button asChild variant="ghost">
+                    <a href={github} target="_blank" rel="noopener noreferrer">
+                      {t('github')}
+                      <span className="sr-only">{tCommon('openInNewTab')}</span>
+                    </a>
+                  </Button>
+                ) : null}
+              </div>
+
+              {profile ? (
+                <dl
+                  aria-label={t('statusPlate')}
+                  className="grid max-w-2xl gap-x-6 gap-y-3 rounded-lg border border-border bg-surface/80 p-4 text-sm sm:grid-cols-[auto_1fr] dark:bg-surface/60"
+                >
+                  <dt className="font-mono text-label tracking-widest text-note uppercase">
+                    {t('statusLabel')}
+                  </dt>
+                  <dd className="flex items-start gap-2 font-medium">
+                    {/* titik setinggi baris pertama; status dan catatan mengalir sebagai satu kalimat
                       agar di HP tidak terbelah menjadi dua kolom sempit */}
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      'mt-[0.45em] size-2 shrink-0 rounded-full',
-                      availabilityDot[profile.availability],
-                    )}
-                  />
-                  <span>
-                    {tAvail(profile.availability)}
-                    {loc(profile, 'availabilityNote', locale) ? (
-                      <span className="font-normal text-muted">
-                        {' '}
-                        · {loc(profile, 'availabilityNote', locale)}
-                      </span>
-                    ) : null}
-                  </span>
-                </dd>
-                {profile.city ? (
-                  <>
-                    <dt className="font-mono text-label tracking-widest text-note uppercase">
-                      {t('locationLabel')}
-                    </dt>
-                    <dd>{profile.city}</dd>
-                  </>
-                ) : null}
-                {profile.campus ? (
-                  <>
-                    <dt className="font-mono text-label tracking-widest text-note uppercase">
-                      {t('campusLabel')}
-                    </dt>
-                    <dd>
-                      {organizationName(profile.campus, locale)}
-                      <span className="text-muted"> · {loc(profile.campus, 'title', locale)}</span>
-                    </dd>
-                  </>
-                ) : null}
-                {loc(profile, 'currentRole', locale) ? (
-                  <>
-                    <dt className="font-mono text-label tracking-widest text-note uppercase">
-                      {t('nowLabel')}
-                    </dt>
-                    <dd>{loc(profile, 'currentRole', locale)}</dd>
-                  </>
-                ) : null}
-              </dl>
-            ) : null}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'mt-[0.45em] size-2 shrink-0 rounded-full',
+                        availabilityDot[profile.availability],
+                      )}
+                    />
+                    <span>
+                      {tAvail(profile.availability)}
+                      {loc(profile, 'availabilityNote', locale) ? (
+                        <span className="font-normal text-muted">
+                          {' '}
+                          · {loc(profile, 'availabilityNote', locale)}
+                        </span>
+                      ) : null}
+                    </span>
+                  </dd>
+                  {profile.city ? (
+                    <>
+                      <dt className="font-mono text-label tracking-widest text-note uppercase">
+                        {t('locationLabel')}
+                      </dt>
+                      <dd>{profile.city}</dd>
+                    </>
+                  ) : null}
+                  {profile.campus ? (
+                    <>
+                      <dt className="font-mono text-label tracking-widest text-note uppercase">
+                        {t('campusLabel')}
+                      </dt>
+                      <dd>
+                        {organizationName(profile.campus, locale)}
+                        <span className="text-muted">
+                          {' '}
+                          · {loc(profile.campus, 'title', locale)}
+                        </span>
+                      </dd>
+                    </>
+                  ) : null}
+                  {loc(profile, 'currentRole', locale) ? (
+                    <>
+                      <dt className="font-mono text-label tracking-widest text-note uppercase">
+                        {t('nowLabel')}
+                      </dt>
+                      <dd>{loc(profile, 'currentRole', locale)}</dd>
+                    </>
+                  ) : null}
+                </dl>
+              ) : null}
+            </div>
           </div>
         </Container>
         <HorizonBackdrop />

@@ -798,3 +798,11 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Isi dari Admin → Project: sampul project terbit, yang bertanda unggulan di depan lalu urutan admin. Bagian tidak tampil bila sampul kurang dari dua.
 - Pita bersifat dekoratif (`aria-hidden`, tidak bisa difokus). Navigasinya: tautan "Semua project (n)" di judul bagian dan deretan nama project (pil, yang pertama berbingkai tegas) menuju halaman detail masing-masing.
 - **Nomor bagian beranda kini dihitung otomatis** (audit nomor 7) dari bagian yang benar-benar tampil: 02 Project pilihan, 03 Dalam angka, 04 Dari komunitas ke software, 05 Yang saya pakai, 06 Aktivitas di GitHub. Bila satu bagian kosong, nomor berikutnya tidak melompat.
+
+## 55. Beranda: foto potret di sisi kanan pembuka (2026-10-15)
+
+- Audit Home nomor 2: di laptop separuh kanan bagian pembuka kosong. Pemilik memilih demo 1 "Foto potret miring" dari sepuluh pilihan.
+- **Laptop (≥ 1024 px):** pembuka menjadi dua kolom (teks kiri, foto kanan). Foto profil dipotong 4:5 dalam bingkai tipis (`--radius-lg`, garis `--border`), miring −2,5° dan kembali lurus sedikit membesar saat disorot (CSS `transform`, 0,6 s). Di bawahnya keterangan mono kecil: kota dan nama kampus dari profil.
+- **HP dan tablet (< 1024 px):** foto bulat kecil 64 px di atas nama, tanpa keterangan. Ukurannya dipilih agar tombol CV tetap terlihat tanpa scroll di 360 × 640 (PRD U1; tombol pertama berakhir di y ≈ 537 px, di atas nav bawah).
+- Foto dari Admin → Profil bila ada, selain itu foto bawaan pemilik (sama dengan halaman Tentang). Alt text dua bahasa. Server component, tanpa JavaScript klien; reduced-motion: tanpa transisi.
+
