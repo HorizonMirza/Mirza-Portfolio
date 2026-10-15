@@ -756,3 +756,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **Admin → Pengaturan → Pemberitahuan pembuka:** nyala/mati, judul dan isi ID/EN (wajib keduanya saat aktif, isi maksimal 600 karakter). Kolom di `SiteSetting` (`introEnabled`, `introTitle_*`, `introBody_*`). Migrasi `20261012090000_intro_notice` mengisi teks awal dari data profil yang sudah tampil di situs (kampus, posisi sekarang, terbuka untuk kerja).
 - **Browser otomatis** (`navigator.webdriver`: tes E2E, Lighthouse) tidak diberi pemberitahuan. Tes `e2e/intro.spec.ts` menimpa penanda itu untuk menguji pemberitahuannya.
 - Tidak muncul di halaman Admin (layout terpisah).
+- **Revisi pemilik 2026-10-15:**
+  - label "Portofolio · nama" dihapus;
+  - judul jadi "Informasi Penting" / "Important Information";
+  - isi baru tentang peluang Fullstack Developer (migrasi `20261015080000_intro_notice_text`, tetap bisa diubah di admin);
+  - tombol tinggal **Unduh CV** dan **Beranda/Home** (Lihat project dan Masuk ke situs dihapus);
+  - kartu lebih ramping (lebar 520 px, sebelumnya 620 px).
+- **Ganti bahasa di kartu** kini tanpa muat ulang. Tombol ID/EN mengganti teks kartu di tempat dengan efek acak huruf dan suara yang sama seperti tombol bahasa di header. Isi kedua bahasa sudah dirender server. Bahasa situs ikut berganti setelah kartu ditutup (Esc, klik di luar, atau Beranda), dengan efek acak huruf seperti biasa. Navigasi tidak dijalankan dari dalam dialog yang masih terbuka, karena tidak andal di Firefox. Ini menggantikan tautan muat ulang yang dicatat di atas.

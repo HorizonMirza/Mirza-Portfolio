@@ -16,11 +16,9 @@
     "darkMode": "Mode gelap"
   },
   "Intro": {
-    "eyebrow": "Portofolio · {name}",
     "language": "Bahasa",
     "downloadCv": "Unduh CV",
-    "projects": "Lihat project",
-    "enter": "Masuk ke situs"
+    "home": "Beranda"
   },
   "NotFound": {
     "title": "Boo! Halamannya hilang.",

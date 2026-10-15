@@ -16,11 +16,9 @@
     "darkMode": "Dark mode"
   },
   "Intro": {
-    "eyebrow": "Portfolio · {name}",
     "language": "Language",
     "downloadCv": "Download CV",
-    "projects": "View projects",
-    "enter": "Enter site"
+    "home": "Home"
   },
   "NotFound": {
     "title": "Boo! Page missing.",

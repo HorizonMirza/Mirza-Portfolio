@@ -33,7 +33,7 @@ export function SettingsForm({ defaultValues }: { defaultValues: SettingsInput }
       <Field
         id={`introTitle_${lang}`}
         label={lang === 'id' ? 'Judul' : 'Title'}
-        hint={lang === 'id' ? 'Mis. Sebelum masuk' : 'E.g. Before you enter'}
+        hint={lang === 'id' ? 'Mis. Informasi Penting' : 'E.g. Important Information'}
         error={errors[`introTitle_${lang}`]?.message}
       >
         {(a) => <Input {...a} {...register(`introTitle_${lang}`)} />}
@@ -120,8 +120,8 @@ export function SettingsForm({ defaultValues }: { defaultValues: SettingsInput }
           <h2 className="text-h3 font-semibold">Pemberitahuan pembuka</h2>
           <p className="mt-1 text-sm text-muted">
             Kartu singkat yang muncul sekali setiap pengunjung membuka situs, sebelum masuk ke
-            halaman. Berisi judul, isi, dan tombol Unduh CV (bila CV ada), Lihat project, dan Masuk
-            ke situs.
+            halaman. Berisi judul, isi, pilihan ID/EN, dan tombol Unduh CV (bila CV ada) dan
+            Beranda.
           </p>
         </div>
         <label className="flex min-h-11 items-center gap-3">

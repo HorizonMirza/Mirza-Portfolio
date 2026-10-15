@@ -1,13 +1,23 @@
 'use client'
 
-import { ArrowRight, Code2, Download } from 'lucide-react'
-import { useLocale } from 'next-intl'
-import { type MouseEvent, type ReactNode, useEffect, useRef } from 'react'
+import { Download, House } from 'lucide-react'
+import { type MouseEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
-import { getPathname, Link, usePathname } from '@/i18n/navigation'
+import { usePathname, useRouter } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
+import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
+import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
+
+type Locale = (typeof routing.locales)[number]
+
+export type IntroNoticeVersion = {
+  title: string
+  body: ReactNode
+  cvHref: string | null
+  labels: { language: string; downloadCv: string; home: string; newTab: string }
+}
 
 // Penanda "sudah dilihat" per sesi browser: pemberitahuan muncul sekali setiap situs dibuka (tab
 // baru), tidak muncul lagi saat berpindah halaman (pilihan pemilik 2026-10-12).
@@ -31,67 +41,84 @@ function markSeen() {
   }
 }
 
-type Labels = {
-  language: string
-  downloadCv: string
-  projects: string
-  enter: string
-  newTab: string
-}
-
-// Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah"): kartu di tengah layar
-// di atas situs yang diburamkan. Memakai <dialog> bawaan (showModal): fokus terkunci di dalam kartu,
-// Esc menutup, halaman di belakang tidak bisa diklik. Dibuka setelah halaman tampil, jadi isi situs
-// tetap dirender server dan terbaca mesin pencari. Isi Markdown sudah dirender server (children).
+// Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah"; revisi 2026-10-15): kartu
+// ramping di tengah layar di atas situs yang diburamkan. Memakai <dialog> bawaan (showModal): fokus
+// terkunci di dalam kartu, Esc menutup, halaman di belakang tidak bisa diklik. Dibuka setelah
+// halaman tampil, jadi isi situs tetap dirender server dan terbaca mesin pencari.
+// Tombol ID/EN mengganti bahasa kartu di tempat (efek acak huruf dan suara seperti tombol bahasa di
+// header, tanpa memuat halaman). Bahasa situs ikut berganti setelah kartu ditutup, karena navigasi
+// dari dalam dialog modal tidak andal di Firefox (CI 2026-10-12).
 export function IntroNotice({
-  eyebrow,
-  title,
-  cvHref,
-  labels,
-  children,
+  locale,
+  versions,
 }: {
-  eyebrow: string
-  title: string
-  cvHref: string | null
-  labels: Labels
-  children: ReactNode
+  locale: Locale
+  versions: Record<Locale, IntroNoticeVersion>
 }) {
   const ref = useRef<HTMLDialogElement>(null)
-  // true saat pengunjung mengganti bahasa dari dalam kartu: halaman dimuat ulang di bahasa lain dan
-  // pemberitahuan harus tampil lagi, jadi penutupan yang terjadi saat halaman ditinggalkan tidak
-  // dihitung "sudah dilihat"
-  const switchingLocale = useRef(false)
-  const locale = useLocale()
+  const router = useRouter()
   const pathname = usePathname()
+  const [shown, setShown] = useState<Locale>(locale)
+  // teks kartu sebelum ganti bahasa, agar teks yang sama di kedua bahasa tidak ikut diacak
+  const before = useRef<string[] | null>(null)
+  const v = versions[shown]
 
-  // Dibuka setelah halaman tampil. Bila bahasa berganti tanpa memuat ulang (tombol bahasa di
-  // header), kartu yang belum ditutup tetap terbuka atau dibuka lagi.
   useEffect(() => {
-    switchingLocale.current = false
     const dialog = ref.current
     // otomatisasi (tes E2E, Lighthouse) tidak perlu melihat pemberitahuan
     if (!dialog || dialog.open || navigator.webdriver || alreadySeen()) return
     dialog.showModal()
-    // fokus ke tombol utama, bukan ke pilihan bahasa di pojok; garis fokus baru tampil saat
-    // pengunjung memakai keyboard (Tab), agar kartu tidak langsung bergaris biru
+    // fokus ke tombol utama; garis fokus baru tampil saat pengunjung memakai keyboard (Tab)
     dialog
       .querySelector<HTMLElement>('[data-intro-primary]')
       ?.focus({ focusVisible: false } as FocusOptions)
-  }, [locale])
+  }, [])
 
-  function close() {
+  // efek acak huruf setelah teks kartu berganti bahasa
+  useEffect(() => {
+    const dialog = ref.current
+    const unchanged = before.current
+    before.current = null
+    if (!dialog?.open || !unchanged || prefersReducedMotion()) return
+    scrambleVisibleText(dialog, unchanged)
+  }, [shown])
+
+  function switchTo(next: Locale) {
+    if (next === shown) return
+    playLanguageSound(next === 'en')
+    if (ref.current) before.current = visibleTexts(ref.current)
+    setShown(next)
+  }
+
+  // Menutup kartu, lalu (bila dipilih) pindah ke Beranda dan/atau ke bahasa yang dipilih di kartu.
+  function close(goHome = false) {
     const dialog = ref.current
     if (!dialog?.open) return
-    if (!switchingLocale.current) markSeen()
-    if (prefersReducedMotion()) {
+    markSeen()
+    const finish = () => {
       dialog.close()
+      delete dialog.dataset.leaving
+      const target = goHome ? '/' : pathname
+      if (shown === locale && target === pathname) return
+      if (shown !== locale) {
+        // situs ikut beranimasi acak huruf seperti ganti bahasa dari header (LanguageScramble)
+        try {
+          sessionStorage.setItem(
+            LANG_SCRAMBLE_KEY,
+            JSON.stringify({ at: Date.now(), texts: visibleTexts() }),
+          )
+        } catch {
+          // sessionStorage diblokir: tetap pindah, hanya tanpa animasi
+        }
+      }
+      router.push(target, { locale: shown, scroll: goHome })
+    }
+    if (prefersReducedMotion()) {
+      finish()
       return
     }
     dialog.dataset.leaving = ''
-    window.setTimeout(() => {
-      dialog.close()
-      delete dialog.dataset.leaving
-    }, LEAVE_MS)
+    window.setTimeout(finish, LEAVE_MS)
   }
 
   // klik di luar kartu (di latar buram) ikut menutup
@@ -109,6 +136,7 @@ export function IntroNotice({
   return (
     <dialog
       ref={ref}
+      lang={shown}
       className="intro"
       aria-labelledby="intro-title"
       onCancel={(event) => {
@@ -118,50 +146,36 @@ export function IntroNotice({
       onClick={onDialogClick}
     >
       <div className="flex items-start justify-between gap-4">
-        <p className="font-mono text-label tracking-widest text-note uppercase">{eyebrow}</p>
-        {/* Ganti bahasa: tautan biasa yang memuat ulang halaman yang sama di bahasa lain (bukan
-            navigasi klien: di Firefox perpindahan klien dari dalam dialog modal tidak andal, CI
-            2026-10-12). Pemberitahuan tampil lagi di bahasa itu karena belum ditutup. */}
-        <nav aria-label={labels.language} className="intro-lang">
+        <h2 id="intro-title" className="intro-title">
+          {v.title}
+        </h2>
+        <div role="group" aria-label={v.labels.language} className="intro-lang">
           {routing.locales.map((l) => (
-            <a
-              key={l}
-              href={getPathname({ href: pathname, locale: l })}
-              hrefLang={l}
-              lang={l}
-              aria-current={l === locale ? 'true' : undefined}
-              onClick={() => {
-                switchingLocale.current = true
-              }}
-            >
+            <button key={l} type="button" aria-pressed={l === shown} onClick={() => switchTo(l)}>
               {l.toUpperCase()}
-            </a>
+            </button>
           ))}
-        </nav>
+        </div>
       </div>
-      <h2 id="intro-title" className="intro-title">
-        {title}
-      </h2>
-      <div className="intro-body">{children}</div>
+      <div className="intro-body">{v.body}</div>
       <div className="mt-7 flex flex-wrap gap-3">
-        {cvHref ? (
+        {v.cvHref ? (
           <Button asChild data-intro-primary="">
-            <a href={cvHref} target="_blank" rel="noopener noreferrer" onClick={close}>
+            <a href={v.cvHref} target="_blank" rel="noopener noreferrer" onClick={() => close()}>
               <Download aria-hidden="true" />
-              {labels.downloadCv}
-              <span className="sr-only">{labels.newTab}</span>
+              {v.labels.downloadCv}
+              <span className="sr-only">{v.labels.newTab}</span>
             </a>
           </Button>
         ) : null}
-        <Button asChild variant="secondary" {...(cvHref ? {} : { 'data-intro-primary': '' })}>
-          <Link href="/projects" onClick={close}>
-            <Code2 aria-hidden="true" />
-            {labels.projects}
-          </Link>
-        </Button>
-        <Button type="button" variant="ghost" onClick={close}>
-          {labels.enter}
-          <ArrowRight aria-hidden="true" />
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => close(true)}
+          {...(v.cvHref ? {} : { 'data-intro-primary': '' })}
+        >
+          <House aria-hidden="true" />
+          {v.labels.home}
         </Button>
       </div>
     </dialog>
