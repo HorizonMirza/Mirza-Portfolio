@@ -175,3 +175,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Grafik kontribusi GitHub memakai biru situs (W1) menggantikan hijau (DESIGN.md bagian 63) |
 | 2026-10-16 | Grafik kontribusi GitHub: default 2D, kotak bergaris seperti GitHub di sekitar grafik dan legenda, judul jumlah kontribusi lebih besar, label statistik Inter (DESIGN.md bagian 64) |
 | 2026-10-16 | Grafik kontribusi GitHub: label statistik huruf besar, statistik menjadi pita bersekat di dalam kotak grafik (demo S5, DESIGN.md bagian 65) |
+| 2026-10-16 | Grafik kontribusi GitHub: total setahun dihapus dari statistik (tinggal 3), judul satu baris di HP, 2D bisa digeser di HP dan dibuka di minggu terbaru (DESIGN.md bagian 66). Menunggu: pilihan demo format statistik |

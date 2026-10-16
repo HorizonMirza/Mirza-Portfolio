@@ -185,6 +185,12 @@ export const ELEV_3D = (34 * Math.PI) / 180
  */
 export const NARROW_WIDTH = 640
 export const YAW_3D_NARROW = (66 * Math.PI) / 180
+/**
+ * Di layar sempit tampilan 2D tidak dipaksa muat selebar layar: lebar per minggu tetap, grafik
+ * bisa digeser ke samping seperti di profil GitHub dan dibuka di minggu terbaru (revisi pemilik
+ * 2026-10-16).
+ */
+export const WEEK_PX_NARROW = 13
 export const YAW_RANGE: [number, number] = [(8 * Math.PI) / 180, (82 * Math.PI) / 180]
 export const ELEV_RANGE: [number, number] = [(18 * Math.PI) / 180, (62 * Math.PI) / 180]
 
@@ -245,7 +251,6 @@ export type SkylineLabels = {
   none: string
   inLastYear: string
   on: string
-  total: string
   busiest: string
   longest: string
   current: string
@@ -265,7 +270,6 @@ export const DEFAULT_SKYLINE_LABELS: SkylineLabels = {
   none: 'No contributions',
   inLastYear: 'in the last year',
   on: 'on',
-  total: '1 year total',
   busiest: 'Busiest day',
   longest: 'Longest streak',
   current: 'Current streak',
@@ -675,12 +679,20 @@ export default function ContributionSkyline({
       return { minx, maxx, miny, maxy }
     }
 
+    // 2D di layar sempit: kanvas lebih lebar dari layar dan bisa digeser. Hanya saat benar-benar
+    // datar (t = 0) agar morph ke 3D dan kembali tidak melompat di tengah jalan.
+    const wantsScroll = () =>
+      Math.round(stage.clientWidth) < NARROW_WIDTH && target === 0 && t === 0
+    let scrolling = false
+
     const relayout = () => {
       const w = Math.round(stage.clientWidth)
       if (!w || !n) return
-      W = w
+      const wide = wantsScroll() ? Math.max(w, Math.ceil(weeks * WEEK_PX_NARROW + 4)) : w
+      const toScroll = wide > w
+      W = wide
       // Kartu sempit memberikan kolom nama hari ke grid; barisnya terlalu rapat untuk dilabeli.
-      gutter = W < 520 ? 0 : labelW
+      gutter = w < 520 ? 0 : labelW
       dpr = Math.min(2, window.devicePixelRatio || 1)
       const b2 = extent(camera(0), 0, true)
       H2 = 20 + 4 + ((b2.maxy - b2.miny) / (b2.maxx - b2.minx)) * (W - gutter - 4)
@@ -694,8 +706,13 @@ export default function ContributionSkyline({
       canvas.height = Math.round(Hmax * dpr)
       canvas.style.width = W + 'px'
       canvas.style.height = Hmax + 'px'
+      stage.style.overflowX = toScroll ? 'auto' : 'hidden'
       lastH = -1
       draw()
+      // dibuka di minggu terbaru (ujung kanan), seperti profil GitHub
+      if (toScroll && !scrolling) stage.scrollLeft = stage.scrollWidth
+      if (!toScroll) stage.scrollLeft = 0
+      scrolling = toScroll
     }
 
     const draw = () => {
@@ -877,14 +894,16 @@ export default function ContributionSkyline({
           py(wk[i] + off, dy[i] + off + w, z),
         )
         const half = tipW / 2
-        const cx = Math.min(W - half - 2, Math.max(half + 2, tx))
+        const sl = scrolling ? stage.scrollLeft : 0
+        const vw = scrolling ? stage.clientWidth : W
+        const cx = Math.min(vw - half - 2, Math.max(half + 2, tx - sl))
         tip.style.transform =
           'translate(' +
           (cx - half).toFixed(1) +
           'px,' +
           (ty - 8).toFixed(1) +
           'px) translateY(-100%)'
-        tip.style.setProperty('--arrow', (tx - cx + half).toFixed(1) + 'px')
+        tip.style.setProperty('--arrow', (tx - sl - cx + half).toFixed(1) + 'px')
       }
     }
 
@@ -898,6 +917,7 @@ export default function ContributionSkyline({
         const step = reduced ? 1 : (dt * 1000) / Math.max(1, cfg.current.duration)
         t = target > t ? Math.min(target, t + step) : Math.max(target, t - step)
         moving = true
+        if (t === 0 && wantsScroll()) relayout()
       }
 
       const ko = reduced ? 1 : 1 - Math.exp(-dt * 12)
@@ -1082,6 +1102,12 @@ export default function ContributionSkyline({
       pinned = i
       hovered = -1
       refreshActive()
+      if (scrolling) {
+        const x = polys[i * 24]
+        const cw = stage.clientWidth
+        if (x < stage.scrollLeft + 8 || x > stage.scrollLeft + cw - 24)
+          stage.scrollLeft = x - cw / 2
+      }
       cfg.current.setAnnounce(cfg.current.describe(i))
     }
 
@@ -1095,6 +1121,7 @@ export default function ContributionSkyline({
       if (!entered) return
       if (goal !== target) {
         target = goal
+        if (goal === 1 && scrolling) relayout()
         if (goal === 0) {
           yawGoal = 0
           elevGoal = 0
@@ -1129,8 +1156,14 @@ export default function ContributionSkyline({
       io.observe(stage)
     } else enter()
 
+    let lastCw = Math.round(stage.clientWidth)
     const ro = new ResizeObserver(() => {
-      if (Math.round(stage.clientWidth) !== W) relayout()
+      const cw = Math.round(stage.clientWidth)
+      if (cw !== lastCw || (!scrolling && cw !== W)) {
+        lastCw = cw
+        scrolling = false
+        relayout()
+      }
     })
     ro.observe(stage)
 
@@ -1155,6 +1188,8 @@ export default function ContributionSkyline({
     canvas.addEventListener('dblclick', onDbl)
     canvas.addEventListener('keydown', onKey)
     canvas.addEventListener('blur', onBlur)
+    const onScroll = () => draw()
+    stage.addEventListener('scroll', onScroll, { passive: true })
 
     engine.current = {
       kick: () => {
@@ -1188,6 +1223,7 @@ export default function ContributionSkyline({
       canvas.removeEventListener('dblclick', onDbl)
       canvas.removeEventListener('keydown', onKey)
       canvas.removeEventListener('blur', onBlur)
+      stage.removeEventListener('scroll', onScroll)
       engine.current = null
     }
     // Loop membaca semua hal lain lewat cfg; dibangun sekali per mount.
@@ -1219,13 +1255,8 @@ export default function ContributionSkyline({
   }
   const dayNoun = (n: number) => (n === 1 ? labels.day : labels.days)
   const is3d = view === '3d'
+  // Total setahun sudah ada di kalimat judul, jadi statistik tinggal tiga (revisi pemilik 2026-10-16)
   const statBlocks = [
-    {
-      label: labels.total,
-      value: nf.format(stats.total),
-      unit: noun(stats.total),
-      sub: range(stats.first, stats.last, true),
-    },
     {
       label: labels.busiest,
       value: nf.format(stats.busiest.count),
@@ -1249,15 +1280,15 @@ export default function ContributionSkyline({
 
   return (
     <div ref={rootRef} className={'relative w-full bg-bg text-text ' + className}>
-      <header className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <p className="m-0 text-lg leading-snug font-normal sm:text-xl">
+      <header className="mb-3 flex items-center justify-between gap-3">
+        <p className="m-0 min-w-0 text-[0.9375rem] leading-snug font-normal sm:text-xl">
           <span className="font-semibold tabular-nums">{nf.format(stats.total)}</span>{' '}
           {noun(stats.total)} {labels.inLastYear}
         </p>
         <div
           role="group"
           aria-label={labels.view}
-          className="relative inline-flex rounded-md border border-border p-0.5"
+          className="relative inline-flex shrink-0 rounded-md border border-border p-0.5"
         >
           <span
             aria-hidden="true"
@@ -1364,7 +1395,7 @@ export default function ContributionSkyline({
         {/* Statistik sebagai pita bawah bersekat di dalam kotak, baik 2D maupun 3D (pilihan pemilik
             2026-10-16, demo S5): empat kolom di layar lebar, 2 x 2 di HP. Garis sekat berasal dari
             celah 1 px di atas latar --border. */}
-        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border md:grid-cols-4">
+        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border">
           {statBlocks.map((b) => (
             <Stat key={b.label} {...b} accent={theme.accent} size={30} />
           ))}

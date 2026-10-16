@@ -916,3 +916,14 @@ Pilihan pemilik dari 10 demo desain statistik: **S5 Pita dalam kotak**. Bagian i
   - satuan Inter `text-sm`;
   - tanggal Inter `text-sm` muted.
 
+## 66. Grafik kontribusi GitHub: tiga statistik, grafik 2D bisa digeser di HP (2026-10-16)
+
+- **Tiga statistik:** "1 year total" dihapus karena totalnya sudah ada di kalimat judul. Pita S5 kini berisi tiga kolom bersekat (hari tersibuk, runtutan terpanjang, runtutan sekarang), satu baris juga di HP. Format isi sel sedang didemokan (10 pilihan).
+- **Judul satu baris di HP:** kalimat jumlah kontribusi memakai `0.9375rem` di HP dan `text-xl` mulai 640 px. Tombol 2D/3D tidak turun baris (`shrink-0`).
+- **2D bisa digeser di layar < 640 px, seperti profil GitHub:**
+  - lebar per minggu tetap 13 px (`WEEK_PX_NARROW`), sehingga kanvas lebih lebar dari layar dan bisa digeser ke samping;
+  - grafik dibuka di minggu terbaru (ujung kanan);
+  - tooltip dan navigasi tombol panah ikut memperhitungkan posisi geser.
+- **Morph 2D/3D di HP:** saat beralih ke 3D, lebar kanvas kembali selebar layar sebelum morph dimulai. Setelah morph kembali ke datar selesai, kanvas melebar lagi dan posisinya kembali ke minggu terbaru.
+- Teks `Skyline.total` yang tidak terpakai dihapus dari `messages`.
+

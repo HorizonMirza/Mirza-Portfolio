@@ -98,7 +98,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     'none',
     'inLastYear',
     'on',
-    'total',
     'busiest',
     'longest',
     'current',
