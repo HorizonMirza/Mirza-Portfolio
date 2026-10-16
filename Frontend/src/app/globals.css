@@ -2417,11 +2417,14 @@ html:has(.intro[open]) {
   /* ukuran wajar, tidak sampai memenuhi lebar kartu (revisi pemilik 2026-10-15) */
   margin: 1rem 0 0.875rem;
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 1.35rem + 1.2vw, 2.25rem);
+  /* di HP kecil ikut mengecil agar "IMPORTANT INFORMATION" (judul terpanjang, ± 10,5 kali ukuran
+     huruf) tetap satu baris di dalam kartu; 100cqi = lebar isi .intro-box (cek HP 2026-10-16:
+     di 360 px judul butuh 295 px, ruangnya 288 px). Judul lebih panjang dari admin turun baris. */
+  font-size: min(clamp(1.75rem, 1.35rem + 1.2vw, 2.25rem), calc(100cqi / 10.8));
   font-weight: 700;
   line-height: 1.05;
   text-transform: uppercase;
-  white-space: nowrap;
+  text-wrap: balance;
 }
 .intro-body {
   color: rgb(255 255 255 / 0.72);

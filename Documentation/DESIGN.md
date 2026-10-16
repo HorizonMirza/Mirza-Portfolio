@@ -811,4 +811,4 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Audit Home nomor 5: tombol yang membuka CV punya tiga nama ("Unduh CV" di hero, "Resume ATS" di kartu pembuka, "Resume CV" di footer). Pemilik memilih **Resume CV** untuk semuanya.
 - Bahasa Inggris juga **Resume CV** (keputusan pemilik 2026-10-16). Usulan "Resume" saja untuk EN sempat dipasang lalu dikembalikan.
 - Ikon tombol hero diganti dari ikon unduh menjadi ikon dokumen (sama dengan kartu pembuka), karena tombol membuka penampil Google Drive, bukan mengunduh langsung. Kartu footer tetap berketerangan "Google Drive".
-
+- **Cek HP 2026-10-16:** ketiga tombol tampil "Resume CV" di 360 px dan Pixel 7, ID dan EN. Judul kartu pembuka versi EN ("IMPORTANT INFORMATION") ternyata terpotong di HP ≤ 360 px (butuh 295 px, ruang 288 px). Ukuran judul kini ikut lebar kartu (`min(…, 100cqi / 10.8)`), sehingga tetap satu baris dari 320 px ke atas. Di laptop ukurannya tidak berubah. Judul lebih panjang dari admin turun baris (`text-wrap: balance`), tidak terpotong.
