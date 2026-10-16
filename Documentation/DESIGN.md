@@ -918,7 +918,7 @@ Pilihan pemilik dari 10 demo desain statistik: **S5 Pita dalam kotak**. Bagian i
 
 ## 66. Grafik kontribusi GitHub: tiga statistik, grafik 2D bisa digeser di HP (2026-10-16)
 
-- **Tiga statistik:** "1 year total" dihapus karena totalnya sudah ada di kalimat judul. Pita S5 kini berisi tiga kolom bersekat (hari tersibuk, runtutan terpanjang, runtutan sekarang), satu baris juga di HP. Format isi sel sedang didemokan (10 pilihan).
+- **Tiga statistik:** "1 year total" dihapus karena totalnya sudah ada di kalimat judul. Pita S5 kini berisi tiga kolom bersekat (hari tersibuk, runtutan terpanjang, runtutan sekarang), satu baris juga di HP. Format isi sel: bagian 67.
 - **Judul satu baris di HP:** kalimat jumlah kontribusi memakai `0.9375rem` di HP dan `text-xl` mulai 640 px. Tombol 2D/3D tidak turun baris (`shrink-0`).
 - **2D bisa digeser di layar < 640 px, seperti profil GitHub:**
   - lebar per minggu tetap 13 px (`WEEK_PX_NARROW`), sehingga kanvas lebih lebar dari layar dan bisa digeser ke samping;
@@ -926,4 +926,16 @@ Pilihan pemilik dari 10 demo desain statistik: **S5 Pita dalam kotak**. Bagian i
   - tooltip dan navigasi tombol panah ikut memperhitungkan posisi geser.
 - **Morph 2D/3D di HP:** saat beralih ke 3D, lebar kanvas kembali selebar layar sebelum morph dimulai. Setelah morph kembali ke datar selesai, kanvas melebar lagi dan posisinya kembali ke minggu terbaru.
 - Teks `Skyline.total` yang tidak terpakai dihapus dari `messages`.
+
+## 67. Grafik kontribusi GitHub: format statistik F10 "minimal" (2026-10-16)
+
+Pilihan pemilik dari 10 demo format: **F10 Minimal**.
+
+- **Isi tiap sel:**
+  - label huruf besar Inter semibold, `0.625rem` di HP dan `text-xs` mulai 640 px;
+  - angka Oswald tebal warna aksen, `2rem` di HP dan `2.6rem` mulai 640 px;
+  - rentang tanggal ringkas tanpa spasi lebar, misalnya "Sep 20–Oct 16" atau "20 Sep–16 Okt".
+- **Satuan:** "kontribusi" dan "hari" tidak ditampilkan, tetapi tetap dibacakan pembaca layar (`sr-only`).
+- **Perataan:** sel memakai flex kolom, dan angka serta tanggal dirapatkan ke bawah (`mt-auto`). Dengan begitu angka ketiga kolom tetap sejajar walau label versi ID di HP turun dua baris.
+- Tetap tiga kolom dalam satu baris di HP, dengan padding sel `px-2.5 py-3`.
 

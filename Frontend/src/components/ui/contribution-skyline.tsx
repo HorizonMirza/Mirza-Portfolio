@@ -389,34 +389,35 @@ const CubeIcon = () => (
   </svg>
 )
 
+// Format F10 "minimal" pilihan pemilik 2026-10-16: label, angka besar, rentang tanggal ringkas.
+// Satuan (kontribusi/hari) tidak ditampilkan, tetapi tetap dibacakan pembaca layar.
 function Stat({
   label,
   value,
   unit,
   sub,
   accent,
-  size,
 }: {
   label: string
   value: string
   unit: string
   sub: string
   accent: string
-  size: number
 }) {
   return (
-    <div className="min-w-0 bg-bg p-3 sm:p-4">
-      <div className="text-xs font-semibold tracking-wider text-muted uppercase">{label}</div>
-      <div className="mt-1.5 flex items-baseline gap-1.5">
-        <span
-          className="font-display font-bold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
-          style={{ color: accent, fontSize: size, lineHeight: 1 }}
-        >
-          {value}
-        </span>
-        <span className="text-sm">{unit}</span>
+    // angka dan tanggal dirapatkan ke bawah agar sejajar walau label di HP turun dua baris
+    <div className="flex min-w-0 flex-col bg-bg px-2.5 py-3 sm:p-4">
+      <div className="text-[0.625rem] leading-tight font-semibold tracking-wide text-muted uppercase sm:text-xs sm:tracking-wider">
+        {label}
       </div>
-      <div className="mt-1 text-sm text-muted tabular-nums">{sub}</div>
+      <div
+        className="mt-auto pt-1.5 font-display text-[2rem] leading-none font-bold tabular-nums transition-colors duration-500 motion-reduce:transition-none sm:text-[2.6rem]"
+        style={{ color: accent }}
+      >
+        {value}
+        <span className="sr-only"> {unit}</span>
+      </div>
+      <div className="mt-1.5 text-xs text-muted tabular-nums sm:text-sm">{sub}</div>
     </div>
   )
 }
@@ -1251,7 +1252,7 @@ export default function ContributionSkyline({
   const range = (a: string | null, b: string | null, withYear = false) => {
     if (!a || !b) return '—'
     const f = withYear ? dfy : df
-    return f.format(dayMs(a)) + ' — ' + f.format(dayMs(b))
+    return f.format(dayMs(a)) + '–' + f.format(dayMs(b))
   }
   const dayNoun = (n: number) => (n === 1 ? labels.day : labels.days)
   const is3d = view === '3d'
@@ -1397,7 +1398,7 @@ export default function ContributionSkyline({
             celah 1 px di atas latar --border. */}
         <div className="grid grid-cols-3 gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border">
           {statBlocks.map((b) => (
-            <Stat key={b.label} {...b} accent={theme.accent} size={30} />
+            <Stat key={b.label} {...b} accent={theme.accent} />
           ))}
         </div>
       </div>
