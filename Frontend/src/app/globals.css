@@ -2467,7 +2467,8 @@ html:has(.intro[open]) {
 }
 
 /* Pengalaman di beranda: akordion <details> (revisi pemilik 2026-10-16, demo E3). Baris berisi
-   logo, peran, instansi, periode, dan tanda +; isi deskripsi terbuka di bawahnya. Di browser yang
+   logo, peran, instansi, dan periode (tanpa ikon +/×, tanpa garis bawah saat disorot); isi
+   deskripsi terbuka di bawahnya. Di browser yang
    mendukung ::details-content isi membuka dengan animasi tinggi, selainnya langsung tampil. */
 .home-xp {
   border-top: 1px solid var(--border);
@@ -2478,7 +2479,7 @@ html:has(.intro[open]) {
 }
 .home-xp summary {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
   padding: 1.125rem 0.25rem;
@@ -2487,10 +2488,6 @@ html:has(.intro[open]) {
 }
 .home-xp summary::-webkit-details-marker {
   display: none;
-}
-.home-xp summary:hover .home-xp-role {
-  text-decoration: underline;
-  text-underline-offset: 4px;
 }
 .home-xp-logo {
   display: grid;
@@ -2528,31 +2525,6 @@ html:has(.intro[open]) {
 .home-xp-when-side {
   display: none;
 }
-.home-xp-toggle {
-  position: relative;
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 1px solid var(--border);
-  border-radius: 9999px;
-  transition: transform 0.3s var(--ease-out-soft);
-}
-.home-xp-toggle::before,
-.home-xp-toggle::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0.625rem;
-  height: 1.5px;
-  background: currentColor;
-  translate: -50% -50%;
-}
-.home-xp-toggle::after {
-  rotate: 90deg;
-}
-.home-xp[open] .home-xp-toggle {
-  transform: rotate(45deg);
-}
 .home-xp-body {
   padding: 0 0.25rem 1.25rem;
 }
@@ -2581,7 +2553,6 @@ html:has(.intro[open]) {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .home-xp-toggle,
   .home-xp::details-content {
     transition: none;
   }

@@ -13,24 +13,23 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   await expect(portrait).toBeInViewport()
   await expect(portrait).toHaveAttribute('alt', /.+/)
   await expect(page.getByRole('heading', { name: 'Yang saya pakai' })).toBeVisible()
-  // Pengalaman (revisi pemilik 2026-10-16, akordion): yang terbaru terbuka, yang lain bisa dibuka
-  await expect(page.getByRole('heading', { name: 'Pengalaman' })).toBeVisible()
+  // Pengalaman (revisi pemilik 2026-10-16, akordion): tanpa nomor dan tanpa tautan "Semua
+  // pengalaman", semua tertutup di awal, satu baris bisa dibuka
+  const xpHeading = page.getByRole('heading', { name: 'Pengalaman' })
+  await expect(xpHeading).toBeVisible()
+  await expect(xpHeading.locator('span[aria-hidden="true"]')).toHaveCount(0)
+  await expect(page.getByText(/Semua pengalaman/)).toHaveCount(0)
   const xp = page.locator('details.home-xp')
-  await expect(xp.first()).toHaveAttribute('open', '')
-  await expect(xp.nth(1)).not.toHaveAttribute('open', '')
+  await expect(xp.first()).not.toHaveAttribute('open', '')
   await xp.nth(1).locator('summary').click()
   await expect(xp.nth(1)).toHaveAttribute('open', '')
   await expect(xp.nth(1).locator('.home-xp-body')).toBeVisible()
-  await expect(page.getByRole('link', { name: /Semua pengalaman \(\d+\)/ })).toHaveAttribute(
-    'href',
-    '/id/experience',
-  )
   // Project (revisi pemilik 2026-10-16, DESIGN.md bagian 58): judul tanpa nomor di bawah
   // Pengalaman, sampul di pita adalah tautan ke detail, pita tidak berhenti saat disorot
   const projectsHeading = page.getByRole('heading', { name: 'Project', exact: true })
   await expect(projectsHeading).toBeVisible()
   await expect(projectsHeading.locator('span[aria-hidden="true"]')).toHaveCount(0)
-  const xpBox = await page.getByRole('heading', { name: 'Pengalaman' }).boundingBox()
+  const xpBox = await xpHeading.boundingBox()
   const projectsBox = await projectsHeading.boundingBox()
   expect(projectsBox!.y).toBeGreaterThan(xpBox!.y)
   for (const name of ['Project pilihan', /Semua project/]) {

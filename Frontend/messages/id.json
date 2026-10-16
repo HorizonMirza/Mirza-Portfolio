@@ -78,8 +78,7 @@
     "githubProfile": "Buka profil GitHub",
     "projectsHeading": "Project",
     "projectList": "Daftar project",
-    "experienceHeading": "Pengalaman",
-    "allExperience": "Semua pengalaman ({count})"
+    "experienceHeading": "Pengalaman"
   },
   "About": {
     "metaTitle": "Tentang Saya",

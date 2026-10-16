@@ -164,8 +164,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
-  // Project tidak bernomor (revisi pemilik 2026-10-16), jadi tidak ikut hitungan
-  const numbered = sections.filter((key) => key !== 'projects')
+  // Pengalaman dan Project tidak bernomor (revisi pemilik 2026-10-16), jadi tidak ikut hitungan
+  const numbered = sections.filter((key) => key !== 'projects' && key !== 'experience')
   const sectionIndex = (key: string) => String(numbered.indexOf(key) + 2).padStart(2, '0')
   const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
@@ -343,31 +343,22 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           aria-labelledby="experience-title"
           className="border-t border-border py-16 md:py-24"
         >
+          {/* Revisi pemilik 2026-10-16: tanpa nomor bagian dan tanpa tautan "Semua pengalaman",
+              judul di tengah seperti bagian Project */}
           <Container className="reveal">
-            <SectionHeading
-              id="experience-title"
-              index={sectionIndex('experience')}
-              title={t('experienceHeading')}
-              action={
-                <Link
-                  href="/experience"
-                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  {t('allExperience', { count: workHistory.length })}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              }
-            />
+            <h2 id="experience-title" className="mb-8 text-center text-h2 font-bold">
+              {t('experienceHeading')}
+            </h2>
             {/* Akordion <details> bawaan browser: tanpa JavaScript, bisa dipakai keyboard dan
-                pembaca layar. Yang terbaru terbuka lebih dulu. */}
+                pembaca layar. Semua tertutup di awal, tanpa ikon +/× (revisi pemilik 2026-10-16). */}
             <div className="home-xp-list">
-              {workHistory.map((e, i) => {
+              {workHistory.map((e) => {
                 const org = organizationName(e, locale)
                 const when = `${formatMonth(e.start, locale)} – ${
                   e.end ? formatMonth(e.end, locale) : tExp('present')
                 }`
                 return (
-                  <details key={e.id} className="home-xp" open={i === 0}>
+                  <details key={e.id} className="home-xp">
                     <summary>
                       <span className="home-xp-logo" aria-hidden="true">
                         {e.logo ? (
@@ -392,7 +383,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                         <span className="home-xp-when home-xp-when-inline">{when}</span>
                       </span>
                       <span className="home-xp-when home-xp-when-side">{when}</span>
-                      <span className="home-xp-toggle" aria-hidden="true" />
                     </summary>
                     <MarkdownView
                       source={loc(e, 'description', locale)}

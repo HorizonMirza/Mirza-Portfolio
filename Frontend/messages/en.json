@@ -78,8 +78,7 @@
     "githubProfile": "Open GitHub profile",
     "projectsHeading": "Projects",
     "projectList": "Project list",
-    "experienceHeading": "Experience",
-    "allExperience": "All experience ({count})"
+    "experienceHeading": "Experience"
   },
   "About": {
     "metaTitle": "About Me",

@@ -826,4 +826,6 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Tiap sampul di pita kini tautan ke halaman detail project (memakai transisi `project-open` seperti daftar project). Pita **tidak berhenti saat disorot**. Pita hanya berhenti saat fokus keyboard ada di dalamnya, supaya tautan bisa dipilih dengan Tab; pada reduced-motion pita diam. Sampul membesar sedikit saat disorot.
 - Deret sampul diulang dua kali agar putaran tidak terputus. Salinan kedua disembunyikan dari pembaca layar dan keyboard (`aria-hidden`, `tabindex=-1`), sehingga setiap project hanya dibacakan satu kali.
 - Penomoran: Project tidak ikut dihitung. Susunan beranda: 01 pembuka, 02 Pengalaman, Project, 03 Yang saya pakai, 04 Aktivitas di GitHub.
+- **Revisi Pengalaman 2026-10-16 (kedua):** nomor bagian "02" dan tautan "Semua pengalaman (n)" dihapus, judul **Pengalaman/Experience** di tengah seperti Project. Semua baris tertutup di awal. Ikon +/× dihapus, begitu juga garis bawah pada peran saat disorot. Baris tetap bisa diklik dan dipakai dengan keyboard (`<summary>`).
+- Penomoran: Pengalaman dan Project tidak ikut dihitung. Susunan beranda: 01 pembuka, Pengalaman, Project, 02 Yang saya pakai, 03 Aktivitas di GitHub.
 
