@@ -94,7 +94,15 @@ function blip(
     dur,
     vol,
     type,
-  }: { at: number; freq: number; dur: number; vol: number; type: OscillatorType },
+    cutoff = 3000,
+  }: {
+    at: number
+    freq: number
+    dur: number
+    vol: number
+    type: OscillatorType
+    cutoff?: number
+  },
 ) {
   const t = ctx.currentTime + at
   const osc = ctx.createOscillator()
@@ -102,7 +110,7 @@ function blip(
   osc.frequency.value = freq
   const filter = ctx.createBiquadFilter()
   filter.type = 'lowpass'
-  filter.frequency.value = 3000
+  filter.frequency.value = cutoff
   const gain = ctx.createGain()
   envelope(gain, t, vol, 0.004, dur)
   osc.connect(filter)
@@ -160,6 +168,26 @@ export function playTimelineStepSound() {
   if (!a) return
   // dibuat lebih keras (revisi pemilik 2026-10-08): 0,07 -> 0,2, sedikit lebih panjang
   blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.06, vol: 0.2, type: 'square' })
+}
+
+// Akordion Pengalaman di beranda (pilihan pemilik 2026-10-16, demo S9 "Blip digital", berbunyi saat
+// dibuka dan ditutup): dua blip kotak naik saat dibuka, satu blip lebih rendah saat ditutup.
+export function playExperienceToggleSound(open: boolean) {
+  const a = audio()
+  if (!a) return
+  if (open) {
+    blip(a.ctx, a.out, { at: 0, freq: 1500, dur: 0.035, vol: 0.08, type: 'square', cutoff: 4000 })
+    blip(a.ctx, a.out, {
+      at: 0.05,
+      freq: 2000,
+      dur: 0.035,
+      vol: 0.07,
+      type: 'square',
+      cutoff: 4000,
+    })
+  } else {
+    blip(a.ctx, a.out, { at: 0, freq: 1100, dur: 0.04, vol: 0.07, type: 'square', cutoff: 3500 })
+  }
 }
 
 // Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo suara A7 "Gelembung"): "blup"

@@ -2491,16 +2491,26 @@ html:has(.intro[open]) {
 }
 .home-xp-logo {
   display: grid;
+  flex: none;
   place-items: center;
   overflow: hidden;
   width: 2.75rem;
   height: 2.75rem;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 0.75rem;
   background: var(--surface-2);
   color: var(--text-muted);
   font-family: var(--font-display);
   font-weight: 700;
+  /* bingkai "bayangan lembut" (pilihan pemilik 2026-10-16, demo B5): bayangan halus di bawah dan
+     cincin warna latar, sehingga logo tampak sedikit terangkat dan rapi di tema gelap maupun terang */
+  box-shadow:
+    0 6px 16px -6px rgb(0 0 0 / 0.55),
+    0 0 0 4px var(--surface);
+}
+/* logo berlatar putih agar logo berwarna gelap maupun terang terbaca; inisial tetap di latar abu */
+.home-xp-logo:has(img) {
+  background: #fff;
 }
 .home-xp-head {
   display: grid;

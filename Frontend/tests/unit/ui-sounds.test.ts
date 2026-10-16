@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  playExperienceToggleSound,
   playLanguageSound,
   playNavSound,
   playProjectSpotlightSound,
@@ -13,5 +14,7 @@ describe('ui-sounds', () => {
     expect(() => playLanguageSound(false)).not.toThrow()
     expect(() => playNavSound()).not.toThrow()
     expect(() => playProjectSpotlightSound()).not.toThrow()
+    expect(() => playExperienceToggleSound(true)).not.toThrow()
+    expect(() => playExperienceToggleSound(false)).not.toThrow()
   })
 })

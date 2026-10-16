@@ -828,4 +828,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Penomoran: Project tidak ikut dihitung. Susunan beranda: 01 pembuka, 02 Pengalaman, Project, 03 Yang saya pakai, 04 Aktivitas di GitHub.
 - **Revisi Pengalaman 2026-10-16 (kedua):** nomor bagian "02" dan tautan "Semua pengalaman (n)" dihapus, judul **Pengalaman/Experience** di tengah seperti Project. Semua baris tertutup di awal. Ikon +/× dihapus, begitu juga garis bawah pada peran saat disorot. Baris tetap bisa diklik dan dipakai dengan keyboard (`<summary>`).
 - Penomoran: Pengalaman dan Project tidak ikut dihitung. Susunan beranda: 01 pembuka, Pengalaman, Project, 02 Yang saya pakai, 03 Aktivitas di GitHub.
+- **Bingkai logo dan suara Pengalaman (pilihan pemilik 2026-10-16 dari 10 + 10 demo: B5 + S9):**
+  - logo berlatar putih dengan garis tipis, sudut 12 px, bayangan halus di bawah, dan cincin 4 px warna latar ("bayangan lembut"), sehingga logo tampak sedikit terangkat dan rapi di kedua tema. Inisial (bila logo kosong) tetap di latar abu;
+  - suara "blip digital" (`playExperienceToggleSound` di `lib/ui-sounds.ts`): dua blip kotak naik saat baris dibuka, satu blip lebih rendah saat ditutup. Dibuat Web Audio tanpa file, ikut volume Admin → Pengaturan (0 = diam). Dipasang lewat pembungkus klien kecil `ExperienceAccordion` yang mendengar event `toggle` dari `<details>`; isi akordion tetap dirender server.
 

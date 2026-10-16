@@ -11,6 +11,7 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
+import { ExperienceAccordion } from '@/features/experience/components/public/experience-accordion'
 import { getPublicExperiences } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import {
@@ -351,7 +352,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             </h2>
             {/* Akordion <details> bawaan browser: tanpa JavaScript, bisa dipakai keyboard dan
                 pembaca layar. Semua tertutup di awal, tanpa ikon +/× (revisi pemilik 2026-10-16). */}
-            <div className="home-xp-list">
+            <ExperienceAccordion>
               {workHistory.map((e) => {
                 const org = organizationName(e, locale)
                 const when = `${formatMonth(e.start, locale)} – ${
@@ -392,7 +393,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   </details>
                 )
               })}
-            </div>
+            </ExperienceAccordion>
           </Container>
         </section>
       ) : null}
