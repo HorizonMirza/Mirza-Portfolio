@@ -389,19 +389,22 @@ const CubeIcon = () => (
   </svg>
 )
 
-// Format F10 "minimal" pilihan pemilik 2026-10-16: label, angka besar, rentang tanggal ringkas.
+// Format F10 "minimal" pilihan pemilik 2026-10-16: label, angka besar, rentang tanggal (bulan
+// lengkap mulai 768 px, singkat di HP; pemisah " - " berspasi seperti tanggal Pengalaman).
 // Satuan (kontribusi/hari) tidak ditampilkan, tetapi tetap dibacakan pembaca layar.
 function Stat({
   label,
   value,
   unit,
   sub,
+  subLong,
   accent,
 }: {
   label: string
   value: string
   unit: string
   sub: string
+  subLong: string
   accent: string
 }) {
   return (
@@ -417,7 +420,10 @@ function Stat({
         {value}
         <span className="sr-only"> {unit}</span>
       </div>
-      <div className="mt-1.5 text-xs text-muted tabular-nums sm:text-sm">{sub}</div>
+      <div className="mt-1.5 text-xs text-muted tabular-nums sm:text-sm">
+        <span className="md:hidden">{sub}</span>
+        <span className="hidden md:inline">{subLong}</span>
+      </div>
     </div>
   )
 }
@@ -476,6 +482,12 @@ export default function ContributionSkyline({
   const nf = React.useMemo(() => new Intl.NumberFormat(locale), [locale])
   const df = React.useMemo(
     () => new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+    [locale],
+  )
+  // nama bulan lengkap untuk statistik di layar lebar (revisi pemilik 2026-10-16: bulan tidak
+  // disingkat kecuali di HP)
+  const dfm = React.useMemo(
+    () => new Intl.DateTimeFormat(locale, { month: 'long', day: 'numeric', timeZone: 'UTC' }),
     [locale],
   )
   const dfy = React.useMemo(
@@ -1252,8 +1264,10 @@ export default function ContributionSkyline({
   const range = (a: string | null, b: string | null, withYear = false) => {
     if (!a || !b) return '—'
     const f = withYear ? dfy : df
-    return f.format(dayMs(a)) + '–' + f.format(dayMs(b))
+    return f.format(dayMs(a)) + ' - ' + f.format(dayMs(b))
   }
+  const longRange = (a: string | null, b: string | null) =>
+    a && b ? dfm.format(dayMs(a)) + ' - ' + dfm.format(dayMs(b)) : '—'
   const dayNoun = (n: number) => (n === 1 ? labels.day : labels.days)
   const is3d = view === '3d'
   // Total setahun sudah ada di kalimat judul, jadi statistik tinggal tiga (revisi pemilik 2026-10-16)
@@ -1263,18 +1277,21 @@ export default function ContributionSkyline({
       value: nf.format(stats.busiest.count),
       unit: noun(stats.busiest.count),
       sub: stats.busiest.date ? df.format(dayMs(stats.busiest.date)) : '—',
+      subLong: stats.busiest.date ? dfm.format(dayMs(stats.busiest.date)) : '—',
     },
     {
       label: labels.longest,
       value: nf.format(stats.longest.days),
       unit: dayNoun(stats.longest.days),
       sub: range(stats.longest.start, stats.longest.end),
+      subLong: longRange(stats.longest.start, stats.longest.end),
     },
     {
       label: labels.current,
       value: nf.format(stats.current.days),
       unit: dayNoun(stats.current.days),
       sub: range(stats.current.start, stats.current.end),
+      subLong: longRange(stats.current.start, stats.current.end),
     },
   ]
   const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'

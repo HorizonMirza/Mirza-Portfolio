@@ -939,3 +939,9 @@ Pilihan pemilik dari 10 demo format: **F10 Minimal**.
 - **Perataan:** sel memakai flex kolom, dan angka serta tanggal dirapatkan ke bawah (`mt-auto`). Dengan begitu angka ketiga kolom tetap sejajar walau label versi ID di HP turun dua baris.
 - Tetap tiga kolom dalam satu baris di HP, dengan padding sel `px-2.5 py-3`.
 
+## 68. Grafik kontribusi GitHub: nama bulan lengkap kecuali di HP (2026-10-16)
+
+- Tanggal di statistik memakai nama bulan lengkap mulai 768 px, misalnya "August 26" dan "September 20 - October 16". Di HP tetap disingkat ("Aug 26", "Sep 20 - Oct 16") agar tiga kolom muat satu baris.
+- Rentang tanggal memakai pemisah " - " (tanda hubung berspasi), sama dengan tanggal di Pengalaman. Pemisah ini menggantikan "–" yang menempel.
+- Label bulan di grafik dan tooltip tidak berubah.
+
