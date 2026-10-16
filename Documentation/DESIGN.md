@@ -869,3 +869,14 @@ Pilihan pemilik dari 10 demo: **T3 Judul tirai**.
 - Di mode 3D, empat angka (total setahun, hari tersibuk, runtutan terpanjang, runtutan sekarang) tidak lagi melayang di sudut kanan atas dan kiri bawah grafik. Seperti mode 2D, angka-angka itu tampil dalam satu baris rapi di bawah grafik: empat kolom di layar lebar, dua kolom di HP.
 - Garis kotak di luar komponen dan garis di sekitar grafik dihapus. Judul, grafik, statistik, petunjuk, dan legenda sejajar di tepi kiri yang sama.
 
+## 62. Grafik kontribusi GitHub: tipografi situs, 3D lebih besar di HP, legenda rapat (2026-10-16)
+
+- **Tipografi mengikuti situs:**
+  - label statistik dan kata Less/More memakai JetBrains Mono `text-label` huruf besar renggang, seperti label di hero;
+  - angka statistik memakai Oswald tebal;
+  - satuan dan tanggal memakai Inter `text-sm`, angka tabular. Tanggal boleh turun baris di HP agar tidak terpotong;
+  - kalimat jumlah kontribusi di atas grafik memakai Inter `text-base`.
+- **3D di layar sempit (< 640 px):** kamera memakai yaw 66° (bukan 45°), sehingga setahun minggu memanjang ke bawah. Tinggi grafik boleh sampai 1,3× lebar. Batang tampil sekitar 1,5× lebih besar di HP. Orbit tetap dalam rentang yaw 8–82°.
+- **Petunjuk dihapus:** "Hover a day for details · arrow keys to explore" dan "Drag to orbit · double-click to reset". Petunjuk tombol panah tetap dibacakan lewat label aksesibel kanvas.
+- **Legenda rapat:** jarak antarkotak 4 px seperti di GitHub. Legenda kini hanya tampilan: fitur sorot level dengan menekan kotak legenda dihapus, karena kotak serapat itu tidak memenuhi area sentuh 24 px (WCAG 2.5.8). Teks label level dan petunjuk yang tidak terpakai dihapus dari `messages`.
+

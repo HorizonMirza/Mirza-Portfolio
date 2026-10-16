@@ -171,3 +171,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Resume CV kartu pembuka hanya membuka Drive (kartu tetap terbuka); semua nomor bagian beranda dihapus; Keahlian Teknis dan GitHub di tengah, tanpa kredit (dipindah ke Privasi), tanpa tautan profil dan ticker GitHub (DESIGN.md bagian 59). |
 | 2026-10-16 | Transisi antarbagian beranda T3 "judul tirai": judul naik dari balik batasnya, isi menyusul memudar (DESIGN.md bagian 60) |
 | 2026-10-16 | Grafik kontribusi GitHub: statistik mode 3D pindah ke baris di bawah grafik seperti mode 2D, tanpa garis kotak (DESIGN.md bagian 61) |
+| 2026-10-16 | Grafik kontribusi GitHub: font mengikuti situs, 3D lebih besar di HP, legenda Less/More rapat, petunjuk hover/orbit dihapus (DESIGN.md bagian 62) |

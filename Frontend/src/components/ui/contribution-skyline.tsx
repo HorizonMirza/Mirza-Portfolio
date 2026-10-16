@@ -179,6 +179,12 @@ export const riseAt = (t: number, week: number, weeks: number, day: number): num
 
 export const YAW_3D = Math.PI / 4
 export const ELEV_3D = (34 * Math.PI) / 180
+/**
+ * Di layar sempit (HP) setahun minggu dilihat lebih memanjang ke bawah agar batang tampil lebih
+ * besar; dengan yaw 45° skalanya dibatasi lebar layar (revisi pemilik 2026-10-16).
+ */
+export const NARROW_WIDTH = 640
+export const YAW_3D_NARROW = (66 * Math.PI) / 180
 export const YAW_RANGE: [number, number] = [(8 * Math.PI) / 180, (82 * Math.PI) / 180]
 export const ELEV_RANGE: [number, number] = [(18 * Math.PI) / 180, (62 * Math.PI) / 180]
 
@@ -243,15 +249,8 @@ export type SkylineLabels = {
   current: string
   day: string
   days: string
-  hint2d: string
-  hint3d: string
   less: string
   more: string
-  level1: string
-  level2: string
-  level3: string
-  level4: string
-  highlight: string
   view: string
   flat: string
   skyline: string
@@ -270,15 +269,8 @@ export const DEFAULT_SKYLINE_LABELS: SkylineLabels = {
   current: 'Current streak',
   day: 'day',
   days: 'days',
-  hint2d: 'Hover a day for details · arrow keys to explore',
-  hint3d: 'Drag to orbit · double-click to reset',
   less: 'Less',
   more: 'More',
-  level1: 'Light',
-  level2: 'Moderate',
-  level3: 'Heavy',
-  level4: 'Heaviest',
-  highlight: 'Highlight days',
   view: 'Chart view',
   flat: 'Flat heat map',
   skyline: '3D skyline',
@@ -408,17 +400,17 @@ function Stat({
 }) {
   return (
     <div className="min-w-0">
-      <div className="text-[13px] leading-tight text-muted">{label}</div>
-      <div className="mt-1 flex items-baseline gap-1.5">
+      <div className="font-mono text-label tracking-widest text-muted uppercase">{label}</div>
+      <div className="mt-1.5 flex items-baseline gap-1.5">
         <span
-          className="font-semibold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
-          style={{ color: accent, fontSize: size, lineHeight: 1, letterSpacing: '-0.02em' }}
+          className="font-display font-bold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
+          style={{ color: accent, fontSize: size, lineHeight: 1 }}
         >
           {value}
         </span>
         <span className="text-sm">{unit}</span>
       </div>
-      <div className="mt-0.5 truncate text-xs text-muted">{sub}</div>
+      <div className="mt-1 text-sm text-muted tabular-nums">{sub}</div>
     </div>
   )
 }
@@ -461,7 +453,6 @@ export default function ContributionSkyline({
     },
   )
   const [active, setActive] = React.useState(-1)
-  const [legendLevel, setLegendLevel] = React.useState(-1)
   const [announce, setAnnounce] = React.useState('')
 
   const rootRef = React.useRef<HTMLDivElement>(null)
@@ -516,7 +507,6 @@ export default function ContributionSkyline({
     heightScale,
     orbit,
     palette,
-    legendLevel,
     target: view === '3d' ? 1 : 0,
     setActive,
     setTheme,
@@ -548,6 +538,7 @@ export default function ContributionSkyline({
     // geseran orbit, mendekati tujuannya dengan halus
     let yaw = 0
     let elev = 0
+    let baseYaw = YAW_3D
     let yawGoal = 0
     let elevGoal = 0
     // tata letak
@@ -576,7 +567,6 @@ export default function ContributionSkyline({
     let hgt = new Float32Array(0)
     let zs = new Float32Array(0)
     let hover = new Float32Array(0)
-    let dim = new Float32Array(0)
     let polys = new Float32Array(0)
     let faces = new Uint8Array(0)
     let order: number[] = []
@@ -601,7 +591,6 @@ export default function ContributionSkyline({
         hgt = new Float32Array(n)
         zs = new Float32Array(n)
         hover = new Float32Array(n)
-        dim = new Float32Array(n)
         polys = new Float32Array(n * 24)
         faces = new Uint8Array(n)
         order = Array.from({ length: n }, (_, i) => i)
@@ -693,9 +682,11 @@ export default function ContributionSkyline({
       dpr = Math.min(2, window.devicePixelRatio || 1)
       const b2 = extent(camera(0), 0, true)
       H2 = 20 + 4 + ((b2.maxy - b2.miny) / (b2.maxx - b2.minx)) * (W - gutter - 4)
-      const b3 = extent(camera(1), 1, true)
+      const narrow = W < NARROW_WIDTH
+      baseYaw = narrow ? YAW_3D_NARROW : YAW_3D
+      const b3 = extent(camera(1, baseYaw - YAW_3D), 1, true)
       const natural = ((b3.maxy - b3.miny) / (b3.maxx - b3.minx)) * (W - 40) + 40
-      H3 = Math.max(Math.min(natural, W * 0.72, 620), Math.min(natural, 240))
+      H3 = Math.max(Math.min(natural, W * (narrow ? 1.3 : 0.72), 620), Math.min(natural, 240))
       Hmax = Math.ceil(Math.max(H2, H3))
       canvas.width = Math.round(W * dpr)
       canvas.height = Math.round(Hmax * dpr)
@@ -708,7 +699,7 @@ export default function ContributionSkyline({
     const draw = () => {
       if (!W || !n) return
       const e = easeInOutCubic(t)
-      const cam = camera(e, yaw, elev)
+      const cam = camera(e, baseYaw - YAW_3D + yaw, elev)
       const Hc = lerp(H2, H3, e)
       if (Math.abs(Hc - lastH) > 0.2) {
         stage.style.height = Hc.toFixed(1) + 'px'
@@ -743,9 +734,6 @@ export default function ContributionSkyline({
       const radius = lerp(0.17, 0.03, e) * s
       const outline = (1 - e) * 0.07
       const lift = 0.7 * e
-      const ex = col[0]
-      const ey = col[1]
-      const ez = col[2]
 
       for (let k = 0; k < n; k++) {
         const i = order[k]
@@ -793,12 +781,6 @@ export default function ContributionSkyline({
         let r = col[L]
         let g = col[L + 1]
         let bl = col[L + 2]
-        const d = dim[i]
-        if (d > 0.002) {
-          r += (ex - r) * 0.72 * d
-          g += (ey - g) * 0.72 * d
-          bl += (ez - bl) * 0.72 * d
-        }
         const hv = hover[i]
         if (hv > 0.002) {
           const m = 0.16 * hv
@@ -935,19 +917,11 @@ export default function ContributionSkyline({
       }
 
       const kh = reduced ? 1 : 1 - Math.exp(-dt * 16)
-      const kd = reduced ? 1 : 1 - Math.exp(-dt * 10)
-      const leg = cfg.current.legendLevel
       for (let i = 0; i < n; i++) {
         const hg = i === activeIdx ? 1 : 0
-        const dg = leg >= 0 && lv[i] !== leg ? 1 : 0
         const h = hover[i]
-        const d = dim[i]
         if (h !== hg) {
           hover[i] = Math.abs(hg - h) < 0.003 ? hg : h + (hg - h) * kh
-          moving = true
-        }
-        if (d !== dg) {
-          dim[i] = Math.abs(dg - d) < 0.003 ? dg : d + (dg - d) * kd
           moving = true
         }
       }
@@ -1027,8 +1001,8 @@ export default function ContributionSkyline({
         if (drag.moved || Math.hypot(dx, dyy) > 4) {
           drag.moved = true
           yawGoal = Math.min(
-            YAW_RANGE[1] - YAW_3D,
-            Math.max(YAW_RANGE[0] - YAW_3D, drag.yaw + dx * 0.006),
+            YAW_RANGE[1] - baseYaw,
+            Math.max(YAW_RANGE[0] - baseYaw, drag.yaw + dx * 0.006),
           )
           if (drag.mouse)
             elevGoal = Math.min(
@@ -1219,7 +1193,7 @@ export default function ContributionSkyline({
 
   React.useEffect(() => {
     engine.current?.kick()
-  }, [view, legendLevel])
+  }, [view])
 
   React.useEffect(() => {
     engine.current?.load()
@@ -1270,16 +1244,12 @@ export default function ContributionSkyline({
     },
   ]
   const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'
-  const levelNames = [labels.none, labels.level1, labels.level2, labels.level3, labels.level4]
-
-  const hints = [labels.hint2d, labels.hint3d]
-  const hint = hints[is3d && orbit ? 1 : 0]
 
   return (
     // tanpa garis kotak di luar maupun di sekitar grafik (revisi pemilik 2026-10-16)
     <div ref={rootRef} className={'relative w-full bg-bg text-text ' + className}>
       <header className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <p className="m-0 text-[15px] leading-snug font-normal">
+        <p className="m-0 text-base leading-snug font-normal">
           <span className="font-semibold tabular-nums">{nf.format(stats.total)}</span>{' '}
           {noun(stats.total)} {labels.inLastYear}
         </p>
@@ -1376,48 +1346,24 @@ export default function ContributionSkyline({
             2026-10-16: angka tidak lagi melayang di sudut grafik 3D) */}
         <div className="grid grid-cols-2 gap-x-4 gap-y-4 pt-4 pb-1 md:grid-cols-4">
           {statBlocks.map((b) => (
-            <Stat key={b.label} {...b} accent={theme.accent} size={28} />
+            <Stat key={b.label} {...b} accent={theme.accent} size={34} />
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-3 text-xs text-muted">
-          <span className="relative grid flex-1">
-            {hints.map((h) => (
-              <span
-                key={h}
-                aria-hidden={h !== hint}
-                className="transition-opacity duration-500 [grid-area:1/1] motion-reduce:transition-none"
-                style={{ opacity: h === hint ? 1 : 0 }}
-              >
-                {h}
-              </span>
-            ))}
-          </span>
-          {/* tiap kotak legenda punya area sentuh 24 px (WCAG 2.5.8), kotak warnanya tetap 11 px */}
-          <div className="flex items-center" onMouseLeave={() => setLegendLevel(-1)}>
-            <span className="mr-1">{labels.less}</span>
-            {theme.swatches.map((c, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={labels.highlight + ': ' + levelNames[i]}
-                aria-pressed={legendLevel === i}
-                title={levelNames[i]}
-                onMouseEnter={() => setLegendLevel(i)}
-                onFocus={() => setLegendLevel(i)}
-                onBlur={() => setLegendLevel(-1)}
-                onClick={() => setLegendLevel((l) => (l === i ? -1 : i))}
-                className="group grid h-[24px] w-[24px] cursor-pointer place-items-center rounded-[4px] border-0 bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-text"
-              >
-                <span
-                  aria-hidden="true"
-                  className="block h-[11px] w-[11px] rounded-[2px] transition-[background-color,transform] duration-500 group-hover:scale-125 motion-reduce:transition-none"
-                  style={{ background: c, boxShadow: 'inset 0 0 0 1px rgba(127,127,127,0.12)' }}
-                />
-              </button>
-            ))}
-            <span className="ml-1">{labels.more}</span>
-          </div>
+        {/* Legenda rapat seperti di GitHub, hanya tampilan (revisi pemilik 2026-10-16: petunjuk
+            "Hover a day…" dan "Drag to orbit…" dihapus; kotak legenda tidak lagi bisa ditekan karena
+            kotak serapat ini tidak memenuhi area sentuh 24 px WCAG 2.5.8) */}
+        <div className="flex items-center justify-end gap-1 pt-3 font-mono text-label tracking-widest text-muted uppercase">
+          <span className="mr-1">{labels.less}</span>
+          {theme.swatches.map((c, i) => (
+            <span
+              key={i}
+              aria-hidden="true"
+              className="block size-[11px] rounded-[2px] transition-[background-color] duration-500 motion-reduce:transition-none"
+              style={{ background: c, boxShadow: 'inset 0 0 0 1px rgba(127,127,127,0.12)' }}
+            />
+          ))}
+          <span className="ml-1">{labels.more}</span>
         </div>
       </div>
 
