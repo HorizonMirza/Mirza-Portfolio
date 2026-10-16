@@ -38,6 +38,12 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   const covers = page.getByRole('list', { name: 'Daftar project' }).getByRole('link')
   const firstCover = covers.first()
   await expect(firstCover).toHaveAttribute('href', /\/id\/projects\/.+/)
+  // nama project (demo N5): layar sentuh menampilkan nama di bawah sampul, layar dengan kursor
+  // menampilkannya di atas sampul saat disorot
+  const caption = page.locator('.home-marquee-caption').first()
+  if (isMobile) await expect(caption).toBeVisible()
+  else await expect(caption).toBeHidden()
+  await expect(firstCover).toHaveAccessibleName(/\S/)
   const track = page.locator('.home-marquee-track')
   if (!isMobile) {
     // pita terus bergerak sehingga tidak pernah "stabil" untuk hover(); kursor diarahkan langsung

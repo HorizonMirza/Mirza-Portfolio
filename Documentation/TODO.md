@@ -166,3 +166,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Project di beranda: tanpa nomor, judul di tengah, tanpa "Semua project" dan deretan nama, sampul pita bisa diklik ke detail dan tidak berhenti saat disorot, letak di bawah Pengalaman (DESIGN.md bagian 58) |
 | 2026-10-16 | Pengalaman di beranda: tanpa nomor dan tautan "Semua pengalaman", judul di tengah, semua tertutup, tanpa ikon +/× dan garis bawah (DESIGN.md bagian 58) |
 | 2026-10-16 | Pengalaman di beranda: logo berbingkai "bayangan lembut" (B5) dan suara blip digital saat baris dibuka dan ditutup (S9) (DESIGN.md bagian 58) |
+| 2026-10-16 | Project di beranda: nama project muncul di tengah sampul saat disorot, di layar sentuh di bawah sampul (demo N5, DESIGN.md bagian 58) |

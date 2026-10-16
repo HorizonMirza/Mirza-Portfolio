@@ -835,4 +835,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - bayangan dan cincin logo hanya di mode terang; di mode gelap logo cukup berlatar putih dengan garis tipis;
   - tanggal di baris Pengalaman memakai huruf dan ukuran yang sama dengan halaman Pengalaman (Inter, `text-sm`, angka tabular), bukan huruf mono;
   - poin detail tanpa batas lebar teks di layar ≥ 640 px, sehingga tiap poin satu baris di desktop (dicek 1024, 1280, 1440 px: 15 dari 15 poin satu baris). Di HP tetap turun baris.
+- **Nama project di pita (pilihan pemilik 2026-10-16 dari 10 demo: N5 "Muncul saat disorot"):**
+  - label Oswald kapital di pojok sampul dihapus, sehingga sampul tampil bersih;
+  - di perangkat dengan kursor (`hover: hover` dan `pointer: fine`), saat sampul disorot atau difokus keyboard, gambar meredup (hitam 62%) dan nama project muncul di tengah dengan Inter semibold;
+  - di layar sentuh, nama tampil di bawah sampul (Inter semibold, satu baris, terpotong dengan elipsis bila panjang);
+  - hanya satu dari keduanya yang tampil, jadi nama tautan dibacakan sekali.
 

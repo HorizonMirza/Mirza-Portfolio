@@ -1578,6 +1578,10 @@
   width: 360px;
 }
 .home-marquee a {
+  display: grid;
+  gap: 0.625rem;
+}
+.home-marquee-cover {
   position: relative;
   display: block;
   overflow: hidden;
@@ -1587,7 +1591,7 @@
   aspect-ratio: 16 / 9;
   transition: border-color 150ms ease-out;
 }
-.home-marquee a:hover {
+.home-marquee a:hover .home-marquee-cover {
   border-color: var(--border-strong);
 }
 .home-marquee img {
@@ -1598,22 +1602,45 @@
 .home-marquee a:hover img {
   transform: scale(1.04);
 }
-.home-marquee-title {
+/* Nama project (pilihan pemilik 2026-10-16, demo N5): sampul bersih; di perangkat dengan kursor
+   nama muncul di tengah sampul yang meredup saat disorot atau difokus. Di layar sentuh (tanpa
+   hover) lapisan itu disembunyikan dan nama tampil di bawah sampul. Hanya satu dari keduanya yang
+   tampil, sehingga nama tautan dibacakan sekali. */
+.home-marquee-hover {
   position: absolute;
-  left: 0.625rem;
-  bottom: 0.625rem;
-  max-width: calc(100% - 1.25rem);
-  overflow: hidden;
-  padding: 0.1875rem 0.5rem;
-  border-radius: 0.375rem;
-  background: rgb(0 0 0 / 0.65);
+  inset: 0;
+  display: none;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 0.62);
   color: #fff;
-  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  text-wrap: balance;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+.home-marquee-caption {
+  overflow: hidden;
+  padding-inline: 0.125rem;
   font-size: 0.9375rem;
-  font-weight: 700;
+  font-weight: 600;
   text-overflow: ellipsis;
-  text-transform: uppercase;
   white-space: nowrap;
+}
+@media (hover: hover) and (pointer: fine) {
+  .home-marquee-hover {
+    display: grid;
+  }
+  .home-marquee a:hover .home-marquee-hover,
+  .home-marquee a:focus-visible .home-marquee-hover {
+    opacity: 1;
+  }
+  .home-marquee-caption {
+    display: none;
+  }
 }
 @keyframes home-marquee {
   to {
@@ -1630,7 +1657,8 @@
   .home-marquee-track {
     animation: none;
   }
-  .home-marquee img {
+  .home-marquee img,
+  .home-marquee-hover {
     transition: none;
   }
 }

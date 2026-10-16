@@ -427,8 +427,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                       transitionTypes={['project-open']}
                       tabIndex={copy === 1 ? -1 : undefined}
                     >
-                      <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
-                      <span className="home-marquee-title">{c.title}</span>
+                      {/* nama muncul di tengah sampul saat disorot; di layar sentuh nama tampil di
+                          bawah sampul (pilihan pemilik 2026-10-16, demo N5) */}
+                      <span className="home-marquee-cover">
+                        <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
+                        <span className="home-marquee-hover">{c.title}</span>
+                      </span>
+                      <span className="home-marquee-caption">{c.title}</span>
                     </Link>
                   </li>
                 )),
