@@ -401,8 +401,8 @@ function Stat({
   size: number
 }) {
   return (
-    <div className="min-w-0">
-      <div className="text-sm font-medium text-muted">{label}</div>
+    <div className="min-w-0 bg-bg p-3 sm:p-4">
+      <div className="text-xs font-semibold tracking-wider text-muted uppercase">{label}</div>
       <div className="mt-1.5 flex items-baseline gap-1.5">
         <span
           className="font-display font-bold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
@@ -1286,8 +1286,8 @@ export default function ContributionSkyline({
         </div>
       </header>
 
-      {/* Satu kotak bergaris di sekitar grafik dan legenda, seperti profil GitHub; statistik di
-          bawah kotak (revisi pemilik 2026-10-16) */}
+      {/* Satu kotak bergaris di sekitar grafik, legenda, dan statistik, seperti profil GitHub
+          (revisi pemilik 2026-10-16) */}
       <div className="relative rounded-md border border-border">
         <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
@@ -1360,14 +1360,15 @@ export default function ContributionSkyline({
           ))}
           <span className="ml-1">{labels.more}</span>
         </div>
-      </div>
 
-      {/* Statistik selalu satu baris rapi di bawah grafik, baik 2D maupun 3D (revisi pemilik
-          2026-10-16: angka tidak lagi melayang di sudut grafik 3D) */}
-      <div className="grid grid-cols-2 gap-x-4 gap-y-4 pt-5 md:grid-cols-4">
-        {statBlocks.map((b) => (
-          <Stat key={b.label} {...b} accent={theme.accent} size={34} />
-        ))}
+        {/* Statistik sebagai pita bawah bersekat di dalam kotak, baik 2D maupun 3D (pilihan pemilik
+            2026-10-16, demo S5): empat kolom di layar lebar, 2 x 2 di HP. Garis sekat berasal dari
+            celah 1 px di atas latar --border. */}
+        <div className="grid grid-cols-2 gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border md:grid-cols-4">
+          {statBlocks.map((b) => (
+            <Stat key={b.label} {...b} accent={theme.accent} size={30} />
+          ))}
+        </div>
       </div>
 
       <p aria-live="polite" className="sr-only">

@@ -905,3 +905,14 @@ Revisi pemilik; menggantikan sebagian bagian 61 dan 62.
   - Less/More memakai Inter `text-sm`;
   - angka statistik tetap Oswald.
 
+## 65. Grafik kontribusi GitHub: statistik sebagai pita dalam kotak (2026-10-16)
+
+Pilihan pemilik dari 10 demo desain statistik: **S5 Pita dalam kotak**. Bagian ini menggantikan letak statistik di bagian 64.
+
+- **Letak:** empat statistik berada di dalam kotak grafik, di bawah legenda. Pita dipisahkan oleh garis atas. Sekat antarkolom setebal 1 px memakai warna `--border` (celah `gap-px` di atas latar `--border`). Layar lebar menampilkan empat kolom, HP 2 × 2. Sudut bawah pita mengikuti sudut kotak.
+- **Isi tiap sel** (padding `p-3`, `p-4` mulai 640 px):
+  - label huruf besar Inter `text-xs` semibold dengan `tracking-wider` (revisi pemilik: "1 YEAR TOTAL" dan seterusnya huruf besar semua);
+  - angka Oswald 30 px warna aksen;
+  - satuan Inter `text-sm`;
+  - tanggal Inter `text-sm` muted.
+
