@@ -852,5 +852,15 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **Semua nomor bagian beranda dihapus** ("02 —", "03 —"). Semua judul bagian rata tengah: Pengalaman, Project, Keahlian Teknis, GitHub. Komponen `SectionHeading` (judul bernomor) tidak dipakai lagi dan dihapus.
 - **Keahlian Teknis / Technical Skills** menggantikan "Yang saya pakai / What I work with". Keterangan sumber keyboard 3D (Naresh Khatri, MIT) dan logo (Simple Icons; logo Git oleh Jason Long, CC BY 3.0) dipindah dari bawah keyboard ke halaman **Privasi → Kredit**, agar atribusi lisensi tetap ada di situs.
 - **GitHub:** judul "GitHub" di tengah, tautan "Buka profil GitHub" dan baris aktivitas terbaru (ticker "Push ke …") dihapus; tinggal grafik kontribusi. Kode ticker (`github-activity-ticker.tsx`, `github-activity.ts`, teks dan CSS-nya) dihapus karena tidak dipakai lagi; bisa dipulihkan dari riwayat git.
-- Transisi antarbagian beranda sedang didemokan (10 pilihan).
+- Transisi antarbagian beranda: lihat bagian 60.
+
+## 60. Beranda: transisi antarbagian "judul tirai" (2026-10-16)
+
+Pilihan pemilik dari 10 demo: **T3 Judul tirai**.
+
+- Berlaku untuk bagian Pengalaman, Project, Keahlian Teknis, dan GitHub (kelas `.home-curtain` pada `<section>`, dipicu `reveal-observer` yang sudah ada; tanpa JavaScript tambahan).
+- Garis pemisah bagian tetap terlihat, bagian tidak ikut memudar.
+- Teks judul berada di `<span>` dalam `<h2 overflow: hidden>`: mulai 110 % di bawah batas judul, naik dalam 750 ms (`--ease-out-soft`).
+- Isi bagian (akordion, pita project, keyboard, grafik kontribusi) memudar masuk 600 ms, mulai 250 ms setelah judul.
+- Sekali jalan, hanya untuk bagian yang berada di bawah layar saat halaman dibuka. Dengan `prefers-reduced-motion` atau tanpa JavaScript semua langsung tampil.
 

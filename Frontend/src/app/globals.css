@@ -841,6 +841,49 @@
   }
 }
 
+/* Transisi antarbagian beranda "judul tirai" (pilihan pemilik 2026-10-16, demo T3, DESIGN.md
+   bagian 60). Bagiannya sendiri tidak memudar sehingga garis pemisah tetap terlihat; judul naik
+   dari balik batas h2, lalu isi bagian menyusul memudar 250 ms kemudian. Tetap memakai
+   reveal-observer: hanya bagian di bawah layar saat halaman dibuka yang dianimasikan. */
+.home-curtain.reveal[data-reveal] {
+  opacity: 1;
+  translate: none;
+  transition: none;
+}
+
+.home-curtain h2 {
+  overflow: hidden;
+}
+
+.home-curtain h2 > span {
+  display: inline-block;
+}
+
+.home-curtain[data-reveal] h2 > span {
+  transition: translate 750ms var(--ease-out-soft);
+}
+
+.home-curtain[data-reveal] :is(h2 ~ *, .home-marquee) {
+  transition: opacity 600ms var(--ease-out-soft) 250ms;
+}
+
+.home-curtain[data-reveal='pending'] h2 > span {
+  translate: 0 110%;
+}
+
+.home-curtain[data-reveal='pending'] :is(h2 ~ *, .home-marquee) {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-curtain[data-reveal] h2 > span,
+  .home-curtain[data-reveal] :is(h2 ~ *, .home-marquee) {
+    transition: none;
+    translate: none;
+    opacity: 1;
+  }
+}
+
 /* Transisi halaman: fade 150 ms (DESIGN.md 2.4), dimatikan bila gerak dikurangi. */
 ::view-transition-old(*),
 ::view-transition-new(*) {

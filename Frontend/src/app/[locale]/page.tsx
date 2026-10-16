@@ -317,13 +317,15 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {sections.includes('experience') ? (
         <section
           aria-labelledby="experience-title"
-          className="border-t border-border py-16 md:py-24"
+          className="home-curtain reveal border-t border-border py-16 md:py-24"
         >
+          {/* Transisi antarbagian "judul tirai" (pilihan pemilik 2026-10-16, demo T3): judul naik dari
+              balik batasnya, isi bagian menyusul memudar. Diatur .home-curtain di globals.css. */}
           {/* Revisi pemilik 2026-10-16: tanpa nomor bagian dan tanpa tautan "Semua pengalaman",
               judul di tengah seperti bagian Project */}
-          <Container className="reveal">
+          <Container>
             <h2 id="experience-title" className="mb-8 text-center text-h2 font-bold">
-              {t('experienceHeading')}
+              <span>{t('experienceHeading')}</span>
             </h2>
             {/* Akordion <details> bawaan browser: tanpa JavaScript, bisa dipakai keyboard dan
                 pembaca layar. Semua tertutup di awal, tanpa ikon +/× (revisi pemilik 2026-10-16). */}
@@ -376,12 +378,15 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       ) : null}
 
       {sections.includes('projects') ? (
-        <section aria-labelledby="projects-title" className="border-t border-border py-16 md:py-24">
+        <section
+          aria-labelledby="projects-title"
+          className="home-curtain reveal border-t border-border py-16 md:py-24"
+        >
           {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul "Project" di tengah, tanpa tautan
               "Semua project" dan tanpa deretan nama; letaknya di bawah Pengalaman. */}
-          <Container className="reveal">
+          <Container>
             <h2 id="projects-title" className="mb-8 text-center text-h2 font-bold">
-              {t('projectsHeading')}
+              <span>{t('projectsHeading')}</span>
             </h2>
           </Container>
           {/* Pita sampul berjalan (pilihan pemilik 2026-10-15): tiap sampul kini tautan ke halaman
@@ -422,13 +427,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <section
           id="skills"
           aria-labelledby="stack-title"
-          className="scroll-mt-24 border-t border-border py-16 md:py-24"
+          className="home-curtain reveal scroll-mt-24 border-t border-border py-16 md:py-24"
         >
-          <Container className="reveal">
+          <Container>
             {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul di tengah; keterangan sumber
                 keyboard 3D dan logo dipindah ke halaman Privasi (bagian Kredit) */}
             <h2 id="stack-title" className="mb-8 text-center text-h2 font-bold">
-              {t('stackHeading')}
+              <span>{t('stackHeading')}</span>
             </h2>
             <SkillKeyboard3D
               keycaps={skillKeycaps}
@@ -449,12 +454,15 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       ) : null}
 
       {sections.includes('github') ? (
-        <section aria-labelledby="github-title" className="border-t border-border py-16 md:py-24">
-          <Container className="reveal">
+        <section
+          aria-labelledby="github-title"
+          className="home-curtain reveal border-t border-border py-16 md:py-24"
+        >
+          <Container>
             {/* Revisi pemilik 2026-10-16: judul "GitHub" di tengah tanpa nomor, tanpa tautan profil
                 dan tanpa baris aktivitas terbaru; tinggal grafik kontribusi */}
             <h2 id="github-title" className="mb-8 text-center text-h2 font-bold">
-              {t('githubHeading')}
+              <span>{t('githubHeading')}</span>
             </h2>
             <ContributionSkyline
               data={contributionDays}
