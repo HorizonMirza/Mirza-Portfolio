@@ -398,7 +398,6 @@ function Stat({
   sub,
   accent,
   size,
-  align,
 }: {
   label: string
   value: string
@@ -406,45 +405,20 @@ function Stat({
   sub: string
   accent: string
   size: number
-  align: 'start' | 'end' | 'stack'
 }) {
-  if (align === 'stack') {
-    return (
-      <div className="min-w-0">
-        <div className="text-[13px] leading-tight text-muted">{label}</div>
-        <div className="mt-1 flex items-baseline gap-1.5">
-          <span
-            className="font-semibold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
-            style={{ color: accent, fontSize: size, lineHeight: 1, letterSpacing: '-0.02em' }}
-          >
-            {value}
-          </span>
-          <span className="text-sm">{unit}</span>
-        </div>
-        <div className="mt-0.5 truncate text-xs text-muted">{sub}</div>
-      </div>
-    )
-  }
   return (
-    <div className="grid grid-cols-[auto_auto] items-end gap-x-2" style={{ justifyContent: align }}>
-      {align === 'end' ? (
-        <>
-          <div className="text-right text-[13px] leading-tight text-muted">{label}</div>
-          <div />
-        </>
-      ) : (
-        <div className="col-span-2 text-[13px] leading-tight text-muted">{label}</div>
-      )}
-      <div
-        className="text-right font-semibold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
-        style={{ color: accent, fontSize: size, lineHeight: 0.95, letterSpacing: '-0.02em' }}
-      >
-        {value}
+    <div className="min-w-0">
+      <div className="text-[13px] leading-tight text-muted">{label}</div>
+      <div className="mt-1 flex items-baseline gap-1.5">
+        <span
+          className="font-semibold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
+          style={{ color: accent, fontSize: size, lineHeight: 1, letterSpacing: '-0.02em' }}
+        >
+          {value}
+        </span>
+        <span className="text-sm">{unit}</span>
       </div>
-      <div className="pb-[0.15em] leading-tight">
-        <div className="text-[15px]">{unit}</div>
-        <div className="text-[13px] whitespace-nowrap text-muted">{sub}</div>
-      </div>
+      <div className="mt-0.5 truncate text-xs text-muted">{sub}</div>
     </div>
   )
 }
@@ -486,7 +460,6 @@ export default function ContributionSkyline({
       return { dark: false, swatches: ['#ebebeb', ...p], accent: p[3] }
     },
   )
-  const [width, setWidth] = React.useState(0)
   const [active, setActive] = React.useState(-1)
   const [legendLevel, setLegendLevel] = React.useState(-1)
   const [announce, setAnnounce] = React.useState('')
@@ -546,7 +519,6 @@ export default function ContributionSkyline({
     legendLevel,
     target: view === '3d' ? 1 : 0,
     setActive,
-    setWidth,
     setTheme,
     setAnnounce,
     describe,
@@ -730,7 +702,6 @@ export default function ContributionSkyline({
       canvas.style.width = W + 'px'
       canvas.style.height = Hmax + 'px'
       lastH = -1
-      cfg.current.setWidth(W)
       draw()
     }
 
@@ -1272,8 +1243,6 @@ export default function ContributionSkyline({
   }
   const dayNoun = (n: number) => (n === 1 ? labels.day : labels.days)
   const is3d = view === '3d'
-  const corners = width >= 560
-  const bigSize = Math.round(Math.max(30, Math.min(56, width * 0.058)))
   const statBlocks = [
     {
       label: labels.total,
@@ -1300,7 +1269,6 @@ export default function ContributionSkyline({
       sub: range(stats.current.start, stats.current.end),
     },
   ]
-  const showRow = !(is3d && corners)
   const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'
   const levelNames = [labels.none, labels.level1, labels.level2, labels.level3, labels.level4]
 
@@ -1308,12 +1276,8 @@ export default function ContributionSkyline({
   const hint = hints[is3d && orbit ? 1 : 0]
 
   return (
-    <div
-      ref={rootRef}
-      className={
-        'relative w-full rounded-xl border border-border bg-bg p-4 text-text sm:p-5 ' + className
-      }
-    >
+    // tanpa garis kotak di luar maupun di sekitar grafik (revisi pemilik 2026-10-16)
+    <div ref={rootRef} className={'relative w-full bg-bg text-text ' + className}>
       <header className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <p className="m-0 text-[15px] leading-snug font-normal">
           <span className="font-semibold tabular-nums">{nf.format(stats.total)}</span>{' '}
@@ -1351,8 +1315,8 @@ export default function ContributionSkyline({
         </div>
       </header>
 
-      <div className="relative rounded-lg border border-border">
-        <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
+      <div className="relative">
+        <div className="relative pt-3 sm:pt-4">
           <div
             ref={stageRef}
             className="relative w-full overflow-hidden rounded-md outline-offset-4 outline-text has-[:focus-visible]:outline-2"
@@ -1374,46 +1338,13 @@ export default function ContributionSkyline({
               className="absolute top-0 left-0 block outline-none"
               style={{ maxWidth: 'none', touchAction: is3d && orbit ? 'pan-y' : 'auto' }}
             />
-
-            {corners && (
-              <>
-                <div
-                  aria-hidden={!is3d}
-                  className="pointer-events-none absolute top-1 right-1 flex flex-col items-end gap-5 transition-[opacity,transform] motion-reduce:transition-none"
-                  style={{
-                    opacity: is3d ? 1 : 0,
-                    transform: is3d ? 'translateY(0)' : 'translateY(-10px)',
-                    transitionDuration: is3d ? '600ms' : '300ms',
-                    transitionDelay: is3d ? Math.round(duration * 0.55) + 'ms' : '0ms',
-                    transitionTimingFunction: ease,
-                  }}
-                >
-                  <Stat {...statBlocks[0]} accent={theme.accent} size={bigSize} align="end" />
-                  <Stat {...statBlocks[1]} accent={theme.accent} size={bigSize} align="end" />
-                </div>
-                <div
-                  aria-hidden={!is3d}
-                  className="pointer-events-none absolute bottom-1 left-1 flex flex-col items-start gap-5 transition-[opacity,transform] motion-reduce:transition-none"
-                  style={{
-                    opacity: is3d ? 1 : 0,
-                    transform: is3d ? 'translateY(0)' : 'translateY(10px)',
-                    transitionDuration: is3d ? '600ms' : '300ms',
-                    transitionDelay: is3d ? Math.round(duration * 0.65) + 'ms' : '0ms',
-                    transitionTimingFunction: ease,
-                  }}
-                >
-                  <Stat {...statBlocks[2]} accent={theme.accent} size={bigSize} align="start" />
-                  <Stat {...statBlocks[3]} accent={theme.accent} size={bigSize} align="start" />
-                </div>
-              </>
-            )}
           </div>
 
           <div
             ref={tipRef}
             role="tooltip"
             aria-hidden={active < 0}
-            className="pointer-events-none absolute top-3 left-3 z-20 rounded-md bg-text px-2.5 py-1.5 text-xs leading-none whitespace-nowrap text-bg shadow-lg transition-opacity duration-150 motion-reduce:transition-none sm:top-4 sm:left-4"
+            className="pointer-events-none absolute top-3 left-0 z-20 rounded-md bg-text px-2.5 py-1.5 text-xs leading-none whitespace-nowrap text-bg shadow-lg transition-opacity duration-150 motion-reduce:transition-none sm:top-4"
             style={{ opacity: active >= 0 ? 1 : 0 }}
           >
             {active >= 0 && model.cells[active] ? (
@@ -1441,26 +1372,15 @@ export default function ContributionSkyline({
           </div>
         </div>
 
-        <div
-          aria-hidden={!showRow}
-          className="grid transition-[grid-template-rows,opacity] motion-reduce:transition-none"
-          style={{
-            gridTemplateRows: showRow ? '1fr' : '0fr',
-            opacity: showRow ? 1 : 0,
-            transitionDuration: duration + 'ms',
-            transitionTimingFunction: ease,
-          }}
-        >
-          <div className="min-h-0 overflow-hidden">
-            <div className="grid grid-cols-2 gap-x-4 gap-y-4 px-3 pt-4 pb-1 sm:px-4 md:grid-cols-4">
-              {statBlocks.map((b) => (
-                <Stat key={b.label} {...b} accent={theme.accent} size={28} align="stack" />
-              ))}
-            </div>
-          </div>
+        {/* Statistik selalu satu baris rapi di bawah grafik, baik 2D maupun 3D (revisi pemilik
+            2026-10-16: angka tidak lagi melayang di sudut grafik 3D) */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-4 pt-4 pb-1 md:grid-cols-4">
+          {statBlocks.map((b) => (
+            <Stat key={b.label} {...b} accent={theme.accent} size={28} />
+          ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-3 pt-3 pb-3 text-xs text-muted sm:px-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-3 text-xs text-muted">
           <span className="relative grid flex-1">
             {hints.map((h) => (
               <span

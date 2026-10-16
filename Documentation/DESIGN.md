@@ -864,3 +864,8 @@ Pilihan pemilik dari 10 demo: **T3 Judul tirai**.
 - Isi bagian (akordion, pita project, keyboard, grafik kontribusi) memudar masuk 600 ms, mulai 250 ms setelah judul.
 - Sekali jalan, hanya untuk bagian yang berada di bawah layar saat halaman dibuka. Dengan `prefers-reduced-motion` atau tanpa JavaScript semua langsung tampil.
 
+## 61. Grafik kontribusi GitHub: statistik di bawah, tanpa garis kotak (2026-10-16)
+
+- Di mode 3D, empat angka (total setahun, hari tersibuk, runtutan terpanjang, runtutan sekarang) tidak lagi melayang di sudut kanan atas dan kiri bawah grafik. Seperti mode 2D, angka-angka itu tampil dalam satu baris rapi di bawah grafik: empat kolom di layar lebar, dua kolom di HP.
+- Garis kotak di luar komponen dan garis di sekitar grafik dihapus. Judul, grafik, statistik, petunjuk, dan legenda sejajar di tepi kiri yang sama.
+

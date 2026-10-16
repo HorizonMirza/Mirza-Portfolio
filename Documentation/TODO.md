@@ -170,3 +170,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Pengalaman beranda: animasi buka/tutup di semua browser termasuk HP, detail sejajar judul di HP, huruf sama dengan halaman Pengalaman. Chip teknologi project langsung berwarna di layar sentuh (DESIGN.md bagian 58) |
 | 2026-10-16 | Resume CV kartu pembuka hanya membuka Drive (kartu tetap terbuka); semua nomor bagian beranda dihapus; Keahlian Teknis dan GitHub di tengah, tanpa kredit (dipindah ke Privasi), tanpa tautan profil dan ticker GitHub (DESIGN.md bagian 59). |
 | 2026-10-16 | Transisi antarbagian beranda T3 "judul tirai": judul naik dari balik batasnya, isi menyusul memudar (DESIGN.md bagian 60) |
+| 2026-10-16 | Grafik kontribusi GitHub: statistik mode 3D pindah ke baris di bawah grafik seperti mode 2D, tanpa garis kotak (DESIGN.md bagian 61) |
