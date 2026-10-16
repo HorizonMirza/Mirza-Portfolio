@@ -880,3 +880,16 @@ Pilihan pemilik dari 10 demo: **T3 Judul tirai**.
 - **Petunjuk dihapus:** "Hover a day for details · arrow keys to explore" dan "Drag to orbit · double-click to reset". Petunjuk tombol panah tetap dibacakan lewat label aksesibel kanvas.
 - **Legenda rapat:** jarak antarkotak 4 px seperti di GitHub. Legenda kini hanya tampilan: fitur sorot level dengan menekan kotak legenda dihapus, karena kotak serapat itu tidak memenuhi area sentuh 24 px (WCAG 2.5.8). Teks label level dan petunjuk yang tidak terpakai dihapus dari `messages`.
 
+## 63. Grafik kontribusi GitHub: biru situs (2026-10-16)
+
+Pilihan pemilik dari 10 demo warna: **W1 Biru situs**, menggantikan hijau khas GitHub. Token `--gh-1` sampai `--gh-4` di `globals.css` dan `GITHUB_PALETTE` di `contribution-skyline.tsx` diganti; keduanya harus tetap sama.
+
+| Tingkat | Terang | Gelap |
+|---|---|---|
+| 1 | `#b9d2f8` | `#10294a` |
+| 2 | `#6e9de8` | `#184a8a` |
+| 3 | `#2f6fd6` | `#2f78d6` |
+| 4 | `#1b4c9c` | `#4da3ff` (= `--note`) |
+
+Angka statistik memakai tingkat 4. Kontrasnya 8,2:1 di latar putih dan 7,5:1 di latar hitam.
+

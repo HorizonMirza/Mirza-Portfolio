@@ -29,11 +29,12 @@
   --accent: #1d5fd0;
   /* warna seri grafik */
   --chart-1: #1d5fd0;
-  /* kalender kontribusi GitHub (level 1-4, hijau khas GitHub; level 0 memakai --surface-2) */
-  --gh-1: #9be9a8;
-  --gh-2: #40c463;
-  --gh-3: #30a14e;
-  --gh-4: #216e39;
+  /* kalender kontribusi GitHub (level 1-4, biru situs pilihan pemilik 2026-10-16, demo W1;
+     level 0 memakai --surface-2) */
+  --gh-1: #b9d2f8;
+  --gh-2: #6e9de8;
+  --gh-3: #2f6fd6;
+  --gh-4: #1b4c9c;
 
   color-scheme: light;
 }
@@ -54,10 +55,10 @@
   --note: #4da3ff;
   --accent: #4da3ff;
   --chart-1: #4da3ff;
-  --gh-1: #0e4429;
-  --gh-2: #006d32;
-  --gh-3: #26a641;
-  --gh-4: #39d353;
+  --gh-1: #10294a;
+  --gh-2: #184a8a;
+  --gh-3: #2f78d6;
+  --gh-4: #4da3ff;
 
   color-scheme: dark;
 }
@@ -80,10 +81,10 @@
     --note: #4da3ff;
     --accent: #4da3ff;
     --chart-1: #4da3ff;
-    --gh-1: #0e4429;
-    --gh-2: #006d32;
-    --gh-3: #26a641;
-    --gh-4: #39d353;
+    --gh-1: #10294a;
+    --gh-2: #184a8a;
+    --gh-3: #2f78d6;
+    --gh-4: #4da3ff;
 
     color-scheme: dark;
   }

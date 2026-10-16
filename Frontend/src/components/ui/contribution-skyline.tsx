@@ -221,9 +221,11 @@ export const luminance = (c: RGB): number => (0.2126 * c[0] + 0.7152 * c[1] + 0.
 export type Palette = { light: string[]; dark: string[] }
 
 // Sama dengan token --gh-1 sampai --gh-4 di globals.css (canvas tidak bisa membaca var()).
+// Biru situs, menggantikan hijau khas GitHub (pilihan pemilik 2026-10-16, demo W1); tingkat
+// terkuat sama dengan --note sehingga angka statistik memakai warna aksen situs.
 export const GITHUB_PALETTE: Palette = {
-  light: ['#9be9a8', '#40c463', '#30a14e', '#216e39'],
-  dark: ['#0e4429', '#006d32', '#26a641', '#39d353'],
+  light: ['#b9d2f8', '#6e9de8', '#2f6fd6', '#1b4c9c'],
+  dark: ['#10294a', '#184a8a', '#2f78d6', '#4da3ff'],
 }
 
 export const resolvePalette = (p: Palette | undefined, dark: boolean): string[] => {
