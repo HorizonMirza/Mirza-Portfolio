@@ -15,8 +15,26 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   const projects = page.getByRole('list', { name: 'Daftar project' })
   await expect(page.getByRole('heading', { name: 'Project pilihan' })).toBeVisible()
   await expect(projects.getByRole('link').first()).toHaveAttribute('href', /\/id\/projects\/.+/)
-  // tetap dihapus atas permintaan pemilik 2026-10-08: Perjalanan terbaru, ajakan + newsletter
-  for (const name of ['Perjalanan terbaru', 'Ada yang ingin dibangun?']) {
+  // Pengalaman (revisi pemilik 2026-10-16, akordion): yang terbaru terbuka, yang lain bisa dibuka
+  await expect(page.getByRole('heading', { name: 'Pengalaman' })).toBeVisible()
+  const xp = page.locator('details.home-xp')
+  await expect(xp.first()).toHaveAttribute('open', '')
+  await expect(xp.nth(1)).not.toHaveAttribute('open', '')
+  await xp.nth(1).locator('summary').click()
+  await expect(xp.nth(1)).toHaveAttribute('open', '')
+  await expect(xp.nth(1).locator('.home-xp-body')).toBeVisible()
+  await expect(page.getByRole('link', { name: /Semua pengalaman \(\d+\)/ })).toHaveAttribute(
+    'href',
+    '/id/experience',
+  )
+  // dihapus atas permintaan pemilik: Perjalanan terbaru, ajakan + newsletter (2026-10-08), Dalam
+  // angka dan Dari komunitas ke software (2026-10-16)
+  for (const name of [
+    'Perjalanan terbaru',
+    'Ada yang ingin dibangun?',
+    'Dalam angka',
+    'Dari komunitas ke software',
+  ]) {
     await expect(page.getByRole('heading', { name })).toHaveCount(0)
   }
   // nomor bagian berurutan tanpa lompatan, mulai 02 setelah pembuka

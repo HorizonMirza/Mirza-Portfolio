@@ -6,11 +6,13 @@ import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
+import { MarkdownView } from '@/components/shared/markdown-view'
 import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
-import { organizationName } from '@/features/experience/schema'
+import { getPublicExperiences } from '@/features/experience/public'
+import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import {
   GithubActivityTicker,
   type TickerItem,
@@ -28,7 +30,7 @@ import { siteUrl } from '@/lib/env'
 import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
-import { loc } from '@/lib/localized'
+import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
 import { cn } from '@/lib/utils'
 
@@ -68,9 +70,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     tKeyboard,
     tSkyline,
     tActivity,
+    tExp,
     profile,
     projects,
     skills,
+    experiences,
   ] = await Promise.all([
     getTranslations({ locale, namespace: 'Home' }),
     getTranslations({ locale, namespace: 'Nav' }),
@@ -80,9 +84,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     getTranslations({ locale, namespace: 'SkillKeyboard' }),
     getTranslations({ locale, namespace: 'Skyline' }),
     getTranslations({ locale, namespace: 'GithubActivity' }),
+    getTranslations({ locale, namespace: 'Experience' }),
     getPublicProfile(),
     getPublishedProjects(),
     getPublicSkills(),
+    getPublicExperiences(),
   ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
@@ -149,8 +155,12 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
   // Nomor bagian dihitung dari bagian yang benar-benar tampil, agar tidak melompat bila satu bagian
   // kosong (mis. semua angka dihapus di admin). 01 selalu bagian pembuka.
+  // Pengalaman di beranda (revisi pemilik 2026-10-16, demo E3 akordion): kerja dan organisasi
+  // terbaru di atas, pendidikan tidak ikut (sama dengan halaman Pengalaman)
+  const workHistory = sortByLatest(experiences.filter((e) => e.type !== 'EDUCATION'))
   const sections = [
     showcaseCovers.length > 1 && 'projects',
+    workHistory.length > 0 && 'experience',
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
@@ -368,6 +378,75 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </li>
               ))}
             </ul>
+          </Container>
+        </section>
+      ) : null}
+
+      {sections.includes('experience') ? (
+        <section
+          aria-labelledby="experience-title"
+          className="border-t border-border py-16 md:py-24"
+        >
+          <Container className="reveal">
+            <SectionHeading
+              id="experience-title"
+              index={sectionIndex('experience')}
+              title={t('experienceHeading')}
+              action={
+                <Link
+                  href="/experience"
+                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
+                >
+                  {t('allExperience', { count: workHistory.length })}
+                  <ArrowRight className="size-4" aria-hidden="true" />
+                </Link>
+              }
+            />
+            {/* Akordion <details> bawaan browser: tanpa JavaScript, bisa dipakai keyboard dan
+                pembaca layar. Yang terbaru terbuka lebih dulu. */}
+            <div className="home-xp-list">
+              {workHistory.map((e, i) => {
+                const org = organizationName(e, locale)
+                const when = `${formatMonth(e.start, locale)} – ${
+                  e.end ? formatMonth(e.end, locale) : tExp('present')
+                }`
+                return (
+                  <details key={e.id} className="home-xp" open={i === 0}>
+                    <summary>
+                      <span className="home-xp-logo" aria-hidden="true">
+                        {e.logo ? (
+                          <Image
+                            src={e.logo.url}
+                            alt=""
+                            width={88}
+                            height={88}
+                            sizes="44px"
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          <span>{initials(e.organization)}</span>
+                        )}
+                      </span>
+                      <span className="home-xp-head">
+                        <span className="home-xp-role">{loc(e, 'title', locale)}</span>
+                        <span className="home-xp-org">
+                          {org}
+                          {e.employmentType ? ` · ${tExp(`employment.${e.employmentType}`)}` : ''}
+                        </span>
+                        <span className="home-xp-when home-xp-when-inline">{when}</span>
+                      </span>
+                      <span className="home-xp-when home-xp-when-side">{when}</span>
+                      <span className="home-xp-toggle" aria-hidden="true" />
+                    </summary>
+                    <MarkdownView
+                      source={loc(e, 'description', locale)}
+                      size="base"
+                      className="home-xp-body text-muted"
+                    />
+                  </details>
+                )
+              })}
+            </div>
           </Container>
         </section>
       ) : null}
