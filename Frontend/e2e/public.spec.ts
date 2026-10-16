@@ -45,11 +45,6 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
     await expect(track).toHaveCSS('animation-play-state', 'running')
   }
-  const href = await firstCover.getAttribute('href')
-  // klik lewat event: sampul terus bergerak, klik berdasarkan koordinat bisa mengenai sampul sebelahnya
-  await firstCover.dispatchEvent('click')
-  await expect(page).toHaveURL(new RegExp(`${href}$`))
-  await page.goto('/id')
   // dihapus atas permintaan pemilik: Perjalanan terbaru, ajakan + newsletter (2026-10-08), Dalam
   // angka dan Dari komunitas ke software (2026-10-16)
   for (const name of [
@@ -65,6 +60,12 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   expect(numbers.map((n) => n.trim())).toEqual(
     numbers.map((_, i) => `${String(i + 2).padStart(2, '0')} —`),
   )
+  // terakhir: klik sampul membuka detail project. Diletakkan di akhir agar tidak perlu kembali ke
+  // beranda dengan goto (Firefox CI kehilangan halaman pada navigasi ulang, CI 245dde1)
+  const href = await firstCover.getAttribute('href')
+  // klik lewat event: sampul terus bergerak, klik berdasarkan koordinat bisa mengenai sampul sebelahnya
+  await firstCover.dispatchEvent('click')
+  await expect(page).toHaveURL(new RegExp(`${href}$`))
 })
 
 test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
