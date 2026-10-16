@@ -812,3 +812,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - Bahasa Inggris juga **Resume CV** (keputusan pemilik 2026-10-16). Usulan "Resume" saja untuk EN sempat dipasang lalu dikembalikan.
 - Ikon tombol hero diganti dari ikon unduh menjadi ikon dokumen (sama dengan kartu pembuka), karena tombol membuka penampil Google Drive, bukan mengunduh langsung. Kartu footer tetap berketerangan "Google Drive".
 - **Cek HP 2026-10-16:** ketiga tombol tampil "Resume CV" di 360 px dan Pixel 7, ID dan EN. Judul kartu pembuka versi EN ("IMPORTANT INFORMATION") ternyata terpotong di HP ≤ 360 px (butuh 295 px, ruang 288 px). Ukuran judul kini ikut lebar kartu (`min(…, 100cqi / 10.8)`), sehingga tetap satu baris dari 320 px ke atas. Di laptop ukurannya tidak berubah. Judul lebih panjang dari admin turun baris (`text-wrap: balance`), tidak terpotong.
+
+## 57. Revisi beranda 2026-10-16
+
+- **Resume CV di kartu pembuka:** sebelumnya kartu ditutup dengan animasi 320 ms setelah tab Drive terbuka. Tab asal langsung pindah ke latar belakang (di HP dibekukan), jadi saat pengunjung kembali, kartu masih terbuka. Sekarang kartu langsung tertutup tanpa animasi, dan tab asal pindah ke Beranda (dalam bahasa yang dipilih di kartu).
+- **Dalam angka dan Dari komunitas ke software dihapus dari beranda** (permintaan pemilik). Admin → Angka dan centang "garis cerita" di Pengalaman tetap ada, dan datanya tersimpan, tetapi tidak tampil di situs. Keterangannya di admin sudah diberi catatan. Komponen hitung naik dan CSS kedua bagian dihapus (bisa dipulihkan dari riwayat git).
+- Susunan beranda sekarang: 01 pembuka, 02 Project pilihan, 03 Yang saya pakai, 04 Aktivitas di GitHub. Bagian About dan Experience di beranda menunggu pilihan demo pemilik.
+

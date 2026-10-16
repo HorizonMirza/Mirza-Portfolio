@@ -138,7 +138,10 @@ export function ExperienceForm({
         </Field>
         <label className="flex min-h-11 items-center gap-3 md:col-span-2">
           <input type="checkbox" className="size-5 accent-primary" {...register('inStory')} />
-          <span>Tampilkan sebagai titik di garis cerita beranda (Dari komunitas ke software)</span>
+          <span>
+            Tandai sebagai titik garis cerita (bagian beranda Dari komunitas ke software sedang
+            tidak ditampilkan)
+          </span>
         </label>
         <Field
           id="status"

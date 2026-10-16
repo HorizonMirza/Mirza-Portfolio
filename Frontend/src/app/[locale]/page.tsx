@@ -10,10 +10,7 @@ import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
 import { Container, SectionHeading } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
-import { getPublicExperiences } from '@/features/experience/public'
 import { organizationName } from '@/features/experience/schema'
-import { CountUp } from '@/features/highlights/components/count-up'
-import { getPublicHighlights } from '@/features/highlights/public'
 import {
   GithubActivityTicker,
   type TickerItem,
@@ -74,8 +71,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     profile,
     projects,
     skills,
-    highlights,
-    experiences,
   ] = await Promise.all([
     getTranslations({ locale, namespace: 'Home' }),
     getTranslations({ locale, namespace: 'Nav' }),
@@ -88,8 +83,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     getPublicProfile(),
     getPublishedProjects(),
     getPublicSkills(),
-    getPublicHighlights(),
-    getPublicExperiences(),
   ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
@@ -99,10 +92,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     ? await Promise.all([getGithubContributions(login), getGithubActivity(login)])
     : [null, [] as GithubActivity[]]
   const numberLocale = locale === 'id' ? 'id-ID' : 'en-US'
-  // garis cerita: titik yang dicentang di admin, dari yang terlama
-  const story = experiences
-    .filter((e) => e.inStory)
-    .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0))
   const tickerItems: TickerItem[] = activity.map((a) => ({
     badge: tActivity(activityBadge[a.kind]),
     // repo milik sendiri cukup namanya ("Mirza-Portfolio"), agar muat di HP
@@ -162,8 +151,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   // kosong (mis. semua angka dihapus di admin). 01 selalu bagian pembuka.
   const sections = [
     showcaseCovers.length > 1 && 'projects',
-    highlights.length > 0 && 'numbers',
-    story.length > 1 && 'story',
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
@@ -381,57 +368,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 </li>
               ))}
             </ul>
-          </Container>
-        </section>
-      ) : null}
-
-      {sections.includes('numbers') ? (
-        <section aria-labelledby="numbers-title" className="border-t border-border py-16 md:py-24">
-          <Container className="reveal">
-            <SectionHeading
-              id="numbers-title"
-              index={sectionIndex('numbers')}
-              title={t('highlightsHeading')}
-            />
-            <ul className="home-stats">
-              {highlights.map((h) => (
-                <li key={h.id}>
-                  <CountUp
-                    value={h.value}
-                    suffix={h.suffix}
-                    locale={numberLocale}
-                    className="home-stat-value"
-                  />
-                  <span className="home-stat-label">{loc(h, 'label', locale)}</span>
-                  {h.source ? <span className="home-stat-source">{h.source}</span> : null}
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      ) : null}
-
-      {sections.includes('story') ? (
-        <section aria-labelledby="story-title" className="border-t border-border py-16 md:py-24">
-          <Container className="reveal">
-            <SectionHeading
-              id="story-title"
-              index={sectionIndex('story')}
-              title={t('storyHeading')}
-            />
-            <ol className="home-story" style={{ '--n': story.length } as CSSProperties}>
-              {story.map((e, i) => (
-                <li
-                  key={e.id}
-                  className={cn(i === story.length - 1 && !e.end && 'is-now')}
-                  style={{ '--i': i } as CSSProperties}
-                >
-                  <span className="home-story-year">{e.start.slice(0, 4)}</span>
-                  <span className="home-story-org">{organizationName(e, locale)}</span>
-                  <span className="home-story-role">{loc(e, 'title', locale)}</span>
-                </li>
-              ))}
-            </ol>
           </Container>
         </section>
       ) : null}

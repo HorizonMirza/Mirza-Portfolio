@@ -149,7 +149,7 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   }
 })
 
-test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit', async ({
+test('CRUD angka: buat, tidak tampil di beranda, hapus, dan tercatat di audit', async ({
   page,
 }, testInfo) => {
   const label = `angka E2E ${testInfo.project.name}-${Date.now()}`
@@ -157,7 +157,6 @@ test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit'
   // akan muncul dua kali di beranda
   const value = 10_000 + Math.floor(Math.random() * 89_999)
   const idText = `${new Intl.NumberFormat('id-ID').format(value)}+`
-  const enText = `${new Intl.NumberFormat('en-US').format(value)}+`
   await page.goto('/admin/highlights/new')
   await page.getByRole('button', { name: 'Tambah angka' }).click()
   await expect(page.getByText('Keterangan wajib diisi')).toBeVisible()
@@ -170,20 +169,9 @@ test('CRUD angka beranda: buat, tampil di beranda, hapus, dan tercatat di audit'
   await expect(page.getByText('Angka ditambahkan.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/highlights\/[0-9a-f-]{36}$/)
 
-  // Proyek browser berjalan paralel dan berbagi satu database: penghapusan angka oleh proyek lain
-  // bisa memicu render ulang beranda dengan data yang dibaca sebelum angka ini tersimpan, sehingga
-  // satu kali muat bisa masih lama. Muat ulang sampai angka baru tampil (tetap gagal bila tidak
-  // pernah tampil).
-  const stats = page.getByRole('region', { name: 'Dalam angka' })
-  await expect(async () => {
-    await page.goto('/id')
-    await expect(stats.getByText(label)).toBeVisible({ timeout: 2000 })
-  }).toPass({ timeout: 15_000 })
-  await expect(stats.getByText(idText)).toBeVisible()
-  await expect(async () => {
-    await page.goto('/en')
-    await expect(page.getByText(enText)).toBeVisible({ timeout: 2000 })
-  }).toPass({ timeout: 15_000 })
+  // Bagian "Dalam angka" dihapus dari beranda (revisi pemilik 2026-10-16): angka tetap tersimpan di
+  // admin tetapi tidak tampil di situs publik
+  expect(await (await page.request.get('/id')).text()).not.toContain(label)
 
   await page.goto('/admin/highlights')
   await page
