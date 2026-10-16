@@ -18,7 +18,7 @@
   "Intro": {
     "eyebrow": "Portofolio - {name}",
     "language": "Bahasa",
-    "downloadCv": "Resume ATS",
+    "downloadCv": "Resume CV",
     "home": "Beranda"
   },
   "NotFound": {
@@ -36,7 +36,7 @@
     "skills": "Skill",
     "projects": "Project",
     "contact": "Kontak",
-    "downloadCv": "Unduh CV"
+    "downloadCv": "Resume CV"
   },
   "Footer": {
     "contactHeading": "Hubungi saya",

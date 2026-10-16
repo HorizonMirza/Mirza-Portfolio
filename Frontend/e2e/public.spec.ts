@@ -264,7 +264,7 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', asyn
   // label semester dihapus (revisi pemilik 2026-10-08)
   await expect(page.getByText(/^Semester \d+$/)).toHaveCount(0)
   // tombol CV dihapus dari halaman ini (CV tetap ada di footer bila diisi)
-  await expect(page.getByRole('main').getByRole('link', { name: /Unduh CV/ })).toHaveCount(0)
+  await expect(page.getByRole('main').getByRole('link', { name: /Resume CV/ })).toHaveCount(0)
   await page.goto('/en/about')
   await expect(
     page.getByRole('heading', { name: 'Budi Luhur Senior High School', level: 3 }),

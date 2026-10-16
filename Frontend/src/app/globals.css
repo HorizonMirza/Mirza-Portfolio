@@ -2433,7 +2433,7 @@ html:has(.intro[open]) {
 .intro-body strong {
   color: #fff;
 }
-/* tombol sejajar selebar kartu: Resume ATS lebih lebar dari Beranda */
+/* tombol sejajar selebar kartu: Resume CV lebih lebar dari Beranda */
 .intro-actions {
   display: grid;
   gap: 0.75rem;

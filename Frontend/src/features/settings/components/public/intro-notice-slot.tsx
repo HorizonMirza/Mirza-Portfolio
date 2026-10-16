@@ -11,7 +11,7 @@ type Locale = (typeof routing.locales)[number]
 
 // Bagian server pemberitahuan pembuka: menyiapkan isi dua bahasa sekaligus (Markdown dirender dan
 // disanitasi di server) agar tombol ID/EN di kartu bisa berganti bahasa tanpa memuat halaman.
-// Tombol Unduh CV hanya tampil bila CV ada.
+// Tombol Resume CV hanya tampil bila CV ada.
 export async function IntroNoticeSlot({
   locale,
   intro,

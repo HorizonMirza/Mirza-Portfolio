@@ -120,7 +120,7 @@ export function SettingsForm({ defaultValues }: { defaultValues: SettingsInput }
           <h2 className="text-h3 font-semibold">Pemberitahuan pembuka</h2>
           <p className="mt-1 text-sm text-muted">
             Kartu singkat yang muncul sekali setiap pengunjung membuka situs, sebelum masuk ke
-            halaman. Berisi judul, isi, pilihan ID/EN, dan tombol Unduh CV (bila CV ada) dan
+            halaman. Berisi judul, isi, pilihan ID/EN, dan tombol Resume CV (bila CV ada) dan
             Beranda.
           </p>
         </div>

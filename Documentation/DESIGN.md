@@ -806,3 +806,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **HP dan tablet (< 1024 px):** foto bulat kecil 64 px di atas nama, tanpa keterangan. Ukurannya dipilih agar tombol CV tetap terlihat tanpa scroll di 360 × 640 (PRD U1; tombol pertama berakhir di y ≈ 537 px, di atas nav bawah).
 - Foto dari Admin → Profil bila ada, selain itu foto bawaan pemilik (sama dengan halaman Tentang). Alt text dua bahasa. Server component, tanpa JavaScript klien; reduced-motion: tanpa transisi.
 
+## 56. Nama tombol CV seragam (2026-10-16)
+
+- Audit Home nomor 5: tombol yang membuka CV punya tiga nama ("Unduh CV" di hero, "Resume ATS" di kartu pembuka, "Resume CV" di footer). Pemilik memilih **Resume CV** untuk semuanya.
+- Bahasa Inggris memakai **Resume**, karena "Resume CV" dalam bahasa Inggris berulang (resume dan CV berarti sama) dan bisa terbaca sebagai kata kerja "resume". Ikon dokumen di depannya membuat maknanya jelas.
+- Ikon tombol hero diganti dari ikon unduh menjadi ikon dokumen (sama dengan kartu pembuka), karena tombol membuka penampil Google Drive, bukan mengunduh langsung. Kartu footer tetap berketerangan "Google Drive".
+

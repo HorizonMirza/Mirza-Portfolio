@@ -4,7 +4,7 @@ import { getCvUrl } from '@/features/profile/public'
 import { getDb } from '@/lib/db'
 import { isBot } from '@/lib/request'
 
-// Unduh CV: catat jumlah unduhan (tanpa data pribadi), lalu arahkan ke berkas terbaru di Cloudinary.
+// Tombol Resume CV: catat jumlah unduhan (tanpa data pribadi), lalu arahkan ke berkas terbaru di Cloudinary.
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const locale = url.searchParams.get('locale') === 'en' ? 'en' : 'id'

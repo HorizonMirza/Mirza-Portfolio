@@ -33,7 +33,7 @@ export default async function ProfilePage() {
           />
           <AssetSlot
             title="CV"
-            description="Berkas PDF yang diunduh dari tombol Unduh CV."
+            description="Berkas PDF yang diunduh dari tombol Resume CV."
             target="profile-cv"
             asset={assets.cv}
             configured={configured}

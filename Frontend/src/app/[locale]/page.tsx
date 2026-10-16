@@ -1,4 +1,4 @@
-import { ArrowRight, Download } from 'lucide-react'
+import { ArrowRight, FileText } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
@@ -246,13 +246,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               </h1>
             </div>
 
-            {/* Di HP tombol tampil sebelum pelat status agar "Unduh CV" terlihat tanpa scroll (PRD U1). */}
+            {/* Di HP tombol tampil sebelum pelat status agar tombol Resume CV terlihat tanpa scroll (PRD U1). */}
             <div className="flex flex-col gap-8 lg:flex-col-reverse">
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 {profile?.hasCv ? (
                   <Button asChild>
                     <a href={cvHref}>
-                      <Download aria-hidden="true" />
+                      <FileText aria-hidden="true" />
                       {tNav('downloadCv')}
                     </a>
                   </Button>
