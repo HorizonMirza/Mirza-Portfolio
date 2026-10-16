@@ -893,3 +893,15 @@ Pilihan pemilik dari 10 demo warna: **W1 Biru situs**, menggantikan hijau khas G
 
 Angka statistik memakai tingkat 4. Kontrasnya 8,2:1 di latar putih dan 7,5:1 di latar hitam.
 
+## 64. Grafik kontribusi GitHub: default 2D, kotak seperti GitHub, label Inter (2026-10-16)
+
+Revisi pemilik; menggantikan sebagian bagian 61 dan 62.
+
+- **Default 2D:** grafik selalu dibuka sebagai peta panas 2D, dan baru berubah ke 3D bila tombol kubus ditekan (`defaultView = '2d'`).
+- **Satu kotak bergaris seperti di profil GitHub:** garis tipis `--border` dengan sudut `rounded-md` membungkus grafik dan legenda Less/More (rata kanan di dalam kotak). Kalimat jumlah kontribusi dan tombol 2D/3D berada di atas kotak. Empat statistik berada di bawah kotak.
+- **Tipografi:**
+  - kalimat "… contributions in the last year" diperbesar ke `text-lg`, dan `text-xl` mulai 640 px;
+  - label statistik ("1 year total", "Busiest day", dan lainnya) memakai Inter `text-sm` medium, huruf biasa, warna muted. JetBrains Mono huruf besar dari bagian 62 dibatalkan;
+  - Less/More memakai Inter `text-sm`;
+  - angka statistik tetap Oswald.
+

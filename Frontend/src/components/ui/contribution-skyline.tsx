@@ -402,7 +402,7 @@ function Stat({
 }) {
   return (
     <div className="min-w-0">
-      <div className="font-mono text-label tracking-widest text-muted uppercase">{label}</div>
+      <div className="text-sm font-medium text-muted">{label}</div>
       <div className="mt-1.5 flex items-baseline gap-1.5">
         <span
           className="font-display font-bold tabular-nums transition-colors duration-500 motion-reduce:transition-none"
@@ -420,7 +420,7 @@ function Stat({
 export default function ContributionSkyline({
   data,
   endDate,
-  defaultView = '3d',
+  defaultView = '2d',
   palette = GITHUB_PALETTE,
   labels = DEFAULT_SKYLINE_LABELS,
   heightScale = 1,
@@ -1248,10 +1248,9 @@ export default function ContributionSkyline({
   const ease = 'cubic-bezier(0.65, 0, 0.35, 1)'
 
   return (
-    // tanpa garis kotak di luar maupun di sekitar grafik (revisi pemilik 2026-10-16)
     <div ref={rootRef} className={'relative w-full bg-bg text-text ' + className}>
       <header className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <p className="m-0 text-base leading-snug font-normal">
+        <p className="m-0 text-lg leading-snug font-normal sm:text-xl">
           <span className="font-semibold tabular-nums">{nf.format(stats.total)}</span>{' '}
           {noun(stats.total)} {labels.inLastYear}
         </p>
@@ -1287,8 +1286,10 @@ export default function ContributionSkyline({
         </div>
       </header>
 
-      <div className="relative">
-        <div className="relative pt-3 sm:pt-4">
+      {/* Satu kotak bergaris di sekitar grafik dan legenda, seperti profil GitHub; statistik di
+          bawah kotak (revisi pemilik 2026-10-16) */}
+      <div className="relative rounded-md border border-border">
+        <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
             ref={stageRef}
             className="relative w-full overflow-hidden rounded-md outline-offset-4 outline-text has-[:focus-visible]:outline-2"
@@ -1316,7 +1317,7 @@ export default function ContributionSkyline({
             ref={tipRef}
             role="tooltip"
             aria-hidden={active < 0}
-            className="pointer-events-none absolute top-3 left-0 z-20 rounded-md bg-text px-2.5 py-1.5 text-xs leading-none whitespace-nowrap text-bg shadow-lg transition-opacity duration-150 motion-reduce:transition-none sm:top-4"
+            className="pointer-events-none absolute top-3 left-3 z-20 rounded-md bg-text px-2.5 py-1.5 text-xs leading-none whitespace-nowrap text-bg shadow-lg transition-opacity duration-150 motion-reduce:transition-none sm:top-4 sm:left-4"
             style={{ opacity: active >= 0 ? 1 : 0 }}
           >
             {active >= 0 && model.cells[active] ? (
@@ -1344,18 +1345,10 @@ export default function ContributionSkyline({
           </div>
         </div>
 
-        {/* Statistik selalu satu baris rapi di bawah grafik, baik 2D maupun 3D (revisi pemilik
-            2026-10-16: angka tidak lagi melayang di sudut grafik 3D) */}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-4 pt-4 pb-1 md:grid-cols-4">
-          {statBlocks.map((b) => (
-            <Stat key={b.label} {...b} accent={theme.accent} size={34} />
-          ))}
-        </div>
-
         {/* Legenda rapat seperti di GitHub, hanya tampilan (revisi pemilik 2026-10-16: petunjuk
             "Hover a day…" dan "Drag to orbit…" dihapus; kotak legenda tidak lagi bisa ditekan karena
             kotak serapat ini tidak memenuhi area sentuh 24 px WCAG 2.5.8) */}
-        <div className="flex items-center justify-end gap-1 pt-3 font-mono text-label tracking-widest text-muted uppercase">
+        <div className="flex items-center justify-end gap-1 px-3 pt-2 pb-3 text-sm text-muted sm:px-4">
           <span className="mr-1">{labels.less}</span>
           {theme.swatches.map((c, i) => (
             <span
@@ -1367,6 +1360,14 @@ export default function ContributionSkyline({
           ))}
           <span className="ml-1">{labels.more}</span>
         </div>
+      </div>
+
+      {/* Statistik selalu satu baris rapi di bawah grafik, baik 2D maupun 3D (revisi pemilik
+          2026-10-16: angka tidak lagi melayang di sudut grafik 3D) */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-4 pt-5 md:grid-cols-4">
+        {statBlocks.map((b) => (
+          <Stat key={b.label} {...b} accent={theme.accent} size={34} />
+        ))}
       </div>
 
       <p aria-live="polite" className="sr-only">

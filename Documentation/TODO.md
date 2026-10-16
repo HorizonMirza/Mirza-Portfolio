@@ -173,3 +173,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Grafik kontribusi GitHub: statistik mode 3D pindah ke baris di bawah grafik seperti mode 2D, tanpa garis kotak (DESIGN.md bagian 61) |
 | 2026-10-16 | Grafik kontribusi GitHub: font mengikuti situs, 3D lebih besar di HP, legenda Less/More rapat, petunjuk hover/orbit dihapus (DESIGN.md bagian 62) |
 | 2026-10-16 | Grafik kontribusi GitHub memakai biru situs (W1) menggantikan hijau (DESIGN.md bagian 63) |
+| 2026-10-16 | Grafik kontribusi GitHub: default 2D, kotak bergaris seperti GitHub di sekitar grafik dan legenda, judul jumlah kontribusi lebih besar, label statistik Inter (DESIGN.md bagian 64) |
