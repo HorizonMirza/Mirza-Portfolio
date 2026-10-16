@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
 
-test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', async ({
+test('beranda: tombol utama terlihat tanpa scroll dan susunan bagian sesuai revisi', async ({
   page,
   isMobile,
 }) => {
@@ -12,7 +12,15 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   const portrait = page.locator('section[aria-labelledby="hero-title"] figure img')
   await expect(portrait).toBeInViewport()
   await expect(portrait).toHaveAttribute('alt', /.+/)
-  await expect(page.getByRole('heading', { name: 'Yang saya pakai' })).toBeVisible()
+  // Keahlian Teknis dan GitHub (revisi pemilik 2026-10-16): judul di tengah tanpa nomor, tanpa
+  // keterangan sumber keyboard, tanpa tautan profil dan baris aktivitas GitHub
+  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
+  // bagian GitHub hanya tampil bila data kontribusi tersedia (lokal/CI bisa tanpa akses GitHub)
+  const githubTitle = page.locator('#github-title')
+  if (await githubTitle.count()) await expect(githubTitle).toHaveText('GitHub')
+  for (const text of [/Naresh Khatri/, /Buka profil GitHub/, /Push ke /]) {
+    await expect(page.getByRole('main').getByText(text)).toHaveCount(0)
+  }
   // Pengalaman (revisi pemilik 2026-10-16, akordion): tanpa nomor dan tanpa tautan "Semua
   // pengalaman", semua tertutup di awal, satu baris bisa dibuka
   const xpHeading = page.getByRole('heading', { name: 'Pengalaman' })
@@ -61,11 +69,8 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   ]) {
     await expect(page.getByRole('heading', { name })).toHaveCount(0)
   }
-  // nomor bagian berurutan tanpa lompatan, mulai 02 setelah pembuka
-  const numbers = await page.locator('main h2 > span[aria-hidden="true"]').allTextContents()
-  expect(numbers.map((n) => n.trim())).toEqual(
-    numbers.map((_, i) => `${String(i + 2).padStart(2, '0')} —`),
-  )
+  // semua nomor bagian ("02 —" dst.) dihapus (revisi pemilik 2026-10-16)
+  await expect(page.locator('main h2 > span[aria-hidden="true"]')).toHaveCount(0)
   // terakhir: klik sampul membuka detail project. Diletakkan di akhir agar tidak perlu kembali ke
   // beranda dengan goto (Firefox CI kehilangan halaman pada navigasi ulang, CI 245dde1)
   const href = await firstCover.getAttribute('href')
@@ -137,7 +142,7 @@ test('keyboard skill 3D tampil, atau keyboard CSS bila 3D tidak bisa dimuat', as
 test('halaman skill lama diarahkan ke bagian skill di beranda', async ({ page }) => {
   await page.goto('/en/skills')
   await expect(page).toHaveURL(/\/en#skills$/)
-  await expect(page.getByRole('heading', { name: 'What I work with' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Technical Skills' })).toBeVisible()
 })
 
 test('halaman pengalaman: timeline tanpa filter dan tanpa pendidikan', async ({ page }) => {
@@ -373,4 +378,11 @@ test('beranda memuat data terstruktur Person tanpa email atau WhatsApp', async (
 test('tema awal gelap untuk pengunjung baru', async ({ page }) => {
   await page.goto('/id')
   await expect(page.locator('html')).toHaveClass(/dark/)
+})
+
+test('halaman privasi memuat kredit keyboard 3D dan logo', async ({ page }) => {
+  // dipindah dari beranda (revisi pemilik 2026-10-16) agar lisensi MIT dan CC BY tetap dipenuhi
+  await page.goto('/id/privacy')
+  await expect(page.getByRole('heading', { name: 'Kredit' })).toBeVisible()
+  await expect(page.getByText(/Naresh Khatri \(MIT\).*Jason Long, CC BY 3\.0/)).toBeVisible()
 })

@@ -8,17 +8,12 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
-import { Container, SectionHeading } from '@/components/site/section-heading'
+import { Container } from '@/components/site/section-heading'
 import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
 import { ExperienceAccordion } from '@/features/experience/components/public/experience-accordion'
 import { getPublicExperiences } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
-import {
-  GithubActivityTicker,
-  type TickerItem,
-} from '@/features/profile/components/github-activity-ticker'
-import { type GithubActivity, getGithubActivity } from '@/features/profile/github-activity'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
 import { getPublishedProjects } from '@/features/projects/public'
@@ -70,7 +65,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     tSkills,
     tKeyboard,
     tSkyline,
-    tActivity,
     tExp,
     profile,
     projects,
@@ -84,7 +78,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     getTranslations({ locale, namespace: 'Skills' }),
     getTranslations({ locale, namespace: 'SkillKeyboard' }),
     getTranslations({ locale, namespace: 'Skyline' }),
-    getTranslations({ locale, namespace: 'GithubActivity' }),
     getTranslations({ locale, namespace: 'Experience' }),
     getPublicProfile(),
     getPublishedProjects(),
@@ -95,23 +88,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const name = profile?.name ?? 'Muhammad Mirza'
   const github = profile?.socials.github
   const login = githubLogin(github)
-  const [contributions, activity] = login
-    ? await Promise.all([getGithubContributions(login), getGithubActivity(login)])
-    : [null, [] as GithubActivity[]]
+  const contributions = login ? await getGithubContributions(login) : null
   const numberLocale = locale === 'id' ? 'id-ID' : 'en-US'
-  const tickerItems: TickerItem[] = activity.map((a) => ({
-    badge: tActivity(activityBadge[a.kind]),
-    // repo milik sendiri cukup namanya ("Mirza-Portfolio"), agar muat di HP
-    text: activityText(
-      {
-        ...a,
-        repo: login && a.repo.startsWith(`${login}/`) ? a.repo.slice(login.length + 1) : a.repo,
-      },
-      tActivity,
-    ),
-    href: `https://github.com/${a.repo}`,
-    at: a.at,
-  }))
   const cvHref = `/api/cv?locale=${locale}`
   // Teks grafik kontribusi dua bahasa (komponen klien hanya menerima string, bukan fungsi).
   const skylineKeys = [
@@ -165,9 +143,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
-  // Pengalaman dan Project tidak bernomor (revisi pemilik 2026-10-16), jadi tidak ikut hitungan
-  const numbered = sections.filter((key) => key !== 'projects' && key !== 'experience')
-  const sectionIndex = (key: string) => String(numbered.indexOf(key) + 2).padStart(2, '0')
   const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
@@ -450,11 +425,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           className="scroll-mt-24 border-t border-border py-16 md:py-24"
         >
           <Container className="reveal">
-            <SectionHeading
-              id="stack-title"
-              index={sectionIndex('stack')}
-              title={t('stackHeading')}
-            />
+            {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul di tengah; keterangan sumber
+                keyboard 3D dan logo dipindah ke halaman Privasi (bagian Kredit) */}
+            <h2 id="stack-title" className="mb-8 text-center text-h2 font-bold">
+              {t('stackHeading')}
+            </h2>
             <SkillKeyboard3D
               keycaps={skillKeycaps}
               label={tKeyboard('label')}
@@ -469,7 +444,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 />
               }
             />
-            <p className="mt-6 text-xs text-muted">{tKeyboard('credit')}</p>
           </Container>
         </section>
       ) : null}
@@ -477,34 +451,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {sections.includes('github') ? (
         <section aria-labelledby="github-title" className="border-t border-border py-16 md:py-24">
           <Container className="reveal">
-            <SectionHeading
-              id="github-title"
-              index={sectionIndex('github')}
-              title={t('githubHeading')}
-              action={
-                <a
-                  href={github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  {t('githubProfile')}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                  <span className="sr-only">{tCommon('openInNewTab')}</span>
-                </a>
-              }
-            />
-            {tickerItems.length > 0 ? (
-              <GithubActivityTicker
-                items={tickerItems}
-                locale={numberLocale}
-                labels={{
-                  region: tActivity('region'),
-                  pause: tActivity('pause'),
-                  play: tActivity('play'),
-                }}
-              />
-            ) : null}
+            {/* Revisi pemilik 2026-10-16: judul "GitHub" di tengah tanpa nomor, tanpa tautan profil
+                dan tanpa baris aktivitas terbaru; tinggal grafik kontribusi */}
+            <h2 id="github-title" className="mb-8 text-center text-h2 font-bold">
+              {t('githubHeading')}
+            </h2>
             <ContributionSkyline
               data={contributionDays}
               locale={numberLocale}
@@ -515,36 +466,4 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       ) : null}
     </>
   )
-}
-
-const activityBadge = {
-  push: 'badgePush',
-  createRepo: 'badgeRepo',
-  createBranch: 'badgeBranch',
-  createTag: 'badgeTag',
-  release: 'badgeRelease',
-  pullOpened: 'badgePull',
-  pullMerged: 'badgePull',
-  public: 'badgePublic',
-  star: 'badgeStar',
-  fork: 'badgeFork',
-} as const satisfies Record<GithubActivity['kind'], string>
-
-type ActivityT = Awaited<ReturnType<typeof getTranslations<'GithubActivity'>>>
-
-function activityText(a: GithubActivity, t: ActivityT): string {
-  switch (a.kind) {
-    case 'push':
-      return t('push', { repo: a.repo, branch: a.branch })
-    case 'createBranch':
-    case 'createTag':
-      return t(a.kind, { repo: a.repo, ref: a.ref })
-    case 'release':
-      return t('release', { repo: a.repo, tag: a.tag })
-    case 'pullOpened':
-    case 'pullMerged':
-      return t(a.kind, { repo: a.repo, number: a.number })
-    default:
-      return t(a.kind, { repo: a.repo })
-  }
 }

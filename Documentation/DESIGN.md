@@ -846,3 +846,11 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - huruf disamakan dengan halaman Pengalaman: peran Oswald kapital ukuran h3, instansi Inter warna teks, tanggal "Jul 2026 - Present" dengan tanda hubung seperti halaman Pengalaman.
 - **Chip teknologi project di layar sentuh** (halaman Project dan detail): logo dan garis chip langsung berwarna brand pada `hover: none`. Di desktop tetap abu-abu sampai disorot.
 
+## 59. Beranda: Keahlian Teknis dan GitHub tanpa nomor (2026-10-16)
+
+- **Resume CV di kartu pembuka (revisi akhir pemilik):** tombol hanya membuka CV di Drive pada tab baru. Kartu tetap terbuka, jadi saat tab Drive ditutup pengunjung masih melihat kartu, lalu masuk situs dengan tombol Beranda. Perilaku "langsung menutup dan pindah ke Beranda" (bagian 57) dibatalkan.
+- **Semua nomor bagian beranda dihapus** ("02 —", "03 —"). Semua judul bagian rata tengah: Pengalaman, Project, Keahlian Teknis, GitHub. Komponen `SectionHeading` (judul bernomor) tidak dipakai lagi dan dihapus.
+- **Keahlian Teknis / Technical Skills** menggantikan "Yang saya pakai / What I work with". Keterangan sumber keyboard 3D (Naresh Khatri, MIT) dan logo (Simple Icons; logo Git oleh Jason Long, CC BY 3.0) dipindah dari bawah keyboard ke halaman **Privasi → Kredit**, agar atribusi lisensi tetap ada di situs.
+- **GitHub:** judul "GitHub" di tengah, tautan "Buka profil GitHub" dan baris aktivitas terbaru (ticker "Push ke …") dihapus; tinggal grafik kontribusi. Kode ticker (`github-activity-ticker.tsx`, `github-activity.ts`, teks dan CSS-nya) dihapus karena tidak dipakai lagi; bisa dipulihkan dari riwayat git.
+- Transisi antarbagian beranda sedang didemokan (10 pilihan).
+

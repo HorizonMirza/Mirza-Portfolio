@@ -1550,7 +1550,6 @@
   }
 }
 
-/* Beranda: aktivitas GitHub (DESIGN.md bagian 46). */
 /* Project di beranda (DESIGN.md bagian 54 dan 58): pita sampul datar yang berjalan pelan; tiap
    sampul tautan ke halaman detail project. Hanya memakai transform (compositor), memudar di kedua
    ujung, tidak berhenti saat disorot (revisi pemilik 2026-10-16), berhenti saat fokus keyboard ada
@@ -1662,89 +1661,6 @@
     transition: none;
   }
 }
-/* Aktivitas GitHub: satu baris berganti di atas grafik kontribusi. */
-.gh-ticker {
-  position: relative;
-  display: flex;
-  align-items: stretch;
-  overflow: hidden;
-  margin-bottom: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 0.75rem;
-  height: 3.25rem;
-}
-.gh-ticker-list {
-  flex: 1;
-  min-width: 0;
-  transition: transform 600ms var(--ease-out-soft);
-}
-.gh-ticker-list > li {
-  height: 3.25rem;
-}
-.gh-ticker-list a {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  height: 100%;
-  padding: 0 1rem;
-  font-size: 0.875rem;
-}
-.gh-ticker-list a:hover .gh-ticker-text {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.gh-ticker-list a:focus-visible {
-  outline: 2px solid var(--note);
-  outline-offset: -2px;
-}
-.gh-ticker-badge {
-  flex: none;
-  border-radius: 0.25rem;
-  background: var(--note);
-  color: var(--bg);
-  padding: 0.125rem 0.375rem;
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-}
-.gh-ticker-text {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.gh-ticker-time {
-  flex: none;
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-.gh-ticker-toggle {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  border-left: 1px solid var(--border);
-  color: var(--text-muted);
-}
-.gh-ticker-toggle:hover {
-  color: var(--text);
-}
-.gh-ticker-toggle:focus-visible {
-  outline: 2px solid var(--note);
-  outline-offset: -2px;
-}
-.gh-ticker-toggle svg {
-  width: 1rem;
-  height: 1rem;
-}
-@media (prefers-reduced-motion: reduce) {
-  .gh-ticker-list {
-    transition: none;
-  }
-}
-
 /* Efek halaman Project, pilihan pemilik 2026-10-08 (demo efek 1, 4, 6, 7, 8, 10; DESIGN.md
    bagian 49). Semua gerak hanya transform/opacity dan mati pada reduced-motion. */
 

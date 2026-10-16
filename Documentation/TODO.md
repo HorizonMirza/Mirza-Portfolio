@@ -168,3 +168,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Pengalaman di beranda: logo berbingkai "bayangan lembut" (B5) dan suara blip digital saat baris dibuka dan ditutup (S9) (DESIGN.md bagian 58) |
 | 2026-10-16 | Project di beranda: nama project muncul di tengah sampul saat disorot, di layar sentuh di bawah sampul (demo N5, DESIGN.md bagian 58) |
 | 2026-10-16 | Pengalaman beranda: animasi buka/tutup di semua browser termasuk HP, detail sejajar judul di HP, huruf sama dengan halaman Pengalaman. Chip teknologi project langsung berwarna di layar sentuh (DESIGN.md bagian 58) |
+| 2026-10-16 | Resume CV kartu pembuka hanya membuka Drive (kartu tetap terbuka); semua nomor bagian beranda dihapus; Keahlian Teknis dan GitHub di tengah, tanpa kredit (dipindah ke Privasi), tanpa tautan profil dan ticker GitHub (DESIGN.md bagian 59). Menunggu: pilihan demo transisi antarbagian |

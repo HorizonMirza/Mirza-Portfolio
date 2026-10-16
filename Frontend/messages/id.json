@@ -73,9 +73,8 @@
     "nowLabel": "Sekarang",
     "viewProjects": "Lihat project",
     "github": "GitHub",
-    "stackHeading": "Yang saya pakai",
-    "githubHeading": "Aktivitas di GitHub",
-    "githubProfile": "Buka profil GitHub",
+    "stackHeading": "Keahlian Teknis",
+    "githubHeading": "GitHub",
     "projectsHeading": "Project",
     "projectList": "Daftar project",
     "experienceHeading": "Pengalaman"
@@ -195,7 +194,9 @@
     "servicesBody": "Situs dijalankan di Vercel, database di Neon (Singapura), gambar dan CV di Cloudinary, dan email dikirim lewat Resend. Vercel Web Analytics dan Speed Insights mencatat jumlah kunjungan dan kecepatan halaman tanpa cookie, dengan alamat halaman tanpa parameter. Error di server dilaporkan ke Sentry tanpa data pribadi. Masing-masing hanya menerima data yang dibutuhkan untuk menjalankan fungsinya.",
     "rightsHeading": "Hak Anda",
     "rightsBody": "Anda bisa meminta salinan atau penghapusan data Anda lewat halaman kontak.",
-    "contactLink": "Buka halaman kontak"
+    "contactLink": "Buka halaman kontak",
+    "creditsHeading": "Kredit",
+    "creditsBody": "Keyboard 3D dari portofolio Naresh Khatri (MIT). Logo dari Simple Icons; logo Git oleh Jason Long, CC BY 3.0."
   },
   "Error": {
     "title": "Terjadi kesalahan",
@@ -205,8 +206,7 @@
   },
   "SkillKeyboard": {
     "label": "Keyboard skill",
-    "hint": "Tekan salah satu tombol. Di keyboard: panah untuk berpindah, huruf untuk melompat.",
-    "credit": "Keyboard 3D dari portofolio Naresh Khatri (MIT). Logo dari Simple Icons; logo Git oleh Jason Long, CC BY 3.0."
+    "hint": "Tekan salah satu tombol. Di keyboard: panah untuk berpindah, huruf untuk melompat."
   },
   "Skyline": {
     "unit": "kontribusi",
@@ -233,29 +233,5 @@
     "flat": "Peta panas datar",
     "skyline": "Skyline 3D",
     "keys": "Gunakan tombol panah untuk membaca tiap hari."
-  },
-  "GithubActivity": {
-    "region": "Aktivitas GitHub terakhir",
-    "pause": "Jeda aktivitas berganti",
-    "play": "Lanjutkan aktivitas berganti",
-    "push": "Push ke {repo} · {branch}",
-    "createRepo": "Membuat repo {repo}",
-    "createBranch": "Membuat branch {ref} di {repo}",
-    "createTag": "Membuat tag {ref} di {repo}",
-    "release": "Merilis {tag} di {repo}",
-    "pullOpened": "Membuka PR #{number} di {repo}",
-    "pullMerged": "Menggabungkan PR #{number} di {repo}",
-    "public": "Menjadikan {repo} publik",
-    "star": "Memberi bintang ke {repo}",
-    "fork": "Mem-fork {repo}",
-    "badgePush": "PUSH",
-    "badgeRepo": "REPO",
-    "badgeBranch": "BRANCH",
-    "badgeTag": "TAG",
-    "badgeRelease": "RILIS",
-    "badgePull": "PR",
-    "badgePublic": "PUBLIK",
-    "badgeStar": "STAR",
-    "badgeFork": "FORK"
   }
 }

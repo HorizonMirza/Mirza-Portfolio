@@ -10,7 +10,7 @@ import { pageMetadata } from '@/lib/seo'
 // Perbarui tanggal ini setiap kali isi kebijakan berubah.
 const UPDATED_AT = '2026-10-01T00:00:00Z'
 
-const SECTIONS = ['visits', 'contact', 'newsletter', 'cv', 'services', 'rights'] as const
+const SECTIONS = ['visits', 'contact', 'newsletter', 'cv', 'services', 'rights', 'credits'] as const
 
 export async function generateMetadata({
   params,

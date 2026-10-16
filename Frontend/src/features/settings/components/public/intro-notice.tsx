@@ -110,11 +110,7 @@ export function IntroNotice({
   }
 
   // Menutup kartu, lalu (bila dipilih) pindah ke Beranda dan/atau ke bahasa yang dipilih di kartu.
-  // `instant`: tanpa animasi tutup. Dipakai tombol Resume CV yang membuka tab baru: tab ini langsung
-  // pindah ke latar belakang (di HP dibekukan) sebelum animasi selesai, sehingga saat pengunjung
-  // kembali kartu masih terbuka (revisi pemilik 2026-10-16). Kini kartu langsung tertutup dan
-  // halaman pindah ke Beranda.
-  function close(goHome = false, instant = false) {
+  function close(goHome = false) {
     const dialog = ref.current
     // sudah sedang ditutup: Esc atau klik kedua tidak memulai ulang
     if (!dialog?.open || dialog.dataset.leaving !== undefined) return
@@ -149,7 +145,7 @@ export function IntroNotice({
       }
       void (escReleased.current ?? Promise.resolve()).then(() => window.setTimeout(go, 0))
     }
-    if (instant || prefersReducedMotion()) {
+    if (prefersReducedMotion()) {
       finish()
       return
     }
@@ -219,13 +215,14 @@ export function IntroNotice({
             </h2>
             <div className="intro-body">{v.body}</div>
             <div className={v.cvHref ? 'intro-actions intro-actions-2' : 'intro-actions'}>
+              {/* Resume CV hanya membuka CV di tab baru; kartu tetap terbuka sampai pengunjung
+                  menekan Beranda, Esc, atau area di luar kartu (revisi pemilik 2026-10-16) */}
               {v.cvHref ? (
                 <a
                   href={v.cvHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="intro-btn intro-btn-primary"
-                  onClick={() => close(true, true)}
                 >
                   <FileText aria-hidden="true" />
                   {v.labels.downloadCv}

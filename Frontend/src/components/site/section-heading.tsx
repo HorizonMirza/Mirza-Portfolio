@@ -2,36 +2,6 @@ import type { ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// Judul bagian dengan penanda koordinat kecil: "02 — Project pilihan" (DESIGN.md bagian 1).
-export function SectionHeading({
-  id,
-  index,
-  title,
-  action,
-  className,
-}: {
-  id: string
-  index: string
-  title: string
-  action?: ReactNode
-  className?: string
-}) {
-  return (
-    <div className={cn('mb-8 flex flex-wrap items-end justify-between gap-4', className)}>
-      <h2 id={id} className="text-h2 font-bold">
-        <span
-          className="mb-2 block font-mono text-label font-medium tracking-widest text-note uppercase"
-          aria-hidden="true"
-        >
-          {index} —
-        </span>
-        {title}
-      </h2>
-      {action}
-    </div>
-  )
-}
-
 export function Container({ className, children }: { className?: string; children: ReactNode }) {
   return (
     <div className={cn('mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8', className)}>
