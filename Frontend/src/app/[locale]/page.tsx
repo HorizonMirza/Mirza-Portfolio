@@ -385,10 +385,12 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                       </span>
                       <span className="home-xp-when home-xp-when-side">{when}</span>
                     </summary>
+                    {/* tiap poin satu baris di layar lebar, tanpa batas lebar teks (revisi pemilik
+                        2026-10-16); di HP tetap turun baris */}
                     <MarkdownView
                       source={loc(e, 'description', locale)}
                       size="base"
-                      className="home-xp-body text-muted"
+                      className="home-xp-body text-muted sm:max-w-none"
                     />
                   </details>
                 )

@@ -2502,8 +2502,11 @@ html:has(.intro[open]) {
   color: var(--text-muted);
   font-family: var(--font-display);
   font-weight: 700;
-  /* bingkai "bayangan lembut" (pilihan pemilik 2026-10-16, demo B5): bayangan halus di bawah dan
-     cincin warna latar, sehingga logo tampak sedikit terangkat dan rapi di tema gelap maupun terang */
+}
+/* bingkai "bayangan lembut" (pilihan pemilik 2026-10-16, demo B5): bayangan halus di bawah dan
+   cincin warna latar sehingga logo tampak sedikit terangkat. Hanya di mode terang; di mode gelap
+   efeknya dihapus (revisi pemilik 2026-10-16) */
+:root:not(.dark) .home-xp-logo {
   box-shadow:
     0 6px 16px -6px rgb(0 0 0 / 0.55),
     0 0 0 4px var(--surface);
@@ -2526,9 +2529,9 @@ html:has(.intro[open]) {
   font-size: 0.9375rem;
 }
 .home-xp-when {
+  /* huruf sama dengan tanggal di halaman Pengalaman (revisi pemilik 2026-10-16) */
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }

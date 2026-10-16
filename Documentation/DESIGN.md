@@ -831,4 +831,8 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **Bingkai logo dan suara Pengalaman (pilihan pemilik 2026-10-16 dari 10 + 10 demo: B5 + S9):**
   - logo berlatar putih dengan garis tipis, sudut 12 px, bayangan halus di bawah, dan cincin 4 px warna latar ("bayangan lembut"), sehingga logo tampak sedikit terangkat dan rapi di kedua tema. Inisial (bila logo kosong) tetap di latar abu;
   - suara "blip digital" (`playExperienceToggleSound` di `lib/ui-sounds.ts`): dua blip kotak naik saat baris dibuka, satu blip lebih rendah saat ditutup. Dibuat Web Audio tanpa file, ikut volume Admin → Pengaturan (0 = diam). Dipasang lewat pembungkus klien kecil `ExperienceAccordion` yang mendengar event `toggle` dari `<details>`; isi akordion tetap dirender server.
+- **Revisi 2026-10-16 (ketiga):**
+  - bayangan dan cincin logo hanya di mode terang; di mode gelap logo cukup berlatar putih dengan garis tipis;
+  - tanggal di baris Pengalaman memakai huruf dan ukuran yang sama dengan halaman Pengalaman (Inter, `text-sm`, angka tabular), bukan huruf mono;
+  - poin detail tanpa batas lebar teks di layar ≥ 640 px, sehingga tiap poin satu baris di desktop (dicek 1024, 1280, 1440 px: 15 dari 15 poin satu baris). Di HP tetap turun baris.
 
