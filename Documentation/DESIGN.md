@@ -809,6 +809,6 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 ## 56. Nama tombol CV seragam (2026-10-16)
 
 - Audit Home nomor 5: tombol yang membuka CV punya tiga nama ("Unduh CV" di hero, "Resume ATS" di kartu pembuka, "Resume CV" di footer). Pemilik memilih **Resume CV** untuk semuanya.
-- Bahasa Inggris memakai **Resume**, karena "Resume CV" dalam bahasa Inggris berulang (resume dan CV berarti sama) dan bisa terbaca sebagai kata kerja "resume". Ikon dokumen di depannya membuat maknanya jelas.
+- Bahasa Inggris juga **Resume CV** (keputusan pemilik 2026-10-16). Usulan "Resume" saja untuk EN sempat dipasang lalu dikembalikan.
 - Ikon tombol hero diganti dari ikon unduh menjadi ikon dokumen (sama dengan kartu pembuka), karena tombol membuka penampil Google Drive, bukan mengunduh langsung. Kartu footer tetap berketerangan "Google Drive".
 

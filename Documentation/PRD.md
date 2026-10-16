@@ -50,7 +50,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F4 | **Skills**: dikelompokkan (Frontend, Backend, Database, Tools/DevOps), tanpa progress bar persen **[ASUMSI]** | P0 |
 | F5 | **Projects**: daftar + halaman detail (galeri, tech stack, demo, repo, tahun, studi kasus) + metadata GitHub otomatis | P0 |
 | F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
-| F7 | **Resume CV** (sebelumnya "Unduh CV"): satu klik, file terbaru dari admin, dihitung jumlah unduhannya. Nama tombol seragam di hero, kartu pembuka, dan footer: "Resume CV" (ID) dan "Resume" (EN), DESIGN.md bagian 56 | P0 |
+| F7 | **Resume CV** (sebelumnya "Unduh CV"): satu klik, file terbaru dari admin, dihitung jumlah unduhannya. Nama tombol seragam di hero, kartu pembuka, dan footer: "Resume CV" di ID dan EN, DESIGN.md bagian 56 | P0 |
 | F8 | **Dua bahasa** ID/EN dengan toggle, URL `/id` dan `/en` | P0 |
 | F9 | **Tema terang/gelap** (ikut sistem, bisa diganti manual) | P0 |
 | F10 | **Animasi**: hero, transisi halaman, reveal saat scroll. Menghormati `prefers-reduced-motion` | P0 |

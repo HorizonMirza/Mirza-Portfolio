@@ -18,7 +18,7 @@
   "Intro": {
     "eyebrow": "Portfolio - {name}",
     "language": "Language",
-    "downloadCv": "Resume",
+    "downloadCv": "Resume CV",
     "home": "Home"
   },
   "NotFound": {
@@ -36,11 +36,11 @@
     "skills": "Skills",
     "projects": "Projects",
     "contact": "Contact",
-    "downloadCv": "Resume"
+    "downloadCv": "Resume CV"
   },
   "Footer": {
     "contactHeading": "Get in touch",
-    "cv": "Resume",
+    "cv": "Resume CV",
     "cvFile": "PDF",
     "copyright": "© {year} {name}",
     "contributions": "{count, plural, one {# contribution} other {# contributions}} in the last year",

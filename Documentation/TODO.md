@@ -161,4 +161,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-09-30 | M4 selesai: hero canvas, reveal, transisi, WhatsApp, tema gelap, SEO, CSP + header keamanan, notifikasi login, tes lintas browser di CI. PRD 11 no. 3 dan 14 dikonfirmasi |
 | 2026-10-01 | Font diganti: Oswald (judul) + Inter (isi) + JetBrains Mono (label), pilihan pemilik dari demo |
 | 2026-10-15 | Audit Home: catatan ketersediaan berisi posisi yang dicari (migrasi `20261015100000`), Project pilihan kembali sebagai pita sampul datar berjalan (pita 3D sempat dipasang lalu diganti karena berat), nomor bagian beranda otomatis, PRD F1/F17/U7 diperbarui dan F19 (pemberitahuan pembuka) ditambah. Masih menunggu: Vercel Web Analytics diaktifkan pemilik (skrip 404). Sisi kanan hero diisi foto potret (demo 1, DESIGN.md bagian 55) |
-| 2026-10-16 | Nama tombol CV seragam: "Resume CV" (ID) dan "Resume" (EN) di hero, kartu pembuka, dan footer; ikon hero menjadi ikon dokumen (DESIGN.md bagian 56) |
+| 2026-10-16 | Nama tombol CV seragam: "Resume CV" (ID dan EN) di hero, kartu pembuka, dan footer; ikon hero menjadi ikon dokumen (DESIGN.md bagian 56) |
