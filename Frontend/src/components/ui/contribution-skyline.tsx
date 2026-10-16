@@ -694,8 +694,11 @@ export default function ContributionSkyline({
 
     // 2D di layar sempit: kanvas lebih lebar dari layar dan bisa digeser. Hanya saat benar-benar
     // datar (t = 0) agar morph ke 3D dan kembali tidak melompat di tengah jalan.
+    // Kanvas lebar (bisa digeser) dipakai di layar sempit kecuali saat 3D sudah diam. Selama morph
+    // kanvas tetap lebar dan adegan 3D digambar di jendela yang sedang terlihat, sehingga peralihan
+    // 2D <-> 3D tidak melompat (revisi pemilik 2026-10-16: transisi di HP jangan patah).
     const wantsScroll = () =>
-      Math.round(stage.clientWidth) < NARROW_WIDTH && target === 0 && t === 0
+      Math.round(stage.clientWidth) < NARROW_WIDTH && !(target === 1 && t === 1)
     let scrolling = false
 
     const relayout = () => {
@@ -709,23 +712,26 @@ export default function ContributionSkyline({
       dpr = Math.min(2, window.devicePixelRatio || 1)
       const b2 = extent(camera(0), 0, true)
       H2 = 20 + 4 + ((b2.maxy - b2.miny) / (b2.maxx - b2.minx)) * (W - gutter - 4)
-      const narrow = W < NARROW_WIDTH
+      // 3D selalu diukur dari lebar yang terlihat, bukan lebar kanvas yang bisa digeser
+      const narrow = w < NARROW_WIDTH
       baseYaw = narrow ? YAW_3D_NARROW : YAW_3D
       const b3 = extent(camera(1, baseYaw - YAW_3D), 1, true)
-      const natural = ((b3.maxy - b3.miny) / (b3.maxx - b3.minx)) * (W - 40) + 40
-      H3 = Math.max(Math.min(natural, W * (narrow ? 1.3 : 0.72), 620), Math.min(natural, 240))
+      const natural = ((b3.maxy - b3.miny) / (b3.maxx - b3.minx)) * (w - 40) + 40
+      H3 = Math.max(Math.min(natural, w * (narrow ? 1.3 : 0.72), 620), Math.min(natural, 240))
       Hmax = Math.ceil(Math.max(H2, H3))
       canvas.width = Math.round(W * dpr)
       canvas.height = Math.round(Hmax * dpr)
       canvas.style.width = W + 'px'
       canvas.style.height = Hmax + 'px'
-      stage.style.overflowX = toScroll ? 'auto' : 'hidden'
-      lastH = -1
-      draw()
-      // dibuka di minggu terbaru (ujung kanan), seperti profil GitHub
+      // hanya 2D yang bisa digeser; selama morph dan 3D posisi geser dikunci
+      stage.style.overflowX = toScroll && target === 0 ? 'auto' : 'hidden'
+      // dibuka di minggu terbaru (ujung kanan), seperti profil GitHub. Posisi geser diatur sebelum
+      // menggambar agar frame pertama sudah memakai jendela yang benar.
       if (toScroll && !scrolling) stage.scrollLeft = stage.scrollWidth
       if (!toScroll) stage.scrollLeft = 0
       scrolling = toScroll
+      lastH = -1
+      draw()
     }
 
     const draw = () => {
@@ -739,10 +745,16 @@ export default function ContributionSkyline({
       }
       for (let i = 0; i < n; i++) zs[i] = riseAt(t, wk[i], weeks, dy[i]) * hgt[i]
       const b = extent(cam, e, false)
+      // Kotak gambar: seluruh kanvas untuk 2D, jendela yang terlihat untuk 3D, berpindah halus
+      // mengikuti morph.
+      const vx = scrolling ? stage.scrollLeft : 0
+      const vw = scrolling ? stage.clientWidth : W
+      const boxX = lerp(0, vx, e)
+      const boxW = lerp(W, vw, e)
       const pad = lerp(2, 20, e)
-      const left = pad + gutter * (1 - e)
+      const left = boxX + pad + gutter * (1 - e)
       const top = pad + 20 * (1 - e)
-      const aw = W - left - pad
+      const aw = boxX + boxW - left - pad
       const ah = Hc - top - pad
       const bw = Math.max(1e-6, b.maxx - b.minx)
       const bh = Math.max(1e-6, b.maxy - b.miny)
@@ -930,7 +942,7 @@ export default function ContributionSkyline({
         const step = reduced ? 1 : (dt * 1000) / Math.max(1, cfg.current.duration)
         t = target > t ? Math.min(target, t + step) : Math.max(target, t - step)
         moving = true
-        if (t === 0 && wantsScroll()) relayout()
+        if (t === 1 && target === 1 && scrolling) relayout()
       }
 
       const ko = reduced ? 1 : 1 - Math.exp(-dt * 12)
@@ -1134,7 +1146,8 @@ export default function ContributionSkyline({
       if (!entered) return
       if (goal !== target) {
         target = goal
-        if (goal === 1 && scrolling) relayout()
+        if (scrolling) stage.style.overflowX = goal === 0 ? 'auto' : 'hidden'
+        else if (goal === 0 && wantsScroll()) relayout()
         if (goal === 0) {
           yawGoal = 0
           elevGoal = 0
@@ -1341,7 +1354,7 @@ export default function ContributionSkyline({
         <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
             ref={stageRef}
-            className="relative w-full overflow-hidden rounded-md outline-offset-4 outline-text has-[:focus-visible]:outline-2"
+            className="relative w-full [scrollbar-width:none] overflow-hidden rounded-md outline-offset-4 outline-text has-[:focus-visible]:outline-2 [&::-webkit-scrollbar]:hidden"
             style={{ height: 150 }}
           >
             <canvas

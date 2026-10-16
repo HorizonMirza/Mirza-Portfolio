@@ -945,3 +945,15 @@ Pilihan pemilik dari 10 demo format: **F10 Minimal**.
 - Rentang tanggal memakai pemisah " - " (tanda hubung berspasi), sama dengan tanggal di Pengalaman. Pemisah ini menggantikan "–" yang menempel.
 - Label bulan di grafik dan tooltip tidak berubah.
 
+## 69. Grafik kontribusi GitHub di HP: tanpa scrollbar, morph 2D/3D mulus (2026-10-16)
+
+Bagian ini menggantikan poin "Morph 2D/3D di HP" pada bagian 66.
+
+- **Scrollbar tersembunyi:** grafik tetap bisa digeser dengan jari, tetapi garis scrollbar tidak tampil (`scrollbar-width: none` dan `::-webkit-scrollbar { display: none }`).
+- **Kanvas tidak melompat lagi.** Kanvas lebar yang bisa digeser dipakai di layar < 640 px, kecuali saat 3D sudah diam.
+- **Selama morph** kanvas tetap lebar. Kotak gambar berpindah halus dari seluruh kanvas (2D) ke jendela yang sedang terlihat (3D), mengikuti kurva morph.
+- **Dari 2D ke 3D:** grafik mengecil pelan sampai setahun terlihat, lalu terangkat ke 3D. Setelah 3D diam, kanvas diganti selebar layar tanpa perubahan tampilan.
+- **Dari 3D ke 2D:** kanvas lebar dipasang lebih dulu, dengan posisi geser di minggu terbaru dan gambar 3D yang sama persis. Setelah itu grafik meratakan diri dan melebar ke tampilan 2D.
+- Geser hanya aktif di 2D. Selama morph dan di 3D, posisi geser dikunci.
+- Ukuran dan kamera 3D selalu dihitung dari lebar yang terlihat, bukan dari lebar kanvas.
+

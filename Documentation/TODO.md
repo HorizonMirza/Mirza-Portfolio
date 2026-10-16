@@ -178,3 +178,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Grafik kontribusi GitHub: total setahun dihapus dari statistik (tinggal 3), judul satu baris di HP, 2D bisa digeser di HP dan dibuka di minggu terbaru (DESIGN.md bagian 66). |
 | 2026-10-16 | Grafik kontribusi GitHub: format statistik F10 minimal (label, angka besar, tanggal ringkas), angka sejajar di HP (DESIGN.md bagian 67) |
 | 2026-10-16 | Grafik kontribusi GitHub: tanggal statistik dengan nama bulan lengkap di layar lebar, singkat di HP, pemisah " - " berspasi (DESIGN.md bagian 68) |
+| 2026-10-16 | Grafik kontribusi GitHub di HP: scrollbar disembunyikan, morph 2D/3D tidak patah (kanvas tetap lebar selama morph, DESIGN.md bagian 69) |
