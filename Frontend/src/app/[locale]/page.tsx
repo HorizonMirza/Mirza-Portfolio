@@ -159,12 +159,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   // terbaru di atas, pendidikan tidak ikut (sama dengan halaman Pengalaman)
   const workHistory = sortByLatest(experiences.filter((e) => e.type !== 'EDUCATION'))
   const sections = [
-    showcaseCovers.length > 1 && 'projects',
     workHistory.length > 0 && 'experience',
+    showcaseCovers.length > 1 && 'projects',
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
-  const sectionIndex = (key: string) => String(sections.indexOf(key) + 2).padStart(2, '0')
+  // Project tidak bernomor (revisi pemilik 2026-10-16), jadi tidak ikut hitungan
+  const numbered = sections.filter((key) => key !== 'projects')
+  const sectionIndex = (key: string) => String(numbered.indexOf(key) + 2).padStart(2, '0')
   const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
@@ -336,52 +338,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <HorizonBackdrop />
       </section>
 
-      {sections.includes('projects') ? (
-        <section aria-labelledby="projects-title" className="border-t border-border py-16 md:py-24">
-          <Container className="reveal">
-            <SectionHeading
-              id="projects-title"
-              index={sectionIndex('projects')}
-              title={t('projectsHeading')}
-              action={
-                <Link
-                  href="/projects"
-                  className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-primary hover:underline"
-                >
-                  {t('allProjects', { count: projects.length })}
-                  <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-              }
-            />
-          </Container>
-          {/* Pita sampul datar yang berjalan pelan (pilihan pemilik 2026-10-15, demo ringan nomor 1):
-              dekoratif dan tidak bisa difokus; tautannya di deretan nama di bawah. Deret diulang dua
-              kali agar putarannya tidak terputus; satu animasi CSS, tanpa JavaScript. */}
-          <div className="home-marquee" aria-hidden="true">
-            <div
-              className="home-marquee-track"
-              style={{ '--n': showcaseCovers.length } as CSSProperties}
-            >
-              {[...showcaseCovers, ...showcaseCovers].map((c, i) => (
-                <figure key={`${c.slug}-${i}`}>
-                  <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
-                  <figcaption>{c.title}</figcaption>
-                </figure>
-              ))}
-            </div>
-          </div>
-          <Container>
-            <ul aria-label={t('projectList')} className="home-project-links">
-              {showcase.map((p) => (
-                <li key={p.slug}>
-                  <Link href={`/projects/${p.slug}`}>{loc(p, 'title', locale)}</Link>
-                </li>
-              ))}
-            </ul>
-          </Container>
-        </section>
-      ) : null}
-
       {sections.includes('experience') ? (
         <section
           aria-labelledby="experience-title"
@@ -448,6 +404,44 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               })}
             </div>
           </Container>
+        </section>
+      ) : null}
+
+      {sections.includes('projects') ? (
+        <section aria-labelledby="projects-title" className="border-t border-border py-16 md:py-24">
+          {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul "Project" di tengah, tanpa tautan
+              "Semua project" dan tanpa deretan nama; letaknya di bawah Pengalaman. */}
+          <Container className="reveal">
+            <h2 id="projects-title" className="mb-8 text-center text-h2 font-bold">
+              {t('projectsHeading')}
+            </h2>
+          </Container>
+          {/* Pita sampul berjalan (pilihan pemilik 2026-10-15): tiap sampul kini tautan ke halaman
+              detail project dan pita tidak berhenti saat disorot (revisi 2026-10-16). Deret diulang
+              dua kali agar putaran tidak terputus; salinan kedua disembunyikan dari pembaca layar
+              dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih. */}
+          <div className="home-marquee">
+            <ul
+              className="home-marquee-track"
+              aria-label={t('projectList')}
+              style={{ '--n': showcaseCovers.length } as CSSProperties}
+            >
+              {[0, 1].map((copy) =>
+                showcaseCovers.map((c) => (
+                  <li key={`${c.slug}-${copy}`} aria-hidden={copy === 1 ? true : undefined}>
+                    <Link
+                      href={`/projects/${c.slug}`}
+                      transitionTypes={['project-open']}
+                      tabIndex={copy === 1 ? -1 : undefined}
+                    >
+                      <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
+                      <span className="home-marquee-title">{c.title}</span>
+                    </Link>
+                  </li>
+                )),
+              )}
+            </ul>
+          </div>
         </section>
       ) : null}
 

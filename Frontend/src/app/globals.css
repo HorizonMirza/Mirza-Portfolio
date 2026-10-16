@@ -1550,10 +1550,11 @@
   }
 }
 
-/* Beranda: angka, garis cerita, dan aktivitas GitHub (DESIGN.md bagian 46). */
-/* Project pilihan di beranda (audit Home 2026-10-15, DESIGN.md bagian 54): pita sampul datar yang
-   berjalan pelan, lalu deretan nama project sebagai tautan ke halaman detailnya. Pita hanya memakai
-   transform (compositor), memudar di kedua ujung, berhenti saat disorot, diam pada reduced-motion. */
+/* Beranda: aktivitas GitHub (DESIGN.md bagian 46). */
+/* Project di beranda (DESIGN.md bagian 54 dan 58): pita sampul datar yang berjalan pelan; tiap
+   sampul tautan ke halaman detail project. Hanya memakai transform (compositor), memudar di kedua
+   ujung, tidak berhenti saat disorot (revisi pemilik 2026-10-16), berhenti saat fokus keyboard ada
+   di dalamnya, diam pada reduced-motion. */
 .home-marquee {
   overflow: hidden;
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
@@ -1563,28 +1564,41 @@
   display: flex;
   gap: 1rem;
   width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
   /* kecepatan tetap per sampul, berapa pun jumlah project */
   animation: home-marquee calc(var(--n) * 8s) linear infinite;
 }
-.home-marquee:hover .home-marquee-track {
+.home-marquee-track:has(:focus-visible) {
   animation-play-state: paused;
 }
-.home-marquee figure {
-  position: relative;
+.home-marquee li {
   flex: none;
   width: 360px;
-  margin: 0;
+}
+.home-marquee a {
+  position: relative;
+  display: block;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 0.75rem;
   background: var(--surface-2);
   aspect-ratio: 16 / 9;
+  transition: border-color 150ms ease-out;
+}
+.home-marquee a:hover {
+  border-color: var(--border-strong);
 }
 .home-marquee img {
   object-fit: cover;
   object-position: top;
+  transition: transform 0.6s var(--ease-out-soft);
 }
-.home-marquee figcaption {
+.home-marquee a:hover img {
+  transform: scale(1.04);
+}
+.home-marquee-title {
   position: absolute;
   left: 0.625rem;
   bottom: 0.625rem;
@@ -1608,7 +1622,7 @@
   }
 }
 @media (max-width: 639px) {
-  .home-marquee figure {
+  .home-marquee li {
     width: 240px;
   }
 }
@@ -1616,37 +1630,9 @@
   .home-marquee-track {
     animation: none;
   }
-}
-.home-project-links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.5rem;
-  margin: 1.5rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.home-project-links a {
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  padding: 0 1rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition:
-    border-color 150ms ease-out,
-    background-color 150ms ease-out;
-}
-.home-project-links a:hover {
-  border-color: var(--border-strong);
-  background: var(--surface-2);
-}
-.home-project-links li:first-child a {
-  border-color: var(--text);
+  .home-marquee img {
+    transition: none;
+  }
 }
 /* Aktivitas GitHub: satu baris berganti di atas grafik kontribusi. */
 .gh-ticker {

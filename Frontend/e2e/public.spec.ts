@@ -2,7 +2,10 @@ import { expect, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
 
-test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', async ({ page }) => {
+test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', async ({
+  page,
+  isMobile,
+}) => {
   await page.goto('/id')
   await expect(page.getByRole('link', { name: 'Lihat project' })).toBeInViewport()
   // foto potret hero (DESIGN.md bagian 55): bulat kecil di HP, potret di kolom kanan laptop
@@ -10,11 +13,6 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
   await expect(portrait).toBeInViewport()
   await expect(portrait).toHaveAttribute('alt', /.+/)
   await expect(page.getByRole('heading', { name: 'Yang saya pakai' })).toBeVisible()
-  // Project pilihan kembali (audit Home 2026-10-15, DESIGN.md bagian 54): pita gambar dekoratif dan
-  // tautan nama project ke halaman detail
-  const projects = page.getByRole('list', { name: 'Daftar project' })
-  await expect(page.getByRole('heading', { name: 'Project pilihan' })).toBeVisible()
-  await expect(projects.getByRole('link').first()).toHaveAttribute('href', /\/id\/projects\/.+/)
   // Pengalaman (revisi pemilik 2026-10-16, akordion): yang terbaru terbuka, yang lain bisa dibuka
   await expect(page.getByRole('heading', { name: 'Pengalaman' })).toBeVisible()
   const xp = page.locator('details.home-xp')
@@ -27,6 +25,32 @@ test('beranda: tombol utama terlihat tanpa scroll dan tiap bagian bernomor', asy
     'href',
     '/id/experience',
   )
+  // Project (revisi pemilik 2026-10-16, DESIGN.md bagian 58): judul tanpa nomor di bawah
+  // Pengalaman, sampul di pita adalah tautan ke detail, pita tidak berhenti saat disorot
+  const projectsHeading = page.getByRole('heading', { name: 'Project', exact: true })
+  await expect(projectsHeading).toBeVisible()
+  await expect(projectsHeading.locator('span[aria-hidden="true"]')).toHaveCount(0)
+  const xpBox = await page.getByRole('heading', { name: 'Pengalaman' }).boundingBox()
+  const projectsBox = await projectsHeading.boundingBox()
+  expect(projectsBox!.y).toBeGreaterThan(xpBox!.y)
+  for (const name of ['Project pilihan', /Semua project/]) {
+    await expect(page.getByText(name)).toHaveCount(0)
+  }
+  const covers = page.getByRole('list', { name: 'Daftar project' }).getByRole('link')
+  const firstCover = covers.first()
+  await expect(firstCover).toHaveAttribute('href', /\/id\/projects\/.+/)
+  const track = page.locator('.home-marquee-track')
+  if (!isMobile) {
+    // pita terus bergerak sehingga tidak pernah "stabil" untuk hover(); kursor diarahkan langsung
+    const box = (await page.locator('.home-marquee').boundingBox())!
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+    await expect(track).toHaveCSS('animation-play-state', 'running')
+  }
+  const href = await firstCover.getAttribute('href')
+  // klik lewat event: sampul terus bergerak, klik berdasarkan koordinat bisa mengenai sampul sebelahnya
+  await firstCover.dispatchEvent('click')
+  await expect(page).toHaveURL(new RegExp(`${href}$`))
+  await page.goto('/id')
   // dihapus atas permintaan pemilik: Perjalanan terbaru, ajakan + newsletter (2026-10-08), Dalam
   // angka dan Dari komunitas ke software (2026-10-16)
   for (const name of [

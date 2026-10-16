@@ -820,3 +820,10 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 - **Pengalaman di beranda** (pilihan pemilik dari 10 demo: E3 "Akordion"; About tidak ditambahkan). Bagian **03 Pengalaman** berisi entri kerja dan organisasi dari Admin → Pengalaman, terbaru di atas, tanpa pendidikan (sama dengan halaman Pengalaman). Tiap baris berisi logo (inisial bila tidak ada), peran, instansi · jenis pekerjaan, periode, dan tanda +. Klik baris membuka deskripsi (Markdown tersanitasi); yang terbaru terbuka lebih dulu. Memakai `<details>`/`<summary>` bawaan browser: tanpa JavaScript, bisa dipakai keyboard dan pembaca layar. Di browser yang mendukung `::details-content` isi membuka dengan animasi tinggi; tanda + berputar menjadi ×. HP: periode pindah ke bawah instansi. Tautan "Semua pengalaman (n)" menuju halaman Pengalaman.
 - Susunan beranda sekarang: 01 pembuka, 02 Project pilihan, 03 Pengalaman, 04 Yang saya pakai, 05 Aktivitas di GitHub.
 
+## 58. Beranda: Project di bawah Pengalaman (2026-10-16)
+
+- Revisi pemilik: nomor "02" pada bagian Project dihapus, judul "Selected projects/Project pilihan" menjadi **Projects/Project** dan diletakkan di tengah, tautan "Semua project (n)" dan deretan nama project (pil) dihapus. Bagian ini pindah ke bawah Pengalaman.
+- Tiap sampul di pita kini tautan ke halaman detail project (memakai transisi `project-open` seperti daftar project). Pita **tidak berhenti saat disorot**. Pita hanya berhenti saat fokus keyboard ada di dalamnya, supaya tautan bisa dipilih dengan Tab; pada reduced-motion pita diam. Sampul membesar sedikit saat disorot.
+- Deret sampul diulang dua kali agar putaran tidak terputus. Salinan kedua disembunyikan dari pembaca layar dan keyboard (`aria-hidden`, `tabindex=-1`), sehingga setiap project hanya dibacakan satu kali.
+- Penomoran: Project tidak ikut dihitung. Susunan beranda: 01 pembuka, 02 Pengalaman, Project, 03 Yang saya pakai, 04 Aktivitas di GitHub.
+
