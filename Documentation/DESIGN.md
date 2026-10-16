@@ -840,4 +840,9 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
   - di perangkat dengan kursor (`hover: hover` dan `pointer: fine`), saat sampul disorot atau difokus keyboard, gambar meredup (hitam 62%) dan nama project muncul di tengah dengan Inter semibold;
   - di layar sentuh, nama tampil di bawah sampul (Inter semibold, satu baris, terpotong dengan elipsis bila panjang);
   - hanya satu dari keduanya yang tampil, jadi nama tautan dibacakan sekali.
+- **Revisi 2026-10-16 (keempat):**
+  - animasi buka/tutup akordion Pengalaman kini dikerjakan `ExperienceAccordion` dengan Web Animations (tinggi 350 ms), karena Safari HP belum mendukung `::details-content` dan detail langsung muncul tanpa efek. Di semua browser kini sama: baris membuka dan menutup halus ke bawah. Suara tutup diputar saat ditekan. Reduced-motion atau tanpa JavaScript: seketika;
+  - di HP, detail dimulai sejajar judul peran (bukan dari tepi logo);
+  - huruf disamakan dengan halaman Pengalaman: peran Oswald kapital ukuran h3, instansi Inter warna teks, tanggal "Jul 2026 - Present" dengan tanda hubung seperti halaman Pengalaman.
+- **Chip teknologi project di layar sentuh** (halaman Project dan detail): logo dan garis chip langsung berwarna brand pada `hover: none`. Di desktop tetap abu-abu sampai disorot.
 

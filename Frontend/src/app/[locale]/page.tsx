@@ -355,7 +355,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             <ExperienceAccordion>
               {workHistory.map((e) => {
                 const org = organizationName(e, locale)
-                const when = `${formatMonth(e.start, locale)} – ${
+                const when = `${formatMonth(e.start, locale)} - ${
                   e.end ? formatMonth(e.end, locale) : tExp('present')
                 }`
                 return (

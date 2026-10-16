@@ -1901,6 +1901,16 @@
     scale: 1.12;
   }
 }
+/* layar sentuh (tanpa hover): logo dan garis chip langsung berwarna brand (revisi pemilik
+   2026-10-16), tidak menunggu disorot seperti di desktop */
+@media (hover: none) {
+  .pj-tech {
+    border-color: color-mix(in srgb, var(--brand) 60%, var(--border));
+  }
+  .pj-tech svg {
+    fill: var(--brand);
+  }
+}
 /* chip di baris daftar ada di bawah tautan selebar baris; logo ikut berwarna saat baris disorot */
 @media (hover: hover) {
   .pj-zz:hover .pj-tech svg {
@@ -2496,11 +2506,10 @@ html:has(.intro[open]) {
 
 /* Pengalaman di beranda: akordion <details> (revisi pemilik 2026-10-16, demo E3). Baris berisi
    logo, peran, instansi, dan periode (tanpa ikon +/×, tanpa garis bawah saat disorot); isi
-   deskripsi terbuka di bawahnya. Di browser yang
-   mendukung ::details-content isi membuka dengan animasi tinggi, selainnya langsung tampil. */
+   deskripsi terbuka di bawahnya. Animasi tinggi saat membuka dan menutup dikerjakan
+   ExperienceAccordion (Web Animations) agar sama di semua browser, termasuk Safari HP. */
 .home-xp {
   border-top: 1px solid var(--border);
-  interpolate-size: allow-keywords;
 }
 .home-xp:last-child {
   border-bottom: 1px solid var(--border);
@@ -2549,12 +2558,16 @@ html:has(.intro[open]) {
   min-width: 0;
 }
 .home-xp-role {
+  /* huruf peran dan instansi sama dengan halaman Pengalaman (revisi pemilik 2026-10-16): peran
+     Oswald kapital ukuran h3, instansi Inter warna teks */
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
   font-weight: 600;
-  line-height: 1.35;
+  line-height: var(--text-h3--line-height);
+  text-transform: uppercase;
 }
 .home-xp-org {
-  color: var(--text-muted);
-  font-size: 0.9375rem;
+  color: var(--text);
 }
 .home-xp-when {
   /* huruf sama dengan tanggal di halaman Pengalaman (revisi pemilik 2026-10-16) */
@@ -2567,17 +2580,9 @@ html:has(.intro[open]) {
   display: none;
 }
 .home-xp-body {
-  padding: 0 0.25rem 1.25rem;
-}
-.home-xp::details-content {
-  block-size: 0;
-  overflow: hidden;
-  transition:
-    block-size 0.35s var(--ease-out-soft),
-    content-visibility 0.35s allow-discrete;
-}
-.home-xp[open]::details-content {
-  block-size: auto;
+  /* detail dimulai sejajar judul peran, bukan dari tepi logo (revisi pemilik 2026-10-16):
+     0,25rem jarak + 2,75rem logo + 1rem celah */
+  padding: 0 0.25rem 1.25rem 4rem;
 }
 @media (min-width: 40rem) {
   .home-xp summary {
@@ -2591,10 +2596,5 @@ html:has(.intro[open]) {
   }
   .home-xp-body {
     padding-left: 4.25rem;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .home-xp::details-content {
-    transition: none;
   }
 }
