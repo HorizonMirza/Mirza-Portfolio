@@ -182,3 +182,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-18 | Halaman 404: sesuai bahasa URL (catch-all `[locale]/[...rest]`), tanpa terjemahan dan penjelasan 404, satu tombol Beranda/Home, kalimat satu baris di layar lebar, isi di tengah (DESIGN.md bagian 70) |
 | 2026-10-18 | Pengalaman: entri teratas aktif saat halaman dibuka (garis baca). Grafik GitHub: suara B2 "gelombang klik" saat berpindah 2D/3D (DESIGN.md bagian 71) |
 | 2026-10-18 | Grafik GitHub: suara morph dihapus; judul jumlah kontribusi dan label statistik satu baris di HP (DESIGN.md bagian 72) |
+| 2026-10-18 | Keahlian Teknis: keyboard Spline diganti globe skill (S4 Globe + warna kategori S7) tanpa library; `@splinetool/runtime`, aset `public/spline/`, dan `'unsafe-eval'` CSP publik dihapus; kredit Naresh Khatri dihapus (DESIGN.md bagian 73) |

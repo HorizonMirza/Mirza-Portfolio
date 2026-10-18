@@ -17,9 +17,8 @@ import { initials, organizationName, sortByLatest } from '@/features/experience/
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
 import { getPublishedProjects } from '@/features/projects/public'
-import { SkillKeyboard } from '@/features/skills/components/skill-keyboard'
-import { SkillKeyboard3D } from '@/features/skills/components/skill-keyboard-3d'
-import { toKeycaps } from '@/features/skills/keycaps'
+import { SkillGlobe } from '@/features/skills/components/skill-globe'
+import { toSkillItems } from '@/features/skills/skill-items'
 import { getPublicSkills } from '@/features/skills/public'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
@@ -63,7 +62,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     tAvail,
     tCommon,
     tSkills,
-    tKeyboard,
+    tGlobe,
     tSkyline,
     tExp,
     profile,
@@ -76,7 +75,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     getTranslations({ locale, namespace: 'Availability' }),
     getTranslations({ locale, namespace: 'Common' }),
     getTranslations({ locale, namespace: 'Skills' }),
-    getTranslations({ locale, namespace: 'SkillKeyboard' }),
+    getTranslations({ locale, namespace: 'SkillGlobe' }),
     getTranslations({ locale, namespace: 'Skyline' }),
     getTranslations({ locale, namespace: 'Experience' }),
     getPublicProfile(),
@@ -135,7 +134,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
-  const skillKeycaps = toKeycaps(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
+  const skillItems = toSkillItems(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
   const person = profile
@@ -423,23 +422,21 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         >
           <Container>
             {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul di tengah; keterangan sumber
-                keyboard 3D dan logo dipindah ke halaman Privasi (bagian Kredit) */}
-            <h2 id="stack-title" className="mb-8 text-center text-h2 font-bold">
+                logo ada di halaman Privasi (bagian Kredit) */}
+            <h2 id="stack-title" className="mb-4 text-center text-h2 font-bold">
               <span>{t('stackHeading')}</span>
             </h2>
-            <SkillKeyboard3D
-              keycaps={skillKeycaps}
-              label={tKeyboard('label')}
-              fallback={
-                <SkillKeyboard
-                  keycaps={skillKeycaps}
-                  labels={{
-                    keyboard: tKeyboard('label'),
-                    hint: tKeyboard('hint'),
-                    usedIn: tSkills('usedIn'),
-                  }}
-                />
-              }
+            <SkillGlobe
+              items={skillItems}
+              categories={skills.map((c) => loc(c, 'name', locale))}
+              labels={{
+                globe: tGlobe('label'),
+                list: tGlobe('list'),
+                categories: tGlobe('categories'),
+                prompt: tGlobe('prompt'),
+                hint: tGlobe('hint'),
+                usedIn: tSkills('usedIn'),
+              }}
             />
           </Container>
         </section>

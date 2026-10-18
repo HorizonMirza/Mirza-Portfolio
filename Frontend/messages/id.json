@@ -194,7 +194,7 @@
     "rightsBody": "Anda bisa meminta salinan atau penghapusan data Anda lewat halaman kontak.",
     "contactLink": "Buka halaman kontak",
     "creditsHeading": "Kredit",
-    "creditsBody": "Keyboard 3D dari portofolio Naresh Khatri (MIT). Logo dari Simple Icons; logo Git oleh Jason Long, CC BY 3.0."
+    "creditsBody": "Logo dari Simple Icons; logo Git oleh Jason Long, CC BY 3.0."
   },
   "Error": {
     "title": "Terjadi kesalahan",
@@ -202,9 +202,12 @@
     "retry": "Coba lagi",
     "home": "Kembali ke beranda"
   },
-  "SkillKeyboard": {
-    "label": "Keyboard skill",
-    "hint": "Tekan salah satu tombol. Di keyboard: panah untuk berpindah, huruf untuk melompat."
+  "SkillGlobe": {
+    "label": "Globe skill",
+    "list": "Daftar skill",
+    "categories": "Kategori skill",
+    "prompt": "Tekan logo untuk melihat rinciannya.",
+    "hint": "Geser untuk memutar, tekan logo untuk detail"
   },
   "Skyline": {
     "unit": "kontribusi",

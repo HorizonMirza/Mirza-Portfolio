@@ -1,10 +1,10 @@
 import type { CSSProperties } from 'react'
 
-import { resolveIcon } from '@/features/skills/keycaps'
+import { resolveIcon } from '@/features/skills/skill-items'
 import { cn } from '@/lib/utils'
 
 // Chip teknologi project dengan logo kecil (pilihan pemilik 2026-10-08, demo efek nomor 7). Logo
-// sama dengan keyboard skill di beranda (Simple Icons, features/skills/brand-icons.ts). Logo abu-abu
+// sama dengan globe skill di beranda (Simple Icons, features/skills/brand-icons.ts). Logo abu-abu
 // dan berwarna brand saat disorot; logo brand yang sangat gelap (mis. Next.js) memakai warna teks
 // agar tetap terlihat di tema gelap.
 export function TechChips({

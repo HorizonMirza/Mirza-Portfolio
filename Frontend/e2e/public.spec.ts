@@ -95,48 +95,41 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
   await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
-test.describe('keyboard skill CSS (cadangan saat gerak dikurangi atau tanpa WebGL)', () => {
+test.describe('globe skill', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
-  test('tombol menampilkan rincian skill dan bisa dipakai dengan keyboard', async ({ page }) => {
+  test('logo menampilkan rincian, kategori meredupkan yang lain, bisa dengan keyboard', async ({
+    page,
+  }) => {
+    const errors: string[] = []
+    page.on('pageerror', (e) => errors.push(e.message))
     await page.goto('/id')
-    const keyboard = page.getByRole('group', { name: 'Keyboard skill' })
-    const typescript = keyboard.getByRole('button', { name: /^TypeScript,/ })
-    await typescript.click()
-    await expect(typescript).toHaveAttribute('aria-current', 'true')
-    const panel = page.locator(`[id="${await typescript.getAttribute('aria-controls')}"]`)
-    await expect(panel).toContainText('TypeScript')
-    // huruf melompat ke skill berawalan huruf itu, panah berpindah ke tombol berikutnya
-    await typescript.press('r')
-    const react = keyboard.getByRole('button', { name: /^React,/ })
-    await expect(react).toBeFocused()
+    const globe = page.getByRole('group', { name: 'Globe skill' })
+    await globe.scrollIntoViewIfNeeded()
+    // logo di sisi depan bisa ditekan; fokus keyboard memutarnya ke tengah
+    const react = globe.getByRole('button', { name: /^React,/ })
+    await react.focus()
+    await page.keyboard.press('Enter')
+    await expect(react).toHaveAttribute('aria-pressed', 'true')
+    const panel = page.locator(`[id="${await react.getAttribute('aria-controls')}"]`)
     await expect(panel).toContainText('React')
+    // panah ke logo berikutnya, juga yang sedang di sisi belakang (diputar ke depan dulu)
     await react.press('ArrowRight')
-    await expect(react).not.toHaveAttribute('aria-current')
+    const next = globe.getByRole('button', { name: /^Next\.js,/ })
+    await expect(next).toBeFocused()
+    await expect(next).toHaveAttribute('aria-pressed', 'true')
+    await expect(panel).toContainText('Next.js')
+    await expect(page.getByRole('list', { name: 'Daftar skill' })).toContainText('TypeScript')
+    // kategori: logo kategori lain diredupkan
+    const category = page.getByRole('group', { name: 'Kategori skill' }).getByRole('button').nth(1)
+    await category.click()
+    await expect(category).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.locator('.globe-item', { hasText: 'TypeScript' })).toHaveAttribute(
+      'data-dim',
+      '',
+    )
+    await expect(react).not.toHaveAttribute('data-dim')
+    expect(errors).toEqual([])
   })
-})
-
-test('keyboard skill 3D tampil, atau keyboard CSS bila 3D tidak bisa dimuat', async ({ page }) => {
-  const errors: string[] = []
-  page.on('pageerror', (e) => errors.push(e.message))
-  page.on('request', (r) => {
-    if (!r.url().startsWith('http://localhost') && !/^(blob|data):/.test(r.url()))
-      errors.push(`permintaan ke luar: ${r.url()}`)
-  })
-  await page.goto('/id')
-  const stage = page.locator('[data-state]').filter({ has: page.locator('canvas.kb3d-canvas') })
-  // sebelum ada interaksi, keyboard CSS yang tampil
-  await expect(page.getByRole('group', { name: 'Keyboard skill' })).toBeVisible()
-  await stage.scrollIntoViewIfNeeded()
-  await page.mouse.move(10, 10)
-  await page.mouse.move(200, 200)
-  // setelah interaksi: scene 3D siap, atau tetap keyboard CSS bila browser tidak sanggup
-  await expect(page.locator('[data-state="ready"], [data-state="fallback"]')).toHaveCount(1, {
-    timeout: 30_000,
-  })
-  if ((await page.locator('[data-state="ready"]').count()) > 0) {
-    await expect(page.getByRole('list', { name: 'Keyboard skill' })).toContainText('TypeScript')
-  }
-  expect(errors).toEqual([])
 })
 
 test('halaman skill lama diarahkan ke bagian skill di beranda', async ({ page }) => {
@@ -380,9 +373,9 @@ test('tema awal gelap untuk pengunjung baru', async ({ page }) => {
   await expect(page.locator('html')).toHaveClass(/dark/)
 })
 
-test('halaman privasi memuat kredit keyboard 3D dan logo', async ({ page }) => {
-  // dipindah dari beranda (revisi pemilik 2026-10-16) agar lisensi MIT dan CC BY tetap dipenuhi
+test('halaman privasi memuat kredit logo', async ({ page }) => {
+  // dipindah dari beranda (revisi pemilik 2026-10-16) agar lisensi CC BY logo Git tetap dipenuhi
   await page.goto('/id/privacy')
   await expect(page.getByRole('heading', { name: 'Kredit' })).toBeVisible()
-  await expect(page.getByText(/Naresh Khatri \(MIT\).*Jason Long, CC BY 3\.0/)).toBeVisible()
+  await expect(page.getByText(/Simple Icons.*Jason Long, CC BY 3\.0/)).toBeVisible()
 })

@@ -119,9 +119,11 @@ describe('isBot dan isSameOrigin', () => {
 
 describe('buildCsp', async () => {
   const { buildCsp } = await import('@/lib/csp')
-  it('halaman publik: tanpa nonce, eval untuk keyboard 3D, tetap ketat untuk arahan lain', () => {
+  it('halaman publik: tanpa nonce dan tanpa eval, tetap ketat untuk arahan lain', () => {
     const csp = buildCsp({ dev: false, preview: false, upgrade: true })
-    expect(csp).toContain("script-src 'self' 'unsafe-inline' 'unsafe-eval'")
+    expect(csp.split('; ').find((d) => d.startsWith('script-src'))).toBe(
+      "script-src 'self' 'unsafe-inline'",
+    )
     expect(csp).toContain("frame-ancestors 'none'")
     expect(csp).toContain("object-src 'none'")
     expect(csp).toContain("img-src 'self' data: blob: https://res.cloudinary.com")

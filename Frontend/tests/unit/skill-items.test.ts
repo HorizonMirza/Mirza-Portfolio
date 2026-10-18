@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { iconSlug, inkFor, resolveIcon, toKeycaps } from '@/features/skills/keycaps'
+import { iconSlug, logoColorFor, resolveIcon, toSkillItems } from '@/features/skills/skill-items'
 
-describe('keycaps', () => {
+describe('skill-items', () => {
   it('slug mengikuti aturan Simple Icons', () => {
     expect(iconSlug('Next.js')).toBe('nextdotjs')
     expect(iconSlug('C++')).toBe('cplusplus')
@@ -16,14 +16,14 @@ describe('keycaps', () => {
     expect(resolveIcon('Project Management', null)).toBeNull()
   })
 
-  it('warna logo hitam atau putih sesuai kontras', () => {
-    expect(inkFor('#F7DF1E')).toBe('#0a0a0a')
-    expect(inkFor('#000000')).toBe('#ffffff')
-    expect(inkFor('#262626')).toBe('#ffffff')
+  it('logo hampir hitam mengikuti warna teks, logo lain memakai warna brand', () => {
+    expect(logoColorFor('F7DF1E')).toBe('#F7DF1E')
+    expect(logoColorFor('000000')).toBeNull()
+    expect(logoColorFor('181717')).toBeNull()
   })
 
   it('skill tanpa logo brand memakai ikon umum atau singkatan', () => {
-    const [pm, other, ts] = toKeycaps(
+    const [pm, other, ts, next] = toSkillItems(
       [
         {
           id: 'c1',
@@ -35,6 +35,12 @@ describe('keycaps', () => {
             { id: 's3', name: 'TypeScript', icon: null, projectSlugs: ['porto'] },
           ],
         },
+        {
+          id: 'c2',
+          name_id: 'Framework',
+          name_en: 'Frameworks',
+          skills: [{ id: 's4', name: 'Next.js', icon: null, projectSlugs: [] }],
+        },
       ],
       'en',
       (slug) => `Judul ${slug}`,
@@ -43,7 +49,10 @@ describe('keycaps', () => {
     expect(pm.category).toBe('Non-technical')
     expect(other.glyph).toBeNull()
     expect(other.label).toBe('PS')
-    expect(ts.color).toBe('#3178C6')
+    expect(ts.logoColor).toBe('#3178C6')
+    expect(ts.categoryIndex).toBe(0)
+    expect(next.categoryIndex).toBe(1)
+    expect(next.logoColor).toBeNull()
     expect(ts.projects).toEqual([{ slug: 'porto', title: 'Judul porto' }])
   })
 })

@@ -1,0 +1,518 @@
+'use client'
+
+import { FileSpreadsheet, Megaphone, SquareKanban, Users } from 'lucide-react'
+import {
+  type CSSProperties,
+  type KeyboardEvent,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+
+import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/utils'
+
+import type { GenericGlyph, SkillItem } from '../skill-items'
+
+const GENERIC_ICONS = {
+  kanban: SquareKanban,
+  users: Users,
+  megaphone: Megaphone,
+  sheet: FileSpreadsheet,
+} satisfies Record<GenericGlyph, unknown>
+
+// jumlah warna kategori di globals.css (--cat-1..--cat-6); kategori ke-7 dst mengulang dari awal
+const CATEGORY_COLORS = 6
+const categoryColor = (index: number) => `var(--cat-${(index % CATEGORY_COLORS) + 1})`
+
+type Vec = [number, number, number]
+
+// sudut awal: sedikit miring agar kesan bola langsung terlihat
+const START_YAW = 0.4
+const START_PITCH = -0.25
+// putaran otomatis per frame (radian) dan batas miring saat digeser
+const AUTO_SPEED = 0.0028
+const PITCH_LIMIT = 1.2
+const FACE_PITCH = 0.75
+// geseran di bawah ini masih dianggap tekan, bukan memutar
+const DRAG_THRESHOLD = 4
+// nama skill hanya tampil di sisi depan (kedalaman 0 belakang .. 1 depan)
+const LABEL_DEPTH = 0.55
+// logo di sisi belakang tertutup logo depan dan terlalu kecil untuk ditekan (WCAG 2.5.8), jadi inert
+// sampai berputar ke depan. Panah kiri/kanan tetap menjangkau semua logo (diputar ke depan dulu) dan
+// daftar lengkap skill tersedia untuk pembaca layar.
+const BACK_DEPTH = 0.45
+
+// titik merata di permukaan bola (spiral Fibonacci), digeser setengah langkah agar tidak ada logo
+// tepat di kutub (bola akan terlihat dari atas saat logo itu diputar ke depan)
+function spherePoints(n: number): Vec[] {
+  const golden = Math.PI * (3 - Math.sqrt(5))
+  return Array.from({ length: n }, (_, i) => {
+    const y = 1 - ((i + 0.5) / n) * 2
+    const r = Math.sqrt(1 - y * y)
+    return [Math.cos(golden * i) * r, y, Math.sin(golden * i) * r]
+  })
+}
+
+function rotate([x, y, z]: Vec, yaw: number, pitch: number): Vec {
+  const cy = Math.cos(yaw)
+  const sy = Math.sin(yaw)
+  const cp = Math.cos(pitch)
+  const sp = Math.sin(pitch)
+  const x1 = x * cy + z * sy
+  const z1 = -x * sy + z * cy
+  return [x1, y * cp - z1 * sp, y * sp + z1 * cp]
+}
+
+// hasil rotasi diproyeksikan dengan perspektif ringan; x dan y dalam satuan jari-jari bola
+function project(p: Vec, yaw: number, pitch: number, scale = 1): Vec {
+  const [x, y, z] = rotate(p, yaw, pitch)
+  const persp = 1 / (1 - z * 0.28)
+  return [x * scale * persp, y * scale * persp, z]
+}
+
+// sudut yang membuat titik p menghadap pengunjung; kemiringan dibatasi agar tetap tampak seperti bola
+function facing([x, y, z]: Vec): [number, number] {
+  const pitch = Math.atan2(y, Math.hypot(x, z))
+  return [Math.atan2(-x, z), Math.max(-FACE_PITCH, Math.min(FACE_PITCH, pitch))]
+}
+
+// variabel CSS satu logo: posisi, skala, keburaman, dan tampil tidaknya nama
+function itemStyle(p: Vec, yaw: number, pitch: number) {
+  const [x, y, z] = project(p, yaw, pitch)
+  const depth = (z + 1) / 2
+  return {
+    '--x': x.toFixed(4),
+    '--y': y.toFixed(4),
+    '--s': (0.55 + depth * 0.6).toFixed(3),
+    '--o': (0.18 + depth * 0.82).toFixed(3),
+    '--lo': depth >= LABEL_DEPTH ? '1' : '0',
+    back: depth < BACK_DEPTH,
+    zIndex: Math.round(depth * 100),
+  }
+}
+
+function Glyph({ item }: { item: SkillItem }) {
+  if (item.glyph?.kind === 'brand') {
+    return (
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d={item.glyph.path} />
+      </svg>
+    )
+  }
+  if (item.glyph?.kind === 'generic') {
+    const Icon = GENERIC_ICONS[item.glyph.name]
+    return <Icon strokeWidth={2} aria-hidden="true" />
+  }
+  return (
+    <span className="font-mono text-xs font-bold" aria-hidden="true">
+      {item.label}
+    </span>
+  )
+}
+
+// Globe skill di beranda (DESIGN.md bagian 73, pilihan pemilik demo S4 + warna kategori S7): logo skill
+// di permukaan bola bergaris lintang-bujur. Bola berputar pelan, bisa digeser (mouse atau jari ke
+// samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Tombol kategori
+// meredupkan kategori lain. Logo adalah tombol biasa (Tab, panah kiri/kanan); hanya garis bola yang
+// digambar di canvas. Posisi awal sudah dihitung di server, jadi tanpa JavaScript bola tetap tampil.
+// Reduced-motion: tanpa putaran otomatis dan tanpa animasi saat berpindah logo.
+export function SkillGlobe({
+  items,
+  categories,
+  labels,
+  className,
+}: {
+  items: SkillItem[]
+  categories: string[]
+  labels: {
+    globe: string
+    list: string
+    categories: string
+    prompt: string
+    hint: string
+    usedIn: string
+  }
+  className?: string
+}) {
+  const stageRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const points = useMemo(() => spherePoints(items.length), [items.length])
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [category, setCategory] = useState<number | null>(null)
+  const panelId = useId()
+  // jembatan dari handler React ke loop animasi di effect
+  const controls = useRef<{ face: (index: number) => void; wake: () => void } | null>(null)
+  const activeRef = useRef<number | null>(null)
+  // salinan untuk loop animasi di effect
+  const pointsRef = useRef(points)
+  useEffect(() => {
+    pointsRef.current = points
+    controls.current?.wake()
+  }, [points])
+  useEffect(() => {
+    activeRef.current = activeIndex
+    controls.current?.wake()
+  }, [activeIndex])
+
+  useEffect(() => {
+    const stage = stageRef.current
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!stage || !canvas || !ctx) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let yaw = START_YAW
+    let pitch = START_PITCH
+    let velocity = reduce.matches ? 0 : AUTO_SPEED
+    let target: [number, number] | null = null
+    let width = 0
+    let height = 0
+    let radius = 0
+    let lineColor = ''
+    let frame = 0
+    let visible = false
+    let drag: { x: number; y: number; id: number; moved: boolean } | null = null
+
+    const readColor = () => {
+      lineColor = getComputedStyle(canvas).color
+    }
+
+    const resize = () => {
+      const rect = stage.getBoundingClientRect()
+      width = rect.width
+      height = rect.height
+      const dpr = Math.min(2, window.devicePixelRatio || 1)
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      // sama dengan nilai awal --r di globals.css (.globe-stage)
+      radius = Math.min(width * 0.36, height * 0.4, 240)
+      stage.style.setProperty('--r', `${radius}px`)
+      readColor()
+    }
+
+    // garis lintang dan bujur; sisi belakang lebih pudar
+    const drawSphere = () => {
+      ctx.clearRect(0, 0, width, height)
+      const cx = width / 2
+      const cy = height / 2
+      const r = radius * 0.98
+      ctx.strokeStyle = lineColor
+      ctx.lineWidth = 1
+      const ring = (point: (a: number) => Vec, alpha: number) => {
+        const steps = 72
+        let prev: Vec | null = null
+        for (let k = 0; k <= steps; k++) {
+          const q = project(point((k / steps) * Math.PI * 2), yaw, pitch)
+          if (prev) {
+            ctx.globalAlpha = alpha * (0.35 + ((prev[2] + q[2]) / 2 + 1) * 0.45)
+            ctx.beginPath()
+            ctx.moveTo(cx + prev[0] * r, cy + prev[1] * r)
+            ctx.lineTo(cx + q[0] * r, cy + q[1] * r)
+            ctx.stroke()
+          }
+          prev = q
+        }
+      }
+      for (let lat = -60; lat <= 60; lat += 30) {
+        const la = (lat * Math.PI) / 180
+        ring((a) => [Math.cos(a) * Math.cos(la), Math.sin(la), Math.sin(a) * Math.cos(la)], 0.28)
+      }
+      for (let lon = 0; lon < 180; lon += 30) {
+        const lo = (lon * Math.PI) / 180
+        ring((a) => [Math.cos(a) * Math.cos(lo), Math.sin(a), Math.cos(a) * Math.sin(lo)], 0.24)
+      }
+      ctx.globalAlpha = 0.4
+      ctx.beginPath()
+      ctx.arc(cx, cy, r, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.globalAlpha = 1
+    }
+
+    const draw = () => {
+      drawSphere()
+      pointsRef.current.forEach((p, i) => {
+        const el = itemRefs.current[i]
+        if (!el) return
+        const style = itemStyle(p, yaw, pitch)
+        el.style.setProperty('--x', style['--x'])
+        el.style.setProperty('--y', style['--y'])
+        el.style.setProperty('--s', style['--s'])
+        el.style.setProperty('--o', style['--o'])
+        el.style.setProperty('--lo', style['--lo'])
+        el.inert = style.back && i !== activeRef.current
+        el.style.zIndex = String(style.zIndex + (i === activeRef.current ? 200 : 0))
+      })
+    }
+
+    const shortest = (from: number, to: number) => {
+      let d = to - from
+      while (d > Math.PI) d -= Math.PI * 2
+      while (d < -Math.PI) d += Math.PI * 2
+      return d
+    }
+
+    // true selama masih ada gerakan, sehingga loop bisa berhenti saat diam (reduced-motion)
+    const step = () => {
+      if (target) {
+        const dy = shortest(yaw, target[0])
+        const dp = target[1] - pitch
+        const ease = reduce.matches ? 1 : 0.12
+        yaw += dy * ease
+        pitch += dp * ease
+        if (Math.abs(dy) < 0.002 && Math.abs(dp) < 0.002) target = null
+        return true
+      }
+      if (drag) return false
+      const auto = reduce.matches || activeRef.current !== null ? 0 : AUTO_SPEED
+      velocity += (auto - velocity) * 0.03
+      yaw += velocity
+      return Math.abs(velocity) > 0.0001 || auto > 0
+    }
+
+    const loop = () => {
+      frame = 0
+      const moving = step()
+      draw()
+      if (visible && moving) frame = requestAnimationFrame(loop)
+    }
+    const wake = () => {
+      if (!frame && visible) frame = requestAnimationFrame(loop)
+    }
+    controls.current = {
+      face: (index) => {
+        const p = pointsRef.current[index]
+        if (!p) return
+        target = facing(p)
+        velocity = 0
+        wake()
+      },
+      wake,
+    }
+
+    const onDown = (e: globalThis.PointerEvent) => {
+      if (e.button !== 0) return
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, moved: false }
+    }
+    const onMove = (e: globalThis.PointerEvent) => {
+      if (!drag || drag.id !== e.pointerId) return
+      const dx = e.clientX - drag.x
+      const dy = e.clientY - drag.y
+      if (!drag.moved) {
+        if (Math.abs(dx) + Math.abs(dy) < DRAG_THRESHOLD) return
+        // mulai memutar: tangkap pointer agar klik di logo tidak terpicu setelah digeser
+        drag.moved = true
+        stage.setPointerCapture(e.pointerId)
+        stage.dataset.dragging = ''
+        target = null
+      }
+      drag.x = e.clientX
+      drag.y = e.clientY
+      velocity = dx * 0.006
+      yaw += velocity
+      // di layar sentuh geser atas-bawah dipakai untuk scroll halaman (touch-action: pan-y)
+      if (e.pointerType !== 'touch') {
+        pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitch - dy * 0.006))
+      }
+      draw()
+    }
+    const onUp = () => {
+      if (!drag) return
+      drag = null
+      delete stage.dataset.dragging
+      wake()
+    }
+    stage.addEventListener('pointerdown', onDown)
+    stage.addEventListener('pointermove', onMove)
+    stage.addEventListener('pointerup', onUp)
+    stage.addEventListener('pointercancel', onUp)
+
+    resize()
+    draw()
+    const resizeObserver = new ResizeObserver(() => {
+      resize()
+      draw()
+    })
+    resizeObserver.observe(stage)
+    // berhenti menggambar saat bagian ini di luar layar
+    const visibility = new IntersectionObserver(([entry]) => {
+      visible = Boolean(entry?.isIntersecting)
+      if (visible) wake()
+      else if (frame) {
+        cancelAnimationFrame(frame)
+        frame = 0
+      }
+    })
+    visibility.observe(stage)
+    // ganti tema: warna garis dibaca ulang
+    const themeObserver = new MutationObserver(() => {
+      readColor()
+      draw()
+    })
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+    const onMotion = () => {
+      velocity = 0
+      wake()
+    }
+    reduce.addEventListener('change', onMotion)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      resizeObserver.disconnect()
+      visibility.disconnect()
+      themeObserver.disconnect()
+      reduce.removeEventListener('change', onMotion)
+      stage.removeEventListener('pointerdown', onDown)
+      stage.removeEventListener('pointermove', onMove)
+      stage.removeEventListener('pointerup', onUp)
+      stage.removeEventListener('pointercancel', onUp)
+      controls.current = null
+    }
+  }, [])
+
+  function select(index: number) {
+    activeRef.current = index
+    setActiveIndex(index)
+    controls.current?.face(index)
+  }
+
+  function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    let next: number | null = null
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = index + 1
+    else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = index - 1
+    if (next === null) return
+    event.preventDefault()
+    const target = (next + items.length) % items.length
+    const el = itemRefs.current[target]
+    if (!el) return
+    // logo tujuan bisa sedang di belakang (inert): pilih dan putar ke depan dulu, baru difokus
+    select(target)
+    el.inert = false
+    el.focus()
+  }
+
+  function toggleCategory(index: number) {
+    const next = category === index ? null : index
+    setCategory(next)
+    setActiveIndex(null)
+    if (next === null) return
+    const first = items.findIndex((item) => item.categoryIndex === next)
+    if (first >= 0) controls.current?.face(first)
+  }
+
+  const active = activeIndex === null ? null : items[activeIndex]
+  // posisi awal (sama di server dan klien), selanjutnya diperbarui langsung oleh loop animasi
+  const initial = points.map((p) => {
+    const { back, ...style } = itemStyle(p, START_YAW, START_PITCH)
+    return { back, style }
+  })
+
+  return (
+    <div className={cn('flex flex-col items-center', className)}>
+      <div ref={stageRef} role="group" aria-label={labels.globe} className="globe-stage">
+        <canvas ref={canvasRef} aria-hidden="true" className="globe-canvas" />
+        {items.map((item, i) => (
+          <button
+            key={item.id}
+            ref={(el) => {
+              itemRefs.current[i] = el
+            }}
+            type="button"
+            className="globe-item"
+            data-active={i === activeIndex ? '' : undefined}
+            data-dim={category !== null && item.categoryIndex !== category ? '' : undefined}
+            aria-pressed={i === activeIndex}
+            aria-controls={panelId}
+            inert={initial[i]?.back}
+            style={
+              {
+                ...initial[i]?.style,
+                '--cat': categoryColor(item.categoryIndex),
+                '--logo': item.logoColor ?? 'currentColor',
+              } as CSSProperties
+            }
+            onClick={() => select(i)}
+            onFocus={(event) => {
+              // fokus dari keyboard ikut memutar logo ke depan; fokus dari klik ditangani onClick
+              if (event.currentTarget.matches(':focus-visible')) select(i)
+            }}
+            onKeyDown={(event) => onKeyDown(event, i)}
+          >
+            <span className="globe-logo">
+              <Glyph item={item} />
+            </span>
+            <span className="globe-name" aria-hidden="true">
+              {item.name}
+            </span>
+            <span className="sr-only">
+              {item.name}, {item.category}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* logo di sisi belakang inert, jadi daftar lengkap disediakan untuk pembaca layar */}
+      <ul className="sr-only" aria-label={labels.list}>
+        {items.map((item) => (
+          <li key={item.id}>
+            {item.name}, {item.category}
+          </li>
+        ))}
+      </ul>
+
+      {categories.length > 1 ? (
+        <div role="group" aria-label={labels.categories} className="globe-legend">
+          {categories.map((name, i) => (
+            <button
+              key={name}
+              type="button"
+              aria-pressed={category === i}
+              style={{ '--cat': categoryColor(i) } as CSSProperties}
+              onClick={() => toggleCategory(i)}
+            >
+              <i aria-hidden="true" />
+              {name}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      <div id={panelId} className="mt-6 min-h-24 text-center">
+        {active ? (
+          <>
+            <p className="font-display text-2xl font-bold uppercase sm:text-3xl">{active.name}</p>
+            <p className="mt-1 font-mono text-label tracking-widest text-muted uppercase">
+              {active.category}
+            </p>
+            {active.projects.length > 0 ? (
+              <p className="mt-2 text-sm text-muted">
+                {labels.usedIn}{' '}
+                {active.projects.map((p, j) => (
+                  <span key={p.slug}>
+                    {j > 0 ? ', ' : null}
+                    <Link
+                      href={`/projects/${p.slug}`}
+                      className="text-primary underline underline-offset-4"
+                    >
+                      {p.title}
+                    </Link>
+                  </span>
+                ))}
+              </p>
+            ) : null}
+          </>
+        ) : (
+          <p className="pt-2 text-sm text-muted">{labels.prompt}</p>
+        )}
+      </div>
+
+      <p className="globe-hint">{labels.hint}</p>
+    </div>
+  )
+}

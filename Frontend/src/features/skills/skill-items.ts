@@ -9,25 +9,20 @@ import type { PublicSkillCategory } from './public'
 // Ikon umum (lucide) untuk skill non-teknis yang tidak punya logo brand. Nama dipetakan di klien.
 export type GenericGlyph = 'kanban' | 'users' | 'megaphone' | 'sheet'
 
-export type Keycap = {
+// Satu skill di globe beranda (components/skill-globe.tsx)
+export type SkillItem = {
   id: string
   name: string
-  // slug Simple Icons yang sudah dinormalkan (alias diterapkan), dipakai keyboard 3D untuk mencari tombolnya
-  slug: string
   category: string
-  // warna tutup tombol dan warna logo/teks di atasnya (hitam atau putih, mana yang lebih kontras)
-  color: string
-  ink: string
+  // urutan kategori (0..n), menentukan warna kategori --cat-1..--cat-6
+  categoryIndex: number
+  // warna logo brand; null = mengikuti warna teks (logo hitam seperti Next.js, GitHub, Vercel)
+  logoColor: string | null
   glyph: { kind: 'brand'; path: string } | { kind: 'generic'; name: GenericGlyph } | null
   // teks pengganti bila tidak ada ikon
   label: string
   projects: { slug: string; title: string }[]
 }
-
-// tutup tombol netral untuk skill tanpa logo brand
-const NEUTRAL_CAP = '#262626'
-const INK_DARK = '#0a0a0a'
-const INK_LIGHT = '#ffffff'
 
 // nama skill umum yang slug Simple Icons-nya berbeda dari nama
 const ALIASES: Record<string, string> = {
@@ -67,12 +62,9 @@ function luminance(hex: string) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
 }
 
-// hitam atau putih, mana yang kontrasnya lebih tinggi terhadap warna tombol (selalu >= 4.5:1)
-export function inkFor(hex: string) {
-  const l = luminance(hex.replace('#', ''))
-  const onWhite = 1.05 / (l + 0.05)
-  const onBlack = (l + 0.05) / 0.05
-  return onWhite >= onBlack ? INK_LIGHT : INK_DARK
+// logo brand yang hampir hitam tidak terlihat di tema gelap, jadi memakai warna teks
+export function logoColorFor(hex: string) {
+  return luminance(hex.replace('#', '')) < 0.02 ? null : `#${hex.replace('#', '')}`
 }
 
 function monogram(name: string) {
@@ -87,12 +79,6 @@ function monogram(name: string) {
     : name.slice(0, 2)
 }
 
-// slug dari kolom icon bila diisi, selain itu dari nama skill; alias diterapkan
-export function skillSlug(name: string, icon: string | null) {
-  const slug = icon || iconSlug(name)
-  return ALIASES[slug] ?? slug
-}
-
 export function resolveIcon(name: string, icon: string | null) {
   const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
   for (const slug of candidates) {
@@ -102,23 +88,21 @@ export function resolveIcon(name: string, icon: string | null) {
   return null
 }
 
-export function toKeycaps(
+export function toSkillItems(
   categories: PublicSkillCategory[],
   locale: AppLocale,
   projectTitle: (slug: string) => string,
-): Keycap[] {
-  return categories.flatMap((c) =>
+): SkillItem[] {
+  return categories.flatMap((c, categoryIndex) =>
     c.skills.map((s) => {
       const brand = resolveIcon(s.name, s.icon)
       const generic = brand ? undefined : GENERIC.find((g) => g.pattern.test(s.name))
-      const color = brand ? `#${brand.hex}` : NEUTRAL_CAP
       return {
         id: s.id,
         name: s.name,
-        slug: skillSlug(s.name, s.icon),
         category: loc(c, 'name', locale),
-        color,
-        ink: inkFor(color),
+        categoryIndex,
+        logoColor: brand ? logoColorFor(brand.hex) : null,
         glyph: brand
           ? { kind: 'brand', path: brand.path }
           : generic

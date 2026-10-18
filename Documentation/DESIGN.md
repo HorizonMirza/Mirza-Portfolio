@@ -986,3 +986,27 @@ Revisi pemilik; bagian ini memperbarui bagian 51.
 - **Label statistik di HP:** "RENTETAN TERPANJANG", "RENTETAN SAAT INI", dan lainnya selalu satu baris. Ukurannya cair, `clamp(0.5rem, 2.3vw, 0.625rem)`, sekitar 9 px di layar 390 px, tanpa jarak huruf tambahan.
 - **Kolom statistik di HP:** lebar kolom mengikuti isi (`repeat(3, auto)`), sehingga kolom berlabel panjang mendapat ruang lebih. Mulai 768 px tetap tiga kolom sama lebar.
 
+## 73. Keahlian Teknis: globe skill dengan warna kategori (2026-10-18)
+
+Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs referensi (abdulmomin.dev). Dari referensi hanya diambil prinsip interaksinya: logo di permukaan bola, sisi depan terang, sisi belakang pudar, bisa digeser. Dari 10 demo, pemilik memilih **S4 Globe** dengan **warna kategori dari S7**. Keyboard Spline (bagian 19, 20, 45) dihapus.
+
+- **Komponen:** `features/skills/components/skill-globe.tsx`, data dari `features/skills/skill-items.ts` (sebelumnya `keycaps.ts`). Isinya skill dari Admin (bukan 24 tombol keyboard tetap), jadi skill baru langsung tampil. *Asumsi: pemilik belum menjawab pilihan "data situs atau daftar keyboard"; data situs dipakai karena dikelola lewat Admin.*
+- **Bentuk:** garis lintang dan bujur di canvas (warna `--note`, sisi belakang lebih pudar). Logo adalah tombol HTML biasa yang diletakkan dengan variabel CSS (`--x`, `--y` dalam satuan jari-jari `--r`, `--s` skala, `--o` keburaman). Titik logo memakai spiral Fibonacci yang digeser setengah langkah, sehingga tidak ada logo tepat di kutub. Posisi awal dihitung di server, jadi tanpa JavaScript bola tetap tampil (tanpa garis).
+- **Warna kategori:** tiap logo diberi lingkaran tipis berwarna kategorinya. Token `--cat-1` sampai `--cat-6` (terang/gelap) di `globals.css` mengikuti urutan kategori di Admin; kategori ke-7 dan seterusnya mengulang dari awal. Logo brand berwarna asli; logo yang hampir hitam (Next.js, GitHub, Vercel) memakai warna teks agar terlihat di tema gelap.
+- **Interaksi:**
+  - bola berputar pelan dan bisa digeser dengan mouse (segala arah) atau jari (ke samping saja; geser atas-bawah tetap scroll halaman);
+  - menekan logo memutarnya ke depan, putaran otomatis berhenti, logo menyala, dan di bawah tampil nama (huruf display), kategori, serta project yang memakainya;
+  - tombol kategori di bawah bola meredupkan dan mengabu-abukan kategori lain lalu memutar bola ke kategori itu;
+  - kalimat ajakan "Geser untuk memutar, tekan logo untuk detail" ada di pil kecil di bawah.
+- **Aksesibilitas:**
+  - nama skill hanya tampil di sisi depan, sehingga teks yang terlihat selalu kontras penuh;
+  - logo di sisi belakang tertutup logo depan dan terlalu kecil untuk ditekan (WCAG 2.5.8), jadi `inert` sampai berputar ke depan;
+  - Tab menjangkau logo di sisi depan, dan fokus keyboard memutar logo ke depan; panah kiri/kanan menjangkau semua logo, termasuk yang di belakang;
+  - pembaca layar mendapat daftar lengkap skill (`Daftar skill` / `Skill list`).
+- **Gerak dan performa:**
+  - reduced-motion: tanpa putaran otomatis dan tanpa animasi saat berpindah logo;
+  - loop berhenti saat bagian ini di luar layar, dan saat diam bila reduced-motion;
+  - tanpa library, berkas JavaScript klien jauh lebih kecil daripada runtime Spline (~1,5 MB).
+- **Keamanan:** `'unsafe-eval'` dihapus dari CSP halaman publik (hanya diizinkan di `next dev`).
+- **Kredit:** baris Naresh Khatri dihapus dari halaman Privasi karena scene keyboardnya tidak dipakai lagi. Kredit Simple Icons dan logo Git (Jason Long, CC BY 3.0) tetap ada.
+
