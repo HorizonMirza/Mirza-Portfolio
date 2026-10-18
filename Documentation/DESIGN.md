@@ -1037,3 +1037,13 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - Migrasi data `20261018130000_skills_remove_three` menghapus ketiganya; seed disamakan. Tidak ada project terbit yang memakai skill ini, dan kaitan project ke skill ikut terhapus bila ada.
 - Berkas logo `public/skills/{nestjs,mongodb,docker}.svg`, entri `SKILL_LOGOS`, dan ikon satu warna NestJS (yang ditambahkan khusus untuk daftar ini) dihapus. Jika skill itu ditambahkan lagi lewat Admin, tampil dengan logo cadangan (Simple Icons satu warna untuk MongoDB dan Docker, singkatan untuk NestJS).
 
+## 77. Globe skill: tanpa teks ajakan, berputar lagi setelah dipilih (2026-10-18)
+
+- Teks "Tekan logo untuk melihat rinciannya." dan pil "Geser untuk memutar, tekan logo untuk detail" dihapus (pesan `SkillGlobe.prompt` dan `.hint`, kelas `.globe-hint`). Panel rincian tetap memesan tinggi (`min-h-24`) agar halaman tidak bergeser saat logo dipilih.
+- **Melepas pilihan:** logo terpilih membuat bola diam di depan. Pilihan lepas dan putaran otomatis berlanjut (melambat lalu kembali ke kecepatan semula) bila:
+  - logo yang sama ditekan lagi (tombol `aria-pressed` menjadi toggle);
+  - pengunjung menekan di mana saja selain logo lain dan panel rincian, termasuk area kosong bola, tombol kategori, dan bagian lain halaman (`pointerdown` di document, fase capture);
+  - halaman di-scroll lebih dari 48 px;
+  - tombol Esc ditekan.
+- Panel rincian dikecualikan agar tautan "Dipakai di" tetap bisa diklik.
+

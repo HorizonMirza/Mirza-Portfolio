@@ -205,9 +205,7 @@
   "SkillGlobe": {
     "label": "Globe skill",
     "list": "Daftar skill",
-    "categories": "Kategori skill",
-    "prompt": "Tekan logo untuk melihat rinciannya.",
-    "hint": "Geser untuk memutar, tekan logo untuk detail"
+    "categories": "Kategori skill"
   },
   "Skyline": {
     "unit": "kontribusi",

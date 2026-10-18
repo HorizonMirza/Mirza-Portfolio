@@ -36,6 +36,8 @@ const START_PITCH = -0.25
 const AUTO_SPEED = 0.0028
 const PITCH_LIMIT = 1.2
 const FACE_PITCH = 0.75
+// scroll lebih jauh dari ini (px) melepas logo terpilih
+const SCROLL_RELEASE = 48
 // geseran di bawah ini masih dianggap tekan, bukan memutar
 const DRAG_THRESHOLD = 4
 // nama skill hanya tampil di sisi depan (kedalaman 0 belakang .. 1 depan)
@@ -157,8 +159,6 @@ export function SkillGlobe({
     globe: string
     list: string
     categories: string
-    prompt: string
-    hint: string
     usedIn: string
   }
   className?: string
@@ -450,6 +450,40 @@ export function SkillGlobe({
     controls.current?.face(index)
   }
 
+  // lepas pilihan: putaran otomatis berlanjut (revisi pemilik 2026-10-18)
+  function release() {
+    activeRef.current = null
+    setActiveIndex(null)
+  }
+
+  // Selama ada logo terpilih: scroll, tekan di mana saja (selain logo lain dan panel rincian), atau Esc
+  // melepas pilihan sehingga bola berputar lagi. Scroll kecil (mis. fokus Tab yang menggeser layar)
+  // diabaikan.
+  useEffect(() => {
+    if (activeIndex === null) return
+    const startY = window.scrollY
+    const panel = document.getElementById(panelId)
+    const onScroll = () => {
+      if (Math.abs(window.scrollY - startY) > SCROLL_RELEASE) release()
+    }
+    const onPointerDown = (event: globalThis.PointerEvent) => {
+      const target = event.target as Element | null
+      if (target?.closest('.globe-item') || (panel && target && panel.contains(target))) return
+      release()
+    }
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') release()
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    document.addEventListener('pointerdown', onPointerDown, true)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      document.removeEventListener('pointerdown', onPointerDown, true)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [activeIndex, panelId])
+
   function onKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next: number | null = null
     if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = index + 1
@@ -505,7 +539,8 @@ export function SkillGlobe({
                 '--logo': item.logoColor ?? 'currentColor',
               } as CSSProperties
             }
-            onClick={() => select(i)}
+            // tekan ulang logo yang sedang terpilih: lepas, bola berputar lagi
+            onClick={() => (i === activeIndex ? release() : select(i))}
             onFocus={(event) => {
               // fokus dari keyboard ikut memutar logo ke depan; fokus dari klik ditangani onClick
               if (event.currentTarget.matches(':focus-visible')) select(i)
@@ -575,12 +610,8 @@ export function SkillGlobe({
               </p>
             ) : null}
           </>
-        ) : (
-          <p className="pt-2 text-sm text-muted">{labels.prompt}</p>
-        )}
+        ) : null}
       </div>
-
-      <p className="globe-hint">{labels.hint}</p>
     </div>
   )
 }

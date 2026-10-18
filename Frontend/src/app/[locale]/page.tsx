@@ -433,8 +433,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 globe: tGlobe('label'),
                 list: tGlobe('list'),
                 categories: tGlobe('categories'),
-                prompt: tGlobe('prompt'),
-                hint: tGlobe('hint'),
                 usedIn: tSkills('usedIn'),
               }}
             />

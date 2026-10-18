@@ -187,3 +187,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-18 | Globe skill: semua logo memakai logo asli berwarna penuh (`public/skills`, Devicon + sumber resmi), logo hitam dibalik di tema gelap (DESIGN.md bagian 75) |
 | 2026-10-18 | Chip teknologi di halaman Project memakai logo asli berwarna penuh yang sama dengan globe skill (DESIGN.md bagian 75) |
 | 2026-10-18 | Keahlian Teknis: NestJS, MongoDB, Docker dihapus, total 31 skill (migrasi `20261018130000_skills_remove_three`, DESIGN.md bagian 76) |
+| 2026-10-18 | Globe skill: teks ajakan dihapus; setelah logo dipilih, scroll, tekan ulang, tekan di mana saja, atau Esc membuat bola berputar lagi (DESIGN.md bagian 77) |
