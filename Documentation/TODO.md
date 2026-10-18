@@ -190,3 +190,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-18 | Globe skill: teks ajakan dihapus; setelah logo dipilih, scroll, tekan ulang, tekan di mana saja, atau Esc membuat bola berputar lagi (DESIGN.md bagian 77) |
 | 2026-10-18 | Globe skill: semua lingkaran dan garis biru situs (B7 seragam); fokus tidak lagi memilih logo dan semua logo inert sampai hydration (perbaikan CI WebKit, DESIGN.md bagian 78) |
 | 2026-10-18 | Globe skill: tombol kategori diganti menu "Kategori: Semua" (pilihan C5, DESIGN.md bagian 79) |
+| 2026-10-18 | Globe skill: menu kategori ke bawah, kategori terpilih menonjol dan lainnya hampir hilang, tekan apa saja kembali ke Semua, "Dipakai di" dihapus (DESIGN.md bagian 80) |

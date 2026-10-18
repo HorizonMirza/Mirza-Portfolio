@@ -56,33 +56,20 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
-  const [
-    t,
-    tNav,
-    tAvail,
-    tCommon,
-    tSkills,
-    tGlobe,
-    tSkyline,
-    tExp,
-    profile,
-    projects,
-    skills,
-    experiences,
-  ] = await Promise.all([
-    getTranslations({ locale, namespace: 'Home' }),
-    getTranslations({ locale, namespace: 'Nav' }),
-    getTranslations({ locale, namespace: 'Availability' }),
-    getTranslations({ locale, namespace: 'Common' }),
-    getTranslations({ locale, namespace: 'Skills' }),
-    getTranslations({ locale, namespace: 'SkillGlobe' }),
-    getTranslations({ locale, namespace: 'Skyline' }),
-    getTranslations({ locale, namespace: 'Experience' }),
-    getPublicProfile(),
-    getPublishedProjects(),
-    getPublicSkills(),
-    getPublicExperiences(),
-  ])
+  const [t, tNav, tAvail, tCommon, tGlobe, tSkyline, tExp, profile, projects, skills, experiences] =
+    await Promise.all([
+      getTranslations({ locale, namespace: 'Home' }),
+      getTranslations({ locale, namespace: 'Nav' }),
+      getTranslations({ locale, namespace: 'Availability' }),
+      getTranslations({ locale, namespace: 'Common' }),
+      getTranslations({ locale, namespace: 'SkillGlobe' }),
+      getTranslations({ locale, namespace: 'Skyline' }),
+      getTranslations({ locale, namespace: 'Experience' }),
+      getPublicProfile(),
+      getPublishedProjects(),
+      getPublicSkills(),
+      getPublicExperiences(),
+    ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
   const github = profile?.socials.github
@@ -115,7 +102,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const contributionDays = contributions
     ? contributions.weeks.flat().map((day) => ({ date: day.date, count: day.count }))
     : []
-  const projectTitles = new Map(projects.map((p) => [p.slug, loc(p, 'title', locale)]))
   // Project pilihan (audit Home 2026-10-15): yang bertanda unggulan di depan, lalu urutan admin.
   // Pita gambar butuh minimal dua sampul agar ada yang mengalir.
   const showcase = [...projects.filter((p) => p.featured), ...projects.filter((p) => !p.featured)]
@@ -134,7 +120,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     skills.length > 0 && 'stack',
     contributions && github && 'github',
   ].filter((key): key is string => Boolean(key))
-  const skillItems = toSkillItems(skills, locale, (slug) => projectTitles.get(slug) ?? slug)
+  const skillItems = toSkillItems(skills, locale)
 
   // Data terstruktur Person (schema.org) untuk mesin pencari. Hanya data publik, tanpa email/WhatsApp.
   const person = profile
@@ -435,7 +421,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 categories: tGlobe('categories'),
                 category: tGlobe('category'),
                 all: tGlobe('all'),
-                usedIn: tSkills('usedIn'),
               }}
             />
           </Container>

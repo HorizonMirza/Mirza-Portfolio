@@ -1223,8 +1223,22 @@
   color: var(--text);
 }
 /* kategori lain saat satu kategori dipilih: logo pudar abu-abu, nama disembunyikan */
+/* kategori terpilih menonjol (terang dan bercahaya), kategori lain hampir hilang */
+.globe-item[data-hl] .globe-logo {
+  opacity: max(var(--o), 0.9);
+  background: color-mix(in oklab, var(--cat) 24%, transparent);
+  box-shadow:
+    0 0 0 2px var(--cat),
+    0 0 1.5rem color-mix(in oklab, var(--cat) 55%, transparent);
+}
+.globe-item[data-hl] .globe-name {
+  color: var(--text);
+}
+.globe-item[data-dim] {
+  scale: 0.8;
+}
 .globe-item[data-dim] .globe-logo {
-  opacity: calc(var(--o) * 0.3);
+  opacity: calc(var(--o) * 0.12);
   filter: grayscale(1);
 }
 .globe-item[data-dim] .globe-name {
@@ -1264,10 +1278,10 @@
 .globe-filter[data-open] .globe-filter-toggle svg {
   rotate: 180deg;
 }
-/* menu terbuka ke atas, di atas bola */
+/* menu terbuka ke bawah (revisi pemilik 2026-10-18) */
 .globe-filter-menu {
   position: absolute;
-  bottom: calc(100% + 0.375rem);
+  top: calc(100% + 0.375rem);
   left: 50%;
   z-index: 400;
   display: none;

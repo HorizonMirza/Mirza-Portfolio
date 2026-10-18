@@ -75,7 +75,6 @@ describe('skill-items', () => {
         },
       ],
       'en',
-      (slug) => `Judul ${slug}`,
     )
     expect(pm.glyph).toEqual({ kind: 'generic', name: 'kanban' })
     expect(pm.category).toBe('Non-technical')
@@ -85,6 +84,5 @@ describe('skill-items', () => {
     expect(ts.categoryIndex).toBe(0)
     expect(next.categoryIndex).toBe(1)
     expect(next.logoColor).toBeNull()
-    expect(ts.projects).toEqual([{ slug: 'porto', title: 'Judul porto' }])
   })
 })

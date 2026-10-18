@@ -26,7 +26,6 @@ export type SkillItem = {
     | null
   // teks pengganti bila tidak ada ikon
   label: string
-  projects: { slug: string; title: string }[]
 }
 
 // nama skill umum yang slug Simple Icons-nya berbeda dari nama
@@ -113,11 +112,7 @@ export function resolveIcon(name: string, icon: string | null) {
   return null
 }
 
-export function toSkillItems(
-  categories: PublicSkillCategory[],
-  locale: AppLocale,
-  projectTitle: (slug: string) => string,
-): SkillItem[] {
+export function toSkillItems(categories: PublicSkillCategory[], locale: AppLocale): SkillItem[] {
   return categories.flatMap((c, categoryIndex) =>
     c.skills.map((s) => {
       const logo = resolveLogo(s.name, s.icon)
@@ -137,7 +132,6 @@ export function toSkillItems(
               ? { kind: 'generic', name: generic.glyph }
               : null,
         label: monogram(s.name),
-        projects: s.projectSlugs.map((slug) => ({ slug, title: projectTitle(slug) })),
       }
     }),
   )

@@ -77,7 +77,7 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.getByLabel('URL demo (opsional)').fill('https://example.com/demo')
   await page.getByLabel('URL repo (opsional)').fill('https://github.com/example/repo')
   await page.getByLabel('Tampilkan tombol "GitHub" (URL repo)').uncheck()
-  // satu skill agar halaman Skill publik menampilkan tautan "Dipakai di"
+  // satu skill agar chip teknologi project ikut diuji
   await page
     .locator('fieldset')
     .filter({ hasText: 'Bahasa Pemrograman' })
@@ -107,7 +107,7 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.goto('/en/projects')
   await expect(page.getByRole('link', { name: `E2E project ${suffix}` })).toBeVisible()
 
-  // Aksesibilitas halaman publik saat ada project terbit (kartu, tautan "Dipakai di", detail).
+  // Aksesibilitas halaman publik saat ada project terbit (kartu, chip teknologi, detail).
   const publicFailures: string[] = []
   for (const path of ['/en/projects', '/id', `/id/projects/${slug}`]) {
     await page.goto(path)

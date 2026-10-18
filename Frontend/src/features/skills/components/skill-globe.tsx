@@ -11,7 +11,6 @@ import {
   useState,
 } from 'react'
 
-import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 
 import type { GenericGlyph, SkillItem } from '../skill-items'
@@ -161,7 +160,6 @@ export function SkillGlobe({
     categories: string
     category: string
     all: string
-    usedIn: string
   }
   className?: string
 }) {
@@ -514,6 +512,24 @@ export function SkillGlobe({
     if (first >= 0) controls.current?.face(first)
   }
 
+  // Selama kategori terpilih: menekan apa saja di luar kendali kategori, atau Esc saat menu tertutup,
+  // mengembalikan globe ke keadaan awal (semua kategori), revisi pemilik 2026-10-18
+  useEffect(() => {
+    if (category === null || menuOpen) return
+    const onPointerDown = (event: globalThis.PointerEvent) => {
+      if (!filterRef.current?.contains(event.target as Node)) setCategory(null)
+    }
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === 'Escape') setCategory(null)
+    }
+    document.addEventListener('pointerdown', onPointerDown, true)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown, true)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [category, menuOpen])
+
   // Menu kategori (pilihan pemilik dari 10 demo gaya tombol: C5 "menu tarik"): tutup saat menekan di
   // luar menu atau Esc (fokus kembali ke tombolnya)
   useEffect(() => {
@@ -556,6 +572,7 @@ export function SkillGlobe({
             className="globe-item"
             data-active={i === activeIndex ? '' : undefined}
             data-dim={category !== null && item.categoryIndex !== category ? '' : undefined}
+            data-hl={category !== null && item.categoryIndex === category ? '' : undefined}
             aria-pressed={i === activeIndex}
             aria-controls={panelId}
             // sebelum JavaScript menghitung tumpang-tindih, logo belum bisa dipakai: semua inert
@@ -633,29 +650,13 @@ export function SkillGlobe({
         </div>
       ) : null}
 
-      <div id={panelId} className="mt-6 min-h-24 text-center">
+      <div id={panelId} className="mt-6 min-h-16 text-center">
         {active ? (
           <>
             <p className="font-display text-2xl font-bold uppercase sm:text-3xl">{active.name}</p>
             <p className="mt-1 font-mono text-label tracking-widest text-muted uppercase">
               {active.category}
             </p>
-            {active.projects.length > 0 ? (
-              <p className="mt-2 text-sm text-muted">
-                {labels.usedIn}{' '}
-                {active.projects.map((p, j) => (
-                  <span key={p.slug}>
-                    {j > 0 ? ', ' : null}
-                    <Link
-                      href={`/projects/${p.slug}`}
-                      className="text-primary underline underline-offset-4"
-                    >
-                      {p.title}
-                    </Link>
-                  </span>
-                ))}
-              </p>
-            ) : null}
           </>
         ) : null}
       </div>

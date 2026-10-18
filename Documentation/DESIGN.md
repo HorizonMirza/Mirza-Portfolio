@@ -1061,3 +1061,10 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - Aksesibilitas: tombol memakai `aria-expanded` dan `aria-controls`, pilihan di menu berupa tombol `aria-pressed`. Menu tertutup saat menekan di luarnya atau Esc, dan Esc mengembalikan fokus ke tombolnya.
 - Pesan baru `SkillGlobe.category` dan `SkillGlobe.all`.
 
+## 80. Globe skill: menu ke bawah, sorotan kategori, reset dengan sekali tekan (2026-10-18)
+
+- Menu kategori terbuka **ke bawah** tombolnya.
+- **Kategori terpilih menonjol:** logonya tampil terang (keburaman minimal 0,9 walau di sisi belakang), dengan lingkaran biru 2 px yang bercahaya dan nama berwarna teks (`data-hl`). Kategori lain hampir hilang: keburaman 12%, abu-abu, mengecil 0,8×, dan tanpa nama (`data-dim`).
+- **Kembali ke awal:** selama satu kategori terpilih dan menu tertutup, menekan apa saja di luar kendali kategori (logo, area kosong, bagian lain halaman) atau Esc mengembalikan globe ke Semua kategori. Menekan logo sekaligus memilih logo itu.
+- **"Dipakai di" dihapus** dari panel rincian; panel hanya berisi nama dan kategori (tinggi minimum `min-h-16`). Akibatnya `SkillItem.projects`, parameter `projectTitle` di `toSkillItems`, dan pesan `Skills.usedIn` ikut dihapus.
+

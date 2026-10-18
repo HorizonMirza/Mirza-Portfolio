@@ -155,7 +155,13 @@ test.describe('globe skill', () => {
       'data-dim',
       '',
     )
-    await expect(page.locator('.globe-item', { hasText: 'React' })).not.toHaveAttribute('data-dim')
+    const react = page.locator('.globe-item', { hasText: 'React' })
+    await expect(react).not.toHaveAttribute('data-dim')
+    await expect(react).toHaveAttribute('data-hl', '')
+    // tekan apa saja di luar menu: kembali ke semua kategori
+    await page.getByRole('heading', { name: 'Keahlian Teknis' }).click()
+    await expect(toggle).toContainText('Semua')
+    await expect(page.locator('.globe-item[data-dim]')).toHaveCount(0)
     expect(errors).toEqual([])
   })
 })
