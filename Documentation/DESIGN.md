@@ -1073,3 +1073,12 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Filter tetap:** selama satu kategori terpilih, bola tetap bisa digeser dan diputar, dan menekan bagian lain halaman tidak mengubah filter. Filter hanya kembali ke semua kategori lewat pilihan **Semua/All** di menu. Ini menggantikan perilaku "tekan apa saja" dari bagian 80.
 - **Kembali ke posisi awal:** saat logo terpilih dilepas (ditekan ulang, tekan di mana saja, scroll, Esc) dan saat memilih Semua, kemiringan bola kembali pelan-pelan ke kemiringan awal, sama seperti saat halaman dibuka (`START_PITCH`, easing 6% per frame, langsung pada reduced-motion), lalu bola lanjut berputar. Sebelumnya bola tetap miring di sudut logo terakhir. Menggeser bola atau memilih logo lain membatalkan gerak kembali ini.
 
+## 82. Menu kategori lebih kecil, angka Oswald, garis bagian turun (2026-10-18)
+
+- **Garis bagian berikutnya turun:** panel rincian di bawah tombol kategori memesan tinggi `min-h-36` (HP) / `min-h-32` (≥ 768 px), sehingga menu yang terbuka ke bawah selalu berada di atas garis bagian GitHub. Jaraknya terukur 20 px di 360 dan 390 px, 36 px di 768 px, 31 px di 1440 px.
+- **Ukuran lebih kecil:**
+  - tombol: tinggi 2,25 rem, huruf 13 px;
+  - menu: lebar minimum 13 rem, baris 2 rem, huruf 13 px, nama kategori satu baris.
+- **Angka jumlah skill** memakai huruf display situs (Oswald 600, 15 px, angka tabular), sama dengan angka statistik lain. Angka kategori aktif berwarna biru.
+- **Geser di WebKit:** gerakan mouse tanpa tombol ditekan (`buttons === 0`) tidak pernah dihitung geser. Ini mencegah `pointerup` yang terlewat membuat stage menangkap pointer dan menelan klik berikutnya, dugaan penyebab tes WebKit di CI yang kadang gagal. Tes globe juga menaruh globe di tengah layar sebelum mengklik, agar scroll otomatis Playwright tidak melepas pilihan.
+

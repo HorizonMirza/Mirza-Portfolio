@@ -104,7 +104,9 @@ test.describe('globe skill', () => {
     page.on('pageerror', (e) => errors.push(e.message))
     await page.goto('/id')
     const globe = page.getByRole('group', { name: 'Globe skill' })
-    await globe.scrollIntoViewIfNeeded()
+    // globe di tengah layar dulu: bila Playwright harus scroll sebelum klik, scroll itu (> 48 px)
+    // melepas pilihan sehingga klik "tekan ulang" malah memilih lagi (viewport Safari lebih pendek)
+    await globe.evaluate((el) => el.scrollIntoView({ block: 'center' }))
     // logo yang bisa ditekan (sisi depan, tidak inert); inert dihitung setelah hydration
     const items = globe.locator('.globe-item')
     await expect(globe.locator('.globe-item:not([inert])').first()).toBeVisible()

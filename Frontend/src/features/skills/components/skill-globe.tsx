@@ -380,6 +380,13 @@ export function SkillGlobe({
     }
     const onMove = (e: globalThis.PointerEvent) => {
       if (!drag || drag.id !== e.pointerId) return
+      // tanpa tombol ditekan bukan geser: pointerup yang terlewat (mis. di WebKit) tidak boleh membuat
+      // gerakan mouse biasa menangkap pointer dan menelan klik berikutnya
+      if (e.pointerType === 'mouse' && e.buttons === 0) {
+        drag = null
+        delete stage.dataset.dragging
+        return
+      }
       const dx = e.clientX - drag.x
       const dy = e.clientY - drag.y
       if (!drag.moved) {
@@ -654,7 +661,9 @@ export function SkillGlobe({
         </div>
       ) : null}
 
-      <div id={panelId} className="mt-6 min-h-16 text-center">
+      {/* tinggi minimum memberi ruang menu kategori yang terbuka ke bawah, agar tidak melewati garis
+          bagian berikutnya */}
+      <div id={panelId} className="mt-6 min-h-36 text-center md:min-h-32">
         {active ? (
           <>
             <p className="font-display text-2xl font-bold uppercase sm:text-3xl">{active.name}</p>
