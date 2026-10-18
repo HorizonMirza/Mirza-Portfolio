@@ -1029,5 +1029,5 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Tema gelap:** logo yang aslinya hitam (Next.js, GitHub, Vercel, OpenAI/Codex) dibalik warnanya (`filter: invert(1)`), sama dengan versi gelap resminya.
 - **Ukuran:** padding lingkaran diperkecil agar logo mengisi lingkaran. Mulai 1024 px, panggung setinggi 36 rem, jari-jari sampai 280 px, dan logo 3,75 rem. Kepadatan baru mengecil di atas 24 skill.
 - **Reduced-motion:** bola berhenti begitu dilepas, tanpa meluncur.
-- Chip teknologi di halaman project tetap memakai logo satu warna (abu-abu, berwarna saat disorot, bagian 49 butir 7).
+- **Chip teknologi di halaman Project** (revisi pemilik yang sama): memakai logo asli yang sama, berwarna penuh sejak awal. Efek saat disorot (naik, miring, garis berwarna brand) tetap ada. Logo hitam dibalik di tema gelap. Skill tanpa logo asli tetap memakai logo satu warna seperti di bagian 49 butir 7.
 

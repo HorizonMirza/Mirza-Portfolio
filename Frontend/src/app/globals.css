@@ -1939,6 +1939,18 @@
     rotate 400ms var(--ease-out-soft),
     scale 400ms var(--ease-out-soft);
 }
+.pj-tech img {
+  width: 0.875rem;
+  height: 0.875rem;
+  object-fit: contain;
+  transition:
+    rotate 400ms var(--ease-out-soft),
+    scale 400ms var(--ease-out-soft);
+}
+/* logo asli yang hitam memakai versi terangnya di tema gelap (sama dengan globe skill) */
+.dark .pj-tech img[data-invert-dark] {
+  filter: invert(1);
+}
 @media (hover: hover) {
   .pj-tech:hover {
     border-color: color-mix(in srgb, var(--brand) 60%, var(--border));
@@ -1946,6 +1958,10 @@
   }
   .pj-tech:hover svg {
     fill: var(--brand);
+    rotate: -8deg;
+    scale: 1.12;
+  }
+  .pj-tech:hover img {
     rotate: -8deg;
     scale: 1.12;
   }

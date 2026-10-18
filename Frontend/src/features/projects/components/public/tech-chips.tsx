@@ -1,12 +1,12 @@
 import type { CSSProperties } from 'react'
 
-import { resolveIcon } from '@/features/skills/skill-items'
+import { resolveIcon, resolveLogo } from '@/features/skills/skill-items'
 import { cn } from '@/lib/utils'
 
-// Chip teknologi project dengan logo kecil (pilihan pemilik 2026-10-08, demo efek nomor 7). Logo
-// sama dengan globe skill di beranda (Simple Icons, features/skills/brand-icons.ts). Logo abu-abu
-// dan berwarna brand saat disorot; logo brand yang sangat gelap (mis. Next.js) memakai warna teks
-// agar tetap terlihat di tema gelap.
+// Chip teknologi project dengan logo kecil (pilihan pemilik 2026-10-08, demo efek nomor 7). Logo asli
+// berwarna penuh sama dengan globe skill di beranda (public/skills, permintaan pemilik 2026-10-18);
+// skill tanpa logo asli memakai logo satu warna Simple Icons (abu-abu, berwarna brand saat disorot).
+// Logo brand yang sangat gelap memakai warna teks agar tetap terlihat di tema gelap.
 export function TechChips({
   skills,
   label,
@@ -20,12 +20,25 @@ export function TechChips({
   return (
     <ul aria-label={label} className={cn('flex flex-wrap gap-1.5', className)}>
       {skills.map((s) => {
+        const logo = resolveLogo(s.name, s.icon)
         const brand = resolveIcon(s.name, s.icon)
         const color = brand && !isVeryDark(brand.hex) ? `#${brand.hex}` : 'var(--text)'
         return (
           <li key={s.id}>
             <span className="pj-tech" style={{ '--brand': color } as CSSProperties}>
-              {brand ? (
+              {logo ? (
+                // logo asli SVG statis kecil, isi SVG terisolasi di <img>
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={logo.src}
+                  alt=""
+                  width={14}
+                  height={14}
+                  loading="lazy"
+                  decoding="async"
+                  data-invert-dark={logo.invertDark ? '' : undefined}
+                />
+              ) : brand ? (
                 <svg viewBox={brand.viewBox ?? '0 0 24 24'} aria-hidden="true">
                   <path d={brand.path} fillRule={brand.evenOdd ? 'evenodd' : undefined} />
                 </svg>
