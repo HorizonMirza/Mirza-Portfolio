@@ -136,10 +136,21 @@ test.describe('globe skill', () => {
     await expect(next).toHaveAttribute('aria-pressed', 'true')
     await expect(panel).toContainText(nextName)
     await expect(page.getByRole('list', { name: 'Daftar skill' })).toContainText('TypeScript')
-    // kategori: logo kategori lain diredupkan
-    const category = page.getByRole('group', { name: 'Kategori skill' }).getByRole('button').nth(1)
+    // kategori lewat menu: logo kategori lain diredupkan, Esc menutup menu
+    const toggle = page.getByRole('button', { name: /^Kategori/ })
+    await toggle.click()
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    const category = page.getByRole('group', { name: 'Kategori skill' }).getByRole('button', {
+      name: /^Frontend/,
+    })
     await category.click()
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(toggle).toContainText('Frontend')
+    await toggle.click()
     await expect(category).toHaveAttribute('aria-pressed', 'true')
+    await page.keyboard.press('Escape')
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    await expect(toggle).toBeFocused()
     await expect(page.locator('.globe-item', { hasText: 'TypeScript' })).toHaveAttribute(
       'data-dim',
       '',

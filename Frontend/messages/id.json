@@ -205,7 +205,9 @@
   "SkillGlobe": {
     "label": "Globe skill",
     "list": "Daftar skill",
-    "categories": "Kategori skill"
+    "categories": "Kategori skill",
+    "category": "Kategori",
+    "all": "Semua"
   },
   "Skyline": {
     "unit": "kontribusi",

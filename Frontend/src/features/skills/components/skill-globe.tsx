@@ -142,7 +142,7 @@ function Glyph({ item }: { item: SkillItem }) {
 
 // Globe skill di beranda (DESIGN.md bagian 73, pilihan pemilik demo S4 + warna kategori S7): logo skill
 // di permukaan bola bergaris lintang-bujur. Bola berputar pelan, bisa digeser (mouse atau jari ke
-// samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Tombol kategori
+// samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Menu kategori
 // meredupkan kategori lain. Logo adalah tombol toggle biasa (Enter/Spasi, panah kiri/kanan); hanya
 // garis bola yang digambar di canvas. Posisi awal sudah dihitung di server, jadi tanpa JavaScript bola
 // tetap tampil.
@@ -159,6 +159,8 @@ export function SkillGlobe({
     globe: string
     list: string
     categories: string
+    category: string
+    all: string
     usedIn: string
   }
   className?: string
@@ -169,6 +171,9 @@ export function SkillGlobe({
   const points = useMemo(() => spherePoints(items.length), [items.length])
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [category, setCategory] = useState<number | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const filterRef = useRef<HTMLDivElement>(null)
+  const menuId = useId()
   const panelId = useId()
   // jembatan dari handler React ke loop animasi di effect
   const controls = useRef<{ face: (index: number) => void; wake: () => void } | null>(null)
@@ -499,14 +504,35 @@ export function SkillGlobe({
     el.focus()
   }
 
-  function toggleCategory(index: number) {
-    const next = category === index ? null : index
+  // null = semua kategori
+  function chooseCategory(next: number | null) {
     setCategory(next)
-    setActiveIndex(null)
+    setMenuOpen(false)
+    release()
     if (next === null) return
     const first = items.findIndex((item) => item.categoryIndex === next)
     if (first >= 0) controls.current?.face(first)
   }
+
+  // Menu kategori (pilihan pemilik dari 10 demo gaya tombol: C5 "menu tarik"): tutup saat menekan di
+  // luar menu atau Esc (fokus kembali ke tombolnya)
+  useEffect(() => {
+    if (!menuOpen) return
+    const onPointerDown = (event: globalThis.PointerEvent) => {
+      if (!filterRef.current?.contains(event.target as Node)) setMenuOpen(false)
+    }
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setMenuOpen(false)
+      filterRef.current?.querySelector<HTMLButtonElement>('.globe-filter-toggle')?.focus()
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
 
   const active = activeIndex === null ? null : items[activeIndex]
   // posisi awal (sama di server dan klien), selanjutnya diperbarui langsung oleh loop animasi
@@ -568,19 +594,42 @@ export function SkillGlobe({
       </ul>
 
       {categories.length > 1 ? (
-        <div role="group" aria-label={labels.categories} className="globe-legend">
-          {categories.map((name, i) => (
-            <button
-              key={name}
-              type="button"
-              aria-pressed={category === i}
-              style={{ '--cat': RING_COLOR } as CSSProperties}
-              onClick={() => toggleCategory(i)}
-            >
-              <i aria-hidden="true" />
-              {name}
-            </button>
-          ))}
+        <div ref={filterRef} className="globe-filter" data-open={menuOpen ? '' : undefined}>
+          <button
+            type="button"
+            className="globe-filter-toggle"
+            aria-expanded={menuOpen}
+            aria-controls={menuId}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            <span className="globe-filter-label">{labels.category}</span>
+            {category === null ? labels.all : categories[category]}
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" />
+            </svg>
+          </button>
+          <div
+            id={menuId}
+            role="group"
+            aria-label={labels.categories}
+            className="globe-filter-menu"
+          >
+            {[null, ...categories.map((_, i) => i)].map((index) => (
+              <button
+                key={index ?? 'all'}
+                type="button"
+                aria-pressed={category === index}
+                onClick={() => chooseCategory(index)}
+              >
+                {index === null ? labels.all : categories[index]}
+                <span className="globe-filter-count">
+                  {index === null
+                    ? items.length
+                    : items.filter((item) => item.categoryIndex === index).length}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
 

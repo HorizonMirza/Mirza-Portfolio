@@ -205,7 +205,9 @@
   "SkillGlobe": {
     "label": "Skill globe",
     "list": "Skill list",
-    "categories": "Skill categories"
+    "categories": "Skill categories",
+    "category": "Category",
+    "all": "All"
   },
   "Skyline": {
     "unit": "contribution",

@@ -1054,3 +1054,10 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Fokus tidak lagi memilih logo.** Di WebKit, klik pada tombol menyalakan `:focus-visible`, sehingga logo yang ditekan ulang langsung terpilih lagi (gagal di CI). Logo kini dipilih hanya lewat klik/Enter/Spasi dan panah kiri/kanan, sesuai tombol toggle biasa.
 - **Inert sejak awal:** HTML dari server menandai semua logo `inert`, karena sebelum hydration logo belum bisa dipakai dan tumpang-tindihnya belum dihitung. Sebelumnya hanya logo di sisi belakang yang inert, sehingga axe di WebKit sempat menemukan target bertumpuk sebelum JavaScript berjalan.
 
+## 79. Globe skill: menu kategori (2026-10-18)
+
+- **Pilihan pemilik dari 10 demo gaya tombol kategori kedua: C5 "menu tarik".** Deret tombol kategori diganti satu tombol kecil "Kategori: Semua" / "Category: All" di bawah globe (`.globe-filter`).
+- Tombol itu membuka menu ke atas, di atas bola. Isinya Semua/All dan tiap kategori beserta jumlah skill-nya (huruf mono); yang aktif berwarna biru situs. Memilih kategori menutup menu, meredupkan kategori lain, dan memutar bola ke kategori itu. Semua/All mengembalikan semua logo.
+- Aksesibilitas: tombol memakai `aria-expanded` dan `aria-controls`, pilihan di menu berupa tombol `aria-pressed`. Menu tertutup saat menekan di luarnya atau Esc, dan Esc mengembalikan fokus ke tombolnya.
+- Pesan baru `SkillGlobe.category` dan `SkillGlobe.all`.
+
