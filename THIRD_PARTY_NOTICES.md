@@ -8,9 +8,20 @@ Aset dan kode pihak ketiga yang disertakan langsung di repo ini (di luar depende
 - Simple Icons v12.0.0 (CC0) untuk Visual Studio Code, Canva, Microsoft Word, Microsoft Excel, Microsoft PowerPoint, dan OpenAI. Logo ini dikeluarkan dari versi Simple Icons yang lebih baru atas permintaan pemiliknya; semuanya merek dagang Microsoft, Canva, dan OpenAI, dipakai hanya untuk menunjukkan alat yang dikuasai.
 - Logo Kiro (dari `kiro.dev/icon.svg`, merek dagang Amazon) dan Google Antigravity (dari `antigravity.google/favicon.svg`, merek dagang Google), disederhanakan menjadi satu warna, untuk tujuan yang sama.
 
+## Logo asli globe skill (`Frontend/public/skills/*.svg`)
+
+Logo berwarna penuh yang tampil di globe Keahlian Teknis (permintaan pemilik 2026-10-18). Semuanya merek dagang pemiliknya masing-masing, dipakai hanya untuk menunjukkan alat yang dikuasai. Isi SVG diperiksa (tanpa script, event handler, atau tautan luar) dan dimuat sebagai `<img>`.
+
+- Devicon v2.17.0 (MIT, lisensi di bawah), varian `*-original`: TypeScript, JavaScript, Python, C++, Java, HTML5, CSS3, React, Next.js, Tailwind CSS, Bootstrap, Node.js, Laravel, NestJS, FastAPI, PostgreSQL, MySQL, MongoDB, Supabase, Git (Jason Long, CC BY 3.0), GitHub, Docker, Vercel, VS Code, Figma, Canva. Logo C dari Devicon v2.15.1 (`c-original`).
+- Word, Excel, PowerPoint: ikon produk resmi Microsoft dari CDN Fluent (`res.cdn.office.net/.../brand-icons/product/svg/*_48x1.svg`).
+- Claude: `claude.ai/favicon.svg` (Anthropic).
+- Codex: logo OpenAI (path Simple Icons v12.0.0, CC0), hitam seperti aslinya, dibalik di tema gelap.
+- Kiro: `kiro.dev/icon.svg` (Amazon), utuh.
+- Google Antigravity: `antigravity.google/favicon.svg` (Google), lingkaran latar dan gaya tema dihapus, logo utuh.
+
 ## Devicon
 
-- `Frontend/src/features/skills/brand-icons.ts`: logo Java (`java-plain.svg`) dari Devicon v2.17.0, https://github.com/devicons/devicon. Java adalah merek dagang Oracle.
+- `Frontend/src/features/skills/brand-icons.ts`: logo Java (`java-plain.svg`) dari Devicon v2.17.0, https://github.com/devicons/devicon, dan logo asli di atas. Java adalah merek dagang Oracle.
 
 ```
 The MIT License (MIT)

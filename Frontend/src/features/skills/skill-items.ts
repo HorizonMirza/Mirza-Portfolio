@@ -5,6 +5,7 @@ import type { AppLocale } from '@/i18n/routing'
 
 import { BRAND_ICONS } from './brand-icons'
 import type { PublicSkillCategory } from './public'
+import { SKILL_LOGOS } from './skill-logos'
 
 // Ikon umum (lucide) untuk skill non-teknis yang tidak punya logo brand. Nama dipetakan di klien.
 export type GenericGlyph = 'kanban' | 'users' | 'megaphone' | 'sheet'
@@ -19,6 +20,7 @@ export type SkillItem = {
   // warna logo brand; null = mengikuti warna teks (logo hitam seperti Next.js, GitHub, Vercel)
   logoColor: string | null
   glyph:
+    | { kind: 'image'; src: string; invertDark: boolean }
     | { kind: 'brand'; path: string; viewBox?: string; evenOdd?: boolean }
     | { kind: 'generic'; name: GenericGlyph }
     | null
@@ -91,6 +93,17 @@ function monogram(name: string) {
     : name.slice(0, 2)
 }
 
+// logo asli berwarna (public/skills) bila ada, dicari dengan aturan slug yang sama dengan resolveIcon
+export function resolveLogo(name: string, icon: string | null) {
+  const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
+  for (const candidate of candidates) {
+    const slug = ALIASES[candidate] ?? candidate
+    const logo = SKILL_LOGOS[slug]
+    if (logo) return { src: `/skills/${slug}.svg`, invertDark: Boolean(logo.invertDark) }
+  }
+  return null
+}
+
 export function resolveIcon(name: string, icon: string | null) {
   const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
   for (const slug of candidates) {
@@ -107,6 +120,7 @@ export function toSkillItems(
 ): SkillItem[] {
   return categories.flatMap((c, categoryIndex) =>
     c.skills.map((s) => {
+      const logo = resolveLogo(s.name, s.icon)
       const brand = resolveIcon(s.name, s.icon)
       const generic = brand ? undefined : GENERIC.find((g) => g.pattern.test(s.name))
       return {
@@ -115,11 +129,13 @@ export function toSkillItems(
         category: loc(c, 'name', locale),
         categoryIndex,
         logoColor: brand ? logoColorFor(brand.hex) : null,
-        glyph: brand
-          ? { kind: 'brand', path: brand.path, viewBox: brand.viewBox, evenOdd: brand.evenOdd }
-          : generic
-            ? { kind: 'generic', name: generic.glyph }
-            : null,
+        glyph: logo
+          ? { kind: 'image', ...logo }
+          : brand
+            ? { kind: 'brand', path: brand.path, viewBox: brand.viewBox, evenOdd: brand.evenOdd }
+            : generic
+              ? { kind: 'generic', name: generic.glyph }
+              : null,
         label: monogram(s.name),
         projects: s.projectSlugs.map((slug) => ({ slug, title: projectTitle(slug) })),
       }

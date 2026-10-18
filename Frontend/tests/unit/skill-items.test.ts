@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
-import { iconSlug, logoColorFor, resolveIcon, toSkillItems } from '@/features/skills/skill-items'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
+
+import {
+  iconSlug,
+  logoColorFor,
+  resolveIcon,
+  resolveLogo,
+  toSkillItems,
+} from '@/features/skills/skill-items'
 
 import { skillCategories } from '../../../Database/seed/seed-data'
 
@@ -26,6 +35,17 @@ describe('skill-items', () => {
     expect(resolveIcon('VS Code', null)?.title).toBe('Visual Studio Code')
     expect(resolveIcon('Codex', null)?.title).toBe('OpenAI')
     expect(resolveIcon('Kiro', null)?.evenOdd).toBe(true)
+  })
+
+  it('semua skill pilihan pemilik memakai logo asli yang berkasnya ada', () => {
+    const missing = skillCategories
+      .flatMap((c) => c.skills)
+      .filter((name) => {
+        const logo = resolveLogo(name, null)
+        return !logo || !existsSync(path.join(process.cwd(), 'public', logo.src))
+      })
+    expect(missing).toEqual([])
+    expect(resolveLogo('Codex', null)).toEqual({ src: '/skills/openai.svg', invertDark: true })
   })
 
   it('logo hampir hitam mengikuti warna teks, logo lain memakai warna brand', () => {

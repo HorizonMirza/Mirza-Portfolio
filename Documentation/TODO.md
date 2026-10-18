@@ -184,3 +184,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-18 | Grafik GitHub: suara morph dihapus; judul jumlah kontribusi dan label statistik satu baris di HP (DESIGN.md bagian 72) |
 | 2026-10-18 | Keahlian Teknis: keyboard Spline diganti globe skill (S4 Globe + warna kategori S7) tanpa library; `@splinetool/runtime`, aset `public/spline/`, dan `'unsafe-eval'` CSP publik dihapus; kredit Naresh Khatri dihapus (DESIGN.md bagian 73) |
 | 2026-10-18 | Keahlian Teknis: 34 skill pilihan pemilik dalam 5 kategori (migrasi `20261018120000_skills_owner_list`), semua dengan logo; logo mengecil sesuai jumlah, logo tertutup dibuat inert (DESIGN.md bagian 74) |
+| 2026-10-18 | Globe skill: semua logo memakai logo asli berwarna penuh (`public/skills`, Devicon + sumber resmi), logo hitam dibalik di tema gelap (DESIGN.md bagian 75) |

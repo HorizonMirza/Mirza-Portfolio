@@ -1022,3 +1022,12 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Kepadatan:** ukuran logo mengecil sesuai jumlah skill (`densityScale`, penuh sampai 20 skill, sekitar 0,77× untuk 34). Jari-jari bola menjadi 40% lebar panggung, tinggi panggung HP 24 rem, dan nama tampil mulai kedalaman 0,6.
 - **Target sentuh (WCAG 2.5.8):** tiap frame, logo diperiksa dari yang paling depan. Logo yang kotaknya bertumpuk dengan logo di depannya, atau yang lebih kecil dari 24 px, dibuat `inert`. Ukuran dasar tiap logo dibaca sekali (setelah resize dan setelah font termuat), sehingga loop tidak memicu layout. Diuji di 8 posisi putaran desktop dan HP: 0 pelanggaran, 12–17 logo bisa ditekan di setiap posisi.
 
+## 75. Globe skill memakai logo asli berwarna penuh (2026-10-18)
+
+- **Permintaan pemilik:** "gunakan logo aslinya untuk semuanya". Logo satu warna (path Simple Icons) diganti logo asli berwarna penuh di `public/skills/<slug>.svg` (34 berkas, sekitar 70 KB, dimuat malas). Sumbernya Devicon (MIT) dan sumber resmi masing-masing; rinciannya di THIRD_PARTY_NOTICES.md.
+- **Kode:** `features/skills/skill-logos.ts` mendaftar slug yang punya logo asli. `resolveLogo` di `skill-items.ts` memakai aturan slug dan alias yang sama dengan `resolveIcon`. Urutan cadangan: logo asli, lalu path Simple Icons, lalu ikon umum, lalu singkatan, sehingga skill baru dari Admin tanpa logo asli tetap tampil.
+- **Tema gelap:** logo yang aslinya hitam (Next.js, GitHub, Vercel, OpenAI/Codex) dibalik warnanya (`filter: invert(1)`), sama dengan versi gelap resminya.
+- **Ukuran:** padding lingkaran diperkecil agar logo mengisi lingkaran. Mulai 1024 px, panggung setinggi 36 rem, jari-jari sampai 280 px, dan logo 3,75 rem. Kepadatan baru mengecil di atas 24 skill.
+- **Reduced-motion:** bola berhenti begitu dilepas, tanpa meluncur.
+- Chip teknologi di halaman project tetap memakai logo satu warna (abu-abu, berwarna saat disorot, bagian 49 butir 7).
+

@@ -85,9 +85,9 @@ function facing([x, y, z]: Vec): [number, number] {
 }
 
 // variabel CSS satu logo: posisi, skala, keburaman, dan tampil tidaknya nama
-// makin banyak skill makin kecil logonya, agar bola tetap lega (penuh sampai 20 skill)
+// makin banyak skill makin kecil logonya, agar bola tetap lega (penuh sampai 24 skill)
 function densityScale(count: number) {
-  return Math.min(1, Math.sqrt(20 / Math.max(1, count)))
+  return Math.min(1, Math.sqrt(24 / Math.max(1, count)))
 }
 
 function itemStyle(p: Vec, yaw: number, pitch: number, density: number) {
@@ -105,6 +105,22 @@ function itemStyle(p: Vec, yaw: number, pitch: number, density: number) {
 }
 
 function Glyph({ item }: { item: SkillItem }) {
+  if (item.glyph?.kind === 'image') {
+    return (
+      // logo asli SVG statis kecil: tanpa optimasi next/image, isi SVG terisolasi di <img>
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={item.glyph.src}
+        alt=""
+        width={32}
+        height={32}
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        data-invert-dark={item.glyph.invertDark ? '' : undefined}
+      />
+    )
+  }
   if (item.glyph?.kind === 'brand') {
     return (
       <svg viewBox={item.glyph.viewBox ?? '0 0 24 24'} fill="currentColor" aria-hidden="true">
@@ -199,7 +215,10 @@ export function SkillGlobe({
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       // sama dengan nilai awal --r di globals.css (.globe-stage)
-      radius = Math.min(width * 0.4, height * 0.4, 240)
+      const wide = window.matchMedia('(min-width: 1024px)').matches
+      radius = wide
+        ? Math.min(width * 0.4, height * 0.42, 280)
+        : Math.min(width * 0.4, height * 0.4, 240)
       stage.style.setProperty('--r', `${radius}px`)
       readColor()
       sizes = []
@@ -362,6 +381,8 @@ export function SkillGlobe({
       if (!drag) return
       drag = null
       delete stage.dataset.dragging
+      // reduced-motion: bola berhenti begitu dilepas, tanpa meluncur
+      if (reduce.matches) velocity = 0
       wake()
     }
     stage.addEventListener('pointerdown', onDown)
