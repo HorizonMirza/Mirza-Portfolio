@@ -1010,3 +1010,15 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Keamanan:** `'unsafe-eval'` dihapus dari CSP halaman publik (hanya diizinkan di `next dev`).
 - **Kredit:** baris Naresh Khatri dihapus dari halaman Privasi karena scene keyboardnya tidak dipakai lagi. Kredit Simple Icons dan logo Git (Jason Long, CC BY 3.0) tetap ada.
 
+## 74. Daftar skill pilihan pemilik dan logo lengkap (2026-10-18)
+
+- **Isi:** 34 skill dalam lima kategori (Bahasa Pemrograman, Frontend, Backend, Database, Tools), dipilih pemilik dari daftar usulan (CONTENT.md bagian 6). Diterapkan lewat migrasi data `20261018120000_skills_owner_list`; seed disamakan. Skill di luar daftar dihapus, kaitannya ke project ikut terhapus (HTML, CSS, JavaScript yang dipakai project tetap).
+- **Logo:** semua skill punya logo (unit test `skill-items.test.ts` menjaganya). Sumbernya:
+  - Simple Icons v16.35.0 untuk NestJS, FastAPI, dan Claude;
+  - Simple Icons v12.0.0 untuk VS Code, Canva, Word, Excel, PowerPoint, dan OpenAI (untuk Codex), karena logo ini sudah dikeluarkan dari versi baru atas permintaan pemiliknya;
+  - Devicon (MIT) untuk Java;
+  - logo resmi dari situs Kiro dan Google Antigravity, disederhanakan menjadi satu warna.
+  `BrandIcon` kini boleh punya `viewBox` dan `evenOdd` sendiri. Nama umum dipetakan lewat alias (VS Code, Word, Excel, PowerPoint, Codex).
+- **Kepadatan:** ukuran logo mengecil sesuai jumlah skill (`densityScale`, penuh sampai 20 skill, sekitar 0,77× untuk 34). Jari-jari bola menjadi 40% lebar panggung, tinggi panggung HP 24 rem, dan nama tampil mulai kedalaman 0,6.
+- **Target sentuh (WCAG 2.5.8):** tiap frame, logo diperiksa dari yang paling depan. Logo yang kotaknya bertumpuk dengan logo di depannya, atau yang lebih kecil dari 24 px, dibuat `inert`. Ukuran dasar tiap logo dibaca sekali (setelah resize dan setelah font termuat), sehingga loop tidak memicu layout. Diuji di 8 posisi putaran desktop dan HP: 0 pelanggaran, 12–17 logo bisa ditekan di setiap posisi.
+

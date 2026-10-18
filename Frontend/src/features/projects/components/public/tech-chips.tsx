@@ -26,8 +26,8 @@ export function TechChips({
           <li key={s.id}>
             <span className="pj-tech" style={{ '--brand': color } as CSSProperties}>
               {brand ? (
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d={brand.path} />
+                <svg viewBox={brand.viewBox ?? '0 0 24 24'} aria-hidden="true">
+                  <path d={brand.path} fillRule={brand.evenOdd ? 'evenodd' : undefined} />
                 </svg>
               ) : null}
               {s.name}

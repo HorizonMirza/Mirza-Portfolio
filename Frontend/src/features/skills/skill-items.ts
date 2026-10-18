@@ -18,7 +18,10 @@ export type SkillItem = {
   categoryIndex: number
   // warna logo brand; null = mengikuti warna teks (logo hitam seperti Next.js, GitHub, Vercel)
   logoColor: string | null
-  glyph: { kind: 'brand'; path: string } | { kind: 'generic'; name: GenericGlyph } | null
+  glyph:
+    | { kind: 'brand'; path: string; viewBox?: string; evenOdd?: boolean }
+    | { kind: 'generic'; name: GenericGlyph }
+    | null
   // teks pengganti bila tidak ada ikon
   label: string
   projects: { slug: string; title: string }[]
@@ -37,6 +40,15 @@ const ALIASES: Record<string, string> = {
   golang: 'go',
   tailwind: 'tailwindcss',
   reactjs: 'react',
+  vscode: 'visualstudiocode',
+  word: 'microsoftword',
+  msword: 'microsoftword',
+  excel: 'microsoftexcel',
+  msexcel: 'microsoftexcel',
+  powerpoint: 'microsoftpowerpoint',
+  ppt: 'microsoftpowerpoint',
+  codex: 'openai',
+  googleantigravity: 'antigravity',
 }
 
 const GENERIC: { pattern: RegExp; glyph: GenericGlyph }[] = [
@@ -104,7 +116,7 @@ export function toSkillItems(
         categoryIndex,
         logoColor: brand ? logoColorFor(brand.hex) : null,
         glyph: brand
-          ? { kind: 'brand', path: brand.path }
+          ? { kind: 'brand', path: brand.path, viewBox: brand.viewBox, evenOdd: brand.evenOdd }
           : generic
             ? { kind: 'generic', name: generic.glyph }
             : null,

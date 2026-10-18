@@ -87,6 +87,18 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 | Lainnya | Project Management, Community Management, Digital Marketing, MS Office |
 | Bahasa | Indonesia (asli), Inggris (working proficiency terbatas) |
 
+**Daftar di situs sejak 2026-10-18 (dipilih pemilik dari daftar usulan, menggantikan tabel CV di atas untuk Keahlian Teknis; migrasi `20261018120000_skills_owner_list`):**
+
+| Kategori | Isi |
+|---|---|
+| Bahasa Pemrograman | TypeScript, JavaScript, Python, C++, C, Java |
+| Frontend | HTML, CSS, React, Next.js, Tailwind CSS, Bootstrap |
+| Backend | Node.js, Laravel, NestJS, FastAPI |
+| Database | PostgreSQL, MySQL, MongoDB, Supabase |
+| Tools | Git, GitHub, Docker, Vercel, VS Code, Figma, Canva, Word, Excel, PowerPoint, Claude, Antigravity, Codex, Kiro |
+
+Project Management, Community Management, dan Digital Marketing tidak lagi tampil di Keahlian Teknis (tidak dipilih); MS Office diganti Word, Excel, PowerPoint.
+
 **Skill yang terlihat di GAAS tetapi belum ada di CV:** C#, ASP.NET Core, Entity Framework Core, SignalR, Tailwind CSS, Playwright, GitHub Actions, dan REST API. Jika Mirza benar-benar mengerjakannya, sebaiknya ditambahkan (ke CV dan ke halaman Skills) **[TANYA]**.
 
 Catatan: stack rencana situs ini (Next.js, TypeScript, PostgreSQL) sesuai dengan skill di CV, sehingga situsnya sendiri bisa menjadi bukti kemampuan. Tools yang belum ada di CV (Prisma, Tailwind, Vercel, dan lain-lain) baru ditambahkan bila Mirza memang menguasainya.

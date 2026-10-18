@@ -39,11 +39,16 @@ const FACE_PITCH = 0.75
 // geseran di bawah ini masih dianggap tekan, bukan memutar
 const DRAG_THRESHOLD = 4
 // nama skill hanya tampil di sisi depan (kedalaman 0 belakang .. 1 depan)
-const LABEL_DEPTH = 0.55
-// logo di sisi belakang tertutup logo depan dan terlalu kecil untuk ditekan (WCAG 2.5.8), jadi inert
-// sampai berputar ke depan. Panah kiri/kanan tetap menjangkau semua logo (diputar ke depan dulu) dan
+const LABEL_DEPTH = 0.6
+// logo di sisi belakang, atau yang tertutup logo lain di depannya, terlalu kecil untuk ditekan
+// (WCAG 2.5.8), jadi inert sampai berputar ke posisi yang lega. Panah kiri/kanan tetap menjangkau semua logo (diputar ke depan dulu) dan
 // daftar lengkap skill tersedia untuk pembaca layar.
 const BACK_DEPTH = 0.45
+// ukuran target minimum WCAG 2.5.8 (px)
+const MIN_TARGET = 24
+
+type Rect = [left: number, top: number, right: number, bottom: number]
+const overlaps = (a: Rect, b: Rect) => a[0] < b[2] && b[0] < a[2] && a[1] < b[3] && b[1] < a[3]
 
 // titik merata di permukaan bola (spiral Fibonacci), digeser setengah langkah agar tidak ada logo
 // tepat di kutub (bola akan terlihat dari atas saat logo itu diputar ke depan)
@@ -80,13 +85,18 @@ function facing([x, y, z]: Vec): [number, number] {
 }
 
 // variabel CSS satu logo: posisi, skala, keburaman, dan tampil tidaknya nama
-function itemStyle(p: Vec, yaw: number, pitch: number) {
+// makin banyak skill makin kecil logonya, agar bola tetap lega (penuh sampai 20 skill)
+function densityScale(count: number) {
+  return Math.min(1, Math.sqrt(20 / Math.max(1, count)))
+}
+
+function itemStyle(p: Vec, yaw: number, pitch: number, density: number) {
   const [x, y, z] = project(p, yaw, pitch)
   const depth = (z + 1) / 2
   return {
     '--x': x.toFixed(4),
     '--y': y.toFixed(4),
-    '--s': (0.55 + depth * 0.6).toFixed(3),
+    '--s': (density * (0.5 + depth * 0.55)).toFixed(3),
     '--o': (0.18 + depth * 0.82).toFixed(3),
     '--lo': depth >= LABEL_DEPTH ? '1' : '0',
     back: depth < BACK_DEPTH,
@@ -97,8 +107,8 @@ function itemStyle(p: Vec, yaw: number, pitch: number) {
 function Glyph({ item }: { item: SkillItem }) {
   if (item.glyph?.kind === 'brand') {
     return (
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d={item.glyph.path} />
+      <svg viewBox={item.glyph.viewBox ?? '0 0 24 24'} fill="currentColor" aria-hidden="true">
+        <path d={item.glyph.path} fillRule={item.glyph.evenOdd ? 'evenodd' : undefined} />
       </svg>
     )
   }
@@ -189,9 +199,10 @@ export function SkillGlobe({
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       // sama dengan nilai awal --r di globals.css (.globe-stage)
-      radius = Math.min(width * 0.36, height * 0.4, 240)
+      radius = Math.min(width * 0.4, height * 0.4, 240)
       stage.style.setProperty('--r', `${radius}px`)
       readColor()
+      sizes = []
     }
 
     // garis lintang dan bujur; sisi belakang lebih pudar
@@ -232,20 +243,48 @@ export function SkillGlobe({
       ctx.globalAlpha = 1
     }
 
+    // ukuran logo tanpa transform (offsetWidth/Height), dibaca sekali agar loop tidak memicu layout
+    let sizes: [number, number][] = []
+    const measure = () => {
+      sizes = itemRefs.current.map((el) => (el ? [el.offsetWidth, el.offsetHeight] : [0, 0]))
+    }
+
     const draw = () => {
       drawSphere()
-      pointsRef.current.forEach((p, i) => {
+      if (sizes.length !== pointsRef.current.length) measure()
+      const density = densityScale(pointsRef.current.length)
+      const styles = pointsRef.current.map((p) => itemStyle(p, yaw, pitch, density))
+      // logo yang bisa ditekan: dari yang paling depan, logo yang menutupi logo lain menang
+      const order = styles
+        .map((style, i) => ({ i, rank: i === activeRef.current ? Infinity : style.zIndex }))
+        .sort((a, b) => b.rank - a.rank)
+      const placed: Rect[] = []
+      for (const { i } of order) {
         const el = itemRefs.current[i]
-        if (!el) return
-        const style = itemStyle(p, yaw, pitch)
+        const style = styles[i]
+        if (!el || !style) continue
         el.style.setProperty('--x', style['--x'])
         el.style.setProperty('--y', style['--y'])
         el.style.setProperty('--s', style['--s'])
         el.style.setProperty('--o', style['--o'])
         el.style.setProperty('--lo', style['--lo'])
-        el.inert = style.back && i !== activeRef.current
         el.style.zIndex = String(style.zIndex + (i === activeRef.current ? 200 : 0))
-      })
+        const scale = Number(style['--s'])
+        const [baseW, baseH] = sizes[i] ?? [0, 0]
+        const w = baseW * scale
+        const h = baseH * scale
+        const cx = width / 2 + Number(style['--x']) * radius
+        const cy = height / 2 + Number(style['--y']) * radius
+        const rect: Rect = [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2]
+        const usable =
+          i === activeRef.current ||
+          (!style.back &&
+            w >= MIN_TARGET &&
+            h >= MIN_TARGET &&
+            !placed.some((other) => overlaps(rect, other)))
+        el.inert = !usable
+        if (usable) placed.push(rect)
+      }
     }
 
     const shortest = (from: number, to: number) => {
@@ -332,6 +371,13 @@ export function SkillGlobe({
 
     resize()
     draw()
+    // lebar nama berubah setelah font termuat
+    let disposed = false
+    void document.fonts?.ready.then(() => {
+      if (disposed) return
+      sizes = []
+      draw()
+    })
     const resizeObserver = new ResizeObserver(() => {
       resize()
       draw()
@@ -363,6 +409,7 @@ export function SkillGlobe({
     reduce.addEventListener('change', onMotion)
 
     return () => {
+      disposed = true
       cancelAnimationFrame(frame)
       resizeObserver.disconnect()
       visibility.disconnect()
@@ -409,7 +456,7 @@ export function SkillGlobe({
   const active = activeIndex === null ? null : items[activeIndex]
   // posisi awal (sama di server dan klien), selanjutnya diperbarui langsung oleh loop animasi
   const initial = points.map((p) => {
-    const { back, ...style } = itemStyle(p, START_YAW, START_PITCH)
+    const { back, ...style } = itemStyle(p, START_YAW, START_PITCH, densityScale(points.length))
     return { back, style }
   })
 

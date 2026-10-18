@@ -223,25 +223,46 @@ export const experiences: SeedExperience[] = [
   },
 ];
 
+// Daftar dipilih pemilik 2026-10-18 (migrasi 20261018120000_skills_owner_list)
 export const skillCategories: SeedSkillCategory[] = [
   {
     key: "languages",
     name: { id: "Bahasa Pemrograman", en: "Programming Languages" },
-    skills: ["TypeScript", "JavaScript", "Python", "C++", "HTML", "CSS"],
+    skills: ["TypeScript", "JavaScript", "Python", "C++", "C", "Java"],
   },
   {
-    key: "frameworks-tools",
-    name: { id: "Framework & Tools", en: "Frameworks & Tools" },
-    skills: ["React", "Next.js", "PostgreSQL", "Git"],
+    key: "frontend",
+    name: { id: "Frontend", en: "Frontend" },
+    skills: ["HTML", "CSS", "React", "Next.js", "Tailwind CSS", "Bootstrap"],
   },
   {
-    key: "other",
-    name: { id: "Lainnya", en: "Other" },
+    key: "backend",
+    name: { id: "Backend", en: "Backend" },
+    skills: ["Node.js", "Laravel", "NestJS", "FastAPI"],
+  },
+  {
+    key: "database",
+    name: { id: "Database", en: "Database" },
+    skills: ["PostgreSQL", "MySQL", "MongoDB", "Supabase"],
+  },
+  {
+    key: "tools",
+    name: { id: "Tools", en: "Tools" },
     skills: [
-      "Project Management",
-      "Community Management",
-      "Digital Marketing",
-      "MS Office",
+      "Git",
+      "GitHub",
+      "Docker",
+      "Vercel",
+      "VS Code",
+      "Figma",
+      "Canva",
+      "Word",
+      "Excel",
+      "PowerPoint",
+      "Claude",
+      "Antigravity",
+      "Codex",
+      "Kiro",
     ],
   },
 ];

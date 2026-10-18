@@ -1107,11 +1107,11 @@
    tampil tidaknya nama (hanya sisi depan, agar teks yang tampil selalu kontras penuh). Nilai awal
    dihitung di server; JavaScript memperbaruinya tiap frame. --cat warna kategori, --logo warna brand. */
 .globe-stage {
-  --r: min(36cqw, 40cqh, 15rem);
+  --r: min(40cqw, 40cqh, 15rem);
   container-type: size;
   position: relative;
   width: 100%;
-  height: 22rem;
+  height: 24rem;
   overflow: hidden;
   touch-action: pan-y;
   cursor: grab;

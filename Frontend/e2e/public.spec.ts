@@ -105,19 +105,24 @@ test.describe('globe skill', () => {
     await page.goto('/id')
     const globe = page.getByRole('group', { name: 'Globe skill' })
     await globe.scrollIntoViewIfNeeded()
-    // logo di sisi depan bisa ditekan; fokus keyboard memutarnya ke tengah
-    const react = globe.getByRole('button', { name: /^React,/ })
-    await react.focus()
+    // logo yang bisa ditekan (sisi depan); fokus keyboard memutarnya ke tengah
+    const items = globe.locator('.globe-item')
+    const index = await items.evaluateAll((els) => els.findIndex((el) => !el.hasAttribute('inert')))
+    expect(index).toBeGreaterThanOrEqual(0)
+    const first = items.nth(index)
+    const firstName = (await first.locator('.globe-name').textContent()) ?? ''
+    await first.focus()
     await page.keyboard.press('Enter')
-    await expect(react).toHaveAttribute('aria-pressed', 'true')
-    const panel = page.locator(`[id="${await react.getAttribute('aria-controls')}"]`)
-    await expect(panel).toContainText('React')
-    // panah ke logo berikutnya, juga yang sedang di sisi belakang (diputar ke depan dulu)
-    await react.press('ArrowRight')
-    const next = globe.getByRole('button', { name: /^Next\.js,/ })
+    await expect(first).toHaveAttribute('aria-pressed', 'true')
+    const panel = page.locator(`[id="${await first.getAttribute('aria-controls')}"]`)
+    await expect(panel).toContainText(firstName)
+    // panah ke logo berikutnya, juga bila sedang di sisi belakang (diputar ke depan dulu)
+    await first.press('ArrowRight')
+    const next = items.nth((index + 1) % (await items.count()))
+    const nextName = (await next.locator('.globe-name').textContent()) ?? ''
     await expect(next).toBeFocused()
     await expect(next).toHaveAttribute('aria-pressed', 'true')
-    await expect(panel).toContainText('Next.js')
+    await expect(panel).toContainText(nextName)
     await expect(page.getByRole('list', { name: 'Daftar skill' })).toContainText('TypeScript')
     // kategori: logo kategori lain diredupkan
     const category = page.getByRole('group', { name: 'Kategori skill' }).getByRole('button').nth(1)
@@ -127,7 +132,7 @@ test.describe('globe skill', () => {
       'data-dim',
       '',
     )
-    await expect(react).not.toHaveAttribute('data-dim')
+    await expect(page.locator('.globe-item', { hasText: 'React' })).not.toHaveAttribute('data-dim')
     expect(errors).toEqual([])
   })
 })

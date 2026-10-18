@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import { iconSlug, logoColorFor, resolveIcon, toSkillItems } from '@/features/skills/skill-items'
 
+import { skillCategories } from '../../../Database/seed/seed-data'
+
 describe('skill-items', () => {
   it('slug mengikuti aturan Simple Icons', () => {
     expect(iconSlug('Next.js')).toBe('nextdotjs')
@@ -14,6 +16,16 @@ describe('skill-items', () => {
     expect(resolveIcon('Postgres', null)?.title).toBe('PostgreSQL')
     expect(resolveIcon('Apa saja', 'react')?.title).toBe('React')
     expect(resolveIcon('Project Management', null)).toBeNull()
+  })
+
+  it('semua skill pilihan pemilik punya logo (permintaan 2026-10-18)', () => {
+    const missing = skillCategories
+      .flatMap((c) => c.skills)
+      .filter((name) => resolveIcon(name, null) === null)
+    expect(missing).toEqual([])
+    expect(resolveIcon('VS Code', null)?.title).toBe('Visual Studio Code')
+    expect(resolveIcon('Codex', null)?.title).toBe('OpenAI')
+    expect(resolveIcon('Kiro', null)?.evenOdd).toBe(true)
   })
 
   it('logo hampir hitam mengikuti warna teks, logo lain memakai warna brand', () => {
