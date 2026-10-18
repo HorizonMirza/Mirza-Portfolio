@@ -308,3 +308,48 @@ export function playSlideSound(forward: boolean) {
   source.start(t, Math.random() * 0.5)
   source.stop(t + dur + 0.05)
 }
+
+// Grafik kontribusi GitHub 2D <-> 3D (pilihan pemilik 2026-10-18, demo B2 "Gelombang klik"):
+// rentetan klik kayu yang menjalar selama morph (1,3 detik), seperti batang yang berdiri satu per
+// satu dari minggu terlama ke terbaru, ditutup ketukan rendah. Ke 3D nadanya naik, ke 2D turun.
+// Dengan reduced-motion morph langsung selesai, jadi hanya ketukan penutup yang berbunyi.
+export function playSkylineMorphSound(to3d: boolean, reduced = false) {
+  const a = audio()
+  if (!a) return
+  const { ctx, out, noise } = a
+  const click = (at: number, freq: number) => {
+    const t = ctx.currentTime + at
+    const source = ctx.createBufferSource()
+    source.buffer = noise
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'bandpass'
+    filter.frequency.value = freq
+    filter.Q.value = 6
+    const gain = ctx.createGain()
+    envelope(gain, t, 0.42, 0.002, 0.025)
+    source.connect(filter)
+    filter.connect(gain)
+    gain.connect(out)
+    source.start(t, Math.random() * 0.5)
+    source.stop(t + 0.05)
+    // badan kayu: sinus pendek dua oktaf di bawah klik
+    blip(ctx, out, { at, freq: freq / 4, dur: 0.03, vol: 0.07, type: 'sine' })
+  }
+  const steps = 20
+  if (!reduced) {
+    for (let i = 0; i < steps; i++) {
+      const k = i / (steps - 1)
+      // jarak antarklik mengikuti kurva morph (pelan, cepat, pelan)
+      const eased = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2
+      click(eased * 1.05, to3d ? 900 + k * 1800 : 2700 - k * 1800)
+    }
+  }
+  const end = reduced ? 0 : 1.15
+  blip(ctx, out, {
+    at: end,
+    freq: to3d ? 140 : 95,
+    dur: to3d ? 0.18 : 0.22,
+    vol: 0.3,
+    type: 'sine',
+  })
+}

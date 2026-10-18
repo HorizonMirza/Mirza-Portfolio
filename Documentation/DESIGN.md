@@ -970,3 +970,12 @@ Revisi pemilik; bagian ini memperbarui bagian 51.
 - **404 global** (URL yang tidak cocok dengan rute mana pun) memakai bahasa default situs, Indonesia, dengan tombol "Beranda" ke `/id`.
 - **Letak:** blok isi berada di tengah layar (`min-h-[calc(100dvh-5rem)]`, rata tengah vertikal).
 
+## 71. Pengalaman dimulai dari entri teratas; suara morph grafik GitHub (2026-10-18)
+
+- **Timeline Pengalaman:** entri aktif ditentukan oleh "garis baca" di tengah layar, yaitu entri terakhir yang bagian atasnya sudah melewati garis itu. Bila belum ada yang melewatinya, entri pertama yang aktif. Saat halaman dibuka, entri teratas (PT PGAS Solution) langsung tajam. Sebelumnya entri kedua (Ace Padel Club) yang menyala karena lebih dekat ke tengah layar. Di dasar halaman entri terakhir tetap aktif.
+- **Suara 2D ↔ 3D** (pilihan pemilik dari 10 demo: **B2 Gelombang klik**, `playSkylineMorphSound` di `lib/ui-sounds.ts`):
+  - 20 klik kayu (derau bandpass + sinus pendek) menjalar selama morph 1,3 detik, dengan jarak mengikuti kurva morph;
+  - ditutup ketukan rendah;
+  - ke 3D nada klik naik (900 → 2700 Hz), ke 2D turun.
+- **Kapan berbunyi:** hanya saat tampilan benar-benar berganti. Dengan reduced-motion hanya ketukan penutup yang berbunyi. Volume mengikuti pengaturan admin.
+

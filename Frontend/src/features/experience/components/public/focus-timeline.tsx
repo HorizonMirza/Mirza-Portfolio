@@ -4,9 +4,10 @@ import { type ReactNode, useEffect, useRef } from 'react'
 
 import { playTimelineStepSound } from '@/lib/ui-sounds'
 
-// Timeline "fokus aktif" (pilihan pemilik 2026-10-03, demo nomor 9): entri yang paling dekat dengan
-// tengah layar diberi data-active, entri lain meredup (gaya di globals.css .xp-tl). Isi daftar tetap
-// dirender server; tanpa JavaScript semua entri tampil penuh karena data-focus tidak dipasang.
+// Timeline "fokus aktif" (pilihan pemilik 2026-10-03, demo nomor 9): entri yang sedang dibaca
+// (lihat "garis baca" di update()) diberi data-active, entri lain meredup (gaya di globals.css
+// .xp-tl). Isi daftar tetap dirender server; tanpa JavaScript semua entri tampil penuh karena
+// data-focus tidak dipasang.
 // Saat entri aktif berganti karena digulir, berbunyi bip pendek (lib/ui-sounds.ts). Browser baru
 // mengizinkan suara setelah pengunjung menekan/menyentuh halaman, jadi gulir pertama bisa sunyi.
 export function FocusTimeline({ label, children }: { label: string; children: ReactNode }) {
@@ -23,19 +24,18 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
       // di dasar halaman entri terakhir tidak bisa mencapai tengah layar: pilih entri terakhir
       const atBottom =
         window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4
-      let best: HTMLElement | null = null
-      let bestDistance = Infinity
-      for (const li of ol!.querySelectorAll<HTMLElement>(':scope > li')) {
+      // "Garis baca" di tengah layar: entri aktif adalah entri terakhir yang bagian atasnya sudah
+      // melewati garis itu; bila belum ada, entri pertama. Jadi saat halaman dibuka yang aktif
+      // selalu entri teratas (revisi pemilik 2026-10-18: sebelumnya entri kedua yang lebih dekat
+      // ke tengah layar langsung menyala).
+      const items = ol!.querySelectorAll<HTMLElement>(':scope > li')
+      let best: HTMLElement | null = items[0] ?? null
+      for (const li of items) {
         if (atBottom) {
           best = li
           continue
         }
-        const box = li.getBoundingClientRect()
-        const distance = Math.abs(box.top + Math.min(box.height, 240) / 2 - mid)
-        if (distance < bestDistance) {
-          bestDistance = distance
-          best = li
-        }
+        if (li.getBoundingClientRect().top <= mid) best = li
       }
       for (const li of ol!.querySelectorAll<HTMLElement>(':scope > li')) {
         if (li === best) li.dataset.active = ''

@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 
+import { playSkylineMorphSound } from '@/lib/ui-sounds'
+
 /**
  * Contribution Skyline: setahun aktivitas sebagai peta panas gaya GitHub yang terlipat menjadi
  * skyline isometrik, lalu kembali datar (diadaptasi dari komponen 21st.dev "contribution-skyline").
@@ -1336,7 +1338,15 @@ export default function ContributionSkyline({
               aria-pressed={view === v}
               aria-label={v === '2d' ? labels.flat : labels.skyline}
               title={v === '2d' ? labels.flat : labels.skyline}
-              onClick={() => setView(v)}
+              onClick={() => {
+                if (v === view) return
+                // suara "gelombang klik" selama morph (pilihan pemilik 2026-10-18, demo B2)
+                playSkylineMorphSound(
+                  v === '3d',
+                  window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+                )
+                setView(v)
+              }}
               className={
                 'relative z-10 grid h-7 w-8 cursor-pointer place-items-center rounded border-0 bg-transparent p-0 transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text motion-reduce:transition-none ' +
                 (view === v ? 'text-bg' : 'text-muted')
