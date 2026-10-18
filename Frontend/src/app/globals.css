@@ -1318,13 +1318,9 @@
   color: var(--note);
   font-weight: 600;
 }
-/* jumlah skill memakai huruf display situs (Oswald) seperti angka statistik lain */
+/* jumlah skill: huruf sama dengan nama kategori (revisi pemilik 2026-10-18), angka tabular */
 .globe-filter-count {
-  font-family: var(--font-display);
-  font-size: 0.9375rem;
-  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
   color: var(--text-muted);
 }
 .globe-filter-menu button[aria-pressed='true'] .globe-filter-count {

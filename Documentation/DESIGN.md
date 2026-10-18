@@ -1079,6 +1079,6 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Ukuran lebih kecil:**
   - tombol: tinggi 2,25 rem, huruf 13 px;
   - menu: lebar minimum 13 rem, baris 2 rem, huruf 13 px, nama kategori satu baris.
-- **Angka jumlah skill** memakai huruf display situs (Oswald 600, 15 px, angka tabular), sama dengan angka statistik lain. Angka kategori aktif berwarna biru.
+- **Angka jumlah skill** memakai huruf yang sama dengan nama kategori (Inter 13 px, angka tabular), revisi pemilik setelah sempat memakai Oswald. Angka kategori aktif berwarna biru.
 - **Geser di WebKit:** gerakan mouse tanpa tombol ditekan (`buttons === 0`) tidak pernah dihitung geser. Ini mencegah `pointerup` yang terlewat membuat stage menangkap pointer dan menelan klik berikutnya, dugaan penyebab tes WebKit di CI yang kadang gagal. Tes globe juga menaruh globe di tengah layar sebelum mengklik, agar scroll otomatis Playwright tidak melepas pilihan.
 

@@ -193,3 +193,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-18 | Globe skill: menu kategori ke bawah, kategori terpilih menonjol dan lainnya hampir hilang, tekan apa saja kembali ke Semua, "Dipakai di" dihapus (DESIGN.md bagian 80) |
 | 2026-10-18 | Globe skill: filter kategori tetap sampai Semua dipilih; setelah logo dilepas atau Semua dipilih, kemiringan bola kembali ke posisi awal (DESIGN.md bagian 81) |
 | 2026-10-18 | Globe skill: menu kategori lebih kecil dan tidak melewati garis bagian, angka jumlah skill huruf Oswald; pengaman geser untuk WebKit (DESIGN.md bagian 82) |
+| 2026-10-18 | Menu kategori globe: angka jumlah skill memakai huruf yang sama dengan nama kategori (DESIGN.md bagian 82) |
