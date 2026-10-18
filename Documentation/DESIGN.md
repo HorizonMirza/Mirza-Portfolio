@@ -1031,3 +1031,9 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Reduced-motion:** bola berhenti begitu dilepas, tanpa meluncur.
 - **Chip teknologi di halaman Project** (revisi pemilik yang sama): memakai logo asli yang sama, berwarna penuh sejak awal. Efek saat disorot (naik, miring, garis berwarna brand) tetap ada. Logo hitam dibalik di tema gelap. Skill tanpa logo asli tetap memakai logo satu warna seperti di bagian 49 butir 7.
 
+## 76. NestJS, MongoDB, dan Docker dihapus dari Keahlian Teknis (2026-10-18)
+
+- Permintaan pemilik: hapus NestJS, MongoDB, dan Docker. Total menjadi **31 skill** (Backend 3, Database 3, Tools 13).
+- Migrasi data `20261018130000_skills_remove_three` menghapus ketiganya; seed disamakan. Tidak ada project terbit yang memakai skill ini, dan kaitan project ke skill ikut terhapus bila ada.
+- Berkas logo `public/skills/{nestjs,mongodb,docker}.svg`, entri `SKILL_LOGOS`, dan ikon satu warna NestJS (yang ditambahkan khusus untuk daftar ini) dihapus. Jika skill itu ditambahkan lagi lewat Admin, tampil dengan logo cadangan (Simple Icons satu warna untuk MongoDB dan Docker, singkatan untuk NestJS).
+

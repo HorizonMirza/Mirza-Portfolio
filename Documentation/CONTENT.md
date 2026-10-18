@@ -93,11 +93,11 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 |---|---|
 | Bahasa Pemrograman | TypeScript, JavaScript, Python, C++, C, Java |
 | Frontend | HTML, CSS, React, Next.js, Tailwind CSS, Bootstrap |
-| Backend | Node.js, Laravel, NestJS, FastAPI |
-| Database | PostgreSQL, MySQL, MongoDB, Supabase |
-| Tools | Git, GitHub, Docker, Vercel, VS Code, Figma, Canva, Word, Excel, PowerPoint, Claude, Antigravity, Codex, Kiro |
+| Backend | Node.js, Laravel, FastAPI |
+| Database | PostgreSQL, MySQL, Supabase |
+| Tools | Git, GitHub, Vercel, VS Code, Figma, Canva, Word, Excel, PowerPoint, Claude, Antigravity, Codex, Kiro |
 
-Project Management, Community Management, dan Digital Marketing tidak lagi tampil di Keahlian Teknis (tidak dipilih); MS Office diganti Word, Excel, PowerPoint.
+Project Management, Community Management, dan Digital Marketing tidak lagi tampil di Keahlian Teknis (tidak dipilih); MS Office diganti Word, Excel, PowerPoint. NestJS, MongoDB, dan Docker dihapus pemilik beberapa saat kemudian (migrasi `20261018130000_skills_remove_three`), sehingga totalnya 31 skill.
 
 **Skill yang terlihat di GAAS tetapi belum ada di CV:** C#, ASP.NET Core, Entity Framework Core, SignalR, Tailwind CSS, Playwright, GitHub Actions, dan REST API. Jika Mirza benar-benar mengerjakannya, sebaiknya ditambahkan (ke CV dan ke halaman Skills) **[TANYA]**.
 

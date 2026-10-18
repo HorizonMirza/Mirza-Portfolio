@@ -223,7 +223,8 @@ export const experiences: SeedExperience[] = [
   },
 ];
 
-// Daftar dipilih pemilik 2026-10-18 (migrasi 20261018120000_skills_owner_list)
+// Daftar dipilih pemilik 2026-10-18 (migrasi 20261018120000_skills_owner_list; NestJS, MongoDB, Docker
+// dihapus oleh migrasi 20261018130000_skills_remove_three)
 export const skillCategories: SeedSkillCategory[] = [
   {
     key: "languages",
@@ -238,12 +239,12 @@ export const skillCategories: SeedSkillCategory[] = [
   {
     key: "backend",
     name: { id: "Backend", en: "Backend" },
-    skills: ["Node.js", "Laravel", "NestJS", "FastAPI"],
+    skills: ["Node.js", "Laravel", "FastAPI"],
   },
   {
     key: "database",
     name: { id: "Database", en: "Database" },
-    skills: ["PostgreSQL", "MySQL", "MongoDB", "Supabase"],
+    skills: ["PostgreSQL", "MySQL", "Supabase"],
   },
   {
     key: "tools",
@@ -251,7 +252,6 @@ export const skillCategories: SeedSkillCategory[] = [
     skills: [
       "Git",
       "GitHub",
-      "Docker",
       "Vercel",
       "VS Code",
       "Figma",
