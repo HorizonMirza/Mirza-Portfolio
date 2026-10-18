@@ -2,8 +2,6 @@
 
 import * as React from 'react'
 
-import { playSkylineMorphSound } from '@/lib/ui-sounds'
-
 /**
  * Contribution Skyline: setahun aktivitas sebagai peta panas gaya GitHub yang terlipat menjadi
  * skyline isometrik, lalu kembali datar (diadaptasi dari komponen 21st.dev "contribution-skyline").
@@ -411,8 +409,8 @@ function Stat({
 }) {
   return (
     // angka dan tanggal dirapatkan ke bawah agar sejajar walau label di HP turun dua baris
-    <div className="flex min-w-0 flex-col bg-bg px-2.5 py-3 sm:p-4">
-      <div className="text-[0.625rem] leading-tight font-semibold tracking-wide text-muted uppercase sm:text-xs sm:tracking-wider">
+    <div className="flex min-w-0 flex-col bg-bg px-2 py-3 sm:p-4">
+      <div className="text-[clamp(0.5rem,2.3vw,0.625rem)] leading-tight font-semibold whitespace-nowrap text-muted uppercase sm:text-xs sm:tracking-wider">
         {label}
       </div>
       <div
@@ -1314,7 +1312,7 @@ export default function ContributionSkyline({
   return (
     <div ref={rootRef} className={'relative w-full bg-bg text-text ' + className}>
       <header className="mb-3 flex items-center justify-between gap-3">
-        <p className="m-0 min-w-0 text-[0.9375rem] leading-snug font-normal sm:text-xl">
+        <p className="m-0 min-w-0 text-[clamp(0.75rem,3.4vw,0.9375rem)] leading-snug font-normal whitespace-nowrap sm:text-xl">
           <span className="font-semibold tabular-nums">{nf.format(stats.total)}</span>{' '}
           {noun(stats.total)} {labels.inLastYear}
         </p>
@@ -1338,15 +1336,7 @@ export default function ContributionSkyline({
               aria-pressed={view === v}
               aria-label={v === '2d' ? labels.flat : labels.skyline}
               title={v === '2d' ? labels.flat : labels.skyline}
-              onClick={() => {
-                if (v === view) return
-                // suara "gelombang klik" selama morph (pilihan pemilik 2026-10-18, demo B2)
-                playSkylineMorphSound(
-                  v === '3d',
-                  window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-                )
-                setView(v)
-              }}
+              onClick={() => setView(v)}
               className={
                 'relative z-10 grid h-7 w-8 cursor-pointer place-items-center rounded border-0 bg-transparent p-0 transition-colors duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text motion-reduce:transition-none ' +
                 (view === v ? 'text-bg' : 'text-muted')
@@ -1436,7 +1426,7 @@ export default function ContributionSkyline({
         {/* Statistik sebagai pita bawah bersekat di dalam kotak, baik 2D maupun 3D (pilihan pemilik
             2026-10-16, demo S5): empat kolom di layar lebar, 2 x 2 di HP. Garis sekat berasal dari
             celah 1 px di atas latar --border. */}
-        <div className="grid grid-cols-3 gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border">
+        <div className="grid grid-cols-[repeat(3,auto)] gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border md:grid-cols-3">
           {statBlocks.map((b) => (
             <Stat key={b.label} {...b} accent={theme.accent} />
           ))}

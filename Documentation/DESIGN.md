@@ -979,3 +979,10 @@ Revisi pemilik; bagian ini memperbarui bagian 51.
   - ke 3D nada klik naik (900 → 2700 Hz), ke 2D turun.
 - **Kapan berbunyi:** hanya saat tampilan benar-benar berganti. Dengan reduced-motion hanya ketukan penutup yang berbunyi. Volume mengikuti pengaturan admin.
 
+## 72. Grafik GitHub tanpa suara; teks satu baris di HP (2026-10-18)
+
+- **Suara morph dibatalkan:** suara 2D ↔ 3D dari bagian 71 (B2) dihapus atas permintaan pemilik, dan grafik GitHub tidak berbunyi sama sekali. `playSkylineMorphSound` dihapus dari `lib/ui-sounds.ts`.
+- **Judul di HP:** kalimat jumlah kontribusi ("1.229 kontribusi dalam setahun terakhir") selalu satu baris (`whitespace-nowrap`). Ukurannya cair, `clamp(0.75rem, 3.4vw, 0.9375rem)`, sekitar 13 px di layar 390 px, dan `text-xl` mulai 640 px.
+- **Label statistik di HP:** "RENTETAN TERPANJANG", "RENTETAN SAAT INI", dan lainnya selalu satu baris. Ukurannya cair, `clamp(0.5rem, 2.3vw, 0.625rem)`, sekitar 9 px di layar 390 px, tanpa jarak huruf tambahan.
+- **Kolom statistik di HP:** lebar kolom mengikuti isi (`repeat(3, auto)`), sehingga kolom berlabel panjang mendapat ruang lebih. Mulai 768 px tetap tiga kolom sama lebar.
+
