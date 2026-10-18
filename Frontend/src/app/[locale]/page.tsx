@@ -7,15 +7,15 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
-import { HorizonBackdrop } from '@/components/site/horizon-backdrop'
+import { LiquidMaskPortrait } from '@/components/site/liquid-mask-portrait'
 import { Container } from '@/components/site/section-heading'
-import { Button } from '@/components/ui/button'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
 import { ExperienceAccordion } from '@/features/experience/components/public/experience-accordion'
 import { getPublicExperiences } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
+import { socialLabel } from '@/features/profile/schema'
 import { getPublishedProjects } from '@/features/projects/public'
 import { SkillGlobe } from '@/features/skills/components/skill-globe'
 import { toSkillItems } from '@/features/skills/skill-items'
@@ -143,7 +143,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     : null
 
   // Foto potret hero: foto dari admin bila ada, selain itu foto bawaan pemilik.
-  const portraitSizes = '(min-width: 1024px) 400px, 64px'
+  const portraitSizes = '(min-width: 1024px) 460px, 280px'
   const portrait = profile?.photo ? (
     <Image
       src={profile.photo.url}
@@ -152,7 +152,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       height={profile.photo.height ?? 600}
       sizes={portraitSizes}
       loading="eager"
-      className="home-portrait-img"
+      className="hero-portrait-img"
     />
   ) : (
     <Image
@@ -161,134 +161,142 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       sizes={portraitSizes}
       loading="eager"
       placeholder="blur"
-      className="home-portrait-img"
+      className="hero-portrait-img"
     />
   )
-  // keterangan di bawah foto (hanya laptop): kota dan kampus dari profil
-  const portraitCaption = [
-    profile?.city,
-    profile?.campus ? organizationName(profile.campus, locale) : null,
-  ].filter((part): part is string => Boolean(part))
+  const currentRole = profile ? loc(profile, 'currentRole', locale) : ''
+  const availabilityNote = profile ? loc(profile, 'availabilityNote', locale) : ''
+  const socials = (['github', 'linkedin', 'instagram'] as const).flatMap((key) => {
+    const href = profile?.socials[key]
+    return href ? [{ key, href, label: socialLabel[key] }] : []
+  })
+  const stats = [
+    { value: projects.length, label: t('statProjects') },
+    { value: skillItems.length, label: t('statSkills') },
+    { value: workHistory.length, label: t('statExperience') },
+  ]
 
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
-      <section aria-labelledby="hero-title" className="flex min-h-[calc(100svh-4rem)] flex-col">
-        {/* Laptop: teks di kiri, foto potret di kanan (audit Home nomor 2, pilihan pemilik 2026-10-15
-            demo 1). HP: foto bulat kecil di atas nama. */}
-        <Container className="grid flex-1 content-center gap-6 pt-10 pb-8 md:pt-16 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:items-center lg:gap-14">
-          <figure className="home-portrait lg:order-last">
-            <div className="home-portrait-frame">{portrait}</div>
-            {portraitCaption.length > 0 ? (
-              <figcaption className="home-portrait-cap">
-                {portraitCaption.map((part) => (
-                  <span key={part}>{part}</span>
-                ))}
-              </figcaption>
-            ) : null}
-          </figure>
-          <div className="flex min-w-0 flex-col gap-8">
-            <div>
-              <p className="font-mono text-label tracking-widest text-note uppercase">
-                <span aria-hidden="true">01 — </span>
-                {name}
-              </p>
-              <h1 id="hero-title" className="mt-4 max-w-5xl text-display font-bold text-balance">
-                {profile ? loc(profile, 'headline', locale) : name}
-              </h1>
-            </div>
-
-            {/* Di HP tombol tampil sebelum pelat status agar tombol Resume CV terlihat tanpa scroll (PRD U1). */}
-            <div className="flex flex-col gap-8 lg:flex-col-reverse">
-              <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                {profile?.hasCv ? (
-                  <Button asChild>
-                    <a href={cvHref}>
-                      <FileText aria-hidden="true" />
-                      {tNav('downloadCv')}
-                    </a>
-                  </Button>
+      {/* Hero (rombak pemilik 2026-10-18, prinsip dari referensi ibnuhakim.id): nama besar di kiri, potret
+          dengan liquid mask di tengah, panel status dan angka portofolio di kanan, CV dan sosial di baris
+          bawah. HP: bertumpuk, nama dan potret lebih dulu. DESIGN.md bagian 83. */}
+      <section
+        aria-labelledby="hero-title"
+        className="hero flex min-h-[calc(100svh-4rem)] flex-col"
+      >
+        <Container className="hero-grid flex-1">
+          <div className="hero-intro">
+            <p className="font-mono text-label tracking-widest text-note uppercase">
+              <span aria-hidden="true">01 — </span>
+              {t('heroEyebrow')}
+            </p>
+            <h1 id="hero-title" className="hero-name">
+              {/* tiap kata satu baris; spasi di antaranya agar pembaca layar membaca nama utuh */}
+              {name.split(/\s+/).map((word, i) => (
+                <span key={i}>
+                  {i > 0 ? ' ' : null}
+                  {word}
+                </span>
+              ))}
+            </h1>
+            {profile ? (
+              <dl className="hero-facts">
+                {profile.city ? (
+                  <div>
+                    <dt>{t('locationLabel')}</dt>
+                    <dd>{profile.city}</dd>
+                  </div>
                 ) : null}
-                <Button asChild variant="secondary">
-                  <Link href="/projects">
-                    {t('viewProjects')}
-                    <ArrowRight aria-hidden="true" />
-                  </Link>
-                </Button>
-                {github ? (
-                  <Button asChild variant="ghost">
-                    <a href={github} target="_blank" rel="noopener noreferrer">
-                      {t('github')}
+                {currentRole ? (
+                  <div>
+                    <dt>{t('nowLabel')}</dt>
+                    <dd>{currentRole}</dd>
+                  </div>
+                ) : null}
+                {profile.campus ? (
+                  <div>
+                    <dt>{t('campusLabel')}</dt>
+                    <dd>
+                      {loc(profile.campus, 'title', locale)} ·{' '}
+                      {organizationName(profile.campus, locale)}
+                    </dd>
+                  </div>
+                ) : null}
+              </dl>
+            ) : null}
+          </div>
+
+          <figure className="hero-portrait">
+            <LiquidMaskPortrait>{portrait}</LiquidMaskPortrait>
+            <span className="hero-portrait-hint" aria-hidden="true">
+              {t('hoverHint')}
+            </span>
+            <Link href="/projects" className="hero-cta">
+              {t('viewProjects')}
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </figure>
+
+          {profile ? (
+            <div className="hero-side">
+              <div className="hero-card">
+                <p className="hero-card-label">{t('statusLabel')}</p>
+                <p className="hero-card-status">
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      'size-2 shrink-0 rounded-full',
+                      availabilityDot[profile.availability],
+                    )}
+                  />
+                  {tAvail(profile.availability)}
+                </p>
+                {availabilityNote ? <p className="hero-card-note">{availabilityNote}</p> : null}
+              </div>
+              <div className="hero-card">
+                <p className="hero-card-label">{t('portfolioLabel')}</p>
+                <dl className="hero-stats">
+                  {stats.map((stat) => (
+                    <div key={stat.label}>
+                      <dt>{stat.label}</dt>
+                      <dd>{stat.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+          ) : null}
+        </Container>
+
+        <div className="hero-bottom">
+          <Container className="hero-bottom-row">
+            {profile?.hasCv ? (
+              <a href={cvHref} className="hero-cv">
+                <FileText aria-hidden="true" />
+                <span>
+                  {tNav('downloadCv')}
+                  <small>PDF</small>
+                </span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {socials.length > 0 ? (
+              <ul aria-label={t('socialLabel')} className="hero-socials">
+                {socials.map((s) => (
+                  <li key={s.key}>
+                    <a href={s.href} target="_blank" rel="noopener noreferrer">
+                      {s.label}
                       <span className="sr-only">{tCommon('openInNewTab')}</span>
                     </a>
-                  </Button>
-                ) : null}
-              </div>
-
-              {profile ? (
-                <dl
-                  aria-label={t('statusPlate')}
-                  className="grid max-w-2xl gap-x-6 gap-y-3 rounded-lg border border-border bg-surface/80 p-4 text-sm sm:grid-cols-[auto_1fr] dark:bg-surface/60"
-                >
-                  <dt className="font-mono text-label tracking-widest text-note uppercase">
-                    {t('statusLabel')}
-                  </dt>
-                  <dd className="flex items-start gap-2 font-medium">
-                    {/* titik setinggi baris pertama; status dan catatan mengalir sebagai satu kalimat
-                      agar di HP tidak terbelah menjadi dua kolom sempit */}
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        'mt-[0.45em] size-2 shrink-0 rounded-full',
-                        availabilityDot[profile.availability],
-                      )}
-                    />
-                    <span>
-                      {tAvail(profile.availability)}
-                      {loc(profile, 'availabilityNote', locale) ? (
-                        <span className="font-normal text-muted">
-                          {' '}
-                          · {loc(profile, 'availabilityNote', locale)}
-                        </span>
-                      ) : null}
-                    </span>
-                  </dd>
-                  {profile.city ? (
-                    <>
-                      <dt className="font-mono text-label tracking-widest text-note uppercase">
-                        {t('locationLabel')}
-                      </dt>
-                      <dd>{profile.city}</dd>
-                    </>
-                  ) : null}
-                  {profile.campus ? (
-                    <>
-                      <dt className="font-mono text-label tracking-widest text-note uppercase">
-                        {t('campusLabel')}
-                      </dt>
-                      <dd>
-                        {organizationName(profile.campus, locale)}
-                        <span className="text-muted">
-                          {' '}
-                          · {loc(profile.campus, 'title', locale)}
-                        </span>
-                      </dd>
-                    </>
-                  ) : null}
-                  {loc(profile, 'currentRole', locale) ? (
-                    <>
-                      <dt className="font-mono text-label tracking-widest text-note uppercase">
-                        {t('nowLabel')}
-                      </dt>
-                      <dd>{loc(profile, 'currentRole', locale)}</dd>
-                    </>
-                  ) : null}
-                </dl>
-              ) : null}
-            </div>
-          </div>
-        </Container>
-        <HorizonBackdrop />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </Container>
+        </div>
       </section>
 
       {sections.includes('experience') ? (

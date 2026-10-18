@@ -8,10 +8,15 @@ test('beranda: tombol utama terlihat tanpa scroll dan susunan bagian sesuai revi
 }) => {
   await page.goto('/id')
   await expect(page.getByRole('link', { name: 'Lihat project' })).toBeInViewport()
-  // foto potret hero (DESIGN.md bagian 55): bulat kecil di HP, potret di kolom kanan laptop
+  // hero (rombak 2026-10-18, DESIGN.md bagian 83): nama sebagai h1 terbaca utuh dengan spasi,
+  // potret dengan liquid mask, panel status dan angka portofolio
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^\S+( \S+)+$/)
   const portrait = page.locator('section[aria-labelledby="hero-title"] figure img')
   await expect(portrait).toBeInViewport()
   await expect(portrait).toHaveAttribute('alt', /.+/)
+  await expect(page.locator('.hero-mask-canvas')).toHaveCount(1)
+  await expect(page.locator('.hero-card-status')).toContainText('Terbuka untuk kerja')
+  await expect(page.locator('.hero-stats > div')).toHaveCount(3)
   // Keahlian Teknis dan GitHub (revisi pemilik 2026-10-16): judul di tengah tanpa nomor, tanpa
   // keterangan sumber keyboard, tanpa tautan profil dan baris aktivitas GitHub
   await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()

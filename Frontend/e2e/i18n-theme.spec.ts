@@ -11,9 +11,8 @@ test('browser berbahasa Indonesia diarahkan ke /id', async ({ browser }) => {
   const { context, page } = await openRootWithLocale(browser, 'id-ID')
   await expect(page).toHaveURL(/\/id$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'id')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Mahasiswa AI BINUS yang membangun software dan komunitas.',
-  )
+  // hero memakai nama sebagai h1 (rombak 2026-10-18); bahasa terlihat dari tombol ajakan
+  await expect(page.getByRole('link', { name: 'Lihat project' })).toBeVisible()
   await context.close()
 })
 

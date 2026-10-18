@@ -1082,3 +1082,22 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 - **Angka jumlah skill** memakai huruf yang sama dengan nama kategori (Inter 13 px, angka tabular), revisi pemilik setelah sempat memakai Oswald. Angka kategori aktif berwarna biru.
 - **Geser di WebKit:** gerakan mouse tanpa tombol ditekan (`buttons === 0`) tidak pernah dihitung geser. Ini mencegah `pointerup` yang terlewat membuat stage menangkap pointer dan menelan klik berikutnya, dugaan penyebab tes WebKit di CI yang kadang gagal. Tes globe juga menaruh globe di tengah layar sebelum mengklik, agar scroll otomatis Playwright tidak melepas pilihan.
 
+## 83. Hero beranda dirombak: nama besar, potret liquid mask, panel status (2026-10-18)
+
+Permintaan pemilik: hero seperti ibnuhakim.id, dengan komponen Framer HoverMaskReveal. Dari referensi hanya diambil prinsip tata letak dan interaksi; teks, huruf, dan warna memakai milik situs ini. Prototipe disetujui pemilik dengan catatan "fotonya gunakan foto sebelumnya dulu".
+
+- **Tata letak (≥ 1024 px, tiga kolom):**
+  - kiri: eyebrow "01 — Portofolio", nama sebagai `h1` (Oswald, satu kata per baris, `clamp(3.5rem, 5vw, 6rem)` agar kata terpanjang tidak menabrak potret), lalu daftar fakta Lokasi, Sekarang, dan Kampus dari profil Admin;
+  - tengah: potret 4:5 dengan tombol "Lihat project" di bawahnya;
+  - kanan: dua kartu bersudut tipis, yaitu Status (ketersediaan dan catatan) dan Portofolio (jumlah project terbit, skill, serta pengalaman kerja dan organisasi, dihitung dari data);
+  - baris bawah bergaris atas: Resume CV (bila ada) di kiri, GitHub/LinkedIn/Instagram dari profil di kanan.
+  IPK tidak ditampilkan karena masih keputusan terbuka (CONTENT.md).
+- **HP dan tablet:** bertumpuk di tengah dengan urutan nama, fakta, potret, dan kartu. Label fakta hanya untuk pembaca layar di HP. Tombol "Lihat project" terlihat tanpa scroll dan tidak tertutup menu bawah (dicek di 360×760 dan Pixel 7). Di tablet potret 21 rem dan kedua kartu berdampingan.
+- **Liquid mask** (`components/site/liquid-mask-portrait.tsx`, dibuat sendiri tanpa kode Framer, WebGL, atau three.js):
+  - kursor atau jari meninggalkan jejak gumpalan bertepi lembut (gradien radial) yang membuka lapisan kedua lalu menyusut dalam 1,1 detik (0,25 detik pada reduced-motion);
+  - lapisan kedua sementara dibuat dari foto yang sama dalam gaya cetak biru (diolah per piksel agar jalan di Safari) sampai pemilik mengirim foto kedua;
+  - foto tetap `<img>` biasa, canvas hanya dekorasi (`aria-hidden`);
+  - petunjuk "Arahkan kursor ke foto" hanya tampil di perangkat dengan kursor.
+- **Dihapus:** latar Horizon di bawah hero (`horizon-backdrop.tsx`, `horizon-canvas.tsx`, gaya `.horizon-*`), pelat status lama, tombol GitHub di hero (pindah ke baris sosial), dan gaya `.home-portrait`. Headline profil tidak tampil lagi di hero, tetapi tetap dipakai metadata dan JSON-LD.
+- **Menunggu pemilik:** foto jas dengan tangan bersilang dan lapisan kedua (manekin) dalam pose dan bingkai yang sama, idealnya PNG latar transparan agar menyatu di tema gelap. Sampai itu ada, di tema gelap potret tampil di atas bidang terang dengan bawah yang memudar.
+
