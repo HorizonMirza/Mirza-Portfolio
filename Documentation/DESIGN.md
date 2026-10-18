@@ -1065,6 +1065,11 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 
 - Menu kategori terbuka **ke bawah** tombolnya.
 - **Kategori terpilih menonjol:** logonya tampil terang (keburaman minimal 0,9 walau di sisi belakang), dengan lingkaran biru 2 px yang bercahaya dan nama berwarna teks (`data-hl`). Kategori lain hampir hilang: keburaman 12%, abu-abu, mengecil 0,8×, dan tanpa nama (`data-dim`).
-- **Kembali ke awal:** selama satu kategori terpilih dan menu tertutup, menekan apa saja di luar kendali kategori (logo, area kosong, bagian lain halaman) atau Esc mengembalikan globe ke Semua kategori. Menekan logo sekaligus memilih logo itu.
+- ~~**Kembali ke awal:** menekan apa saja atau Esc mengembalikan ke Semua kategori.~~ Dibatalkan di bagian 81.
 - **"Dipakai di" dihapus** dari panel rincian; panel hanya berisi nama dan kategori (tinggi minimum `min-h-16`). Akibatnya `SkillItem.projects`, parameter `projectTitle` di `toSkillItems`, dan pesan `Skills.usedIn` ikut dihapus.
+
+## 81. Globe skill: filter tetap sampai Semua dipilih, kemiringan kembali ke awal (2026-10-18)
+
+- **Filter tetap:** selama satu kategori terpilih, bola tetap bisa digeser dan diputar, dan menekan bagian lain halaman tidak mengubah filter. Filter hanya kembali ke semua kategori lewat pilihan **Semua/All** di menu. Ini menggantikan perilaku "tekan apa saja" dari bagian 80.
+- **Kembali ke posisi awal:** saat logo terpilih dilepas (ditekan ulang, tekan di mana saja, scroll, Esc) dan saat memilih Semua, kemiringan bola kembali pelan-pelan ke kemiringan awal, sama seperti saat halaman dibuka (`START_PITCH`, easing 6% per frame, langsung pada reduced-motion), lalu bola lanjut berputar. Sebelumnya bola tetap miring di sudut logo terakhir. Menggeser bola atau memilih logo lain membatalkan gerak kembali ini.
 

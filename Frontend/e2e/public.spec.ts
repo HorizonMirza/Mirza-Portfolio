@@ -158,8 +158,14 @@ test.describe('globe skill', () => {
     const react = page.locator('.globe-item', { hasText: 'React' })
     await expect(react).not.toHaveAttribute('data-dim')
     await expect(react).toHaveAttribute('data-hl', '')
-    // tekan apa saja di luar menu: kembali ke semua kategori
+    // menekan di luar menu tidak mengubah filter; hanya Semua yang mengembalikannya
     await page.getByRole('heading', { name: 'Keahlian Teknis' }).click()
+    await expect(toggle).toContainText('Frontend')
+    await toggle.click()
+    await page
+      .getByRole('group', { name: 'Kategori skill' })
+      .getByRole('button', { name: /^Semua/ })
+      .click()
     await expect(toggle).toContainText('Semua')
     await expect(page.locator('.globe-item[data-dim]')).toHaveCount(0)
     expect(errors).toEqual([])

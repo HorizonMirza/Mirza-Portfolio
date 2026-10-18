@@ -174,7 +174,11 @@ export function SkillGlobe({
   const menuId = useId()
   const panelId = useId()
   // jembatan dari handler React ke loop animasi di effect
-  const controls = useRef<{ face: (index: number) => void; wake: () => void } | null>(null)
+  const controls = useRef<{
+    face: (index: number) => void
+    home: () => void
+    wake: () => void
+  } | null>(null)
   const activeRef = useRef<number | null>(null)
   // salinan untuk loop animasi di effect
   const pointsRef = useRef(points)
@@ -197,6 +201,7 @@ export function SkillGlobe({
     let pitch = START_PITCH
     let velocity = reduce.matches ? 0 : AUTO_SPEED
     let target: [number, number] | null = null
+    let homing = false
     let width = 0
     let height = 0
     let radius = 0
@@ -328,10 +333,19 @@ export function SkillGlobe({
         return true
       }
       if (drag) return false
+      // setelah pilihan lepas: kemiringan kembali pelan ke posisi awal
+      if (homing) {
+        const dp = START_PITCH - pitch
+        pitch += reduce.matches ? dp : dp * 0.06
+        if (Math.abs(dp) < 0.002) {
+          pitch = START_PITCH
+          homing = false
+        }
+      }
       const auto = reduce.matches || activeRef.current !== null ? 0 : AUTO_SPEED
       velocity += (auto - velocity) * 0.03
       yaw += velocity
-      return Math.abs(velocity) > 0.0001 || auto > 0
+      return Math.abs(velocity) > 0.0001 || auto > 0 || homing
     }
 
     const loop = () => {
@@ -348,7 +362,13 @@ export function SkillGlobe({
         const p = pointsRef.current[index]
         if (!p) return
         target = facing(p)
+        homing = false
         velocity = 0
+        wake()
+      },
+      home: () => {
+        target = null
+        homing = true
         wake()
       },
       wake,
@@ -369,6 +389,7 @@ export function SkillGlobe({
         stage.setPointerCapture(e.pointerId)
         stage.dataset.dragging = ''
         target = null
+        homing = false
       }
       drag.x = e.clientX
       drag.y = e.clientY
@@ -453,10 +474,11 @@ export function SkillGlobe({
     controls.current?.face(index)
   }
 
-  // lepas pilihan: putaran otomatis berlanjut (revisi pemilik 2026-10-18)
+  // lepas pilihan: bola kembali ke kemiringan awal lalu berputar lagi (revisi pemilik 2026-10-18)
   function release() {
     activeRef.current = null
     setActiveIndex(null)
+    controls.current?.home()
   }
 
   // Selama ada logo terpilih: scroll, tekan di mana saja (selain logo lain dan panel rincian), atau Esc
@@ -511,24 +533,6 @@ export function SkillGlobe({
     const first = items.findIndex((item) => item.categoryIndex === next)
     if (first >= 0) controls.current?.face(first)
   }
-
-  // Selama kategori terpilih: menekan apa saja di luar kendali kategori, atau Esc saat menu tertutup,
-  // mengembalikan globe ke keadaan awal (semua kategori), revisi pemilik 2026-10-18
-  useEffect(() => {
-    if (category === null || menuOpen) return
-    const onPointerDown = (event: globalThis.PointerEvent) => {
-      if (!filterRef.current?.contains(event.target as Node)) setCategory(null)
-    }
-    const onKey = (event: globalThis.KeyboardEvent) => {
-      if (event.key === 'Escape') setCategory(null)
-    }
-    document.addEventListener('pointerdown', onPointerDown, true)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown, true)
-      document.removeEventListener('keydown', onKey)
-    }
-  }, [category, menuOpen])
 
   // Menu kategori (pilihan pemilik dari 10 demo gaya tombol: C5 "menu tarik"): tutup saat menekan di
   // luar menu atau Esc (fokus kembali ke tombolnya)
