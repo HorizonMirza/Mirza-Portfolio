@@ -105,8 +105,9 @@ test.describe('globe skill', () => {
     await page.goto('/id')
     const globe = page.getByRole('group', { name: 'Globe skill' })
     await globe.scrollIntoViewIfNeeded()
-    // logo yang bisa ditekan (sisi depan); fokus keyboard memutarnya ke tengah
+    // logo yang bisa ditekan (sisi depan, tidak inert); inert dihitung setelah hydration
     const items = globe.locator('.globe-item')
+    await expect(globe.locator('.globe-item:not([inert])').first()).toBeVisible()
     const index = await items.evaluateAll((els) => els.findIndex((el) => !el.hasAttribute('inert')))
     expect(index).toBeGreaterThanOrEqual(0)
     const first = items.nth(index)

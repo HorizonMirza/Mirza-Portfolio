@@ -1047,3 +1047,10 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
   - tombol Esc ditekan.
 - Panel rincian dikecualikan agar tautan "Dipakai di" tetap bisa diklik.
 
+## 78. Globe skill: satu warna biru, perbaikan WebKit (2026-10-18)
+
+- **Warna (pilihan pemilik dari 10 demo warna: B7 "biru laut", dengan warna yang sama untuk semua kategori):** garis bola dan lingkaran logo semuanya `--note` (biru situs, terang/gelap). Token `--cat-1..6` dihapus. Bagian 73 soal warna per kategori tidak berlaku lagi.
+- **Tombol kategori:** belum ada yang cocok dari 10 demo gaya (A1–A10). 10 demo baru disiapkan; tampilan sekarang tetap sampai pemilik memilih.
+- **Fokus tidak lagi memilih logo.** Di WebKit, klik pada tombol menyalakan `:focus-visible`, sehingga logo yang ditekan ulang langsung terpilih lagi (gagal di CI). Logo kini dipilih hanya lewat klik/Enter/Spasi dan panah kiri/kanan, sesuai tombol toggle biasa.
+- **Inert sejak awal:** HTML dari server menandai semua logo `inert`, karena sebelum hydration logo belum bisa dipakai dan tumpang-tindihnya belum dihitung. Sebelumnya hanya logo di sisi belakang yang inert, sehingga axe di WebKit sempat menemukan target bertumpuk sebelum JavaScript berjalan.
+

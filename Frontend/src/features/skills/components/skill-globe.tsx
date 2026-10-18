@@ -23,9 +23,8 @@ const GENERIC_ICONS = {
   sheet: FileSpreadsheet,
 } satisfies Record<GenericGlyph, unknown>
 
-// jumlah warna kategori di globals.css (--cat-1..--cat-6); kategori ke-7 dst mengulang dari awal
-const CATEGORY_COLORS = 6
-const categoryColor = (index: number) => `var(--cat-${(index % CATEGORY_COLORS) + 1})`
+// satu warna untuk semua kategori: biru situs (pilihan pemilik 2026-10-18, demo B7 dengan warna seragam)
+const RING_COLOR = 'var(--note)'
 
 type Vec = [number, number, number]
 
@@ -144,8 +143,9 @@ function Glyph({ item }: { item: SkillItem }) {
 // Globe skill di beranda (DESIGN.md bagian 73, pilihan pemilik demo S4 + warna kategori S7): logo skill
 // di permukaan bola bergaris lintang-bujur. Bola berputar pelan, bisa digeser (mouse atau jari ke
 // samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Tombol kategori
-// meredupkan kategori lain. Logo adalah tombol biasa (Tab, panah kiri/kanan); hanya garis bola yang
-// digambar di canvas. Posisi awal sudah dihitung di server, jadi tanpa JavaScript bola tetap tampil.
+// meredupkan kategori lain. Logo adalah tombol toggle biasa (Enter/Spasi, panah kiri/kanan); hanya
+// garis bola yang digambar di canvas. Posisi awal sudah dihitung di server, jadi tanpa JavaScript bola
+// tetap tampil.
 // Reduced-motion: tanpa putaran otomatis dan tanpa animasi saat berpindah logo.
 export function SkillGlobe({
   items,
@@ -511,8 +511,9 @@ export function SkillGlobe({
   const active = activeIndex === null ? null : items[activeIndex]
   // posisi awal (sama di server dan klien), selanjutnya diperbarui langsung oleh loop animasi
   const initial = points.map((p) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- back hanya dipakai loop animasi
     const { back, ...style } = itemStyle(p, START_YAW, START_PITCH, densityScale(points.length))
-    return { back, style }
+    return style
   })
 
   return (
@@ -531,20 +532,17 @@ export function SkillGlobe({
             data-dim={category !== null && item.categoryIndex !== category ? '' : undefined}
             aria-pressed={i === activeIndex}
             aria-controls={panelId}
-            inert={initial[i]?.back}
+            // sebelum JavaScript menghitung tumpang-tindih, logo belum bisa dipakai: semua inert
+            inert
             style={
               {
-                ...initial[i]?.style,
-                '--cat': categoryColor(item.categoryIndex),
+                ...initial[i],
+                '--cat': RING_COLOR,
                 '--logo': item.logoColor ?? 'currentColor',
               } as CSSProperties
             }
             // tekan ulang logo yang sedang terpilih: lepas, bola berputar lagi
             onClick={() => (i === activeIndex ? release() : select(i))}
-            onFocus={(event) => {
-              // fokus dari keyboard ikut memutar logo ke depan; fokus dari klik ditangani onClick
-              if (event.currentTarget.matches(':focus-visible')) select(i)
-            }}
             onKeyDown={(event) => onKeyDown(event, i)}
           >
             <span className="globe-logo">
@@ -576,7 +574,7 @@ export function SkillGlobe({
               key={name}
               type="button"
               aria-pressed={category === i}
-              style={{ '--cat': categoryColor(i) } as CSSProperties}
+              style={{ '--cat': RING_COLOR } as CSSProperties}
               onClick={() => toggleCategory(i)}
             >
               <i aria-hidden="true" />

@@ -35,13 +35,6 @@
   --gh-2: #6e9de8;
   --gh-3: #2f6fd6;
   --gh-4: #1b4c9c;
-  /* warna kategori globe skill (DESIGN.md bagian 73), urutan mengikuti urutan kategori di Admin */
-  --cat-1: #1d5fd0;
-  --cat-2: #0b7a3e;
-  --cat-3: #c2410c;
-  --cat-4: #7c3aed;
-  --cat-5: #be185d;
-  --cat-6: #0f766e;
 
   color-scheme: light;
 }
@@ -66,12 +59,6 @@
   --gh-2: #184a8a;
   --gh-3: #2f78d6;
   --gh-4: #4da3ff;
-  --cat-1: #4da3ff;
-  --cat-2: #34d399;
-  --cat-3: #fb923c;
-  --cat-4: #a78bfa;
-  --cat-5: #f472b6;
-  --cat-6: #2dd4bf;
 
   color-scheme: dark;
 }
