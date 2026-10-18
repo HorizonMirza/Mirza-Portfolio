@@ -12,8 +12,6 @@ export default function LocaleNotFound() {
     <NotFound
       title={t('title')}
       body={t('body')}
-      whatIs={t('whatIs')}
-      whatIsBody={t('whatIsBody')}
       action={
         <Link href="/" className={flowButtonClassName}>
           <FlowButtonContent text={t('home')} />

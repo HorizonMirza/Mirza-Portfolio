@@ -179,3 +179,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-16 | Grafik kontribusi GitHub: format statistik F10 minimal (label, angka besar, tanggal ringkas), angka sejajar di HP (DESIGN.md bagian 67) |
 | 2026-10-16 | Grafik kontribusi GitHub: tanggal statistik dengan nama bulan lengkap di layar lebar, singkat di HP, pemisah " - " berspasi (DESIGN.md bagian 68) |
 | 2026-10-16 | Grafik kontribusi GitHub di HP: scrollbar disembunyikan, morph 2D/3D tidak patah (kanvas tetap lebar selama morph, DESIGN.md bagian 69) |
+| 2026-10-18 | Halaman 404: sesuai bahasa URL (catch-all `[locale]/[...rest]`), tanpa terjemahan dan penjelasan 404, satu tombol Beranda/Home, kalimat satu baris di layar lebar, isi di tengah (DESIGN.md bagian 70) |

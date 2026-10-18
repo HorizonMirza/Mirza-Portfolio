@@ -101,12 +101,21 @@ test('tidak ada error di console', async ({ page, browserName }) => {
 })
 
 // URL /admin/* tanpa sesi diarahkan ke login (e2e/admin/access.spec.ts).
-for (const path of ['/id/halaman-yang-tidak-ada', '/en/missing-page']) {
-  test(`URL tidak dikenal ${path} menampilkan 404 dua bahasa`, async ({ page }) => {
+// URL tak dikenal di bawah /id atau /en: 404 dalam bahasa URL itu saja, satu tombol ke beranda,
+// tanpa terjemahan dan tanpa penjelasan 404 (revisi pemilik 2026-10-18).
+for (const [path, title, home, href] of [
+  ['/id/halaman-yang-tidak-ada', 'Boo! Halamannya hilang.', 'Beranda', '/id'],
+  ['/en/missing-page', 'Boo! Page missing.', 'Home', '/en'],
+] as const) {
+  test(`URL tidak dikenal ${path} menampilkan 404 sesuai bahasa`, async ({ page }) => {
     const response = await page.goto(path)
     expect(response?.status()).toBe(404)
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Boo! Halamannya hilang.')
-    await expect(page.getByText('Boo! Page missing.')).toBeVisible()
-    await expect(page.getByRole('link', { name: /Beranda/ })).toHaveAttribute('href', '/id')
+    const main = page.locator('main')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(title)
+    await expect(main.getByRole('link', { name: home, exact: true })).toHaveAttribute('href', href)
+    await expect(main.getByText(/Apa itu 404|What does 404 mean/)).toHaveCount(0)
+    await expect(
+      main.getByText(path.startsWith('/id') ? 'Boo! Page missing.' : 'Boo! Halamannya hilang.'),
+    ).toHaveCount(0)
   })
 }

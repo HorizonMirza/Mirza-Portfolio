@@ -957,3 +957,16 @@ Bagian ini menggantikan poin "Morph 2D/3D di HP" pada bagian 66.
 - Geser hanya aktif di 2D. Selama morph dan di 3D, posisi geser dikunci.
 - Ukuran dan kamera 3D selalu dihitung dari lebar yang terlihat, bukan dari lebar kanvas.
 
+## 70. Halaman 404: satu bahasa, lebih ringkas, di tengah (2026-10-18)
+
+Revisi pemilik; bagian ini memperbarui bagian 51.
+
+- **404 sesuai bahasa URL:** `app/[locale]/[...rest]/page.tsx` menangkap URL tak dikenal di bawah `/id` atau `/en` (misalnya `/id/bllog`) lalu memanggil `notFound()`. Akibatnya yang tampil adalah `[locale]/not-found.tsx`, lengkap dengan topbar dan footer. Sebelumnya URL seperti itu jatuh ke 404 global yang dua bahasa sekaligus.
+- **Isi:**
+  - judul ("Boo! Halamannya hilang." atau "Boo! Page missing.");
+  - satu kalimat, satu baris mulai 768 px dan boleh turun baris di HP;
+  - satu tombol, "Beranda" (ID) atau "Home" (EN).
+- **Yang dihapus:** baris terjemahan "Boo! Page missing." di bawah judul, penjelasan "Apa itu 404? · What does 404 mean?", dan tombol gabungan "Beranda · Home". Teks `NotFound.whatIs` dan `NotFound.whatIsBody` dihapus dari `messages`.
+- **404 global** (URL yang tidak cocok dengan rute mana pun) memakai bahasa default situs, Indonesia, dengan tombol "Beranda" ke `/id`.
+- **Letak:** blok isi berada di tengah layar (`min-h-[calc(100dvh-5rem)]`, rata tengah vertikal).
+
