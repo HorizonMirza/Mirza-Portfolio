@@ -1149,3 +1149,7 @@ Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup fot
   - Nama digeser `--face-dx` agar tengahnya tepat di tengah wajah, bukan di tengah layar.
   - Kata pertama dibagi tiga (MUH·AM·MAD). Bagian tengah diberi `margin-inline` sehingga ruangnya `--face-zone: 24cqh`; lebar "AM" Oswald 700 terukur 1,25em. MUH dan MAD sejajar di kiri-kanan wajah, H dan M sedikit tertutup kepala seperti A dan W di baris kedua (disetujui pemilik). Di HP ruang ini nol karena nama ada di atas kepala.
 - **Peran di pojok bawah (2026-10-19, demo peran 3 tanpa garis dan tanpa label "Peran"):** isi kolom Peran di Tentang (`aboutRoles`, dipisah "|") tampil sebagai `ul.hero-roles`. Peran pertama di kiri bawah, peran kedua di kanan bawah, JetBrains Mono huruf besar dengan bayangan latar agar terbaca di atas jas. Di HP dan tablet letaknya di atas menu ikon bawah (10 px); di layar lebar 5cqh dari bawah (12 px). Bila kolom Peran kosong, tidak ada yang tampil.
+- **Susunan HP (2026-10-19, < 768 px):**
+  - Nama naik ke 4cqh dan sedikit lebih besar (`min(15cqw, 12cqh)`).
+  - Foto selebar 125cqw, sehingga sisi lengan hanya terpotong sedikit. Foto dimulai tepat di bawah nama (`--photo-top`, dikurangi ruang di atas rambut dalam foto), jadi nama dan foto tidak saling menutupi. Lubang wajah di HP tidak dipakai.
+  - Tablet (768–1023 px) tetap: foto 84cqh rata bawah, nama di 12cqh.

@@ -2523,14 +2523,19 @@ html:has(.intro[open]) {
 .hero {
   /* posisi wajah dalam foto (dihitung dari potongan hero-portrait.webp) untuk lubang di salinan depan
      nama; jarak antarkata baris kedua agar huruf di kiri dan kanan wajah tetap terlihat */
-  /* HP dan tablet (foto 84cqh): lubang hanya selebar wajah, MIRZA WIRYA tanpa jarak tambahan */
-  --face-x: calc(50% - 1.7cqh);
-  --face-y: 39.5cqh;
-  --face-rx: 12cqh;
-  --face-ry: 18.5cqh;
+  /* HP (revisi pemilik 2026-10-19): nama di atas, foto 125cqw tepat di bawahnya tanpa saling menutup,
+     jadi tanpa lubang wajah; sisi lengan hanya terpotong sedikit */
+  --name-size: min(15cqw, 12cqh);
+  --name-top: 4cqh;
+  /* ruang kosong di atas rambut dalam foto (±6,6% tinggi) dikurangi agar kepala tepat di bawah nama */
+  --photo-top: calc(var(--name-top) + 1.8 * var(--name-size) + 2cqh - 7cqw);
+  --face-x: calc(50% - 2.5cqw);
+  --face-y: calc(var(--photo-top) + 0.28 * 122.8cqw);
+  --face-rx: 0px;
+  --face-ry: 0px;
   --face-gap: 0px;
   /* geser nama agar tengahnya tepat di tengah wajah; ruang suku tengah kata pertama (HP: tanpa) */
-  --face-dx: -1.7cqh;
+  --face-dx: -2.5cqw;
   --face-zone: 0px;
   /* halo lembut dan panjang gradasi bawah foto; tema terang lebih tipis */
   --hero-glow: rgb(29 95 208 / 0.16);
@@ -2550,11 +2555,11 @@ html:has(.intro[open]) {
 }
 .hero-name {
   position: absolute;
-  inset: 12% 0 auto;
+  inset: var(--name-top) 0 auto;
   /* ruang bawah agar masker pudar juga menutupi bagian huruf di luar kotak baris */
   padding-bottom: 0.18em;
   font-family: var(--font-display);
-  font-size: min(13cqw, 11cqh);
+  font-size: var(--name-size);
   font-weight: 700;
   line-height: 0.9;
   text-align: center;
@@ -2621,12 +2626,12 @@ html:has(.intro[open]) {
     #000 100%
   );
 }
-/* HP dan tablet: 84% tinggi hero; di HP lebih lebar dari layar (sisi lengan terpotong) */
+/* HP: mulai tepat di bawah nama, sedikit lebih lebar dari layar */
 .hero-portrait {
   position: absolute;
-  bottom: 0;
+  top: var(--photo-top);
   left: 50%;
-  height: 84cqh;
+  width: 125cqw;
   aspect-ratio: 1120 / 1100;
   margin: 0;
   translate: -50% 0;
@@ -2658,9 +2663,25 @@ html:has(.intro[open]) {
   height: 100%;
   pointer-events: none;
 }
+/* tablet: foto 84cqh rata bawah, nama di 12% dan sedikit menutupi kepala dengan lubang wajah */
 @media (min-width: 48rem) {
+  .hero {
+    --name-size: min(13cqw, 11cqh);
+    --name-top: 12cqh;
+    --face-x: calc(50% - 1.7cqh);
+    --face-y: 39.5cqh;
+    --face-rx: 12cqh;
+    --face-ry: 18.5cqh;
+    --face-dx: -1.7cqh;
+  }
   .hero-name {
     line-height: 0.86;
+  }
+  .hero-portrait {
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 84cqh;
   }
 }
 /* layar lebar: foto setinggi hero, nama lebih besar */
