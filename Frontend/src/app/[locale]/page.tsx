@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
@@ -140,43 +139,31 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       className="hero-portrait-img"
     />
   )
-  const currentRole = profile ? loc(profile, 'currentRole', locale) : ''
   const nameWords = name.split(/\s+/)
+  // baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca nama utuh
+  const nameLines = [nameWords[0], nameWords.slice(1).join(' ')].filter(Boolean).map((line, i) => (
+    <span key={i}>
+      {i > 0 ? ' ' : null}
+      {line}
+    </span>
+  ))
 
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
-      {/* Hero (revisi pemilik 2026-10-19, DESIGN.md bagian 85): foto tanpa bingkai rata bawah dengan
-          liquid mask, nama dua baris besar di belakang foto yang memudar ke bawah (letak demo 2, efek
-          demo 8). Hanya posisi sekarang dan tombol Lihat project di depan. */}
+      {/* Hero (revisi pemilik 2026-10-19, DESIGN.md bagian 85 dan 86): foto besar tanpa bingkai rata
+          bawah, nama dua baris memudar ke bawah di belakang dan di depan foto. Salinan depan dilubangi di
+          area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
       <section aria-labelledby="hero-title" className="hero">
-        <h1 id="hero-title" className="hero-name">
-          {/* baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca utuh */}
-          {[nameWords[0], nameWords.slice(1).join(' ')].filter(Boolean).map((line, i) => (
-            <span key={i}>
-              {i > 0 ? ' ' : null}
-              {line}
-            </span>
-          ))}
-        </h1>
-        <figure className="hero-portrait">
-          <LiquidMaskPortrait>{portrait}</LiquidMaskPortrait>
-        </figure>
-        <div className="hero-front">
-          {currentRole ? (
-            <p className="hero-now">
-              <span>{t('nowLabel')}</span>
-              {currentRole}
-            </p>
-          ) : null}
-          <span className="hero-portrait-hint" aria-hidden="true">
-            {t('hoverHint')}
-          </span>
-          <Link href="/projects" className="hero-cta">
-            {t('viewProjects')}
-            <ArrowRight aria-hidden="true" />
-          </Link>
-        </div>
+        <LiquidMaskPortrait className="hero-stage">
+          <h1 id="hero-title" className="hero-name">
+            {nameLines}
+          </h1>
+          <figure className="hero-portrait">{portrait}</figure>
+          <div aria-hidden="true" className="hero-name-front">
+            <p className="hero-name">{nameLines}</p>
+          </div>
+        </LiquidMaskPortrait>
       </section>
 
       {sections.includes('experience') ? (

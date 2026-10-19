@@ -2516,10 +2516,19 @@ html:has(.intro[open]) {
   }
 }
 
-/* Hero beranda (revisi pemilik 2026-10-19, DESIGN.md bagian 85): foto tanpa bingkai rata bawah di
-   tengah, nama dua baris besar di belakangnya yang memudar ke bawah (letak demo 2, efek demo 8), posisi
-   sekarang dan tombol Lihat project di depan. Tinggi tetap satu layar agar ukuran memakai cqw/cqh. */
+/* Hero beranda (revisi pemilik 2026-10-19, DESIGN.md bagian 85 dan 86): foto besar tanpa bingkai rata
+   bawah di tengah, nama dua baris memudar ke bawah di belakang foto dan sebagai salinan di depan foto
+   yang dilubangi di area wajah. Liquid mask di seluruh hero. Tinggi tetap satu layar agar ukuran
+   memakai cqw/cqh. */
 .hero {
+  /* posisi wajah dalam foto (dihitung dari potongan hero-portrait.webp) untuk lubang di salinan depan
+     nama; jarak antarkata baris kedua agar huruf di kiri dan kanan wajah tetap terlihat */
+  /* HP dan tablet (foto 72cqh): lubang hanya selebar wajah, jarak mengisi lebar layar */
+  --face-x: calc(50% - 1.5cqh);
+  --face-y: 48cqh;
+  --face-rx: 10.3cqh;
+  --face-ry: 18cqh;
+  --face-gap: calc(90cqw - 5.45em);
   container-type: size;
   position: relative;
   height: calc(100svh - 4rem);
@@ -2527,13 +2536,19 @@ html:has(.intro[open]) {
   max-height: 64rem;
   overflow: hidden;
 }
+.hero-mask {
+  position: absolute;
+  inset: 0;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
 .hero-name {
   position: absolute;
-  inset: 25% 0 auto;
+  inset: 28% 0 auto;
   /* ruang bawah agar masker pudar juga menutupi bagian huruf di luar kotak baris */
   padding-bottom: 0.18em;
   font-family: var(--font-display);
-  font-size: min(17.5cqw, 14cqh);
+  font-size: min(10.5cqw, 11cqh);
   font-weight: 700;
   line-height: 0.9;
   text-align: center;
@@ -2544,25 +2559,38 @@ html:has(.intro[open]) {
 .hero-name span {
   display: block;
 }
-/* HP: foto lebih tinggi dari lebar layar (sisi lengan terpotong) agar kepala menutupi nama */
+.hero-name span + span {
+  white-space: nowrap;
+  word-spacing: var(--face-gap);
+}
+/* salinan nama di depan foto, kosong di area wajah (demo 5 pilihan pemilik) */
+.hero-name-front {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    var(--face-rx) var(--face-ry) at var(--face-x) var(--face-y),
+    transparent 88%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    var(--face-rx) var(--face-ry) at var(--face-x) var(--face-y),
+    transparent 88%,
+    #000 100%
+  );
+}
+/* HP dan tablet: 72% tinggi hero; di HP lebih lebar dari layar (sisi lengan terpotong) */
 .hero-portrait {
   position: absolute;
   bottom: 0;
   left: 50%;
-  z-index: 1;
-  height: 74cqh;
+  height: 72cqh;
   aspect-ratio: 1120 / 1100;
   margin: 0;
   translate: -50% 0;
 }
-.hero-mask {
-  position: absolute;
-  inset: 0;
-  touch-action: pan-y;
-  cursor: crosshair;
-}
 /* bawah foto memudar ke latar halaman */
-.hero-mask::after {
+.hero-portrait::after {
   content: '';
   position: absolute;
   inset: auto 0 0;
@@ -2584,104 +2612,26 @@ html:has(.intro[open]) {
   height: 100%;
   pointer-events: none;
 }
-.hero-front {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-}
-/* posisi sekarang hanya di layar lebar (di HP ada di halaman Tentang) */
-.hero-now {
-  display: none;
-}
-.hero-now span {
-  display: block;
-  margin-bottom: 0.25rem;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.hero-portrait-hint {
-  position: absolute;
-  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px) + 3.75rem);
-  left: 50%;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  translate: -50% 0;
-}
-@media (hover: none) {
-  .hero-portrait-hint {
-    display: none;
-  }
-}
-/* HP: di atas menu ikon yang menempel di bawah layar */
-.hero-cta {
-  position: absolute;
-  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.375rem;
-  border: 1px solid var(--note);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--bg) 82%, transparent);
-  backdrop-filter: blur(8px);
-  color: var(--text);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  white-space: nowrap;
-  pointer-events: auto;
-  translate: -50% 0;
-  transition:
-    background-color 0.2s,
-    color 0.2s;
-}
-.hero-cta svg {
-  width: 1rem;
-  height: 1rem;
-}
-.hero-cta:hover {
-  background: var(--text);
-  color: var(--bg);
-}
 @media (min-width: 48rem) {
   .hero-name {
-    top: 12%;
-    font-size: min(15.5cqw, 21cqh);
+    top: 16%;
     line-height: 0.86;
   }
-  .hero-portrait {
-    height: auto;
-    width: min(100cqw, 93cqh * 1120 / 1100);
-  }
 }
+/* layar lebar: foto setinggi hero, nama lebih besar */
 @media (min-width: 64rem) {
-  .hero-cta {
-    bottom: 5cqh;
+  .hero {
+    --face-x: calc(50% - 2cqh);
+    --face-y: 28cqh;
+    --face-rx: 19.3cqh;
+    --face-ry: 25cqh;
+    --face-gap: min(26cqh, 22cqw);
   }
-  .hero-portrait-hint {
-    bottom: calc(5cqh + 3.75rem);
+  .hero-name {
+    font-size: min(13cqw, 21cqh);
   }
-  .hero-now {
-    display: block;
-    position: absolute;
-    bottom: 6cqh;
-    left: clamp(1.5rem, 3.2cqw, 4rem);
-    max-width: min(24cqw, 22rem);
-    font-size: 0.875rem;
-    line-height: 1.45;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-cta {
-    transition: none;
+  .hero-portrait {
+    height: 100cqh;
   }
 }
 

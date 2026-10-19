@@ -1122,3 +1122,14 @@ Revisi pemilik dengan video referensi ibnuhakim.id (hanya prinsip yang diambil).
 - **Di depan foto:** baris "Sekarang" (posisi dari profil, hanya ≥ 1024 px), petunjuk "Arahkan kursor ke foto" (hanya perangkat dengan kursor), dan tombol "Lihat project". Di HP dan tablet tombol berada di atas menu ikon bawah.
 - **Ukuran:** hero setinggi satu layar (`100svh − 4rem`, 34–64 rem) dengan `container-type: size`, jadi nama dan foto memakai satuan `cqw`/`cqh`.
 - **Menunggu pemilik:** desain foto kedua untuk lapisan liquid mask. Sementara ini lapisannya masih versi cetak biru dari foto yang sama.
+
+## 86. Hero: foto lebih besar, nama terbaca di depan foto, hover selayar (2026-10-19)
+
+Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup foto; pilihan pemilik demo 5 ("wajah tetap bersih") dengan jarak antara MIRZA dan WIRYA agar huruf A dan W sedikit terlihat.
+
+- **Dihapus dari hero:** baris "Sekarang", petunjuk "Arahkan kursor ke foto", dan tombol "Lihat project" (teks `nowLabel`, `hoverHint`, `viewProjects` ikut dihapus). Hero kini hanya berisi nama dan foto.
+- **Foto lebih besar:** setinggi hero di layar ≥ 1024 px; 72% tinggi hero di HP dan tablet.
+- **Nama sedikit turun:** 16% dari atas di layar ≥ 768 px, 28% di HP.
+- **Nama terbaca:** `h1` tetap di belakang foto. Di depan foto ada salinan `aria-hidden` yang dilubangi di area wajah dengan `mask-image` radial, sehingga huruf terlihat di rambut, bahu, dan latar, tetapi wajah tetap bersih. Posisi dan ukuran lubang (`--face-x`, `--face-y`, `--face-rx`, `--face-ry`) dihitung dari potongan `hero-portrait.webp`. Jika foto hero diganti, nilai ini perlu disesuaikan.
+- **Jarak MIRZA–WIRYA:** baris kedua memakai `word-spacing: var(--face-gap)`, di layar lebar `min(26cqh, 22cqw)`, sehingga A dan W berada di tepi lubang wajah. Di HP lebar layar tidak cukup untuk wajah dan dua kata, jadi huruf lebih kecil (`min(10.5cqw, 11cqh)`), lubang hanya selebar wajah, dan jaraknya mengisi lebar layar (`90cqw − 5,45em`). Akibatnya nama di HP berada di atas kepala.
+- **Hover selayar:** `LiquidMaskPortrait` kini membungkus seluruh hero. Lapisan kedua berupa rona biru tipis dengan kisi 24 px di seluruh area, ditambah versi cetak biru foto di posisi foto. Kanvas berada paling depan, tetapi tidak menangkap klik.

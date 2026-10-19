@@ -4,19 +4,21 @@ import { type ReactNode, useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// ukuran lapisan kedua yang dibuat dari foto (cukup untuk potret ±500 px, ringan diolah per piksel)
-const BACK_WIDTH = 640
-// jejak gumpalan: umur (detik), jari-jari relatif sisi pendek potret, jumlah maksimum
+// ukuran lapisan kedua yang dibuat dari foto (cukup untuk potret besar, ringan diolah per piksel)
+const BACK_WIDTH = 720
+// jejak gumpalan: umur (detik), jari-jari relatif sisi pendek area, jumlah maksimum
 const BLOB_LIFE = 1.1
 const BLOB_LIFE_REDUCED = 0.25
-const BLOB_RADIUS = 0.17
-const MAX_BLOBS = 60
+const BLOB_RADIUS = 0.13
+const MAX_BLOBS = 70
+// kisi cetak biru di seluruh area (px CSS)
+const GRID = 24
 
 type Blob = { x: number; y: number; r: number; life: number; seed: number }
 
-// Lapisan kedua sementara (sebelum ada foto kedua dari pemilik): foto yang sama dalam gaya cetak biru,
-// abu-abu kontras tinggi diwarnai biru situs dengan kisi tipis. Diolah per piksel (getImageData) agar
-// juga jalan di Safari yang belum mendukung ctx.filter.
+// Lapisan kedua sementara untuk foto (sebelum ada foto kedua dari pemilik): foto yang sama dalam gaya
+// cetak biru, abu-abu kontras tinggi diwarnai biru. Diolah per piksel (getImageData) agar juga jalan di
+// Safari yang belum mendukung ctx.filter. Latar transparan tetap transparan.
 function blueprint(img: HTMLImageElement) {
   const ratio = img.naturalHeight / img.naturalWidth
   const c = document.createElement('canvas')
@@ -36,27 +38,14 @@ function blueprint(img: HTMLImageElement) {
     px[i + 2] = 80 + v * 175
   }
   g.putImageData(data, 0, 0)
-  g.strokeStyle = 'rgb(190 215 255 / 0.16)'
-  g.lineWidth = 1
-  for (let x = 0; x < c.width; x += 20) {
-    g.beginPath()
-    g.moveTo(x + 0.5, 0)
-    g.lineTo(x + 0.5, c.height)
-    g.stroke()
-  }
-  for (let y = 0; y < c.height; y += 20) {
-    g.beginPath()
-    g.moveTo(0, y + 0.5)
-    g.lineTo(c.width, y + 0.5)
-    g.stroke()
-  }
   return c
 }
 
-// Potret hero dengan efek "liquid mask" (permintaan pemilik 2026-10-18, terinspirasi komponen
-// HoverMaskReveal): kursor atau jari meninggalkan jejak gumpalan lembut yang membuka lapisan kedua di
-// bawah foto, lalu menyusut dan menutup lagi. Dibuat sendiri dengan canvas 2D, tanpa WebGL/three.js.
-// Foto tetap <img> biasa (children) sehingga tampil tanpa JavaScript; canvas hanya dekorasi.
+// Hero dengan efek "liquid mask" (permintaan pemilik 2026-10-18, terinspirasi komponen HoverMaskReveal;
+// sejak 2026-10-19 seluruh layar hero): kursor atau jari meninggalkan jejak gumpalan lembut yang membuka
+// lapisan kedua, yaitu kisi cetak biru di seluruh area dan versi cetak biru foto di posisi foto, lalu
+// menyusut dan menutup lagi. Dibuat sendiri dengan canvas 2D, tanpa WebGL/three.js. Isi (nama dan
+// <img>) tetap HTML biasa sehingga tampil tanpa JavaScript; canvas hanya dekorasi.
 export function LiquidMaskPortrait({
   children,
   className,
@@ -76,8 +65,10 @@ export function LiquidMaskPortrait({
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
     const mask = document.createElement('canvas')
     const mctx = mask.getContext('2d')
-    if (!mctx) return
-    let back: HTMLCanvasElement | null = null
+    const back = document.createElement('canvas')
+    const bctx = back.getContext('2d')
+    if (!mctx || !bctx) return
+    let photo: HTMLCanvasElement | null = null
     let blobs: Blob[] = []
     let pointer: { x: number; y: number } | null = null
     let width = 0
@@ -85,29 +76,69 @@ export function LiquidMaskPortrait({
     let dpr = 1
     let frame = 0
     let last = 0
+    let dirty = true
     let disposed = false
 
     const prepare = () => {
-      if (disposed || back) return
+      if (disposed || photo) return
       try {
-        back = blueprint(img)
+        photo = blueprint(img)
       } catch {
-        // foto lintas origin tanpa CORS: efek dilewati, foto tetap tampil
-        back = null
+        // foto lintas origin tanpa CORS: hanya kisi yang terbuka, foto tetap tampil
+        photo = null
       }
+      dirty = true
     }
     if (img.complete && img.naturalWidth) prepare()
     else img.addEventListener('load', prepare, { once: true })
+
+    // susun lapisan kedua selebar area: rona biru tipis + kisi, lalu foto cetak biru di posisi foto
+    const compose = () => {
+      dirty = false
+      bctx.setTransform(1, 0, 0, 1, 0, 0)
+      bctx.clearRect(0, 0, back.width, back.height)
+      bctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      bctx.fillStyle = 'rgb(29 95 208 / 0.14)'
+      bctx.fillRect(0, 0, width, height)
+      bctx.strokeStyle = 'rgb(77 163 255 / 0.28)'
+      bctx.lineWidth = 1
+      bctx.beginPath()
+      for (let x = 0; x <= width; x += GRID) {
+        bctx.moveTo(x + 0.5, 0)
+        bctx.lineTo(x + 0.5, height)
+      }
+      for (let y = 0; y <= height; y += GRID) {
+        bctx.moveTo(0, y + 0.5)
+        bctx.lineTo(width, y + 0.5)
+      }
+      bctx.stroke()
+      if (!photo) return
+      const area = root.getBoundingClientRect()
+      const rect = img.getBoundingClientRect()
+      const x = rect.left - area.left
+      const y = rect.top - area.top
+      // mengikuti object-fit: cover dari <img>
+      const scale = Math.max(rect.width / photo.width, rect.height / photo.height)
+      const w = photo.width * scale
+      const h = photo.height * scale
+      bctx.save()
+      bctx.beginPath()
+      bctx.rect(x, y, rect.width, rect.height)
+      bctx.clip()
+      bctx.drawImage(photo, x + (rect.width - w) / 2, y + (rect.height - h) / 2, w, h)
+      bctx.restore()
+    }
 
     const resize = () => {
       const rect = root.getBoundingClientRect()
       width = rect.width
       height = rect.height
       dpr = Math.min(2, window.devicePixelRatio || 1)
-      for (const c of [canvas, mask]) {
+      for (const c of [canvas, mask, back]) {
         c.width = Math.round(width * dpr)
         c.height = Math.round(height * dpr)
       }
+      dirty = true
     }
     resize()
     const resizeObserver = new ResizeObserver(resize)
@@ -127,7 +158,8 @@ export function LiquidMaskPortrait({
     const draw = (time: number) => {
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      if (!back || blobs.length === 0) return
+      if (blobs.length === 0) return
+      if (dirty) compose()
       mctx.setTransform(1, 0, 0, 1, 0, 0)
       mctx.clearRect(0, 0, mask.width, mask.height)
       mctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -144,11 +176,7 @@ export function LiquidMaskPortrait({
         mctx.ellipse(b.x, b.y, r, r / wobble, b.seed, 0, Math.PI * 2)
         mctx.fill()
       }
-      // lapisan kedua mengikuti object-fit: cover, lalu dipotong dengan masker
-      const scale = Math.max(canvas.width / back.width, canvas.height / back.height)
-      const w = back.width * scale
-      const h = back.height * scale
-      ctx.drawImage(back, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h)
+      ctx.drawImage(back, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
       ctx.drawImage(mask, 0, 0)
       ctx.globalCompositeOperation = 'source-over'

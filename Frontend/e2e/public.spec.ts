@@ -2,12 +2,8 @@ import { expect, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
 
-test('beranda: tombol utama terlihat tanpa scroll dan susunan bagian sesuai revisi', async ({
-  page,
-  isMobile,
-}) => {
+test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }) => {
   await page.goto('/id')
-  await expect(page.getByRole('link', { name: 'Lihat project' })).toBeInViewport()
   // hero (revisi 2026-10-19, DESIGN.md bagian 85): nama sebagai h1 terbaca utuh dengan spasi di
   // belakang foto tanpa bingkai yang memakai liquid mask; panel status, angka, CV, dan sosial dihapus
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^\S+( \S+)+$/)
@@ -15,8 +11,12 @@ test('beranda: tombol utama terlihat tanpa scroll dan susunan bagian sesuai revi
   await expect(portrait).toBeInViewport()
   await expect(portrait).toHaveAttribute('alt', /.+/)
   await expect(page.locator('.hero-mask-canvas')).toHaveCount(1)
+  // tanpa tombol Lihat project dan petunjuk hover (revisi 2026-10-19)
+  await expect(page.locator('section[aria-labelledby="hero-title"]').getByRole('link')).toHaveCount(
+    0,
+  )
   const hero = page.locator('section[aria-labelledby="hero-title"]')
-  for (const text of [/Terbuka untuk kerja/, /Resume CV/, /^Lokasi$/, /^Kampus$/]) {
+  for (const text of [/Terbuka untuk kerja/, /Resume CV/, /^Lokasi$/, /^Kampus$/, /^Sekarang$/]) {
     await expect(hero.getByText(text)).toHaveCount(0)
   }
   // Keahlian Teknis dan GitHub (revisi pemilik 2026-10-16): judul di tengah tanpa nomor, tanpa
