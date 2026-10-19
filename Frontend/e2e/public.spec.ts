@@ -16,6 +16,9 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
     0,
   )
   const hero = page.locator('section[aria-labelledby="hero-title"]')
+  // peran dari profil di pojok kiri dan kanan bawah (demo peran 3, 2026-10-19)
+  await expect(hero.locator('.hero-roles li')).toHaveCount(2)
+  await expect(hero.locator('.hero-roles li').first()).toBeInViewport()
   for (const text of [/Terbuka untuk kerja/, /Resume CV/, /^Lokasi$/, /^Kampus$/, /^Sekarang$/]) {
     await expect(hero.getByText(text)).toHaveCount(0)
   }

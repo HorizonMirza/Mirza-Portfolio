@@ -139,6 +139,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       className="hero-portrait-img"
     />
   )
+  // peran dari profil (kolom Peran di Tentang, dipisah "|"), di pojok bawah hero (demo peran 3)
+  const roles = (profile ? loc(profile, 'aboutRoles', locale) : '')
+    .split('|')
+    .map((r) => r.trim())
+    .filter(Boolean)
   const nameWords = name.split(/\s+/)
   // Baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca nama utuh.
   // Kata pertama dibagi tiga (mis. MUH·AM·MAD): bagian tengah diberi ruang selebar wajah agar sisi
@@ -173,6 +178,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           <div aria-hidden="true" className="hero-name-front">
             <p className="hero-name">{nameLines}</p>
           </div>
+          {roles.length > 0 ? (
+            <ul className="hero-roles">
+              {roles.map((role) => (
+                <li key={role}>{role}</li>
+              ))}
+            </ul>
+          ) : null}
         </LiquidMaskPortrait>
       </section>
 

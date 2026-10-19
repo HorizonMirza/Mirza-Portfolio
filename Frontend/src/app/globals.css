@@ -2577,6 +2577,26 @@ html:has(.intro[open]) {
   display: inline;
   margin-inline: max(0px, calc((var(--face-zone) - 1.25em) / 2));
 }
+.hero-roles {
+  position: absolute;
+  inset: auto 1rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  /* tetap terbaca di atas jas dan kemeja */
+  text-shadow:
+    0 0 6px var(--bg),
+    0 0 14px var(--bg);
+  pointer-events: none;
+}
+.hero-roles li:last-child:not(:first-child) {
+  text-align: right;
+}
 .hero-glow {
   position: absolute;
   inset: 0;
@@ -2653,6 +2673,11 @@ html:has(.intro[open]) {
     --face-gap: min(21cqh, 18cqw);
     --face-dx: -2cqh;
     --face-zone: 24cqh;
+  }
+  .hero-roles {
+    inset: auto clamp(1.5rem, 3.2cqw, 4rem) 5cqh;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
   }
   .hero-name {
     top: 16%;
