@@ -2550,6 +2550,8 @@ html[data-intro='pending'] body {
   /* halo lembut dan panjang gradasi bawah foto; tema terang lebih tipis */
   --hero-glow: rgb(29 95 208 / 0.16);
   --hero-fade: 14%;
+  /* jejak hover di luar tubuh (bentuk cair tipis, seperti referensi HoverMaskReveal) */
+  --hero-trail: rgb(10 10 10 / 0.07);
   container-type: size;
   position: relative;
   /* satu layar penuh di bawah topbar (±3,5rem); lvh agar bagian berikutnya tidak mengintip saat
@@ -2737,11 +2739,13 @@ html[data-intro='pending'] body {
 .dark .hero {
   --hero-glow: rgb(255 255 255 / 0.18);
   --hero-fade: 24%;
+  --hero-trail: rgb(255 255 255 / 0.1);
 }
 @media (prefers-color-scheme: dark) {
   :root:not(.light):not(.dark) .hero {
     --hero-glow: rgb(255 255 255 / 0.18);
     --hero-fade: 24%;
+    --hero-trail: rgb(255 255 255 / 0.1);
   }
 }
 

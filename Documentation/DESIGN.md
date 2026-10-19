@@ -1180,3 +1180,8 @@ Permintaan pemilik: saat di-hover, foto berganti menjadi armor seperti referensi
 - `LiquidMaskPortrait` menerima `back` (alamat gambar) dan `bleed`, lalu menggambar armor tepat di atas `<img>` pertama dengan ruang tambahan itu. Bagian bawah armor memudar sama seperti foto (`--hero-fade`).
 - Gambar armor (±100 KB) dimuat 1,2 detik setelah halaman tampil, atau saat hero pertama kali disentuh, jadi tidak memperlambat tampilan awal.
 - Bila foto hero atau armor diganti, penyelarasan (skala 1,3×, posisi mata) perlu dihitung ulang.
+- **Revisi armor (2026-10-19):**
+  - Dari leher ke bawah (y 560 dalam bingkai foto), armor diregangkan vertikal 1,17× agar sarung tangan dan lengan bersilang jatuh tepat di tangan foto.
+  - Kepala tidak dilebarkan; ukuran helm tetap seperti semula (pemilik menolak pelebaran 16%). Supaya telinga tidak terlihat saat di-hover, lapisan kedua diberi siluet foto berwarna latar halaman di paling belakang. Di dalam jejak, foto benar-benar berganti menjadi armor, dan bagian foto yang tidak tertutup armor (telinga) hilang, seperti video referensi. Huruf nama yang bertumpuk dengan siluet ikut tertutup di dalam jejak.
+  - Disetujui lewat gambar perbandingan setengah tembus.
+- **Jejak di luar tubuh:** seperti video referensi, jejak hover tetap terlihat di luar foto sebagai bentuk cair tipis (`--hero-trail`: hitam 7% di tema terang, putih 10% di tema gelap). Jejak digambar di belakang armor setelah gradasi bawah. Lapisan disusun ulang saat tema berganti.

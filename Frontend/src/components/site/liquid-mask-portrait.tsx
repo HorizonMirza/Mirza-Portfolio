@@ -48,7 +48,9 @@ export function LiquidMaskPortrait({
     const mctx = mask.getContext('2d')
     const layer = document.createElement('canvas')
     const bctx = layer.getContext('2d')
-    if (!mctx || !bctx) return
+    const silhouette = document.createElement('canvas')
+    const sctx = silhouette.getContext('2d')
+    if (!mctx || !bctx || !sctx) return
     let photo: HTMLImageElement | null = null
     let blobs: Blob[] = []
     let pointer: { x: number; y: number } | null = null
@@ -85,6 +87,7 @@ export function LiquidMaskPortrait({
       bctx.clearRect(0, 0, layer.width, layer.height)
       if (!photo) return
       bctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      const style = getComputedStyle(root)
       const area = root.getBoundingClientRect()
       const rect = img.getBoundingClientRect()
       const x = rect.left - area.left
@@ -97,7 +100,7 @@ export function LiquidMaskPortrait({
         rect.width * (1 + 2 * bleed.x),
         rect.height * (1 + bleed.top),
       )
-      const fade = parseFloat(getComputedStyle(root).getPropertyValue('--hero-fade')) / 100 || 0
+      const fade = parseFloat(style.getPropertyValue('--hero-fade')) / 100 || 0
       if (fade > 0) {
         const top = y + rect.height * (1 - fade)
         const gradient = bctx.createLinearGradient(0, top, 0, y + rect.height)
@@ -115,6 +118,28 @@ export function LiquidMaskPortrait({
         )
         bctx.globalCompositeOperation = 'source-over'
       }
+      // di luar tubuh jejak tetap terlihat sebagai bentuk cair tipis (seperti referensi); digambar di
+      // belakang armor setelah gradasi agar tidak ikut terhapus. Warna dari --hero-trail sesuai tema.
+      const trail = style.getPropertyValue('--hero-trail').trim()
+      if (trail) {
+        bctx.globalCompositeOperation = 'destination-over'
+        bctx.fillStyle = trail
+        bctx.fillRect(0, 0, width, height)
+      }
+      // Paling belakang: siluet foto pertama berwarna latar halaman, jadi di dalam jejak foto benar-benar
+      // berganti dan bagian yang tidak tertutup armor (mis. telinga) hilang (permintaan pemilik 2026-10-19)
+      sctx.setTransform(1, 0, 0, 1, 0, 0)
+      sctx.clearRect(0, 0, silhouette.width, silhouette.height)
+      sctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      sctx.globalCompositeOperation = 'source-over'
+      sctx.drawImage(img, x, y, rect.width, rect.height)
+      sctx.globalCompositeOperation = 'source-in'
+      sctx.fillStyle = getComputedStyle(document.body).backgroundColor
+      sctx.fillRect(0, 0, width, height)
+      bctx.setTransform(1, 0, 0, 1, 0, 0)
+      bctx.globalCompositeOperation = 'destination-over'
+      bctx.drawImage(silhouette, 0, 0)
+      bctx.globalCompositeOperation = 'source-over'
       bctx.restore()
     }
 
@@ -123,7 +148,7 @@ export function LiquidMaskPortrait({
       width = rect.width
       height = rect.height
       dpr = Math.min(2, window.devicePixelRatio || 1)
-      for (const c of [canvas, mask, layer]) {
+      for (const c of [canvas, mask, layer, silhouette]) {
         c.width = Math.round(width * dpr)
         c.height = Math.round(height * dpr)
       }
@@ -132,6 +157,14 @@ export function LiquidMaskPortrait({
     resize()
     const resizeObserver = new ResizeObserver(resize)
     resizeObserver.observe(root)
+    // ganti tema (kelas di <html>) mengubah warna jejak dan gradasi: susun ulang lapisan kedua
+    const themeObserver = new MutationObserver(() => {
+      dirty = true
+    })
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
 
     const add = (x: number, y: number, strength = 1) => {
       blobs.push({
@@ -228,6 +261,7 @@ export function LiquidMaskPortrait({
       cancelAnimationFrame(frame)
       window.clearTimeout(timer)
       resizeObserver.disconnect()
+      themeObserver.disconnect()
       root.removeEventListener('pointermove', onMove)
       root.removeEventListener('pointerleave', onLeave)
       root.removeEventListener('pointerdown', onDown)
