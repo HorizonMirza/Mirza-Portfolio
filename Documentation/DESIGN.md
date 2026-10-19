@@ -1133,3 +1133,8 @@ Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup fot
 - **Nama terbaca:** `h1` tetap di belakang foto. Di depan foto ada salinan `aria-hidden` yang dilubangi di area wajah dengan `mask-image` radial, sehingga huruf terlihat di rambut, bahu, dan latar, tetapi wajah tetap bersih. Posisi dan ukuran lubang (`--face-x`, `--face-y`, `--face-rx`, `--face-ry`) dihitung dari potongan `hero-portrait.webp`. Jika foto hero diganti, nilai ini perlu disesuaikan.
 - **Jarak MIRZA–WIRYA:** baris kedua memakai `word-spacing: var(--face-gap)`, di layar lebar `min(26cqh, 22cqw)`, sehingga A dan W berada di tepi lubang wajah. Di HP lebar layar tidak cukup untuk wajah dan dua kata, jadi huruf lebih kecil (`min(10.5cqw, 11cqh)`), lubang hanya selebar wajah, dan jaraknya mengisi lebar layar (`90cqw − 5,45em`). Akibatnya nama di HP berada di atas kepala.
 - **Hover selayar:** `LiquidMaskPortrait` kini membungkus seluruh hero. Lapisan kedua berupa rona biru tipis dengan kisi 24 px di seluruh area, ditambah versi cetak biru foto di posisi foto. Kanvas berada paling depan, tetapi tidak menangkap klik.
+
+**Revisi lanjutan (2026-10-19):**
+- Baris kedua kini simetris di tengah. Jarak MIRZA–WIRYA dikecilkan menjadi `min(21cqh, 18cqw)`, sehingga W sedikit tertutup wajah (disetujui pemilik).
+- Gradasi bawah foto lebih panjang: 40% tinggi foto, memudar bertahap ke latar.
+- HP dan tablet: foto 84% tinggi hero (lebih ke atas), nama di 12% dari atas dengan huruf `min(13cqw, 11cqh)`, dan MIRZA WIRYA tanpa jarak tambahan. Lubang wajah disesuaikan dengan ukuran foto ini.

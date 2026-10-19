@@ -2523,12 +2523,12 @@ html:has(.intro[open]) {
 .hero {
   /* posisi wajah dalam foto (dihitung dari potongan hero-portrait.webp) untuk lubang di salinan depan
      nama; jarak antarkata baris kedua agar huruf di kiri dan kanan wajah tetap terlihat */
-  /* HP dan tablet (foto 72cqh): lubang hanya selebar wajah, jarak mengisi lebar layar */
-  --face-x: calc(50% - 1.5cqh);
-  --face-y: 48cqh;
-  --face-rx: 10.3cqh;
-  --face-ry: 18cqh;
-  --face-gap: calc(90cqw - 5.45em);
+  /* HP dan tablet (foto 84cqh): lubang hanya selebar wajah, MIRZA WIRYA tanpa jarak tambahan */
+  --face-x: calc(50% - 1.7cqh);
+  --face-y: 39.5cqh;
+  --face-rx: 12cqh;
+  --face-ry: 18.5cqh;
+  --face-gap: 0px;
   container-type: size;
   position: relative;
   height: calc(100svh - 4rem);
@@ -2544,11 +2544,11 @@ html:has(.intro[open]) {
 }
 .hero-name {
   position: absolute;
-  inset: 28% 0 auto;
+  inset: 12% 0 auto;
   /* ruang bawah agar masker pudar juga menutupi bagian huruf di luar kotak baris */
   padding-bottom: 0.18em;
   font-family: var(--font-display);
-  font-size: min(10.5cqw, 11cqh);
+  font-size: min(13cqw, 11cqh);
   font-weight: 700;
   line-height: 0.9;
   text-align: center;
@@ -2579,23 +2579,27 @@ html:has(.intro[open]) {
     #000 100%
   );
 }
-/* HP dan tablet: 72% tinggi hero; di HP lebih lebar dari layar (sisi lengan terpotong) */
+/* HP dan tablet: 84% tinggi hero; di HP lebih lebar dari layar (sisi lengan terpotong) */
 .hero-portrait {
   position: absolute;
   bottom: 0;
   left: 50%;
-  height: 72cqh;
+  height: 84cqh;
   aspect-ratio: 1120 / 1100;
   margin: 0;
   translate: -50% 0;
 }
-/* bawah foto memudar ke latar halaman */
+/* bawah foto memudar panjang ke latar halaman (revisi pemilik 2026-10-19: gradasi lebih banyak) */
 .hero-portrait::after {
   content: '';
   position: absolute;
   inset: auto 0 0;
-  height: 18%;
-  background: linear-gradient(transparent, var(--bg));
+  height: 40%;
+  background: linear-gradient(
+    transparent,
+    color-mix(in oklab, var(--bg) 55%, transparent) 50%,
+    var(--bg) 92%
+  );
   pointer-events: none;
 }
 .hero-portrait-img {
@@ -2614,7 +2618,6 @@ html:has(.intro[open]) {
 }
 @media (min-width: 48rem) {
   .hero-name {
-    top: 16%;
     line-height: 0.86;
   }
 }
@@ -2625,9 +2628,10 @@ html:has(.intro[open]) {
     --face-y: 28cqh;
     --face-rx: 19.3cqh;
     --face-ry: 25cqh;
-    --face-gap: min(26cqh, 22cqw);
+    --face-gap: min(21cqh, 18cqw);
   }
   .hero-name {
+    top: 16%;
     font-size: min(13cqw, 21cqh);
   }
   .hero-portrait {
