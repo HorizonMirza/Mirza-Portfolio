@@ -1111,3 +1111,14 @@ Permintaan pemilik: semua foto memakai foto jas baru, khusus pembuka beranda mem
 - Lapisan kedua liquid mask masih versi cetak biru dari foto yang sama (bagian 83); latar transparan tetap transparan di lapisan itu.
 - **Revisi potongan (2026-10-19, permintaan pemilik "kurang ke tengah"):** bahu di foto condong ke kiri, sehingga potongan wajah di tengah membuat badan tampak bergeser. Foto profil sekarang persegi 1190 px dari foto asli (x 0, y 64, rata bawah), jadi wajah dan bahu seimbang di Tentang dan kartu ID. Avatar bulat tidak lagi wajah saja: kepala sampai dada (persegi 960 px dari x 150, y 110).
 - **Revisi kedua (2026-10-19, "kurang ke tengah dan beri jarak di atas kepala"):** foto profil kini 4:5 (800×1000, sama dengan bingkai Tentang) dari potongan 1040 px berpusat di x 590, titik tengah antara wajah dan badan. Latar atas diperpanjang 46 px dari baris teratas foto agar kepala turun dengan ruang kosong sekitar 17% tinggi bingkai. Kartu ID tetap memotong bagian bawah (`cover`, offset 25%).
+
+## 85. Hero beranda tanpa bingkai, nama di belakang foto (2026-10-19)
+
+Revisi pemilik dengan video referensi ibnuhakim.id (hanya prinsip yang diambil). Prototipe 10 demo letak nama; pilihan pemilik: letak demo 2 (dua baris besar rata tengah) dengan efek demo 8 (memudar ke bawah).
+
+- **Dihapus dari hero:** label "01 — Portofolio", Lokasi, Kampus, kartu Status, kartu Portofolio (angka project, skill, pengalaman), Resume CV, serta GitHub, LinkedIn, dan Instagram. Teks pesan yang tidak dipakai lagi ikut dihapus dari `messages/*.json`.
+- **Foto:** `assets/hero-portrait.webp` kini potongan tanpa bingkai 1120×1100 berlatar transparan, rata bawah di tengah. Tingginya 93% hero di layar ≥ 768 px. Di HP 74% tinggi hero, lebih lebar dari layar dengan sisi lengan terpotong, agar kepala tetap menutupi nama. Liquid mask (bagian 83) kini menutupi seluruh foto, tanpa kotak atau latar; bawah foto memudar ke latar.
+- **Nama (`h1`):** kata pertama di baris pertama, sisanya di baris kedua, Oswald `min(15.5cqw, 21cqh)` (HP `min(17.5cqw, 14cqh)`), di lapisan belakang foto, dengan `mask-image` yang memudar ke bawah. Ada `padding-bottom` agar bagian huruf di luar kotak baris ikut terpudar, bukan terpotong.
+- **Di depan foto:** baris "Sekarang" (posisi dari profil, hanya ≥ 1024 px), petunjuk "Arahkan kursor ke foto" (hanya perangkat dengan kursor), dan tombol "Lihat project". Di HP dan tablet tombol berada di atas menu ikon bawah.
+- **Ukuran:** hero setinggi satu layar (`100svh − 4rem`, 34–64 rem) dengan `container-type: size`, jadi nama dan foto memakai satuan `cqw`/`cqh`.
+- **Menunggu pemilik:** desain foto kedua untuk lapisan liquid mask. Sementara ini lapisannya masih versi cetak biru dari foto yang sama.

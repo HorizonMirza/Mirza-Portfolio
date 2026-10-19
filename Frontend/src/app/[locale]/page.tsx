@@ -1,4 +1,4 @@
-import { ArrowRight, FileText } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
@@ -15,7 +15,6 @@ import { getPublicExperiences } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
-import { socialLabel } from '@/features/profile/schema'
 import { getPublishedProjects } from '@/features/projects/public'
 import { SkillGlobe } from '@/features/skills/components/skill-globe'
 import { toSkillItems } from '@/features/skills/skill-items'
@@ -27,7 +26,6 @@ import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
 import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
-import { cn } from '@/lib/utils'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const { locale } = await params
@@ -45,38 +43,27 @@ export async function generateMetadata({ params }: PageProps<'/[locale]'>): Prom
   })
 }
 
-const availabilityDot = {
-  OPEN: 'bg-note',
-  BUSY: 'bg-danger',
-  NOT_LOOKING: 'bg-border-strong',
-} as const
-
 export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
-  const [t, tNav, tAvail, tCommon, tGlobe, tSkyline, tExp, profile, projects, skills, experiences] =
-    await Promise.all([
-      getTranslations({ locale, namespace: 'Home' }),
-      getTranslations({ locale, namespace: 'Nav' }),
-      getTranslations({ locale, namespace: 'Availability' }),
-      getTranslations({ locale, namespace: 'Common' }),
-      getTranslations({ locale, namespace: 'SkillGlobe' }),
-      getTranslations({ locale, namespace: 'Skyline' }),
-      getTranslations({ locale, namespace: 'Experience' }),
-      getPublicProfile(),
-      getPublishedProjects(),
-      getPublicSkills(),
-      getPublicExperiences(),
-    ])
+  const [t, tGlobe, tSkyline, tExp, profile, projects, skills, experiences] = await Promise.all([
+    getTranslations({ locale, namespace: 'Home' }),
+    getTranslations({ locale, namespace: 'SkillGlobe' }),
+    getTranslations({ locale, namespace: 'Skyline' }),
+    getTranslations({ locale, namespace: 'Experience' }),
+    getPublicProfile(),
+    getPublishedProjects(),
+    getPublicSkills(),
+    getPublicExperiences(),
+  ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
   const github = profile?.socials.github
   const login = githubLogin(github)
   const contributions = login ? await getGithubContributions(login) : null
   const numberLocale = locale === 'id' ? 'id-ID' : 'en-US'
-  const cvHref = `/api/cv?locale=${locale}`
   // Teks grafik kontribusi dua bahasa (komponen klien hanya menerima string, bukan fungsi).
   const skylineKeys = [
     'unit',
@@ -147,144 +134,48 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     <Image
       src={HERO_PORTRAIT}
       alt={DEFAULT_PHOTO_ALT[locale]}
-      sizes="(min-width: 1024px) 460px, (min-width: 48rem) 336px, 240px"
+      sizes="(min-width: 1024px) 860px, 100vw"
       loading="eager"
       placeholder="blur"
       className="hero-portrait-img"
     />
   )
   const currentRole = profile ? loc(profile, 'currentRole', locale) : ''
-  const availabilityNote = profile ? loc(profile, 'availabilityNote', locale) : ''
-  const socials = (['github', 'linkedin', 'instagram'] as const).flatMap((key) => {
-    const href = profile?.socials[key]
-    return href ? [{ key, href, label: socialLabel[key] }] : []
-  })
-  const stats = [
-    { value: projects.length, label: t('statProjects') },
-    { value: skillItems.length, label: t('statSkills') },
-    { value: workHistory.length, label: t('statExperience') },
-  ]
+  const nameWords = name.split(/\s+/)
 
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
-      {/* Hero (rombak pemilik 2026-10-18, prinsip dari referensi ibnuhakim.id): nama besar di kiri, potret
-          dengan liquid mask di tengah, panel status dan angka portofolio di kanan, CV dan sosial di baris
-          bawah. HP: bertumpuk, nama dan potret lebih dulu. DESIGN.md bagian 83. */}
-      <section
-        aria-labelledby="hero-title"
-        className="hero flex min-h-[calc(100svh-4rem)] flex-col"
-      >
-        <Container className="hero-grid flex-1">
-          <div className="hero-intro">
-            <p className="font-mono text-label tracking-widest text-note uppercase">
-              <span aria-hidden="true">01 — </span>
-              {t('heroEyebrow')}
-            </p>
-            <h1 id="hero-title" className="hero-name">
-              {/* tiap kata satu baris; spasi di antaranya agar pembaca layar membaca nama utuh */}
-              {name.split(/\s+/).map((word, i) => (
-                <span key={i}>
-                  {i > 0 ? ' ' : null}
-                  {word}
-                </span>
-              ))}
-            </h1>
-            {profile ? (
-              <dl className="hero-facts">
-                {profile.city ? (
-                  <div>
-                    <dt>{t('locationLabel')}</dt>
-                    <dd>{profile.city}</dd>
-                  </div>
-                ) : null}
-                {currentRole ? (
-                  <div>
-                    <dt>{t('nowLabel')}</dt>
-                    <dd>{currentRole}</dd>
-                  </div>
-                ) : null}
-                {profile.campus ? (
-                  <div>
-                    <dt>{t('campusLabel')}</dt>
-                    <dd>
-                      {loc(profile.campus, 'title', locale)} ·{' '}
-                      {organizationName(profile.campus, locale)}
-                    </dd>
-                  </div>
-                ) : null}
-              </dl>
-            ) : null}
-          </div>
-
-          <figure className="hero-portrait">
-            <LiquidMaskPortrait>{portrait}</LiquidMaskPortrait>
-            <span className="hero-portrait-hint" aria-hidden="true">
-              {t('hoverHint')}
+      {/* Hero (revisi pemilik 2026-10-19, DESIGN.md bagian 85): foto tanpa bingkai rata bawah dengan
+          liquid mask, nama dua baris besar di belakang foto yang memudar ke bawah (letak demo 2, efek
+          demo 8). Hanya posisi sekarang dan tombol Lihat project di depan. */}
+      <section aria-labelledby="hero-title" className="hero">
+        <h1 id="hero-title" className="hero-name">
+          {/* baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca utuh */}
+          {[nameWords[0], nameWords.slice(1).join(' ')].filter(Boolean).map((line, i) => (
+            <span key={i}>
+              {i > 0 ? ' ' : null}
+              {line}
             </span>
-            <Link href="/projects" className="hero-cta">
-              {t('viewProjects')}
-              <ArrowRight aria-hidden="true" />
-            </Link>
-          </figure>
-
-          {profile ? (
-            <div className="hero-side">
-              <div className="hero-card">
-                <p className="hero-card-label">{t('statusLabel')}</p>
-                <p className="hero-card-status">
-                  <span
-                    aria-hidden="true"
-                    className={cn(
-                      'size-2 shrink-0 rounded-full',
-                      availabilityDot[profile.availability],
-                    )}
-                  />
-                  {tAvail(profile.availability)}
-                </p>
-                {availabilityNote ? <p className="hero-card-note">{availabilityNote}</p> : null}
-              </div>
-              <div className="hero-card">
-                <p className="hero-card-label">{t('portfolioLabel')}</p>
-                <dl className="hero-stats">
-                  {stats.map((stat) => (
-                    <div key={stat.label}>
-                      <dt>{stat.label}</dt>
-                      <dd>{stat.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </div>
+          ))}
+        </h1>
+        <figure className="hero-portrait">
+          <LiquidMaskPortrait>{portrait}</LiquidMaskPortrait>
+        </figure>
+        <div className="hero-front">
+          {currentRole ? (
+            <p className="hero-now">
+              <span>{t('nowLabel')}</span>
+              {currentRole}
+            </p>
           ) : null}
-        </Container>
-
-        <div className="hero-bottom">
-          <Container className="hero-bottom-row">
-            {profile?.hasCv ? (
-              <a href={cvHref} className="hero-cv">
-                <FileText aria-hidden="true" />
-                <span>
-                  {tNav('downloadCv')}
-                  <small>PDF</small>
-                </span>
-              </a>
-            ) : (
-              <span />
-            )}
-            {socials.length > 0 ? (
-              <ul aria-label={t('socialLabel')} className="hero-socials">
-                {socials.map((s) => (
-                  <li key={s.key}>
-                    <a href={s.href} target="_blank" rel="noopener noreferrer">
-                      {s.label}
-                      <span className="sr-only">{tCommon('openInNewTab')}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </Container>
+          <span className="hero-portrait-hint" aria-hidden="true">
+            {t('hoverHint')}
+          </span>
+          <Link href="/projects" className="hero-cta">
+            {t('viewProjects')}
+            <ArrowRight aria-hidden="true" />
+          </Link>
         </div>
       </section>
 
