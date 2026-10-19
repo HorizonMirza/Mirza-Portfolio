@@ -142,7 +142,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       alt={DEFAULT_PHOTO_ALT[locale]}
       sizes="(min-width: 1024px) 860px, 100vw"
       loading="eager"
-      placeholder="blur"
+      // tanpa placeholder blur: versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto
+      // saat halaman dimuat ulang (laporan pemilik 2026-10-19)
       draggable={false}
       className="hero-portrait-img"
     />

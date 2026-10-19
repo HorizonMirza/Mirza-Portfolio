@@ -354,7 +354,7 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', asyn
     page.getByRole('heading', { name: 'Universitas Bina Nusantara', level: 3 }),
   ).toBeVisible()
   await expect(page.getByText('S1 Ilmu Komputer – Kecerdasan Buatan')).toBeVisible()
-  await expect(page.getByText('IPK kumulatif: 3,41/4,0')).toBeVisible()
+  await expect(page.getByText('IPK kumulatif: 3,5/4,0')).toBeVisible()
   await expect(page.getByRole('heading', { name: 'SMAS Budi Luhur', level: 3 })).toBeVisible()
   await expect(page.getByText('Nilai: 88,3')).toBeVisible()
   await expect(page.getByText('2021 – 2024')).toBeVisible()
@@ -370,7 +370,7 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', asyn
   await expect(
     page.getByRole('heading', { name: 'Bina Nusantara University', level: 3 }),
   ).toBeVisible()
-  await expect(page.getByText('Cumulative GPA: 3.41/4.0')).toBeVisible()
+  await expect(page.getByText('Cumulative GPA: 3.5/4.0')).toBeVisible()
   await expect(page.getByText('Grade: 88.3')).toBeVisible()
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('About Me')
   await expect(page.getByRole('heading', { name: 'Education', level: 2 })).toBeVisible()

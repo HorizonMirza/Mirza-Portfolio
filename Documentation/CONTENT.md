@@ -70,11 +70,11 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 | Instansi | Program | Periode | Catatan |
 |---|---|---|---|
 | SMAS Budi Luhur (EN: Budi Luhur Senior High School), Tangerang | SMA, Jurusan IPA (EN: Senior High School, Natural Sciences) | 2021 – 2024 | Nilai 88,3 (dari LinkedIn pemilik 2026-10-05; tidak ada di CV). Hanya tahun yang diketahui |
-| Universitas Bina Nusantara (EN: Bina Nusantara University), Tangerang | S1 Ilmu Komputer – Kecerdasan Buatan (EN: Bachelor of Computer Science – Artificial Intelligence) | September 2024 – sekarang | IPK kumulatif 3,41/4,0 (sampai semester 5; keterangan semester tidak ditampilkan sejak 2026-10-07). Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering |
+| Universitas Bina Nusantara (EN: Bina Nusantara University), Tangerang | S1 Ilmu Komputer – Kecerdasan Buatan (EN: Bachelor of Computer Science – Artificial Intelligence) | September 2024 – sekarang | IPK kumulatif 3,5/4,0 (diputuskan pemilik 2026-10-19; sebelumnya 3,41 dari CV). Mata kuliah relevan: Web Application Development, Artificial Intelligence, Software Engineering |
 
-**Catatan IPK:** LinkedIn pemilik mencantumkan 3,5, sedangkan CV 3,41/4,0 (sampai semester 5); situs memakai angka CV, bisa diubah dari admin.
+**Catatan IPK:** LinkedIn dan PDF portofolio mencantumkan 3,5, CV lama 3,41/4,0. **Diputuskan pemilik 2026-10-19: 3,5/4,0** (migrasi `20261019180000_education_gpa_3_5` dan seed). Bisa diubah dari admin.
 
-**Diputuskan 2026-10-05:** IPK 3,41/4,0 (sampai semester 5) ditampilkan di kartu pendidikan halaman Tentang, sesuai CV terbaru yang dikirim pemilik. Angkanya perlu diperbarui tiap semester lewat admin (deskripsi entri Pendidikan). Pendidikan sebelum BINUS (SMA) tidak ada di CV.
+**Diputuskan 2026-10-05 (diganti 2026-10-19 menjadi 3,5):** IPK 3,41/4,0 (sampai semester 5) ditampilkan di kartu pendidikan halaman Tentang, sesuai CV terbaru yang dikirim pemilik. Angkanya perlu diperbarui tiap semester lewat admin (deskripsi entri Pendidikan). Pendidikan sebelum BINUS (SMA) tidak ada di CV.
 
 **Diputuskan 2026-10-07 (pemilik):** nama kampus ditulis "Bina Nusantara", bukan "BINUS", dan nama instansi serta jurusan pendidikan mengikuti bahasa. Bio halaman Tentang memakai teks SUMMARY CV lengkap yang dikirim pemilik, termasuk "At 20 years old" (perlu diperbarui lewat admin saat usia berubah).
 
@@ -112,7 +112,7 @@ Catatan: stack rencana situs ini (Next.js, TypeScript, PostgreSQL) sesuai dengan
 | 5,0 / 5,0 | Rating platform Ayo (Ace Padel Club) |
 | 128+ | Peserta per turnamen (Horizon Organizer) |
 | 30+ | Siswa yang didaftarkan (Algo Bootcamp) |
-| 3,41 | IPK, jika ditampilkan |
+| 3,5 | IPK (diputuskan 2026-10-19; sebelumnya 3,41) |
 
 Aturan: tidak boleh menambah angka baru tanpa sumber dari Mirza. Angka pada pelat status hero harus dari daftar ini.
 
@@ -208,7 +208,7 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 5. **Izin publikasi GAAS.** README repo GAAS menyatakan proyek internal yang tidak untuk didistribusikan di luar organisasi, tetapi repo GitHub-nya publik. Sudah ada izin dari perusahaan untuk menampilkan GAAS di portofolio dan menautkan repo-nya? Jika belum, usul: tampilkan hanya ringkasan dan diagram alur (tanpa tautan repo), dan pertimbangkan menjadikan repo privat. SMART tidak dimasukkan untuk sekarang (tetap tampil di daftar pengalaman sesuai CV).
 6. "Voucher game digital": tampilkan atau tidak?
 7. Kripto: tampilkan atau tidak?
-8. IPK: tampilkan atau tidak?
+8. ~~IPK: tampilkan atau tidak?~~ Ditampilkan, 3,5/4,0 (pemilik 2026-10-19)
 9. Instagram dan nomor WhatsApp yang dipublikasikan.
 10. Foto profil dan logo/inisial.
 11. Nama perusahaan yang benar: **PT PGAS Solution** (CV) atau **PGN Solution** (README GAAS)?
@@ -237,6 +237,6 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 
 Peran ditampilkan di atas judul (kolom `role_id`/`role_en`, migrasi `20261008160000_project_role_buttons`): CatFin-R dan RIPE.AI "Front-End Developer", Crypto Pedia "Frontend Developer" (sesuai ejaan PDF). **[TANYA]** peran untuk MR Coffee dan Swarna Creation.
 
-Teknologi semua project: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Catatan: PDF mencantumkan IPK 3,5/4,0 (CV: 3,41); situs belum diubah, menunggu keputusan pemilik.
+Teknologi semua project: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Catatan: PDF mencantumkan IPK 3,5/4,0 (CV: 3,41); sejak 2026-10-19 situs memakai 3,5 atas keputusan pemilik.
 
 **Catatan ketersediaan di beranda (2026-10-15, audit Home nomor 2, permintaan pemilik "eksekusi 1 dan 2"):** migrasi `20261015100000_availability_note` mengisi `availabilityNote_id` "Mencari peluang Fullstack Developer" dan `availabilityNote_en` "Looking for Fullstack Developer opportunities", diambil dari kalimat pemilik di pemberitahuan pembuka. Tampil di pelat status: "Terbuka untuk kerja · Mencari peluang Fullstack Developer". Hanya mengisi kolom yang masih kosong; pemilik bisa mengubahnya di Admin → Profil.

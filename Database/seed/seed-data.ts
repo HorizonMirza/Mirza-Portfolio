@@ -212,10 +212,10 @@ export const experiences: SeedExperience[] = [
       id: "S1 Ilmu Komputer – Kecerdasan Buatan",
       en: "Bachelor of Computer Science – Artificial Intelligence",
     },
-    // IPK dari CV terbaru pemilik (2026-10-05); keterangan semester dihapus agar satu baris
+    // IPK 3,5 (keputusan pemilik 2026-10-19, sesuai PDF portofolio dan LinkedIn); satu baris
     description: {
-      id: "IPK kumulatif: 3,41/4,0",
-      en: "Cumulative GPA: 3.41/4.0",
+      id: "IPK kumulatif: 3,5/4,0",
+      en: "Cumulative GPA: 3.5/4.0",
     },
     startDate: "2024-09-01",
     endDate: null,

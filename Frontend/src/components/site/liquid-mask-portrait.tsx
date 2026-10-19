@@ -4,26 +4,33 @@ import { type ReactNode, useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// jejak: umur (detik), jari-jari seukuran ujung kursor (3% sisi pendek, 12–20 px), jarak antartitik,
-// jumlah maksimum (revisi pemilik 2026-10-19: lebih lama, lebih kecil)
+// jejak: umur (detik), jari-jari (4,5% sisi pendek, 18–30 px; 1,5× ukuran ujung kursor sebelumnya),
+// jarak antartitik, jumlah maksimum (revisi pemilik 2026-10-19)
 const BLOB_LIFE = 2.2
 const BLOB_LIFE_REDUCED = 0.3
-const BLOB_RADIUS = 0.03
-const BLOB_MIN = 12
-const BLOB_MAX = 20
+const BLOB_RADIUS = 0.045
+const BLOB_MIN = 18
+const BLOB_MAX = 30
 const BLOB_STEP = 4
 const MAX_BLOBS = 260
 // gaya "Kabut" (demo bentuk 9): padat sampai 40% jari-jari luar lalu memudar sampai 1,8× jari-jari
 const FOG_REACH = 1.8
 // gambar kedua dimuat setelah halaman tenang (atau saat pertama disentuh), bukan saat halaman dibuka
 const BACK_DELAY_MS = 1200
-// tanda bisa di-hover (pilihan pemilik "intip berkala"): armor mengintip di pipi kiri dan kanan saat
-// halaman tenang sekian lama; posisi pipi sebagai bagian bingkai foto
-const PEEK_IDLE_MS = 6000
+// tanda bisa di-hover (pilihan pemilik "intip berkala"): armor mengintip berupa goresan lurus tepat di garis
+// rahang, dari bawah telinga ke dagu, bergantian kiri lalu kanan dengan jeda 8 detik selama kursor diam.
+// Ujung garis diukur dari hero-portrait.webp (1120×1100): kiri (402, 450)→(520, 585), kanan (680, 450)→(575, 585).
+const PEEK_EVERY_MS = 8000
 const PEEK_FIRST_MS = 1800
-const CHEEKS = [
-  { x: 0.395, y: 0.41 },
-  { x: 0.585, y: 0.41 },
+const JAWS = [
+  [
+    { x: 402 / 1120, y: 450 / 1100 },
+    { x: 520 / 1120, y: 585 / 1100 },
+  ],
+  [
+    { x: 680 / 1120, y: 450 / 1100 },
+    { x: 575 / 1120, y: 585 / 1100 },
+  ],
 ] as const
 
 type Blob = { x: number; y: number; r: number; life: number }
@@ -283,15 +290,24 @@ export function LiquidMaskPortrait({
       visible = Boolean(entry?.isIntersecting)
     })
     io.observe(root)
+    let side = 0
     const peek = () => {
       if (!photo || !visible || reduce.matches || document.visibilityState !== 'visible') return
       const area = root.getBoundingClientRect()
       const rect = img.getBoundingClientRect()
-      for (const cheek of CHEEKS) {
-        const cx = rect.left - area.left + rect.width * cheek.x
-        const cy = rect.top - area.top + rect.height * cheek.y
-        for (let k = 0; k < 7; k++) {
-          add(cx + Math.cos(k) * BLOB_MAX * 0.8, cy + Math.sin(k * 1.7) * BLOB_MAX * 1.1, 1.25)
+      const jaw = JAWS[side]!
+      side = (side + 1) % JAWS.length
+      const at = (i: number) => ({
+        x: rect.left - area.left + rect.width * jaw[i]!.x,
+        y: rect.top - area.top + rect.height * jaw[i]!.y,
+      })
+      // goresan menyambung antartitik garis rahang
+      for (let i = 1; i < jaw.length; i++) {
+        const a = at(i - 1)
+        const b = at(i)
+        const steps = Math.max(1, Math.floor(Math.hypot(b.x - a.x, b.y - a.y) / BLOB_STEP))
+        for (let k = 0; k <= steps; k++) {
+          add(a.x + ((b.x - a.x) * k) / steps, a.y + ((b.y - a.y) * k) / steps, 1.2)
         }
       }
       idle = performance.now()
@@ -303,7 +319,7 @@ export function LiquidMaskPortrait({
       else wantPeek = true
     }, PEEK_FIRST_MS)
     const peekTimer = window.setInterval(() => {
-      if (performance.now() - idle >= PEEK_IDLE_MS) peek()
+      if (performance.now() - idle >= PEEK_EVERY_MS) peek()
     }, 500)
 
     return () => {

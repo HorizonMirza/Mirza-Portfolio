@@ -1199,3 +1199,15 @@ Pilihan pemilik setelah tiga putaran demo. Gerak tarikannya dibuat biasa saja, y
 - **Latar vortex (pilihan latar 9):** `NeuralVortexBackground` dipasang di hero. Kekuatannya 0,55 di tema gelap dan 0,35 di tema terang, memudar di tepi atas. Ukurannya kini mengikuti elemen kanvas, dan animasi berhenti saat hero di luar layar.
 - **Pudar bawah foto:** kini berupa `mask-image` pada foto, bukan lapisan berwarna latar, agar vortex di sisi foto tidak tertutup kotak.
 - **Tanpa blok seleksi biru:** teks dan foto hero tidak bisa diseleksi atau diseret (`user-select: none`, `draggable={false}`). Laporan pemilik: menarik kursor sebelumnya memblok foto dan nama.
+- **Revisi (2026-10-19, malam):**
+  - Jejak 1,5× lebih besar: jari-jari 4,5% sisi pendek, 18–30 px.
+  - Intip dipindah dari pipi ke rahang (40% dan 58% lebar foto, 47% tinggi). Muncul satu per satu, kiri lalu kanan, dengan jeda 8 detik selama kursor diam.
+  - Placeholder blur Next.js dihapus dari foto hero. Versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto saat halaman dimuat ulang (laporan pemilik).
+- **Revisi (2026-10-19, malam):**
+  - Jejak 1,5× lebih besar: jari-jari 4,5% sisi pendek, 18–30 px.
+  - Intip dipindah dari pipi ke garis rahang. Bentuknya goresan dari bawah telinga turun ke dagu (`JAWS`, empat titik per sisi), sesuai contoh tangkapan layar pemilik. Kiri dan kanan bergantian dengan jeda 8 detik selama kursor diam.
+  - Placeholder blur Next.js dihapus dari foto hero. Versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto saat halaman dimuat ulang (laporan pemilik).
+- **Revisi (2026-10-19, malam):**
+  - Jejak 1,5× lebih besar: jari-jari 4,5% sisi pendek, 18–30 px.
+  - Intip dipindah dari pipi ke garis rahang. Bentuknya goresan lurus tepat di rahang, dari bawah telinga ke dagu. Ujung garis diukur dari foto: kiri (402, 450)→(520, 585), kanan (680, 450)→(575, 585) dalam 1120×1100. Kiri dan kanan bergantian dengan jeda 8 detik selama kursor diam.
+  - Placeholder blur Next.js dihapus dari foto hero. Versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto saat halaman dimuat ulang (laporan pemilik).
