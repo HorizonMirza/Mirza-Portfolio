@@ -2529,7 +2529,7 @@ html:has(.intro[open]) {
   --name-top: 4cqh;
   /* ruang kosong di atas rambut dalam foto (±6,6% tinggi) dikurangi agar kepala tepat di bawah nama */
   --photo-top: calc(var(--name-top) + 1.8 * var(--name-size) + 2cqh - 7cqw);
-  --face-x: calc(50% - 2.5cqw);
+  --face-x: 50%;
   --photo-w: 140cqw;
   --face-y: calc(var(--photo-top) + 0.28 * 0.982 * var(--photo-w));
   --face-rx: 0px;
@@ -2643,7 +2643,8 @@ html:has(.intro[open]) {
   width: var(--photo-w);
   aspect-ratio: 1120 / 1100;
   margin: 0;
-  translate: -50% 0;
+  /* HP: wajah di foto ada di 48% lebar gambar, digeser agar wajah tepat di tengah layar */
+  translate: calc(-50% + 0.02 * var(--photo-w)) 0;
 }
 /* bawah foto memudar panjang ke latar halaman (revisi pemilik 2026-10-19: gradasi lebih banyak) */
 .hero-portrait::after {
@@ -2691,6 +2692,7 @@ html:has(.intro[open]) {
     bottom: 0;
     width: auto;
     height: 84cqh;
+    translate: -50% 0;
   }
   .hero-roles {
     inset: auto 1rem calc(5.5rem + env(safe-area-inset-bottom, 0px));

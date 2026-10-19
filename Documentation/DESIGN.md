@@ -1158,3 +1158,4 @@ Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup fot
   - Foto 140cqw, sisi lengan terpotong sedikit.
   - Peran tepat di bawah foto, tetapi tidak lebih rendah dari batas di atas menu ikon bawah.
   - Tinggi hero kini `100lvh − 3,5rem` (cadangan `100vh`), sehingga beranda terisi satu layar penuh dan bagian Pengalaman tidak mengintip di bawah, juga saat bilah browser HP menyusut.
+- **Foto HP di tengah (2026-10-19):** wajah dalam `hero-portrait.webp` berada di 48% lebar gambar, jadi foto di HP digeser `0.02 × --photo-w` ke kanan agar wajah tepat di tengah layar. Tablet dan desktop tetap `translate: -50%`; di sana nama yang digeser mengikuti wajah.
