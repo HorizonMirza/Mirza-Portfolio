@@ -140,13 +140,21 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     />
   )
   const nameWords = name.split(/\s+/)
-  // baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca nama utuh
-  const nameLines = [nameWords[0], nameWords.slice(1).join(' ')].filter(Boolean).map((line, i) => (
-    <span key={i}>
-      {i > 0 ? ' ' : null}
-      {line}
-    </span>
-  ))
+  // Baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca nama utuh.
+  // Kata pertama dibagi tiga (mis. MUH·AM·MAD): bagian tengah diberi ruang selebar wajah agar sisi
+  // kiri dan kanannya sejajar dan utuh di kiri-kanan wajah (revisi pemilik 2026-10-19).
+  const first = nameWords[0] ?? ''
+  const edge = Math.max(0, Math.floor((first.length - 2) / 2))
+  const nameLines = (
+    <>
+      <span>
+        {first.slice(0, edge)}
+        <span className="hero-name-mid">{first.slice(edge, first.length - edge)}</span>
+        {first.slice(first.length - edge)}
+      </span>
+      {nameWords.length > 1 ? <span> {nameWords.slice(1).join(' ')}</span> : null}
+    </>
+  )
 
   return (
     <>
@@ -156,6 +164,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
       <section aria-labelledby="hero-title" className="hero">
         <LiquidMaskPortrait className="hero-stage">
+          {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
+          <div aria-hidden="true" className="hero-glow" />
           <h1 id="hero-title" className="hero-name">
             {nameLines}
           </h1>

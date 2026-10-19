@@ -1138,3 +1138,13 @@ Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup fot
 - Baris kedua kini simetris di tengah. Jarak MIRZA–WIRYA dikecilkan menjadi `min(21cqh, 18cqw)`, sehingga W sedikit tertutup wajah (disetujui pemilik).
 - Gradasi bawah foto lebih panjang: 40% tinggi foto, memudar bertahap ke latar.
 - HP dan tablet: foto 84% tinggi hero (lebih ke atas), nama di 12% dari atas dengan huruf `min(13cqw, 11cqh)`, dan MIRZA WIRYA tanpa jarak tambahan. Lubang wajah disesuaikan dengan ukuran foto ini.
+- **Revisi ketiga (2026-10-19):**
+  - Cahaya pilihan pemilik "halo lembut" (demo cahaya 1): `.hero-glow`, gradien radial di belakang kepala, putih tipis di tema gelap dan biru tipis di tema terang, memudar di tepi atas.
+  - Gradasi bawah foto lebih tipis: 24% tinggi foto di tema gelap, 14% di tema terang (`--hero-fade`).
+  - Nama digeser `--face-dx` agar tengahnya tepat di tengah wajah, bukan di tengah layar.
+  - Kata pertama dibagi tiga (MUH·AM·MAD). Bagian tengah diberi `margin-inline` sehingga ruangnya selebar lubang wajah (`--face-zone: 34cqh`; lebar "AM" Oswald 700 terukur 1,25em). Hasilnya MUH dan MAD utuh dan sejajar di kiri-kanan wajah. Di HP ruang ini nol karena nama ada di atas kepala.
+- **Revisi ketiga (2026-10-19):**
+  - Cahaya pilihan pemilik "halo lembut" (demo cahaya 1): `.hero-glow`, gradien radial di belakang kepala, putih tipis di tema gelap dan biru tipis di tema terang, memudar di tepi atas.
+  - Gradasi bawah foto lebih tipis: 24% tinggi foto di tema gelap, 14% di tema terang (`--hero-fade`).
+  - Nama digeser `--face-dx` agar tengahnya tepat di tengah wajah, bukan di tengah layar.
+  - Kata pertama dibagi tiga (MUH·AM·MAD). Bagian tengah diberi `margin-inline` sehingga ruangnya `--face-zone: 24cqh`; lebar "AM" Oswald 700 terukur 1,25em. MUH dan MAD sejajar di kiri-kanan wajah, H dan M sedikit tertutup kepala seperti A dan W di baris kedua (disetujui pemilik). Di HP ruang ini nol karena nama ada di atas kepala.
