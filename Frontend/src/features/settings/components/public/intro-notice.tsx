@@ -17,6 +17,8 @@ import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
+import { INTRO_PENDING_ATTR, INTRO_SEEN_KEY } from '../../intro-pending'
+
 type Locale = (typeof routing.locales)[number]
 
 export type IntroNoticeVersion = {
@@ -27,9 +29,9 @@ export type IntroNoticeVersion = {
   labels: { language: string; downloadCv: string; home: string; newTab: string }
 }
 
-// Penanda "sudah dilihat" per sesi browser: pemberitahuan muncul sekali setiap situs dibuka (tab
-// baru), tidak muncul lagi saat berpindah halaman (pilihan pemilik 2026-10-12).
-const SEEN_KEY = 'intro-notice-seen'
+function clearPending() {
+  document.documentElement.removeAttribute(INTRO_PENDING_ATTR)
+}
 // sama dengan durasi animasi .intro[data-leaving] di globals.css
 const LEAVE_MS = 320
 // sama dengan durasi animasi .intro[data-leaving='home'] (memudar dan buram)
@@ -40,7 +42,7 @@ const LOCALE_FALLBACK_MS = 1500
 
 function alreadySeen() {
   try {
-    return sessionStorage.getItem(SEEN_KEY) === '1'
+    return sessionStorage.getItem(INTRO_SEEN_KEY) === '1'
   } catch {
     return false
   }
@@ -48,7 +50,7 @@ function alreadySeen() {
 
 function markSeen() {
   try {
-    sessionStorage.setItem(SEEN_KEY, '1')
+    sessionStorage.setItem(INTRO_SEEN_KEY, '1')
   } catch {
     // penyimpanan diblokir: pemberitahuan bisa muncul lagi di halaman berikutnya
   }
@@ -85,7 +87,12 @@ export function IntroNotice({
   useEffect(() => {
     const dialog = ref.current
     // otomatisasi (tes E2E, Lighthouse) tidak perlu melihat pemberitahuan
-    if (!dialog || dialog.open || navigator.webdriver || alreadySeen()) return
+    if (!dialog || dialog.open || navigator.webdriver || alreadySeen()) {
+      clearPending()
+      return
+    }
+    // dilepas sebelum showModal: di dalam body yang tersembunyi kartu tidak bisa difokus
+    clearPending()
     dialog.showModal()
     setActive(true)
     // Fokus awal di dialog itu sendiri (pembaca layar membacakan judulnya), bukan di tombol: Chromium

@@ -2285,6 +2285,15 @@
 html:has(.intro[open]) {
   overflow: hidden;
 }
+/* Layar hitam sementara sebelum pemberitahuan pembuka terbuka (features/settings/intro-pending.ts):
+   halaman disembunyikan sampai kartu muncul, agar beranda tidak berkedip. */
+html[data-intro='pending'],
+html[data-intro='pending'] body {
+  background: #000;
+}
+html[data-intro='pending'] body {
+  visibility: hidden;
+}
 .intro {
   /* dialog selebar layar; kartu yang tinggi tetap bisa digulir di dalamnya */
   position: fixed;
@@ -2598,9 +2607,11 @@ html:has(.intro[open]) {
   justify-content: space-between;
   gap: 1rem;
   color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
+  /* huruf utama situs (Inter, seperti menu), permintaan pemilik 2026-10-19 */
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   /* tetap terbaca di atas jas dan kemeja */
   text-shadow:
@@ -2711,8 +2722,8 @@ html:has(.intro[open]) {
   }
   .hero-roles {
     inset: auto clamp(1.5rem, 3.2cqw, 4rem) 5cqh;
-    font-size: 0.75rem;
-    letter-spacing: 0.16em;
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
   }
   .hero-name {
     top: 16%;

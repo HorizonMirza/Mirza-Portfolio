@@ -16,9 +16,21 @@ test.beforeEach(async ({ page }) => {
 test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka beranda', async ({
   page,
 }) => {
+  // halaman sudah ditandai layar hitam sebelum tampil, agar beranda tidak berkedip (2026-10-19)
+  await page.addInitScript(() => {
+    document.addEventListener('DOMContentLoaded', () => {
+      ;(window as unknown as { introPending?: string | null }).introPending =
+        document.documentElement.getAttribute('data-intro')
+    })
+  })
   await page.goto('/id/about')
   const dialog = page.getByRole('dialog', { name: 'Informasi Penting' })
   await expect(dialog).toBeVisible()
+  expect(
+    await page.evaluate(() => (window as unknown as { introPending?: string | null }).introPending),
+  ).toBe('pending')
+  // dilepas begitu kartu terbuka
+  await expect(page.locator('html')).not.toHaveAttribute('data-intro', /.*/)
   await expect(dialog.getByRole('button', { name: 'Beranda' })).toBeVisible()
   // latar neural vortex (seperti login admin) hanya terpasang selama kartu terbuka
   await expect(page.locator('dialog.intro canvas')).toHaveCount(1)

@@ -17,6 +17,7 @@ import { VercelInsights } from '@/components/site/vercel-insights'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
 import { IntroNoticeSlot } from '@/features/settings/components/public/intro-notice-slot'
+import { INTRO_PENDING_SCRIPT } from '@/features/settings/intro-pending'
 import { getSiteSettings } from '@/features/settings/public'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
@@ -59,6 +60,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
       suppressHydrationWarning
     >
       <body className="bg-bg text-text">
+        {/* Sebelum apa pun tampil: tandai bila pemberitahuan pembuka akan dibuka, agar beranda tidak
+            berkedip sebelum kartu muncul. Isi skrip konstanta tetap (bukan masukan), aman tanpa sanitasi. */}
+        {settings.intro ? (
+          <script dangerouslySetInnerHTML={{ __html: INTRO_PENDING_SCRIPT }} />
+        ) : null}
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:shadow-lg"

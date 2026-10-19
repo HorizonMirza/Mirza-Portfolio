@@ -1159,3 +1159,14 @@ Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup fot
   - Peran tepat di bawah foto, tetapi tidak lebih rendah dari batas di atas menu ikon bawah.
   - Tinggi hero kini `100lvh − 3,5rem` (cadangan `100vh`), sehingga beranda terisi satu layar penuh dan bagian Pengalaman tidak mengintip di bawah, juga saat bilah browser HP menyusut.
 - **Foto HP di tengah (2026-10-19):** wajah dalam `hero-portrait.webp` berada di 48% lebar gambar, jadi foto di HP digeser `0.02 × --photo-w` ke kanan agar wajah tepat di tengah layar. Tablet dan desktop tetap `translate: -50%`; di sana nama yang digeser mengikuti wajah.
+- **Font peran (2026-10-19):** peran di pojok bawah memakai Inter 600 huruf besar (huruf utama situs, seperti menu), bukan JetBrains Mono. Ukurannya 11 px di HP dan 14 px di layar lebar.
+
+## 87. Pemberitahuan pembuka tanpa kedipan beranda (2026-10-19)
+
+Laporan pemilik: saat membuka mmirza.site, beranda sempat terlihat sebentar sebelum kartu "Informasi Penting" muncul. Penyebabnya, kartu baru dibuka setelah JavaScript halaman selesai dimuat (hidrasi).
+
+- Skrip sebaris kecil di awal `<body>` (`features/settings/intro-pending.ts`, hanya bila pemberitahuan aktif) memasang `data-intro="pending"` di `<html>` sebelum halaman tampil. Skrip melewati browser otomatis dan sesi yang sudah melihat kartu.
+- Selama atribut itu ada, `body` disembunyikan di atas latar hitam (sama dengan latar kartu). `IntroNotice` melepasnya tepat sebelum `showModal()`, karena isi `body` yang tersembunyi tidak bisa difokus. Atribut juga dilepas bila kartu tidak jadi dibuka.
+- Pengaman: bila JavaScript gagal dimuat, layar hitam dilepas sendiri setelah 5 detik. Tanpa JavaScript, skrip tidak berjalan dan halaman tampil biasa.
+- Isi situs tetap dirender server, jadi mesin pencari tetap membacanya. CSP halaman publik sudah mengizinkan skrip sebaris.
+- E2E `intro.spec.ts` memeriksa bahwa atribut sudah terpasang saat `DOMContentLoaded` dan dilepas setelah kartu terbuka.
