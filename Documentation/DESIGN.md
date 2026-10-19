@@ -1170,3 +1170,13 @@ Laporan pemilik: saat membuka mmirza.site, beranda sempat terlihat sebentar sebe
 - Pengaman: bila JavaScript gagal dimuat, layar hitam dilepas sendiri setelah 5 detik. Tanpa JavaScript, skrip tidak berjalan dan halaman tampil biasa.
 - Isi situs tetap dirender server, jadi mesin pencari tetap membacanya. CSP halaman publik sudah mengizinkan skrip sebaris.
 - E2E `intro.spec.ts` memeriksa bahwa atribut sudah terpasang saat `DOMContentLoaded` dan dilepas setelah kartu terbuka.
+
+## 88. Hover hero membuka armor (2026-10-19)
+
+Permintaan pemilik: saat di-hover, foto berganti menjadi armor seperti referensi ibnuhakim.id dan komponen HoverMaskReveal (video referensi). Gambar armor dari pemilik; jambul helm dibiarkan menjulang ke atas.
+
+- **Lapisan kedua liquid mask** kini `assets/hero-armor.webp`, menggantikan kisi biru dan versi cetak biru foto (bagian 83 dan 86). Latar di luar tubuh tidak berubah saat di-hover, sama seperti referensi.
+- **Penyelarasan:** armor diskalakan 1,3× sehingga lubang mata helm sejajar dengan mata, lebar helm sama dengan lebar kepala, dan tangan bersilang berada di posisi yang sama. Bingkainya 1280×1300: lebih besar 80 px di kiri-kanan dan 200 px di atas bingkai foto (1120×1100), dicatat sebagai `HERO_ARMOR_BLEED`, jadi jambul tidak terpotong.
+- `LiquidMaskPortrait` menerima `back` (alamat gambar) dan `bleed`, lalu menggambar armor tepat di atas `<img>` pertama dengan ruang tambahan itu. Bagian bawah armor memudar sama seperti foto (`--hero-fade`).
+- Gambar armor (±100 KB) dimuat 1,2 detik setelah halaman tampil, atau saat hero pertama kali disentuh, jadi tidak memperlambat tampilan awal.
+- Bila foto hero atau armor diganti, penyelarasan (skala 1,3×, posisi mata) perlu dihitung ulang.

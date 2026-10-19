@@ -20,7 +20,13 @@ import { toSkillItems } from '@/features/skills/skill-items'
 import { getPublicSkills } from '@/features/skills/public'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
-import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO, HERO_PORTRAIT } from '@/lib/default-photo'
+import {
+  DEFAULT_PHOTO_ALT,
+  DEFAULT_PROFILE_PHOTO,
+  HERO_ARMOR,
+  HERO_ARMOR_BLEED,
+  HERO_PORTRAIT,
+} from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
 import { formatMonth, loc } from '@/lib/localized'
@@ -168,7 +174,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           bawah, nama dua baris memudar ke bawah di belakang dan di depan foto. Salinan depan dilubangi di
           area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
       <section aria-labelledby="hero-title" className="hero">
-        <LiquidMaskPortrait className="hero-stage">
+        <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED} className="hero-stage">
           {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
           <div aria-hidden="true" className="hero-glow" />
           <h1 id="hero-title" className="hero-name">
