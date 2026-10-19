@@ -2547,20 +2547,48 @@ html[data-intro='pending'] body {
   /* geser nama agar tengahnya tepat di tengah wajah; ruang suku tengah kata pertama (HP: tanpa) */
   --face-dx: 0px;
   --face-zone: 0px;
+  container-type: size;
+  /* isi hero tepat di bawah navbar, di dalam .hero-shell */
+  position: absolute;
+  inset: var(--hero-head) 0 0;
+}
+/* Pembungkus hero: satu layar penuh dari atas halaman, ditarik ke belakang navbar (tinggi navbar
+   --hero-head, diukur 58–59 px) agar efek hover dan latar vortex sampai ke navbar. lvh agar bagian
+   berikutnya tidak mengintip saat bilah browser HP menyusut. Teks dan foto tidak bisa diseleksi atau
+   diseret, supaya menarik kursor tidak memunculkan blok seleksi biru (laporan pemilik 2026-10-19). */
+.hero-shell {
+  --hero-head: 59px;
   /* halo lembut dan panjang gradasi bawah foto; tema terang lebih tipis */
   --hero-glow: rgb(29 95 208 / 0.16);
   --hero-fade: 14%;
   /* jejak hover di luar tubuh (bentuk cair tipis, seperti referensi HoverMaskReveal) */
   --hero-trail: rgb(10 10 10 / 0.07);
-  container-type: size;
+  --hero-vortex: 0.35;
   position: relative;
-  /* satu layar penuh di bawah topbar (±3,5rem); lvh agar bagian berikutnya tidak mengintip saat
-     bilah browser HP menyusut */
-  height: calc(100vh - 3.5rem);
-  height: calc(100lvh - 3.5rem);
-  min-height: 34rem;
-  max-height: 64rem;
+  margin-top: calc(-1 * var(--hero-head));
+  height: 100vh;
+  height: 100lvh;
+  min-height: calc(34rem + var(--hero-head));
+  max-height: calc(64rem + var(--hero-head));
   overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.hero-shell img {
+  -webkit-user-drag: none;
+}
+/* latar vortex redup, memudar di tepi atas */
+.hero-vortex {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  opacity: var(--hero-vortex);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(transparent, #000 12%);
+  mask-image: linear-gradient(transparent, #000 12%);
 }
 .hero-mask {
   position: absolute;
@@ -2659,25 +2687,24 @@ html[data-intro='pending'] body {
   /* HP: wajah di foto ada di 48% lebar gambar, digeser agar wajah tepat di tengah layar */
   translate: calc(-50% + 0.02 * var(--photo-w)) 0;
 }
-/* bawah foto memudar panjang ke latar halaman (revisi pemilik 2026-10-19: gradasi lebih banyak) */
-.hero-portrait::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 0;
-  height: var(--hero-fade);
-  background: linear-gradient(
-    transparent,
-    color-mix(in oklab, var(--bg) 55%, transparent) 50%,
-    var(--bg) 92%
-  );
-  pointer-events: none;
-}
 .hero-portrait-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* bawah foto memudar ke transparan (masker pada foto sendiri, bukan lapisan warna latar, agar latar
+     vortex di sisi foto tidak tertutup); sama dengan gradasi armor di liquid-mask-portrait.tsx */
+  -webkit-mask-image: linear-gradient(
+    #000 calc(100% - var(--hero-fade)),
+    rgb(0 0 0 / 0.45) calc(100% - var(--hero-fade) / 2),
+    transparent calc(100% - var(--hero-fade) * 0.08)
+  );
+  mask-image: linear-gradient(
+    #000 calc(100% - var(--hero-fade)),
+    rgb(0 0 0 / 0.45) calc(100% - var(--hero-fade) / 2),
+    transparent calc(100% - var(--hero-fade) * 0.08)
+  );
 }
 .hero-mask-canvas {
   position: absolute;
@@ -2713,6 +2740,9 @@ html[data-intro='pending'] body {
 }
 /* layar lebar: foto setinggi hero, nama lebih besar */
 @media (min-width: 64rem) {
+  .hero-shell {
+    --hero-head: 58px;
+  }
   .hero {
     --face-x: calc(50% - 2cqh);
     --face-y: 28cqh;
@@ -2736,16 +2766,18 @@ html[data-intro='pending'] body {
   }
 }
 
-.dark .hero {
+.dark .hero-shell {
   --hero-glow: rgb(255 255 255 / 0.18);
   --hero-fade: 24%;
   --hero-trail: rgb(255 255 255 / 0.1);
+  --hero-vortex: 0.55;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not(.light):not(.dark) .hero {
+  :root:not(.light):not(.dark) .hero-shell {
     --hero-glow: rgb(255 255 255 / 0.18);
     --hero-fade: 24%;
     --hero-trail: rgb(255 255 255 / 0.1);
+    --hero-vortex: 0.55;
   }
 }
 

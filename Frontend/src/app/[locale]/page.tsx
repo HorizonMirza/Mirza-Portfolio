@@ -6,6 +6,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
+import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
 import { LiquidMaskPortrait } from '@/components/site/liquid-mask-portrait'
 import { Container } from '@/components/site/section-heading'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
@@ -142,6 +143,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       sizes="(min-width: 1024px) 860px, 100vw"
       loading="eager"
       placeholder="blur"
+      draggable={false}
       className="hero-portrait-img"
     />
   )
@@ -173,24 +175,29 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {/* Hero (revisi pemilik 2026-10-19, DESIGN.md bagian 85 dan 86): foto besar tanpa bingkai rata
           bawah, nama dua baris memudar ke bawah di belakang dan di depan foto. Salinan depan dilubangi di
           area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
-      <section aria-labelledby="hero-title" className="hero">
-        <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED} className="hero-stage">
-          {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
-          <div aria-hidden="true" className="hero-glow" />
-          <h1 id="hero-title" className="hero-name">
-            {nameLines}
-          </h1>
-          <figure className="hero-portrait">{portrait}</figure>
-          <div aria-hidden="true" className="hero-name-front">
-            <p className="hero-name">{nameLines}</p>
+      {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
+          .hero, tepat di bawah navbar. Latar vortex redup (pilihan pemilik 2026-10-19, latar 9). */}
+      <section aria-labelledby="hero-title" className="hero-shell">
+        <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
+          <NeuralVortexBackground className="hero-vortex" />
+          <div className="hero">
+            {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
+            <div aria-hidden="true" className="hero-glow" />
+            <h1 id="hero-title" className="hero-name">
+              {nameLines}
+            </h1>
+            <figure className="hero-portrait">{portrait}</figure>
+            <div aria-hidden="true" className="hero-name-front">
+              <p className="hero-name">{nameLines}</p>
+            </div>
+            {roles.length > 0 ? (
+              <ul className="hero-roles">
+                {roles.map((role) => (
+                  <li key={role}>{role}</li>
+                ))}
+              </ul>
+            ) : null}
           </div>
-          {roles.length > 0 ? (
-            <ul className="hero-roles">
-              {roles.map((role) => (
-                <li key={role}>{role}</li>
-              ))}
-            </ul>
-          ) : null}
         </LiquidMaskPortrait>
       </section>
 

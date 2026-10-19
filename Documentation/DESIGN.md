@@ -1185,3 +1185,17 @@ Permintaan pemilik: saat di-hover, foto berganti menjadi armor seperti referensi
   - Kepala tidak dilebarkan; ukuran helm tetap seperti semula (pemilik menolak pelebaran 16%). Supaya telinga tidak terlihat saat di-hover, lapisan kedua diberi siluet foto berwarna latar halaman di paling belakang. Di dalam jejak, foto benar-benar berganti menjadi armor, dan bagian foto yang tidak tertutup armor (telinga) hilang, seperti video referensi. Huruf nama yang bertumpuk dengan siluet ikut tertutup di dalam jejak.
   - Disetujui lewat gambar perbandingan setengah tembus.
 - **Jejak di luar tubuh:** seperti video referensi, jejak hover tetap terlihat di luar foto sebagai bentuk cair tipis (`--hero-trail`: hitam 7% di tema terang, putih 10% di tema gelap). Jejak digambar di belakang armor setelah gradasi bawah. Lapisan disusun ulang saat tema berganti.
+
+## 89. Hover hero: gaya Kabut, intip di pipi, latar vortex, sampai navbar (2026-10-19)
+
+Pilihan pemilik setelah tiga putaran demo. Gerak tarikannya dibuat biasa saja, yang dipilih adalah gaya bentuk 9 "Kabut".
+
+- **Jejak:**
+  - seukuran ujung kursor (jari-jari 3% sisi pendek, 12–20 px), bertahan 2,2 detik (0,3 detik pada reduced-motion);
+  - titik ditambahkan setiap 4 px di sepanjang jalur kursor, jadi jejak tidak putus;
+  - tepinya berkabut: padat sampai 40% jari-jari luar, lalu memudar sampai 1,8× jari-jari.
+- **Tanda bisa di-hover (pilihan "intip berkala"):** 1,8 detik setelah halaman tampil, lalu setiap 6 detik tanpa gerakan, armor mengintip di pipi kiri dan pipi kanan (39,5% dan 58,5% lebar foto, 41% tinggi). Intip hanya berjalan saat hero terlihat, tab aktif, dan tanpa reduced-motion.
+- **Area efek sampai navbar:** hero dibungkus `.hero-shell` yang ditarik ke belakang navbar (`--hero-head` 59 px, 58 px di layar lebar) dan tetap satu layar penuh (`100lvh`). Kejadian penunjuk dibaca dari `window`, karena navbar menutupi area itu.
+- **Latar vortex (pilihan latar 9):** `NeuralVortexBackground` dipasang di hero. Kekuatannya 0,55 di tema gelap dan 0,35 di tema terang, memudar di tepi atas. Ukurannya kini mengikuti elemen kanvas, dan animasi berhenti saat hero di luar layar.
+- **Pudar bawah foto:** kini berupa `mask-image` pada foto, bukan lapisan berwarna latar, agar vortex di sisi foto tidak tertutup kotak.
+- **Tanpa blok seleksi biru:** teks dan foto hero tidak bisa diseleksi atau diseret (`user-select: none`, `draggable={false}`). Laporan pemilik: menarik kursor sebelumnya memblok foto dan nama.

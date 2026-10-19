@@ -4,8 +4,10 @@ import { useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// Latar halaman login admin dan pemberitahuan pembuka situs: shader "neural vortex" (WebGL, tanpa
-// library). Cahaya mengikuti kursor/sentuhan. Berhenti saat tab tersembunyi, satu bingkai diam bila prefers-reduced-motion.
+// Latar halaman login admin, pemberitahuan pembuka situs, dan hero beranda (pilihan pemilik 2026-10-19,
+// latar 9): shader "neural vortex" (WebGL, tanpa library). Cahaya mengikuti kursor/sentuhan. Ukuran dari
+// elemen kanvas itu sendiri. Berhenti saat tab tersembunyi atau kanvas di luar layar, satu bingkai diam
+// bila prefers-reduced-motion.
 // Tanpa WebGL: canvas kosong, latar hitam tetap tampil.
 
 const VERTEX = `
@@ -107,7 +109,8 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
     const uPointer = gl.getUniformLocation(program, 'u_pointer_position')
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, tX: 0, tY: 0 }
+    let box = canvas.getBoundingClientRect()
+    const pointer = { x: box.width / 2, y: box.height / 2, tX: 0, tY: 0 }
     pointer.tX = pointer.x
     pointer.tY = pointer.y
     let frame = 0
@@ -116,15 +119,16 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
       pointer.x += (pointer.tX - pointer.x) * 0.2
       pointer.y += (pointer.tY - pointer.y) * 0.2
       gl.uniform1f(uTime, time)
-      gl.uniform2f(uPointer, pointer.x / window.innerWidth, 1 - pointer.y / window.innerHeight)
+      gl.uniform2f(uPointer, pointer.x / (box.width || 1), 1 - pointer.y / (box.height || 1))
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
     }
 
     const resize = () => {
       // DPR dibatasi agar shader 15 lapis tetap ringan di layar besar
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
-      canvas.width = Math.round(window.innerWidth * dpr)
-      canvas.height = Math.round(window.innerHeight * dpr)
+      box = canvas.getBoundingClientRect()
+      canvas.width = Math.max(1, Math.round(box.width * dpr))
+      canvas.height = Math.max(1, Math.round(box.height * dpr))
       gl.viewport(0, 0, canvas.width, canvas.height)
       gl.uniform1f(uRatio, canvas.width / canvas.height)
       if (reduceMotion) draw(20000)
@@ -134,8 +138,9 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
       draw(time)
       frame = requestAnimationFrame(loop)
     }
+    let onScreen = true
     const start = () => {
-      if (!reduceMotion && !frame && document.visibilityState === 'visible') {
+      if (!reduceMotion && !frame && onScreen && document.visibilityState === 'visible') {
         frame = requestAnimationFrame(loop)
       }
     }
@@ -145,19 +150,34 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
     }
     const onVisibility = () => (document.visibilityState === 'visible' ? start() : stop())
     const onPointer = (event: PointerEvent) => {
-      pointer.tX = event.clientX
-      pointer.tY = event.clientY
+      pointer.tX = event.clientX - box.left
+      pointer.tY = event.clientY - box.top
     }
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = Boolean(entry?.isIntersecting)
+      box = canvas.getBoundingClientRect()
+      if (onScreen) start()
+      else stop()
+    })
+    const resizeObserver = new ResizeObserver(() => resize())
 
     resize()
     start()
-    window.addEventListener('resize', resize)
+    io.observe(canvas)
+    resizeObserver.observe(canvas)
+    // posisi kanvas berubah saat halaman digulir (hero beranda), kursor dihitung relatif kepadanya
+    const onScroll = () => {
+      box = canvas.getBoundingClientRect()
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('pointermove', onPointer, { passive: true })
     document.addEventListener('visibilitychange', onVisibility)
 
     return () => {
       stop()
-      window.removeEventListener('resize', resize)
+      io.disconnect()
+      resizeObserver.disconnect()
+      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('pointermove', onPointer)
       document.removeEventListener('visibilitychange', onVisibility)
       gl.deleteProgram(program)

@@ -4,19 +4,33 @@ import { type ReactNode, useEffect, useRef } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// jejak gumpalan: umur (detik), jari-jari relatif sisi pendek area, jumlah maksimum
-const BLOB_LIFE = 1.1
-const BLOB_LIFE_REDUCED = 0.25
-const BLOB_RADIUS = 0.13
-const MAX_BLOBS = 70
+// jejak: umur (detik), jari-jari seukuran ujung kursor (3% sisi pendek, 12–20 px), jarak antartitik,
+// jumlah maksimum (revisi pemilik 2026-10-19: lebih lama, lebih kecil)
+const BLOB_LIFE = 2.2
+const BLOB_LIFE_REDUCED = 0.3
+const BLOB_RADIUS = 0.03
+const BLOB_MIN = 12
+const BLOB_MAX = 20
+const BLOB_STEP = 4
+const MAX_BLOBS = 260
+// gaya "Kabut" (demo bentuk 9): padat sampai 40% jari-jari luar lalu memudar sampai 1,8× jari-jari
+const FOG_REACH = 1.8
 // gambar kedua dimuat setelah halaman tenang (atau saat pertama disentuh), bukan saat halaman dibuka
 const BACK_DELAY_MS = 1200
+// tanda bisa di-hover (pilihan pemilik "intip berkala"): armor mengintip di pipi kiri dan kanan saat
+// halaman tenang sekian lama; posisi pipi sebagai bagian bingkai foto
+const PEEK_IDLE_MS = 6000
+const PEEK_FIRST_MS = 1800
+const CHEEKS = [
+  { x: 0.395, y: 0.41 },
+  { x: 0.585, y: 0.41 },
+] as const
 
-type Blob = { x: number; y: number; r: number; life: number; seed: number }
+type Blob = { x: number; y: number; r: number; life: number }
 
 // Hero dengan efek "liquid mask" (permintaan pemilik 2026-10-18, seperti komponen HoverMaskReveal dan
-// ibnuhakim.id): kursor atau jari di mana saja di hero meninggalkan jejak gumpalan lembut yang membuka
-// gambar kedua (`back`, sejak 2026-10-19 foto armor dengan bingkai dan pose yang sama dengan foto), lalu
+// ibnuhakim.id): kursor atau jari di mana saja di hero, termasuk di belakang navbar, meninggalkan jejak
+// kecil berkabut yang membuka gambar kedua (`back`, sejak 2026-10-19 foto armor dengan bingkai dan pose yang sama dengan foto), lalu
 // menyusut dan menutup lagi. Gambar kedua digambar tepat di atas <img> pertama, jadi hanya tubuh yang
 // berganti; latar tidak berubah. Dibuat sendiri dengan canvas 2D, tanpa WebGL/three.js. Isi (nama dan
 // <img>) tetap HTML biasa sehingga tampil tanpa JavaScript; canvas hanya dekorasi.
@@ -41,7 +55,7 @@ export function LiquidMaskPortrait({
     const root = rootRef.current
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
-    const img = root?.querySelector('img')
+    const img = root?.querySelector<HTMLImageElement>('figure img')
     if (!root || !canvas || !ctx || !img) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
     const mask = document.createElement('canvas')
@@ -63,6 +77,8 @@ export function LiquidMaskPortrait({
     let disposed = false
 
     let loading = false
+    // intip pertama menunggu gambar kedua siap
+    let wantPeek = false
     const load = () => {
       if (loading || disposed) return
       loading = true
@@ -74,6 +90,10 @@ export function LiquidMaskPortrait({
         dirty = true
         // jejak yang dibuat sebelum gambar siap langsung terlihat
         if (blobs.length > 0) wake()
+        if (wantPeek) {
+          wantPeek = false
+          peek()
+        }
       }
       next.src = back
     }
@@ -167,17 +187,12 @@ export function LiquidMaskPortrait({
     })
 
     const add = (x: number, y: number, strength = 1) => {
-      blobs.push({
-        x,
-        y,
-        r: Math.min(width, height) * BLOB_RADIUS * strength,
-        life: 1,
-        seed: Math.random() * Math.PI * 2,
-      })
-      if (blobs.length > MAX_BLOBS) blobs.shift()
+      const r = Math.min(BLOB_MAX, Math.max(BLOB_MIN, Math.min(width, height) * BLOB_RADIUS))
+      blobs.push({ x, y, r: r * strength, life: 1 })
+      if (blobs.length > MAX_BLOBS) blobs.splice(0, blobs.length - MAX_BLOBS)
     }
 
-    const draw = (time: number) => {
+    const draw = () => {
       ctx.setTransform(1, 0, 0, 1, 0, 0)
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       if (blobs.length === 0 || !photo) return
@@ -186,17 +201,17 @@ export function LiquidMaskPortrait({
       mctx.clearRect(0, 0, mask.width, mask.height)
       mctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       for (const b of blobs) {
-        const k = Math.sqrt(b.life)
-        const wobble = reduce.matches ? 1 : 1 + Math.sin(time / 260 + b.seed) * 0.08
-        const r = b.r * k * wobble
-        // tepi lembut: gradien radial menggantikan blur (yang belum ada di canvas Safari)
-        const gradient = mctx.createRadialGradient(b.x, b.y, r * 0.35, b.x, b.y, r)
+        const r = b.r * Math.pow(b.life, 0.6) * FOG_REACH
+        if (r < 0.5) continue
+        // tepi berkabut: gradien radial menggantikan blur (yang belum ada di canvas Safari)
+        const gradient = mctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, r)
         gradient.addColorStop(0, 'rgb(0 0 0 / 1)')
+        gradient.addColorStop(0.4, 'rgb(0 0 0 / 1)')
+        gradient.addColorStop(0.6, 'rgb(0 0 0 / 0.45)')
+        gradient.addColorStop(0.8, 'rgb(0 0 0 / 0.12)')
         gradient.addColorStop(1, 'rgb(0 0 0 / 0)')
         mctx.fillStyle = gradient
-        mctx.beginPath()
-        mctx.ellipse(b.x, b.y, r, r / wobble, b.seed, 0, Math.PI * 2)
-        mctx.fill()
+        mctx.fillRect(b.x - r, b.y - r, r * 2, r * 2)
       }
       ctx.drawImage(layer, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
@@ -211,8 +226,8 @@ export function LiquidMaskPortrait({
       const life = reduce.matches ? BLOB_LIFE_REDUCED : BLOB_LIFE
       for (const b of blobs) b.life -= dt / life
       blobs = blobs.filter((b) => b.life > 0)
-      draw(time)
-      if (blobs.length > 0 || pointer) frame = requestAnimationFrame(loop)
+      draw()
+      if (blobs.length > 0) frame = requestAnimationFrame(loop)
     }
     const wake = () => {
       if (frame) return
@@ -220,26 +235,30 @@ export function LiquidMaskPortrait({
       frame = requestAnimationFrame(loop)
     }
 
+    // area efek = seluruh hero termasuk di belakang navbar; header menutupi root, jadi kejadian penunjuk
+    // dibaca dari window lalu dicek apakah di dalam root
     const local = (e: PointerEvent) => {
       const rect = root.getBoundingClientRect()
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top }
+      const p = { x: e.clientX - rect.left, y: e.clientY - rect.top }
+      return p.x >= 0 && p.y >= 0 && p.x <= rect.width && p.y <= rect.height ? p : null
     }
+    let idle = performance.now()
     const onMove = (e: PointerEvent) => {
-      load()
       const p = local(e)
+      if (!p) {
+        pointer = null
+        return
+      }
+      load()
+      idle = performance.now()
       if (pointer) {
         // isi jarak antar-kejadian agar jejak tidak putus saat kursor cepat
-        const distance = Math.hypot(p.x - pointer.x, p.y - pointer.y)
-        const steps = Math.min(6, Math.floor(distance / 14))
-        for (let i = 1; i <= steps; i++) {
-          add(
-            pointer.x + ((p.x - pointer.x) * i) / steps,
-            pointer.y + ((p.y - pointer.y) * i) / steps,
-            0.9,
-          )
-        }
-      }
-      add(p.x, p.y)
+        const dx = p.x - pointer.x
+        const dy = p.y - pointer.y
+        const steps = Math.max(1, Math.min(24, Math.floor(Math.hypot(dx, dy) / BLOB_STEP)))
+        for (let i = 1; i <= steps; i++)
+          add(pointer.x + (dx * i) / steps, pointer.y + (dy * i) / steps)
+      } else add(p.x, p.y)
       pointer = p
       wake()
     }
@@ -247,24 +266,58 @@ export function LiquidMaskPortrait({
       pointer = null
     }
     const onDown = (e: PointerEvent) => {
-      load()
       const p = local(e)
-      add(p.x, p.y, 1.3)
+      if (!p) return
+      load()
+      idle = performance.now()
+      add(p.x, p.y, 1.4)
       wake()
     }
-    root.addEventListener('pointermove', onMove)
-    root.addEventListener('pointerleave', onLeave)
-    root.addEventListener('pointerdown', onDown)
+    window.addEventListener('pointermove', onMove, { passive: true })
+    window.addEventListener('pointerdown', onDown, { passive: true })
+    document.documentElement.addEventListener('pointerleave', onLeave)
+
+    // intip berkala di kedua pipi, hanya saat hero terlihat, tab aktif, dan tanpa reduced-motion
+    let visible = true
+    const io = new IntersectionObserver(([entry]) => {
+      visible = Boolean(entry?.isIntersecting)
+    })
+    io.observe(root)
+    const peek = () => {
+      if (!photo || !visible || reduce.matches || document.visibilityState !== 'visible') return
+      const area = root.getBoundingClientRect()
+      const rect = img.getBoundingClientRect()
+      for (const cheek of CHEEKS) {
+        const cx = rect.left - area.left + rect.width * cheek.x
+        const cy = rect.top - area.top + rect.height * cheek.y
+        for (let k = 0; k < 7; k++) {
+          add(cx + Math.cos(k) * BLOB_MAX * 0.8, cy + Math.sin(k * 1.7) * BLOB_MAX * 1.1, 1.25)
+        }
+      }
+      idle = performance.now()
+      wake()
+    }
+    const firstPeek = window.setTimeout(() => {
+      load()
+      if (photo) peek()
+      else wantPeek = true
+    }, PEEK_FIRST_MS)
+    const peekTimer = window.setInterval(() => {
+      if (performance.now() - idle >= PEEK_IDLE_MS) peek()
+    }, 500)
 
     return () => {
       disposed = true
       cancelAnimationFrame(frame)
       window.clearTimeout(timer)
+      window.clearTimeout(firstPeek)
+      window.clearInterval(peekTimer)
       resizeObserver.disconnect()
       themeObserver.disconnect()
-      root.removeEventListener('pointermove', onMove)
-      root.removeEventListener('pointerleave', onLeave)
-      root.removeEventListener('pointerdown', onDown)
+      io.disconnect()
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerdown', onDown)
+      document.documentElement.removeEventListener('pointerleave', onLeave)
     }
   }, [back, bleed.x, bleed.top])
 
