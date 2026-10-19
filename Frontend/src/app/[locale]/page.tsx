@@ -22,7 +22,7 @@ import { toSkillItems } from '@/features/skills/skill-items'
 import { getPublicSkills } from '@/features/skills/public'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
-import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
+import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO, HERO_PORTRAIT } from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
 import { routing } from '@/i18n/routing'
 import { formatMonth, loc } from '@/lib/localized'
@@ -142,23 +142,12 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       }
     : null
 
-  // Foto potret hero: foto dari admin bila ada, selain itu foto bawaan pemilik.
-  const portraitSizes = '(min-width: 1024px) 460px, 280px'
-  const portrait = profile?.photo ? (
+  // Potret hero: selalu foto khusus beranda (bukan foto profil dari admin).
+  const portrait = (
     <Image
-      src={profile.photo.url}
-      alt={loc(profile.photo, 'alt', locale)}
-      width={profile.photo.width ?? 480}
-      height={profile.photo.height ?? 600}
-      sizes={portraitSizes}
-      loading="eager"
-      className="hero-portrait-img"
-    />
-  ) : (
-    <Image
-      src={DEFAULT_PROFILE_PHOTO}
+      src={HERO_PORTRAIT}
       alt={DEFAULT_PHOTO_ALT[locale]}
-      sizes={portraitSizes}
+      sizes="(min-width: 1024px) 460px, (min-width: 48rem) 336px, 240px"
       loading="eager"
       placeholder="blur"
       className="hero-portrait-img"

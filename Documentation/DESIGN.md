@@ -1099,5 +1099,13 @@ Permintaan pemilik: hero seperti ibnuhakim.id, dengan komponen Framer HoverMaskR
   - foto tetap `<img>` biasa, canvas hanya dekorasi (`aria-hidden`);
   - petunjuk "Arahkan kursor ke foto" hanya tampil di perangkat dengan kursor.
 - **Dihapus:** latar Horizon di bawah hero (`horizon-backdrop.tsx`, `horizon-canvas.tsx`, gaya `.horizon-*`), pelat status lama, tombol GitHub di hero (pindah ke baris sosial), dan gaya `.home-portrait`. Headline profil tidak tampil lagi di hero, tetapi tetap dipakai metadata dan JSON-LD.
-- **Menunggu pemilik:** foto jas dengan tangan bersilang dan lapisan kedua (manekin) dalam pose dan bingkai yang sama, idealnya PNG latar transparan agar menyatu di tema gelap. Sampai itu ada, di tema gelap potret tampil di atas bidang terang dengan bawah yang memudar.
+- **Menunggu pemilik:** ~~foto jas dengan tangan bersilang~~ (terpasang 2026-10-19, bagian 84) dan lapisan kedua (manekin) dalam pose dan bingkai yang sama, idealnya PNG latar transparan agar menyatu di tema gelap. Sampai itu ada, di tema gelap potret tampil di atas bidang terang dengan bawah yang memudar.
 
+
+## 84. Foto baru pemilik di seluruh situs (2026-10-19)
+
+Permintaan pemilik: semua foto memakai foto jas baru, khusus pembuka beranda memakai foto jas dengan tangan bersilang.
+
+- **Foto profil bawaan** (`assets/profile-photo.jpg` 800×800 dan potongan wajah `assets/profile-avatar.jpg` 256×256) diganti dengan foto jas baru. Foto ini dipakai di Tentang, kartu ID Kontak, avatar topbar, footer, login, dan panel admin. Foto yang diunggah lewat Admin tetap didahulukan, jadi bila di produksi sudah ada foto profil unggahan, foto itu yang tampil sampai diganti atau dihapus di Admin.
+- **Potret hero** (`assets/hero-portrait.webp`, `HERO_PORTRAIT` di `lib/default-photo.ts`) selalu memakai foto tangan bersilang, tidak diganti oleh foto dari Admin. Foto asli berlatar transparan dipotong 4:5 (1000×1250) dengan subjek rata bawah dan siku tetap utuh, sehingga menyatu dengan bidang potret di tema terang dan gelap.
+- Lapisan kedua liquid mask masih versi cetak biru dari foto yang sama (bagian 83); latar transparan tetap transparan di lapisan itu.
