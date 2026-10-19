@@ -1153,3 +1153,8 @@ Revisi pemilik setelah bagian 85. Prototipe 10 demo agar nama tidak tertutup fot
   - Nama naik ke 4cqh dan sedikit lebih besar (`min(15cqw, 12cqh)`).
   - Foto selebar 125cqw, sehingga sisi lengan hanya terpotong sedikit. Foto dimulai tepat di bawah nama (`--photo-top`, dikurangi ruang di atas rambut dalam foto), jadi nama dan foto tidak saling menutupi. Lubang wajah di HP tidak dipakai.
   - Tablet (768–1023 px) tetap: foto 84cqh rata bawah, nama di 12cqh.
+- **Susunan HP, revisi berikutnya (2026-10-19):**
+  - Nama tepat di tengah layar (`--face-dx: 0` di HP).
+  - Foto 140cqw, sisi lengan terpotong sedikit.
+  - Peran tepat di bawah foto, tetapi tidak lebih rendah dari batas di atas menu ikon bawah.
+  - Tinggi hero kini `100lvh − 3,5rem` (cadangan `100vh`), sehingga beranda terisi satu layar penuh dan bagian Pengalaman tidak mengintip di bawah, juga saat bilah browser HP menyusut.
