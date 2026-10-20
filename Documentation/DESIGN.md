@@ -1237,3 +1237,14 @@ Laporan pemilik: menu bawah HP kadang hilang saat menggulir antarbagian beranda.
 - **Lapisan GPU sendiri** untuk navbar atas dan menu bawah (`.site-bar`: `translateZ(0)`, `will-change: transform`). Browser HP bisa menunda menggambar ulang elemen fixed/sticky saat halaman digulir di atas kanvas animasi dan lapisan bermasker.
 - **`#main` diberi `isolation: isolate`**, jadi z-index di dalam isi halaman (logo globe sampai ±300, menu kategori 400) tidak pernah bisa naik ke atas navbar (z-40).
 - **Tes E2E HP baru:** menggulir seluruh beranda per 250 px dengan menu kategori terbuka, lalu memastikan titik tengah menu bawah selalu milik menu itu sendiri.
+
+## 92. Audit kebersihan kode (2026-10-20)
+
+Pemindaian ulang berkas, ekspor, kelas CSS, kunci pesan, aset `public/`, dan dependency. Yang terbukti tidak dipakai dan dihapus:
+
+- `components/shared/click-sound.tsx` (`ClickSound`): tombol project tidak lagi berbunyi sejak revisi 2026-10-09 (bagian 52), komponennya tertinggal tanpa pemakai.
+- `features/highlights/public.ts` (`getPublicHighlights`): bagian "Dalam angka" sudah dihapus dari beranda. Admin → Angka dan tabel `Highlight` **tetap ada** (menunggu keputusan pemilik: dihapus permanen atau dipakai lagi).
+- Dependency langsung `pg` dan `@types/pg`: keduanya sudah dibawa `@prisma/adapter-pg` dan tidak diimpor langsung oleh kode.
+- Tangkapan layar README diganti dengan hero sekarang.
+
+Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newsletter), logo skill, dan gambar project masih dipakai.

@@ -2003,7 +2003,7 @@
   user-select: none;
 }
 
-/* 10. tombol berkilau (bunyi klik dari ClickSound) */
+/* 10. tombol berkilau (tanpa suara sejak revisi 2026-10-09) */
 .pj-shine {
   position: relative;
   overflow: hidden;

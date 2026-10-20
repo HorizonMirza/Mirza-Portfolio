@@ -6,14 +6,14 @@ Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk men
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/screenshots/home-dark.webp">
-  <img src="Documentation/screenshots/home-light.webp" alt="Halaman awal mmirza.site: judul besar Mahasiswa AI BINUS yang membangun software dan komunitas, pelat status, tombol Unduh CV dan Lihat project, dengan latar garis cakrawala biru" width="100%">
+  <img src="Documentation/screenshots/home-light.webp" alt="Halaman awal mmirza.site: nama besar MUHAMMAD MIRZA WIRYA di belakang foto Mirza berjas, sebagian rahang memperlihatkan armor, tulisan Fullstack Developer dan Community Manager di bawah, dengan latar pusaran cahaya biru" width="100%">
 </picture>
 
 <p align="center">
-  <img src="Documentation/screenshots/home-mobile.webp" alt="Halaman awal mmirza.site di HP, mode gelap, dengan menu ikon di bawah layar" width="270">
+  <img src="Documentation/screenshots/home-mobile.webp" alt="Halaman awal mmirza.site di HP, mode gelap: nama di atas foto, dua peran di bawah foto, dan menu ikon di bawah layar" width="270">
 </p>
 
-<sub>Tangkapan layar halaman awal (10 Oktober 2026). Gambar besar mengikuti tema GitHub Anda: gelap atau terang.</sub>
+<sub>Tangkapan layar halaman awal (20 Oktober 2026). Gambar besar mengikuti tema GitHub Anda: gelap atau terang.</sub>
 
 **Status:** live di `mmirza.site` sejak 1 Oktober 2026 (Vercel + Neon Singapura). Milestone 1–4 selesai, Milestone 5 tinggal tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) dan uji akhir rilis. Lihat [`Documentation/TODO.md`](Documentation/TODO.md).
 
