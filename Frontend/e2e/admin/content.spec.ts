@@ -142,10 +142,12 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.goto('/admin/audit?entity=Project')
   await expect(page.locator('main ol > li').first()).toContainText('hapus')
 
-  // Regresi: revalidasi setelah simpan tidak boleh membuat halaman publik menjadi 404.
+  // Regresi: revalidasi setelah simpan tidak boleh membuat halaman publik menjadi 404. Dicek langsung
+  // ke server (seperti status 404 di atas): navigasi Firefox bisa dijawab cache browser dengan 304
+  // atau tanpa respons sama sekali (CI 2026-10-20).
   for (const locale of ['id', 'en']) {
-    const response = await page.goto(`/${locale}`)
-    expect(response?.status(), `/${locale}`).toBe(200)
+    const response = await page.request.get(`/${locale}`)
+    expect(response.status(), `/${locale}`).toBe(200)
   }
 })
 
