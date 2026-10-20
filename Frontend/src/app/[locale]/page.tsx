@@ -182,7 +182,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           .hero, tepat di bawah navbar. Latar vortex redup (pilihan pemilik 2026-10-19, latar 9). */}
       <section aria-labelledby="hero-title" className="hero-shell">
         <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
-          <NeuralVortexBackground className="hero-vortex" resolution={0.5} fps={30} />
+          <NeuralVortexBackground className="hero-vortex" resolution={0.4} fps={24} />
           <div className="hero">
             {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
             <div aria-hidden="true" className="hero-glow" />

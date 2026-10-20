@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react'
 
+import { isScrolling, onScrollEnd } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
 
 import type { GenericGlyph, SkillItem } from '../skill-items'
@@ -34,6 +35,8 @@ type Vec = [number, number, number]
 const START_YAW = 0.4
 const START_PITCH = -0.25
 // putaran otomatis per frame (radian) dan batas miring saat digeser
+// jeda antarbingkai saat berputar otomatis (±30 fps)
+const AUTO_FRAME_MS = 30
 const AUTO_SPEED = 0.0028
 const PITCH_LIMIT = 1.2
 const FACE_PITCH = 0.75
@@ -221,7 +224,7 @@ export function SkillGlobe({
       const rect = stage.getBoundingClientRect()
       width = rect.width
       height = rect.height
-      const dpr = Math.min(2, window.devicePixelRatio || 1)
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1)
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -363,9 +366,24 @@ export function SkillGlobe({
       return Math.abs(velocity) > 0.0001 || auto > 0 || homing
     }
 
-    const loop = () => {
+    // Putaran otomatis cukup 30 fps (pelan, tetap halus); seret dan arah ke logo tetap tiap bingkai.
+    // Selama halaman digulir loop berhenti dan lanjut setelahnya (laporan lag pemilik 2026-10-20).
+    let lastDraw = 0
+    const loop = (time: number) => {
       frame = 0
-      const moving = step()
+      if (!drag && !target && isScrolling()) {
+        onScrollEnd(wake)
+        return
+      }
+      if (!drag && !target && time - lastDraw < AUTO_FRAME_MS) {
+        if (visible) frame = requestAnimationFrame(loop)
+        return
+      }
+      // langkah fisika tetap per 1/60 detik, jadi kecepatan putar sama walau digambar 30 fps
+      const steps = Math.min(4, Math.max(1, Math.round((time - lastDraw) / (1000 / 60))))
+      lastDraw = time
+      let moving = false
+      for (let k = 0; k < steps; k++) moving = step() || moving
       draw()
       if (visible && moving) frame = requestAnimationFrame(loop)
     }

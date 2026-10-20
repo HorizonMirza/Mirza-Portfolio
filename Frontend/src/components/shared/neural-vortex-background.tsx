@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
+import { isScrolling, onScrollEnd } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
 
 // Latar halaman login admin, pemberitahuan pembuka situs, dan hero beranda (pilihan pemilik 2026-10-19,
@@ -147,6 +148,12 @@ export function NeuralVortexBackground({
     const minGap = 1000 / fps - 2
     let drawnAt = 0
     const loop = (time: number) => {
+      // selama halaman digulir bingkai dilewati (gambar terakhir tetap tampil), lanjut setelahnya
+      if (isScrolling()) {
+        frame = 0
+        onScrollEnd(start)
+        return
+      }
       if (time - drawnAt >= minGap) {
         drawnAt = time
         draw(time)

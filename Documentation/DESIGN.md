@@ -1225,3 +1225,7 @@ Laporan pemilik: beranda, Keahlian Teknis, dan GitHub terasa lag di HP dan lapto
 - **Foto hero di HP:** dikirim apa adanya (`unoptimized`, WebP 1120 px kualitas 85), tanpa kompresi ulang dan ukuran `100vw` dari Next.js. Sebelumnya foto selebar 140vw di HP diperbesar dari versi yang lebih kecil.
 - **Intip rahang pertama** muncul 3 detik setelah halaman dibuka.
 - **Jarak Keahlian Teknis–GitHub** dirapatkan: bawah Keahlian `pb-10 md:pb-14`, atas GitHub `pt-10 md:pt-16`.
+- **Pengurangan lag tahap 2 (2026-10-20):**
+  - `lib/scroll-idle.ts`: satu pendengar scroll pasif. Selama halaman digulir dan 160 ms sesudahnya, vortex, globe, dan masker hover melewatkan bingkai, agar gulir tidak bersaing dengan gambar kanvas.
+  - Globe berputar otomatis di ±30 fps. Fisika tetap dihitung per 1/60 detik, jadi kecepatan putarnya sama. Seret dan arah ke logo tetap tiap bingkai. Kanvas garis bola maksimal 1,5× piksel.
+  - Vortex hero: resolusi 0,4 dan 24 fps.

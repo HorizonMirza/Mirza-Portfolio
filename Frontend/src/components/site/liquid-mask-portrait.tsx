@@ -2,6 +2,7 @@
 
 import { type ReactNode, useEffect, useRef } from 'react'
 
+import { isScrolling } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
 
 // jejak: umur (detik), jari-jari (4,5% sisi pendek, 18–30 px; 1,5× ukuran ujung kursor sebelumnya),
@@ -238,7 +239,8 @@ export function LiquidMaskPortrait({
       const life = reduce.matches ? BLOB_LIFE_REDUCED : BLOB_LIFE
       for (const b of blobs) b.life -= dt / life
       blobs = blobs.filter((b) => b.life > 0)
-      draw()
+      // selama halaman digulir jejak tetap menua tetapi tidak digambar ulang
+      if (!isScrolling()) draw()
       if (blobs.length > 0) frame = requestAnimationFrame(loop)
     }
     const wake = () => {
