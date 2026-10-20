@@ -28,7 +28,7 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
   return (
     <>
       {/* Lebar penuh (tanpa batas kontainer): foto di pojok kiri, tombol bahasa dan tema di pojok kanan */}
-      <header className="sticky top-[env(safe-area-inset-top,0px)] z-40 px-3 pt-3 sm:px-4 lg:px-5 lg:pt-4">
+      <header className="site-bar sticky top-[env(safe-area-inset-top,0px)] z-40 px-3 pt-3 sm:px-4 lg:px-5 lg:pt-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
           <div className="justify-self-start">
             {/* foto bulat berbingkai seperti tombol bahasa dan tema; ditekan = kembali ke beranda */}
@@ -51,7 +51,7 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
       </header>
       <nav
         aria-label={t('label')}
-        className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+        className="site-bar fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
       >
         {/* tanpa backdrop-blur: latar sudah 95% pekat, sedangkan blur di elemen fixed dihitung ulang
             setiap frame saat halaman bergerak di belakangnya (berat di HP) */}

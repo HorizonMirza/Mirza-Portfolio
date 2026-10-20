@@ -94,6 +94,31 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   await expect(page).toHaveURL(new RegExp(`${href}$`))
 })
 
+test('menu bawah HP tetap di atas isi saat menggulir antarbagian beranda', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'menu bawah hanya di HP')
+  // Laporan pemilik 2026-10-20: menu bawah kadang hilang saat pindah bagian. Isi halaman (logo globe,
+  // menu kategori ber-z-index tinggi) tidak boleh menutupinya di bagian mana pun.
+  await page.goto('/id')
+  const nav = page.locator('nav.fixed')
+  await expect(nav).toBeVisible()
+  await page.getByRole('button', { name: /Kategori/ }).click()
+  const covered: string[] = []
+  const height = await page.evaluate(() => document.documentElement.scrollHeight)
+  for (let y = 0; y < height; y += 250) {
+    await page.evaluate((top) => window.scrollTo(0, top), y)
+    const ok = await nav.evaluate((el) => {
+      const r = el.getBoundingClientRect()
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+      return Boolean(hit && el.contains(hit))
+    })
+    if (!ok) covered.push(String(y))
+  }
+  expect(covered, 'posisi gulir saat menu bawah tertutup').toEqual([])
+})
+
 test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
   await page.goto('/id')
   // desktop: kapsul atas berisi teks; HP: kapsul ikon di bawah layar (label untuk pembaca layar)

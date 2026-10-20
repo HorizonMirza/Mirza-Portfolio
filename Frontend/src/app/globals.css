@@ -849,6 +849,15 @@
   }
 }
 
+/* Navbar atas dan menu bawah HP di lapisan GPU sendiri: browser HP (Chrome Android, Safari iOS) bisa
+   menunda menggambar ulang elemen fixed/sticky saat halaman digulir di atas kanvas animasi dan lapisan
+   bermasker, sehingga navbar sempat kosong (laporan pemilik 2026-10-20). */
+.site-bar {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
 /* Transisi halaman: fade 150 ms (DESIGN.md 2.4), dimatikan bila gerak dikurangi. */
 ::view-transition-old(*),
 ::view-transition-new(*) {

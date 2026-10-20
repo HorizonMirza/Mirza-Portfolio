@@ -83,7 +83,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             {/* pb: ruang untuk menu bawah di HP (fixed) agar footer tidak tertutup */}
             <div className="flex min-h-dvh flex-col pb-28 lg:pb-0">
               <SiteHeader locale={locale} />
-              <main id="main" className="flex-1">
+              {/* isolate: z-index di dalam isi halaman (logo globe, menu kategori) tidak bisa naik ke atas
+                  navbar atas dan menu bawah HP (laporan pemilik 2026-10-20: navbar HP hilang saat pindah
+                  bagian) */}
+              <main id="main" className="relative isolate flex-1">
                 {/* Transisi antarhalaman lewat View Transitions (tanpa library): dari menu utama
                     halaman bergeser searah urutan menu, daftar project ↔ detail memudar pelan mengikuti
                     gambar yang terbang, navigasi lain memakai pudar singkat. */}

@@ -1229,3 +1229,11 @@ Laporan pemilik: beranda, Keahlian Teknis, dan GitHub terasa lag di HP dan lapto
   - `lib/scroll-idle.ts`: satu pendengar scroll pasif. Selama halaman digulir dan 160 ms sesudahnya, vortex, globe, dan masker hover melewatkan bingkai, agar gulir tidak bersaing dengan gambar kanvas.
   - Globe berputar otomatis di ±30 fps. Fisika tetap dihitung per 1/60 detik, jadi kecepatan putarnya sama. Seret dan arah ke logo tetap tiap bingkai. Kanvas garis bola maksimal 1,5× piksel.
   - Vortex hero: resolusi 0,4 dan 24 fps.
+
+## 91. Menu bawah HP tidak hilang saat pindah bagian (2026-10-20)
+
+Laporan pemilik: menu bawah HP kadang hilang saat menggulir antarbagian beranda. Gejalanya tidak muncul di Chromium simulasi HP, jadi perbaikan berikut bersifat pencegahan untuk dua penyebab yang umum:
+
+- **Lapisan GPU sendiri** untuk navbar atas dan menu bawah (`.site-bar`: `translateZ(0)`, `will-change: transform`). Browser HP bisa menunda menggambar ulang elemen fixed/sticky saat halaman digulir di atas kanvas animasi dan lapisan bermasker.
+- **`#main` diberi `isolation: isolate`**, jadi z-index di dalam isi halaman (logo globe sampai ±300, menu kategori 400) tidak pernah bisa naik ke atas navbar (z-40).
+- **Tes E2E HP baru:** menggulir seluruh beranda per 250 px dengan menu kategori terbuka, lalu memastikan titik tengah menu bawah selalu milik menu itu sendiri.
