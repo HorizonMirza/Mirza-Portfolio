@@ -21,7 +21,8 @@
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
     "prepare": "cd .. && husky Frontend/.husky",
-    "admin:reset-password": "tsx scripts/admin-reset-password.ts"
+    "admin:reset-password": "tsx scripts/admin-reset-password.ts",
+    "logos:build": "node scripts/build-skill-logos.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

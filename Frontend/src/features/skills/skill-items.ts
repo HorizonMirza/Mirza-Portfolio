@@ -98,7 +98,7 @@ export function resolveLogo(name: string, icon: string | null) {
   for (const candidate of candidates) {
     const slug = ALIASES[candidate] ?? candidate
     const logo = SKILL_LOGOS[slug]
-    if (logo) return { src: `/skills/${slug}.svg`, invertDark: Boolean(logo.invertDark) }
+    if (logo) return { src: `/skills/${slug}.webp`, invertDark: Boolean(logo.invertDark) }
   }
   return null
 }

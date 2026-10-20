@@ -80,8 +80,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           disableTransitionOnChange
         >
           <NextIntlClientProvider>
-            {/* pb: ruang untuk menu bawah di HP (fixed) agar footer tidak tertutup */}
-            <div className="flex min-h-dvh flex-col pb-28 lg:pb-0">
+            {/* pb: ruang untuk menu bawah di HP (fixed) agar footer tidak tertutup.
+                overflow-x-clip: tidak ada isi yang boleh lebih lebar dari layar. Di HP, halaman baru
+                masuk bergeser 40 px (page-transitions.tsx); tanpa clip lebar halaman sesaat jadi 430 px,
+                Chrome HP memperkecil tampilan agar muat dan tetap begitu, lalu menu bawah (fixed bottom)
+                terdorong ke luar layar. Penyebab "menu bawah HP hilang saat pindah bagian" (2026-10-20).
+                clip, bukan hidden: tidak membuat wadah gulir, jadi header sticky tetap bekerja. */}
+            <div className="flex min-h-dvh flex-col overflow-x-clip pb-28 lg:pb-0">
               <SiteHeader locale={locale} />
               {/* isolate: z-index di dalam isi halaman (logo globe, menu kategori) tidak bisa naik ke atas
                   navbar atas dan menu bawah HP (laporan pemilik 2026-10-20: navbar HP hilang saat pindah

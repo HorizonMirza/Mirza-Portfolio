@@ -119,6 +119,50 @@ test('menu bawah HP tetap di atas isi saat menggulir antarbagian beranda', async
   expect(covered, 'posisi gulir saat menu bawah tertutup').toEqual([])
 })
 
+test('menu bawah HP tetap di dalam layar setelah pindah halaman', async ({ page, isMobile }) => {
+  test.skip(!isMobile, 'menu bawah hanya di HP')
+  // Penyebab asli laporan pemilik 2026-10-20: halaman baru masuk bergeser 40 px, halaman sesaat lebih
+  // lebar dari layar, Chrome HP memperkecil tampilan (innerHeight 844 -> 931) dan menu bawah terdorong
+  // ke luar layar. Ketuk setiap menu (maju dan mundur), lalu pastikan tampilan tidak berubah ukuran.
+  await page.goto('/id')
+  const nav = page.locator('nav.fixed')
+  await expect(nav).toBeVisible()
+  const size = await page.evaluate(() => [window.innerWidth, window.innerHeight])
+  for (const name of [
+    'Tentang',
+    'Pengalaman',
+    'Project',
+    'Kontak',
+    'Beranda',
+    'Project',
+    'Tentang',
+  ]) {
+    await nav.getByRole('link', { name, exact: true }).tap()
+    await expect(nav.getByRole('link', { name, exact: true })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    // tunggu animasi masuk halaman (320–560 ms) selesai
+    await page.waitForTimeout(700)
+    const state = await nav.evaluate((el) => {
+      const r = el.getBoundingClientRect()
+      const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+      return {
+        size: [window.innerWidth, window.innerHeight],
+        wide: document.documentElement.scrollWidth > window.innerWidth,
+        inside: r.bottom <= window.innerHeight + 1,
+        mine: Boolean(hit && el.contains(hit)),
+      }
+    })
+    expect(state, `setelah membuka ${name}`).toEqual({
+      size,
+      wide: false,
+      inside: true,
+      mine: true,
+    })
+  }
+})
+
 test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
   await page.goto('/id')
   // desktop: kapsul atas berisi teks; HP: kapsul ikon di bawah layar (label untuk pembaca layar)

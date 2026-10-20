@@ -1125,6 +1125,10 @@
   background: color-mix(in oklab, var(--cat) 14%, transparent);
   box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--cat) 60%, transparent);
   opacity: var(--o);
+  /* lapisan sendiri: opacity yang berubah tiap bingkai saat bola berputar cukup dikerjakan compositor.
+     Tanpa ini logo SVG digambar ulang setiap bingkai (diukur 2026-10-20: ±1.000 tugas raster per
+     4 detik, bingkai 111 ms di HP dengan CPU 4x lebih lambat) */
+  will-change: opacity;
   transition:
     box-shadow 0.2s,
     background-color 0.2s,

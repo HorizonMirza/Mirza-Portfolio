@@ -113,7 +113,7 @@ function itemStyle(p: Vec, yaw: number, pitch: number, density: number) {
 function Glyph({ item }: { item: SkillItem }) {
   if (item.glyph?.kind === 'image') {
     return (
-      // logo asli SVG statis kecil: tanpa optimasi next/image, isi SVG terisolasi di <img>
+      // logo asli WebP statis kecil (skill-logos.ts): tanpa optimasi next/image
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={item.glyph.src}
@@ -306,19 +306,27 @@ export function SkillGlobe({
         const el = itemRefs.current[i]
         const style = styles[i]
         if (!el || !style) continue
-        el.style.setProperty('--x', style['--x'])
-        el.style.setProperty('--y', style['--y'])
-        el.style.setProperty('--s', style['--s'])
-        el.style.setProperty('--o', style['--o'])
-        el.style.setProperty('--lo', style['--lo'])
+        // Tiap bingkai: transform ditulis langsung (bukan lewat --x/--y/--s di tombol) dan --o hanya di
+        // lingkaran logo. Variabel CSS di tombol diwariskan ke seluruh isinya sehingga setiap bingkai
+        // menghitung ulang gaya 31 logo beserta isinya (diukur 2026-10-20: ±25 ms per bingkai di HP
+        // dengan CPU 4x lebih lambat). Nilai awal dari server tetap lewat variabel (globals.css).
+        const scale = Number(style['--s'])
+        const dx = Number(style['--x']) * radius
+        const dy = Number(style['--y']) * radius
+        el.style.transform = `translate(-50%, -50%) translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${style['--s']})`
+        const logo = el.firstElementChild as HTMLElement | null
+        logo?.style.setProperty('--o', style['--o'])
+        const name = el.lastElementChild as HTMLElement | null
+        if (name && name.style.getPropertyValue('--lo') !== style['--lo']) {
+          name.style.setProperty('--lo', style['--lo'])
+        }
         const z = String(style.zIndex + (i === activeRef.current ? 200 : 0))
         if (el.style.zIndex !== z) el.style.zIndex = z
-        const scale = Number(style['--s'])
         const [baseW, baseH] = sizes[i] ?? [0, 0]
         const w = baseW * scale
         const h = baseH * scale
-        const cx = width / 2 + Number(style['--x']) * radius
-        const cy = height / 2 + Number(style['--y']) * radius
+        const cx = width / 2 + dx
+        const cy = height / 2 + dy
         const rect: Rect = [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2]
         const usable =
           i === activeRef.current ||

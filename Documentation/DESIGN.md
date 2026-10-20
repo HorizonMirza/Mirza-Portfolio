@@ -1248,3 +1248,21 @@ Pemindaian ulang berkas, ekspor, kelas CSS, kunci pesan, aset `public/`, dan dep
 - Tangkapan layar README diganti dengan hero sekarang.
 
 Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newsletter), logo skill, dan gambar project masih dipakai.
+
+## 93. Penyebab asli menu bawah HP hilang, dan lag bola skill (2026-10-20)
+
+**Menu bawah HP hilang (penyebab asli, melengkapi bagian 91).** Berhasil dimunculkan dengan mengetuk menu bawah sambil memotret layar per beberapa milidetik. Di HP, halaman baru masuk dengan bergeser 40 px dari kanan (`page-transitions.tsx`). Selama animasi itu halaman sesaat lebih lebar dari layar (390 + 40 = 430 px). Chrome HP lalu memperkecil tampilan agar seluruh lebar muat dan tetap begitu: tinggi tampilan naik dari 844 menjadi 931 px. Menu bawah (fixed di dasar tampilan) terdorong ke bawah layar yang sebenarnya. Hanya terjadi saat pindah ke menu di sebelah kanan, karena itu "kadang-kadang".
+
+- Perbaikan: pembungkus seluruh halaman diberi `overflow-x: clip`. Pakai `clip`, bukan `hidden`, agar tidak menjadi wadah gulir dan header sticky tetap bekerja.
+- Tes E2E baru "menu bawah HP tetap di dalam layar setelah pindah halaman": mengetuk tujuh menu maju-mundur, lalu memastikan ukuran tampilan tidak berubah, halaman tidak lebih lebar dari layar, dan menu tetap di dalam layar serta bisa ditekan. Tanpa perbaikan tes ini gagal (Pixel 7: 412×839 menjadi 452×921). Dengan perbaikan, uji 192 sampel tangkapan layar tidak menemukan satu pun menu yang hilang.
+- Lapisan GPU `.site-bar` dan `isolate` di `#main` dari bagian 91 tetap dipasang sebagai perlindungan tambahan.
+
+**Lag bola skill.** Diukur di simulasi HP (412×839, CPU 4× lebih lambat):
+
+- Saat bola berputar, opacity tiap logo berubah setiap bingkai. Akibatnya 31 logo SVG digambar ulang terus-menerus (±1.000 tugas raster per 4 detik), dan variabel `--x/--y/--s/--o` di tombol memaksa hitung ulang gaya seluruh isi logo. Hasilnya 111 ms per bingkai (±9 fps).
+  - Perbaikan: lingkaran logo diberi `will-change: opacity` (opacity dikerjakan compositor). Transform ditulis langsung ke tombol, `--o` hanya di lingkaran logo, `--lo` hanya ditulis saat berubah. Hasilnya 27–38 ms per bingkai (median 16,8 ms) dan 0 tugas raster.
+- Saat bagian Keahlian pertama kali masuk layar, 31 logo SVG dirasterisasi sekaligus (rata-rata 70 ms per bingkai, 6 bingkai macet).
+  - Perbaikan: logo kini bitmap WebP 144 px (`public/skills/<slug>.webp`, total 110 KB, sebelumnya 140 KB SVG), dibuat dari sumber SVG di `scripts/skill-logos/` dengan `pnpm logos:build` (Chromium dari Playwright, tanpa pustaka baru). Hasilnya 19 ms per bingkai, 0 bingkai macet. Tampilan dicek di tema gelap dan terang, dan logo hitam tetap dibalik di tema gelap.
+- **Hasil gulir seluruh beranda pada pembukaan pertama:** hero, Pengalaman, Project, Keahlian, dan GitHub (diuji dengan data kontribusi contoh) semuanya 17–22 ms per bingkai rata-rata. Footer 16,5 ms.
+
+**Batas pengukuran.** GPU di lingkungan uji disimulasikan dengan CPU (SwiftShader). Biaya kanvas hero (vortex WebGL, efek armor) karena itu terukur jauh lebih berat daripada di HP dengan GPU sungguhan. JavaScript efek armor sendiri sekitar 5 ms per bingkai pada CPU 4×, dan hanya berjalan saat intip atau saat disentuh.

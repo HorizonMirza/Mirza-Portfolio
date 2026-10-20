@@ -45,7 +45,7 @@ describe('skill-items', () => {
         return !logo || !existsSync(path.join(process.cwd(), 'public', logo.src))
       })
     expect(missing).toEqual([])
-    expect(resolveLogo('Codex', null)).toEqual({ src: '/skills/openai.svg', invertDark: true })
+    expect(resolveLogo('Codex', null)).toEqual({ src: '/skills/openai.webp', invertDark: true })
   })
 
   it('logo hampir hitam mengikuti warna teks, logo lain memakai warna brand', () => {
