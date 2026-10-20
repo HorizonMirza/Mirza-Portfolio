@@ -1276,3 +1276,24 @@ Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newslette
   - Status dan catatan ketersediaan saat ini hanya dikirim lewat `/api/v1`.
 - `inStory` tidak lagi diambil oleh query Pengalaman publik, karena bagian garis cerita sudah dihapus. Kolom dan centangnya di admin tetap ada.
 - README, CLAUDE.md, PRD, ARCHITECTURE, TODO, CONTENT, dan Backend/README diperbarui: status M5 (tugas akun pemilik ditunda), isi beranda sekarang, newsletter tanpa form daftar, Motion tidak terpasang, vortex WebGL, `GITHUB_TOKEN` wajib untuk grafik kontribusi, dan `pnpm logos:build`.
+
+## 95. Revisi final: medali dada, efek cairan, kotak GitHub, logo project, kartu berbalik (2026-10-20)
+
+- **Intip di dada:** intip rahang dihapus. Armor kini mengintip di dua medali emas di dada, keduanya bersamaan.
+  - Pusat dan jari-jari medali diukur dari `hero-armor.webp` lalu dipindah ke bingkai foto: kiri (370, 708), kanan (724, 718), jari-jari ±64 px dari 1120×1100.
+  - Intip pertama muncul 3 detik setelah beranda benar-benar terlihat. Hitungan baru mulai setelah pemberitahuan pembuka ditutup, jadi tidak muncul saat kartu "Informasi Penting" tampil. Berikutnya tiap 8 detik selama kursor diam.
+  - Diukur di build lokal: komponen terpasang 1,8 detik, medali muncul ±4,8 detik, lalu berulang tiap ±8 detik.
+- **Efek hover seperti "Crazy Hover Mask Reveal"** (Framer University, dibuat ulang dari karya OFF+BRAND): `components/site/hero-fluid.ts` berisi simulasi cairan WebGL2 kecil buatan sendiri, tanpa library.
+  - Algoritmanya *stable fluids*: kecepatan 128 sel di sisi pendek, zat warna setengah resolusi CSS, 18 iterasi tekanan, vortisitas untuk pusaran.
+  - Zat warna menjadi masker bertepi tajam (ambang 0,3) dengan butiran tipis. Kursor mendorong cairan dengan 20% kecepatannya.
+  - Ukuran sapuan sama dengan efek sebelumnya (tepi ±1,05× jari-jari kabut). Jejak hilang ±2,2 detik setelah kursor berhenti, menyusut dari tepi.
+  - Lapisan armor, jejak abu-abu di luar badan (`--hero-trail`), dan siluet tetap disusun dengan canvas 2D, lalu dikirim ke WebGL sebagai tekstur. Tema gelap dan terang mengikuti token seperti sebelumnya.
+  - Tanpa WebGL2 atau render float 16 bit, efek kembali ke kabut canvas 2D. Dengan reduced-motion: tanpa pusaran, jejak 0,3 detik, tanpa intip.
+  - Parallax dari referensi tidak dipasang, karena akan menggeser armor dari wajah yang sudah diselaraskan.
+- **Kotak GitHub:** garis kotak kini lapisan teratas (`span` absolut). Sebelumnya latar sel statistik menimpa lengkungan border di kedua sudut bawah sehingga garis tampak putus.
+- **Logo teknologi di daftar project:** abu-abu (`grayscale`, svg warna muted) di baris yang tidak difokus, berwarna asli di baris yang difokus lampu sorot, seperti timeline Pengalaman. Transisinya 700 ms bersama peredupan baris.
+- **Pesan terkirim, "Kartu berbalik"** (pilihan pemilik dari 10 demo, nomor 6):
+  - Form dan tiket menumpuk di satu sel grid. Form berputar ke belakang dan tiket ke depan (760 ms, perspektif 3D), lalu tinggi sisi form dilipat ke 0 dalam 360 ms agar kotak menyusut halus.
+  - Skala gepeng lama (`scale: 1 0.6`) dihapus. *Scroll anchoring* dimatikan setelah terkirim supaya tiket tidak melompat.
+  - Reduced-motion: tiket langsung tampil.
+

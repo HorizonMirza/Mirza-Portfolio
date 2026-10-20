@@ -5,6 +5,8 @@ import { type ReactNode, useEffect, useRef } from 'react'
 import { isScrolling } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
 
+import { createHeroFluid, type HeroFluid } from './hero-fluid'
+
 // jejak: umur (detik), jari-jari (4,5% sisi pendek, 18–30 px; 1,5× ukuran ujung kursor sebelumnya),
 // jarak antartitik, jumlah maksimum (revisi pemilik 2026-10-19)
 const BLOB_LIFE = 2.2
@@ -14,36 +16,43 @@ const BLOB_MIN = 18
 const BLOB_MAX = 30
 const BLOB_STEP = 4
 const MAX_BLOBS = 260
-// gaya "Kabut" (demo bentuk 9): padat sampai 40% jari-jari luar lalu memudar sampai 1,8× jari-jari
+// cadangan tanpa WebGL2, gaya "Kabut" (demo bentuk 9): padat sampai 40% jari-jari luar lalu memudar
+// sampai 1,8× jari-jari
 const FOG_REACH = 1.8
+// Simulasi cairan (hero-fluid.ts, revisi pemilik 2026-10-20 "persis seperti Crazy Hover Mask Reveal"):
+// jari-jari tepi percikan sama dengan tepi kabut sebelumnya (±1,05× BLOB_RADIUS, ukuran tidak diubah),
+// sebagian kecepatan kursor ikut mendorong cairan, pusaran sedang, dan butiran tipis di tepi.
+const FLUID_EDGE = 1.05
+const FLUID_PUSH = 0.2
+const FLUID_SWIRL = 28
+const FLUID_GRAIN = 0.05
+const FLUID_STEP = 6
 // gambar kedua dimuat setelah halaman tenang (atau saat pertama disentuh), bukan saat halaman dibuka
 const BACK_DELAY_MS = 1200
 // resolusi masker jejak terhadap piksel CSS
 const MASK_SCALE = 0.5
-// tanda bisa di-hover (pilihan pemilik "intip berkala"): armor mengintip berupa goresan lurus tepat di garis
-// rahang, dari bawah telinga ke dagu, bergantian kiri lalu kanan dengan jeda 8 detik selama kursor diam.
-// Ujung garis diukur dari hero-portrait.webp (1120×1100): kiri (402, 450)→(520, 585), kanan (680, 450)→(575, 585).
+// tanda bisa di-hover (revisi pemilik 2026-10-20): armor mengintip di dua medali emas di dada, keduanya
+// bersamaan, tiap 8 detik selama kursor diam. Intip pertama 3 detik setelah beranda benar-benar terlihat
+// (pemberitahuan pembuka sudah ditutup). Pusat dan jari-jari medali diukur dari hero-armor.webp lalu
+// dipindah ke bingkai foto 1120×1100 (armor = foto + bleed 80 px kiri-kanan dan 200 px atas):
+// kiri (370, 708), kanan (724, 718), jari-jari ±64 px.
 const PEEK_EVERY_MS = 8000
 const PEEK_FIRST_MS = 3000
-const JAWS = [
-  [
-    { x: 402 / 1120, y: 450 / 1100 },
-    { x: 520 / 1120, y: 585 / 1100 },
-  ],
-  [
-    { x: 680 / 1120, y: 450 / 1100 },
-    { x: 575 / 1120, y: 585 / 1100 },
-  ],
+const MEDALS = [
+  { x: 370 / 1120, y: 708 / 1100 },
+  { x: 724 / 1120, y: 718 / 1100 },
 ] as const
+const MEDAL_RADIUS = 64 / 1120
 
 type Blob = { x: number; y: number; r: number; life: number }
 
 // Hero dengan efek "liquid mask" (permintaan pemilik 2026-10-18, seperti komponen HoverMaskReveal dan
 // ibnuhakim.id): kursor atau jari di mana saja di hero, termasuk di belakang navbar, meninggalkan jejak
-// kecil berkabut yang membuka gambar kedua (`back`, sejak 2026-10-19 foto armor dengan bingkai dan pose yang sama dengan foto), lalu
-// menyusut dan menutup lagi. Gambar kedua digambar tepat di atas <img> pertama, jadi hanya tubuh yang
-// berganti; latar tidak berubah. Dibuat sendiri dengan canvas 2D, tanpa WebGL/three.js. Isi (nama dan
-// <img>) tetap HTML biasa sehingga tampil tanpa JavaScript; canvas hanya dekorasi.
+// cair yang membuka gambar kedua (`back`, sejak 2026-10-19 foto armor dengan bingkai dan pose yang sama dengan
+// foto), lalu menyusut dan menutup lagi. Sejak 2026-10-20 jejaknya simulasi cairan WebGL2 bertepi tajam
+// (hero-fluid.ts, seperti Crazy Hover Mask Reveal); tanpa WebGL2 memakai kabut canvas 2D. Gambar kedua
+// digambar tepat di atas <img> pertama, jadi hanya tubuh yang berganti; latar tidak berubah. Isi (nama
+// dan <img>) tetap HTML biasa sehingga tampil tanpa JavaScript; canvas hanya dekorasi.
 export function LiquidMaskPortrait({
   children,
   back,
@@ -63,26 +72,51 @@ export function LiquidMaskPortrait({
 
   useEffect(() => {
     const root = rootRef.current
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d')
+    let canvas = canvasRef.current
     const img = root?.querySelector<HTMLImageElement>('figure img')
-    if (!root || !canvas || !ctx || !img) return
+    if (!root || !canvas || !img) return
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const mask = document.createElement('canvas')
-    const mctx = mask.getContext('2d')
     const layer = document.createElement('canvas')
     const bctx = layer.getContext('2d')
     const silhouette = document.createElement('canvas')
     const sctx = silhouette.getContext('2d')
-    if (!mctx || !bctx || !sctx) return
+    if (!bctx || !sctx) return
+    const fluidOptions = () => ({
+      life: reduce.matches ? BLOB_LIFE_REDUCED : BLOB_LIFE,
+      swirl: reduce.matches ? 0 : FLUID_SWIRL,
+      grain: FLUID_GRAIN,
+    })
+    // WebGL2 dicek di canvas uji dulu: canvas yang sudah memegang konteks WebGL tidak bisa dipakai 2D
+    let fluid: HeroFluid | null = null
+    const probe = document.createElement('canvas').getContext('webgl2')
+    if (
+      probe?.getExtension('EXT_color_buffer_float') ||
+      probe?.getExtension('EXT_color_buffer_half_float')
+    ) {
+      fluid = createHeroFluid(canvas, fluidOptions())
+      if (!fluid) {
+        // konteks WebGL sudah terpasang tetapi shader gagal: pakai canvas baru untuk cadangan 2D
+        const fresh = canvas.cloneNode() as HTMLCanvasElement
+        canvas.replaceWith(fresh)
+        canvas = fresh
+      }
+    }
+    probe?.getExtension('WEBGL_lose_context')?.loseContext()
+    const out = canvas
+    const ctx = fluid ? null : out.getContext('2d')
+    const mask = document.createElement('canvas')
+    const mctx = fluid ? null : mask.getContext('2d')
+    if (!fluid && (!ctx || !mctx)) return
     let photo: HTMLImageElement | null = null
     let blobs: Blob[] = []
-    let pointer: { x: number; y: number } | null = null
+    let pointer: { x: number; y: number; t: number } | null = null
     let width = 0
     let height = 0
     let dpr = 1
     let frame = 0
     let last = 0
+    // kapan percikan terakhir dibuat: simulasi berhenti setelah semua percikan hilang
+    let lastSplat = -Infinity
     let dirty = true
     let disposed = false
 
@@ -99,7 +133,7 @@ export function LiquidMaskPortrait({
         photo = next
         dirty = true
         // jejak yang dibuat sebelum gambar siap langsung terlihat
-        if (blobs.length > 0) wake()
+        if (blobs.length > 0 || performance.now() - lastSplat < 3000) wake()
         if (wantPeek) {
           wantPeek = false
           peek()
@@ -171,6 +205,7 @@ export function LiquidMaskPortrait({
       bctx.drawImage(silhouette, 0, 0)
       bctx.globalCompositeOperation = 'source-over'
       bctx.restore()
+      fluid?.setLayer(layer)
     }
 
     const resize = () => {
@@ -178,13 +213,19 @@ export function LiquidMaskPortrait({
       width = rect.width
       height = rect.height
       dpr = Math.min(2, window.devicePixelRatio || 1)
-      for (const c of [canvas, layer, silhouette]) {
+      for (const c of [layer, silhouette]) {
         c.width = Math.round(width * dpr)
         c.height = Math.round(height * dpr)
       }
-      // masker kabut cukup setengah resolusi CSS: tepinya memang lembut, dan jauh lebih ringan
-      mask.width = Math.max(1, Math.round(width * MASK_SCALE))
-      mask.height = Math.max(1, Math.round(height * MASK_SCALE))
+      if (fluid) {
+        fluid.resize(width, height, dpr)
+      } else {
+        out.width = Math.round(width * dpr)
+        out.height = Math.round(height * dpr)
+        // masker kabut cukup setengah resolusi CSS: tepinya memang lembut, dan jauh lebih ringan
+        mask.width = Math.max(1, Math.round(width * MASK_SCALE))
+        mask.height = Math.max(1, Math.round(height * MASK_SCALE))
+      }
       dirty = true
     }
     resize()
@@ -193,21 +234,33 @@ export function LiquidMaskPortrait({
     // ganti tema (kelas di <html>) mengubah warna jejak dan gradasi: susun ulang lapisan kedua
     const themeObserver = new MutationObserver(() => {
       dirty = true
+      if (fluid && performance.now() - lastSplat < 4000) wake()
     })
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class'],
     })
+    const onMotionPref = () => fluid?.setOptions(fluidOptions())
+    reduce.addEventListener('change', onMotionPref)
 
-    const add = (x: number, y: number, strength = 1) => {
-      const r = Math.min(BLOB_MAX, Math.max(BLOB_MIN, Math.min(width, height) * BLOB_RADIUS))
-      blobs.push({ x, y, r: r * strength, life: 1 })
+    const baseRadius = () =>
+      Math.min(BLOB_MAX, Math.max(BLOB_MIN, Math.min(width, height) * BLOB_RADIUS))
+    // satu percikan: cairan (dengan dorongan kecepatan) atau blob kabut cadangan
+    const add = (x: number, y: number, strength = 1, vx = 0, vy = 0) => {
+      const r = baseRadius() * strength
+      lastSplat = performance.now()
+      if (fluid) {
+        fluid.splat(x, y, r * FLUID_EDGE, vx * FLUID_PUSH, vy * FLUID_PUSH)
+        return
+      }
+      blobs.push({ x, y, r, life: 1 })
       if (blobs.length > MAX_BLOBS) blobs.splice(0, blobs.length - MAX_BLOBS)
     }
 
-    const draw = () => {
+    const drawFog = () => {
+      if (!ctx || !mctx) return
       ctx.setTransform(1, 0, 0, 1, 0, 0)
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, out.width, out.height)
       if (blobs.length === 0 || !photo) return
       if (dirty) compose()
       mctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -228,7 +281,7 @@ export function LiquidMaskPortrait({
       }
       ctx.drawImage(layer, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.drawImage(mask, 0, 0, canvas.width, canvas.height)
+      ctx.drawImage(mask, 0, 0, out.width, out.height)
       ctx.globalCompositeOperation = 'source-over'
     }
 
@@ -237,14 +290,29 @@ export function LiquidMaskPortrait({
       const dt = Math.min(0.05, (time - last) / 1000)
       last = time
       const life = reduce.matches ? BLOB_LIFE_REDUCED : BLOB_LIFE
+      if (fluid) {
+        // selama halaman digulir cairan tidak dihitung dan tidak digambar (hero biasanya keluar layar)
+        if (!isScrolling() && dt > 0) {
+          if (dirty && photo) compose()
+          fluid.step(dt)
+          fluid.render()
+        }
+        // semua percikan sudah di bawah ambang: kosongkan dan berhenti sampai ada gerakan lagi
+        if (time - lastSplat > life * 1000 * 1.6 + 400) {
+          fluid.clear()
+          return
+        }
+        frame = requestAnimationFrame(loop)
+        return
+      }
       for (const b of blobs) b.life -= dt / life
       blobs = blobs.filter((b) => b.life > 0)
       // selama halaman digulir jejak tetap menua tetapi tidak digambar ulang
-      if (!isScrolling()) draw()
+      if (!isScrolling()) drawFog()
       if (blobs.length > 0) frame = requestAnimationFrame(loop)
     }
     const wake = () => {
-      if (frame) return
+      if (frame || !photo) return
       last = performance.now()
       frame = requestAnimationFrame(loop)
     }
@@ -264,16 +332,21 @@ export function LiquidMaskPortrait({
         return
       }
       load()
-      idle = performance.now()
+      const now = performance.now()
+      idle = now
       if (pointer) {
         // isi jarak antar-kejadian agar jejak tidak putus saat kursor cepat
         const dx = p.x - pointer.x
         const dy = p.y - pointer.y
-        const steps = Math.max(1, Math.min(24, Math.floor(Math.hypot(dx, dy) / BLOB_STEP)))
+        const seconds = Math.max(0.008, (now - pointer.t) / 1000)
+        const vx = dx / seconds
+        const vy = dy / seconds
+        const gap = fluid ? FLUID_STEP : BLOB_STEP
+        const steps = Math.max(1, Math.min(fluid ? 12 : 24, Math.floor(Math.hypot(dx, dy) / gap)))
         for (let i = 1; i <= steps; i++)
-          add(pointer.x + (dx * i) / steps, pointer.y + (dy * i) / steps)
+          add(pointer.x + (dx * i) / steps, pointer.y + (dy * i) / steps, 1, vx, vy)
       } else add(p.x, p.y)
-      pointer = p
+      pointer = { ...p, t: now }
       wake()
     }
     const onLeave = () => {
@@ -291,56 +364,75 @@ export function LiquidMaskPortrait({
     window.addEventListener('pointerdown', onDown, { passive: true })
     document.documentElement.addEventListener('pointerleave', onLeave)
 
-    // intip berkala di kedua pipi, hanya saat hero terlihat, tab aktif, dan tanpa reduced-motion
+    // intip berkala di dua medali dada, hanya saat hero terlihat, tab aktif, pemberitahuan pembuka sudah
+    // ditutup, dan tanpa reduced-motion
     let visible = true
     const io = new IntersectionObserver(([entry]) => {
       visible = Boolean(entry?.isIntersecting)
     })
     io.observe(root)
-    let side = 0
+    const introOpen = () =>
+      document.documentElement.hasAttribute('data-intro') ||
+      Boolean(document.querySelector('.intro[open]'))
+    const canPeek = () =>
+      visible && !reduce.matches && document.visibilityState === 'visible' && !introOpen()
+    let lastPeek = -Infinity
     const peek = () => {
-      if (!photo || !visible || reduce.matches || document.visibilityState !== 'visible') return
+      if (!photo || !canPeek()) return
       const area = root.getBoundingClientRect()
       const rect = img.getBoundingClientRect()
-      const jaw = JAWS[side]!
-      side = (side + 1) % JAWS.length
-      const at = (i: number) => ({
-        x: rect.left - area.left + rect.width * jaw[i]!.x,
-        y: rect.top - area.top + rect.height * jaw[i]!.y,
-      })
-      // goresan menyambung antartitik garis rahang
-      for (let i = 1; i < jaw.length; i++) {
-        const a = at(i - 1)
-        const b = at(i)
-        const steps = Math.max(1, Math.floor(Math.hypot(b.x - a.x, b.y - a.y) / BLOB_STEP))
-        for (let k = 0; k <= steps; k++) {
-          add(a.x + ((b.x - a.x) * k) / steps, a.y + ((b.y - a.y) * k) / steps, 1.2)
+      const radius = rect.width * MEDAL_RADIUS
+      const scale = radius / baseRadius()
+      for (const medal of MEDALS) {
+        const cx = rect.left - area.left + rect.width * medal.x
+        const cy = rect.top - area.top + rect.height * medal.y
+        // satu percikan menutupi medali, ditambah cincin kecil yang berputar agar tepinya bergerak cair
+        add(cx, cy, scale * 1.1)
+        const ring = 6
+        for (let k = 0; k < ring; k++) {
+          const a = (k / ring) * Math.PI * 2
+          const px = cx + Math.cos(a) * radius * 0.55
+          const py = cy + Math.sin(a) * radius * 0.55
+          const speed = radius * 6
+          add(px, py, scale * 0.5, -Math.sin(a) * speed, Math.cos(a) * speed)
         }
       }
-      idle = performance.now()
+      lastPeek = performance.now()
+      idle = lastPeek
       wake()
     }
-    const firstPeek = window.setTimeout(() => {
-      load()
-      if (photo) peek()
-      else wantPeek = true
-    }, PEEK_FIRST_MS)
+    // 3 detik terhitung sejak beranda terlihat tanpa pemberitahuan pembuka di depannya
+    let readySince: number | null = null
     const peekTimer = window.setInterval(() => {
-      if (performance.now() - idle >= PEEK_EVERY_MS) peek()
-    }, 500)
+      const now = performance.now()
+      if (!canPeek()) {
+        if (lastPeek === -Infinity) readySince = null
+        return
+      }
+      if (lastPeek === -Infinity) {
+        readySince ??= now
+        if (now - readySince < PEEK_FIRST_MS) return
+        load()
+        if (photo) peek()
+        else wantPeek = true
+        return
+      }
+      if (now - lastPeek >= PEEK_EVERY_MS && now - idle >= PEEK_EVERY_MS) peek()
+    }, 250)
 
     return () => {
       disposed = true
       cancelAnimationFrame(frame)
       window.clearTimeout(timer)
-      window.clearTimeout(firstPeek)
       window.clearInterval(peekTimer)
       resizeObserver.disconnect()
       themeObserver.disconnect()
+      reduce.removeEventListener('change', onMotionPref)
       io.disconnect()
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerdown', onDown)
       document.documentElement.removeEventListener('pointerleave', onLeave)
+      fluid?.dispose()
     }
   }, [back, bleed.x, bleed.top])
 

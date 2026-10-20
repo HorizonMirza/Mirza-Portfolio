@@ -1350,7 +1350,14 @@ export default function ContributionSkyline({
 
       {/* Satu kotak bergaris di sekitar grafik, legenda, dan statistik, seperti profil GitHub
           (revisi pemilik 2026-10-16) */}
-      <div className="relative rounded-md border border-border">
+      {/* Garis kotak digambar sebagai lapisan teratas (bukan border pembungkus): latar sel statistik
+          menimpa lengkungan border di kedua sudut bawah sehingga garisnya tampak terputus (laporan
+          pemilik 2026-10-20). p-px menggantikan tebal border agar ukuran isi tetap. */}
+      <div className="relative rounded-md p-px">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-30 rounded-md border border-border"
+        />
         <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
             ref={stageRef}

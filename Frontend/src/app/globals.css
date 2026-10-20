@@ -1455,11 +1455,11 @@
     rotate: 360deg;
   }
 }
-/* Setelah terkirim (DESIGN.md bagian 35): form memudar dan menyusut, lalu tiket ringkasan terbuka
-   dari atas. Murni CSS agar urutannya sama dengan atau tanpa JavaScript. */
-/* Desktop: setelah terkirim, kolom kanan selebar kalimat pengantar sehingga kotak tiket berakhir
-   di ujung kalimat itu (permintaan pemilik). Tiket tidak ikut menentukan lebar (contain), hanya
-   mengisi lebar kolom; form sebelum terkirim tetap selebar kolom penuh. */
+/* Setelah terkirim: "Kartu berbalik" (pilihan pemilik 2026-10-20, demo 6, menggantikan susut + buka
+   dari DESIGN.md bagian 35 yang terasa kasar). Form dan tiket menumpuk di sel grid yang sama; form
+   berputar ke belakang dan tiket (sisi belakang kartu) berputar ke depan dalam 760 ms. Setelah itu
+   tinggi sisi form dilipat ke 0 dalam 360 ms, sehingga kotak menyusut halus ke tinggi tiket tanpa
+   melompat. Murni CSS agar urutannya sama dengan atau tanpa JavaScript. */
 @media (min-width: 1024px) {
   .contact-col:has(.contact-sent) {
     width: fit-content;
@@ -1472,19 +1472,45 @@
     max-width: none;
   }
 }
+.contact-sent {
+  display: grid;
+  perspective: 1400px;
+}
+/* saat kotak menyusut ke tinggi tiket, browser tidak boleh menggeser halaman untuk menjaga posisi
+   footer (scroll anchoring); tanpa ini tiket terlihat melompat turun */
+html:has(.contact-sent) {
+  overflow-anchor: none;
+}
+.contact-sent > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+  backface-visibility: hidden;
+}
 .contact-sent-form {
   display: grid;
   grid-template-rows: 1fr;
-  animation: contact-collapse 0.4s ease 0.15s forwards;
+  align-self: start;
+  animation:
+    contact-flip-out 760ms cubic-bezier(0.65, 0, 0.35, 1) both,
+    contact-collapse 360ms var(--ease-out-soft) 760ms forwards;
 }
 .contact-sent-form > div {
   overflow: hidden;
 }
+@keyframes contact-flip-out {
+  to {
+    transform: rotateY(-180deg);
+  }
+}
 @keyframes contact-collapse {
   to {
     grid-template-rows: 0fr;
-    opacity: 0;
     visibility: hidden;
+  }
+}
+@keyframes contact-flip-in {
+  from {
+    transform: rotateY(180deg);
   }
 }
 .contact-ticket {
@@ -1494,8 +1520,8 @@
   border-radius: 0.875rem;
   background: var(--surface);
   padding: 1.125rem 1.25rem 0.75rem;
-  transform-origin: top;
-  animation: contact-unfold 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both;
+  align-self: start;
+  animation: contact-flip-in 760ms cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 /* lekukan tiket di kedua sisi, sejajar garis putus-putus */
 .contact-ticket::before,
@@ -1545,12 +1571,6 @@
 .contact-ticket-rows dd {
   margin: 0;
   overflow-wrap: anywhere;
-}
-@keyframes contact-unfold {
-  from {
-    opacity: 0;
-    scale: 1 0.6;
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .send-btn,
@@ -2252,7 +2272,15 @@
     color 700ms var(--ease-out-soft),
     border-color 700ms var(--ease-out-soft),
     background-color 700ms var(--ease-out-soft),
+    fill 700ms var(--ease-out-soft),
+    filter 700ms var(--ease-out-soft),
     -webkit-text-stroke-color 700ms var(--ease-out-soft);
+}
+/* Logo teknologi di daftar project (revisi pemilik 2026-10-20, seperti timeline Pengalaman): baris
+   yang sedang difokus memakai warna asli logo, baris lain abu-abu. Logo satu warna (svg) ikut warna
+   brand di baris fokus, di HP maupun desktop. */
+.pj-spot[data-focus] > li[data-active] .pj-tech svg {
+  fill: var(--brand);
 }
 @media (scripting: enabled) {
   .pj-spot[data-focus] > li:not([data-active]):not(:focus-within) {
@@ -2274,6 +2302,20 @@
   /* chip teknologi kehilangan latar abu-abunya agar teks redup tetap di atas warna latar halaman */
   .pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-tech {
     background-color: transparent;
+    border-color: color-mix(in srgb, var(--border) 50%, var(--bg));
+  }
+  .pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-tech svg {
+    fill: var(--text-muted);
+  }
+  .pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-tech img {
+    filter: grayscale(1) opacity(0.6);
+  }
+  .dark
+    .pj-spot[data-focus]
+    > li:not([data-active]):not(:focus-within)
+    .pj-tech
+    img[data-invert-dark] {
+    filter: invert(1) grayscale(1) opacity(0.6);
   }
   /* angka besar hanya garis tepi (dekoratif): yang diredupkan warna garisnya */
   .pj-spot[data-focus] > li:not([data-active]):not(:focus-within) .pj-bignum {
