@@ -15,19 +15,20 @@ Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk men
 
 <sub>Tangkapan layar halaman awal (20 Oktober 2026). Gambar besar mengikuti tema GitHub Anda: gelap atau terang.</sub>
 
-**Status:** live di `mmirza.site` sejak 1 Oktober 2026 (Vercel + Neon Singapura). Milestone 1–4 selesai, Milestone 5 tinggal tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) dan uji akhir rilis. Lihat [`Documentation/TODO.md`](Documentation/TODO.md).
+**Status:** live di `mmirza.site` sejak 1 Oktober 2026 (Vercel + Neon Singapura). Milestone 1–4 selesai. Milestone 5 selesai di sisi kode; tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda atas keputusan pemilik (2026-10-20). Lihat [`Documentation/TODO.md`](Documentation/TODO.md).
 
 ## Fitur
 
 **Situs publik** (semua teks dua bahasa, tema gelap dan terang, mobile-first)
-- **Beranda:** hero "Horizon" (canvas), pelat status, angka ringkas, aktivitas GitHub, ajakan kontak.
+- **Beranda:** nama besar di belakang foto berjas; kursor (atau sentuhan) membuka lapisan armor di bawah foto, dengan intip berkala di rahang dan latar pusaran cahaya (WebGL). Di bawahnya peran, Pengalaman (akordion), Project (pita sampul berjalan), Keahlian Teknis (bola logo yang bisa diputar dan difilter per kategori), dan grafik kontribusi GitHub 2D/3D.
 - **Tentang:** bio, pendidikan, kartu foto yang bisa dimiringkan.
 - **Pengalaman:** timeline yang menyorot entri di tengah layar saat digulir.
 - **Project:** daftar "lampu sorot" (project di tengah layar menyala, sisanya redup), gambar dalam bingkai browser yang terbang ke halaman detail. Detail berisi peran, tombol View App/GitHub yang dipilih admin, dan galeri foto.
-- **Kontak:** form dengan rate limit dan honeypot, tombol WhatsApp, newsletter double opt-in.
-- **Lainnya:** halaman privasi, 404 "hantu", SEO (sitemap, Open Graph dinamis, JSON-LD), API publik `/api/v1`, suara antarmuka yang volumenya diatur admin.
+- **Kontak:** kartu ID bertali yang bisa diayun, form dengan rate limit dan honeypot. WhatsApp, email, dan sosial ada di footer.
+- **Newsletter:** double opt-in dan halaman berhenti langganan tetap berjalan, tetapi form daftarnya tidak ditampilkan sejak 2026-10-08 (permintaan pemilik).
+- **Lainnya:** pemberitahuan pembuka yang diatur admin, halaman privasi, 404 "hantu", SEO (sitemap, Open Graph dinamis, JSON-LD), API publik `/api/v1`, suara antarmuka yang volumenya diatur admin.
 
-**Panel Super Admin** (`/admin`): profil, project (impor dari GitHub, unggah Cloudinary, urutan, draf/terbit), skill, pengalaman, sorotan beranda, kotak masuk pesan, pelanggan newsletter, log audit, pengaturan, dan akun. Semua aksi divalidasi Zod di server, memeriksa role `SUPER_ADMIN`, dan dicatat di log audit.
+**Panel Super Admin** (`/admin`): profil, project (impor dari GitHub, unggah Cloudinary, urutan, draf/terbit), skill, pengalaman, angka (sedang tidak tampil di situs), kotak masuk pesan, pelanggan newsletter, log audit, pengaturan, dan akun. Semua aksi divalidasi Zod di server, memeriksa role `SUPER_ADMIN`, dan dicatat di log audit.
 
 **Kualitas:** WCAG 2.2 AA (axe bersih di semua halaman, terang/gelap, ID/EN, desktop/HP), `prefers-reduced-motion` dihormati, CSP ketat, backup database harian terenkripsi.
 
@@ -63,7 +64,7 @@ pnpm dev                      # http://localhost:3000 -> diarahkan ke /id atau /
 
 **Panel admin:** buka `http://localhost:3000/admin` lalu masuk dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD`. Buat `BETTER_AUTH_SECRET` dengan `openssl rand -base64 32`. Password yang lupa bisa diganti dari terminal: `ADMIN_NEW_PASSWORD=... pnpm admin:reset-password` (semua sesi ikut dicabut). Login dibatasi 5 percobaan per 15 menit per IP.
 
-Variabel lain ada di `Frontend/.env.example` (tanpa nilai). Unggah foto, CV, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (opsional, token *fine-grained* tanpa izin tambahan) menaikkan batas impor dari GitHub.
+Variabel lain ada di `Frontend/.env.example` (tanpa nilai). Unggah foto, CV, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (opsional, token *fine-grained* tanpa izin tambahan) menaikkan batas impor dari GitHub dan **wajib** untuk grafik kontribusi GitHub di beranda (tanpa token bagian itu tidak tampil).
 
 Contoh Postgres lokal dengan Docker:
 
@@ -88,6 +89,7 @@ docker run -d --name portfolio-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 pos
 | `pnpm db:seed` | Isi data awal |
 | `pnpm db:studio` | Prisma Studio |
 | `pnpm admin:reset-password` | Ganti password admin dari terminal (`ADMIN_EMAIL`, `ADMIN_NEW_PASSWORD`) |
+| `pnpm logos:build` | Buat ulang logo WebP globe skill (`public/skills/`) dari sumber SVG di `scripts/skill-logos/` |
 
 Semua pekerjaan langsung di `main` (tanpa branch lain), dan push ke `main` langsung live. Sebelum push jalankan: `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`.
 Hook pre-commit (Husky + lint-staged, di `Frontend/.husky`) menjalankan ESLint dan Prettier pada berkas yang di-stage.
@@ -169,4 +171,4 @@ Neon juga punya pemulihan bawaan ke titik waktu tertentu (Neon Console → Resto
 
 ## Lisensi
 
-Kode dan konten milik Muhammad Mirza Wirya, hak cipta dilindungi. Font Oswald, Inter, dan JetBrains Mono memakai SIL Open Font License (lihat `Frontend/src/fonts/`).
+Kode dan konten milik Muhammad Mirza Wirya, hak cipta dilindungi. Font Oswald, Inter, dan JetBrains Mono memakai SIL Open Font License (lihat `Frontend/src/fonts/`). Logo skill adalah merek dagang pemiliknya; sumber dan lisensinya (Devicon MIT, Simple Icons CC0, logo Git CC BY 3.0) di `Frontend/scripts/skill-logos/SOURCES.md`.

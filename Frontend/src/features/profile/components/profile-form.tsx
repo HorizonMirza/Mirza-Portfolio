@@ -48,7 +48,11 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         <Field
           id={`headline_${lang}`}
           label="Headline"
-          hint={id ? 'Kalimat utama di hero. Spesifik, tanpa klise.' : 'Main hero sentence.'}
+          hint={
+            id
+              ? 'Judul gambar pratinjau saat tautan dibagikan dan deskripsi untuk mesin pencari. Spesifik, tanpa klise.'
+              : 'Link preview image title and search engine description.'
+          }
           error={errors[`headline_${lang}`]?.message}
         >
           {(a) => <Textarea rows={2} {...a} {...register(`headline_${lang}`)} />}
@@ -65,18 +69,22 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         <Field
           id={`currentRole_${lang}`}
           label={id ? 'Posisi sekarang (opsional)' : 'Current role (optional)'}
-          hint={id ? 'Tampil di pelat status hero.' : 'Shown in the hero status plate.'}
+          hint={
+            id
+              ? 'Subjudul gambar pratinjau tautan, jabatan untuk mesin pencari, dan cadangan baris peran di footer.'
+              : 'Link preview subtitle, job title for search engines, and footer fallback.'
+          }
           error={errors[`currentRole_${lang}`]?.message}
         >
           {(a) => <Input {...a} {...register(`currentRole_${lang}`)} />}
         </Field>
         <Field
           id={`aboutRoles_${lang}`}
-          label={id ? 'Peran di halaman Tentang (opsional)' : 'Roles on the About page (optional)'}
+          label={id ? 'Peran (opsional)' : 'Roles (optional)'}
           hint={
             id
-              ? 'Baris di bawah nama pada pita hitam, mis. "Fullstack Developer | Community Manager".'
-              : 'Line under the name in the black band.'
+              ? 'Dipisah | , mis. "Fullstack Developer | Community Manager". Tampil di bawah foto beranda, di bawah nama pada pita hitam Tentang, dan di footer.'
+              : 'Separated by |. Shown under the home photo, under the name on the About band, and in the footer.'
           }
           error={errors[`aboutRoles_${lang}`]?.message}
         >
@@ -99,7 +107,11 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         <Field
           id={`availabilityNote_${lang}`}
           label={id ? 'Catatan ketersediaan (opsional)' : 'Availability note (optional)'}
-          hint={id ? 'Contoh: mulai Januari 2027.' : 'Example: from January 2027.'}
+          hint={
+            id
+              ? 'Contoh: mulai Januari 2027. Saat ini hanya dikirim lewat API publik /api/v1, tidak tampil di situs.'
+              : 'Example: from January 2027. Currently only sent through the public API /api/v1.'
+          }
           error={errors[`availabilityNote_${lang}`]?.message}
         >
           {(a) => <Input {...a} {...register(`availabilityNote_${lang}`)} />}
@@ -118,7 +130,12 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         <Field id="city" label="Kota (opsional)" error={errors.city?.message}>
           {(a) => <Input {...a} {...register('city')} />}
         </Field>
-        <Field id="availability" label="Status ketersediaan" error={errors.availability?.message}>
+        <Field
+          id="availability"
+          label="Status ketersediaan"
+          hint="Saat ini hanya dikirim lewat API publik /api/v1, tidak tampil di situs."
+          error={errors.availability?.message}
+        >
           {(a) => (
             <NativeSelect {...a} {...register('availability')}>
               {Object.entries(availabilityLabel).map(([value, label]) => (

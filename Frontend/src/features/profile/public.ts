@@ -40,7 +40,7 @@ export type PublicProfile = {
   hasCv: boolean
   // host link CV di luar (mis. drive.google.com) bila diisi di admin; null bila memakai PDF upload
   cvHost: string | null
-  // pendidikan terbaru yang terbit, untuk pelat status "Kampus"
+  // pendidikan terbaru yang terbit, untuk data terstruktur Person (alumniOf) di beranda
   campus: {
     organization: string
     organization_en: string | null

@@ -20,7 +20,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Framework | **Next.js 16 (App Router, Turbopack)** + React 19 + **TypeScript strict** | SEO (SSG/ISR), satu codebase untuk UI dan API, cocok dengan Vercel | Astro (kurang cocok untuk admin dinamis), Remix |
 | Styling | **Tailwind CSS** + design token CSS variables | Cepat, konsisten, mudah tema gelap/terang | CSS Modules |
 | Komponen | **shadcn/ui** (Radix) | Aksesibel bawaan, kode dimiliki sendiri, mudah disesuaikan | MUI, Chakra |
-| Animasi | **CSS bawaan** (scroll-driven animation, View Transitions, `@starting-style`) untuk reveal, transisi, dan hover. **Canvas 2D buatan sendiri** untuk hero. **Motion** hanya untuk animasi yang bergantung state React (menu, modal, daftar), dimuat di komponen yang butuh saja | 0 KB JS untuk sebagian besar gerak, ringan di HP, mendukung Lighthouse ≥ 90 dan `prefers-reduced-motion` | Motion untuk semua animasi (JS lebih berat), GSAP (baru dipertimbangkan bila butuh animasi scroll yang sangat kompleks), Three.js/WebGL (terlalu berat untuk HP), Lenis (mengganggu scroll bawaan dan aksesibilitas) |
+| Animasi | **CSS bawaan** (scroll-driven animation, View Transitions, `@starting-style`) untuk reveal, transisi, dan hover. **Canvas 2D buatan sendiri** untuk efek armor hero, globe skill, grafik GitHub, dan kartu ID; **WebGL kecil buatan sendiri** untuk latar neural vortex (resolusi 0,4, 24 fps). Tanpa library animasi (Motion tidak terpasang). Semua berhenti di luar layar dan saat digulir (`lib/scroll-idle.ts`) | 0 KB library animasi, ringan di HP, mendukung Lighthouse ≥ 90 dan `prefers-reduced-motion` | Motion (JS lebih berat), GSAP, Three.js (terlalu berat untuk HP), Lenis (mengganggu scroll bawaan dan aksesibilitas) |
 | Tema | **next-themes** | Tanpa flicker, ikut sistem | Buatan sendiri |
 | i18n | **next-intl**, rute `/id` dan `/en` | Server component friendly, SEO (`hreflang`) | i18next |
 | Database | **PostgreSQL 17 di Neon**, dipasang lewat **integrasi Vercel Marketplace** | Serverless, tier gratis permanen, branch database per preview, env terisi otomatis. Fitur yang dipakai: `timestamptz`, `uuid`, `jsonb`, transactional DDL | MySQL (PlanetScale tidak lagi gratis, tanpa `timestamptz`/`uuid` bawaan, DDL tidak transaksional), Supabase (tidur setelah seminggu sepi), Prisma Postgres |
@@ -36,12 +36,12 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
 | Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
-| GitHub | **`fetch` biasa** ke GitHub REST API (token read-only), di-cache Next.js 1 jam | Hanya 1–2 endpoint, tidak perlu library | Octokit, scraping |
+| GitHub | **`fetch` biasa**: REST API untuk metadata project dan impor di admin (di-cache 1 jam), GraphQL API untuk grafik kontribusi beranda (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil) | Hanya beberapa endpoint, tidak perlu library | Octokit, scraping |
 | Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (retensi `PageView`, `RateLimit`), ganti garam hash harian, ringkas statistik | GitHub Actions cron (tetap dipakai untuk backup) |
 | Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Web Analytics** + **Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
-| Live chat | Widget pihak ketiga gratis (default **Tawk.to**), lazy saat diklik | Memenuhi permintaan fitur tanpa server WebSocket | Server WebSocket sendiri (tidak didukung Vercel) |
-| Error tracking | **Sentry** | Tier gratis, integrasi Next.js | LogRocket |
-| Uptime | **Better Stack** atau UptimeRobot (gratis) | Notifikasi email dan Telegram | — |
+| Live chat | ~~Widget pihak ketiga~~ **Tidak dipakai** (PRD 11 no. 3): WhatsApp lewat footer | Tanpa skrip pihak ketiga dan tanpa banner cookie | Tawk.to |
+| Error tracking | **Sentry tanpa SDK**, hanya error server (`src/instrumentation.ts`, keputusan 18) | Tier gratis, tanpa JS klien tambahan | `@sentry/nextjs`, LogRocket |
+| Uptime | **UptimeRobot** (gratis) ke `/api/health`, dipasang pemilik (ditunda 2026-10-20) | Notifikasi email dan Telegram | Better Stack |
 | Unit test | **Vitest** + Testing Library | Cepat, cocok TypeScript | Jest |
 | E2E dan a11y | **Playwright** + `@axe-core/playwright` | Uji lintas browser dan aksesibilitas otomatis | Cypress |
 | Performa | **Lighthouse CI** | Gerbang skor ≥ 90 di CI | Manual |
@@ -191,7 +191,7 @@ erDiagram
       enum availability "OPEN | BUSY | NOT_LOOKING"
       string availabilityNote_id
       string availabilityNote_en
-      string currentRole_id "posisi sekarang untuk pelat status"
+      string currentRole_id "posisi sekarang: gambar pratinjau, jabatan JSON-LD, cadangan footer"
       string currentRole_en
       string cvUrl "link CV di luar (Google Drive), didahulukan /api/cv"
     }
@@ -244,7 +244,7 @@ erDiagram
       string location
       enum employmentType "FULL_TIME | ... | INTERNSHIP | VOLUNTEER, opsional"
       int order
-      bool inStory "titik garis cerita beranda"
+      bool inStory "titik garis cerita (bagian beranda dihapus 2026-10-16, kolom disimpan)"
       string logoId FK
       string photoId FK
     }
@@ -359,7 +359,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
-| Angka beranda | `/admin/highlights`, `/new`, `/[id]` | `saveHighlight`, `deleteHighlight` |
+| Angka (tidak tampil di situs sejak bagian "Dalam angka" dihapus 2026-10-16; menunggu keputusan pemilik) | `/admin/highlights`, `/new`, `/[id]` | `saveHighlight`, `deleteHighlight` |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pelanggan | `/admin/subscribers` | `deleteSubscriber` |

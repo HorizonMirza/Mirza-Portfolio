@@ -1,19 +1,19 @@
 # TODO — Rencana Pengerjaan
 
-Status: **draf v1**. Urutan = prioritas. Tanda `[?]` = bergantung pada keputusan terbuka (lihat `PRD.md` bagian 11). Estimasi memakai patokan Anda: 1 hari per milestone, di luar waktu review.
+Status: **live di `mmirza.site` sejak 2026-10-01**; M1–M4 selesai, M5 selesai di sisi kode, tugas akun pemilik ditunda (keputusan pemilik 2026-10-20). Pekerjaan sekarang berupa revisi dari pemilik, dicatat di log di bawah dan di `DESIGN.md`. Urutan = prioritas. Tanda `[?]` = bergantung pada keputusan terbuka (lihat `PRD.md` bagian 11). Estimasi memakai patokan Anda: 1 hari per milestone, di luar waktu review.
 
 ## Menunggu dari Pemilik
 
 - [x] **CV** (diterima 2026-09-30, ringkasan di `Documentation/CONTENT.md`)
 - [ ] Jawaban 10 pertanyaan konten (`Documentation/CONTENT.md` bagian 10) dan pertanyaan referensi (`Documentation/REFERENCES.md` bagian 6)
-- [ ] Persetujuan konsep "Horizon" (`Documentation/DESIGN.md` bagian 1)
-- [ ] Foto profil, logo/inisial
-- [ ] **Data GAAS** (project awal, lihat `Documentation/CONTENT.md` bagian 8). Project lain ditambahkan Mirza lewat admin setelah rilis
-- [ ] Teks halaman error dan 404
-- [ ] Tautan sosial (LinkedIn, GitHub, email, WhatsApp, Instagram)
+- [x] ~~Persetujuan konsep "Horizon"~~ disetujui 2026-09-30, lalu hero diganti potret + armor (2026-10-18/19, `DESIGN.md` bagian 83–89)
+- [x] Foto profil (foto jas baru 2026-10-19, `DESIGN.md` bagian 84)
+- [x] **Data GAAS** (project awal, lihat `Documentation/CONTENT.md` bagian 8). Project lain ditambahkan Mirza lewat admin setelah rilis
+- [x] Teks halaman error dan 404 (404 "hantu")
+- [x] Tautan sosial (LinkedIn, GitHub, email, WhatsApp, Instagram), diisi lewat admin
 - [ ] Jawaban untuk 15 keputusan terbuka (`Documentation/00-discovery.md` bagian 6, ringkasan di `PRD.md` bagian 11)
-- [ ] Akun layanan: Neon, Vercel, Cloudinary, Resend, Sentry, uptime monitor (Upstash tidak diperlukan lagi)
-- [ ] Domain `.site` (dibimbing pada M5)
+- [ ] Akun layanan: Neon dan Vercel aktif; Resend, Sentry, dan uptime monitor ditunda pemilik (2026-10-20). Upstash tidak diperlukan
+- [x] Domain `mmirza.site` (2026-10-01)
 
 ## M0 — Pra-Perencanaan dan Dokumen
 
@@ -114,18 +114,18 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 ## M5 — Deploy (≈ 1 hari)
 
 - [x] Domain `mmirza.site` (Hostinger): A `@` dan CNAME `www` ke Vercel, `www` dialihkan 308 ke `mmirza.site`, HTTPS aktif, `NEXT_PUBLIC_SITE_URL` dan `BETTER_AUTH_URL` diisi (2026-10-01)
-- [ ] Verifikasi domain di Resend (SPF/DKIM)
+- [ ] (Ditunda pemilik 2026-10-20) Verifikasi domain di Resend (SPF/DKIM)
 - [x] Variabel lingkungan production, Neon Singapura, migrasi production, seed admin (deploy pertama 2026-10-01)
 - [x] Vercel Cron (`Frontend/vercel.json`): ringkas `PageView` ke `PageViewDaily`, hapus `PageView` > 90 hari dan `RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET` (dibuat di M3)
 - [x] Kode: laporan error server ke Sentry tanpa SDK (`src/instrumentation.ts`), Vercel Analytics + Speed Insights (hanya di Vercel, tanpa query string)
-- [ ] Pemilik: aktifkan Analytics dan Speed Insights di Vercel, buat project Sentry lalu isi `SENTRY_DSN`, UptimeRobot (monitor `/api/health` tiap 5 menit, notifikasi email + Telegram)
-- [ ] GitHub ruleset untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
+- [ ] (Ditunda pemilik 2026-10-20) Pemilik: aktifkan Analytics dan Speed Insights di Vercel, buat project Sentry lalu isi `SENTRY_DSN`, UptimeRobot (monitor `/api/health` tiap 5 menit, notifikasi email + Telegram)
+- [ ] (Ditunda pemilik 2026-10-20) GitHub ruleset untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
 - [x] Backup harian terenkripsi (`backup.yml`) dengan uji pemulihan otomatis di setiap run (diuji lokal: dump → gpg → pulih → cek isi)
-- [ ] Pemilik: isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan Backup sekali lewat Actions
+- [ ] (Ditunda pemilik 2026-10-20) Pemilik: isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan Backup sekali lewat Actions
 - [ ] Uji rollback Vercel
-- [ ] Dokumentasi: panduan admin, catatan arsitektur final. README sudah diperbarui 2026-10-11 (tautan situs, tangkapan layar halaman awal, daftar fitur), panduan setup ada di README
+- [ ] Dokumentasi: panduan admin, catatan arsitektur final. README, CLAUDE.md, PRD, ARCHITECTURE, dan CONTENT diselaraskan dengan situs 2026-10-20 (tangkapan layar baru, daftar fitur, petunjuk admin); panduan setup ada di README
 - [ ] Daftar periksa rilis (`WORKFLOW.md` bagian 7), uji di HP nyata
-- [ ] Kirim situs ke Search Console, cek preview link di WhatsApp dan LinkedIn
+- [ ] (Ditunda pemilik 2026-10-20) Kirim situs ke Search Console, cek preview link di WhatsApp dan LinkedIn
 
 **Selesai bila:** situs live di domain `.site`, monitoring aktif, backup teruji.
 
@@ -195,3 +195,7 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-18 | Globe skill: menu kategori lebih kecil dan tidak melewati garis bagian, angka jumlah skill huruf Oswald; pengaman geser untuk WebKit (DESIGN.md bagian 82) |
 | 2026-10-18 | Menu kategori globe: angka jumlah skill memakai huruf yang sama dengan nama kategori (DESIGN.md bagian 82) |
 | 2026-10-18 | Hero beranda dirombak: nama besar, potret dengan liquid mask (canvas 2D sendiri), panel status dan angka portofolio, baris CV dan sosial; latar Horizon dihapus (DESIGN.md bagian 83). Menunggu foto jas dan lapisan kedua dari pemilik |
+| 2026-10-19 | Foto jas baru di seluruh situs; hero tanpa bingkai dengan nama di belakang foto dan peran di bawah foto; pemberitahuan pembuka tanpa kedipan; hover membuka armor (gaya Kabut, intip berkala di rahang, latar neural vortex, efek sampai navbar) (DESIGN.md bagian 84–89) |
+| 2026-10-20 | Performa beranda (kanvas berhenti saat digulir, globe 30 fps, vortex lebih ringan), foto HP tajam, jarak Keahlian–GitHub, IPK 3,5 (DESIGN.md bagian 90) |
+| 2026-10-20 | Menu bawah HP hilang: penyebab asli ditemukan (halaman sesaat lebih lebar dari layar saat transisi, tampilan diperkecil Chrome HP), diperbaiki `overflow-x: clip` + tes E2E; bola skill tanpa raster ulang tiap bingkai dan logo WebP (DESIGN.md bagian 91 dan 93) |
+| 2026-10-20 | Audit kebersihan: `ClickSound`, `getPublicHighlights`, dependency `pg`/`@types/pg`, `inStory` di query publik, dan `THIRD_PARTY_NOTICES.md` dihapus (lisensi logo pindah ke `Frontend/scripts/skill-logos/SOURCES.md`); dokumen dan petunjuk admin diselaraskan; tugas akun pemilik M5 ditunda (DESIGN.md bagian 92 dan 94) |

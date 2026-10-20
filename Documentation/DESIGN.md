@@ -1024,7 +1024,7 @@ Pemilik meminta bagian skill seperti bola 3D yang bisa diputar pada situs refere
 
 ## 75. Globe skill memakai logo asli berwarna penuh (2026-10-18)
 
-- **Permintaan pemilik:** "gunakan logo aslinya untuk semuanya". Logo satu warna (path Simple Icons) diganti logo asli berwarna penuh di `public/skills/<slug>.svg` (34 berkas, sekitar 70 KB, dimuat malas). Sumbernya Devicon (MIT) dan sumber resmi masing-masing; rinciannya di THIRD_PARTY_NOTICES.md.
+- **Permintaan pemilik:** "gunakan logo aslinya untuk semuanya". Logo satu warna (path Simple Icons) diganti logo asli berwarna penuh di `public/skills/<slug>.svg` (34 berkas, sekitar 70 KB, dimuat malas). Sumbernya Devicon (MIT) dan sumber resmi masing-masing; rinciannya kini di `Frontend/scripts/skill-logos/SOURCES.md` (THIRD_PARTY_NOTICES.md dihapus 2026-10-20).
 - **Kode:** `features/skills/skill-logos.ts` mendaftar slug yang punya logo asli. `resolveLogo` di `skill-items.ts` memakai aturan slug dan alias yang sama dengan `resolveIcon`. Urutan cadangan: logo asli, lalu path Simple Icons, lalu ikon umum, lalu singkatan, sehingga skill baru dari Admin tanpa logo asli tetap tampil.
 - **Tema gelap:** logo yang aslinya hitam (Next.js, GitHub, Vercel, OpenAI/Codex) dibalik warnanya (`filter: invert(1)`), sama dengan versi gelap resminya.
 - **Ukuran:** padding lingkaran diperkecil agar logo mengisi lingkaran. Mulai 1024 px, panggung setinggi 36 rem, jari-jari sampai 280 px, dan logo 3,75 rem. Kepadatan baru mengecil di atas 24 skill.
@@ -1266,3 +1266,13 @@ Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newslette
 - **Hasil gulir seluruh beranda pada pembukaan pertama:** hero, Pengalaman, Project, Keahlian, dan GitHub (diuji dengan data kontribusi contoh) semuanya 17–22 ms per bingkai rata-rata. Footer 16,5 ms.
 
 **Batas pengukuran.** GPU di lingkungan uji disimulasikan dengan CPU (SwiftShader). Biaya kanvas hero (vortex WebGL, efek armor) karena itu terukur jauh lebih berat daripada di HP dengan GPU sungguhan. JavaScript efek armor sendiri sekitar 5 ms per bingkai pada CPU 4×, dan hanya berjalan saat intip atau saat disentuh.
+
+## 94. Audit dokumen dan berkas (2026-10-20)
+
+- `THIRD_PARTY_NOTICES.md` di akar dihapus (permintaan pemilik). Teks lisensi MIT Devicon wajib ikut bersama logonya, jadi sumber dan lisensi logo kini ada di samping sumber SVG: `Frontend/scripts/skill-logos/SOURCES.md`. Kredit singkat tetap di halaman Privasi.
+- Petunjuk di Admin → Profil diselaraskan dengan tampilan sekarang:
+  - Headline dan Posisi sekarang dipakai di gambar pratinjau tautan, data mesin pencari, dan cadangan footer. Keduanya tidak tampil di hero.
+  - Peran (dipisah `|`) tampil di bawah foto beranda, di pita Tentang, dan di footer.
+  - Status dan catatan ketersediaan saat ini hanya dikirim lewat `/api/v1`.
+- `inStory` tidak lagi diambil oleh query Pengalaman publik, karena bagian garis cerita sudah dihapus. Kolom dan centangnya di admin tetap ada.
+- README, CLAUDE.md, PRD, ARCHITECTURE, TODO, CONTENT, dan Backend/README diperbarui: status M5 (tugas akun pemilik ditunda), isi beranda sekarang, newsletter tanpa form daftar, Motion tidak terpasang, vortex WebGL, `GITHUB_TOKEN` wajib untuk grafik kontribusi, dan `pnpm logos:build`.

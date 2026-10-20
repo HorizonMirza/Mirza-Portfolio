@@ -31,7 +31,7 @@ Usulan kalimat hero (untuk dipilih/diubah Mirza):
 | 2 | Saya membangun aplikasi dan komunitas yang benar-benar dipakai orang. | I build apps and communities that people actually use. |
 | 3 | Fullstack developer dan pembangun komunitas, sedang mendalami AI. | Fullstack developer and community builder, studying AI. |
 
-Kalimat pendukung (satu baris, untuk pelat status): "Sedang magang sebagai Fullstack Developer di PT PGAS Solution."
+Kalimat pendukung (satu baris, dulu untuk pelat status hero): "Sedang magang sebagai Fullstack Developer di PT PGAS Solution." Pelat status dihapus dari hero 2026-10-18; hero kini hanya nama dan peran.
 
 ## 3. Pengalaman Kerja (draf ID/EN)
 
@@ -114,9 +114,9 @@ Catatan: stack rencana situs ini (Next.js, TypeScript, PostgreSQL) sesuai dengan
 | 30+ | Siswa yang didaftarkan (Algo Bootcamp) |
 | 3,5 | IPK (diputuskan 2026-10-19; sebelumnya 3,41) |
 
-Aturan: tidak boleh menambah angka baru tanpa sumber dari Mirza. Angka pada pelat status hero harus dari daftar ini.
+Aturan: tidak boleh menambah angka baru tanpa sumber dari Mirza. Angka apa pun yang tampil di situs harus dari daftar ini.
 
-**2026-10-08:** empat angka pertama (1.000+, 300+, 128+, 30+) menjadi isi awal bagian "Dalam angka" di beranda (tabel `Highlight`, Admin → Angka). Rating 5,0 dan IPK tidak dimasukkan; bisa ditambah pemilik lewat admin.
+**2026-10-08:** empat angka pertama (1.000+, 300+, 128+, 30+) menjadi isi awal bagian "Dalam angka" di beranda (tabel `Highlight`, Admin → Angka). Rating 5,0 dan IPK tidak dimasukkan; bisa ditambah pemilik lewat admin. **2026-10-16:** bagian "Dalam angka" dihapus dari beranda; data di Admin → Angka tetap tersimpan tetapi tidak tampil di mana pun (menunggu keputusan pemilik: hapus atau pakai lagi).
 
 ## 8. Project
 

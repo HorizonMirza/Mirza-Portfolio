@@ -102,8 +102,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     p.cover ? [{ slug: p.slug, url: p.cover.url, title: loc(p, 'title', locale) }] : [],
   )
 
-  // Nomor bagian dihitung dari bagian yang benar-benar tampil, agar tidak melompat bila satu bagian
-  // kosong (mis. semua angka dihapus di admin). 01 selalu bagian pembuka.
+  // Bagian beranda hanya tampil bila datanya ada (mis. GitHub butuh GITHUB_TOKEN dan URL profil GitHub).
   // Pengalaman di beranda (revisi pemilik 2026-10-16, demo E3 akordion): kerja dan organisasi
   // terbaru di atas, pendidikan tidak ikut (sama dengan halaman Pengalaman)
   const workHistory = sortByLatest(experiences.filter((e) => e.type !== 'EDUCATION'))

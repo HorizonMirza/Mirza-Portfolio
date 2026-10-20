@@ -8,7 +8,7 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** Milestone 1–4 selesai (setup, panel admin, halaman publik, polish). Berikutnya M5 (deploy dan domain). Kerjakan milestone berikutnya hanya bila diminta Mirza (`Documentation/TODO.md`).
+**Status:** live di `mmirza.site` sejak 2026-10-01. Milestone 1–4 selesai, M5 selesai di sisi kode; tugas akun pemilik M5 (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda atas keputusan pemilik (2026-10-20). Pekerjaan sekarang berupa revisi dari Mirza (`Documentation/TODO.md`, log di `Documentation/DESIGN.md`).
 
 **Next.js 16:** API berbeda dari versi lama. Baca `Frontend/AGENTS.md` dan panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 
@@ -30,7 +30,7 @@ Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md
 
 ## Stack Singkat
 
-Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas (Motion seperlunya) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Resend + React Email · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
+Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas 2D/WebGL buatan sendiri (tanpa library animasi) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Resend + React Email · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
 
 ## Perintah
 
@@ -46,6 +46,7 @@ pnpm build          # build production
 pnpm format:check   # Prettier
 pnpm db:migrate     # prisma migrate dev
 pnpm db:seed        # data awal dari CV (idempoten)
+pnpm logos:build    # logo WebP globe skill dari scripts/skill-logos/*.svg
 ```
 
 Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
@@ -72,7 +73,7 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 - Target Lighthouse mobile ≥ 90. Jangan menambah JavaScript klien tanpa alasan. Utamakan Server Components.
 - Gunakan token desain (CSS variables), bukan warna atau ukuran acak.
 - Waktu disimpan UTC (`timestamptz`) dan **selalu ditampilkan dalam zona `Asia/Jakarta`** lewat `Intl.DateTimeFormat` (termasuk email, PDF, export). Primary key UUID v7. Seed memakai `seedId()` agar idempoten.
-- Animasi: CSS dulu (scroll-driven, View Transitions, `@starting-style`). Motion hanya untuk gerak yang bergantung state React. Form publik memakai Server Action + `useActionState`, tanpa library form (`Documentation/DESIGN.md` bagian 2.4 dan 3).
+- Animasi: CSS dulu (scroll-driven, View Transitions, `@starting-style`), lalu canvas buatan sendiri. Tidak ada library animasi (Motion tidak terpasang). Animasi berat berhenti saat di luar layar dan saat digulir (`lib/scroll-idle.ts`); nilai yang berubah tiap bingkai ditulis langsung ke `transform`/`opacity`, bukan lewat variabel CSS yang diwariskan. Form publik memakai Server Action + `useActionState`, tanpa library form (`Documentation/DESIGN.md` bagian 2.4 dan 3).
 
 **Proses**
 - Jangan menambah dependency, layanan, atau biaya tanpa persetujuan. Tuliskan alasannya.
@@ -103,7 +104,9 @@ Documentation/   dokumen perencanaan
 
 - Sandbox bawaan memakai Node 22, sedangkan proyek butuh Node 24 (`Frontend/.nvmrc`). Unduh Node 24 dari nodejs.org (cek SHASUMS256) ke scratchpad lalu taruh di awal `PATH`.
 - Proyek memakai PostgreSQL 17 (CI dan production). Sandbox hanya punya Postgres 16 di `/usr/lib/postgresql/16/bin` (jalankan sebagai user non-root, data di luar repo), cukup untuk uji lokal, tetapi hasil akhir dipastikan oleh CI.
-- E2E: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e` (jalankan `pnpm build` dulu).
+- E2E: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1194/chrome-linux/chrome pnpm test:e2e` (jalankan `pnpm build` dulu). Tes admin butuh `ADMIN_EMAIL`/`ADMIN_PASSWORD`: muat `Frontend/.env.local` dengan `set -a && . ./.env.local && set +a` (jangan dicetak) dan tambahkan `BETTER_AUTH_URL=http://localhost:3100`.
+- Hentikan server `next start` lama sebelum build ulang: server lama dengan build baru menyajikan CSS/JS yang tidak cocok.
+- GPU sandbox disimulasikan CPU (SwiftShader): angka bingkai kanvas/WebGL jauh lebih berat daripada di HP sungguhan. Bandingkan sebelum/sesudah di lingkungan yang sama, jangan sebagai angka mutlak.
 - Jangan `pkill -f` dengan pola yang juga muncul di perintah shell itu sendiri.
 
 ## Batasan Lingkungan Sesi Cloud

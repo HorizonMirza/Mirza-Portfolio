@@ -1,8 +1,9 @@
 // Data ikon brand dari Simple Icons v16.33.0 (https://simpleicons.org, CC0), disalin tanpa
 // menambah dependency. Pengecualian lisensi: logo Git oleh Jason Long (CC BY 3.0), atribusinya tampil
 // di halaman Privasi; logo JavaScript, Bootstrap, dan Zod berlisensi MIT. Ikon berlisensi NC/SA tidak dipakai.
-// Ikon dari sumber lain ditandai di bagian bawah (THIRD_PARTY_NOTICES.md). Semua logo tetap merek dagang
-// pemiliknya dan hanya dipakai untuk menunjukkan alat yang dikuasai.
+// Ikon dari sumber lain ditandai di bagian bawah; logo Java dari Devicon (MIT, lisensinya di
+// scripts/skill-logos/SOURCES.md). Semua logo tetap merek dagang pemiliknya dan hanya dipakai untuk
+// menunjukkan alat yang dikuasai.
 // Hanya diimpor di server: klien hanya menerima path skill yang tampil.
 
 // viewBox bawaan 0 0 24 24 (Simple Icons); evenOdd untuk logo yang lubangnya dibentuk path dalam
