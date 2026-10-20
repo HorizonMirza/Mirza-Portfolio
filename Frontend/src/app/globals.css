@@ -1707,7 +1707,8 @@
   /* kecepatan tetap per sampul, berapa pun jumlah project */
   animation: home-marquee calc(var(--n) * 8s) linear infinite;
 }
-.home-marquee-track:has(:focus-visible) {
+.home-marquee-track:has(:focus-visible),
+.home-marquee[data-offscreen] .home-marquee-track {
   animation-play-state: paused;
 }
 .home-marquee li {

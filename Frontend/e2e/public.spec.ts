@@ -63,6 +63,11 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   else await expect(caption).toBeHidden()
   await expect(firstCover).toHaveAccessibleName(/\S/)
   const track = page.locator('.home-marquee-track')
+  // pita dijeda selama di luar layar (performa, 2026-10-20) dan berjalan lagi saat terlihat
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expect(track).toHaveCSS('animation-play-state', 'paused')
+  await page.locator('.home-marquee').evaluate((el) => el.scrollIntoView({ block: 'center' }))
+  await expect(track).toHaveCSS('animation-play-state', 'running')
   if (!isMobile) {
     // pita terus bergerak sehingga tidak pernah "stabil" untuk hover(); kursor diarahkan langsung
     const box = (await page.locator('.home-marquee').boundingBox())!

@@ -17,11 +17,13 @@ const MAX_BLOBS = 260
 const FOG_REACH = 1.8
 // gambar kedua dimuat setelah halaman tenang (atau saat pertama disentuh), bukan saat halaman dibuka
 const BACK_DELAY_MS = 1200
+// resolusi masker jejak terhadap piksel CSS
+const MASK_SCALE = 0.5
 // tanda bisa di-hover (pilihan pemilik "intip berkala"): armor mengintip berupa goresan lurus tepat di garis
 // rahang, dari bawah telinga ke dagu, bergantian kiri lalu kanan dengan jeda 8 detik selama kursor diam.
 // Ujung garis diukur dari hero-portrait.webp (1120×1100): kiri (402, 450)→(520, 585), kanan (680, 450)→(575, 585).
 const PEEK_EVERY_MS = 8000
-const PEEK_FIRST_MS = 1800
+const PEEK_FIRST_MS = 3000
 const JAWS = [
   [
     { x: 402 / 1120, y: 450 / 1100 },
@@ -175,10 +177,13 @@ export function LiquidMaskPortrait({
       width = rect.width
       height = rect.height
       dpr = Math.min(2, window.devicePixelRatio || 1)
-      for (const c of [canvas, mask, layer, silhouette]) {
+      for (const c of [canvas, layer, silhouette]) {
         c.width = Math.round(width * dpr)
         c.height = Math.round(height * dpr)
       }
+      // masker kabut cukup setengah resolusi CSS: tepinya memang lembut, dan jauh lebih ringan
+      mask.width = Math.max(1, Math.round(width * MASK_SCALE))
+      mask.height = Math.max(1, Math.round(height * MASK_SCALE))
       dirty = true
     }
     resize()
@@ -206,7 +211,7 @@ export function LiquidMaskPortrait({
       if (dirty) compose()
       mctx.setTransform(1, 0, 0, 1, 0, 0)
       mctx.clearRect(0, 0, mask.width, mask.height)
-      mctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      mctx.setTransform(MASK_SCALE, 0, 0, MASK_SCALE, 0, 0)
       for (const b of blobs) {
         const r = b.r * Math.pow(b.life, 0.6) * FOG_REACH
         if (r < 0.5) continue
@@ -222,7 +227,7 @@ export function LiquidMaskPortrait({
       }
       ctx.drawImage(layer, 0, 0)
       ctx.globalCompositeOperation = 'destination-in'
-      ctx.drawImage(mask, 0, 0)
+      ctx.drawImage(mask, 0, 0, canvas.width, canvas.height)
       ctx.globalCompositeOperation = 'source-over'
     }
 

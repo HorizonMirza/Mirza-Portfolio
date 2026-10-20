@@ -15,6 +15,9 @@ import { cn } from '@/lib/utils'
 
 import type { GenericGlyph, SkillItem } from '../skill-items'
 
+// garis bola: ruas per lingkaran dan jumlah tingkat kedalaman untuk pengelompokan stroke
+const RING_STEPS = 60
+const DEPTH_BANDS = 6
 const GENERIC_ICONS = {
   kanban: SquareKanban,
   users: Users,
@@ -240,29 +243,39 @@ export function SkillGlobe({
       const r = radius * 0.98
       ctx.strokeStyle = lineColor
       ctx.lineWidth = 1
-      const ring = (point: (a: number) => Vec, alpha: number) => {
-        const steps = 72
+      // Ruas garis dikelompokkan per tingkat kedalaman (DEPTH_BANDS), lalu tiap kelompok digambar dengan
+      // satu stroke: ±10 panggilan gambar per bingkai, bukan ±800 (penyebab lag, laporan pemilik 2026-10-20)
+      const bands: Path2D[][] = [[], []]
+      const ring = (point: (a: number) => Vec, set: number) => {
         let prev: Vec | null = null
-        for (let k = 0; k <= steps; k++) {
-          const q = project(point((k / steps) * Math.PI * 2), yaw, pitch)
+        for (let k = 0; k <= RING_STEPS; k++) {
+          const q = project(point((k / RING_STEPS) * Math.PI * 2), yaw, pitch)
           if (prev) {
-            ctx.globalAlpha = alpha * (0.35 + ((prev[2] + q[2]) / 2 + 1) * 0.45)
-            ctx.beginPath()
-            ctx.moveTo(cx + prev[0] * r, cy + prev[1] * r)
-            ctx.lineTo(cx + q[0] * r, cy + q[1] * r)
-            ctx.stroke()
+            const depth = ((prev[2] + q[2]) / 2 + 1) / 2
+            const band = Math.min(DEPTH_BANDS - 1, Math.floor(depth * DEPTH_BANDS))
+            const path = (bands[set]![band] ??= new Path2D())
+            path.moveTo(cx + prev[0] * r, cy + prev[1] * r)
+            path.lineTo(cx + q[0] * r, cy + q[1] * r)
           }
           prev = q
         }
       }
       for (let lat = -60; lat <= 60; lat += 30) {
         const la = (lat * Math.PI) / 180
-        ring((a) => [Math.cos(a) * Math.cos(la), Math.sin(la), Math.sin(a) * Math.cos(la)], 0.28)
+        ring((a) => [Math.cos(a) * Math.cos(la), Math.sin(la), Math.sin(a) * Math.cos(la)], 0)
       }
       for (let lon = 0; lon < 180; lon += 30) {
         const lo = (lon * Math.PI) / 180
-        ring((a) => [Math.cos(a) * Math.cos(lo), Math.sin(a), Math.cos(a) * Math.sin(lo)], 0.24)
+        ring((a) => [Math.cos(a) * Math.cos(lo), Math.sin(a), Math.cos(a) * Math.sin(lo)], 1)
       }
+      // sisi belakang lebih pudar: lintang 0,28 dan bujur 0,24 dikali 0,35–1,25 menurut kedalaman
+      bands.forEach((set, k) => {
+        set.forEach((path, band) => {
+          if (!path) return
+          ctx.globalAlpha = (k === 0 ? 0.28 : 0.24) * (0.35 + ((band + 0.5) / DEPTH_BANDS) * 0.9)
+          ctx.stroke(path)
+        })
+      })
       ctx.globalAlpha = 0.4
       ctx.beginPath()
       ctx.arc(cx, cy, r, 0, Math.PI * 2)
@@ -295,7 +308,8 @@ export function SkillGlobe({
         el.style.setProperty('--s', style['--s'])
         el.style.setProperty('--o', style['--o'])
         el.style.setProperty('--lo', style['--lo'])
-        el.style.zIndex = String(style.zIndex + (i === activeRef.current ? 200 : 0))
+        const z = String(style.zIndex + (i === activeRef.current ? 200 : 0))
+        if (el.style.zIndex !== z) el.style.zIndex = z
         const scale = Number(style['--s'])
         const [baseW, baseH] = sizes[i] ?? [0, 0]
         const w = baseW * scale
@@ -309,7 +323,8 @@ export function SkillGlobe({
             w >= MIN_TARGET &&
             h >= MIN_TARGET &&
             !placed.some((other) => overlaps(rect, other)))
-        el.inert = !usable
+        // ditulis hanya bila berubah: mengubah inert memicu hitung ulang pohon aksesibilitas
+        if (el.inert === usable) el.inert = !usable
         if (usable) placed.push(rect)
       }
     }

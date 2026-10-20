@@ -79,7 +79,17 @@ function compile(gl: WebGLRenderingContext, source: string, type: number) {
   return shader
 }
 
-export function NeuralVortexBackground({ className }: { className?: string }) {
+export function NeuralVortexBackground({
+  className,
+  resolution = 1,
+  fps = 60,
+}: {
+  className?: string
+  // skala resolusi kanvas terhadap 1,5× piksel CSS; latar yang redup cukup 0,5 (jauh lebih ringan)
+  resolution?: number
+  // batas bingkai per detik; latar hero beranda cukup 30
+  fps?: number
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -125,7 +135,7 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
 
     const resize = () => {
       // DPR dibatasi agar shader 15 lapis tetap ringan di layar besar
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5) * resolution
       box = canvas.getBoundingClientRect()
       canvas.width = Math.max(1, Math.round(box.width * dpr))
       canvas.height = Math.max(1, Math.round(box.height * dpr))
@@ -134,8 +144,13 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
       if (reduceMotion) draw(20000)
     }
 
+    const minGap = 1000 / fps - 2
+    let drawnAt = 0
     const loop = (time: number) => {
-      draw(time)
+      if (time - drawnAt >= minGap) {
+        drawnAt = time
+        draw(time)
+      }
       frame = requestAnimationFrame(loop)
     }
     let onScreen = true
@@ -188,7 +203,7 @@ export function NeuralVortexBackground({ className }: { className?: string }) {
       // (kartu pembuka memasang dan membongkar kanvas ini setiap sesi).
       gl.getExtension('WEBGL_lose_context')?.loseContext()
     }
-  }, [])
+  }, [resolution, fps])
 
   return (
     <canvas

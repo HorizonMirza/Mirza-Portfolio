@@ -140,7 +140,9 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     <Image
       src={HERO_PORTRAIT}
       alt={DEFAULT_PHOTO_ALT[locale]}
-      sizes="(min-width: 1024px) 860px, 100vw"
+      // foto dikirim apa adanya (WebP 1120 px kualitas 85), tanpa kompresi ulang Next.js yang membuatnya
+      // buram di HP (laporan pemilik 2026-10-20); di HP foto selebar 140vw
+      unoptimized
       loading="eager"
       // tanpa placeholder blur: versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto
       // saat halaman dimuat ulang (laporan pemilik 2026-10-19)
@@ -180,7 +182,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           .hero, tepat di bawah navbar. Latar vortex redup (pilihan pemilik 2026-10-19, latar 9). */}
       <section aria-labelledby="hero-title" className="hero-shell">
         <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
-          <NeuralVortexBackground className="hero-vortex" />
+          <NeuralVortexBackground className="hero-vortex" resolution={0.5} fps={30} />
           <div className="hero">
             {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
             <div aria-hidden="true" className="hero-glow" />
@@ -315,7 +317,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <section
           id="skills"
           aria-labelledby="stack-title"
-          className="home-curtain reveal scroll-mt-24 border-t border-border py-16 md:py-24"
+          // jarak ke bagian GitHub dirapatkan (revisi pemilik 2026-10-20)
+          className="home-curtain reveal scroll-mt-24 border-t border-border pt-16 pb-10 md:pt-24 md:pb-14"
         >
           <Container>
             {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul di tengah; keterangan sumber
@@ -341,7 +344,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {sections.includes('github') ? (
         <section
           aria-labelledby="github-title"
-          className="home-curtain reveal border-t border-border py-16 md:py-24"
+          className="home-curtain reveal border-t border-border pt-10 pb-16 md:pt-16 md:pb-24"
         >
           <Container>
             {/* Revisi pemilik 2026-10-16: judul "GitHub" di tengah tanpa nomor, tanpa tautan profil

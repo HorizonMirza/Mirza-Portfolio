@@ -11,6 +11,21 @@ import { usePathname } from '@/i18n/navigation'
 export function RevealObserver() {
   const pathname = usePathname()
 
+  // Animasi berulang (pita project) dijeda saat di luar layar agar tidak terus dirender (laporan lag
+  // pemilik 2026-10-20); ditandai data-offscreen, dibaca globals.css
+  useEffect(() => {
+    if (!('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const el = entry.target as HTMLElement
+        if (entry.isIntersecting) delete el.dataset.offscreen
+        else el.dataset.offscreen = ''
+      }
+    })
+    for (const el of document.querySelectorAll<HTMLElement>('.home-marquee')) io.observe(el)
+    return () => io.disconnect()
+  }, [pathname])
+
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     if (!('IntersectionObserver' in window)) return

@@ -1211,3 +1211,17 @@ Pilihan pemilik setelah tiga putaran demo. Gerak tarikannya dibuat biasa saja, y
   - Jejak 1,5× lebih besar: jari-jari 4,5% sisi pendek, 18–30 px.
   - Intip dipindah dari pipi ke garis rahang. Bentuknya goresan lurus tepat di rahang, dari bawah telinga ke dagu. Ujung garis diukur dari foto: kiri (402, 450)→(520, 585), kanan (680, 450)→(575, 585) dalam 1120×1100. Kiri dan kanan bergantian dengan jeda 8 detik selama kursor diam.
   - Placeholder blur Next.js dihapus dari foto hero. Versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto saat halaman dimuat ulang (laporan pemilik).
+
+## 90. Performa beranda, foto HP tajam, jarak Keahlian–GitHub (2026-10-20)
+
+Laporan pemilik: beranda, Keahlian Teknis, dan GitHub terasa lag di HP dan laptop; foto hero di HP kurang tajam.
+
+- **Globe skill:** ruas garis bola kini dikelompokkan menjadi 6 tingkat kedalaman dan digambar dengan ±12 stroke `Path2D` per bingkai, sebelumnya ±800 stroke terpisah (60 ruas per lingkaran, sebelumnya 72). Status `inert` dan `z-index` logo hanya ditulis bila berubah.
+- **Vortex hero:** dirender di setengah resolusi (`resolution={0.5}`) dan dibatasi 30 fps (`fps={30}`). Latar redup, jadi perbedaannya tidak terlihat. Kartu pembuka dan login tetap resolusi penuh.
+- **Liquid mask:** masker jejak di setengah resolusi CSS (`MASK_SCALE`).
+- **Pita project:** dijeda saat di luar layar (`data-offscreen` dari `RevealObserver`).
+- **Header:** tombol dan kapsul navbar tanpa `backdrop-blur`, latar 95% pekat. Blur di header sticky dihitung ulang setiap bingkai saat halaman digulir atau latar hero beranimasi.
+- **Hasil ukur lokal** (Chromium tanpa GPU, CPU diperlambat 4×, rata-rata waktu per bingkai): hero 135 → 45 ms, Keahlian Teknis 42 → 37 ms. Di perangkat dengan GPU angkanya jauh lebih kecil; yang dibandingkan hanya selisihnya.
+- **Foto hero di HP:** dikirim apa adanya (`unoptimized`, WebP 1120 px kualitas 85), tanpa kompresi ulang dan ukuran `100vw` dari Next.js. Sebelumnya foto selebar 140vw di HP diperbesar dari versi yang lebih kecil.
+- **Intip rahang pertama** muncul 3 detik setelah halaman dibuka.
+- **Jarak Keahlian Teknis–GitHub** dirapatkan: bawah Keahlian `pb-10 md:pb-14`, atas GitHub `pt-10 md:pt-16`.
