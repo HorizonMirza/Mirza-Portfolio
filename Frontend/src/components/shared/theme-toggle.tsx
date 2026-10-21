@@ -6,6 +6,7 @@ import { type MouseEvent, useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
 
 import { canAnimateViewTransition, originOf, revealChange } from '@/lib/circle-reveal'
+import { THEME_STORAGE_KEY } from '@/lib/theme'
 import { playThemeSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
@@ -74,7 +75,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       root.classList.add(next)
       root.style.colorScheme = next
       try {
-        localStorage.setItem('theme', next)
+        localStorage.setItem(THEME_STORAGE_KEY, next)
       } catch {
         // penyimpanan diblokir: tema tetap berganti untuk kunjungan ini
       }

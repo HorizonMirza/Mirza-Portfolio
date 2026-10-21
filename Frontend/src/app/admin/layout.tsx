@@ -7,6 +7,7 @@ import '@/app/globals.css'
 import { fontVariables } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
+import { THEME_STORAGE_KEY } from '@/lib/theme'
 
 // Root layout kedua (tanpa awalan bahasa). Panel admin hanya dipakai pemilik, jadi berbahasa Indonesia.
 export const metadata: Metadata = {
@@ -30,7 +31,8 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
           nonce={nonce}
           attribute="class"
           defaultTheme="dark"
-          enableSystem
+          enableSystem={false}
+          storageKey={THEME_STORAGE_KEY}
           // warna tidak beranimasi saat tema dipasang (mis. ketika halaman dibuka)
           disableTransitionOnChange
         >

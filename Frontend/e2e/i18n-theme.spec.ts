@@ -39,6 +39,42 @@ test('tombol bahasa berpindah ke versi Inggris di halaman yang sama', async ({ p
   await expect(page).toHaveURL(/\/id\/experience$/)
 })
 
+test('ganti bahasa tidak membuat tema berkedip', async ({ page }) => {
+  // Laporan pemilik 2026-10-21: saat ganti bahasa React memasang ulang atribut <html> dan kelas tema
+  // sempat hilang sampai next-themes memasangnya lagi. Tiap perubahan atribut <html> dicatat; saat
+  // pencatat berjalan (setelah commit React selesai) kelas tema harus sudah kembali.
+  for (const theme of ['dark', 'light'] as const) {
+    await page.addInitScript((t) => localStorage.setItem('mmirza-theme', t), theme)
+    await page.goto('/id/about')
+    await page.evaluate((t) => {
+      const w = window as unknown as { __themeLost: number }
+      w.__themeLost = 0
+      new MutationObserver(() => {
+        if (!document.documentElement.classList.contains(t)) w.__themeLost++
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    }, theme)
+    const switcher = page.locator('header a[hreflang]')
+    await switcher.click()
+    await expect(page).toHaveURL(/\/en\/about$/)
+    await page.waitForTimeout(400)
+    const lost = await page.evaluate(
+      () => (window as unknown as { __themeLost: number }).__themeLost,
+    )
+    expect(lost, `kelas ${theme} hilang saat ganti bahasa`).toBe(0)
+    await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${theme}\\b`))
+  }
+})
+
+test('pengunjung dengan pilihan tema lama tetap mulai dari gelap', async ({ browser }) => {
+  // kunci penyimpanan baru (2026-10-21): pilihan lama 'theme' diabaikan, dan tema tidak ikut sistem
+  const context = await browser.newContext({ colorScheme: 'light' })
+  const page = await context.newPage()
+  await page.addInitScript(() => localStorage.setItem('theme', 'light'))
+  await page.goto('/id')
+  await expect(page.locator('html')).toHaveClass(/\bdark\b/)
+  await context.close()
+})
+
 test('satu tombol tema membalik gelap dan terang, lalu tersimpan', async ({ page }) => {
   await page.goto('/id')
   const html = page.locator('html')

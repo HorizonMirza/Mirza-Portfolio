@@ -1225,6 +1225,13 @@
   outline: 2px solid var(--note);
   outline-offset: 2px;
 }
+/* Setelah JavaScript siap, logo dan nama digambar di canvas (globe-sprites.ts, 2026-10-21, globe lag di
+   HP); tombol HTML tetap di tempatnya untuk sentuhan, keyboard, dan pembaca layar, tetapi isinya tidak
+   terlihat. Garis fokus keyboard tetap milik tombol. */
+.globe-stage[data-canvas] .globe-item > * {
+  opacity: 0 !important;
+  will-change: auto;
+}
 .globe-filter {
   position: relative;
   margin-top: 1rem;

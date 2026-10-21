@@ -7,6 +7,7 @@ import { ViewTransition } from 'react'
 import '@/app/globals.css'
 import { fontVariables } from '@/app/fonts'
 import { LanguageScramble } from '@/components/shared/language-scramble'
+import { ThemeClassSync } from '@/components/shared/theme-class-sync'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { PageTransitions } from '@/components/site/page-transitions'
 import { PageViewTracker } from '@/components/site/page-view-tracker'
@@ -16,6 +17,7 @@ import { SiteHeader } from '@/components/site/site-header'
 import { VercelInsights } from '@/components/site/vercel-insights'
 import { routing } from '@/i18n/routing'
 import { siteUrl } from '@/lib/env'
+import { THEME_STORAGE_KEY } from '@/lib/theme'
 import { IntroNoticeSlot } from '@/features/settings/components/public/intro-notice-slot'
 import { INTRO_PENDING_SCRIPT } from '@/features/settings/intro-pending'
 import { getSiteSettings } from '@/features/settings/public'
@@ -75,7 +77,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           attribute="class"
           // tampilan awal gelap (keputusan pemilik M4); pilihan pengunjung tersimpan
           defaultTheme="dark"
-          enableSystem
+          enableSystem={false}
+          storageKey={THEME_STORAGE_KEY}
           // warna tidak beranimasi saat tema dipasang (mis. ketika halaman dibuka)
           disableTransitionOnChange
         >
@@ -109,6 +112,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
               </main>
               <SiteFooter locale={locale} />
             </div>
+            <ThemeClassSync />
             <PageTransitions />
             <RevealObserver />
             <LanguageScramble />

@@ -115,7 +115,7 @@ test.describe('tampilan halaman login', () => {
       page.on('console', (m) => {
         if (m.type() === 'error') errors.push(m.text())
       })
-      await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
+      await page.addInitScript((t) => localStorage.setItem('mmirza-theme', t), theme)
       await page.goto('/admin/login')
       await expect(page.getByRole('heading', { name: 'Welcome Back King!' })).toBeVisible()
       await expect(page.locator('main').locator('..')).toHaveCSS('background-color', 'rgb(0, 0, 0)')

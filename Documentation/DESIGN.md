@@ -1297,3 +1297,20 @@ Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newslette
   - Skala gepeng lama (`scale: 1 0.6`) dihapus. *Scroll anchoring* dimatikan setelah terkirim supaya tiket tidak melompat.
   - Reduced-motion: tiket langsung tampil.
 
+## 96. Visor mata, tema gelap tetap, ganti bahasa tanpa kedipan, HP tanpa latar ungu, globe di canvas (2026-10-21)
+
+- **Intip armor "Visor mata"** (pilihan pemilik dari 10 demo letak intip, nomor 3): intip di medali dada diganti sapuan mendatar menyapu kacamata dari kiri ke kanan dalam 0,8 detik, memakai jejak cairan yang sama dengan hover. Titiknya (360, 372) → (540, 380) → (720, 372) di foto 1120×1100, kuas 1,3×. Jadwal tetap: pertama 3 detik setelah beranda terlihat (pemberitahuan pembuka sudah ditutup), lalu tiap 8 detik selama kursor diam.
+- **Tema gelap default:** tema tidak lagi mengikuti sistem (`enableSystem={false}`). Kunci penyimpanan diganti dari `theme` ke `mmirza-theme` (`lib/theme.ts`), sehingga pilihan terang yang tersimpan sebelumnya diabaikan sekali dan semua pengunjung kembali mulai gelap. Pilihan baru lewat tombol tema tetap tersimpan.
+- **Ganti bahasa tanpa kedipan tema:**
+  - Penyebab: saat bahasa berganti, React memasang ulang atribut `<html>` dari layout bahasa baru. Kelasnya kembali hanya berisi font, dan next-themes baru memasang `dark` lagi 20–230 ms kemudian, setelah layar tergambar. Hasilnya, layar terang sepersekian detik, bahkan bisa terus terang di beranda desktop karena snapshot View Transition.
+  - Perbaikan: `ThemeClassSync` memasang kelas tema dalam layout effect, pada commit yang sama sebelum browser menggambar.
+  - Bukti: rekaman frame demi frame kini tanpa frame terang di beranda, Tentang, dan HP. Tes E2E baru "ganti bahasa tidak membuat tema berkedip" mengamati kelas `<html>` di tema gelap dan terang.
+- **HP dan tablet tanpa latar ungu:** `NeuralVortexBackground` tidak membuat konteks WebGL di perangkat sentuh tanpa hover (hero beranda, pemberitahuan pembuka, login admin); kanvasnya disembunyikan. Laptop dan desktop tidak berubah.
+- **Globe skill digambar di canvas** (`features/skills/components/globe-sprites.ts`):
+  - Masalahnya ada di hitung ulang gaya 31 tombol dan lingkaran logo setiap bingkai: ±42 ms per bingkai di HP dengan CPU 6× lebih lambat (bola ±12 fps). Memindah variabel CSS (−25%) dan Web Animations (gaya turun, JavaScript naik) sudah dicoba dan tidak cukup.
+  - Kini lingkaran, logo, cahaya, dan nama digambar di canvas yang sama dengan garis bola, mengikuti ukuran tata letak tombol HTML dan aturan `.globe-*` (terpilih, menonjol, redup abu-abu, disorot, logo hitam dibalik di tema gelap).
+  - Sprite logo dibuat sekali per tema sebagai `ImageBitmap` supaya tinggal di GPU. Kanvas yang pikselnya pernah dibaca harus diunggah ulang tiap bingkai, dan itu sempat membuat versi pertama lebih lambat.
+  - Tombol HTML tetap di tempatnya, tak terlihat, untuk sentuhan, keyboard, dan pembaca layar. Posisinya diperbarui tiap bingkai ke-4, kecuali saat digeser atau diputar dan untuk logo yang disorot, difokus, atau terpilih. Tanpa JavaScript, logo HTML tetap tampil seperti biasa.
+  - Hasil di HP CPU 6× (render CPU, dibandingkan di lingkungan yang sama): 108 → 77 ms per bingkai, hitung ulang gaya 2.210 → 157 ms per 4 detik, beban utas utama ±separuh. Tanpa perlambatan: 60 fps stabil.
+  - Sekalian diperbaiki: sejak 2026-10-20 nilai `--lo` (tampil tidaknya nama) tertulis ke teks pembaca layar, bukan ke label nama, sehingga nama tidak ikut muncul atau hilang saat bola berputar.
+

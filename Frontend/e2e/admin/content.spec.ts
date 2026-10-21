@@ -27,7 +27,7 @@ for (const theme of ['light', 'dark'] as const) {
   test(`halaman admin (${theme}) tanpa pelanggaran aksesibilitas dan CSP`, async ({ page }) => {
     // 11 halaman diperiksa axe dalam satu tes; batas 30 detik terlalu ketat bila data uji menumpuk
     test.setTimeout(90_000)
-    await page.addInitScript((value) => localStorage.setItem('theme', value), theme)
+    await page.addInitScript((value) => localStorage.setItem('mmirza-theme', value), theme)
     const failures: string[] = []
     // CSP admin ber-nonce: skrip Next.js dan skrip tema harus tetap jalan
     page.on('console', (m) => {

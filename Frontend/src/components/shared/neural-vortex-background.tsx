@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 
 import { isScrolling, onScrollEnd } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
+import { touchFirstDevice } from '@/lib/view-transition'
 
 // Latar halaman login admin, pemberitahuan pembuka situs, dan hero beranda (pilihan pemilik 2026-10-19,
 // latar 9): shader "neural vortex" (WebGL, tanpa library). Cahaya mengikuti kursor/sentuhan. Ukuran dari
@@ -95,8 +96,15 @@ export function NeuralVortexBackground({
 
   useEffect(() => {
     const canvas = canvasRef.current
-    const gl = canvas?.getContext('webgl', { premultipliedAlpha: false, antialias: false })
-    if (!canvas || !gl) return
+    if (!canvas) return
+    // HP dan tablet (layar sentuh tanpa hover): tanpa latar ungu sama sekali, karena shader layar
+    // penuh ini membuat HP lag (permintaan pemilik 2026-10-21). Kanvas disembunyikan, tanpa konteks WebGL.
+    if (touchFirstDevice()) {
+      canvas.hidden = true
+      return
+    }
+    const gl = canvas.getContext('webgl', { premultipliedAlpha: false, antialias: false })
+    if (!gl) return
 
     const vertex = compile(gl, VERTEX, gl.VERTEX_SHADER)
     const fragment = compile(gl, FRAGMENT, gl.FRAGMENT_SHADER)

@@ -12,7 +12,7 @@ for (const locale of ['id', 'en'] as const) {
     test(`halaman publik /${locale} (${theme}) tanpa pelanggaran aksesibilitas`, async ({
       page,
     }) => {
-      await page.addInitScript((value) => localStorage.setItem('theme', value), theme)
+      await page.addInitScript((value) => localStorage.setItem('mmirza-theme', value), theme)
       const failures: string[] = []
       for (const path of PAGES) {
         const response = await page.goto(`/${locale}${path}`)

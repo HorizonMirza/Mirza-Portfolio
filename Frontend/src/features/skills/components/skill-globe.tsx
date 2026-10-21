@@ -16,6 +16,15 @@ import { cn } from '@/lib/utils'
 
 import type { GenericGlyph, SkillItem } from '../skill-items'
 
+import {
+  buildSprite,
+  drawItem,
+  type ItemGeometry,
+  type ItemSprite,
+  type Palette,
+  measureItem,
+} from './globe-sprites'
+
 // garis bola: ruas per lingkaran dan jumlah tingkat kedalaman untuk pengelompokan stroke
 const RING_STEPS = 60
 const DEPTH_BANDS = 6
@@ -196,6 +205,10 @@ export function SkillGlobe({
     activeRef.current = activeIndex
     controls.current?.wake()
   }, [activeIndex])
+  // keadaan kategori (menonjol/redup) digambar canvas: gambar ulang juga saat bola diam (reduced-motion)
+  useEffect(() => {
+    controls.current?.wake()
+  }, [category])
 
   useEffect(() => {
     const stage = stageRef.current
@@ -216,8 +229,44 @@ export function SkillGlobe({
     let visible = false
     let drag: { x: number; y: number; id: number; moved: boolean } | null = null
 
+    // tampilan logo digambar di canvas (globe-sprites.ts) setelah semua sprite siap; sebelum itu (dan
+    // tanpa JavaScript) logo HTML yang terlihat
+    let disposed = false
+    let painted = false
+    let geoms: ItemGeometry[] = []
+    let sprites: (ItemSprite | undefined)[] = []
+    let palette: Palette = { cat: '', text: '', muted: '', font: '' }
+    const labelAlpha: number[] = []
+    let hovered = -1
+    let domTick = 0
+    let spriteRound = 0
+
     const readColor = () => {
       lineColor = getComputedStyle(canvas).color
+      const css = getComputedStyle(stage)
+      const name = stage.querySelector<HTMLElement>('.globe-name')
+      const ns = name ? getComputedStyle(name) : null
+      palette = {
+        cat: lineColor,
+        text: css.getPropertyValue('--text').trim() || css.color,
+        muted: css.getPropertyValue('--text-muted').trim() || css.color,
+        font: ns ? `${ns.fontWeight} ${ns.fontSize} ${ns.fontFamily}` : '12px monospace',
+      }
+    }
+    const buildSprites = async () => {
+      const round = ++spriteRound
+      const dark = document.documentElement.classList.contains('dark')
+      const els = itemRefs.current
+      const next = await Promise.all(
+        els.map((el, i) => (el ? buildSprite(el, geoms[i]?.inner ?? 32, dark) : undefined)),
+      )
+      if (disposed || round !== spriteRound) return
+      sprites = next
+      if (!painted) {
+        painted = true
+        stage.dataset.canvas = ''
+      }
+      draw()
     }
 
     const resize = () => {
@@ -290,6 +339,24 @@ export function SkillGlobe({
     let sizes: [number, number][] = []
     const measure = () => {
       sizes = itemRefs.current.map((el) => (el ? [el.offsetWidth, el.offsetHeight] : [0, 0]))
+      geoms = itemRefs.current.map((el) =>
+        el
+          ? measureItem(el, ctx)
+          : {
+              bw: 0,
+              bh: 0,
+              lx: 0,
+              ly: 0,
+              ld: 0,
+              inner: 0,
+              nx: 0,
+              ny: 0,
+              nw: 0,
+              lines: [],
+              lineHeight: 0,
+            },
+      )
+      void buildSprites()
     }
 
     const draw = () => {
@@ -302,10 +369,16 @@ export function SkillGlobe({
         .map((style, i) => ({ i, rank: i === activeRef.current ? Infinity : style.zIndex }))
         .sort((a, b) => b.rank - a.rank)
       const placed: Rect[] = []
+      // Tombol HTML (tak terlihat saat canvas menggambar logo) cukup dipindah tiap bingkai ke-4, kecuali
+      // saat digeser/diputar ke logo dan untuk logo yang disorot, difokus, atau terpilih: posisi target
+      // sentuh paling jauh tertinggal ±130 ms (beberapa piksel pada putaran pelan).
+      const syncAll = !painted || drag !== null || target !== null || domTick++ % 4 === 0
+      const focused = document.activeElement
       for (const { i } of order) {
         const el = itemRefs.current[i]
         const style = styles[i]
         if (!el || !style) continue
+        const sync = syncAll || i === hovered || i === activeRef.current || el === focused
         // Tiap bingkai: transform ditulis langsung (bukan lewat --x/--y/--s di tombol) dan --o hanya di
         // lingkaran logo. Variabel CSS di tombol diwariskan ke seluruh isinya sehingga setiap bingkai
         // menghitung ulang gaya 31 logo beserta isinya (diukur 2026-10-20: ±25 ms per bingkai di HP
@@ -313,15 +386,19 @@ export function SkillGlobe({
         const scale = Number(style['--s'])
         const dx = Number(style['--x']) * radius
         const dy = Number(style['--y']) * radius
-        el.style.transform = `translate(-50%, -50%) translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${style['--s']})`
-        const logo = el.firstElementChild as HTMLElement | null
-        logo?.style.setProperty('--o', style['--o'])
-        const name = el.lastElementChild as HTMLElement | null
-        if (name && name.style.getPropertyValue('--lo') !== style['--lo']) {
-          name.style.setProperty('--lo', style['--lo'])
+        if (sync) {
+          el.style.transform = `translate(-50%, -50%) translate(${dx.toFixed(2)}px, ${dy.toFixed(2)}px) scale(${style['--s']})`
+          const z = String(style.zIndex + (i === activeRef.current ? 200 : 0))
+          if (el.style.zIndex !== z) el.style.zIndex = z
         }
-        const z = String(style.zIndex + (i === activeRef.current ? 200 : 0))
-        if (el.style.zIndex !== z) el.style.zIndex = z
+        if (!painted) {
+          const logo = el.querySelector<HTMLElement>('.globe-logo')
+          logo?.style.setProperty('--o', style['--o'])
+          const name = el.querySelector<HTMLElement>('.globe-name')
+          if (name && name.style.getPropertyValue('--lo') !== style['--lo']) {
+            name.style.setProperty('--lo', style['--lo'])
+          }
+        }
         const [baseW, baseH] = sizes[i] ?? [0, 0]
         const w = baseW * scale
         const h = baseH * scale
@@ -337,6 +414,35 @@ export function SkillGlobe({
         // ditulis hanya bila berubah: mengubah inert memicu hitung ulang pohon aksesibilitas
         if (el.inert === usable) el.inert = !usable
         if (usable) placed.push(rect)
+      }
+      if (!painted) return
+      // logo dari belakang ke depan, nama memudar 0,2 dtk seperti transisi CSS --lo
+      for (let k = order.length - 1; k >= 0; k--) {
+        const i = order[k]!.i
+        const style = styles[i]
+        const g = geoms[i]
+        const el = itemRefs.current[i]
+        if (!style || !g || !el) continue
+        const want = style['--lo'] === '1' ? 1 : 0
+        const was = labelAlpha[i] ?? want
+        labelAlpha[i] = Math.abs(want - was) < 0.02 ? want : was + (want - was) * 0.25
+        drawItem(
+          ctx,
+          g,
+          sprites[i],
+          {
+            cx: width / 2 + Number(style['--x']) * radius,
+            cy: height / 2 + Number(style['--y']) * radius,
+            scale: Number(style['--s']),
+            opacity: Number(style['--o']),
+            label: labelAlpha[i]!,
+            active: i === activeRef.current,
+            hl: el.dataset.hl !== undefined,
+            dim: el.dataset.dim !== undefined,
+            hover: i === hovered,
+          },
+          palette,
+        )
       }
     }
 
@@ -465,7 +571,6 @@ export function SkillGlobe({
     resize()
     draw()
     // lebar nama berubah setelah font termuat
-    let disposed = false
     void document.fonts?.ready.then(() => {
       if (disposed) return
       sizes = []
@@ -490,7 +595,24 @@ export function SkillGlobe({
     const themeObserver = new MutationObserver(() => {
       readColor()
       draw()
+      // logo satu warna dan logo hitam yang dibalik bergantung pada tema
+      if (painted) void buildSprites()
     })
+    // logo disorot (mouse): tampilannya digambar canvas, jadi indeksnya dicatat di sini
+    const onOver = (event: PointerEvent) => {
+      const el = (event.target as Element | null)?.closest('.globe-item')
+      const next = el ? itemRefs.current.indexOf(el as HTMLButtonElement) : -1
+      if (next === hovered) return
+      hovered = next
+      draw()
+    }
+    const onLeaveStage = () => {
+      if (hovered === -1) return
+      hovered = -1
+      draw()
+    }
+    stage.addEventListener('pointerover', onOver)
+    stage.addEventListener('pointerleave', onLeaveStage)
     themeObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['class'],
@@ -512,6 +634,8 @@ export function SkillGlobe({
       stage.removeEventListener('pointermove', onMove)
       stage.removeEventListener('pointerup', onUp)
       stage.removeEventListener('pointercancel', onUp)
+      stage.removeEventListener('pointerover', onOver)
+      stage.removeEventListener('pointerleave', onLeaveStage)
       controls.current = null
     }
   }, [])

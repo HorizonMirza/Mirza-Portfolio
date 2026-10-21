@@ -31,18 +31,19 @@ const FLUID_STEP = 6
 const BACK_DELAY_MS = 1200
 // resolusi masker jejak terhadap piksel CSS
 const MASK_SCALE = 0.5
-// tanda bisa di-hover (revisi pemilik 2026-10-20): armor mengintip di dua medali emas di dada, keduanya
-// bersamaan, tiap 8 detik selama kursor diam. Intip pertama 3 detik setelah beranda benar-benar terlihat
-// (pemberitahuan pembuka sudah ditutup). Pusat dan jari-jari medali diukur dari hero-armor.webp lalu
-// dipindah ke bingkai foto 1120×1100 (armor = foto + bleed 80 px kiri-kanan dan 200 px atas):
-// kiri (370, 708), kanan (724, 718), jari-jari ±64 px.
+// tanda bisa di-hover (pilihan pemilik 2026-10-21 dari 10 demo letak intip: nomor 3 "Visor mata"):
+// sapuan mendatar menyapu kacamata dari kiri ke kanan dalam 0,8 detik, sehingga celah mata helm terlihat.
+// Intip pertama 3 detik setelah beranda benar-benar terlihat (pemberitahuan pembuka sudah ditutup), lalu
+// tiap 8 detik selama kursor diam. Titik diukur di foto 1120×1100: kacamata x 385–690, mata ±y 370.
 const PEEK_EVERY_MS = 8000
 const PEEK_FIRST_MS = 3000
-const MEDALS = [
-  { x: 370 / 1120, y: 708 / 1100 },
-  { x: 724 / 1120, y: 718 / 1100 },
+const VISOR = [
+  { x: 360 / 1120, y: 372 / 1100 },
+  { x: 540 / 1120, y: 380 / 1100 },
+  { x: 720 / 1120, y: 372 / 1100 },
 ] as const
-const MEDAL_RADIUS = 64 / 1120
+const VISOR_MS = 800
+const VISOR_SIZE = 1.3
 
 type Blob = { x: number; y: number; r: number; life: number }
 
@@ -364,7 +365,7 @@ export function LiquidMaskPortrait({
     window.addEventListener('pointerdown', onDown, { passive: true })
     document.documentElement.addEventListener('pointerleave', onLeave)
 
-    // intip berkala di dua medali dada, hanya saat hero terlihat, tab aktif, pemberitahuan pembuka sudah
+    // intip berkala (visor mata), hanya saat hero terlihat, tab aktif, pemberitahuan pembuka sudah
     // ditutup, dan tanpa reduced-motion
     let visible = true
     const io = new IntersectionObserver(([entry]) => {
@@ -377,29 +378,53 @@ export function LiquidMaskPortrait({
     const canPeek = () =>
       visible && !reduce.matches && document.visibilityState === 'visible' && !introOpen()
     let lastPeek = -Infinity
+    let sweep = 0
     const peek = () => {
       if (!photo || !canPeek()) return
       const area = root.getBoundingClientRect()
       const rect = img.getBoundingClientRect()
-      const radius = rect.width * MEDAL_RADIUS
-      const scale = radius / baseRadius()
-      for (const medal of MEDALS) {
-        const cx = rect.left - area.left + rect.width * medal.x
-        const cy = rect.top - area.top + rect.height * medal.y
-        // satu percikan menutupi medali, ditambah cincin kecil yang berputar agar tepinya bergerak cair
-        add(cx, cy, scale * 1.1)
-        const ring = 6
-        for (let k = 0; k < ring; k++) {
-          const a = (k / ring) * Math.PI * 2
-          const px = cx + Math.cos(a) * radius * 0.55
-          const py = cy + Math.sin(a) * radius * 0.55
-          const speed = radius * 6
-          add(px, py, scale * 0.5, -Math.sin(a) * speed, Math.cos(a) * speed)
+      const pts = VISOR.map((v) => ({
+        x: rect.left - area.left + rect.width * v.x,
+        y: rect.top - area.top + rect.height * v.y,
+      }))
+      const lens = pts.slice(1).map((q, i) => Math.hypot(q.x - pts[i]!.x, q.y - pts[i]!.y))
+      const total = lens.reduce((sum, l) => sum + l, 0)
+      const speed = total / (VISOR_MS / 1000)
+      const gap = fluid ? FLUID_STEP : BLOB_STEP
+      const start = performance.now()
+      let done = 0
+      // "kursor tak terlihat" bergerak di sepanjang garis kacamata, sama seperti jejak hover sungguhan
+      const tick = () => {
+        sweep = 0
+        if (disposed) return
+        const target = total * Math.min(1, (performance.now() - start) / VISOR_MS)
+        while (done < target) {
+          done = Math.min(target, done + gap)
+          let d = done
+          let i = 0
+          while (i < lens.length - 1 && d > lens[i]!) {
+            d -= lens[i]!
+            i++
+          }
+          const a = pts[i]!
+          const b = pts[i + 1]!
+          const len = lens[i] || 1
+          const f = d / len
+          add(
+            a.x + (b.x - a.x) * f,
+            a.y + (b.y - a.y) * f,
+            VISOR_SIZE,
+            ((b.x - a.x) / len) * speed,
+            ((b.y - a.y) / len) * speed,
+          )
         }
+        wake()
+        if (done < total) sweep = requestAnimationFrame(tick)
       }
+      cancelAnimationFrame(sweep)
+      sweep = requestAnimationFrame(tick)
       lastPeek = performance.now()
       idle = lastPeek
-      wake()
     }
     // 3 detik terhitung sejak beranda terlihat tanpa pemberitahuan pembuka di depannya
     let readySince: number | null = null
@@ -423,6 +448,7 @@ export function LiquidMaskPortrait({
     return () => {
       disposed = true
       cancelAnimationFrame(frame)
+      cancelAnimationFrame(sweep)
       window.clearTimeout(timer)
       window.clearInterval(peekTimer)
       resizeObserver.disconnect()
