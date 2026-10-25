@@ -36,9 +36,9 @@ Status: **live di `mmirza.site` sejak 2026-10-01**; M1–M4 selesai, M5 selesai 
 - [x] `Frontend/src/lib/env.ts` (validasi Zod), `Frontend/.env.example`
 - [x] GitHub Actions `ci.yml` (lint, format, typecheck, unit, audit keamanan, migrasi + cek drift, seed, build, E2E, gitleaks), templat PR. Dependabot update otomatis dimatikan (lihat `WORKFLOW.md` bagian 10a)
 - [x] Konfigurasi hosting di repo: `Frontend/vercel.json` (region `sin1`), migrasi hanya di production, Ignored Build Step
-- [ ] Koneksi repo ke Vercel dan database Neon Singapura (butuh akun pemilik, langkah di README bagian "Deploy ke Vercel")
+- [ ] Koneksi repo ke Vercel dan database Neon Singapura (butuh akun pemilik, langkah di `Documentation/DEPLOYMENT.md` bagian "Deploy ke Vercel")
 - [x] `/api/health`
-- [x] README (cara menjalankan lokal dan deploy)
+- [x] README (ringkas, bahasa Inggris) dan `Documentation/DEPLOYMENT.md` (cara menjalankan lokal, deploy, backup)
 - [x] 404 global dua bahasa (`app/global-not-found.tsx`) dan 404 per bahasa untuk `notFound()`
 
 **Selesai bila:** situs kosong tampil di preview Vercel, CI hijau, migrasi dan seed berjalan.
@@ -201,3 +201,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-20 | Audit kebersihan: `ClickSound`, `getPublicHighlights`, dependency `pg`/`@types/pg`, `inStory` di query publik, dan `THIRD_PARTY_NOTICES.md` dihapus (lisensi logo pindah ke `Frontend/scripts/skill-logos/SOURCES.md`); dokumen dan petunjuk admin diselaraskan; tugas akun pemilik M5 ditunda (DESIGN.md bagian 92 dan 94) |
 | 2026-10-20 | Revisi final pemilik: intip pindah dari rahang ke dua medali dada (3 detik setelah beranda terlihat, lalu tiap 8 detik), hover jadi simulasi cairan WebGL2 seperti Crazy Hover Mask Reveal, sudut bawah kotak GitHub bersambung, logo teknologi project abu-abu kecuali baris yang difokus, transisi pesan terkirim "Kartu berbalik" (demo 6) (DESIGN.md bagian 95) |
 | 2026-10-21 | Intip armor jadi "visor mata" (demo 3); tema selalu mulai gelap (kunci penyimpanan baru, tanpa ikut sistem); kedipan tema saat ganti bahasa diperbaiki + tes E2E; latar ungu vortex mati di HP/tablet; logo globe digambar di canvas (beban utas utama HP ±separuh) (DESIGN.md bagian 96) |
+| 2026-10-25 | README ditulis ulang ringkas dalam bahasa Inggris dengan satu tangkapan layar; panduan lokal/deploy/pemantauan/backup pindah ke `Documentation/DEPLOYMENT.md`. Folder `Backend/` (hanya peta placeholder) dan dua tangkapan layar lama dihapus. About repo diisi (mmirza.site), release v1.0.0 dibuat, dan image Docker dikirim ke GitHub Packages lewat `.github/workflows/release.yml` (DESIGN.md bagian 97) |

@@ -1,0 +1,18 @@
+# Konteks build = akar repo; berkas ini dipakai BuildKit untuk Frontend/Dockerfile
+.git
+.github
+.claude
+.agents
+Documentation
+Backend
+**/node_modules
+**/.next
+**/.env*
+!**/.env.example
+Frontend/src/generated
+Frontend/test-results
+Frontend/playwright-report
+Frontend/e2e
+Frontend/tests
+Frontend/tsconfig.tsbuildinfo
+**/*.md

@@ -19,6 +19,7 @@ Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) +
 | `Documentation/PRD.md` | Tujuan, fitur, user story, kriteria penerimaan, keputusan sementara | Sebelum mengerjakan fitur apa pun |
 | `Documentation/DESIGN.md` | Token, tipografi, komponen, wireframe, aksesibilitas, pedoman tulisan | Sebelum mengerjakan UI |
 | `Documentation/ARCHITECTURE.md` | Tech stack, model data, API, keamanan, deployment | Sebelum mengubah struktur, data, atau API |
+| `Documentation/DEPLOYMENT.md` | Menjalankan lokal, deploy Vercel, image Docker (GitHub Packages), pemantauan, backup dan pemulihan | Sebelum mengubah deploy, Dockerfile, atau workflow release/backup |
 | `Documentation/WORKFLOW.md` | Commit, Definition of Done, rilis | Sebelum commit atau push |
 | `Documentation/TODO.md` | Milestone dan tugas | Untuk menentukan pekerjaan berikutnya |
 | `Documentation/00-discovery.md` | Jawaban asli pemilik dan keputusan terbuka | Bila ada keraguan tentang maksud pemilik |
@@ -88,12 +89,11 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 Akar repo hanya berisi berkas `.md`, ditambah `.github/` (wajib di akar) dan `.agents/skill/` (skill proyek).
 
 ```
-Frontend/        aplikasi Next.js. SEMUA perintah pnpm dijalankan dari sini (cd Frontend)
+Frontend/        aplikasi Next.js + Dockerfile. SEMUA perintah pnpm dijalankan dari sini (cd Frontend)
   src/app/[locale]/  halaman publik     src/app/admin/  panel admin
   src/app/api/       route handlers     src/features/   per domain (schema, queries, actions, components)
   src/components/    ui/, shared/       src/lib/        db, auth, env, ...
   messages/          id.json, en.json   scripts/seed.ts, tests/unit/, e2e/
-Backend/         README peta kode server. Backend ada di dalam Next.js (Opsi A, final)
 Database/        schema.prisma, migrations/, seed/seed-data.ts
 Documentation/   dokumen perencanaan
 ```

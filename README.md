@@ -1,174 +1,63 @@
-# Portofolio Muhammad Mirza
+# Muhammad Mirza — Portfolio
 
-Website portofolio pribadi dua bahasa (ID/EN) dengan panel Super Admin untuk mengelola konten.
+[![CI](https://github.com/HorizonMirza/Mirza-Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/HorizonMirza/Mirza-Portfolio/actions/workflows/ci.yml)
+
+A bilingual (Indonesian / English) personal portfolio with a Super Admin panel to manage its content.
 
 **Live:** [mmirza.site](https://mmirza.site) · [Bahasa Indonesia](https://mmirza.site/id) · [English](https://mmirza.site/en)
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Documentation/screenshots/home-dark.webp">
-  <img src="Documentation/screenshots/home-light.webp" alt="Halaman awal mmirza.site: nama besar MUHAMMAD MIRZA WIRYA di belakang foto Mirza berjas, sebagian rahang memperlihatkan armor, tulisan Fullstack Developer dan Community Manager di bawah, dengan latar pusaran cahaya biru" width="100%">
-</picture>
+![Home page of mmirza.site: the name behind the photo, with an armor layer revealed under the cursor](Documentation/screenshots/home.webp)
 
-<p align="center">
-  <img src="Documentation/screenshots/home-mobile.webp" alt="Halaman awal mmirza.site di HP, mode gelap: nama di atas foto, dua peran di bawah foto, dan menu ikon di bawah layar" width="270">
-</p>
+## What's inside
 
-<sub>Tangkapan layar halaman awal (20 Oktober 2026). Gambar besar mengikuti tema GitHub Anda: gelap atau terang.</sub>
+**Public site** — dark by default with a light theme, mobile-first, `ID`/`EN` on every page.
 
-**Status:** live di `mmirza.site` sejak 1 Oktober 2026 (Vercel + Neon Singapura). Milestone 1–4 selesai. Milestone 5 selesai di sisi kode; tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda atas keputusan pemilik (2026-10-20). Lihat [`Documentation/TODO.md`](Documentation/TODO.md).
-
-## Fitur
-
-**Situs publik** (semua teks dua bahasa, tema gelap dan terang, mobile-first)
-- **Beranda:** nama besar di belakang foto berjas; kursor (atau sentuhan) membuka lapisan armor di bawah foto, dengan intip berkala di rahang dan latar pusaran cahaya (WebGL). Di bawahnya peran, Pengalaman (akordion), Project (pita sampul berjalan), Keahlian Teknis (bola logo yang bisa diputar dan difilter per kategori), dan grafik kontribusi GitHub 2D/3D.
-- **Tentang:** bio, pendidikan, kartu foto yang bisa dimiringkan.
-- **Pengalaman:** timeline yang menyorot entri di tengah layar saat digulir.
-- **Project:** daftar "lampu sorot" (project di tengah layar menyala, sisanya redup), gambar dalam bingkai browser yang terbang ke halaman detail. Detail berisi peran, tombol View App/GitHub yang dipilih admin, dan galeri foto.
-- **Kontak:** kartu ID bertali yang bisa diayun, form dengan rate limit dan honeypot. WhatsApp, email, dan sosial ada di footer.
-- **Newsletter:** double opt-in dan halaman berhenti langganan tetap berjalan, tetapi form daftarnya tidak ditampilkan sejak 2026-10-08 (permintaan pemilik).
-- **Lainnya:** pemberitahuan pembuka yang diatur admin, halaman privasi, 404 "hantu", SEO (sitemap, Open Graph dinamis, JSON-LD), API publik `/api/v1`, suara antarmuka yang volumenya diatur admin.
-
-**Panel Super Admin** (`/admin`): profil, project (impor dari GitHub, unggah Cloudinary, urutan, draf/terbit), skill, pengalaman, angka (sedang tidak tampil di situs), kotak masuk pesan, pelanggan newsletter, log audit, pengaturan, dan akun. Semua aksi divalidasi Zod di server, memeriksa role `SUPER_ADMIN`, dan dicatat di log audit.
-
-**Kualitas:** WCAG 2.2 AA (axe bersih di semua halaman, terang/gelap, ID/EN, desktop/HP), `prefers-reduced-motion` dihormati, CSP ketat, backup database harian terenkripsi.
-
-## Stack
-
-Node.js 24 · Next.js 16 (App Router, Turbopack) · React 19 · TypeScript 6 (strict) · Tailwind CSS 4 · next-intl · next-themes · PostgreSQL (Neon) + Prisma 7 · Better Auth · Zod · Cloudinary · Resend · Vitest · Playwright + axe · pnpm · Vercel · GitHub Actions.
-Alasan tiap pilihan: [`Documentation/ARCHITECTURE.md`](Documentation/ARCHITECTURE.md).
-
-## Struktur
-
-| Folder | Isi |
+| Section | What you get |
 |---|---|
-| [`Frontend/`](Frontend) | Aplikasi Next.js: halaman publik, panel admin `/admin`, route handler (`/api/v1`, `/api/cv`, `/api/track`, `/api/cron`), tes |
-| [`Backend/`](Backend) | Peta lokasi kode server. Backend berjalan di dalam Next.js (Opsi A, tanpa server terpisah) |
-| [`Database/`](Database) | Skema Prisma, migrasi SQL, dan data seed dari CV |
-| [`Documentation/`](Documentation) | PRD, desain, arsitektur, alur kerja, rencana, konten, referensi, tangkapan layar README |
+| **Home** | Name behind the photo; hovering (or touching) reveals an armor layer through a WebGL fluid mask, with an automatic peek every 8 seconds. Below: Experience accordion, Projects marquee, a spinning **Technical Skills** globe, and a **GitHub** contribution graph (2D/3D). |
+| **About** | Bio, education, and a tilting photo card. |
+| **Experience** | Timeline of work and organizations, with filters. |
+| **Projects** | Spotlight list with browser-frame previews and detail pages (role, tech stack, gallery, demo and code links). |
+| **Contact** | Form with rate limit and honeypot, a swinging ID-card lanyard, and a flip-card "message sent" ticket. |
 
-Di akar repo hanya ada berkas `.md`, ditambah folder tersembunyi `.github/` (CI, wajib di akar) dan `.agents/` (skill untuk agen AI).
+Also: SEO (sitemap, dynamic Open Graph images, JSON-LD), a read-only public API (`/api/v1`), a privacy page, a custom 404, and UI sounds whose volume the admin controls.
 
-## Menjalankan secara lokal
+**Super Admin** (`/admin`) — a single owner account (email + password via Better Auth) to manage profile, projects (GitHub import, Cloudinary uploads, draft/published), skills, experience and education, the contact inbox, newsletter subscribers, an audit log, and site settings. Every action is validated with Zod on the server, requires the `SUPER_ADMIN` role, and is written to the audit log.
 
-Prasyarat: Node.js 24 LTS (lihat `Frontend/.nvmrc`), pnpm 10 (`corepack enable`), dan PostgreSQL 17 (lokal, Docker, atau branch Neon).
-**Semua perintah dijalankan dari folder `Frontend/`.**
+**Quality** — WCAG 2.2 AA (axe-clean on every page, both themes and languages), `prefers-reduced-motion` respected, strict CSP, and an encrypted daily database backup.
+
+## Tech stack
+
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · next-intl · PostgreSQL (Neon) + Prisma 7 · Better Auth · Zod · Cloudinary · Resend · Vitest + Playwright + axe · pnpm · Vercel · GitHub Actions.
+
+## Run it
+
+Needs Node.js 24, pnpm 10, and a PostgreSQL database. All commands run from `Frontend/`.
 
 ```bash
 cd Frontend
-pnpm install                  # sekaligus menjalankan prisma generate dari ../Database/schema.prisma
-cp .env.example .env.local    # isi DATABASE_URL, BETTER_AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
-pnpm db:migrate               # terapkan migrasi di ../Database/migrations
-pnpm db:seed                  # isi data awal dari ../Database/seed + akun admin (aman dijalankan berulang)
-pnpm dev                      # http://localhost:3000 -> diarahkan ke /id atau /en
+pnpm install
+cp .env.example .env.local   # set DATABASE_URL, BETTER_AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
+pnpm db:migrate && pnpm db:seed
+pnpm dev                     # http://localhost:3000 · admin at /admin
 ```
 
-**Panel admin:** buka `http://localhost:3000/admin` lalu masuk dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD`. Buat `BETTER_AUTH_SECRET` dengan `openssl rand -base64 32`. Password yang lupa bisa diganti dari terminal: `ADMIN_NEW_PASSWORD=... pnpm admin:reset-password` (semua sesi ikut dicabut). Login dibatasi 5 percobaan per 15 menit per IP.
-
-Variabel lain ada di `Frontend/.env.example` (tanpa nilai). Unggah foto, CV, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (opsional, token *fine-grained* tanpa izin tambahan) menaikkan batas impor dari GitHub dan **wajib** untuk grafik kontribusi GitHub di beranda (tanpa token bagian itu tidak tampil).
-
-Contoh Postgres lokal dengan Docker:
+Or pull the container image (needs a migrated database):
 
 ```bash
-docker run -d --name portfolio-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:17
-# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+docker pull ghcr.io/horizonmirza/mirza-portfolio:latest
 ```
 
-## Perintah (di `Frontend/`)
+Before pushing: `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`.
 
-| Perintah | Fungsi |
+## Repository
+
+| Path | Contents |
 |---|---|
-| `pnpm dev` | Server pengembangan |
-| `pnpm build` / `pnpm start` | Build dan jalankan versi production |
-| `pnpm lint` | ESLint (tanpa peringatan) |
-| `pnpm format` / `pnpm format:check` | Prettier |
-| `pnpm typecheck` | Generate tipe rute Next.js lalu `tsc --noEmit` |
-| `pnpm test` | Tes unit (Vitest) |
-| `pnpm test:e2e` | Tes E2E + aksesibilitas (Playwright + axe), butuh `pnpm build`, database, dan env admin (tes admin dilewati bila `ADMIN_EMAIL` kosong) |
-| `pnpm db:migrate` | Buat/terapkan migrasi (pengembangan) |
-| `pnpm db:deploy` | Terapkan migrasi (CI/production) |
-| `pnpm db:seed` | Isi data awal |
-| `pnpm db:studio` | Prisma Studio |
-| `pnpm admin:reset-password` | Ganti password admin dari terminal (`ADMIN_EMAIL`, `ADMIN_NEW_PASSWORD`) |
-| `pnpm logos:build` | Buat ulang logo WebP globe skill (`public/skills/`) dari sumber SVG di `scripts/skill-logos/` |
+| `Frontend/` | The Next.js app: public site, `/admin`, route handlers, tests |
+| `Database/` | Prisma schema, SQL migrations, and CV seed data |
+| `Documentation/` | PRD, design, architecture, [deployment & backup](Documentation/DEPLOYMENT.md), workflow, plan |
 
-Semua pekerjaan langsung di `main` (tanpa branch lain), dan push ke `main` langsung live. Sebelum push jalankan: `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`.
-Hook pre-commit (Husky + lint-staged, di `Frontend/.husky`) menjalankan ESLint dan Prettier pada berkas yang di-stage.
+## License
 
-Bila Playwright tidak bisa mengunduh browser (misalnya di sandbox), arahkan ke Chromium yang terpasang:
-`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/path/ke/chrome pnpm test:e2e`.
-
-## Deploy ke Vercel (dilakukan pemilik akun)
-
-Situs sudah live di `mmirza.site`, jadi langkah di bawah hanya diperlukan bila project Vercel dipasang ulang dari nol. Setiap push ke `main` langsung di-deploy otomatis.
-
-Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, Ignored Build Step, dan Vercel Cron harian. Deploy production pertama otomatis menjalankan migrasi, lalu mengisi konten dari CV dan membuat akun admin bila database masih kosong. Tidak perlu menjalankan apa pun dari komputer sendiri.
-
-1. **Vercel → Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Klik **Edit** di Root Directory lalu pilih `Frontend`. Framework terdeteksi Next.js, build command dan region terbaca dari `vercel.json`. Klik **Deploy**. Deploy pertama ini **akan gagal** karena database belum ada, itu wajar.
-2. **Storage → Create Database → Neon** (di halaman project): region **Singapore (aws-ap-southeast-1)**, hubungkan ke **Production** dan **Preview**. Integrasi mengisi `DATABASE_URL` dan `DATABASE_URL_UNPOOLED` otomatis.
-3. **Settings → Environment Variables**, tambahkan:
-
-   | Nama | Environment | Nilai |
-   |---|---|---|
-   | `BETTER_AUTH_SECRET` | Production | teks acak minimal 32 karakter |
-   | `BETTER_AUTH_SECRET` | Preview | teks acak lain (berbeda dari Production) |
-   | `ADMIN_EMAIL` | Production | email untuk login admin |
-   | `ADMIN_PASSWORD` | Production | password admin, minimal 12 karakter |
-   | `CRON_SECRET` | Production | teks acak minimal 16 karakter |
-   | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Production, Preview | dari dashboard Cloudinary (opsional, untuk unggah foto/CV/gambar) |
-   | `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL` | Production | opsional, untuk email kontak dan newsletter. `EMAIL_FROM` harus di domain yang terverifikasi di Resend |
-
-   `BETTER_AUTH_URL` dan `NEXT_PUBLIC_SITE_URL` **dikosongkan dulu**: situs otomatis memakai domain `*.vercel.app` proyek. Isi keduanya (`https://domainanda.site`) setelah domain sendiri terpasang.
-4. **Deployments → titik tiga pada deploy terakhir → Redeploy**. Di log build akan terlihat "All migrations have been successfully applied", "Akun admin dibuat", dan "Seed selesai".
-5. Buka `https://<proyek>.vercel.app/api/health` → harus `{"status":"ok","database":"ok"}`. Lalu masuk ke `https://<proyek>.vercel.app/admin` dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD`.
-6. Setelah bisa masuk: **hapus** env `ADMIN_PASSWORD` dari Vercel (akun sudah tersimpan di database), lalu ganti password lewat `/admin/account` bila perlu. Mengganti `ADMIN_EMAIL` nanti tidak membuat akun admin kedua.
-7. Isi dari admin langsung tampil di situs. Perubahan di luar admin (misalnya langsung di database) tampil paling lambat 10 menit kemudian.
-
-Catatan:
-- Migrasi dan pengisian awal hanya berjalan di **production** (`Frontend/scripts/vercel-build.sh`), jadi preview tidak pernah mengubah database production. Bila preview memakai branch database Neon sendiri (opsi di pengaturan integrasi Neon), tambahkan `MIGRATE_ON_BUILD=true` khusus Preview.
-- Pengisian awal (`scripts/seed.ts --bootstrap`) hanya mengisi konten bila belum ada profil, jadi data yang Anda hapus lewat admin tidak muncul lagi di deploy berikutnya.
-- Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama dan Redeploy commit yang sama (misalnya setelah mengubah Environment Variables) selalu di-build.
-- Menjalankan seed manual dari komputer sendiri tetap bisa: `pnpm db:seed` di `Frontend/` dengan `DATABASE_URL` production.
-
-Setelah deploy (pemilik akun):
-
-- **GitHub → Settings → Rules → Rulesets → New branch ruleset** untuk `main`: aktifkan *Block force pushes* dan *Restrict deletions*. Jangan aktifkan *Require a pull request*, karena semua pekerjaan langsung di `main` (tanpa branch lain).
-- **UptimeRobot** (gratis): monitor HTTP ke `https://<domain>/api/health` tiap 5 menit, notifikasi ke **email** dan **Telegram**.
-- Domain `mmirza.site` (Hostinger) sudah terhubung: A `@` dan CNAME `www` ke Vercel, `www` dialihkan ke `mmirza.site`.
-
-## Pemantauan dan Backup (Milestone 5)
-
-**Vercel Web Analytics dan Speed Insights.** Di project Vercel: tab **Analytics → Enable** dan tab **Speed Insights → Enable** (paket Hobby gratis). Skrip hanya dimuat di Vercel (`components/site/vercel-insights.tsx`) dan query string dibuang sebelum dikirim, jadi token newsletter tidak ikut tercatat.
-
-**Sentry (error server).** Buat project Sentry (platform Next.js), salin **DSN**, lalu tambahkan `SENTRY_DSN` di Vercel (Production, tipe Config). Error dikirim dari `src/instrumentation.ts` lewat HTTP tanpa SDK, tanpa header, cookie, IP, atau query string. Tanpa `SENTRY_DSN` tidak ada yang dikirim.
-
-**Backup harian** (`.github/workflows/backup.yml`, 02.30 WIB): `pg_dump` → enkripsi AES-256 (gpg) → artifact 30 hari → langsung diuji pulih ke Postgres sementara (jumlah Profile, Super Admin, dan migrasi dicek). Isi dua secret di **GitHub → Settings → Secrets and variables → Actions**:
-
-| Secret | Isi |
-|---|---|
-| `BACKUP_DATABASE_URL` | connection string Neon **tanpa pooler** (Neon Console → Connect → matikan *Connection pooling*) |
-| `BACKUP_PASSPHRASE` | kalimat sandi panjang (≥ 32 karakter). **Simpan juga di password manager**: tanpa ini backup tidak bisa dibuka |
-
-Jalankan sekali lewat **Actions → Backup → Run workflow** untuk memastikan hijau.
-
-**Memulihkan backup** (bila data production rusak):
-
-```bash
-# 1. Unduh artifact dari Actions → Backup → run terakhir, ekstrak backup.dump.gpg
-gpg --decrypt --output restore.dump backup.dump.gpg       # minta BACKUP_PASSPHRASE
-# 2. Paling aman: pulihkan ke branch Neon baru dulu, cek isinya, baru arahkan aplikasi ke sana.
-#    Untuk menimpa database yang sedang dipakai (data di dalamnya diganti isi backup):
-pg_restore --clean --if-exists --no-owner --no-acl --dbname "<URL Neon tanpa pooler>" restore.dump
-rm restore.dump
-```
-
-Neon juga punya pemulihan bawaan ke titik waktu tertentu (Neon Console → Restore), sebagai lapis kedua.
-
-**Rollback aplikasi:** Vercel → Deployments → deploy yang sehat → **Instant Rollback**. Bila deploy yang dibatalkan membawa migrasi database, pulihkan juga dari backup.
-
-## Dokumen
-
-[PRD](Documentation/PRD.md) · [Desain](Documentation/DESIGN.md) · [Arsitektur](Documentation/ARCHITECTURE.md) · [Alur kerja](Documentation/WORKFLOW.md) · [Rencana](Documentation/TODO.md) · [Konten](Documentation/CONTENT.md) · [Referensi](Documentation/REFERENCES.md) · [Panduan Claude](CLAUDE.md)
-
-## Lisensi
-
-Kode dan konten milik Muhammad Mirza Wirya, hak cipta dilindungi. Font Oswald, Inter, dan JetBrains Mono memakai SIL Open Font License (lihat `Frontend/src/fonts/`). Logo skill adalah merek dagang pemiliknya; sumber dan lisensinya (Devicon MIT, Simple Icons CC0, logo Git CC BY 3.0) di `Frontend/scripts/skill-logos/SOURCES.md`.
+© Muhammad Mirza Wirya. All rights reserved. Fonts (Oswald, Inter, JetBrains Mono) are under the SIL Open Font License. Skill logos are trademarks of their owners; sources and licenses are in [`Frontend/scripts/skill-logos/SOURCES.md`](Frontend/scripts/skill-logos/SOURCES.md).

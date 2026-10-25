@@ -1,0 +1,128 @@
+name: Release image
+
+# Saat sebuah release dipublikasikan (atau dijalankan manual), bangun image Docker aplikasi, uji
+# singkat, lalu kirim ke GitHub Packages: ghcr.io/horizonmirza/mirza-portfolio.
+# `next build` merender halaman dari database, jadi build memakai Postgres sementara yang sudah
+# dimigrasi dan diisi seed (sama seperti job build di ci.yml). Database itu tidak ikut ke image.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag image (kosongkan untuk "manual")
+        required: false
+        default: manual
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: release-image
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: Frontend
+
+jobs:
+  image:
+    name: Bangun, uji, dan kirim image
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: portfolio
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/portfolio
+      # nilai khusus database sementara ini, bukan secret production
+      BETTER_AUTH_URL: http://localhost:3200
+      BETTER_AUTH_SECRET: image-smoke-test-bukan-rahasia-1a2b3c4d5e6f
+      ADMIN_EMAIL: admin-ci@example.com
+      ADMIN_PASSWORD: ci-admin-password-bukan-rahasia
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: Frontend/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: Frontend/.nvmrc
+          cache: pnpm
+          cache-dependency-path: Frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Migrasi dan seed database sementara
+        run: pnpm db:deploy && pnpm db:seed
+
+      - name: Tentukan nama dan tag image
+        id: meta
+        working-directory: .
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name || github.event.inputs.tag || 'manual' }}
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          image="ghcr.io/${owner}/mirza-portfolio"
+          tags="${image}:${RELEASE_TAG}"
+          if [[ "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            tags="${tags} ${image}:${RELEASE_TAG#v} ${image}:latest"
+          fi
+          echo "image=${image}" >> "$GITHUB_OUTPUT"
+          echo "tags=${tags}" >> "$GITHUB_OUTPUT"
+          echo "Tag yang dikirim: ${tags}"
+
+      - name: Bangun image
+        working-directory: .
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          args=()
+          for t in ${TAGS}; do args+=(-t "$t"); done
+          docker build --network=host -f Frontend/Dockerfile \
+            --build-arg DATABASE_URL="${DATABASE_URL}" \
+            "${args[@]}" .
+
+      - name: Uji image (halaman dan /api/health)
+        working-directory: .
+        env:
+          IMAGE: ${{ steps.meta.outputs.image }}
+          RELEASE_TAG: ${{ github.event.release.tag_name || github.event.inputs.tag || 'manual' }}
+        run: |
+          docker run -d --name smoke --network=host -e PORT=3200 \
+            -e DATABASE_URL="${DATABASE_URL}" \
+            -e BETTER_AUTH_SECRET="${BETTER_AUTH_SECRET}" \
+            -e BETTER_AUTH_URL="${BETTER_AUTH_URL}" \
+            -e NEXT_PUBLIC_SITE_URL="${BETTER_AUTH_URL}" \
+            "${IMAGE}:${RELEASE_TAG}"
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3200/api/health | grep -q '"database":"ok"'; then ok=1; break; fi
+            sleep 2
+          done
+          docker logs smoke | tail -20
+          [ "${ok:-0}" = "1" ] || { echo "Image tidak sehat"; exit 1; }
+          for path in /id /en /id/about /id/projects /en/contact /admin/login; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:3200${path}")
+            echo "${path} -> ${code}"
+            [ "${code}" = "200" ] || exit 1
+          done
+          docker rm -f smoke
+
+      - name: Masuk ke GitHub Packages
+        working-directory: .
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Kirim image
+        working-directory: .
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          for t in ${TAGS}; do docker push "$t"; done

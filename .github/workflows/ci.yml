@@ -52,7 +52,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: portfolio
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s
@@ -87,7 +87,7 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm test:e2e
         env:
-          E2E_ALL_BROWSERS: '1'
+          E2E_ALL_BROWSERS: "1"
       - uses: actions/upload-artifact@v7
         if: failure()
         with:

@@ -113,9 +113,9 @@ Catatan:
 │   ├── scripts/seed.ts       # menjalankan data seed ke database
 │   ├── tests/unit/           # Vitest
 │   ├── e2e/                  # Playwright + axe
+│   ├── Dockerfile            # image produksi (ghcr.io), dibangun dari akar repo; lihat DEPLOYMENT.md
 │   ├── prisma.config.ts      # menunjuk ke ../Database/
 │   └── package.json          # semua perintah pnpm dijalankan dari sini
-├── Backend/                  # README peta kode server (backend berjalan di dalam Next.js)
 ├── Database/
 │   ├── schema.prisma         # skema database
 │   ├── migrations/           # migrasi SQL
@@ -493,7 +493,7 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 - **Sentry:** error server lewat `onRequestError` di `src/instrumentation.ts`, dikirim ke envelope API Sentry dengan `fetch` (tanpa SDK), tanpa header, cookie, IP, dan query string. Error di browser belum dilaporkan (lihat ADR 18).
 - **Uptime monitor:** memeriksa `/api/health` (cek koneksi database). Notifikasi ke email dan Telegram.
 - **Vercel Analytics + Speed Insights:** tren traffic dan Web Vitals lapangan, hanya dimuat di Vercel, query string dibuang lewat `beforeSend`.
-- **Backup:** `backup.yml` harian 02.30 WIB: `pg_dump` (Postgres 17) → gpg AES-256 → artifact 30 hari, lalu **diuji pulih otomatis setiap kali** ke Postgres sementara (jumlah Profile, Super Admin, migrasi). Ditambah pemulihan bawaan Neon. Langkah pemulihan manual di README.
+- **Backup:** `backup.yml` harian 02.30 WIB: `pg_dump` (Postgres 17) → gpg AES-256 → artifact 30 hari, lalu **diuji pulih otomatis setiap kali** ke Postgres sementara (jumlah Profile, Super Admin, migrasi). Ditambah pemulihan bawaan Neon. Langkah pemulihan manual di `Documentation/DEPLOYMENT.md`.
 - **Log audit:** di database, hanya bisa dibaca admin.
 
 ## 12. Catatan Keputusan (ADR ringkas)

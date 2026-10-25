@@ -10,6 +10,9 @@ const cloudName = process.env.CLOUDINARY_CLOUD_NAME
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Hanya untuk image Docker (Frontend/Dockerfile): server mandiri berisi dependency yang terpakai saja.
+  // Vercel dan CI tidak memasangnya, jadi build mereka tidak berubah.
+  output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined,
   images: {
     remotePatterns: cloudName
       ? [{ protocol: 'https', hostname: 'res.cloudinary.com', pathname: `/${cloudName}/**` }]

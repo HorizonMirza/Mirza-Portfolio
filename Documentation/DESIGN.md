@@ -1314,3 +1314,14 @@ Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newslette
   - Hasil di HP CPU 6× (render CPU, dibandingkan di lingkungan yang sama): 108 → 77 ms per bingkai, hitung ulang gaya 2.210 → 157 ms per 4 detik, beban utas utama ±separuh. Tanpa perlambatan: 60 fps stabil.
   - Sekalian diperbaiki: sejak 2026-10-20 nilai `--lo` (tampil tidaknya nama) tertulis ke teks pembaca layar, bukan ke label nama, sehingga nama tidak ikut muncul atau hilang saat bola berputar.
 
+## 97. README, rilis, dan paket (2026-10-25)
+
+- **README** ditulis ulang: ±60 baris, bahasa Inggris, satu tangkapan layar (hero dengan armor terbuka). Isinya bagian situs publik, Super Admin, kualitas, stack, cara menjalankan, dan struktur repo. Panduan lokal, deploy, pemantauan, dan backup (dulu ±120 baris di README) pindah utuh ke `Documentation/DEPLOYMENT.md`.
+- **Berkas dihapus:** folder `Backend/` (satu README peta placeholder; petanya sudah ada di ARCHITECTURE bagian 4) dan dua tangkapan layar lama (`home-dark.webp`, `home-mobile.webp`); `home-light.webp` diganti `home.webp`. Pemindaian berkas, ekspor, kelas CSS, kunci pesan, dan aset tidak menemukan kode mati lain.
+- **About repo:** situs `https://mmirza.site`, deskripsi, dan topik diisi (sebelumnya masih alamat `*.vercel.app`).
+- **Release `v1.0.0`** dengan catatan rilis ringkas bahasa Inggris.
+- **Paket (GitHub Packages):** `ghcr.io/horizonmirza/mirza-portfolio`, image Docker aplikasi.
+  - `Frontend/Dockerfile` bertahap: build `next build` dengan `output: 'standalone'` (hanya aktif bila `DOCKER_BUILD=1`, jadi Vercel dan CI tidak berubah), lalu image kecil (±424 MB, user non-root, `HEALTHCHECK` ke `/api/health`).
+  - `next build` merender halaman dari database, jadi build butuh Postgres yang sudah dimigrasi. `.github/workflows/release.yml` menyediakannya (service container + migrasi + seed, sama seperti job build di CI), membangun dengan `--network=host`, menguji image (`/api/health` dan lima halaman harus 200), baru mendorong tag `vX.Y.Z`, `X.Y.Z`, dan `latest`. Dijalankan saat release dipublikasikan atau manual.
+  - Diuji lokal sebelum dipush: image terbangun, container berjalan sebagai user 1000, semua halaman 200, aset statis dan `next/image` (sharp) berfungsi.
+
