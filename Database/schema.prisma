@@ -290,6 +290,8 @@ model Asset {
   projectImages    ProjectImage[]
   experiences      Experience[]   @relation("ExperienceLogo")
   experiencePhotos Experience[]   @relation("ExperiencePhoto")
+  heroPortraitOf   SiteSetting?   @relation("HeroPortrait")
+  heroArmorOf      SiteSetting?   @relation("HeroArmor")
 }
 
 model Message {
@@ -382,16 +384,21 @@ model CvDownload {
 
 // Pengaturan situs (satu baris, id = 1). Diubah dari /admin/settings.
 model SiteSetting {
-  id            Int      @id @default(1)
+  id             Int      @id @default(1)
   // volume suara tombol di situs publik (tema, bahasa, menu), 0 = tanpa suara, 100 = paling keras
-  soundVolume   Int      @default(80)
+  soundVolume    Int      @default(80)
   // pemberitahuan pembuka: kartu sebelum masuk situs, sekali setiap situs dibuka (per sesi browser)
-  introEnabled  Boolean  @default(true)
-  introTitle_id String?
-  introTitle_en String?
-  introBody_id  String?  @db.Text
-  introBody_en  String?  @db.Text
-  updatedAt     DateTime @updatedAt @db.Timestamptz(3)
+  introEnabled   Boolean  @default(true)
+  introTitle_id  String?
+  introTitle_en  String?
+  introBody_id   String?  @db.Text
+  introBody_en   String?  @db.Text
+  // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
+  heroPortraitId String?  @unique @db.Uuid
+  heroPortrait   Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
+  heroArmorId    String?  @unique @db.Uuid
+  heroArmor      Asset?   @relation("HeroArmor", fields: [heroArmorId], references: [id], onDelete: SetNull)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(3)
 }
 
 // Teks situs yang diubah admin (judul bagian, SEO, kebijakan privasi, ...). Menimpa teks bawaan di

@@ -1,11 +1,12 @@
 import { FileText } from 'lucide-react'
 import Image from 'next/image'
+import type { ReactNode } from 'react'
 
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { Card } from '@/components/ui/card'
 
 import { removeAsset } from '../actions'
-import { formatBytes, type UploadTarget } from '../targets'
+import { formatBytes, needsAlt, UPLOAD_TARGETS, type UploadTarget } from '../targets'
 import { AssetAltForm } from './asset-alt-form'
 import { AssetUploader } from './asset-uploader'
 
@@ -65,9 +66,12 @@ export function AssetSlot({
   targetId,
   asset,
   configured,
+  note,
 }: {
   title: string
   description?: string
+  // keterangan tambahan di bawah deskripsi, mis. tautan unduh contoh
+  note?: ReactNode
   target: UploadTarget
   targetId?: string
   asset: AssetView | null
@@ -78,12 +82,13 @@ export function AssetSlot({
       <div>
         <h2 className="text-h3 font-semibold">{title}</h2>
         {description ? <p className="mt-1 text-sm text-muted">{description}</p> : null}
+        {note ? <div className="mt-2 text-sm text-muted">{note}</div> : null}
       </div>
       {asset ? (
         <div className="flex flex-col gap-4 md:flex-row md:items-start">
           <AssetPreview asset={asset} label={title.toLowerCase()} />
           <div className="flex flex-1 flex-col gap-3">
-            {asset.kind === 'IMAGE' ? (
+            {needsAlt(UPLOAD_TARGETS[target]) ? (
               <AssetAltForm
                 key={asset.id}
                 assetId={asset.id}

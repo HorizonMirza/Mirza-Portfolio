@@ -26,6 +26,17 @@ export async function getProfileAssets(): Promise<{
   return { photo: p?.photo ?? null, cv: p?.cv ?? null }
 }
 
+export async function getHeroAssets(): Promise<{
+  portrait: AssetView | null
+  armor: AssetView | null
+}> {
+  const row = await getDb().siteSetting.findUnique({
+    where: { id: 1 },
+    select: { heroPortrait: { select: assetSelect }, heroArmor: { select: assetSelect } },
+  })
+  return { portrait: row?.heroPortrait ?? null, armor: row?.heroArmor ?? null }
+}
+
 export async function getProjectAssets(
   projectId: string,
 ): Promise<{ cover: AssetView | null; images: AssetView[] }> {

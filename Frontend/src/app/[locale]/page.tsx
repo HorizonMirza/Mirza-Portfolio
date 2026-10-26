@@ -18,6 +18,7 @@ import { getPublicProfile } from '@/features/profile/public'
 import { getPublishedProjects } from '@/features/projects/public'
 import { SkillGlobe } from '@/features/skills/components/skill-globe'
 import { toSkillItems } from '@/features/skills/skill-items'
+import { getSiteSettings } from '@/features/settings/public'
 import { getPublicSkills } from '@/features/skills/public'
 import { Link } from '@/i18n/navigation'
 import { siteUrl } from '@/lib/env'
@@ -54,16 +55,18 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
-  const [t, tGlobe, tSkyline, tExp, profile, projects, skills, experiences] = await Promise.all([
-    getTranslations({ locale, namespace: 'Home' }),
-    getTranslations({ locale, namespace: 'SkillGlobe' }),
-    getTranslations({ locale, namespace: 'Skyline' }),
-    getTranslations({ locale, namespace: 'Experience' }),
-    getPublicProfile(),
-    getPublishedProjects(),
-    getPublicSkills(),
-    getPublicExperiences(),
-  ])
+  const [t, tGlobe, tSkyline, tExp, profile, projects, skills, experiences, settings] =
+    await Promise.all([
+      getTranslations({ locale, namespace: 'Home' }),
+      getTranslations({ locale, namespace: 'SkillGlobe' }),
+      getTranslations({ locale, namespace: 'Skyline' }),
+      getTranslations({ locale, namespace: 'Experience' }),
+      getPublicProfile(),
+      getPublishedProjects(),
+      getPublicSkills(),
+      getPublicExperiences(),
+      getSiteSettings(),
+    ])
 
   const name = profile?.name ?? 'Muhammad Mirza'
   const github = profile?.socials.github
@@ -134,11 +137,26 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       }
     : null
 
-  // Potret hero: selalu foto khusus beranda (bukan foto profil dari admin).
+  // Potret hero: foto khusus beranda (bukan foto profil). Memakai unggahan dari Admin → Pengaturan bila ada,
+  // jika tidak foto bawaan di repo. Unggahan berasal dari Cloudinary, jadi dimuat dengan CORS agar bisa
+  // digambar di canvas dan WebGL (efek liquid mask).
+  const customPortrait = settings.heroPortrait
+  const customArmor = settings.heroArmor
   const portrait = (
     <Image
-      src={HERO_PORTRAIT}
-      alt={DEFAULT_PHOTO_ALT[locale]}
+      src={customPortrait?.url ?? HERO_PORTRAIT}
+      {...(customPortrait
+        ? {
+            width: customPortrait.width ?? 1120,
+            height: customPortrait.height ?? 1100,
+            crossOrigin: 'anonymous' as const,
+          }
+        : {})}
+      alt={
+        customPortrait
+          ? loc(customPortrait, 'alt', locale) || DEFAULT_PHOTO_ALT[locale]
+          : DEFAULT_PHOTO_ALT[locale]
+      }
       // foto dikirim apa adanya (WebP 1120 px kualitas 85), tanpa kompresi ulang Next.js yang membuatnya
       // buram di HP (laporan pemilik 2026-10-20); di HP foto selebar 140vw
       unoptimized
@@ -180,7 +198,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
           .hero, tepat di bawah navbar. Latar vortex redup (pilihan pemilik 2026-10-19, latar 9). */}
       <section aria-labelledby="hero-title" className="hero-shell">
-        <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
+        <LiquidMaskPortrait back={customArmor?.url ?? HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
           <NeuralVortexBackground className="hero-vortex" resolution={0.4} fps={24} />
           <div className="hero">
             {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}

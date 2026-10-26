@@ -17,6 +17,8 @@ import { revalidateContent } from '@/lib/revalidate'
 import { requiredText } from '@/lib/validation'
 
 import {
+  checkImageShape,
+  needsAlt,
   UPLOAD_TARGET_KEYS,
   UPLOAD_TARGETS,
   type UploadSignature,
@@ -53,7 +55,9 @@ function revalidateFor(target: UploadTarget) {
       ? 'profile'
       : target.startsWith('experience')
         ? 'experience'
-        : 'projects',
+        : target.startsWith('hero')
+          ? 'settings'
+          : 'projects',
   )
 }
 
@@ -63,7 +67,10 @@ function usageOf(asset: {
   profileCv?: { id: number } | null
   experiences: { id: string }[]
   experiencePhotos: { id: string }[]
+  heroPortraitOf?: { id: number } | null
+  heroArmorOf?: { id: number } | null
 }) {
+  if (asset.heroPortraitOf || asset.heroArmorOf) return 'settings' as const
   if (asset.profilePhoto || asset.profileCv) return 'profile' as const
   if (asset.experiences.length || asset.experiencePhotos.length) return 'experience' as const
   return 'projects' as const
@@ -139,9 +146,11 @@ export async function attachUploadedAsset(
     ) {
       return reject('Berkas ditolak: tipe atau ukuran tidak sesuai.')
     }
+    const shapeError = checkImageShape(spec, result.width, result.height)
+    if (shapeError) return reject(shapeError, { file: shapeError })
 
     let altValues: { alt_id: string; alt_en: string } | null = null
-    if (spec.kind === 'IMAGE') {
+    if (needsAlt(spec)) {
       const a = altSchema.safeParse(alt)
       if (!a.success)
         return reject(
@@ -188,6 +197,23 @@ export async function attachUploadedAsset(
         const data: Prisma.ProfileUncheckedUpdateInput =
           field === 'photo' ? { photoId: asset.id } : { cvId: asset.id }
         await tx.profile.update({ where: { id: 1 }, data })
+      } else if (t.data === 'hero-portrait' || t.data === 'hero-armor') {
+        const field = t.data === 'hero-portrait' ? 'heroPortrait' : 'heroArmor'
+        const current = await tx.siteSetting.findUnique({
+          where: { id: 1 },
+          select: {
+            heroPortrait: { select: { id: true, publicId: true } },
+            heroArmor: { select: { id: true, publicId: true } },
+          },
+        })
+        old = current?.[field] ?? null
+        const data: Prisma.SiteSettingUncheckedUpdateInput =
+          field === 'heroPortrait' ? { heroPortraitId: asset.id } : { heroArmorId: asset.id }
+        await tx.siteSetting.upsert({
+          where: { id: 1 },
+          create: { id: 1, ...data } as Prisma.SiteSettingUncheckedCreateInput,
+          update: data,
+        })
       } else if (t.data === 'experience-logo' || t.data === 'experience-photo') {
         const isLogo = t.data === 'experience-logo'
         const experience = await tx.experience.findUniqueOrThrow({
@@ -271,6 +297,8 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
           profilePhoto: { select: { id: true } },
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
+          heroPortraitOf: { select: { id: true } },
+          heroArmorOf: { select: { id: true } },
         },
       })
       const after = await tx.asset.update({
@@ -310,6 +338,8 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           profileCv: { select: { id: true } },
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
+          heroPortraitOf: { select: { id: true } },
+          heroArmorOf: { select: { id: true } },
         },
       })
       // Relasi ke profil/project menjadi null, baris galeri ikut terhapus (onDelete di skema).

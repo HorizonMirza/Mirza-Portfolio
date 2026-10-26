@@ -9,10 +9,28 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 import { attachUploadedAsset, signAssetUpload } from '../actions'
-import { formatBytes, UPLOAD_TARGETS, type UploadTarget } from '../targets'
+import {
+  checkImageShape,
+  formatBytes,
+  needsAlt,
+  UPLOAD_TARGETS,
+  type UploadTarget,
+} from '../targets'
 
 // Alur: pilih berkas → minta tanda tangan ke server → unggah langsung ke Cloudinary →
 // server memverifikasi respons lalu mencatat Asset. Secret tidak pernah sampai ke browser.
+// Ukuran piksel gambar di browser, untuk menolak gambar yang salah bentuk sebelum diunggah.
+async function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
+  try {
+    const bitmap = await createImageBitmap(file)
+    const size = { width: bitmap.width, height: bitmap.height }
+    bitmap.close()
+    return size
+  } catch {
+    return null
+  }
+}
+
 export function AssetUploader({
   target,
   targetId,
@@ -30,7 +48,8 @@ export function AssetUploader({
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [stage, setStage] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
-  const isImage = spec.kind === 'IMAGE'
+  // gambar hiasan (armor hero) tidak butuh teks alternatif
+  const isImage = needsAlt(spec)
 
   function validate(): boolean {
     const next: Record<string, string> = {}
@@ -47,6 +66,15 @@ export function AssetUploader({
   function upload() {
     if (!validate() || !file) return
     startTransition(async () => {
+      if ('ratio' in spec) {
+        const size = await readImageSize(file)
+        // gambar yang tak terbaca di browser (mis. AVIF lama) tetap diperiksa server
+        const shapeError = size ? checkImageShape(spec, size.width, size.height) : null
+        if (shapeError) {
+          setErrors({ file: shapeError })
+          return
+        }
+      }
       setStage('Menyiapkan…')
       const signed = await signAssetUpload(target)
       if (!signed.ok || !signed.data) {

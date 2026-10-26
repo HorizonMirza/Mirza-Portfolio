@@ -61,7 +61,7 @@ export function LiquidMaskPortrait({
   className,
 }: {
   children: ReactNode
-  // alamat gambar kedua (satu origin dengan situs agar bisa digambar di canvas)
+  // alamat gambar kedua (satu origin dengan situs, atau Cloudinary yang mengirim header CORS)
   back: string
   // ruang tambahan gambar kedua di luar bingkai foto, sebagai bagian lebar/tinggi foto (kiri-kanan, atas),
   // mis. jambul helm yang menjulang di atas foto
@@ -129,6 +129,8 @@ export function LiquidMaskPortrait({
       loading = true
       const next = new Image()
       next.decoding = 'async'
+      // gambar unggahan admin datang dari Cloudinary: tanpa CORS canvas dan WebGL menolaknya
+      next.crossOrigin = 'anonymous'
       next.onload = () => {
         if (disposed) return
         photo = next

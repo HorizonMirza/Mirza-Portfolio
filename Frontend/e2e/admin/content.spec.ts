@@ -220,3 +220,12 @@ test('teks situs: judul bagian diubah, tampil di situs, lalu dikembalikan ke baw
   await expect(page.getByText('Teks situs disimpan.')).toBeVisible()
   await expect.poll(async () => (await page.request.get('/id')).text()).toContain('Keahlian Teknis')
 })
+
+test('pengaturan menampilkan slot potret dan armor hero beranda', async ({ page }) => {
+  await page.goto('/admin/settings')
+  for (const title of ['Potret hero', 'Armor hero']) {
+    await expect(page.getByRole('heading', { name: title })).toBeVisible()
+  }
+  // belum ada unggahan: foto bawaan dipakai, dan contoh bawaan bisa diunduh sebagai acuan
+  await expect(page.getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' })).toHaveCount(2)
+})
