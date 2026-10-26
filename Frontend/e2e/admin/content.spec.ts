@@ -267,3 +267,52 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
       await expect(menu.getByRole('link', { name: old, exact: true })).toHaveCount(0)
   }
 })
+
+test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ page }) => {
+  await page.goto('/admin/pages/home')
+  const bar = page.getByRole('banner')
+  await expect(bar.getByRole('button', { name: 'Bahasa isian: Indonesia' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
+
+  // bahasa isian menentukan kolom yang tampil di form dua bahasa
+  await expect(page.getByLabel('Indonesia untuk Bagian keahlian')).toBeVisible()
+  await expect(page.getByLabel('English untuk Bagian keahlian')).toHaveCount(0)
+  await expect(async () => {
+    await bar.getByRole('button', { name: 'Bahasa isian: English' }).click()
+    await expect(page.getByLabel('English untuk Bagian keahlian')).toBeVisible({ timeout: 1000 })
+  }).toPass()
+  await expect(page.getByLabel('Indonesia untuk Bagian keahlian')).toHaveCount(0)
+  // kembalikan agar tes lain tidak terpengaruh (pilihan tersimpan di browser)
+  await bar.getByRole('button', { name: 'Bahasa isian: Indonesia' }).click()
+
+  await bar.getByRole('button', { name: 'Menu profil' }).click()
+  await expect(page.getByRole('link', { name: 'Akun' }).last()).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Keluar' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('button', { name: 'Keluar' })).toHaveCount(0)
+})
+
+test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
+  for (const path of ['/admin', '/admin/pages/home', '/admin/profile', '/admin/messages']) {
+    await page.goto(path)
+    const blue = await page.evaluate(() => {
+      const found: string[] = []
+      for (const el of document.querySelectorAll('main *, header *, aside *')) {
+        if (!(el.textContent ?? '').trim() || el.children.length > 0) continue
+        const m = getComputedStyle(el)
+          .color.match(/\d+(\.\d+)?/g)
+          ?.map(Number)
+        if (m && m[2]! > m[0]! + 50 && m[2]! > m[1]! + 25)
+          found.push(`${el.tagName} ${el.textContent!.trim().slice(0, 30)}`)
+      }
+      return found
+    })
+    expect(blue, `${path} berisi tulisan biru`).toEqual([])
+    // batang gulir menyisakan selisih lebar; disembunyikan berarti selisihnya nol
+    const gutter = await page.evaluate(
+      () => window.innerWidth - document.documentElement.clientWidth,
+    )
+    expect(gutter, `${path} masih punya batang gulir`).toBe(0)
+  }
+})

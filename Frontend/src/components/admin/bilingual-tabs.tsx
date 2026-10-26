@@ -2,9 +2,10 @@
 
 import type { ReactNode } from 'react'
 
+import { type ContentLang, useAdminLang } from '@/components/admin/admin-lang'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-// Tab ID/EN untuk isian dua bahasa. Kedua panel tetap ter-mount agar validasi berjalan di keduanya,
+// Tab ID/EN untuk isian dua bahasa; tab yang terbuka mengikuti tombol bahasa isian di top bar. Kedua panel tetap ter-mount agar validasi berjalan di keduanya,
 // dan jumlah galat tampil di label tab supaya galat di tab tersembunyi tetap terlihat.
 export function BilingualTabs({
   errors,
@@ -15,8 +16,9 @@ export function BilingualTabs({
   id: ReactNode
   en: ReactNode
 }) {
+  const { lang, setLang } = useAdminLang()
   return (
-    <Tabs defaultValue="id">
+    <Tabs value={lang} onValueChange={(value) => setLang(value as ContentLang)}>
       <TabsList aria-label="Bahasa isian">
         <TabsTrigger value="id">
           Indonesia

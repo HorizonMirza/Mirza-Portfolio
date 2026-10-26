@@ -89,14 +89,15 @@ test.describe('login dan logout', () => {
     expect(signInCalls).toBe(0)
   })
 
-  test('login, kembali ke halaman tujuan, lalu logout', async ({ page, isMobile }) => {
+  test('login, kembali ke halaman tujuan, lalu logout', async ({ page }) => {
     await page.goto('/admin/skills')
     await expect(page).toHaveURL(/next=/)
     await page.getByLabel('Email').fill(process.env.ADMIN_EMAIL!)
     await page.getByLabel('Password', { exact: true }).fill(process.env.ADMIN_PASSWORD!)
     await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL(/\/admin\/skills$/)
-    if (isMobile) await page.getByRole('button', { name: /menu/i }).click()
+    // Keluar ada di menu profil (foto bulat di pojok kanan atas top bar)
+    await page.getByRole('button', { name: 'Menu profil' }).click()
     await page.getByRole('button', { name: 'Keluar' }).click()
     await expect(page).toHaveURL(/\/admin\/login/)
     await page.goto('/admin')

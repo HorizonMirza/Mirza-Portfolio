@@ -4,6 +4,7 @@ import { RotateCcw } from 'lucide-react'
 import { useState, useTransition } from 'react'
 
 import { applyResult } from '@/components/admin/apply-result'
+import { useAdminLang } from '@/components/admin/admin-lang'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
 import { FormFooter } from '@/components/admin/form-footer'
@@ -223,6 +224,10 @@ function TextRow({
   onChange: (lang: Lang, value: string) => void
   onReset: () => void
 }) {
+  // hanya bahasa yang dipilih di top bar yang tampil; galat di bahasa lain tetap diberitahukan
+  const { lang: shown } = useAdminLang()
+  const other = LANGS.find((l) => l.lang !== shown)!
+  const otherError = errors[`${entry.key}.${other.lang}`]
   const changed = Boolean(value.id || value.en)
   const slug = entry.key.replace('.', '-')
   return (
@@ -242,8 +247,8 @@ function TextRow({
           </Button>
         ) : null}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {LANGS.map(({ lang, label }) => {
+      <div className="grid gap-4">
+        {LANGS.filter((l) => l.lang === shown).map(({ lang, label }) => {
           const id = `${slug}-${lang}`
           const error = errors[`${entry.key}.${lang}`]
           const props = {
@@ -278,6 +283,11 @@ function TextRow({
           )
         })}
       </div>
+      {otherError ? (
+        <p className="text-sm text-danger">
+          Galat di {other.label}: {otherError}
+        </p>
+      ) : null}
       {entry.placeholders?.length ? (
         <p className="text-xs text-muted">
           Boleh memakai {entry.placeholders.map((p) => `{${p}}`).join(' dan ')}; diisi otomatis.
