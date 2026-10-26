@@ -55,6 +55,22 @@ describe('modul situs', () => {
     for (const site of SITE_MODULES) expect(entriesOf(site.id).length, site.id).toBeGreaterThan(0)
   })
 
+  it('tiap topik hanya punya satu menu: tanpa label ganda dan halaman data lewat tab modul', async () => {
+    const { adminNav, isNavActive } = await import('@/components/admin/nav')
+    const labels = adminNav.map((item) => item.label.toLowerCase())
+    expect(new Set(labels).size).toBe(labels.length)
+    const hrefs = adminNav.map((item) => item.href)
+    expect(new Set(hrefs).size).toBe(hrefs.length)
+    // halaman data menyalakan menu modulnya, bukan menu sendiri
+    const active = (path: string) =>
+      adminNav.filter((item) => isNavActive(path, item)).map((item) => item.href)
+    expect(active('/admin/profile')).toEqual(['/admin/pages/about'])
+    expect(active('/admin/skills')).toEqual(['/admin/pages/home'])
+    expect(active('/admin/experience/abc')).toEqual(['/admin/pages/experience'])
+    expect(active('/admin/projects/new')).toEqual(['/admin/pages/projects'])
+    expect(active('/admin')).toEqual(['/admin'])
+  })
+
   it('kunci menu admin sesuai modul', async () => {
     const { adminNav } = await import('@/components/admin/nav')
     for (const site of SITE_MODULES)

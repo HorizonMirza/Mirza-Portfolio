@@ -238,3 +238,32 @@ test('modul Home menampilkan slot potret dan armor hero beranda', async ({ page 
   // belum ada unggahan: foto bawaan dipakai, dan contoh bawaan bisa diunduh sebagai acuan
   await expect(page.getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' })).toHaveCount(2)
 })
+
+test('Bagian Awal: kartu pembuka dan teksnya disimpan dengan satu tombol Simpan', async ({
+  page,
+}) => {
+  await page.goto('/admin/pages/intro')
+  await expect(page.getByRole('button', { name: 'Simpan' })).toHaveCount(1)
+  await expect(page.getByRole('heading', { name: 'Pemberitahuan pembuka' })).toBeVisible()
+})
+
+test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan menu kedua', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/admin/profile')
+  await expect(page.getByRole('link', { name: 'Teks halaman' })).toHaveAttribute(
+    'href',
+    '/admin/pages/about',
+  )
+  await expect(page.getByRole('link', { name: 'Profil', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  if (!isMobile) {
+    const menu = page.getByRole('navigation', { name: 'Menu admin' })
+    await expect(menu.getByRole('link', { name: 'About' })).toHaveAttribute('aria-current', 'page')
+    for (const old of ['Profil', 'Project', 'Skill', 'Pengalaman'])
+      await expect(menu.getByRole('link', { name: old, exact: true })).toHaveCount(0)
+  }
+})

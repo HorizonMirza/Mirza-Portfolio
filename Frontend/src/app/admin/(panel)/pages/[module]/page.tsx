@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
+import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getHeroAssets } from '@/features/assets/queries'
-import { IntroForm } from '@/features/settings/components/intro-form'
 import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
 import { SiteTextForm } from '@/features/site-text/components/site-text-form'
@@ -35,10 +35,17 @@ export default async function SiteModulePage({ params }: Params) {
   return (
     <>
       <PageHeader eyebrow="Halaman situs" title={found.title} description={found.description} />
+      {isTabbedModule(moduleId) ? (
+        <ModuleTabs moduleId={moduleId} current={`/admin/pages/${moduleId}`} />
+      ) : null}
       <div className="flex flex-col gap-6">
-        {moduleId === 'intro' ? <IntroForm defaultValues={await getIntroForEdit()} /> : null}
         {moduleId === 'home' ? <HeroPhotos /> : null}
-        <SiteTextForm moduleId={moduleId} initialValues={texts.values} defaults={defaults} />
+        <SiteTextForm
+          moduleId={moduleId}
+          initialValues={texts.values}
+          defaults={defaults}
+          intro={moduleId === 'intro' ? await getIntroForEdit() : undefined}
+        />
       </div>
     </>
   )

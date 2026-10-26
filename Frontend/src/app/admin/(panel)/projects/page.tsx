@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { Button } from '@/components/ui/button'
 import { ProjectTable } from '@/features/projects/components/project-table'
@@ -16,7 +17,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Konten"
+        eyebrow="Projects"
         title="Project"
         description="Urutan di sini sama dengan urutan di situs publik. Hanya project berstatus terbit yang tampil."
         actions={
@@ -28,6 +29,7 @@ export default async function ProjectsPage() {
           </Button>
         }
       />
+      <ModuleTabs moduleId="projects" current="/admin/projects" />
       <ProjectTable rows={projects.map((p) => ({ ...p, updatedAt: p.updatedAt.toISOString() }))} />
     </>
   )

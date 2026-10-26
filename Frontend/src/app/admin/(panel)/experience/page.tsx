@@ -2,6 +2,7 @@ import { Plus } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
+import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { Button } from '@/components/ui/button'
 import { ExperienceTable } from '@/features/experience/components/experience-table'
@@ -18,7 +19,7 @@ export default async function ExperiencePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Konten"
+        eyebrow="Experience"
         title="Pengalaman dan pendidikan"
         description="Timeline publik diurutkan otomatis dari tanggal mulai terbaru."
         actions={
@@ -30,6 +31,7 @@ export default async function ExperiencePage() {
           </Button>
         }
       />
+      <ModuleTabs moduleId="experience" current="/admin/experience" />
       <ExperienceTable
         rows={items.map((e) => ({
           id: e.id,

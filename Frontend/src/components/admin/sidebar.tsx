@@ -20,7 +20,7 @@ type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 const floating = 'border border-border bg-surface/95 shadow-lg'
 
 // Menu cepat di bilah bawah HP; sisanya lewat tombol Menu. Urutan = urutan kolom.
-const SHORTCUTS = ['/admin', '/admin/projects', '/admin/messages', '/admin/settings'] as const
+const SHORTCUTS = ['/admin', '/admin/pages/projects', '/admin/messages', '/admin/settings'] as const
 const shortcutItems = SHORTCUTS.map((href) => adminNav.find((item) => item.href === href)!)
 
 // Foto bulat berbingkai, sama dengan foto di topbar situs publik.
@@ -80,8 +80,9 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           <ul className="flex flex-col gap-0.5">
             {adminNav
               .filter((item) => item.group === group)
-              .map(({ href, label, icon: Icon }) => {
-                const active = isNavActive(pathname, href)
+              .map((item) => {
+                const { href, label, icon: Icon } = item
+                const active = isNavActive(pathname, item)
                 return (
                   <li key={href}>
                     <Link
@@ -195,8 +196,8 @@ function BottomLamp({ index }: { index: number }) {
 export function AdminMobileBar(props: AdminIdentity) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const current = adminNav.find((item) => isNavActive(pathname, item.href))
-  const shortcut = shortcutItems.findIndex((item) => isNavActive(pathname, item.href))
+  const current = adminNav.find((item) => isNavActive(pathname, item))
+  const shortcut = shortcutItems.findIndex((item) => isNavActive(pathname, item))
   // halaman di luar menu cepat: lampu jatuh di tombol Menu
   const lampIndex = shortcut >= 0 ? shortcut : current ? shortcutItems.length : -1
   const itemClass =

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getProfileAssets } from '@/features/assets/queries'
@@ -17,10 +18,11 @@ export default async function ProfilePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Konten"
+        eyebrow="About"
         title="Profil dan hero"
         description="Teks di bagian atas beranda, bio, status ketersediaan, dan link kontak."
       />
+      <ModuleTabs moduleId="about" current="/admin/profile" />
       <div className="flex flex-col gap-6">
         <ProfileForm defaultValues={profile} />
         <div className="grid gap-6 lg:grid-cols-2">

@@ -43,25 +43,25 @@ export const SITE_MODULES: readonly SiteModule[] = [
     label: 'Home',
     title: 'Home',
     description:
-      'Beranda: foto hero, judul bagian, dan SEO. Nama dan peran di hero diatur di Konten → Profil.',
+      'Beranda: foto hero, judul bagian, dan SEO. Nama dan peran di hero ada di About → tab Profil; daftar skill di tab Skill.',
   },
   {
     id: 'about',
     label: 'About',
     title: 'About',
-    description: 'Halaman Tentang. Bio, foto, dan peran diatur di Konten → Profil.',
+    description: 'Halaman Tentang. Bio, foto, nama, dan peran ada di tab Profil.',
   },
   {
     id: 'experience',
     label: 'Experience',
     title: 'Experience',
-    description: 'Halaman Pengalaman. Isi riwayatnya diatur di Konten → Pengalaman.',
+    description: 'Halaman Pengalaman. Isi riwayatnya ada di tab Pengalaman.',
   },
   {
     id: 'projects',
     label: 'Projects',
     title: 'Projects',
-    description: 'Halaman daftar dan detail Project. Isi project diatur di Konten → Project.',
+    description: 'Halaman daftar dan detail Project. Isi project ada di tab Project.',
   },
   {
     id: 'contact',

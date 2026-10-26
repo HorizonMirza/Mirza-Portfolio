@@ -352,10 +352,10 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 
 | Modul | Halaman | Action |
 |---|---|---|
-| Profil | `/admin/profile` | `saveProfile` |
-| Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
-| Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
-| Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
+| Profil (tab modul About) | `/admin/profile` | `saveProfile` |
+| Project (tab modul Projects) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
+| Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
+| Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
 | Halaman situs (10 modul: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`), `saveIntroNotice` (kartu pembuka); foto hero di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `hero-portrait`, `hero-armor`) |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |

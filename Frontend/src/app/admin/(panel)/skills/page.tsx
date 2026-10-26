@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { SkillsManager } from '@/features/skills/components/skills-manager'
 import { listSkillCategoriesAdmin } from '@/features/skills/queries'
@@ -13,10 +14,11 @@ export default async function SkillsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Konten"
+        eyebrow="Home"
         title="Skill"
         description="Kelompokkan skill per kategori. Urutan di sini dipakai di situs publik. Kategori hanya bisa dihapus bila sudah kosong."
       />
+      <ModuleTabs moduleId="home" current="/admin/skills" />
       <SkillsManager categories={categories} />
     </>
   )
