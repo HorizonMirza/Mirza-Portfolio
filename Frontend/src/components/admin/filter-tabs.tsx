@@ -13,7 +13,7 @@ export function FilterTabs({
   return (
     <nav
       aria-label={label}
-      className="mb-4 flex flex-wrap gap-1 rounded-md border border-border bg-surface-2 p-0.5 sm:inline-flex"
+      className="mb-4 flex flex-wrap gap-1 rounded-3xl border border-border bg-surface-2 p-1 sm:inline-flex"
     >
       {items.map((item) => (
         <Link
@@ -21,7 +21,7 @@ export function FilterTabs({
           href={item.href}
           aria-current={item.active ? 'page' : undefined}
           className={cn(
-            'inline-flex min-h-10 items-center gap-2 rounded-sm px-4 text-sm font-medium text-muted',
+            'inline-flex min-h-10 items-center gap-2 rounded-full px-4 text-sm font-medium text-muted',
             item.active && 'bg-surface text-text shadow-sm',
           )}
         >

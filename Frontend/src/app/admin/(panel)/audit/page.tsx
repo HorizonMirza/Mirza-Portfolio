@@ -56,7 +56,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
             key={e ?? 'all'}
             href={href(e, 1)}
             aria-current={e === entityParam ? 'page' : undefined}
-            className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm aria-[current=page]:border-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
+            className="inline-flex min-h-9 items-center rounded-full border border-border px-3.5 text-sm aria-[current=page]:border-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
           >
             {e ?? 'Semua'}
           </Link>
@@ -64,7 +64,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
       </nav>
 
       {rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted">
+        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
           Belum ada catatan.
         </p>
       ) : (
@@ -72,7 +72,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
           {rows.map((row) => {
             const changes = Object.entries((row.diff ?? {}) as Record<string, Change>)
             return (
-              <li key={row.id} className="rounded-lg border border-border bg-surface px-4 py-3">
+              <li key={row.id} className="rounded-2xl border border-border bg-surface px-4 py-3">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
                   <time dateTime={row.createdAt.toISOString()} className="text-muted tabular-nums">
                     {formatDateTime(row.createdAt)}

@@ -94,7 +94,7 @@ export function DataTable<T extends Record<string, unknown>>({
       </label>
 
       {rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted">
+        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
           {emptyText}
         </p>
       ) : (
@@ -108,7 +108,7 @@ export function DataTable<T extends Record<string, unknown>>({
               </li>
             ))}
           </ul>
-          <div className="hidden overflow-x-auto rounded-lg border border-border xl:block">
+          <div className="hidden overflow-x-auto rounded-2xl border border-border xl:block">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface-2 text-muted">
                 {table.getHeaderGroups().map((group) => (

@@ -12,13 +12,14 @@ export default async function PanelLayout({ children }: { children: ReactNode })
   const profile = await getPublicProfile()
   const identity = { adminName: admin.name, photo: profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR }
   return (
-    <div className="flex min-h-dvh">
+    <div className="min-h-dvh lg:flex lg:gap-6 lg:p-4">
       <AdminSidebar {...identity} />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="min-w-0 flex-1">
         <AdminMobileBar {...identity} />
         <main
           id="main"
-          className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10"
+          // bawah memberi ruang untuk kapsul menu di HP
+          className="mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6 lg:px-4 lg:py-6"
         >
           {children}
         </main>

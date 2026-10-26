@@ -29,7 +29,7 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
       </div>
 
       {categories.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted">
+        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
           Belum ada kategori. Buat kategori dulu, lalu tambahkan skill di dalamnya.
         </p>
       ) : null}

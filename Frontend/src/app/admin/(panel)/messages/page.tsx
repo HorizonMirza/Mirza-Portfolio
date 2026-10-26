@@ -37,13 +37,13 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
         }))}
       />
       {messages.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border p-6 text-center text-sm text-muted">
+        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
           {status === 'NEW'
             ? 'Tidak ada pesan baru.'
             : `Tidak ada pesan berstatus ${messageStatusLabel[status].toLowerCase()}.`}
         </p>
       ) : (
-        <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface">
+        <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
           {messages.map((m) => (
             <li key={m.id}>
               <Link

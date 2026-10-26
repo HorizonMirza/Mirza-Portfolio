@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 // Tiga tingkat hierarki tombol (DESIGN.md bagian 3). Tinggi minimal 44 px untuk target sentuh.
 export const buttonVariants = cva(
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-5 text-sm font-semibold whitespace-nowrap transition-colors duration-150 ease-out-soft disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold whitespace-nowrap transition-colors duration-150 ease-out-soft disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {

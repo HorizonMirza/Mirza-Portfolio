@@ -15,14 +15,23 @@ import { cn } from '@/lib/utils'
 
 type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 
+// Permukaan melayang yang sama dengan topbar situs publik (components/site/site-header.tsx): tanpa
+// backdrop-blur, latar 95% pekat.
+const floating = 'border border-border bg-surface/95 shadow-lg'
+
+// Menu cepat di bilah bawah HP; sisanya lewat tombol Menu. Urutan = urutan kolom.
+const SHORTCUTS = ['/admin', '/admin/projects', '/admin/messages', '/admin/settings'] as const
+const shortcutItems = SHORTCUTS.map((href) => adminNav.find((item) => item.href === href)!)
+
 // Foto bulat berbingkai, sama dengan foto di topbar situs publik.
 function Avatar({ photo, size }: { photo: AdminIdentity['photo']; size: 'sm' | 'md' }) {
   const px = size === 'sm' ? 36 : 44
   return (
     <span
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-full border border-border bg-surface p-0.5',
-        size === 'sm' ? 'size-10' : 'size-12',
+        'inline-flex shrink-0 items-center justify-center rounded-full p-0.5',
+        floating,
+        size === 'sm' ? 'size-11' : 'size-12',
       )}
     >
       <Image
@@ -37,13 +46,35 @@ function Avatar({ photo, size }: { photo: AdminIdentity['photo']; size: 'sm' | '
   )
 }
 
+// Lampu hitam/putih (ikut warna teks tema) di tepi menu aktif, seperti topbar situs publik.
+function Lamp({ edge }: { edge: 'left' | 'top' }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        'pointer-events-none absolute bg-text',
+        edge === 'left'
+          ? 'top-1/2 -left-[5px] h-6 w-1 -translate-y-1/2 rounded-l-full'
+          : '-top-[5px] left-1/2 h-1 w-8 -translate-x-1/2 rounded-t-full',
+      )}
+    >
+      <span
+        className={cn(
+          'absolute rounded-full bg-text/20 blur-md',
+          edge === 'left' ? '-top-2 -left-3 h-10 w-6' : '-top-2 -left-2 h-6 w-12',
+        )}
+      />
+    </span>
+  )
+}
+
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
   return (
     <nav aria-label="Menu admin" className="flex flex-col gap-5">
       {adminNavGroups.map((group) => (
         <div key={group}>
-          <p className="mb-1.5 px-3 font-mono text-[0.6875rem] tracking-widest text-muted uppercase">
+          <p className="mb-1.5 px-3.5 font-mono text-[0.6875rem] tracking-widest text-muted uppercase">
             {group}
           </p>
           <ul className="flex flex-col gap-0.5">
@@ -58,14 +89,13 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                       onClick={onNavigate}
                       aria-current={active ? 'page' : undefined}
                       className={cn(
-                        // garis biru di kiri menandai halaman aktif, senada label biru di tiap halaman
-                        'relative flex min-h-10 items-center gap-3 rounded-md px-3 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text',
-                        active &&
-                          'bg-surface-2 text-text before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-note',
+                        'relative flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2/60 hover:text-text',
+                        active && 'bg-surface-2 text-text',
                       )}
                     >
-                      <Icon className={cn('size-4', active && 'text-note')} aria-hidden="true" />
+                      <Icon className="size-4" aria-hidden="true" />
                       {label}
+                      {active ? <Lamp edge="left" /> : null}
                     </Link>
                   </li>
                 )
@@ -85,7 +115,7 @@ function SignOutButton() {
     router.refresh()
   }
   return (
-    <Button variant="ghost" className="flex-1 justify-start" onClick={signOut}>
+    <Button variant="secondary" className="flex-1" onClick={signOut}>
       <LogOut aria-hidden="true" />
       Keluar
     </Button>
@@ -96,7 +126,8 @@ function SidebarBody({
   adminName,
   photo,
   onNavigate,
-}: AdminIdentity & { onNavigate?: () => void }) {
+  withTheme = true,
+}: AdminIdentity & { onNavigate?: () => void; withTheme?: boolean }) {
   return (
     <>
       <div className="flex items-center gap-3 px-1">
@@ -112,7 +143,7 @@ function SidebarBody({
           href="/id"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-10 items-center gap-3 rounded-md px-3 text-sm font-medium text-muted transition-colors hover:bg-surface-2 hover:text-text"
+          className="flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2/60 hover:text-text"
         >
           <ExternalLink className="size-4" aria-hidden="true" />
           Lihat situs
@@ -120,54 +151,124 @@ function SidebarBody({
         </a>
         <div className="flex items-center gap-2">
           <SignOutButton />
-          <ThemeToggle />
+          {withTheme ? <ThemeToggle className="size-11" /> : null}
         </div>
       </div>
     </>
   )
 }
 
-// Desktop (≥ 1024 px): sidebar menempel setinggi layar dan bisa digulir sendiri, jadi menu, tema,
+// Desktop (≥ 1024 px): dock melayang di kiri setinggi layar (bisa digulir sendiri), jadi menu, tema,
 // dan Keluar tetap terlihat walau halamannya panjang.
 export function AdminSidebar(props: AdminIdentity) {
   return (
-    <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 overflow-y-auto overscroll-contain border-r border-border bg-surface p-4 lg:flex">
-      <SidebarBody {...props} />
+    <aside className="sticky top-4 hidden h-[calc(100dvh-2rem)] w-64 shrink-0 lg:block">
+      <div
+        className={cn(
+          'flex h-full flex-col gap-6 overflow-y-auto overscroll-contain rounded-3xl p-4',
+          floating,
+        )}
+      >
+        <SidebarBody {...props} />
+      </div>
     </aside>
   )
 }
 
-// HP dan tablet: bilah atas menempel dengan foto bulat, nama halaman aktif, dan tombol menu.
+// Lampu bilah bawah: satu elemen yang digeser per kolom lewat transform (dikerjakan GPU), sama dengan
+// bilah bawah situs publik (components/site/nav-links.tsx).
+function BottomLamp({ index }: { index: number }) {
+  if (index < 0) return null
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute top-0 left-0 w-[calc((100%-4*var(--nav-gap))/5)] transition-transform duration-[360ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+      style={{ transform: `translateX(calc(${index} * (100% + var(--nav-gap))))` }}
+    >
+      <Lamp edge="top" />
+    </span>
+  )
+}
+
+// HP dan tablet (< 1024 px), seperti situs publik: foto bulat, nama halaman, dan tombol tema melayang di
+// atas; kapsul menu cepat di bawah layar dengan tombol Menu untuk sisanya.
 export function AdminMobileBar(props: AdminIdentity) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const current = adminNav.find((item) => isNavActive(pathname, item.href))
+  const shortcut = shortcutItems.findIndex((item) => isNavActive(pathname, item.href))
+  // halaman di luar menu cepat: lampu jatuh di tombol Menu
+  const lampIndex = shortcut >= 0 ? shortcut : current ? shortcutItems.length : -1
+  const itemClass =
+    'relative inline-flex h-[3.75rem] w-full items-center justify-center rounded-full text-muted transition-colors hover:text-text'
+
   return (
-    <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-surface/95 px-4 py-2 backdrop-blur lg:hidden">
-      <Link href="/admin" aria-label="Dashboard admin" className="shrink-0 rounded-full">
-        <Avatar photo={props.photo} size="sm" />
-      </Link>
-      <div className="min-w-0 flex-1">
-        <p className="font-mono text-[0.6875rem] tracking-widest text-note uppercase">
-          Super Admin
-        </p>
-        <p className="truncate text-sm font-semibold">{current?.label ?? 'Admin'}</p>
-      </div>
+    <>
+      <header className="sticky top-[env(safe-area-inset-top,0px)] z-30 flex items-center gap-3 px-3 pt-3 sm:px-4 lg:hidden">
+        <Link href="/admin" aria-label="Dashboard admin" className="shrink-0 rounded-full">
+          <Avatar photo={props.photo} size="sm" />
+        </Link>
+        <div
+          className={cn(
+            'flex min-h-11 min-w-0 flex-1 flex-col justify-center rounded-full px-4',
+            floating,
+          )}
+        >
+          <p className="font-mono text-[0.625rem] leading-none tracking-widest text-note uppercase">
+            Super Admin
+          </p>
+          <p className="mt-0.5 truncate text-sm leading-tight font-semibold">
+            {current?.label ?? 'Admin'}
+          </p>
+        </div>
+        <ThemeToggle className={cn('size-11', floating)} />
+      </header>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Buka menu admin">
-            <Menu aria-hidden="true" />
-          </Button>
-        </SheetTrigger>
+        <nav
+          aria-label="Menu cepat admin"
+          className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+        >
+          <div className={cn('flex w-full max-w-md items-center rounded-full p-1.5', floating)}>
+            <ul className="relative grid w-full grid-cols-5 gap-(--nav-gap) [--nav-gap:0.25rem]">
+              <BottomLamp index={lampIndex} />
+              {shortcutItems.map(({ href, label, icon: Icon }, i) => (
+                <li key={href} className="min-w-0">
+                  <Link
+                    href={href}
+                    aria-current={i === shortcut ? 'page' : undefined}
+                    className={cn(itemClass, i === shortcut && 'bg-surface-2 text-text')}
+                  >
+                    <Icon className="size-6" strokeWidth={2} aria-hidden="true" />
+                    <span className="sr-only">{label}</span>
+                  </Link>
+                </li>
+              ))}
+              <li className="min-w-0">
+                <SheetTrigger asChild>
+                  <button
+                    type="button"
+                    aria-label="Buka menu admin"
+                    className={cn(
+                      itemClass,
+                      lampIndex === shortcutItems.length && 'bg-surface-2 text-text',
+                    )}
+                  >
+                    <Menu className="size-6" strokeWidth={2} aria-hidden="true" />
+                  </button>
+                </SheetTrigger>
+              </li>
+            </ul>
+          </div>
+        </nav>
         {/* bisa digulir: di HP pendek tombol Keluar di dasar menu tetap terjangkau */}
         <SheetContent
           aria-describedby={undefined}
           className="gap-6 overflow-y-auto overscroll-contain"
         >
           <SheetTitle className="sr-only">Menu admin</SheetTitle>
-          <SidebarBody {...props} onNavigate={() => setOpen(false)} />
+          <SidebarBody {...props} withTheme={false} onNavigate={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
-    </header>
+    </>
   )
 }

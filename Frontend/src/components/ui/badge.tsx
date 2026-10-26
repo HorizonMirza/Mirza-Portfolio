@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 // Status selalu disertai teks, bukan hanya warna (DESIGN.md bagian 2.1).
 const badgeVariants = cva(
-  'inline-flex items-center rounded-sm border px-2 py-0.5 font-mono text-xs font-medium',
+  'inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-medium',
   {
     variants: {
       tone: {
