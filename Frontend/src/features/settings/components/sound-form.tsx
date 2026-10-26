@@ -46,11 +46,7 @@ export function SoundForm({ defaultValues }: { defaultValues: SoundInput }) {
             <label htmlFor="soundVolume" className="text-sm font-medium">
               Volume
             </label>
-            <output
-              htmlFor="soundVolume"
-              className="font-mono text-sm tabular-nums"
-              aria-live="polite"
-            >
+            <output htmlFor="soundVolume" className="text-sm tabular-nums" aria-live="polite">
               {volume}%
             </output>
           </div>

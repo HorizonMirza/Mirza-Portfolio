@@ -11,7 +11,7 @@ export default async function AccountPage() {
   const admin = await requireSuperAdminPage()
   return (
     <>
-      <PageHeader eyebrow="Keamanan" title="Akun" />
+      <PageHeader title="Akun" />
       <div className="flex flex-col gap-6">
         <Card className="max-w-lg">
           <dl className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-[auto_1fr]">

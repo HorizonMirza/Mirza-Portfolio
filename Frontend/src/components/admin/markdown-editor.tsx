@@ -18,7 +18,7 @@ export function MarkdownEditor({
         <TabsTrigger value="preview">Pratinjau</TabsTrigger>
       </TabsList>
       <TabsContent value="write">
-        <Textarea value={value} rows={10} className="font-mono text-sm" {...textareaProps} />
+        <Textarea value={value} rows={10} className="text-sm" {...textareaProps} />
         <p className="mt-2 text-xs text-muted">
           Markdown: **tebal**, *miring*, ## judul, - daftar, [teks](https://tautan). HTML tidak
           didukung.

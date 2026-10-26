@@ -27,7 +27,7 @@ export function FilterTabs({
         >
           {item.label}
           {item.count !== undefined ? (
-            <span className="font-mono text-xs tabular-nums">{item.count}</span>
+            <span className="text-xs tabular-nums">{item.count}</span>
           ) : null}
         </Link>
       ))}

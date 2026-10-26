@@ -26,11 +26,7 @@ export default async function EditProjectPage({ params }: PageProps<'/admin/proj
   const configured = isUploadConfigured()
   return (
     <>
-      <PageHeader
-        eyebrow="Project"
-        title={project.title_id}
-        description={`/projects/${project.slug}`}
-      />
+      <PageHeader title={project.title_id} description={`/projects/${project.slug}`} />
       <div className="flex flex-col gap-6">
         <ProjectForm key={id} projectId={id} defaultValues={project} skillGroups={skillGroups} />
         <AssetSlot

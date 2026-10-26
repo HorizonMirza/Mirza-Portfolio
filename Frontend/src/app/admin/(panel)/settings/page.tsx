@@ -13,7 +13,6 @@ export default async function SettingsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Sistem"
         title="Pengaturan"
         description="Pengaturan teknis yang berlaku untuk seluruh situs publik. Teks, foto, dan kartu pembuka ada di menu Halaman situs."
       />

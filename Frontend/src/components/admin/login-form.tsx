@@ -117,7 +117,7 @@ export function LoginForm({
                 className="size-full rounded-full bg-black object-cover"
               />
             </div>
-            <p className="font-mono text-label tracking-widest text-white/60 uppercase">
+            <p className="text-label font-semibold tracking-widest text-white/60 uppercase">
               Super Admin
             </p>
             <h1 className="mt-2 text-h3 font-bold text-white">Welcome Back King!</h1>

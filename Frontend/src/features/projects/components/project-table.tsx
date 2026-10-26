@@ -57,9 +57,7 @@ export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
       helper.columns([
         helper.accessor('position', {
           header: 'No',
-          cell: (info) => (
-            <span className="font-mono text-muted tabular-nums">{info.getValue() + 1}</span>
-          ),
+          cell: (info) => <span className="text-muted tabular-nums">{info.getValue() + 1}</span>,
         }),
         helper.accessor('title_id', {
           header: 'Judul',

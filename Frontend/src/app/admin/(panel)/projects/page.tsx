@@ -17,7 +17,6 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Projects"
         title="Project"
         description="Urutan di sini sama dengan urutan di situs publik. Hanya project berstatus terbit yang tampil."
         actions={

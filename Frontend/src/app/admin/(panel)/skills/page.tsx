@@ -14,7 +14,6 @@ export default async function SkillsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Home"
         title="Skill"
         description="Kelompokkan skill per kategori. Urutan di sini dipakai di situs publik. Kategori hanya bisa dihapus bila sudah kosong."
       />

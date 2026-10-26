@@ -19,7 +19,11 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
   // nonce CSP dari src/proxy.ts untuk skrip tema next-themes
   const nonce = (await headers()).get('x-nonce') ?? undefined
   return (
-    <html lang="id" className={fontVariables} suppressHydrationWarning>
+    <html
+      lang="id" // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan (revisi pemilik 2026-10-26)
+      className={`${fontVariables} no-scrollbar`}
+      suppressHydrationWarning
+    >
       <body className="bg-bg text-text">
         <a
           href="#main"

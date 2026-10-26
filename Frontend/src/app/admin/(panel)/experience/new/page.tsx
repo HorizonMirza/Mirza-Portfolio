@@ -11,7 +11,7 @@ export default async function NewExperiencePage() {
   await requireSuperAdminPage()
   return (
     <>
-      <PageHeader eyebrow="Pengalaman" title="Tambah pengalaman" />
+      <PageHeader title="Tambah pengalaman" />
       <ExperienceForm experienceId={null} defaultValues={emptyExperience} />
     </>
   )

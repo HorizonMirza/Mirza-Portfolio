@@ -18,7 +18,6 @@ export default async function ProfilePage() {
   return (
     <>
       <PageHeader
-        eyebrow="About"
         title="Profil dan hero"
         description="Teks di bagian atas beranda, bio, status ketersediaan, dan link kontak."
       />

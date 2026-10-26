@@ -46,7 +46,6 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
   return (
     <>
       <PageHeader
-        eyebrow="Keamanan"
         title="Log audit"
         description="Setiap perubahan dari panel admin tercatat di sini. Data pribadi pengunjung tidak ikut dicatat."
       />
@@ -91,7 +90,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
                   </Badge>
                   <span>{row.entity}</span>
                   {row.entityId ? (
-                    <span className="font-mono text-xs text-muted">{row.entityId.slice(0, 8)}</span>
+                    <span className="text-xs text-muted">{row.entityId.slice(0, 8)}</span>
                   ) : null}
                 </div>
                 {changes.length > 0 ? (
@@ -102,7 +101,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
                     <dl className="mt-2 grid gap-2">
                       {changes.map(([field, change]) => (
                         <div key={field} className="rounded-md bg-surface-2 px-3 py-2">
-                          <dt className="font-mono text-xs text-muted">{field}</dt>
+                          <dt className="text-xs text-muted">{field}</dt>
                           <dd className="mt-1 break-words">
                             <span className="text-muted line-through decoration-danger/60">
                               {show(change.before)}

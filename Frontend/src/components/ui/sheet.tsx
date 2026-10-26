@@ -21,7 +21,7 @@ export function SheetContent({
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
       <DialogPrimitive.Content
         className={cn(
-          'fixed inset-y-3 left-3 z-50 flex w-72 max-w-[85vw] flex-col rounded-3xl border border-border bg-surface p-4 shadow-lg',
+          'fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col border-r border-border bg-surface p-4 shadow-lg',
           className,
         )}
         {...props}

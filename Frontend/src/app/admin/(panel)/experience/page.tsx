@@ -19,7 +19,6 @@ export default async function ExperiencePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Experience"
         title="Pengalaman dan pendidikan"
         description="Timeline publik diurutkan otomatis dari tanggal mulai terbaru."
         actions={

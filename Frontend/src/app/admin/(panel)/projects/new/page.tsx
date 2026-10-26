@@ -13,7 +13,7 @@ export default async function NewProjectPage() {
   const skillGroups = await listSkillOptions()
   return (
     <>
-      <PageHeader eyebrow="Project" title="Project baru" />
+      <PageHeader title="Project baru" />
       <ProjectForm projectId={null} defaultValues={emptyProject} skillGroups={skillGroups} />
     </>
   )

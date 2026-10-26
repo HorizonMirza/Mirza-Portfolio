@@ -34,7 +34,7 @@ export default async function SiteModulePage({ params }: Params) {
 
   return (
     <>
-      <PageHeader eyebrow="Halaman situs" title={found.title} description={found.description} />
+      <PageHeader title={found.title} description={found.description} />
       {isTabbedModule(moduleId) ? (
         <ModuleTabs moduleId={moduleId} current={`/admin/pages/${moduleId}`} />
       ) : null}

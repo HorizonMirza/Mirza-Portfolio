@@ -24,7 +24,6 @@ export default async function SubscribersPage({ searchParams }: PageProps<'/admi
   return (
     <>
       <PageHeader
-        eyebrow="Newsletter"
         title="Pelanggan"
         description="Hanya pelanggan terkonfirmasi (double opt-in) yang akan menerima email. Pengiriman broadcast menunggu keputusan pemilik (PRD bagian 11)."
       />

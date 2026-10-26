@@ -22,11 +22,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
 
   return (
     <>
-      <PageHeader
-        eyebrow="Kotak masuk"
-        title="Pesan"
-        description="Pesan dari formulir kontak. Waktu dalam WIB."
-      />
+      <PageHeader title="Pesan" description="Pesan dari formulir kontak. Waktu dalam WIB." />
       <FilterTabs
         label="Filter status pesan"
         items={MESSAGE_STATUSES.map((s) => ({
