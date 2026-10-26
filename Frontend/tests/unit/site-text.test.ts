@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { TEXT_CATALOG, checkTextValue, findTextEntry } from '@/features/site-text/catalog'
+import {
+  SITE_MODULES,
+  TEXT_CATALOG,
+  checkTextValue,
+  entriesOf,
+  findModule,
+  findTextEntry,
+} from '@/features/site-text/catalog'
 import { applyTextOverrides } from '@/features/site-text/merge'
 import { siteTextsSchema } from '@/features/site-text/schema'
 
@@ -42,6 +49,22 @@ describe('daftar teks situs', () => {
   })
 })
 
+describe('modul situs', () => {
+  it('tiap teks milik modul yang dikenal, dan tiap modul berisi teks', () => {
+    for (const entry of TEXT_CATALOG) expect(findModule(entry.module), entry.key).toBeDefined()
+    for (const site of SITE_MODULES) expect(entriesOf(site.id).length, site.id).toBeGreaterThan(0)
+  })
+
+  it('kunci menu admin sesuai modul', async () => {
+    const { adminNav } = await import('@/components/admin/nav')
+    for (const site of SITE_MODULES)
+      expect(
+        adminNav.some((item) => item.href === `/admin/pages/${site.id}`),
+        site.id,
+      ).toBe(true)
+  })
+})
+
 describe('aturan isi teks', () => {
   const plain = findTextEntry('Home.stackHeading')!
   const copyright = findTextEntry('Footer.copyright')!
@@ -76,7 +99,7 @@ describe('skema simpan teks situs', () => {
 
   it('menolak kunci di luar daftar', () => {
     const parsed = siteTextsSchema.safeParse({
-      values: { 'Contact.send': { id: 'x', en: '' } },
+      values: { 'Contact.honeypot': { id: 'x', en: '' } },
     })
     expect(parsed.success).toBe(false)
   })

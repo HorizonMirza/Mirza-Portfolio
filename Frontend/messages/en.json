@@ -31,10 +31,8 @@
     "home": "Home",
     "about": "About",
     "experience": "Experience",
-    "skills": "Skills",
     "projects": "Projects",
-    "contact": "Contact",
-    "downloadCv": "Resume CV"
+    "contact": "Contact"
   },
   "Footer": {
     "contactHeading": "Get in touch",
@@ -48,11 +46,6 @@
     "emailHint": "Opens a new Gmail message",
     "cvHint": "Open or download my CV",
     "githubHint": "GitHub profile"
-  },
-  "Availability": {
-    "OPEN": "Open to work",
-    "BUSY": "Currently busy",
-    "NOT_LOOKING": "Not looking right now"
   },
   "Social": {
     "linkedin": "LinkedIn",

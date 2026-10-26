@@ -31,10 +31,8 @@
     "home": "Beranda",
     "about": "Tentang",
     "experience": "Pengalaman",
-    "skills": "Skill",
     "projects": "Project",
-    "contact": "Kontak",
-    "downloadCv": "Resume CV"
+    "contact": "Kontak"
   },
   "Footer": {
     "contactHeading": "Hubungi saya",
@@ -48,11 +46,6 @@
     "emailHint": "Membuka pesan baru di Gmail",
     "cvHint": "Buka atau unduh CV saya",
     "githubHint": "Profil GitHub"
-  },
-  "Availability": {
-    "OPEN": "Terbuka untuk kerja",
-    "BUSY": "Sedang sibuk",
-    "NOT_LOOKING": "Tidak sedang mencari kerja"
   },
   "Social": {
     "linkedin": "LinkedIn",

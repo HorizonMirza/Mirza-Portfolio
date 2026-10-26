@@ -61,7 +61,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
 | F16 | **API publik** read-only (project, skill, profil) | P1 |
 | F17 | ~~**Pelat status di hero**~~ **Dihapus dari hero 2026-10-18** (DESIGN.md bagian 83). Kolom status ketersediaan, catatan ketersediaan, kota, dan posisi sekarang tetap ada di admin; kini dipakai di API publik, data terstruktur `Person`, dan gambar pratinjau tautan, tidak tampil di halaman | — |
-| F19 | **Pemberitahuan pembuka**: kartu "Informasi Penting" sekali per sesi browser (tab baru), teks dua bahasa dari Admin → Pengaturan, tombol Resume CV dan Beranda. Resume CV membuka CV di tab baru dan kartu tetap terbuka; pengunjung masuk situs lewat tombol Beranda (revisi akhir pemilik 2026-10-16). ID/EN mengganti bahasa kartu di tempat; bahasa situs ikut setelah kartu ditutup. Latar neural vortex seperti login Super Admin, selalu gelap (keputusan pemilik 2026-10-12 s.d. 2026-10-15, DESIGN.md bagian 53) | P0 |
+| F19 | **Pemberitahuan pembuka**: kartu "Informasi Penting" sekali per sesi browser (tab baru), teks dua bahasa dari Admin → Halaman situs → Bagian Awal, tombol Resume CV dan Beranda. Resume CV membuka CV di tab baru dan kartu tetap terbuka; pengunjung masuk situs lewat tombol Beranda (revisi akhir pemilik 2026-10-16). ID/EN mengganti bahasa kartu di tempat; bahasa situs ikut setelah kartu ditutup. Latar neural vortex seperti login Super Admin, selalu gelap (keputusan pemilik 2026-10-12 s.d. 2026-10-15, DESIGN.md bagian 53) | P0 |
 | F18 | **Kategori project**: Software dan Komunitas & Bisnis **[USULAN, dari CV]** | P0 |
 
 ### 5.2 Super Admin (satu akun, email + password)

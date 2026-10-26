@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
 import { saveSiteTexts } from '../actions'
-import { TEXT_CATALOG, TEXT_GROUPS, type TextEntry, checkTextValue } from '../catalog'
+import { type ModuleId, type TextEntry, checkTextValue, entriesOf } from '../catalog'
 import type { SiteTextsInput } from '../schema'
 
 type Lang = 'id' | 'en'
@@ -25,12 +25,17 @@ const LANGS: { lang: Lang; label: string }[] = [
 ]
 
 export function SiteTextForm({
+  moduleId,
   initialValues,
   defaults,
 }: {
+  moduleId: ModuleId
   initialValues: Values
   defaults: Defaults
 }) {
+  const entries = entriesOf(moduleId)
+  // kartu per bagian, urut sesuai kemunculan pertama di daftar
+  const sections = [...new Set(entries.map((entry) => entry.section))]
   const [values, setValues] = useState<Values>(initialValues)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [pending, startTransition] = useTransition()
@@ -54,7 +59,7 @@ export function SiteTextForm({
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault()
     const found: Record<string, string> = {}
-    for (const entry of TEXT_CATALOG) {
+    for (const entry of entries) {
       for (const { lang } of LANGS) {
         const message = checkTextValue(entry, (values[entry.key]?.[lang] ?? '').trim())
         if (message) found[`${entry.key}.${lang}`] = message
@@ -63,7 +68,7 @@ export function SiteTextForm({
     setErrors(found)
     if (Object.keys(found).length) return
     startTransition(async () => {
-      const result = await saveSiteTexts({ values })
+      const result = await saveSiteTexts(moduleId, { values })
       const ok = applyResult(result)
       if (!ok && !result.ok && result.fieldErrors) {
         const mapped: Record<string, string> = {}
@@ -76,23 +81,22 @@ export function SiteTextForm({
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
-      {TEXT_GROUPS.map((group) => (
-        <Card key={group.id} className="flex flex-col gap-5">
-          <div>
-            <h2 className="text-h3 font-semibold">{group.title}</h2>
-            <p className="mt-1 text-sm text-muted">{group.description}</p>
-          </div>
-          {TEXT_CATALOG.filter((entry) => entry.group === group.id).map((entry) => (
-            <TextRow
-              key={entry.key}
-              entry={entry}
-              value={values[entry.key] ?? { id: '', en: '' }}
-              defaults={defaults[entry.key] ?? { id: '', en: '' }}
-              errors={errors}
-              onChange={(lang, value) => setValue(entry.key, lang, value)}
-              onReset={() => reset(entry.key)}
-            />
-          ))}
+      {sections.map((section) => (
+        <Card key={section} className="flex flex-col gap-5">
+          <h2 className="text-h3 font-semibold">{section}</h2>
+          {entries
+            .filter((entry) => entry.section === section)
+            .map((entry) => (
+              <TextRow
+                key={entry.key}
+                entry={entry}
+                value={values[entry.key] ?? { id: '', en: '' }}
+                defaults={defaults[entry.key] ?? { id: '', en: '' }}
+                errors={errors}
+                onChange={(lang, value) => setValue(entry.key, lang, value)}
+                onReset={() => reset(entry.key)}
+              />
+            ))}
         </Card>
       ))}
       <FormFooter pending={pending} />

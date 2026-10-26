@@ -356,12 +356,12 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
-| Teks situs | `/admin/texts` | `saveSiteTexts` (judul bagian, Kontak, footer, 404, SEO, Kebijakan Privasi; menimpa `messages/*.json`) |
+| Halaman situs (10 modul: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`), `saveIntroNotice` (kartu pembuka); foto hero di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `hero-portrait`, `hero-armor`) |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pelanggan | `/admin/subscribers` | `deleteSubscriber` |
 | Audit | `/admin/audit` | (baca saja) |
-| Pengaturan | `/admin/settings` | `saveSettings` (volume suara, pemberitahuan pembuka); potret dan armor hero lewat `signAssetUpload`/`attachUploadedAsset` (target `hero-portrait`, `hero-armor`) |
+| Pengaturan | `/admin/settings` | `saveSoundVolume` (volume suara tombol situs publik) |
 | Akun | `/admin/account` | `changePassword` |
 
 **Unggah Cloudinary** (tanpa SDK): `signAssetUpload` membuat tanda tangan SHA-1 di server (secret tidak ke browser) → browser mengunggah langsung ke `api.cloudinary.com` → `attachUploadedAsset` memverifikasi tanda tangan respons (`public_id` + `version`), memeriksa ulang folder, tipe, format, ukuran, dan asal URL, lalu mencatat `Asset`. Berkas yang ditolak atau diganti dihapus dari Cloudinary. Tanpa kunci `CLOUDINARY_*`, form unggah diganti pesan "belum aktif". `next/image` hanya mengizinkan `res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/`.

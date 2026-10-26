@@ -17,15 +17,24 @@ const PAGES = [
   '/admin/messages',
   '/admin/subscribers',
   '/admin/audit',
-  '/admin/texts',
+  '/admin/pages/intro',
+  '/admin/pages/home',
+  '/admin/pages/about',
+  '/admin/pages/experience',
+  '/admin/pages/projects',
+  '/admin/pages/contact',
+  '/admin/pages/navbar',
+  '/admin/pages/footer',
+  '/admin/pages/privacy',
+  '/admin/pages/other',
   '/admin/settings',
   '/admin/account',
 ]
 
 for (const theme of ['light', 'dark'] as const) {
   test(`halaman admin (${theme}) tanpa pelanggaran aksesibilitas dan CSP`, async ({ page }) => {
-    // 12 halaman diperiksa axe dalam satu tes; batas 30 detik terlalu ketat bila data uji menumpuk
-    test.setTimeout(90_000)
+    // 22 halaman diperiksa axe dalam satu tes; batas 30 detik terlalu ketat bila data uji menumpuk
+    test.setTimeout(150_000)
     await page.addInitScript((value) => localStorage.setItem('mmirza-theme', value), theme)
     const failures: string[] = []
     // CSP admin ber-nonce: skrip Next.js dan skrip tema harus tetap jalan
@@ -184,11 +193,11 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
 })
 
-test('teks situs: judul bagian diubah, tampil di situs, lalu dikembalikan ke bawaan', async ({
+test('modul Home: judul bagian diubah, tampil di situs, lalu dikembalikan ke bawaan', async ({
   page,
 }) => {
   const field = () => page.getByLabel('Indonesia untuk Bagian keahlian')
-  await page.goto('/admin/texts')
+  await page.goto('/admin/pages/home')
   // placeholder menampilkan teks bawaan
   await expect(field()).toHaveAttribute('placeholder', 'Keahlian Teknis')
 
@@ -197,7 +206,7 @@ test('teks situs: judul bagian diubah, tampil di situs, lalu dikembalikan ke baw
     await expect(field()).toHaveValue('Tumpukan Teknologi', { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Teks situs disimpan.')).toBeVisible()
+  await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
   // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
   await expect
     .poll(async () => (await page.request.get('/id')).text())
@@ -214,15 +223,15 @@ test('teks situs: judul bagian diubah, tampil di situs, lalu dikembalikan ke baw
   await expect(page.getByText('Tidak boleh memakai tanda kurung kurawal { }')).toBeVisible()
 
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
-  await page.goto('/admin/texts')
+  await page.goto('/admin/pages/home')
   await page.getByRole('button', { name: 'Kembalikan bawaan: Bagian keahlian' }).click()
   await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Teks situs disimpan.')).toBeVisible()
+  await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
   await expect.poll(async () => (await page.request.get('/id')).text()).toContain('Keahlian Teknis')
 })
 
-test('pengaturan menampilkan slot potret dan armor hero beranda', async ({ page }) => {
-  await page.goto('/admin/settings')
+test('modul Home menampilkan slot potret dan armor hero beranda', async ({ page }) => {
+  await page.goto('/admin/pages/home')
   for (const title of ['Potret hero', 'Armor hero']) {
     await expect(page.getByRole('heading', { name: title })).toBeVisible()
   }

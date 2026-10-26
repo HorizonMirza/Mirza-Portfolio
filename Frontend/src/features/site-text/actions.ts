@@ -6,6 +6,7 @@ import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
 import { revalidateContent } from '@/lib/revalidate'
 
+import { findModule, findTextEntry } from './catalog'
 import { siteTextsSchema } from './schema'
 
 // Audit membandingkan objek datar: satu entri per kunci dan bahasa, hanya yang terisi.
@@ -18,9 +19,11 @@ function snapshot(rows: { key: string; value_id: string | null; value_en: string
   return out
 }
 
-export async function saveSiteTexts(input: unknown): Promise<ActionResult> {
+export async function saveSiteTexts(moduleId: unknown, input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
+    const siteModule = typeof moduleId === 'string' ? findModule(moduleId) : undefined
+    if (!siteModule) return fail('Halaman tidak dikenal.')
     const parsed = siteTextsSchema.safeParse(input)
     if (!parsed.success) {
       // path galat: values.<kunci>.<bahasa>; kunci memuat titik, jadi diambil dari belakang
@@ -31,8 +34,12 @@ export async function saveSiteTexts(input: unknown): Promise<ActionResult> {
       }
       return fail('Periksa kembali isian.', fieldErrors)
     }
+    // satu halaman hanya boleh mengubah teks miliknya
+    if (Object.keys(parsed.data.values).some((key) => findTextEntry(key)?.module !== siteModule.id))
+      return fail('Ada teks yang bukan milik halaman ini.')
+    const keys = Object.keys(parsed.data.values)
     await getDb().$transaction(async (tx) => {
-      const before = await tx.siteText.findMany()
+      const before = await tx.siteText.findMany({ where: { key: { in: keys } } })
       const beforeByKey = new Map(before.map((row) => [row.key, row]))
       for (const [key, value] of Object.entries(parsed.data.values)) {
         const value_id = value.id || null
@@ -50,18 +57,18 @@ export async function saveSiteTexts(input: unknown): Promise<ActionResult> {
           update: { value_id, value_en },
         })
       }
-      const after = await tx.siteText.findMany()
+      const after = await tx.siteText.findMany({ where: { key: { in: keys } } })
       await writeAudit(tx, {
         actorId: admin.userId,
         action: 'update',
         entity: 'SiteText',
-        entityId: 'all',
+        entityId: siteModule.id,
         before: snapshot(before),
         after: snapshot(after),
       })
     })
     revalidateContent('siteText')
-    return ok('Teks situs disimpan.')
+    return ok(`Teks ${siteModule.title} disimpan.`)
   } catch (error) {
     return toActionError(error)
   }

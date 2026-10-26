@@ -2,15 +2,18 @@ import 'server-only'
 
 import { getDb } from '@/lib/db'
 
-import { TEXT_CATALOG } from './catalog'
+import { entriesOf, type ModuleId } from './catalog'
 import type { SiteTextsInput } from './schema'
 
 // Nilai tersimpan untuk formulir admin. Kunci tanpa suntingan berisi string kosong.
-export async function getTextsForEdit(): Promise<SiteTextsInput> {
-  const rows = await getDb().siteText.findMany()
+export async function getTextsForEdit(moduleId: ModuleId): Promise<SiteTextsInput> {
+  const entries = entriesOf(moduleId)
+  const rows = await getDb().siteText.findMany({
+    where: { key: { in: entries.map((entry) => entry.key) } },
+  })
   const byKey = new Map(rows.map((row) => [row.key, row]))
   const values: SiteTextsInput['values'] = {}
-  for (const entry of TEXT_CATALOG) {
+  for (const entry of entries) {
     const row = byKey.get(entry.key)
     values[entry.key] = { id: row?.value_id ?? '', en: row?.value_en ?? '' }
   }
@@ -21,7 +24,9 @@ type Messages = Record<string, Record<string, unknown>>
 
 // Teks bawaan dari messages/*.json, ditampilkan sebagai placeholder agar admin tahu apa yang berlaku
 // bila isian dikosongkan.
-export async function getDefaultTexts(): Promise<Record<string, { id: string; en: string }>> {
+export async function getDefaultTexts(
+  moduleId: ModuleId,
+): Promise<Record<string, { id: string; en: string }>> {
   const [id, en] = await Promise.all([
     import('../../../messages/id.json').then((m) => m.default as Messages),
     import('../../../messages/en.json').then((m) => m.default as Messages),
@@ -32,6 +37,9 @@ export async function getDefaultTexts(): Promise<Record<string, { id: string; en
     return typeof value === 'string' ? value : ''
   }
   return Object.fromEntries(
-    TEXT_CATALOG.map((entry) => [entry.key, { id: read(id, entry.key), en: read(en, entry.key) }]),
+    entriesOf(moduleId).map((entry) => [
+      entry.key,
+      { id: read(id, entry.key), en: read(en, entry.key) },
+    ]),
   )
 }
