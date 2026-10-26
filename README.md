@@ -22,7 +22,7 @@ A bilingual (Indonesian / English) personal portfolio with a Super Admin panel t
 
 Also: SEO (sitemap, dynamic Open Graph images, JSON-LD), a read-only public API (`/api/v1`), a privacy page, a custom 404, and UI sounds whose volume the admin controls.
 
-**Super Admin** (`/admin`) — a single owner account (email + password via Better Auth) to manage profile, projects (GitHub import, Cloudinary uploads, draft/published), skills, experience and education, the contact inbox, newsletter subscribers, an audit log, and site settings. Every action is validated with Zod on the server, requires the `SUPER_ADMIN` role, and is written to the audit log.
+**Super Admin** (`/admin`) — a single owner account (email + password via Better Auth) to manage profile, projects (GitHub import, Cloudinary uploads, draft/published), skills, experience and education, the contact inbox, newsletter subscribers, an audit log, and the text of every public page (one admin page per module: intro card, Home with hero photos, About, Experience, Projects, Contact, Navbar, Footer, Privacy), in both languages. Every action is validated with Zod on the server, requires the `SUPER_ADMIN` role, and is written to the audit log.
 
 **Quality** — WCAG 2.2 AA (axe-clean on every page, both themes and languages), `prefers-reduced-motion` respected, strict CSP, and an encrypted daily database backup.
 
