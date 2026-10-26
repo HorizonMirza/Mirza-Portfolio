@@ -14,18 +14,17 @@ const PAGES = [
   '/admin/skills',
   '/admin/experience',
   '/admin/experience/new',
-  '/admin/highlights',
-  '/admin/highlights/new',
   '/admin/messages',
   '/admin/subscribers',
   '/admin/audit',
+  '/admin/texts',
   '/admin/settings',
   '/admin/account',
 ]
 
 for (const theme of ['light', 'dark'] as const) {
   test(`halaman admin (${theme}) tanpa pelanggaran aksesibilitas dan CSP`, async ({ page }) => {
-    // 11 halaman diperiksa axe dalam satu tes; batas 30 detik terlalu ketat bila data uji menumpuk
+    // 12 halaman diperiksa axe dalam satu tes; batas 30 detik terlalu ketat bila data uji menumpuk
     test.setTimeout(90_000)
     await page.addInitScript((value) => localStorage.setItem('mmirza-theme', value), theme)
     const failures: string[] = []
@@ -151,46 +150,6 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   }
 })
 
-test('CRUD angka: buat, tidak tampil di beranda, hapus, dan tercatat di audit', async ({
-  page,
-}, testInfo) => {
-  const label = `angka E2E ${testInfo.project.name}-${Date.now()}`
-  // angka acak per tes: proyek browser berjalan paralel dan berbagi satu database, angka yang sama
-  // akan muncul dua kali di beranda
-  const value = 10_000 + Math.floor(Math.random() * 89_999)
-  const idText = `${new Intl.NumberFormat('id-ID').format(value)}+`
-  await page.goto('/admin/highlights/new')
-  await page.getByRole('button', { name: 'Tambah angka' }).click()
-  await expect(page.getByText('Keterangan wajib diisi')).toBeVisible()
-
-  await page.getByLabel('Angka', { exact: true }).fill(String(value))
-  await page.getByLabel('Keterangan (ID)').fill(label)
-  await page.getByLabel('Keterangan (EN)').fill(`${label} en`)
-  await page.getByLabel('Urutan').fill('999')
-  await page.getByRole('button', { name: 'Tambah angka' }).click()
-  await expect(page.getByText('Angka ditambahkan.')).toBeVisible()
-  await expect(page).toHaveURL(/\/admin\/highlights\/[0-9a-f-]{36}$/)
-
-  // Bagian "Dalam angka" dihapus dari beranda (revisi pemilik 2026-10-16): angka tetap tersimpan di
-  // admin tetapi tidak tampil di situs publik
-  expect(await (await page.request.get('/id')).text()).not.toContain(label)
-
-  await page.goto('/admin/highlights')
-  await page
-    .getByRole('button', { name: `Hapus ${idText} ${label}` })
-    .locator('visible=true')
-    .first()
-    .click()
-  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
-  await expect(page.getByText('Angka dihapus.')).toBeVisible()
-
-  // dicek langsung ke server: Firefox/WebKit bisa menyajikan beranda lama dari cache browser
-  // (lihat catatan serupa di tes CRUD project)
-  await expect.poll(async () => (await page.request.get('/id')).text()).not.toContain(label)
-  await page.goto('/admin/audit?entity=Highlight')
-  await expect(page.locator('main ol > li').first()).toContainText('hapus')
-})
-
 test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => {
   await page.goto('/admin/skills')
   const first = page.getByRole('button', { name: /^Hapus kategori / }).first()
@@ -223,4 +182,41 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
+})
+
+test('teks situs: judul bagian diubah, tampil di situs, lalu dikembalikan ke bawaan', async ({
+  page,
+}) => {
+  const field = () => page.getByLabel('Indonesia untuk Bagian keahlian')
+  await page.goto('/admin/texts')
+  // placeholder menampilkan teks bawaan
+  await expect(field()).toHaveAttribute('placeholder', 'Keahlian Teknis')
+
+  await expect(async () => {
+    await field().fill('Tumpukan Teknologi')
+    await expect(field()).toHaveValue('Tumpukan Teknologi', { timeout: 1000 })
+  }).toPass()
+  await page.getByRole('button', { name: 'Simpan' }).click()
+  await expect(page.getByText('Teks situs disimpan.')).toBeVisible()
+  // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
+  await expect
+    .poll(async () => (await page.request.get('/id')).text())
+    .toContain('Tumpukan Teknologi')
+  // bahasa lain tidak ikut berubah
+  expect(await (await page.request.get('/en')).text()).toContain('Technical Skills')
+
+  // kurung kurawal di teks tanpa placeholder ditolak
+  await expect(async () => {
+    await field().fill('Bagian {rusak}')
+    await expect(field()).toHaveValue('Bagian {rusak}', { timeout: 1000 })
+  }).toPass()
+  await page.getByRole('button', { name: 'Simpan' }).click()
+  await expect(page.getByText('Tidak boleh memakai tanda kurung kurawal { }')).toBeVisible()
+
+  // kembalikan ke bawaan agar tes lain tidak terpengaruh
+  await page.goto('/admin/texts')
+  await page.getByRole('button', { name: 'Kembalikan bawaan: Bagian keahlian' }).click()
+  await page.getByRole('button', { name: 'Simpan' }).click()
+  await expect(page.getByText('Teks situs disimpan.')).toBeVisible()
+  await expect.poll(async () => (await page.request.get('/id')).text()).toContain('Keahlian Teknis')
 })

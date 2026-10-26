@@ -6,9 +6,9 @@ import {
   LayoutDashboard,
   Mail,
   Sparkles,
-  TrendingUp,
   KeyRound,
   Settings,
+  Type,
   UserRound,
 } from 'lucide-react'
 
@@ -18,7 +18,7 @@ export const adminNav = [
   { href: '/admin/projects', label: 'Project', icon: FolderKanban, group: 'Konten' },
   { href: '/admin/skills', label: 'Skill', icon: Sparkles, group: 'Konten' },
   { href: '/admin/experience', label: 'Pengalaman', icon: BriefcaseBusiness, group: 'Konten' },
-  { href: '/admin/highlights', label: 'Angka', icon: TrendingUp, group: 'Konten' },
+  { href: '/admin/texts', label: 'Teks situs', icon: Type, group: 'Konten' },
   { href: '/admin/messages', label: 'Pesan', icon: Inbox, group: 'Kotak masuk' },
   { href: '/admin/subscribers', label: 'Pelanggan', icon: Mail, group: 'Kotak masuk' },
   { href: '/admin/audit', label: 'Log audit', icon: History, group: 'Sistem' },

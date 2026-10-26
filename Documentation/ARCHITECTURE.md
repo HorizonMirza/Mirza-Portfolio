@@ -248,16 +248,6 @@ erDiagram
       string logoId FK
       string photoId FK
     }
-    Highlight {
-      string id PK
-      int value
-      string suffix "mis. +"
-      string label_id
-      string label_en
-      string source "asal angka, opsional"
-      int order
-      enum status
-    }
     Asset {
       string id PK
       string publicId
@@ -325,6 +315,11 @@ erDiagram
       int id PK "singleton"
       int soundVolume "0-100, atribut data-sound-volume"
     }
+    SiteText {
+      string key PK "Namespace.nama, dibatasi daftar di features/site-text/catalog.ts"
+      string value_id "kosong = teks bawaan"
+      string value_en "kosong = teks bawaan"
+    }
 ```
 
 Catatan:
@@ -359,7 +354,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
-| Angka (tidak tampil di situs sejak bagian "Dalam angka" dihapus 2026-10-16; menunggu keputusan pemilik) | `/admin/highlights`, `/new`, `/[id]` | `saveHighlight`, `deleteHighlight` |
+| Teks situs | `/admin/texts` | `saveSiteTexts` (judul bagian, Kontak, footer, 404, SEO, Kebijakan Privasi; menimpa `messages/*.json`) |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pelanggan | `/admin/subscribers` | `deleteSubscriber` |

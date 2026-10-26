@@ -271,25 +271,6 @@ model Experience {
   @@index([type, startDate])
 }
 
-// Angka pencapaian di beranda ("1.000+ anggota di Reclub"). Hanya angka dari CV atau yang
-// dikonfirmasi pemilik (CONTENT.md bagian 7).
-model Highlight {
-  id        String        @id @default(uuid(7)) @db.Uuid
-  value     Int
-  // ditulis setelah angka, mis. "+" atau "%"
-  suffix    String        @default("")
-  label_id  String
-  label_en  String
-  // asal angka, mis. nama komunitas; sama di kedua bahasa
-  source    String?
-  order     Int           @default(0)
-  status    ContentStatus @default(PUBLISHED)
-  createdAt DateTime      @default(now()) @db.Timestamptz(3)
-  updatedAt DateTime      @updatedAt @db.Timestamptz(3)
-
-  @@index([status, order])
-}
-
 model Asset {
   id               String         @id @default(uuid(7)) @db.Uuid
   // id di Cloudinary
@@ -411,4 +392,14 @@ model SiteSetting {
   introBody_id  String?  @db.Text
   introBody_en  String?  @db.Text
   updatedAt     DateTime @updatedAt @db.Timestamptz(3)
+}
+
+// Teks situs yang diubah admin (judul bagian, SEO, kebijakan privasi, ...). Menimpa teks bawaan di
+// messages/*.json. Kunci "Namespace.nama" dibatasi daftar di features/site-text/catalog.ts. Kolom
+// kosong berarti memakai teks bawaan bahasa itu.
+model SiteText {
+  key       String   @id
+  value_id  String?  @db.Text
+  value_en  String?  @db.Text
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
 }

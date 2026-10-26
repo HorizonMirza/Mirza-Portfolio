@@ -1243,7 +1243,7 @@ Laporan pemilik: menu bawah HP kadang hilang saat menggulir antarbagian beranda.
 Pemindaian ulang berkas, ekspor, kelas CSS, kunci pesan, aset `public/`, dan dependency. Yang terbukti tidak dipakai dan dihapus:
 
 - `components/shared/click-sound.tsx` (`ClickSound`): tombol project tidak lagi berbunyi sejak revisi 2026-10-09 (bagian 52), komponennya tertinggal tanpa pemakai.
-- `features/highlights/public.ts` (`getPublicHighlights`): bagian "Dalam angka" sudah dihapus dari beranda. Admin → Angka dan tabel `Highlight` **tetap ada** (menunggu keputusan pemilik: dihapus permanen atau dipakai lagi).
+- `features/highlights/public.ts` (`getPublicHighlights`): bagian "Dalam angka" sudah dihapus dari beranda. Admin → Angka dan tabel `Highlight` kemudian dihapus total (2026-10-26, bagian 98).
 - Dependency langsung `pg` dan `@types/pg`: keduanya sudah dibawa `@prisma/adapter-pg` dan tidak diimpor langsung oleh kode.
 - Tangkapan layar README diganti dengan hero sekarang.
 
@@ -1326,3 +1326,9 @@ Semua kelas CSS, kunci pesan ID/EN (termasuk kunci dinamis Privasi dan Newslette
   - Diuji lokal sebelum dipush: image terbangun, container berjalan sebagai user 1000, semua halaman 200, aset statis dan `next/image` (sharp) berfungsi.
 - **Pembaruan keamanan (2026-10-25):** `pnpm audit` melaporkan advisori baru untuk Next.js `>=16.0.0 <=16.4.0` (dua kritis: RCE lewat Image Optimization dengan SVG dan lewat fungsi `use cache`; satu tinggi: DoS Server Actions), Zod `<4.6.6` (tinggi), dan undici lewat jsdom (tinggi, alat tes). Situs ini tidak memakai SVG di optimasi gambar maupun `use cache`, tetapi versinya berada di rentang rentan dan `pnpm audit --audit-level=high` di CI akan merah. Dinaikkan: Next.js 16.3.8 → 16.4.3 (dan `eslint-config-next` sejajar), Zod 4.6.5 → 4.6.7, jsdom 30.1.1 → 30.1.3. Sisa advisori: 4 sedang dan 2 rendah, di bawah ambang CI.
 
+## 98. Revisi Super Admin (2026-10-26)
+
+Permintaan pemilik: gaya Super Admin diselaraskan dengan situs utama, dan yang seharusnya bisa diedit bisa diedit. Dikerjakan bertahap.
+
+- **Menu Angka dihapus total.** Bagian "Dalam angka" sudah tidak tampil sejak 2026-10-16; kini fiturnya juga dihapus: `features/highlights/`, halaman `/admin/highlights`, tabel `Highlight` (migrasi `20261026100000_remove_highlight`), tes, dan entri navigasi. Angka dari CV tetap tercatat di CONTENT.md.
+- **Teks situs (Admin → Teks situs, `/admin/texts`).** Tabel `SiteText` (kunci `Namespace.nama`, kolom `value_id`/`value_en`). Teks yang tersimpan menimpa `messages/*.json` di `src/i18n/request.ts` (`applyTextOverrides`); kolom kosong berarti memakai teks bawaan, jadi situs tetap benar bila tabel kosong atau database bermasalah. Hanya kunci di `features/site-text/catalog.ts` yang diterima: judul bagian beranda, judul halaman, Kontak (judul, pembuka, jabatan kartu), footer, 404, SEO (judul dan deskripsi tiap halaman), dan seluruh isi Kebijakan Privasi. Kurung kurawal hanya boleh untuk placeholder yang diizinkan (mis. `{year}`, `{name}` di hak cipta) karena sisanya dibaca sebagai sintaks ICU. Teks bawaan terlihat sebagai placeholder, ada tombol "Kembalikan bawaan" per teks. Setiap simpan menulis `AuditLog`.

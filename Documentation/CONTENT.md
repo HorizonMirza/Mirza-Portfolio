@@ -116,7 +116,7 @@ Catatan: stack rencana situs ini (Next.js, TypeScript, PostgreSQL) sesuai dengan
 
 Aturan: tidak boleh menambah angka baru tanpa sumber dari Mirza. Angka apa pun yang tampil di situs harus dari daftar ini.
 
-**2026-10-08:** empat angka pertama (1.000+, 300+, 128+, 30+) menjadi isi awal bagian "Dalam angka" di beranda (tabel `Highlight`, Admin → Angka). Rating 5,0 dan IPK tidak dimasukkan; bisa ditambah pemilik lewat admin. **2026-10-16:** bagian "Dalam angka" dihapus dari beranda; data di Admin → Angka tetap tersimpan tetapi tidak tampil di mana pun (menunggu keputusan pemilik: hapus atau pakai lagi).
+**2026-10-08:** empat angka pertama (1.000+, 300+, 128+, 30+) menjadi isi awal bagian "Dalam angka" di beranda (tabel `Highlight`, Admin → Angka). Rating 5,0 dan IPK tidak dimasukkan; bisa ditambah pemilik lewat admin. **2026-10-16:** bagian "Dalam angka" dihapus dari beranda; **2026-10-26:** menu Admin → Angka dan tabel `Highlight` dihapus total atas permintaan pemilik; daftar angka di atas tetap menjadi acuan bila angka perlu dipakai lagi.
 
 ## 8. Project
 
