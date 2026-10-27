@@ -1,34 +1,50 @@
-# Muhammad Mirza — Portfolio
+# Muhammad Mirza - Portfolio
+
+Portfolio of Muhammad Mirza with a Super Admin Panel
 
 [![CI](https://github.com/HorizonMirza/Mirza-Portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/HorizonMirza/Mirza-Portfolio/actions/workflows/ci.yml)
-
-A bilingual (Indonesian / English) personal portfolio with a Super Admin panel to manage its content.
 
 **Live:** [mmirza.site](https://mmirza.site) · [Bahasa Indonesia](https://mmirza.site/id) · [English](https://mmirza.site/en)
 
 ![Home page of mmirza.site: the name behind the photo, with an armor layer revealed under the cursor](Documentation/screenshots/home.webp)
 
-## What's inside
+## Pages
 
-**Public site** — dark by default with a light theme, mobile-first, `ID`/`EN` on every page.
-
-| Section | What you get |
+| Page | What's there |
 |---|---|
-| **Home** | Name behind the photo; hovering (or touching) reveals an armor layer through a WebGL fluid mask, with an automatic peek every 8 seconds. Below: Experience accordion, Projects marquee, a spinning **Technical Skills** globe, and a **GitHub** contribution graph (2D/3D). |
-| **About** | Bio, education, and a tilting photo card. |
-| **Experience** | Timeline of work and organizations, with filters. |
-| **Projects** | Spotlight list with browser-frame previews and detail pages (role, tech stack, gallery, demo and code links). |
-| **Contact** | Form with rate limit and honeypot, a swinging ID-card lanyard, and a flip-card "message sent" ticket. |
+| **Home** `/` | Name behind the photo, with an armor layer revealed by a WebGL fluid mask. Below it: an Experience accordion, a Projects marquee, a spinning Technical Skills globe, and a GitHub contribution graph. |
+| **About** `/about` | Bio, education, and a tilting photo card. |
+| **Experience** `/experience` | Timeline of work and organizations, with filters. |
+| **Projects** `/projects` | Spotlight list with browser-frame previews and detail pages (role, tech stack, gallery, demo and code links). |
+| **Contact** `/contact` | Rate-limited form with honeypot, a swinging ID-card lanyard, and a flip-card "message sent" ticket. |
+| **Privacy** `/privacy` | What the site collects and why. |
 
-Also: SEO (sitemap, dynamic Open Graph images, JSON-LD), a read-only public API (`/api/v1`), a privacy page, a custom 404, and UI sounds whose volume the admin controls.
+Every page comes in Indonesian and English (`/id`, `/en`), dark by default with a light theme, and is built mobile-first.
 
-**Super Admin** (`/admin`) — a single owner account (email + password via Better Auth) to manage profile, projects (GitHub import, Cloudinary uploads, draft/published), skills, experience and education, the contact inbox, newsletter subscribers, an audit log, and the text of every public page (one admin page per module: intro card, Home with hero photos, About, Experience, Projects, Contact, Navbar, Footer, Privacy), in both languages. Every action is validated with Zod on the server, requires the `SUPER_ADMIN` role, and is written to the audit log.
+## Super Admin
 
-**Quality** — WCAG 2.2 AA (axe-clean on every page, both themes and languages), `prefers-reduced-motion` respected, strict CSP, and an encrypted daily database backup.
+`/admin` is a single owner account (email and password via Better Auth).
+
+- **Site text:** one admin page per module (Intro, Home, About, Experience, Projects, Contact, Navbar, Footer, Privacy), edited in both languages, plus the hero photos.
+- **Content:** profile, projects (GitHub import, Cloudinary uploads, draft/published), skills, experience and education.
+- **Inbox:** contact messages and newsletter subscribers.
+- **Safety:** every action is validated with Zod on the server, requires the `SUPER_ADMIN` role, and is written to the audit log.
 
 ## Tech stack
 
-Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · next-intl · PostgreSQL (Neon) + Prisma 7 · Better Auth · Zod · Cloudinary · Resend · Vitest + Playwright + axe · pnpm · Vercel · GitHub Actions.
+| Layer | Tools |
+|---|---|
+| **App** | Next.js 16 (App Router), React 19, TypeScript (strict) |
+| **UI** | Tailwind CSS 4, Radix UI, lucide-react, next-themes, Recharts, WebGL for the hero effect |
+| **i18n and forms** | next-intl, React Hook Form, Zod, TanStack Table, react-markdown with sanitizing |
+| **Data and auth** | PostgreSQL (Neon), Prisma 7, Better Auth |
+| **Services** | Cloudinary (uploads), Resend (email), Vercel Analytics and Speed Insights |
+| **Testing** | Vitest, Testing Library, Playwright, axe |
+| **Delivery** | pnpm, Vercel, GitHub Actions, Docker image on GitHub Packages |
+
+## Quality
+
+WCAG 2.2 AA (axe-clean on every page, in both themes and languages), `prefers-reduced-motion` respected, strict CSP, SEO (sitemap, dynamic Open Graph images, JSON-LD), a read-only public API at `/api/v1`, and an encrypted daily database backup.
 
 ## Run it
 
