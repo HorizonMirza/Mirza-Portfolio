@@ -22,7 +22,9 @@ ARG NEXT_PUBLIC_SITE_URL=https://mmirza.site
 RUN pnpm exec next build
 
 FROM node:24-slim AS runtime
-LABEL org.opencontainers.image.source="https://github.com/HorizonMirza/Mirza-Portfolio" \
+LABEL org.opencontainers.image.title="mirza-portfolio" \
+      org.opencontainers.image.url="https://mmirza.site" \
+      org.opencontainers.image.source="https://github.com/HorizonMirza/Mirza-Portfolio" \
       org.opencontainers.image.description="Bilingual (ID/EN) portfolio website with a Super Admin panel, built with Next.js" \
       org.opencontainers.image.licenses="NOASSERTION"
 ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1

@@ -91,6 +91,8 @@ Setelah deploy (pemilik akun):
 
 Setiap release di GitHub membangun image aplikasi dan mengirimnya ke **GitHub Packages**: `ghcr.io/horizonmirza/mirza-portfolio` (tag `vX.Y.Z`, `X.Y.Z`, dan `latest`). Workflow-nya `.github/workflows/release.yml`: migrasi dan seed ke Postgres sementara, `docker build`, uji singkat (`/api/health` dan lima halaman), baru `docker push`. Database sementara itu tidak ikut ke image.
 
+**Membuat release.** Buka GitHub → tab **Actions** → **Buat release** → **Run workflow**, isi tag (mis. `v1.0.0`). Workflow `.github/workflows/buat-release.yml` membuat tag dan Release dari `main` (catatan rilis dari `.github/release-notes/<tag>.md`, atau otomatis dari commit bila berkasnya tidak ada), lalu menjalankan `release.yml` untuk membangun image bertag itu. Release yang dibuat lewat tombol **Draft a new release** di GitHub juga memicu `release.yml` sendiri.
+
 Menjalankan (butuh PostgreSQL yang **sudah dimigrasi**, mis. lewat `pnpm db:deploy` dari repo ini):
 
 ```bash
