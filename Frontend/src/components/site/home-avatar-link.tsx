@@ -42,7 +42,8 @@ export function HomeAvatarLink({
         width={72}
         height={72}
         sizes="36px"
-        className="size-full rounded-full object-cover"
+        // latar lingkaran berlawanan dengan tema (putih di mode gelap, hitam di mode terang), pilihan pemilik 2026-10-27
+        className="size-full rounded-full bg-text object-cover"
       />
       <span className="sr-only">{name}</span>
     </Link>

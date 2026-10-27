@@ -114,7 +114,7 @@ export function LoginForm({
                 height={112}
                 sizes="56px"
                 priority
-                className="size-full rounded-full bg-black object-cover"
+                className="size-full rounded-full bg-white object-cover"
               />
             </div>
             <p className="text-label font-semibold tracking-widest text-white/60 uppercase">

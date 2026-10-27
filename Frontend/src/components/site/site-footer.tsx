@@ -111,7 +111,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
       width={size * 2}
       height={size * 2}
       sizes={`${size}px`}
-      className={cn('shrink-0 rounded-full object-cover', className)}
+      className={cn('shrink-0 rounded-full bg-text object-cover', className)}
       style={{ width: size, height: size }}
     />
   )

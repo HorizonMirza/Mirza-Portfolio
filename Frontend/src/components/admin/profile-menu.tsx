@@ -57,7 +57,7 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
           width={40}
           height={40}
           sizes="40px"
-          className="size-full rounded-full object-cover"
+          className="size-full rounded-full bg-text object-cover"
         />
       </button>
       {open ? (
