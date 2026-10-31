@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import { resolveIcon, resolveLogo } from '@/features/skills/skill-items'
+import { logoColorFor, resolveIcon, resolveLogo } from '@/features/skills/skill-items'
 import { cn } from '@/lib/utils'
 
 // Chip teknologi project dengan logo kecil (pilihan pemilik 2026-10-08, demo efek nomor 7). Logo asli
@@ -22,7 +22,8 @@ export function TechChips({
       {skills.map((s) => {
         const logo = resolveLogo(s.name, s.icon)
         const brand = resolveIcon(s.name, s.icon)
-        const color = brand && !isVeryDark(brand.hex) ? `#${brand.hex}` : 'var(--text)'
+        // aturan warna yang sama dengan globe skill (logo hampir hitam memakai warna teks)
+        const color = (brand && logoColorFor(brand.hex)) ?? 'var(--text)'
         return (
           <li key={s.id}>
             <span className="pj-tech" style={{ '--brand': color } as CSSProperties}>
@@ -50,12 +51,4 @@ export function TechChips({
       })}
     </ul>
   )
-}
-
-function isVeryDark(hex: string) {
-  const n = Number.parseInt(hex, 16)
-  const r = (n >> 16) & 255
-  const g = (n >> 8) & 255
-  const b = n & 255
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 40
 }
