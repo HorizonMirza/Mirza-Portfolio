@@ -437,8 +437,14 @@ export function IdLanyard({
       const ly = dx * Math.sin(-ang) + dy * Math.cos(-ang)
       return Math.abs(lx) <= CARD_W / 2 + 4 && ly >= -4 && ly <= CARD_H + 4 ? ly / CARD_H : null
     }
+    // Kotak lanyard disembunyikan di layar kecil (`hidden lg:block`), tetapi pendengar pointer ada
+    // di window: tanpa pemeriksaan ini sentuhan di pojok kiri atas HP "mengenai" kartu tak terlihat
+    // dan menahan gulir lewat preventDefault (audit 2026-10-31, BUG-03).
+    function shown() {
+      return wrapEl!.offsetParent !== null && width > 0
+    }
     function onDown(e: PointerEvent) {
-      if (reduce || e.button !== 0) return
+      if (reduce || e.button !== 0 || !visible || !shown()) return
       const m = local(e)
       const t = hit(m)
       if (t === null) return
@@ -449,6 +455,7 @@ export function IdLanyard({
       wake()
     }
     function onMove(e: PointerEvent) {
+      if (!grab && (!visible || !shown())) return
       const m = local(e)
       if (grab) {
         grab.tx = m.x
@@ -469,7 +476,8 @@ export function IdLanyard({
     build()
     draw()
     img.onload = () => draw()
-    if (!reduce) frame = requestAnimationFrame(loop)
+    visible = shown()
+    if (!reduce && visible) frame = requestAnimationFrame(loop)
 
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting && wrapEl.offsetParent !== null
