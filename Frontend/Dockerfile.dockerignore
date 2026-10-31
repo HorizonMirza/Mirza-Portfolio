@@ -4,7 +4,6 @@
 .claude
 .agents
 Documentation
-Backend
 **/node_modules
 **/.next
 **/.env*

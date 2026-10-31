@@ -19,7 +19,7 @@ export function NotFound({
 }: {
   title: string
   body: string
-  // tombol utama, mis. FlowButton sebagai tautan ke beranda
+  // tombol utama, mis. tautan ke beranda bergaya flowButtonClassName
   action: ReactNode
 }) {
   return (

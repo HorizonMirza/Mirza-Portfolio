@@ -1,7 +1,4 @@
 import { ArrowRight } from 'lucide-react'
-import type { ButtonHTMLAttributes } from 'react'
-
-import { cn } from '@/lib/utils'
 
 // Tombol "flow" (komponen 21st.dev xubohuah/flow-button), disesuaikan: warna dari token tema
 // (ikut mode terang/gelap), bisa dipakai sebagai tautan lewat flowButtonClassName + FlowButtonContent,
@@ -32,18 +29,5 @@ export function FlowButtonContent({ text }: { text: string }) {
         className="absolute right-4 z-[9] size-4 transition-all duration-[800ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:right-[-25%] motion-reduce:transition-none"
       />
     </>
-  )
-}
-
-export function FlowButton({
-  text = 'Modern Button',
-  className,
-  type = 'button',
-  ...props
-}: { text?: string } & ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button type={type} className={cn(flowButtonClassName, className)} {...props}>
-      <FlowButtonContent text={text} />
-    </button>
   )
 }
