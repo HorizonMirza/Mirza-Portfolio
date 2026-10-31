@@ -406,6 +406,18 @@
 .xp-tl[data-focus] > li:not([data-active]) .xp-side {
   filter: blur(2px);
 }
+/* Teks buram tidak dipakai saat entri difokus keyboard atau pada reduced-motion: cukup warna redup
+   di bawah ini (audit 2026-10-31, GAP-11). Efek buram E4 tetap untuk pengunjung lain. */
+.xp-tl[data-focus] > li:not([data-active]):focus-within .xp-main,
+.xp-tl[data-focus] > li:not([data-active]):focus-within .xp-side {
+  filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .xp-tl[data-focus] > li:not([data-active]) .xp-main,
+  .xp-tl[data-focus] > li:not([data-active]) .xp-side {
+    filter: none;
+  }
+}
 .xp-tl[data-focus] > li:not([data-active]) .xp-main,
 .xp-tl[data-focus] > li:not([data-active]) .xp-main *,
 .xp-tl[data-focus] > li:not([data-active]) .xp-year,
