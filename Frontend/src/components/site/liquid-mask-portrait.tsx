@@ -76,6 +76,7 @@ export function LiquidMaskPortrait({
     let canvas = canvasRef.current
     const img = root?.querySelector<HTMLImageElement>('figure img')
     if (!root || !canvas || !img) return
+    const reactCanvas = canvas
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
     const layer = document.createElement('canvas')
     const bctx = layer.getContext('2d')
@@ -89,6 +90,8 @@ export function LiquidMaskPortrait({
     })
     // WebGL2 dicek di canvas uji dulu: canvas yang sudah memegang konteks WebGL tidak bisa dipakai 2D
     let fluid: HeroFluid | null = null
+    // canvas cadangan 2D buatan efek ini sendiri (hanya bila shader gagal), dibongkar saat cleanup
+    let fallback: HTMLCanvasElement | null = null
     const probe = document.createElement('canvas').getContext('webgl2')
     if (
       probe?.getExtension('EXT_color_buffer_float') ||
@@ -96,10 +99,15 @@ export function LiquidMaskPortrait({
     ) {
       fluid = createHeroFluid(canvas, fluidOptions())
       if (!fluid) {
-        // konteks WebGL sudah terpasang tetapi shader gagal: pakai canvas baru untuk cadangan 2D
-        const fresh = canvas.cloneNode() as HTMLCanvasElement
-        canvas.replaceWith(fresh)
-        canvas = fresh
+        // Konteks WebGL sudah terpasang tetapi shader gagal: cadangan 2D digambar di canvas baru yang
+        // disisipkan di sebelahnya. Canvas milik React cukup disembunyikan, tidak diganti, agar
+        // rekonsiliasi React tidak kehilangan simpulnya (audit 2026-10-31, BUG-06).
+        fallback = document.createElement('canvas')
+        fallback.className = canvas.className
+        fallback.setAttribute('aria-hidden', 'true')
+        reactCanvas.after(fallback)
+        reactCanvas.hidden = true
+        canvas = fallback
       }
     }
     probe?.getExtension('WEBGL_lose_context')?.loseContext()
@@ -461,6 +469,10 @@ export function LiquidMaskPortrait({
       window.removeEventListener('pointerdown', onDown)
       document.documentElement.removeEventListener('pointerleave', onLeave)
       fluid?.dispose()
+      if (fallback) {
+        fallback.remove()
+        reactCanvas.hidden = false
+      }
     }
   }, [back, bleed.x, bleed.top])
 

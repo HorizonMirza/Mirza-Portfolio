@@ -10,7 +10,8 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   const portrait = page.locator('section[aria-labelledby="hero-title"] figure img')
   await expect(portrait).toBeInViewport()
   await expect(portrait).toHaveAttribute('alt', /.+/)
-  await expect(page.locator('.hero-mask-canvas')).toHaveCount(1)
+  // satu canvas aktif; bila shader WebGL gagal, canvas React disembunyikan dan cadangan 2D disisipkan
+  await expect(page.locator('.hero-mask-canvas:not([hidden])')).toHaveCount(1)
   // tanpa tombol Lihat project dan petunjuk hover (revisi 2026-10-19)
   await expect(page.locator('section[aria-labelledby="hero-title"]').getByRole('link')).toHaveCount(
     0,
