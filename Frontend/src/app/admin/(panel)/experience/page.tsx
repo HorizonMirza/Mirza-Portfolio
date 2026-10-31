@@ -20,7 +20,7 @@ export default async function ExperiencePage() {
     <>
       <PageHeader
         title="Pengalaman dan pendidikan"
-        description="Timeline publik diurutkan otomatis dari tanggal mulai terbaru."
+        description="Timeline publik diurutkan otomatis: yang masih berjalan di atas, lalu dari tanggal selesai terbaru."
         actions={
           <Button asChild>
             <Link href="/admin/experience/new">

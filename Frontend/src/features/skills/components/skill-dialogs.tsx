@@ -78,7 +78,7 @@ export function CategoryDialog({
       <DialogContent>
         <DialogTitle>{categoryId ? 'Ubah kategori' : 'Kategori baru'}</DialogTitle>
         <DialogDescription>
-          Nama kategori tampil sebagai judul kelompok di halaman skill.
+          Nama kategori tampil di pilihan Kategori pada globe Keahlian Teknis di beranda.
         </DialogDescription>
         <form onSubmit={onSubmit} noValidate className="mt-4 flex flex-col gap-4">
           <Field

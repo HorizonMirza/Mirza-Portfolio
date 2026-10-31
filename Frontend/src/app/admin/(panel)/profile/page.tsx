@@ -18,8 +18,8 @@ export default async function ProfilePage() {
   return (
     <>
       <PageHeader
-        title="Profil dan hero"
-        description="Teks di bagian atas beranda, bio, status ketersediaan, dan link kontak."
+        title="Profil"
+        description="Nama, bio dan peran di halaman Tentang (peran juga tampil di pojok bawah hero beranda), headline untuk gambar pratinjau tautan, status ketersediaan, dan link kontak. Foto hero beranda diatur di modul Home."
       />
       <ModuleTabs moduleId="about" current="/admin/profile" />
       <div className="flex flex-col gap-6">
@@ -27,7 +27,7 @@ export default async function ProfilePage() {
         <div className="grid gap-6 lg:grid-cols-2">
           <AssetSlot
             title="Foto profil"
-            description="Tampil di hero dan pratinjau tautan. Rasio persegi atau potret."
+            description="Tampil di avatar navbar dan footer, kartu halaman Tentang, dan kartu lanyard halaman Kontak. Rasio persegi atau potret."
             target="profile-photo"
             asset={assets.photo}
             configured={configured}

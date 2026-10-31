@@ -31,7 +31,7 @@ export default async function EditProjectPage({ params }: PageProps<'/admin/proj
         <ProjectForm key={id} projectId={id} defaultValues={project} skillGroups={skillGroups} />
         <AssetSlot
           title="Sampul"
-          description="Gambar utama di kartu project dan pratinjau tautan. Rasio 16:9 disarankan."
+          description="Gambar utama di daftar project, pita project beranda, dan foto pertama galeri halaman detail. Rasio 16:9 disarankan."
           target="project-cover"
           targetId={id}
           asset={assets.cover}

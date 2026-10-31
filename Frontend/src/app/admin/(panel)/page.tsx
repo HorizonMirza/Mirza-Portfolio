@@ -49,7 +49,7 @@ export default async function DashboardPage() {
         <h2 className="text-h3 font-semibold">Kunjungan per hari, 30 hari terakhir</h2>
         <p className="mt-1 text-sm text-muted">
           {totalVisits === 0
-            ? 'Belum ada kunjungan tercatat. Pencatatan aktif setelah halaman publik diluncurkan.'
+            ? 'Belum ada kunjungan tercatat dalam 30 hari terakhir.'
             : `Total ${totalVisits.toLocaleString('id-ID')} kunjungan. Hari menurut WIB.`}
         </p>
         <div className="mt-4">
@@ -95,7 +95,7 @@ export default async function DashboardPage() {
         </div>
         {messages.length === 0 ? (
           <p className="mt-3 text-sm text-muted">
-            Belum ada pesan. Form kontak aktif mulai Milestone 3.
+            Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.
           </p>
         ) : (
           <ul className="mt-3 divide-y divide-border">
