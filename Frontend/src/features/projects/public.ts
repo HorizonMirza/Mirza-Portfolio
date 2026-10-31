@@ -3,7 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
-import type { PublicImage } from '@/features/profile/public'
+import type { PublicImage } from '@/lib/public-image'
 import type { Prisma } from '@/generated/prisma/client'
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'

@@ -3,7 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
-import type { PublicImage } from '@/features/profile/public'
+import type { PublicImage } from '@/lib/public-image'
 import { getDb } from '@/lib/db'
 import { safeImage } from '@/lib/public-image'
 import { DEFAULT_SOUND_VOLUME } from '@/lib/ui-sounds'

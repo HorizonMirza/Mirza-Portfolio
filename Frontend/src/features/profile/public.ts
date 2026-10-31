@@ -5,17 +5,9 @@ import { cache } from 'react'
 
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
-import { safeImage } from '@/lib/public-image'
+import { type PublicImage, safeImage } from '@/lib/public-image'
 
 import { SOCIAL_KEYS } from './schema'
-
-export type PublicImage = {
-  url: string
-  width: number | null
-  height: number | null
-  alt_id: string | null
-  alt_en: string | null
-}
 
 export type PublicProfile = {
   name: string

@@ -1,6 +1,14 @@
 import 'server-only'
 
-import type { PublicImage } from '@/features/profile/public'
+// Bentuk gambar yang dikirim ke halaman publik. Tinggal di lib/ karena lib/ tidak boleh mengimpor
+// dari features/ (CLAUDE.md, audit 2026-10-31 GAP-13); domain di features/ mengimpornya dari sini.
+export type PublicImage = {
+  url: string
+  width: number | null
+  height: number | null
+  alt_id: string | null
+  alt_en: string | null
+}
 
 // Halaman publik hanya menampilkan gambar dari akun Cloudinary yang diizinkan next/image
 // (next.config.ts), ditambah gambar bawaan repo: tangkapan layar project (public/images/projects,

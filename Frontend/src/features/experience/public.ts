@@ -5,6 +5,7 @@ import { cache } from 'react'
 
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
+import type { PublicImage } from '@/lib/public-image'
 
 import { dateToMonth, type EMPLOYMENT_TYPES } from './schema'
 
@@ -23,14 +24,6 @@ export type PublicExperience = {
   employmentType: (typeof EMPLOYMENT_TYPES)[number] | null
   logo: PublicImage | null
   photo: PublicImage | null
-}
-
-type PublicImage = {
-  url: string
-  alt_id: string | null
-  alt_en: string | null
-  width: number | null
-  height: number | null
 }
 
 const imageSelect = { url: true, alt_id: true, alt_en: true, width: true, height: true } as const
