@@ -12,7 +12,7 @@ LinkedIn tidak dapat dibaca otomatis (halaman masuk wajib). GitHub `HorizonMirza
 | Nama lengkap (CV) | Muhammad Mirza Wirya |
 | Nama tampilan di hero | **[TANYA]** "Muhammad Mirza" atau nama lengkap |
 | Lokasi | Tangerang, Indonesia |
-| Usia di ringkasan | 20 tahun (jangan ditulis tetap di situs, hitung otomatis atau hilangkan) |
+| Usia di ringkasan | 20 tahun. Aturan awal "jangan ditulis tetap" diganti keputusan pemilik 2026-10-07 (bagian bawah dokumen ini): bio memakai teks SUMMARY CV lengkap termasuk "Di usia 20 tahun", dan pemilik memperbaruinya lewat admin saat usia berubah |
 | Kampus | BINUS University, Computer Science (Artificial Intelligence) |
 | Sosial | LinkedIn `muhammad-mirza-wirya`, GitHub `HorizonMirza`. Instagram dan WhatsApp **[TANYA]** (WhatsApp mungkin sama dengan nomor di CV) |
 | Tujuan | Mencari pekerjaan dan klien. Jenis yang dicari (magang/penuh waktu/freelance) dan tanggal tersedia **[TANYA]** |
