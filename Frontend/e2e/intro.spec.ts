@@ -1,6 +1,8 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import { waitForFiniteAnimations } from './wait'
+
 // Pemberitahuan pembuka (DESIGN.md bagian 53). Situs menyembunyikannya untuk browser otomatis
 // (navigator.webdriver), jadi tes ini berpura-pura sebagai pengunjung biasa.
 // Tanpa animasi: kartu yang masih masuk (transparan dan bergeser) membuat cek kontras salah baca dan
@@ -46,13 +48,15 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   await expect(page).toHaveURL(/\/id$/)
   await expect(page.locator('dialog.intro canvas')).toHaveCount(0)
   await page.goto('/id/projects')
-  // beri waktu efek klien berjalan; pemberitahuan tetap tertutup
-  await page.waitForTimeout(800)
+  // tunggu skrip klien selesai dimuat dan animasi masuk selesai; pemberitahuan tetap tertutup
+  await page.waitForLoadState('networkidle')
+  await waitForFiniteAnimations(page)
   await expect(page.locator('dialog.intro')).toBeHidden()
 })
 
 test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setelah ditutup', async ({
   page,
+  browserName,
 }) => {
   // Catatan kejadian browser, dicetak ke log CI bila tes gagal: tes ini berulang kali gagal hanya di
   // Firefox CI dengan halaman yang tidak terbaca lagi (URL kosong), dan artefak trace tidak bisa
@@ -105,12 +109,13 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
       .toBe(true)
     // Di Chromium/WebKit halaman tetap terbaca dan bahasanya harus sudah Inggris. Di Firefox CI "close"
     // datang beberapa milidetik setelah navigasi, jadi pemeriksaan ini bisa membaca URL kosong (CI
-    // 9c4dd34); kegagalan hanya diterima bila halaman memang sudah ditutup driver.
+    // 9c4dd34); kegagalan hanya diterima di Firefox dan bila halaman memang sudah ditutup driver.
+    // Navigasi ke /en/projects sendiri sudah dipastikan oleh poll di atas.
     try {
       await expect(page).toHaveURL(enProjects)
       await expect(page.locator('html')).toHaveAttribute('lang', 'en')
     } catch (error) {
-      if (!page.isClosed()) throw error
+      if (browserName !== 'firefox' || !page.isClosed()) throw error
     }
   } catch (error) {
     console.log(`[intro ID/EN] kejadian browser:\n${events.join('\n')}`)
@@ -126,7 +131,7 @@ test.describe('dengan animasi', () => {
     const dialog = page.getByRole('dialog', { name: 'Informasi Penting' })
     await expect(dialog).toBeVisible()
     // tunggu animasi masuk kartu selesai agar tombol diam saat diklik
-    await page.waitForTimeout(900)
+    await waitForFiniteAnimations(dialog)
     await dialog.getByRole('button', { name: 'Beranda' }).click()
     await expect(dialog).toBeHidden()
     await expect(page).toHaveURL(/\/id$/)

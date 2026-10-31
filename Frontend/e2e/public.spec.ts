@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
+import { waitForFiniteAnimations } from './wait'
 
 test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }) => {
   await page.goto('/id')
@@ -144,7 +145,7 @@ test('menu bawah HP tetap di dalam layar setelah pindah halaman', async ({ page,
       'page',
     )
     // tunggu animasi masuk halaman (320–560 ms) selesai
-    await page.waitForTimeout(700)
+    await waitForFiniteAnimations(page)
     const state = await nav.evaluate((el) => {
       const r = el.getBoundingClientRect()
       const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)

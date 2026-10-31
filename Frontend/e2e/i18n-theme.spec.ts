@@ -1,5 +1,7 @@
 import { expect, test, type Browser } from '@playwright/test'
 
+import { waitForFiniteAnimations } from './wait'
+
 async function openRootWithLocale(browser: Browser, locale: string) {
   const context = await browser.newContext({ locale })
   const page = await context.newPage()
@@ -60,7 +62,9 @@ test('ganti bahasa tidak membuat tema berkedip', async ({ browser }) => {
     const switcher = page.locator('header a[hreflang]')
     await switcher.click()
     await expect(page).toHaveURL(/\/en\/about$/)
-    await page.waitForTimeout(400)
+    // kedipan tema terjadi saat halaman baru hidrasi: tunggu semua skrip termuat dan animasi selesai
+    await page.waitForLoadState('networkidle')
+    await waitForFiniteAnimations(page)
     const lost = await page.evaluate(
       () => (window as unknown as { __themeLost: number }).__themeLost,
     )
