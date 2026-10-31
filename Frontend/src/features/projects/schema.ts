@@ -16,7 +16,11 @@ export const projectCategoryLabel: Record<(typeof PROJECT_CATEGORIES)[number], s
   COMMUNITY_BUSINESS: 'Komunitas & Bisnis',
 }
 
-const currentYear = new Date().getFullYear()
+// Batas atas tahun dihitung saat validasi, bukan saat modul dimuat: server yang hidup melewati
+// pergantian tahun tetap menerima tahun baru (audit 2026-10-31, BUG-04).
+function maxProjectYear() {
+  return new Date().getFullYear() + 1
+}
 
 // Dipakai di form (klien) dan divalidasi ulang di Server Action.
 export const projectSchema = z.object({
@@ -35,7 +39,10 @@ export const projectSchema = z.object({
     .number({ error: 'Tahun wajib diisi' })
     .int('Tahun harus bilangan bulat')
     .min(2000, 'Tahun minimal 2000')
-    .max(currentYear + 1, `Tahun maksimal ${currentYear + 1}`),
+    .superRefine((year, ctx) => {
+      const max = maxProjectYear()
+      if (year > max) ctx.addIssue({ code: 'custom', message: `Tahun maksimal ${max}` })
+    }),
   category: z.enum(PROJECT_CATEGORIES),
   demoUrl: optionalUrl('URL demo'),
   repoUrl: optionalUrl('URL repo'),
@@ -62,7 +69,8 @@ export const emptyProject: ProjectInput = {
   description_en: '',
   caseStudy_id: '',
   caseStudy_en: '',
-  year: currentYear,
+  // nilai awal saja; halaman "Project baru" mengisi ulang dengan tahun saat halaman dibuka
+  year: new Date().getFullYear(),
   category: 'SOFTWARE',
   demoUrl: '',
   repoUrl: '',

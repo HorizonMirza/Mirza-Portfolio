@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { changePasswordSchema } from '@/features/account/schema'
 import {
@@ -38,6 +38,17 @@ describe('projectSchema', () => {
   it('menolak tahun di luar rentang dan kategori asing', () => {
     const r = projectSchema.safeParse({ ...validProject, year: 1999, category: 'LAINNYA' })
     expect(fieldsOf(r)).toEqual(expect.arrayContaining(['year', 'category']))
+  })
+  it('batas atas tahun mengikuti tanggal saat validasi, bukan saat modul dimuat', () => {
+    vi.useFakeTimers()
+    try {
+      vi.setSystemTime(new Date('2026-06-01T00:00:00Z'))
+      expect(projectSchema.safeParse({ ...validProject, year: 2028 }).success).toBe(false)
+      vi.setSystemTime(new Date('2027-06-01T00:00:00Z'))
+      expect(projectSchema.safeParse({ ...validProject, year: 2028 }).success).toBe(true)
+    } finally {
+      vi.useRealTimers()
+    }
   })
   it('menolak id skill yang bukan UUID', () => {
     const r = projectSchema.safeParse({ ...validProject, skillIds: ['1 OR 1=1'] })

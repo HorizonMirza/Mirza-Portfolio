@@ -14,7 +14,11 @@ export default async function NewProjectPage() {
   return (
     <>
       <PageHeader title="Project baru" />
-      <ProjectForm projectId={null} defaultValues={emptyProject} skillGroups={skillGroups} />
+      <ProjectForm
+        projectId={null}
+        defaultValues={{ ...emptyProject, year: new Date().getFullYear() }}
+        skillGroups={skillGroups}
+      />
     </>
   )
 }
