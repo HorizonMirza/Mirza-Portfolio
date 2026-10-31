@@ -67,9 +67,10 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   const titleId = `Project E2E ${suffix}`
   await page.goto('/admin/projects/new')
 
-  // Validasi: galat tampil dan dihitung per tab bahasa
+  // Validasi: galat tampil dan dihitung per tab bahasa (judul dan ringkasan; deskripsi opsional
+  // sejak audit 2026-10-31 GAP-05)
   await page.getByRole('button', { name: 'Buat project' }).click()
-  await expect(page.getByRole('tab', { name: /Indonesia/ })).toContainText('3')
+  await expect(page.getByRole('tab', { name: /Indonesia/ })).toContainText('2')
   await expect(page.getByText('Judul wajib diisi')).toBeVisible()
 
   await page.getByLabel('Judul', { exact: true }).fill(titleId)

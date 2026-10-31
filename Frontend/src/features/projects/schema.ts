@@ -31,8 +31,10 @@ export const projectSchema = z.object({
   summary_en: requiredText('Summary', 240),
   role_id: optionalText('Peran', 80),
   role_en: optionalText('Role', 80),
-  description_id: requiredText('Deskripsi', 5000),
-  description_en: requiredText('Description', 5000),
+  // Opsional: tidak tampil di halaman detail (keputusan pemilik 2026-10-08), hanya dikirim API.
+  // Dulu wajib sehingga admin harus mengisi teks yang tidak terlihat (audit 2026-10-31, GAP-05).
+  description_id: optionalText('Deskripsi', 5000),
+  description_en: optionalText('Description', 5000),
   caseStudy_id: optionalText('Studi kasus', 20000),
   caseStudy_en: optionalText('Case study', 20000),
   year: z

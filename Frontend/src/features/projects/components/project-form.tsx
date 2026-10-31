@@ -132,7 +132,7 @@ export function ProjectForm({
       </Field>
       <Field
         id={`description_${lang}`}
-        label={lang === 'id' ? 'Deskripsi' : 'Description'}
+        label={lang === 'id' ? 'Deskripsi (opsional)' : 'Description (optional)'}
         hint={
           lang === 'id'
             ? 'Masalah, peran saya, teknologi, hasil. Saat ini tidak tampil di halaman detail (hanya foto dan tombol, keputusan pemilik 2026-10-08), tetap dipakai API.'
