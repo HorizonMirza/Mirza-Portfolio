@@ -86,6 +86,7 @@ Claude memeriksa diff sendiri sebelum meminta review, lalu menjalankan review ko
 
 - **Deploy:** otomatis dari `main` ke Vercel (production). Tidak ada staging terpisah dan tidak ada preview PR, jadi pemeriksaan lokal lengkap (bagian 2 langkah 3) menggantikan staging.
 - **Migrasi database:** kompatibel ke belakang. Tambahkan kolom/tabel dulu, hapus di rilis berikutnya. Uji dulu di database lokal/CI (CI menjalankan migrasi + seed dua kali) sebelum push.
+- **Konten bukan lewat migrasi** (audit 2026-10-31, GAP-15): migrasi hanya untuk struktur (tabel, kolom, indeks). Menambah, mengubah, atau menghapus konten (project, teks, profil) dilakukan lewat panel admin agar tercatat di `AuditLog` dan bisa dilacak. Bila migrasi data benar-benar tidak terhindarkan (mis. memindahkan isi kolom saat struktur berubah), migrasi itu juga menulis satu baris `AuditLog` (`actorId` NULL, `action` = `migrasi`, `entity` sesuai tabel, `diff` berisi nama migrasi dan jumlah baris) dan disebut di log `TODO.md`. Migrasi konten lama seperti `20261008170000_delete_all_projects` tetap seperti adanya, karena migrasi yang sudah berjalan tidak boleh diubah.
 - **Daftar periksa rilis:**
   - [ ] CI hijau, situs sudah dicek di HP nyata
   - [ ] Lighthouse mobile ≥ 90
