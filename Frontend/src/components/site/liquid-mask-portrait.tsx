@@ -380,6 +380,7 @@ export function LiquidMaskPortrait({
     let visible = true
     const io = new IntersectionObserver(([entry]) => {
       visible = Boolean(entry?.isIntersecting)
+      syncPeekTimer()
     })
     io.observe(root)
     const introOpen = () =>
@@ -438,7 +439,8 @@ export function LiquidMaskPortrait({
     }
     // 3 detik terhitung sejak beranda terlihat tanpa pemberitahuan pembuka di depannya
     let readySince: number | null = null
-    const peekTimer = window.setInterval(() => {
+    let peekTimer = 0
+    const peekTick = () => {
       const now = performance.now()
       if (!canPeek()) {
         if (lastPeek === -Infinity) readySince = null
@@ -453,7 +455,22 @@ export function LiquidMaskPortrait({
         return
       }
       if (now - lastPeek >= PEEK_EVERY_MS && now - idle >= PEEK_EVERY_MS) peek()
-    }, 250)
+    }
+    // Pemeriksa 250 ms hanya berjalan saat hero terlihat dan tab aktif; sebelumnya tetap berdetak
+    // walau hero sudah jauh di luar layar (audit 2026-10-31, EFF-04)
+    function syncPeekTimer() {
+      const run = visible && document.visibilityState === 'visible'
+      if (run && !peekTimer) {
+        peekTimer = window.setInterval(peekTick, 250)
+      } else if (!run && peekTimer) {
+        window.clearInterval(peekTimer)
+        peekTimer = 0
+        // hitungan 3 detik intip pertama dimulai ulang saat hero terlihat lagi
+        if (lastPeek === -Infinity) readySince = null
+      }
+    }
+    syncPeekTimer()
+    document.addEventListener('visibilitychange', syncPeekTimer)
 
     return () => {
       disposed = true
@@ -461,6 +478,7 @@ export function LiquidMaskPortrait({
       cancelAnimationFrame(sweep)
       window.clearTimeout(timer)
       window.clearInterval(peekTimer)
+      document.removeEventListener('visibilitychange', syncPeekTimer)
       resizeObserver.disconnect()
       themeObserver.disconnect()
       reduce.removeEventListener('change', onMotionPref)
