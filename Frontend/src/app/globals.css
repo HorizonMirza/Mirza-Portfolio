@@ -1748,8 +1748,45 @@ html:has(.contact-sent) {
   animation: home-marquee calc(var(--n) * 8s) linear infinite;
 }
 .home-marquee-track:has(:focus-visible),
-.home-marquee[data-offscreen] .home-marquee-track {
+.home-marquee[data-offscreen] .home-marquee-track,
+.home-marquee-wrap:has(.home-marquee-pause input:checked) .home-marquee-track {
   animation-play-state: paused;
+}
+/* Tombol jeda pita (WCAG 2.2.2, audit 2026-10-31 GAP-02): checkbox asli yang disembunyikan secara
+   visual, labelnya tampil sebagai pil kecil. Ikon berganti jeda/putar sesuai keadaan. */
+.home-marquee-pause {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: color 150ms;
+}
+.home-marquee-pause:hover {
+  color: var(--text);
+}
+.home-marquee-pause:has(:focus-visible) {
+  outline: 2px solid var(--note);
+  outline-offset: 2px;
+}
+.home-marquee-pause input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.home-marquee-play-icon,
+.home-marquee-pause:has(input:checked) .home-marquee-pause-icon {
+  display: none;
+}
+.home-marquee-pause:has(input:checked) .home-marquee-play-icon {
+  display: block;
 }
 .home-marquee li {
   flex: none;
@@ -1834,6 +1871,10 @@ html:has(.contact-sent) {
 @media (prefers-reduced-motion: reduce) {
   .home-marquee-track {
     animation: none;
+  }
+  /* pita sudah diam, tombol jeda tidak berguna */
+  .home-marquee-pause {
+    display: none;
   }
   .home-marquee img,
   .home-marquee-hover {

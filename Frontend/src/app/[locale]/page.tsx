@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Pause, Play } from 'lucide-react'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
@@ -302,33 +303,45 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           {/* Pita sampul berjalan (pilihan pemilik 2026-10-15): tiap sampul kini tautan ke halaman
               detail project dan pita tidak berhenti saat disorot (revisi 2026-10-16). Deret diulang
               dua kali agar putaran tidak terputus; salinan kedua disembunyikan dari pembaca layar
-              dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih. */}
-          <div className="home-marquee">
-            <ul
-              className="home-marquee-track"
-              aria-label={t('projectList')}
-              style={{ '--n': showcaseCovers.length } as CSSProperties}
-            >
-              {[0, 1].map((copy) =>
-                showcaseCovers.map((c) => (
-                  <li key={`${c.slug}-${copy}`} aria-hidden={copy === 1 ? true : undefined}>
-                    <Link
-                      href={`/projects/${c.slug}`}
-                      transitionTypes={['project-open']}
-                      tabIndex={copy === 1 ? -1 : undefined}
-                    >
-                      {/* nama muncul di tengah sampul saat disorot; di layar sentuh nama tampil di
+              dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih,
+              dan tombol jeda di bawahnya menghentikannya kapan saja (WCAG 2.2.2; audit 2026-10-31,
+              GAP-02). Tombol berupa checkbox + CSS sehingga bekerja tanpa JavaScript. */}
+          <div className="home-marquee-wrap">
+            <div className="home-marquee">
+              <ul
+                className="home-marquee-track"
+                aria-label={t('projectList')}
+                style={{ '--n': showcaseCovers.length } as CSSProperties}
+              >
+                {[0, 1].map((copy) =>
+                  showcaseCovers.map((c) => (
+                    <li key={`${c.slug}-${copy}`} aria-hidden={copy === 1 ? true : undefined}>
+                      <Link
+                        href={`/projects/${c.slug}`}
+                        transitionTypes={['project-open']}
+                        tabIndex={copy === 1 ? -1 : undefined}
+                      >
+                        {/* nama muncul di tengah sampul saat disorot; di layar sentuh nama tampil di
                           bawah sampul (pilihan pemilik 2026-10-16, demo N5) */}
-                      <span className="home-marquee-cover">
-                        <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
-                        <span className="home-marquee-hover">{c.title}</span>
-                      </span>
-                      <span className="home-marquee-caption">{c.title}</span>
-                    </Link>
-                  </li>
-                )),
-              )}
-            </ul>
+                        <span className="home-marquee-cover">
+                          <Image src={c.url} alt="" fill sizes="(min-width: 640px) 360px, 240px" />
+                          <span className="home-marquee-hover">{c.title}</span>
+                        </span>
+                        <span className="home-marquee-caption">{c.title}</span>
+                      </Link>
+                    </li>
+                  )),
+                )}
+              </ul>
+            </div>
+            <Container className="mt-5 flex justify-center">
+              <label className="home-marquee-pause">
+                <input type="checkbox" />
+                <Pause aria-hidden="true" className="home-marquee-pause-icon size-3.5" />
+                <Play aria-hidden="true" className="home-marquee-play-icon size-3.5" />
+                <span>{t('marqueePause')}</span>
+              </label>
+            </Container>
           </div>
         </section>
       ) : null}
