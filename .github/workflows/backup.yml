@@ -43,7 +43,14 @@ jobs:
         id: check
         run: |
           if [ -z "$DATABASE_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
-            echo "::notice::BACKUP_DATABASE_URL atau BACKUP_PASSPHRASE belum diisi, backup dilewati."
+            # Peringatan (bukan sekadar notice) dan ringkasan run: run hijau tanpa secret berarti TIDAK
+            # ada backup yang dibuat, jadi harus mudah terlihat di tab Actions (audit 2026-10-31, GAP-01)
+            echo "::warning::BACKUP_DATABASE_URL atau BACKUP_PASSPHRASE belum diisi: TIDAK ada backup production yang dibuat."
+            {
+              echo "### Backup TIDAK berjalan"
+              echo "Secret \`BACKUP_DATABASE_URL\` dan/atau \`BACKUP_PASSPHRASE\` belum diisi."
+              echo "Isi lewat Settings → Secrets and variables → Actions (Documentation/DEPLOYMENT.md bagian Pemantauan dan Backup)."
+            } >> "$GITHUB_STEP_SUMMARY"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"

@@ -127,6 +127,8 @@ docker run -d --name mirza-portfolio -p 3000:3000 \
 
 Jalankan sekali lewat **Actions → Backup → Run workflow** untuk memastikan hijau.
 
+> **Status 2026-10-31: backup production belum aktif.** Pengisian kedua secret ditunda pemilik (2026-10-20). Selama secret kosong, run harian tetap hijau tetapi **tidak membuat backup apa pun**; run menampilkan peringatan kuning dan ringkasan "Backup TIDAK berjalan". Backup baru benar-benar ada setelah secret diisi dan satu run menghasilkan artifact `portfolio-*`.
+
 **Memulihkan backup** (bila data production rusak):
 
 ```bash
