@@ -30,7 +30,8 @@ vi.mock('@/lib/rate-limit', () => ({
 const { submitContact } = await import('@/features/messages/public-actions')
 const { subscribeNewsletter, confirmSubscription, unsubscribe } =
   await import('@/features/subscribers/public-actions')
-const { unsubscribeToken } = await import('@/features/subscribers/tokens')
+const { CONFIRM_TOKEN_MAX_AGE_MS, confirmTokenExpired, newConfirmToken, unsubscribeToken } =
+  await import('@/features/subscribers/tokens')
 
 function form(values: Record<string, string>) {
   const fd = new FormData()
@@ -147,7 +148,8 @@ describe('konfirmasi dan berhenti langganan', () => {
   })
   it('token PENDING dikonfirmasi lalu diganti agar hanya sekali pakai', async () => {
     db.subscriber.findUnique.mockResolvedValueOnce({ id: 's1', status: 'PENDING' })
-    expect(await confirmSubscription(idle, form({ token: 'y'.repeat(43) }))).toEqual({
+    const { token } = newConfirmToken()
+    expect(await confirmSubscription(idle, form({ token }))).toEqual({
       status: 'confirmed',
     })
     const data = (
@@ -155,6 +157,22 @@ describe('konfirmasi dan berhenti langganan', () => {
     )[0].data
     expect(data).toMatchObject({ status: 'CONFIRMED' })
     expect(data.tokenHash).toMatch(/^[0-9a-f]{64}$/)
+  })
+  it('token konfirmasi yang lebih tua dari batas umur ditolak tanpa membaca database', async () => {
+    const issued = Date.now() - CONFIRM_TOKEN_MAX_AGE_MS - 60_000
+    const { token } = newConfirmToken(issued)
+    db.subscriber.findUnique.mockClear()
+    expect(await confirmSubscription(idle, form({ token }))).toEqual({ status: 'invalid' })
+    expect(db.subscriber.findUnique).not.toHaveBeenCalled()
+  })
+  it('batas umur token: baru berlaku, lama, masa depan, dan format lama ditolak', () => {
+    const now = Date.UTC(2026, 9, 31)
+    expect(confirmTokenExpired(newConfirmToken(now - 1000).token, now)).toBe(false)
+    expect(
+      confirmTokenExpired(newConfirmToken(now - CONFIRM_TOKEN_MAX_AGE_MS - 1).token, now),
+    ).toBe(true)
+    expect(confirmTokenExpired(newConfirmToken(now + 3_600_000).token, now)).toBe(true)
+    expect(confirmTokenExpired('y'.repeat(43), now)).toBe(true)
   })
   it('tanda tangan berhenti langganan diverifikasi', async () => {
     const id = '01a0f218-0209-7656-a356-02d34f1c52c3'

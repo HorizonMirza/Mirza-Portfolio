@@ -13,7 +13,13 @@ import type { PublicFormState } from '@/lib/form-state'
 import { consumePublicRateLimit } from '@/lib/rate-limit'
 
 import { NEWSLETTER_RATE_LIMIT, newsletterSchema } from './public-schema'
-import { hashToken, newConfirmToken, unsubscribeToken, verifyUnsubscribeToken } from './tokens'
+import {
+  confirmTokenExpired,
+  hashToken,
+  newConfirmToken,
+  unsubscribeToken,
+  verifyUnsubscribeToken,
+} from './tokens'
 
 function field(formData: FormData, name: string) {
   const v = formData.get(name)
@@ -103,6 +109,7 @@ export async function confirmSubscription(
 ): Promise<TokenResult> {
   const token = field(formData, 'token')
   if (token.length < 20 || token.length > 100) return { status: 'invalid' }
+  if (confirmTokenExpired(token)) return { status: 'invalid' }
   try {
     const db = getDb()
     const sub = await db.subscriber.findUnique({
