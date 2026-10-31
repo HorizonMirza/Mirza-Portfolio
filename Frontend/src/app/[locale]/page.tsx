@@ -55,12 +55,13 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
-  const [t, tGlobe, tSkyline, tExp, profile, projects, skills, experiences, settings] =
+  const [t, tGlobe, tSkyline, tExp, tAbout, profile, projects, skills, experiences, settings] =
     await Promise.all([
       getTranslations({ locale, namespace: 'Home' }),
       getTranslations({ locale, namespace: 'SkillGlobe' }),
       getTranslations({ locale, namespace: 'Skyline' }),
       getTranslations({ locale, namespace: 'Experience' }),
+      getTranslations({ locale, namespace: 'About' }),
       getPublicProfile(),
       getPublishedProjects(),
       getPublicSkills(),
@@ -167,8 +168,10 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       className="hero-portrait-img"
     />
   )
-  // peran dari profil (kolom Peran di Tentang, dipisah "|"), di pojok bawah hero (demo peran 3)
-  const roles = (profile ? loc(profile, 'aboutRoles', locale) : '')
+  // peran dari profil (kolom Peran di Tentang, dipisah "|"), di pojok bawah hero (demo peran 3).
+  // Kosong atau profil gagal dimuat: teks bawaan About.roles, sama seperti halaman Tentang
+  // (audit 2026-10-31, BUG-05).
+  const roles = ((profile && loc(profile, 'aboutRoles', locale)) || tAbout('roles'))
     .split('|')
     .map((r) => r.trim())
     .filter(Boolean)
