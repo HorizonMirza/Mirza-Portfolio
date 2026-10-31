@@ -2622,7 +2622,8 @@ html[data-intro='pending'] body {
 .hero-shell {
   --hero-head: 59px;
   /* halo lembut dan panjang gradasi bawah foto; tema terang lebih tipis */
-  --hero-glow: rgb(29 95 208 / 0.16);
+  /* biru dari token --note, bukan warna mentah (audit 2026-10-31, EFF-10) */
+  --hero-glow: color-mix(in srgb, var(--note) 16%, transparent);
   --hero-fade: 14%;
   /* jejak hover di luar tubuh (bentuk cair tipis, seperti referensi HoverMaskReveal) */
   --hero-trail: rgb(10 10 10 / 0.07);
