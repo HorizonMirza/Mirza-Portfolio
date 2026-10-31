@@ -28,7 +28,7 @@ export function TechChips({
           <li key={s.id}>
             <span className="pj-tech" style={{ '--brand': color } as CSSProperties}>
               {logo ? (
-                // logo asli SVG statis kecil, isi SVG terisolasi di <img>
+                // logo asli berwarna (WebP 144 px dari public/skills, dibuat `pnpm logos:build`)
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={logo.src}

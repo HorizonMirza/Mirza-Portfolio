@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
-// Skema variabel lingkungan sisi server. Kunci milestone berikutnya sengaja opsional
-// dulu dan akan diwajibkan saat fiturnya dibuat (lihat Documentation/ARCHITECTURE.md bagian 8).
+// Skema variabel lingkungan sisi server (Documentation/ARCHITECTURE.md bagian 8). Kunci layanan
+// tambahan (Resend, Sentry, Cloudinary, dan lainnya) opsional: bila kosong, fitur terkait mati sendiri.
 export const serverEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   DATABASE_URL: z

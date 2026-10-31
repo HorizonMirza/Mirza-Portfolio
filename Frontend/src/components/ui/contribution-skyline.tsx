@@ -1431,8 +1431,8 @@ export default function ContributionSkyline({
         </div>
 
         {/* Statistik sebagai pita bawah bersekat di dalam kotak, baik 2D maupun 3D (pilihan pemilik
-            2026-10-16, demo S5): empat kolom di layar lebar, 2 x 2 di HP. Garis sekat berasal dari
-            celah 1 px di atas latar --border. */}
+            2026-10-16, demo S5): tiga kolom di semua ukuran layar. Garis sekat berasal dari celah
+            1 px di atas latar --border. */}
         <div className="grid grid-cols-[repeat(3,auto)] gap-px overflow-hidden rounded-b-[5px] border-t border-border bg-border md:grid-cols-3">
           {statBlocks.map((b) => (
             <Stat key={b.label} {...b} accent={theme.accent} />

@@ -46,9 +46,9 @@ export type SeedProject = {
 };
 
 export const profile: SeedProfile = {
-  // TODO(konten): nama tampilan di hero masih ditanyakan (CONTENT.md bagian 10 no. 1)
+  // nama lengkap sesuai CV; tampil di hero beranda dan bisa diubah lewat admin (Profil)
   name: "Muhammad Mirza Wirya",
-  // TODO(konten): kalimat hero masih draf (CONTENT.md bagian 2)
+  // headline: judul gambar pratinjau tautan dan deskripsi JSON-LD beranda; isi production diatur lewat admin
   headline: {
     id: "Mahasiswa AI BINUS yang membangun software dan komunitas.",
     en: "AI student at BINUS who builds software and communities.",

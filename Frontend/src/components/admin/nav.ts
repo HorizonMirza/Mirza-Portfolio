@@ -71,7 +71,7 @@ export const adminNav: readonly NavItem[] = [
   { href: '/admin/account', label: 'Akun', icon: KeyRound, group: 'Sistem' },
 ]
 
-// Menu dikelompokkan seperti label kecil di atas judul tiap halaman admin (Konten, Kotak masuk, ...).
+// Urutan kelompok menu di sidebar admin; tiap item memilih kelompoknya lewat `group`.
 export const adminNavGroups = ['Utama', 'Halaman situs', 'Kotak masuk', 'Sistem'] as const
 
 function under(pathname: string, href: string) {
