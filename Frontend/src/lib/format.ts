@@ -17,9 +17,13 @@ export function formatDateTime(date: Date): string {
   return `${dateTimeFormatter.format(date)} WIB`
 }
 
+// en-CA menghasilkan format YYYY-MM-DD. Formatter dibuat sekali, bukan tiap panggilan
+// (dipanggil per baris kunjungan di dasbor; audit 2026-10-31, EFF-05).
+const dayKeyFormatter = new Intl.DateTimeFormat('en-CA', { timeZone: DISPLAY_TIME_ZONE })
+
 // Kunci hari kalender (YYYY-MM-DD) menurut Asia/Jakarta.
 export function jakartaDayKey(date: Date): string {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: DISPLAY_TIME_ZONE }).format(date)
+  return dayKeyFormatter.format(date)
 }
 
 // Label singkat untuk kunci hari, mis. "30 Sep".
@@ -45,10 +49,12 @@ const monthFormatter = new Intl.DateTimeFormat('id-ID', {
   timeZone: 'UTC',
 })
 
-export function formatMonth(date: Date): string {
+// Hanya dipakai formatPeriod (admin). Nama berbeda dari formatMonth di lib/localized.ts yang menerima
+// "YYYY-MM" dan locale, agar impor otomatis tidak tertukar (audit 2026-10-31, EFF-06).
+function formatDateMonth(date: Date): string {
   return monthFormatter.format(date)
 }
 
 export function formatPeriod(start: Date, end: Date | null): string {
-  return `${formatMonth(start)} – ${end ? formatMonth(end) : 'sekarang'}`
+  return `${formatDateMonth(start)} – ${end ? formatDateMonth(end) : 'sekarang'}`
 }

@@ -9,13 +9,15 @@ export function loc<K extends string>(row: Localized<K>, key: K, locale: AppLoca
 
 const intlLocale: Record<AppLocale, string> = { id: 'id-ID', en: 'en-GB' }
 
+// Formatter disimpan per locale: dipanggil dua kali per entri pengalaman di setiap render.
+const monthFormatters: Record<AppLocale, Intl.DateTimeFormat> = {
+  id: new Intl.DateTimeFormat(intlLocale.id, { month: 'short', year: 'numeric', timeZone: 'UTC' }),
+  en: new Intl.DateTimeFormat(intlLocale.en, { month: 'short', year: 'numeric', timeZone: 'UTC' }),
+}
+
 // "2025-07" → "Jul 2025". Kolom tanggal disimpan tanpa zona waktu, jadi diformat dengan UTC.
 export function formatMonth(month: string, locale: AppLocale): string {
-  return new Intl.DateTimeFormat(intlLocale[locale], {
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(new Date(`${month}-01T00:00:00Z`))
+  return monthFormatters[locale].format(new Date(`${month}-01T00:00:00Z`))
 }
 
 export function formatDateShort(iso: string, locale: AppLocale): string {
