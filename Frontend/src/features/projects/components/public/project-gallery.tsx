@@ -10,8 +10,10 @@ export type GalleryImage = { url: string; alt: string; width: number | null; hei
 
 // Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08, DESIGN.md bagian 47): satu
 // foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan
-// layar laptop maupun HP tidak terpotong. Semua gambar sudah ada di HTML sehingga
-// tanpa JavaScript foto pertama tetap tampil.
+// layar laptop maupun HP tidak terpotong. Foto besar yang dirender hanya foto aktif, dua tetangganya,
+// dan foto yang sudah pernah dilihat: semua foto bertumpuk di area terlihat sehingga lazy-load
+// browser tidak berlaku, dan tanpa pembatasan ini semua foto penuh diunduh di awal (audit
+// 2026-10-31, EFF-02). Tanpa JavaScript foto pertama tetap tampil.
 // Ganti foto: klik separuh kiri/kanan foto besar, tekan gambar kecil, atau tombol panah keyboard,
 // dengan bunyi desir. Tombol panah di atas foto dihapus (revisi pemilik 2026-10-08), geser diganti
 // klik kiri/kanan (2026-10-09). Gambar dari
@@ -31,7 +33,15 @@ export function ProjectGallery({
   labels: { gallery: string; thumb: string; imageOf: string }
 }) {
   const [active, setActive] = useState(0)
+  // foto yang pernah aktif tetap terpasang agar kembali ke sana langsung memudar tanpa unduh ulang
+  const [visited, setVisited] = useState<ReadonlySet<number>>(() => new Set([0]))
   const many = images.length > 1
+  const count = images.length
+  const mounted = (i: number) =>
+    i === active ||
+    visited.has(i) ||
+    i === (active + 1) % count ||
+    i === (active - 1 + count) % count
 
   if (images.length === 0) return null
 
@@ -40,6 +50,7 @@ export function ProjectGallery({
     if (target === active) return
     playSlideSound(next > active)
     setActive(target)
+    setVisited((prev) => (prev.has(target) ? prev : new Set(prev).add(target)))
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLDivElement>) {
@@ -83,20 +94,22 @@ export function ProjectGallery({
         >
           <ViewTransition name={`project-${slug}`} share="morph" default="none">
             <div className="absolute inset-0">
-              {images.map((img, i) => (
-                <Image
-                  key={img.url}
-                  src={img.url}
-                  alt={i === active ? img.alt : ''}
-                  aria-hidden={i === active ? undefined : true}
-                  data-active={i === active}
-                  fill
-                  sizes="(min-width: 1280px) 1200px, 100vw"
-                  priority={i === 0}
-                  draggable={false}
-                  className="object-contain"
-                />
-              ))}
+              {images.map((img, i) =>
+                mounted(i) ? (
+                  <Image
+                    key={img.url}
+                    src={img.url}
+                    alt={i === active ? img.alt : ''}
+                    aria-hidden={i === active ? undefined : true}
+                    data-active={i === active}
+                    fill
+                    sizes="(min-width: 1280px) 1200px, 100vw"
+                    priority={i === 0}
+                    draggable={false}
+                    className="object-contain"
+                  />
+                ) : null,
+              )}
             </div>
           </ViewTransition>
         </div>
