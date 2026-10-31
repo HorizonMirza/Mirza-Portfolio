@@ -7,6 +7,7 @@ import { browserAddress, imageRatio } from '@/features/projects/browser-address'
 import type { PublicProjectSummary } from '@/features/projects/public'
 import type { AppLocale } from '@/i18n/routing'
 import { Link } from '@/i18n/navigation'
+import { siteHost } from '@/lib/env'
 import { loc } from '@/lib/localized'
 import { cn } from '@/lib/utils'
 
@@ -33,7 +34,7 @@ export async function ProjectRow({
   const flip = index % 2 === 1
   const number = String(index + 1).padStart(2, '0')
   const href = `/projects/${project.slug}`
-  const address = browserAddress(project)
+  const address = browserAddress(project, siteHost())
 
   return (
     <article className="pj-zz group relative grid grid-cols-1 items-center gap-5 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-8 has-[a:focus-visible]:outline-primary md:grid-cols-2 md:gap-12">

@@ -116,3 +116,9 @@ export function siteUrl(source: Record<string, string | undefined> = process.env
   if (deployment) return `https://${deployment}`
   return 'http://localhost:3000'
 }
+
+// Nama host situs tanpa protokol (mis. "mmirza.site"), untuk teks tampilan seperti kolom alamat
+// bingkai browser project dan pita lanyard kontak.
+export function siteHost(source: Record<string, string | undefined> = process.env): string {
+  return new URL(siteUrl(source)).host
+}

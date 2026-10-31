@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { getEmailConfig } from '@/lib/email'
-import { siteUrl } from '@/lib/env'
+import { browserAddress } from '@/features/projects/browser-address'
+import { siteHost, siteUrl } from '@/lib/env'
 import { formatMonth, loc } from '@/lib/localized'
 import { safeImage } from '@/lib/public-image'
 import { isBot, isSameOrigin } from '@/lib/request'
@@ -52,6 +53,15 @@ describe('siteUrl', () => {
       'https://x.vercel.app',
     )
     expect(siteUrl({})).toBe('http://localhost:3000')
+  })
+})
+
+describe('siteHost dan browserAddress', () => {
+  it('alamat bingkai project memakai host situs, bukan domain yang ditulis mati', () => {
+    const host = siteHost({ NEXT_PUBLIC_SITE_URL: 'https://contoh.dev/' })
+    expect(host).toBe('contoh.dev')
+    expect(browserAddress({ slug: 'gaas', demoUrl: null }, host)).toBe('contoh.dev/projects/gaas')
+    expect(browserAddress({ slug: 'gaas', demoUrl: 'https://gaas.app/' }, host)).toBe('gaas.app')
   })
 })
 

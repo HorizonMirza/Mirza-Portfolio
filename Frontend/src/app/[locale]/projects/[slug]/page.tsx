@@ -12,6 +12,7 @@ import { ProjectGallery } from '@/features/projects/components/public/project-ga
 import { getPublishedProject, getPublishedProjects } from '@/features/projects/public'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import { routing } from '@/i18n/routing'
+import { siteHost } from '@/lib/env'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
@@ -120,7 +121,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
       <div className="mx-auto mt-6 max-w-6xl md:mt-10">
         <ProjectGallery
           slug={project.slug}
-          address={browserAddress(project)}
+          address={browserAddress(project, siteHost())}
           images={images}
           labels={{
             gallery: t('gallery', { title }),
