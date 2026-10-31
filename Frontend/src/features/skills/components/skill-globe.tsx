@@ -483,10 +483,13 @@ export function SkillGlobe({
     // Putaran otomatis cukup 30 fps (pelan, tetap halus); seret dan arah ke logo tetap tiap bingkai.
     // Selama halaman digulir loop berhenti dan lanjut setelahnya (laporan lag pemilik 2026-10-20).
     let lastDraw = 0
+    let cancelResume = () => {}
     const loop = (time: number) => {
       frame = 0
+      if (disposed) return
       if (!drag && !target && isScrolling()) {
-        onScrollEnd(wake)
+        cancelResume()
+        cancelResume = onScrollEnd(wake)
         return
       }
       if (!drag && !target && time - lastDraw < AUTO_FRAME_MS) {
@@ -501,8 +504,9 @@ export function SkillGlobe({
       draw()
       if (visible && moving) frame = requestAnimationFrame(loop)
     }
+    // tidak pernah menjadwalkan bingkai setelah globe dibongkar (audit 2026-10-31, BUG-02)
     const wake = () => {
-      if (!frame && visible) frame = requestAnimationFrame(loop)
+      if (!disposed && !frame && visible) frame = requestAnimationFrame(loop)
     }
     controls.current = {
       face: (index) => {
@@ -625,6 +629,7 @@ export function SkillGlobe({
 
     return () => {
       disposed = true
+      cancelResume()
       cancelAnimationFrame(frame)
       resizeObserver.disconnect()
       visibility.disconnect()

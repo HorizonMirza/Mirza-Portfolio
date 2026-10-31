@@ -30,9 +30,15 @@ export function isScrolling() {
   return scrolling
 }
 
-// jalankan `resume` sekali setelah gulir berhenti (mis. memulai lagi loop animasi)
-export function onScrollEnd(resume: () => void) {
+// jalankan `resume` sekali setelah gulir berhenti (mis. memulai lagi loop animasi). Mengembalikan
+// fungsi pembatal: komponen yang dibongkar saat halaman masih digulir wajib memanggilnya, agar
+// loop animasinya tidak hidup lagi setelah komponen hilang (audit 2026-10-31, BUG-01/02).
+export function onScrollEnd(resume: () => void): () => void {
   listen()
-  if (!scrolling) resume()
-  else waiting.add(resume)
+  if (!scrolling) {
+    resume()
+    return () => {}
+  }
+  waiting.add(resume)
+  return () => waiting.delete(resume)
 }

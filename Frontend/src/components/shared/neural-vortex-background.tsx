@@ -155,11 +155,16 @@ export function NeuralVortexBackground({
 
     const minGap = 1000 / fps - 2
     let drawnAt = 0
+    // true setelah kanvas dibongkar: tidak ada bingkai baru yang boleh dijadwalkan lagi
+    let disposed = false
+    let cancelResume = () => {}
     const loop = (time: number) => {
+      if (disposed) return
       // selama halaman digulir bingkai dilewati (gambar terakhir tetap tampil), lanjut setelahnya
       if (isScrolling()) {
         frame = 0
-        onScrollEnd(start)
+        cancelResume()
+        cancelResume = onScrollEnd(start)
         return
       }
       if (time - drawnAt >= minGap) {
@@ -170,7 +175,13 @@ export function NeuralVortexBackground({
     }
     let onScreen = true
     const start = () => {
-      if (!reduceMotion && !frame && onScreen && document.visibilityState === 'visible') {
+      if (
+        !disposed &&
+        !reduceMotion &&
+        !frame &&
+        onScreen &&
+        document.visibilityState === 'visible'
+      ) {
         frame = requestAnimationFrame(loop)
       }
     }
@@ -204,6 +215,8 @@ export function NeuralVortexBackground({
     document.addEventListener('visibilitychange', onVisibility)
 
     return () => {
+      disposed = true
+      cancelResume()
       stop()
       io.disconnect()
       resizeObserver.disconnect()
