@@ -26,6 +26,8 @@ vi.mock('@/lib/auth-guard', () => {
 const id = '01a0f218-0209-7656-a356-02d34f1c52c3'
 
 const cases: [string, () => Promise<unknown>][] = []
+// semua fungsi yang diekspor modul Server Action admin, untuk memastikan tidak ada yang terlewat
+const exported: string[] = []
 async function load() {
   const projects = await import('@/features/projects/actions')
   const skills = await import('@/features/skills/actions')
@@ -35,6 +37,24 @@ async function load() {
   const subscribers = await import('@/features/subscribers/actions')
   const assets = await import('@/features/assets/actions')
   const account = await import('@/features/account/actions')
+  const settings = await import('@/features/settings/actions')
+  const siteText = await import('@/features/site-text/actions')
+  for (const mod of [
+    projects,
+    skills,
+    experience,
+    profile,
+    messages,
+    subscribers,
+    assets,
+    account,
+    settings,
+    siteText,
+  ]) {
+    for (const [name, value] of Object.entries(mod)) {
+      if (typeof value === 'function') exported.push(name)
+    }
+  }
   cases.push(
     ['saveProject', () => projects.saveProject(null, {})],
     ['deleteProject', () => projects.deleteProject(id)],
@@ -57,6 +77,10 @@ async function load() {
     ['updateAssetAlt', () => assets.updateAssetAlt(id, {})],
     ['removeAsset', () => assets.removeAsset(id)],
     ['changePassword', () => account.changePassword({})],
+    // tiga action yang belum tercakup (audit 2026-10-31, GAP-04)
+    ['saveSiteTexts', () => siteText.saveSiteTexts('home', {})],
+    ['saveSoundVolume', () => settings.saveSoundVolume({})],
+    ['saveIntroNotice', () => settings.saveIntroNotice({})],
   )
 }
 
@@ -72,5 +96,9 @@ describe('otorisasi Server Action admin', async () => {
       message: expect.stringMatching(/Sesi berakhir/),
     })
     expect(getDb).not.toHaveBeenCalled()
+  })
+
+  it('setiap Server Action admin yang diekspor ada di daftar uji', () => {
+    expect([...exported].sort()).toEqual(cases.map(([name]) => name).sort())
   })
 })
