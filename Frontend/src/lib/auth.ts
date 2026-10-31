@@ -8,12 +8,12 @@ import { after } from 'next/server'
 import { getDb } from '@/lib/db'
 import { getAuthEnv, resolveBaseUrl, trustedAuthOrigins } from '@/lib/env'
 import { notifyLogin } from '@/lib/login-notice'
+import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
 import { authRateLimitStorage, hashIdentifier } from '@/lib/rate-limit'
 
 // Batas percobaan login: 5 kali per 15 menit per IP (ARCHITECTURE.md bagian 7).
 export const LOGIN_RATE_LIMIT = { window: 15 * 60, max: 5 } as const
 export const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60
-export const MIN_PASSWORD_LENGTH = 12
 
 function createAuth() {
   const env = getAuthEnv()

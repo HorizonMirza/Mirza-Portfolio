@@ -3,6 +3,7 @@ import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
 
 import { PrismaClient } from '../src/generated/prisma/client'
+import { MIN_PASSWORD_LENGTH } from '../src/lib/password-policy'
 import { experiences, profile, projects, skillCategories } from '../../Database/seed/seed-data'
 import { seedId } from './seed-ids'
 
@@ -135,7 +136,9 @@ async function seedAdmin(db: PrismaClient) {
     console.log('ADMIN_EMAIL/ADMIN_PASSWORD kosong, akun admin tidak dibuat.')
     return
   }
-  if (password.length < 12) throw new Error('ADMIN_PASSWORD minimal 12 karakter')
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    throw new Error(`ADMIN_PASSWORD minimal ${MIN_PASSWORD_LENGTH} karakter`)
+  }
 
   const existing = await db.user.findUnique({ where: { email } })
   if (existing) {

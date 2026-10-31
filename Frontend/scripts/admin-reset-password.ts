@@ -3,6 +3,7 @@ import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
 
 import { PrismaClient } from '../src/generated/prisma/client'
+import { MIN_PASSWORD_LENGTH } from '../src/lib/password-policy'
 
 config({ path: ['.env.local', '.env'], quiet: true })
 
@@ -15,7 +16,9 @@ async function main() {
   const password = process.env.ADMIN_NEW_PASSWORD
   if (!connectionString) throw new Error('DATABASE_URL belum diisi')
   if (!email) throw new Error('ADMIN_EMAIL belum diisi')
-  if (!password || password.length < 12) throw new Error('ADMIN_NEW_PASSWORD minimal 12 karakter')
+  if (!password || password.length < MIN_PASSWORD_LENGTH) {
+    throw new Error(`ADMIN_NEW_PASSWORD minimal ${MIN_PASSWORD_LENGTH} karakter`)
+  }
 
   const db = new PrismaClient({ adapter: new PrismaPg({ connectionString }) })
   try {

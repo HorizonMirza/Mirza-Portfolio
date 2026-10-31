@@ -9,9 +9,10 @@ import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
 
 import { changePassword } from '../actions'
-import { type ChangePasswordInput, changePasswordSchema, MIN_PASSWORD } from '../schema'
+import { type ChangePasswordInput, changePasswordSchema } from '../schema'
 
 const empty: ChangePasswordInput = { currentPassword: '', newPassword: '', confirmPassword: '' }
 
@@ -55,7 +56,7 @@ export function ChangePasswordForm() {
         <Field
           id="newPassword"
           label="Password baru"
-          hint={`Minimal ${MIN_PASSWORD} karakter. Frasa panjang lebih kuat daripada simbol acak.`}
+          hint={`Minimal ${MIN_PASSWORD_LENGTH} karakter. Frasa panjang lebih kuat daripada simbol acak.`}
           error={errors.newPassword?.message}
         >
           {(a) => (

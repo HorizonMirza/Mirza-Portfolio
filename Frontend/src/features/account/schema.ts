@@ -1,13 +1,13 @@
 import { z } from 'zod'
 
-export const MIN_PASSWORD = 12
+import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
 
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Password saat ini wajib diisi').max(128),
     newPassword: z
       .string()
-      .min(MIN_PASSWORD, `Password baru minimal ${MIN_PASSWORD} karakter`)
+      .min(MIN_PASSWORD_LENGTH, `Password baru minimal ${MIN_PASSWORD_LENGTH} karakter`)
       .max(128, 'Password baru maksimal 128 karakter'),
     confirmPassword: z.string(),
   })
