@@ -39,11 +39,15 @@ test('tombol bahasa berpindah ke versi Inggris di halaman yang sama', async ({ p
   await expect(page).toHaveURL(/\/id\/experience$/)
 })
 
-test('ganti bahasa tidak membuat tema berkedip', async ({ page }) => {
+test('ganti bahasa tidak membuat tema berkedip', async ({ browser }) => {
   // Laporan pemilik 2026-10-21: saat ganti bahasa React memasang ulang atribut <html> dan kelas tema
   // sempat hilang sampai next-themes memasangnya lagi. Tiap perubahan atribut <html> dicatat; saat
   // pencatat berjalan (setelah commit React selesai) kelas tema harus sudah kembali.
+  // Tiap tema memakai konteks baru: memakai ulang satu halaman membuat iterasi kedua di Firefox
+  // menggantung menunggu navigasi (CI 2026-10-30, dua kali di langkah klik yang sama).
   for (const theme of ['dark', 'light'] as const) {
+    const context = await browser.newContext()
+    const page = await context.newPage()
     await page.addInitScript((t) => localStorage.setItem('mmirza-theme', t), theme)
     await page.goto('/id/about')
     await page.evaluate((t) => {
@@ -62,6 +66,7 @@ test('ganti bahasa tidak membuat tema berkedip', async ({ page }) => {
     )
     expect(lost, `kelas ${theme} hilang saat ganti bahasa`).toBe(0)
     await expect(page.locator('html')).toHaveClass(new RegExp(`\\b${theme}\\b`))
+    await context.close()
   }
 })
 
