@@ -16,7 +16,7 @@ Every module comes in Indonesian and English, dark by default with a light theme
 |---|---|
 | **Home** | Name behind the photo with a WebGL armor reveal, experience accordion, projects marquee, skills globe, GitHub contribution graph |
 | **About** | Bio, education, and a tilting photo card |
-| **Experience** | Timeline of work and organizations, with filters |
+| **Experience** | Timeline of work and organizations |
 | **Projects** | Spotlight list and detail pages (role, tech stack, gallery, demo and code links) |
 | **Contact** | Rate-limited form with honeypot and a "message sent" ticket |
 | **Privacy** | What the site collects and why |
