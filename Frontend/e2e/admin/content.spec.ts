@@ -167,7 +167,15 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   await expect(page.getByText(/Kategori masih berisi \d+ skill/)).toBeVisible()
 })
 
-test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
+// Dua tes di bawah mengubah data global bersama (pengaturan situs dan teks Home), lalu
+// mengembalikannya. Bila dijalankan di semua proyek browser sekaligus, satu proyek bisa
+// mengembalikan nilai saat proyek lain masih memeriksanya (audit 2026-10-31, BUG-07). Karena itu
+// keduanya hanya berjalan di proyek chromium; alur admin ini tidak bergantung pada mesin browser.
+const GLOBAL_MUTATION_PROJECT = 'chromium'
+const globalMutationReason = 'mengubah data global bersama; satu proyek saja agar tidak balapan'
+
+test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
   await page.goto('/admin/settings')
   const slider = page.getByLabel('Volume')
   const output = page.locator('output[for="soundVolume"]')
@@ -193,41 +201,49 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }) => {
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
 })
 
-test('modul Home: judul bagian diubah, tampil di situs, lalu dikembalikan ke bawaan', async ({
+test('modul Home: judul beranda diubah, tampil di situs, lalu dikembalikan ke bawaan', async ({
   page,
-}) => {
-  const field = () => page.getByLabel('Indonesia untuk Bagian keahlian')
+}, testInfo) => {
+  test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
+  // Judul tab beranda dipakai karena tidak ada tes lain yang memeriksanya; judul bagian yang dulu
+  // diubah di sini dibaca tes publik yang berjalan bersamaan.
+  const field = () => page.getByLabel('Indonesia untuk Judul beranda')
   await page.goto('/admin/pages/home')
   // placeholder menampilkan teks bawaan
-  await expect(field()).toHaveAttribute('placeholder', 'Keahlian Teknis')
+  await expect(field()).toHaveAttribute(
+    'placeholder',
+    'Muhammad Mirza · Fullstack developer dan pembangun komunitas',
+  )
 
   await expect(async () => {
-    await field().fill('Tumpukan Teknologi')
-    await expect(field()).toHaveValue('Tumpukan Teknologi', { timeout: 1000 })
+    await field().fill('Beranda Uji Otomatis')
+    await expect(field()).toHaveValue('Beranda Uji Otomatis', { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
   // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
   await expect
     .poll(async () => (await page.request.get('/id')).text())
-    .toContain('Tumpukan Teknologi')
+    .toContain('Beranda Uji Otomatis')
   // bahasa lain tidak ikut berubah
-  expect(await (await page.request.get('/en')).text()).toContain('Technical Skills')
+  expect(await (await page.request.get('/en')).text()).toContain('community builder')
 
   // kurung kurawal di teks tanpa placeholder ditolak
   await expect(async () => {
-    await field().fill('Bagian {rusak}')
-    await expect(field()).toHaveValue('Bagian {rusak}', { timeout: 1000 })
+    await field().fill('Beranda {rusak}')
+    await expect(field()).toHaveValue('Beranda {rusak}', { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Tidak boleh memakai tanda kurung kurawal { }')).toBeVisible()
 
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
   await page.goto('/admin/pages/home')
-  await page.getByRole('button', { name: 'Kembalikan bawaan: Bagian keahlian' }).click()
+  await page.getByRole('button', { name: 'Kembalikan bawaan: Judul beranda' }).click()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
-  await expect.poll(async () => (await page.request.get('/id')).text()).toContain('Keahlian Teknis')
+  await expect
+    .poll(async () => (await page.request.get('/id')).text())
+    .toContain('pembangun komunitas')
 })
 
 test('modul Home menampilkan slot potret dan armor hero beranda', async ({ page }) => {
