@@ -28,6 +28,18 @@ export type ItemGeometry = {
 // pikselnya pindah ke memori CPU dan harus diunggah setiap kali digambar)
 export type ItemSprite = { normal: CanvasImageSource; gray: CanvasImageSource }
 
+// Lepas memori GPU sprite yang tidak dipakai lagi (ganti tema membuat set baru, audit 2026-10-31
+// EFF-03). Kanvas cadangan (tanpa createImageBitmap) cukup dibiarkan ke pembersih memori.
+export function releaseSprites(list: readonly (ItemSprite | undefined)[]) {
+  if (typeof ImageBitmap === 'undefined') return
+  for (const sprite of list) {
+    if (!sprite) continue
+    for (const image of [sprite.normal, sprite.gray]) {
+      if (image instanceof ImageBitmap) image.close()
+    }
+  }
+}
+
 export type ItemState = {
   cx: number
   cy: number

@@ -23,6 +23,7 @@ import {
   type ItemSprite,
   type Palette,
   measureItem,
+  releaseSprites,
 } from './globe-sprites'
 
 // garis bola: ruas per lingkaran dan jumlah tingkat kedalaman untuk pengelompokan stroke
@@ -260,7 +261,11 @@ export function SkillGlobe({
       const next = await Promise.all(
         els.map((el, i) => (el ? buildSprite(el, geoms[i]?.inner ?? 32, dark) : undefined)),
       )
-      if (disposed || round !== spriteRound) return
+      if (disposed || round !== spriteRound) {
+        releaseSprites(next)
+        return
+      }
+      releaseSprites(sprites)
       sprites = next
       if (!painted) {
         painted = true
@@ -631,6 +636,8 @@ export function SkillGlobe({
       disposed = true
       cancelResume()
       cancelAnimationFrame(frame)
+      releaseSprites(sprites)
+      sprites = []
       resizeObserver.disconnect()
       visibility.disconnect()
       themeObserver.disconnect()
