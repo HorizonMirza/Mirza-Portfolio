@@ -169,16 +169,16 @@
     "contactHeading": "Formulir kontak",
     "contactBody": "Nama, email, subjek, dan isi pesan disimpan agar saya bisa membalas. Alamat IP hanya disimpan sebagai kode acak untuk mencegah spam. Pesan disimpan sampai saya menghapusnya.",
     "newsletterHeading": "Newsletter",
-    "newsletterBody": "Email Anda disimpan setelah Anda mengonfirmasi lewat tautan di email. Anda bisa berhenti kapan saja dari tautan di tiap email, dan data Anda bisa saya hapus atas permintaan.",
+    "newsletterBody": "Saat ini situs tidak menyediakan formulir newsletter, jadi tidak ada email baru yang dikumpulkan. Bila dibuka lagi, email hanya disimpan setelah Anda mengonfirmasi lewat tautan di email, Anda bisa berhenti kapan saja dari tautan di tiap email, dan data Anda bisa saya hapus atas permintaan.",
     "cvHeading": "Unduhan CV",
     "cvBody": "Hanya jumlah unduhan dan bahasa halaman yang dicatat, tanpa data pribadi.",
     "servicesHeading": "Layanan pihak ketiga",
-    "servicesBody": "Situs dijalankan di Vercel, database di Neon (Singapura), gambar dan CV di Cloudinary, dan email dikirim lewat Resend. Vercel Web Analytics dan Speed Insights mencatat jumlah kunjungan dan kecepatan halaman tanpa cookie, dengan alamat halaman tanpa parameter. Error di server dilaporkan ke Sentry tanpa data pribadi. Masing-masing hanya menerima data yang dibutuhkan untuk menjalankan fungsinya.",
+    "servicesBody": "Situs dijalankan di Vercel, database di Neon (Singapura), serta gambar dan CV di Cloudinary. Layanan berikut hanya dipakai bila sedang diaktifkan: Resend untuk mengirim email, Vercel Web Analytics dan Speed Insights untuk mencatat jumlah kunjungan dan kecepatan halaman tanpa cookie (alamat halaman tanpa parameter), dan Sentry untuk laporan error server tanpa data pribadi. Masing-masing hanya menerima data yang dibutuhkan untuk menjalankan fungsinya.",
     "rightsHeading": "Hak Anda",
     "rightsBody": "Anda bisa meminta salinan atau penghapusan data Anda lewat halaman kontak.",
     "contactLink": "Buka halaman kontak",
     "creditsHeading": "Kredit",
-    "creditsBody": "Logo dari Devicon (MIT) dan Simple Icons, merek dagang milik pemiliknya; logo Git oleh Jason Long, CC BY 3.0."
+    "creditsBody": "Logo dari Devicon (MIT) dan Simple Icons, merek dagang milik pemiliknya; logo Git oleh Jason Long, CC BY 3.0. Logo Word, Excel, dan PowerPoint milik Microsoft, Claude milik Anthropic, Codex milik OpenAI, Kiro milik Amazon, dan Google Antigravity milik Google."
   },
   "Error": {
     "title": "Terjadi kesalahan",

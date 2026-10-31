@@ -2,13 +2,15 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
+import { getPrivacyEditedAt } from '@/features/site-text/public'
 import { Link } from '@/i18n/navigation'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { formatDateShort } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
 
-// Perbarui tanggal ini setiap kali isi kebijakan berubah.
-const UPDATED_AT = '2026-10-01T00:00:00Z'
+// Tanggal perubahan teks bawaan (messages/*.json); perbarui setiap kali isi bawaan kebijakan diubah
+// di kode. Suntingan lewat admin dihitung otomatis dari SiteText (getPrivacyEditedAt).
+const DEFAULT_TEXT_UPDATED_AT = '2026-10-31T00:00:00Z'
 
 const SECTIONS = ['visits', 'contact', 'newsletter', 'cv', 'services', 'rights', 'credits'] as const
 
@@ -28,11 +30,17 @@ export async function generateMetadata({
 
 export default async function PrivacyPage({ params }: PageProps<'/[locale]/privacy'>) {
   const locale = await resolveLocale(params)
-  const t = await getTranslations({ locale, namespace: 'Privacy' })
+  const [t, editedAt] = await Promise.all([
+    getTranslations({ locale, namespace: 'Privacy' }),
+    getPrivacyEditedAt(),
+  ])
+  // yang lebih baru di antara perubahan teks bawaan dan suntingan admin
+  const updatedAt =
+    editedAt && editedAt > DEFAULT_TEXT_UPDATED_AT ? editedAt : DEFAULT_TEXT_UPDATED_AT
   return (
     <Container className="pb-20">
       <PageIntro
-        eyebrow={t('updated', { date: formatDateShort(UPDATED_AT, locale) })}
+        eyebrow={t('updated', { date: formatDateShort(updatedAt, locale) })}
         title={t('title')}
         intro={t('intro')}
       />

@@ -169,16 +169,16 @@
     "contactHeading": "Contact form",
     "contactBody": "Your name, email, subject, and message are stored so I can reply. Your IP address is only kept as a random code to prevent spam. Messages are kept until I delete them.",
     "newsletterHeading": "Newsletter",
-    "newsletterBody": "Your email is stored once you confirm through the link in the email. You can unsubscribe anytime from the link in every email, and I will delete your data on request.",
+    "newsletterBody": "The site has no newsletter form right now, so no new email addresses are collected. If it opens again, your email is stored only after you confirm through the link in the email, you can unsubscribe anytime from the link in every email, and I will delete your data on request.",
     "cvHeading": "CV downloads",
     "cvBody": "Only the number of downloads and the page language are recorded, with no personal data.",
     "servicesHeading": "Third-party services",
-    "servicesBody": "The site runs on Vercel, the database on Neon (Singapore), images and the CV on Cloudinary, and email is sent through Resend. Vercel Web Analytics and Speed Insights record visit counts and page speed without cookies, using page addresses without parameters. Server errors are reported to Sentry without personal data. Each receives only the data it needs to do its job.",
+    "servicesBody": "The site runs on Vercel, the database on Neon (Singapore), and images and the CV on Cloudinary. These services are used only while they are switched on: Resend to send email, Vercel Web Analytics and Speed Insights to record visit counts and page speed without cookies (page addresses without parameters), and Sentry for server error reports without personal data. Each receives only the data it needs to do its job.",
     "rightsHeading": "Your rights",
     "rightsBody": "You can ask for a copy or deletion of your data through the contact page.",
     "contactLink": "Go to the contact page",
     "creditsHeading": "Credits",
-    "creditsBody": "Logos from Devicon (MIT) and Simple Icons, trademarks of their owners; Git logo by Jason Long, CC BY 3.0."
+    "creditsBody": "Logos from Devicon (MIT) and Simple Icons, trademarks of their owners; Git logo by Jason Long, CC BY 3.0. The Word, Excel, and PowerPoint logos belong to Microsoft, Claude to Anthropic, Codex to OpenAI, Kiro to Amazon, and Google Antigravity to Google."
   },
   "Error": {
     "title": "Something went wrong",
