@@ -88,7 +88,7 @@ Catatan:
 - Data dari `unstable_cache` diserialisasi JSON, jadi query publik hanya mengembalikan nilai sederhana (tanggal sebagai string `YYYY-MM` atau ISO).
 - Build butuh database (`DATABASE_URL`) karena halaman publik dirender dari data. CI dan Vercel sudah menyediakannya.
 - **Jangan** `export const dynamicParams = false` di `app/[locale]/layout.tsx`: render ulang ISR setelah revalidasi gagal (`NoFallbackError`) dan semua halaman publik menjadi 404. Locale asing ditolak lewat `hasLocale()`.
-- Filter tidak membuat halaman dinamis: filter pengalaman memakai radio + CSS `:has()` (tanpa JS), filter project di klien dan baru muncul bila ≥ 3 project atau ≥ 2 kategori.
+- Halaman publik tanpa filter: filter Pengalaman dihapus 2026-10-03 dan filter Project dihapus 2026-10-08 (revisi pemilik, DESIGN.md). Filter kategori yang tersisa hanya di globe skill beranda (komponen klien).
 - Gambar publik hanya dari akun Cloudinary di `CLOUDINARY_CLOUD_NAME` (`lib/public-image.ts`); gambar lain dilewati agar halaman tidak gagal render.
 
 ## 4. Struktur Folder
@@ -510,7 +510,7 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 10 | Mutasi admin (termasuk tanda tangan unggah dan impor GitHub) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
 | 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
-| 13 | Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()` | Hampir tanpa JavaScript klien, Esc dan fokus ditangani browser | Final (M3, 2026-09-30) |
+| 13 | ~~Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()`~~ **Diganti:** menu HP kini menu bawah tetap (tautan biasa, tanpa `popover`) dan filter pengalaman dihapus 2026-10-03 | Hampir tanpa JavaScript klien | Diganti (revisi pemilik, DESIGN.md) |
 | 14 | Konfirmasi dan berhenti newsletter lewat tombol (POST) di halaman, bukan GET di tautan email | Pemindai tautan email tidak ikut mengonfirmasi atau memberhentikan langganan | Final (M3, 2026-09-30) |
 | 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
 | 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
