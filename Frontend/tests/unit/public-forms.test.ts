@@ -106,6 +106,26 @@ describe('submitContact', () => {
       expect.objectContaining({ to: 'owner@example.com', replyTo: 'rina@example.com' }),
     )
   })
+  it('baris baru di nama tidak ikut ke subjek email notifikasi', async () => {
+    emailConfig = {
+      RESEND_API_KEY: 'x',
+      EMAIL_FROM: 'a@b.c',
+      CONTACT_TO_EMAIL: 'owner@example.com',
+    }
+    const r = await submitContact(
+      idle,
+      form({ ...validContact, name: 'Rina\r\nBcc: korban@example.com\u0007' }),
+    )
+    expect(r.status).toBe('success')
+    const calls = sendEmail.mock.calls as unknown as [{ subject: string }][]
+    const sent = calls.at(-1)![0]
+    expect(sent.subject).toBe('Pesan baru: Rina Bcc: korban@example.com')
+    expect(sent.subject).not.toMatch(/[\r\n]/)
+  })
+  it('nama yang hanya berisi karakter kontrol ditolak sebagai kosong', async () => {
+    const r = await submitContact(idle, form({ ...validContact, name: '\n\t\u0000' }))
+    expect(r).toMatchObject({ status: 'error', fieldErrors: { name: 'nameRequired' } })
+  })
 })
 
 describe('subscribeNewsletter', () => {

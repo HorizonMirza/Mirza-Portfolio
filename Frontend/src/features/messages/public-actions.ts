@@ -11,7 +11,7 @@ import { siteUrl } from '@/lib/env'
 import type { PublicFormState } from '@/lib/form-state'
 import { consumePublicRateLimit, hashIdentifier } from '@/lib/rate-limit'
 
-import { CONTACT_RATE_LIMIT, contactSchema } from './public-schema'
+import { CONTACT_RATE_LIMIT, contactSchema, toSingleLine } from './public-schema'
 
 function field(formData: FormData, name: string) {
   const v = formData.get(name)
@@ -73,7 +73,8 @@ export async function submitContact(
       try {
         await sendEmail({
           to: config.CONTACT_TO_EMAIL,
-          subject: `Pesan baru: ${data.subject || data.name}`.slice(0, 150),
+          // nama dan subjek sudah satu baris dari skema; dibersihkan lagi sebagai pengaman header email
+          subject: toSingleLine(`Pesan baru: ${data.subject || data.name}`).slice(0, 150),
           html: await render(email),
           text: await render(email, { plainText: true }),
           replyTo: data.email,
