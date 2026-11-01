@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { clientIp } from '@/lib/client-ip'
 import { getDb } from '@/lib/db'
 import { jakartaDayKey } from '@/lib/format'
-import { consumePublicRateLimit, hashIdentifier } from '@/lib/rate-limit'
+import { consumePublicRateLimit, consumeRateLimit, hashIdentifier } from '@/lib/rate-limit'
 import { isBot, isSameOrigin } from '@/lib/request'
 
 const bodySchema = z.object({
@@ -16,7 +16,13 @@ const bodySchema = z.object({
   referrer: z.string().max(500).nullable().optional(),
 })
 
-const RULE = { window: 3600, max: 300 }
+// Per IP: 120 halaman per jam sudah jauh di atas pengunjung sungguhan.
+const RULE = { window: 3600, max: 120 }
+// Batas global per hari. Cek asal (sec-fetch-site/origin) bisa dipalsukan klien di luar browser, jadi
+// batas ini yang menjamin tabel PageView tidak bisa dibanjiri sampai kuota database habis: paling
+// banyak ±1 MB per hari, ±90 MB untuk 90 hari data mentah (audit 2026-11-01, SEC-01). Kunjungan di atas
+// batas tidak dicatat, halaman tetap jalan.
+const GLOBAL_RULE = { window: 86_400, max: 5_000 }
 
 function noContent() {
   return new Response(null, { status: 204, headers: { 'Cache-Control': 'no-store' } })
@@ -40,6 +46,8 @@ export async function POST(request: Request) {
   const ip = clientIp(request.headers)
   const limit = await consumePublicRateLimit('track', ip, RULE)
   if (!limit.allowed) return noContent()
+  const daily = await consumeRateLimit('public:track:global', GLOBAL_RULE)
+  if (!daily.allowed) return noContent()
 
   const host = new URL(request.url).host
   let referrerHost: string | null = null
