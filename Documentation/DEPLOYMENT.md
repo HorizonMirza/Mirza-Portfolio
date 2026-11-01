@@ -105,6 +105,7 @@ docker run -d --name mirza-portfolio -p 3000:3000 \
 ```
 
 - Variabel lain (Cloudinary, Resend, `CRON_SECRET`, `ADMIN_EMAIL`, dst.) sama dengan tabel di bagian Deploy ke Vercel.
+- **Di balik reverse proxy (nginx, Caddy, Traefik, load balancer):** isi `TRUSTED_PROXIES` dengan IP atau CIDR IPv4 proxy tersebut, dipisah koma (mis. `TRUSTED_PROXIES=172.16.0.0/12`). IP klien lalu dibaca dari kanan `x-forwarded-for`, melewati proxy tepercaya, sehingga batas percobaan login dan form tidak bisa diakali dengan header palsu. Tanpa variabel ini, di luar Vercel situs memakai entri paling kanan (yang ditambahkan proxy terdekat) dan Better Auth hanya mempercayai header berisi satu IP. Image yang diakses langsung tanpa proxy tidak punya sumber IP tepercaya; letakkan di balik proxy untuk production. Di Vercel variabel ini tidak perlu.
 - Image berjalan sebagai user non-root, mendengarkan port 3000 (`PORT` bisa diganti), dan punya `HEALTHCHECK` ke `/api/health`.
 - Server mandiri (`output: 'standalone'`) hanya aktif saat build Docker (`DOCKER_BUILD=1`), jadi build Vercel dan CI tidak berubah.
 - Isi halaman yang sudah dirender saat build berasal dari data seed; setelah itu halaman mengikuti database yang terhubung (revalidasi, paling lambat 10 menit). `NEXT_PUBLIC_SITE_URL` awal image adalah `https://mmirza.site`; ganti dengan `--build-arg NEXT_PUBLIC_SITE_URL=...` saat membangun sendiri.

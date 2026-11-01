@@ -5,6 +5,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma'
 import { nextCookies } from 'better-auth/next-js'
 import { after } from 'next/server'
 
+import { trustedProxies } from '@/lib/client-ip'
 import { getDb } from '@/lib/db'
 import { getAuthEnv, resolveBaseUrl, trustedAuthOrigins } from '@/lib/env'
 import { notifyLogin } from '@/lib/login-notice'
@@ -71,6 +72,10 @@ function createAuth() {
     },
     advanced: {
       cookiePrefix: 'mm',
+      // Proxy tepercaya untuk membaca IP klien dari x-forwarded-for (batas percobaan login). Tanpa daftar
+      // ini Better Auth hanya mempercayai header berisi satu IP (Vercel); di balik proxy lain isi
+      // TRUSTED_PROXIES agar batas login tidak bisa diakali dengan header palsu (audit 2026-11-01, SEC-02).
+      ipAddress: { trustedProxies: trustedProxies() },
       // id dibuat Prisma (UUID v7 lewat @default(uuid(7)))
       database: { generateId: false },
     },
