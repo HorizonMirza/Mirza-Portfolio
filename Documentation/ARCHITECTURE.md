@@ -386,7 +386,7 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 | GET | `/api/v1/projects` | Publik | Daftar project terbit. `?locale=id\|en` → teks satu bahasa, tanpa → `{ id, en }` |
 | GET | `/api/v1/projects/{slug}` | Publik | Detail project terbit, 404 bila tidak ada |
 | GET | `/api/v1/skills` | Publik | Skill per kategori beserta slug project yang memakainya |
-| GET | `/api/v1/profile` | Publik | Profil publik **tanpa** email dan WhatsApp (agar tidak mudah dipanen bot) |
+| GET | `/api/v1/profile` | Publik | Profil publik **tanpa** email dan WhatsApp. Keputusan pemilik 2026-11-01 (audit SEC-05): keduanya tetap tampil di footer HTML untuk pengunjung, tetapi tidak disediakan sebagai data siap-mesin di API dan JSON-LD. Ini mengurangi pengambilan otomatis yang paling mudah, bukan menyembunyikannya |
 | POST | `/api/track` | Publik, same-origin, rate limit 300/jam | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
 | GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
 | GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas 7 hari terakhir ke `PageViewDaily` (idempoten), hapus `PageView` > 90 hari dan `RateLimit` > 1 hari. Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
@@ -434,7 +434,8 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | XSS | React escape default. Markdown lewat `rehype-sanitize`. CSP (`lib/csp.ts`): halaman publik statis tanpa nonce (`script-src 'self' 'unsafe-inline'`, arahan lain ketat), panel admin dinamis dengan nonce per permintaan + `'strict-dynamic'` (`src/proxy.ts`). Satu-satunya `dangerouslySetInnerHTML` adalah JSON-LD dengan `<` di-escape (`lib/json-ld.tsx`) |
 | Injeksi SQL | Hanya lewat Prisma (parameterisasi). Tidak ada `$queryRawUnsafe` |
 | CSRF | Server Actions memeriksa Origin. Route handler mutasi memeriksa `Origin`/`Sec-Fetch-Site` |
-| Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik |
+| Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik. IP klien hanya dibaca dari sumber tepercaya (`lib/client-ip.ts`, `advanced.ipAddress.trustedProxies`): di Vercel entri pertama `x-forwarded-for`, di luar Vercel entri paling kanan atau melewati `TRUSTED_PROXIES` (audit 2026-11-01, SEC-02) |
+| Banjir data publik | Beacon `/api/track`: 120 per jam per IP dan batas global 5.000 baris per hari, karena cek asal bisa dipalsukan klien non-browser (SEC-01). Unduhan CV tercatat paling banyak 3 kali per jam per IP (SEC-03). Nama dan subjek pesan dijadikan satu baris sebelum masuk subjek email notifikasi (SEC-04) |
 | Spam form | Honeypot + rate limit + validasi panjang. CAPTCHA hanya jika masih ada spam |
 | Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Respons diverifikasi di server, tipe (gambar, PDF) dan ukuran (5 MB) dicek ulang, berkas ditolak dihapus |
 | Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
@@ -442,6 +443,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=high` di CI, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
 | Akses admin | Satu akun, log audit, ganti password dengan rate limit. Notifikasi login baru via email menyusul bersama Resend (M4) |
+| Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `lib/auth-guard.ts`) |
 
 Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
 

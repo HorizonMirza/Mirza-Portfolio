@@ -2,7 +2,9 @@ import { getPublicProfile } from '@/features/profile/public'
 
 import { apiError, apiLocale, ok, options, text } from '../helpers'
 
-// Email dan WhatsApp sengaja tidak disertakan agar tidak mudah dipanen bot.
+// Email dan WhatsApp sengaja tidak disertakan di API (keputusan pemilik 2026-11-01, audit SEC-05):
+// keduanya tetap tampil di footer untuk pengunjung, tetapi tidak disediakan sebagai data siap-mesin.
+// Ini mengurangi pengambilan otomatis yang paling mudah, bukan menyembunyikannya sepenuhnya.
 export async function GET(request: Request) {
   const locale = apiLocale(request)
   const p = await getPublicProfile()
