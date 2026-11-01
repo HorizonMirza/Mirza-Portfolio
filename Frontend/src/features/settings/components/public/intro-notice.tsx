@@ -10,7 +10,6 @@ import {
   useState,
 } from 'react'
 
-import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
 import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
@@ -58,8 +57,8 @@ function markSeen() {
 
 // Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah"; revisi 2026-10-15): kartu
 // ramping di tengah layar. Latar dan kartu sama dengan halaman login Super Admin (pilihan pemilik
-// 2026-10-15, demo latar 11): shader neural vortex di atas hitam dan kartu kaca gelap, selalu gelap
-// di tema terang maupun gelap. Shader hanya dipasang selama kartu terbuka. Memakai <dialog> bawaan
+// 2026-10-15, demo latar 11): latar hitam dan kartu kaca gelap, selalu gelap di tema terang maupun
+// gelap (shader vortex ungu dihapus 2026-11-01 karena lag, permintaan pemilik). Memakai <dialog> bawaan
 // (showModal): fokus terkunci di dalam kartu, Esc menutup, halaman di belakang tidak bisa diklik.
 // Dibuka setelah halaman tampil, jadi isi situs tetap dirender server dan terbaca mesin pencari.
 // Tombol ID/EN mengganti bahasa kartu di tempat (efek acak huruf dan suara seperti tombol bahasa di
@@ -78,8 +77,6 @@ export function IntroNotice({
   const router = useRouter()
   const pathname = usePathname()
   const [shown, setShown] = useState<Locale>(locale)
-  // shader latar berjalan hanya selama kartu terbuka
-  const [active, setActive] = useState(false)
   // teks kartu sebelum ganti bahasa, agar teks yang sama di kedua bahasa tidak ikut diacak
   const before = useRef<string[] | null>(null)
   const v = versions[shown]
@@ -94,7 +91,6 @@ export function IntroNotice({
     // dilepas sebelum showModal: di dalam body yang tersembunyi kartu tidak bisa difokus
     clearPending()
     dialog.showModal()
-    setActive(true)
     // Fokus awal di dialog itu sendiri (pembaca layar membacakan judulnya), bukan di tombol: Chromium
     // menampilkan garis fokus untuk fokus dari skrip sebelum ada interaksi. Tab menuju tombol pertama.
     dialog.focus()
@@ -125,7 +121,6 @@ export function IntroNotice({
     const finish = () => {
       dialog.close()
       delete dialog.dataset.leaving
-      setActive(false)
       const target = goHome ? '/' : pathname
       if (shown === locale && target === pathname) return
       if (shown !== locale) {
@@ -161,7 +156,7 @@ export function IntroNotice({
     window.setTimeout(finish, goHome ? HOME_LEAVE_MS : LEAVE_MS)
   }
 
-  // dialog memenuhi layar; klik di luar kartu (di latar vortex) ikut menutup
+  // dialog memenuhi layar; klik di luar kartu (di latar hitam) ikut menutup
   function onDialogClick(event: MouseEvent<HTMLDialogElement>) {
     if (event.target === event.currentTarget) close()
   }
@@ -196,7 +191,6 @@ export function IntroNotice({
       onKeyDown={onDialogKeyDown}
       onClick={onDialogClick}
     >
-      {active ? <NeuralVortexBackground /> : null}
       {/* kartu kaca seperti login admin (components/admin/login-form.tsx) */}
       <div className="intro-card login-card">
         <div className="intro-panel">

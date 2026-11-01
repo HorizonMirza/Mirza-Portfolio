@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/admin/login-form'
-import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
 import { getAdminEmailDomain, getAdminSession } from '@/lib/auth-guard'
 import { safeAdminRedirect } from '@/lib/safe-redirect'
 
@@ -16,9 +15,9 @@ export default async function LoginPage({ searchParams }: PageProps<'/admin/logi
   const emailDomain = await getAdminEmailDomain()
 
   return (
-    // Selalu hitam (permintaan pemilik), tidak mengikuti tema terang/gelap panel admin.
+    // Selalu hitam (permintaan pemilik), tidak mengikuti tema terang/gelap panel admin. Latar vortex
+    // ungu dihapus 2026-11-01 karena lag (permintaan pemilik).
     <div className="relative min-h-dvh overflow-hidden bg-black text-white [color-scheme:dark]">
-      <NeuralVortexBackground />
       <main
         id="main"
         className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-4 py-12"

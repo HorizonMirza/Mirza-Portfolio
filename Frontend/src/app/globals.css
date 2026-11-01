@@ -2395,7 +2395,7 @@ html:has(.contact-sent) {
 
 /* Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah", DESIGN.md bagian 53).
    Latar dan kartu sama dengan login Super Admin (pilihan pemilik 2026-10-15, demo latar 11): <dialog>
-   memenuhi layar di atas hitam, shader neural vortex di belakang, kartu kaca gelap di tengah. Selalu
+   memenuhi layar di atas hitam, kartu kaca gelap di tengah (shader vortex dihapus 2026-11-01). Selalu
    gelap, jadi warna ditulis langsung seperti login, tidak memakai token tema. Halaman tidak bisa
    digulir selama terbuka. */
 html:has(.intro[open]) {
@@ -2584,10 +2584,9 @@ html[data-intro='pending'] body {
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* Dialog hanya memudar (tanpa geser), agar kanvas fixed di dalamnya tetap menempel layar.
-     Mode isi "backwards", bukan "both": animasi opacity yang terus menahan nilai akhirnya membuat
-     Chrome menjadikan kartu batas latar, sehingga blur kaca .intro-panel tidak lagi mengaburkan
-     cahaya vortex di belakangnya (revisi pemilik 2026-10-15). */
+  /* Dialog hanya memudar (tanpa geser). Mode isi "backwards", bukan "both": animasi opacity yang
+     terus menahan nilai akhirnya membuat Chrome menjadikan kartu batas latar (revisi pemilik
+     2026-10-15). */
   .intro[open] {
     animation: intro-fade 400ms ease-out backwards;
   }
@@ -2669,7 +2668,7 @@ html[data-intro='pending'] body {
   inset: var(--hero-head) 0 0;
 }
 /* Pembungkus hero: satu layar penuh dari atas halaman, ditarik ke belakang navbar (tinggi navbar
-   --hero-head, diukur 58–59 px) agar efek hover dan latar vortex sampai ke navbar. lvh agar bagian
+   --hero-head, diukur 58–59 px) agar efek hover sampai ke navbar. lvh agar bagian
    berikutnya tidak mengintip saat bilah browser HP menyusut. Teks dan foto tidak bisa diseleksi atau
    diseret, supaya menarik kursor tidak memunculkan blok seleksi biru (laporan pemilik 2026-10-19). */
 .hero-shell {
@@ -2680,7 +2679,6 @@ html[data-intro='pending'] body {
   --hero-fade: 14%;
   /* jejak hover di luar tubuh (bentuk cair tipis, seperti referensi HoverMaskReveal) */
   --hero-trail: rgb(10 10 10 / 0.07);
-  --hero-vortex: 0.35;
   position: relative;
   margin-top: calc(-1 * var(--hero-head));
   height: 100vh;
@@ -2694,18 +2692,6 @@ html[data-intro='pending'] body {
 }
 .hero-shell img {
   -webkit-user-drag: none;
-}
-/* latar vortex redup, memudar di tepi atas */
-.hero-vortex {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  opacity: var(--hero-vortex);
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(transparent, #000 12%);
-  mask-image: linear-gradient(transparent, #000 12%);
 }
 .hero-mask {
   position: absolute;
@@ -2811,7 +2797,7 @@ html[data-intro='pending'] body {
   height: 100%;
   object-fit: cover;
   /* bawah foto memudar ke transparan (masker pada foto sendiri, bukan lapisan warna latar, agar latar
-     vortex di sisi foto tidak tertutup); sama dengan gradasi armor di liquid-mask-portrait.tsx */
+     di sisi foto tidak tertutup); sama dengan gradasi armor di liquid-mask-portrait.tsx */
   -webkit-mask-image: linear-gradient(
     #000 calc(100% - var(--hero-fade)),
     rgb(0 0 0 / 0.45) calc(100% - var(--hero-fade) / 2),
@@ -2887,14 +2873,12 @@ html[data-intro='pending'] body {
   --hero-glow: rgb(255 255 255 / 0.18);
   --hero-fade: 24%;
   --hero-trail: rgb(255 255 255 / 0.1);
-  --hero-vortex: 0.55;
 }
 @media (prefers-color-scheme: dark) {
   :root:not(.light):not(.dark) .hero-shell {
     --hero-glow: rgb(255 255 255 / 0.18);
     --hero-fade: 24%;
     --hero-trail: rgb(255 255 255 / 0.1);
-    --hero-vortex: 0.55;
   }
 }
 

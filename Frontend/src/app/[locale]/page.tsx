@@ -7,7 +7,6 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
-import { NeuralVortexBackground } from '@/components/shared/neural-vortex-background'
 import { LiquidMaskPortrait } from '@/components/site/liquid-mask-portrait'
 import { Container } from '@/components/site/section-heading'
 import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
@@ -200,10 +199,9 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           bawah, nama dua baris memudar ke bawah di belakang dan di depan foto. Salinan depan dilubangi di
           area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
       {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
-          .hero, tepat di bawah navbar. Latar vortex redup (pilihan pemilik 2026-10-19, latar 9). */}
+          .hero, tepat di bawah navbar. Latar vortex ungu dihapus 2026-11-01 karena lag (permintaan pemilik). */}
       <section aria-labelledby="hero-title" className="hero-shell">
         <LiquidMaskPortrait back={customArmor?.url ?? HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
-          <NeuralVortexBackground className="hero-vortex" resolution={0.4} fps={24} />
           <div className="hero">
             {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
             <div aria-hidden="true" className="hero-glow" />

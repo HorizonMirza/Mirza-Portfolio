@@ -11,7 +11,7 @@ import { NavLinks } from './nav-links'
 
 // permukaan melayang bersama: kapsul menu dan tombol-tombol bulat di topbar
 // tanpa backdrop-blur (2026-10-20): blur di header sticky dihitung ulang tiap bingkai saat halaman digulir
-// atau latar hero beranimasi (vortex, hover), salah satu penyebab lag; latar 95% pekat sebagai gantinya
+// atau latar hero beranimasi (efek hover), salah satu penyebab lag; latar 95% pekat sebagai gantinya
 const floating = 'border border-border bg-surface/95 shadow-lg'
 const pill = `flex items-center gap-1 rounded-full p-1 ${floating}`
 

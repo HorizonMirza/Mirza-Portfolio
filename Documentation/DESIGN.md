@@ -1348,3 +1348,7 @@ Permintaan pemilik: gaya Super Admin diselaraskan dengan situs utama, dan yang s
 - **Nama bahasa seragam (TYPO-02):** `Locale.id` di kedua bahasa kini "Bahasa Indonesia".
 - **Tombol jeda pita project (audit GAP-02, WCAG 2.2.2).** Pil kecil "Jeda pita project" / "Pause project strip" di tengah bawah pita, checkbox asli + CSS `:has()` tanpa JavaScript, ikon jeda/putar berganti. Pita tetap tidak berhenti saat disorot (bagian 58); disembunyikan pada reduced-motion karena pita sudah diam.
 - **Timeline Pengalaman (audit GAP-11):** buram 2 px entri tidak aktif (E4) tidak dipakai saat reduced-motion dan saat entri difokus keyboard; warna redup tetap.
+
+## 100. Latar ungu dihapus (2026-11-01)
+
+- **Shader "neural vortex" ungu dihapus seluruhnya karena lag (permintaan pemilik 2026-11-01).** Dulu dipakai di latar hero beranda (bagian 86, latar 9), kartu pemberitahuan pembuka, dan halaman login Super Admin (demo latar 11). Ketiganya kini latar polos: hero memakai warna halaman dengan halo `--hero-glow`, kartu pembuka dan login tetap hitam dengan kartu kaca gelap. Komponen `neural-vortex-background.tsx` dan CSS `.hero-vortex` dihapus. Efek cairan armor (hover foto hero) dan globe skill tidak berubah.

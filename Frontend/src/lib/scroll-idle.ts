@@ -1,4 +1,4 @@
-// Penanda "halaman sedang digulir" bersama untuk animasi kanvas (vortex hero, globe skill): selama
+// Penanda "halaman sedang digulir" bersama untuk animasi kanvas (globe skill): selama
 // digulir dan sampai IDLE_MS sesudahnya, animasi dekoratif melewatkan bingkai agar gulir tetap mulus
 // (laporan lag pemilik 2026-10-20). Satu pendengar scroll pasif untuk seluruh halaman.
 const IDLE_MS = 160

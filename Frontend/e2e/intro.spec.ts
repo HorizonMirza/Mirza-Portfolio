@@ -34,8 +34,8 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   // dilepas begitu kartu terbuka
   await expect(page.locator('html')).not.toHaveAttribute('data-intro', /.*/)
   await expect(dialog.getByRole('button', { name: 'Beranda' })).toBeVisible()
-  // latar neural vortex (seperti login admin) hanya terpasang selama kartu terbuka
-  await expect(page.locator('dialog.intro canvas')).toHaveCount(1)
+  // tanpa latar shader (vortex ungu dihapus 2026-11-01 karena lag)
+  await expect(page.locator('dialog.intro canvas')).toHaveCount(0)
 
   const results = await new AxeBuilder({ page })
     .include('dialog.intro')
