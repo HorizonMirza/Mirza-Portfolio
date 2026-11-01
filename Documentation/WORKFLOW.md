@@ -129,7 +129,7 @@ Update dikerjakan Claude **sebulan sekali**, atau **segera** bila ada peringatan
 
 1. `cd Frontend && pnpm outdated` dan `pnpm audit`.
 2. Naikkan patch/minor sekaligus. Major satu per satu, baca catatan rilisnya (untuk Next.js: panduan di `node_modules/next/dist/docs/`).
-3. Periksa juga versi GitHub Actions di `.github/workflows/ci.yml`.
+3. Periksa juga versi GitHub Actions di `.github/workflows/*.yml`. Action milik GitHub (`actions/*`) memakai tag versi; action pihak ketiga (`pnpm/action-setup`, `gitleaks/gitleaks-action`) **dikunci ke SHA commit** dengan versinya di komentar (audit 2026-11-01, SEC-06), karena tag bisa dipindahkan pemiliknya. Untuk menaikkan: `git ls-remote --tags https://github.com/<owner>/<repo>.git`, ambil SHA dari baris `refs/tags/vX.Y.Z^{}` (atau baris tag itu sendiri bila tanpa `^{}`), ganti SHA dan komentar versinya.
 4. Celah di dependency tidak langsung yang belum diperbaiki induknya: pakai `overrides` di `Frontend/pnpm-workspace.yaml`, lengkap dengan alasan dan kapan dihapus.
 5. Jalankan pemeriksaan lengkap (lint, typecheck, test, build, E2E), lalu commit `[CLAUDIA] chore(deps): ...` atas nama Horizon Mirza.
 
