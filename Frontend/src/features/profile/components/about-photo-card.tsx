@@ -12,11 +12,11 @@ export type PhotoCardChip = {
 // Chip kampus hanya tampil bila datanya ada; fotonya dipasang oleh halaman lewat `photo`.
 export function AboutPhotoCard({ photo, chip }: { photo: ReactNode; chip: PhotoCardChip | null }) {
   return (
-    <figure className="ab-pc">
+    <figure className="ab-pc" data-tilt-target="">
       <div className="ab-pc-frame">
         {photo}
         {/* cahaya yang mengikuti kursor saat kartu dimiringkan (PhotoTilt) */}
-        <span className="ab-pc-glare" aria-hidden="true" />
+        <span className="ab-pc-glare" data-tilt-glare="" aria-hidden="true" />
       </div>
       {chip ? (
         <div className="ab-pc-chip">

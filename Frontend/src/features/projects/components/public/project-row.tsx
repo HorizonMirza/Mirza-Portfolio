@@ -54,7 +54,7 @@ export async function ProjectRow({
           className="block"
         >
           <PhotoTilt className="pj-tilt" maxTilt={8} sound={false}>
-            <div className="pj-tilt-in">
+            <div className="pj-tilt-in" data-tilt-target="">
               {/* bingkai jendela browser (pilihan pemilik 2026-10-08, demo bingkai nomor 1); warna dari
                   token tema sehingga ikut mode gelap/terang */}
               <div className="pj-browser">
@@ -91,7 +91,7 @@ export async function ProjectRow({
                     )}
                   </div>
                 </ViewTransition>
-                <span className="pj-glare" />
+                <span className="pj-glare" data-tilt-glare="" />
               </div>
             </div>
           </PhotoTilt>

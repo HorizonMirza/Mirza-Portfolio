@@ -20,8 +20,10 @@ function reducedMotion() {
 // dan bendera melayang lebih dekat (translateZ), dan kartu sedikit mengecil saat
 // ditekan. Saat kursor keluar, kartu kembali tegak perlahan. Di layar sentuh kartu bereaksi saat
 // disentuh/digeser ke samping; geser ke atas-bawah tetap menggulir halaman.
-// Hanya mengubah variabel CSS lewat requestAnimationFrame (transform dikerjakan GPU, globals.css
-// .ab-tilt). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
+// Nilai per gerakan ditulis langsung lewat requestAnimationFrame: `transform` ke elemen bertanda
+// data-tilt-target dan posisi/opacity kilau ke elemen data-tilt-glare itu sendiri, bukan lewat
+// variabel CSS di pembungkus yang diwariskan ke seluruh isi kartu (CLAUDE.md, audit 2026-11-02
+// PERF-04). Transisi tetap dari globals.css (.ab-pc, .pj-tilt-in). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
 // demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
 // Dipakai juga untuk gambar di daftar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan
 // kelas pembungkus sendiri; di sana tanpa suara (`sound={false}`, revisi pemilik 2026-10-09).
@@ -52,12 +54,26 @@ export function PhotoTilt({
     playPhotoShimmerSound()
   }
 
-  function apply(vars: Record<string, string>) {
+  // keadaan terakhir; tiap gerakan hanya mengganti sebagian (mis. skala saat ditekan)
+  const pose = useRef({ x: 0, y: 0, s: 1, gx: 50, gy: 30, go: 0 })
+
+  function apply(patch: Partial<typeof pose.current>) {
+    Object.assign(pose.current, patch)
     cancelAnimationFrame(frame.current)
     frame.current = requestAnimationFrame(() => {
       const el = ref.current
       if (!el) return
-      for (const [key, value] of Object.entries(vars)) el.style.setProperty(key, value)
+      const p = pose.current
+      const target = el.querySelector<HTMLElement>('[data-tilt-target]')
+      if (target)
+        target.style.transform = `rotateX(${p.x.toFixed(2)}deg) rotateY(${p.y.toFixed(2)}deg) scale(${p.s})`
+      const glare = el.querySelector<HTMLElement>('[data-tilt-glare]')
+      if (glare) {
+        // variabel di elemen kilau sendiri (tanpa anak), dipakai radial-gradient-nya
+        glare.style.setProperty('--glare-x', `${p.gx.toFixed(1)}%`)
+        glare.style.setProperty('--glare-y', `${p.gy.toFixed(1)}%`)
+        glare.style.opacity = String(p.go)
+      }
     })
   }
 
@@ -70,11 +86,11 @@ export function PhotoTilt({
     const y = Math.min(1, Math.max(0, (event.clientY - r.top) / r.height))
     if (ref.current) ref.current.dataset.tilt = 'on'
     apply({
-      '--tilt-x': `${((0.5 - y) * 2 * maxTilt).toFixed(2)}deg`,
-      '--tilt-y': `${((x - 0.5) * 2 * maxTilt).toFixed(2)}deg`,
-      '--glare-x': `${(x * 100).toFixed(1)}%`,
-      '--glare-y': `${(y * 100).toFixed(1)}%`,
-      '--glare-o': '1',
+      x: (0.5 - y) * 2 * maxTilt,
+      y: (x - 0.5) * 2 * maxTilt,
+      gx: x * 100,
+      gy: y * 100,
+      go: 1,
     })
   }
 
@@ -82,7 +98,7 @@ export function PhotoTilt({
     pressed.current = false
     rect.current = null
     if (ref.current) ref.current.dataset.tilt = 'off'
-    apply({ '--tilt-x': '0deg', '--tilt-y': '0deg', '--tilt-s': '1', '--glare-o': '0' })
+    apply({ x: 0, y: 0, s: 1, go: 0 })
   }
 
   return (
@@ -100,13 +116,13 @@ export function PhotoTilt({
         if (reducedMotion()) return
         pressed.current = true
         rect.current = e.currentTarget.getBoundingClientRect()
-        apply({ '--tilt-s': '0.97' })
+        apply({ s: 0.97 })
         follow(e)
       }}
       onPointerUp={(e) => {
         if (e.pointerType === 'touch') return reset()
         pressed.current = false
-        apply({ '--tilt-s': '1' })
+        apply({ s: 1 })
       }}
       onPointerLeave={reset}
       onPointerCancel={reset}

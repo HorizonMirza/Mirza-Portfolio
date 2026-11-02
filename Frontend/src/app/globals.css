@@ -615,7 +615,8 @@
 .ab-pc {
   position: relative;
   padding: 14px 0 14px 14px;
-  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-s, 1));
+  /* transform ditulis langsung oleh PhotoTilt (photo-tilt.tsx) */
+  transform: none;
   transform-style: preserve-3d;
   transition: transform 700ms var(--ease-out-soft);
 }
@@ -632,7 +633,8 @@
     rgb(255 255 255 / 0.32),
     transparent 55%
   );
-  opacity: var(--glare-o, 0);
+  /* opacity dan --glare-x/y ditulis langsung di elemen ini oleh PhotoTilt */
+  opacity: 0;
   pointer-events: none;
   transition: opacity 400ms var(--ease-out-soft);
 }
@@ -1917,7 +1919,8 @@ html:has(.contact-sent) {
 }
 .pj-tilt-in {
   position: relative;
-  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(var(--tilt-s, 1));
+  /* transform ditulis langsung oleh PhotoTilt (photo-tilt.tsx) */
+  transform: none;
   transform-style: preserve-3d;
   transition: transform 700ms var(--ease-out-soft);
 }
@@ -1934,7 +1937,8 @@ html:has(.contact-sent) {
     rgb(255 255 255 / 0.28),
     transparent 55%
   );
-  opacity: var(--glare-o, 0);
+  /* opacity dan --glare-x/y ditulis langsung di elemen ini oleh PhotoTilt */
+  opacity: 0;
   pointer-events: none;
   transition: opacity 400ms var(--ease-out-soft);
 }
