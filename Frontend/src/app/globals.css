@@ -2408,14 +2408,17 @@ html:has(.contact-sent) {
 html:has(.intro[open]) {
   overflow: hidden;
 }
-/* Layar hitam sementara sebelum pemberitahuan pembuka terbuka (features/settings/intro-pending.ts):
-   halaman disembunyikan sampai kartu muncul, agar beranda tidak berkedip. */
-html[data-intro='pending'],
-html[data-intro='pending'] body {
+/* Sebelum JavaScript membuka pemberitahuan pembuka (features/settings/intro-pending.ts): kartu yang
+   sudah ada di HTML langsung ditampilkan menutupi layar, agar beranda tidak berkedip (permintaan
+   pemilik 2026-10-19). Dulu seluruh body disembunyikan sampai JavaScript selesai dimuat, sehingga di
+   jaringan lambat pengunjung melihat layar hitam kosong dan LCP tertunda (audit 2026-11-02, PERF-02). */
+html[data-intro='pending'] {
+  overflow: hidden;
   background: #000;
 }
-html[data-intro='pending'] body {
-  visibility: hidden;
+html[data-intro='pending'] .intro {
+  display: flex;
+  z-index: 2147483647;
 }
 .intro {
   /* dialog selebar layar; kartu yang tinggi tetap bisa digulir di dalamnya */
@@ -2599,6 +2602,11 @@ html[data-intro='pending'] body {
   }
   .intro[open] .intro-card {
     animation: intro-rise 600ms var(--ease-out-soft) 120ms backwards;
+  }
+  /* kartu sudah tampil sejak sebelum JavaScript: tanpa animasi masuk lagi agar tidak berkedip */
+  .intro[data-instant][open]:not([data-leaving]),
+  .intro[data-instant][open]:not([data-leaving]) .intro-card {
+    animation: none;
   }
   .intro[data-leaving] {
     animation: intro-fade 320ms ease-in reverse both;

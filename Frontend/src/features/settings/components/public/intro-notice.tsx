@@ -88,7 +88,9 @@ export function IntroNotice({
       clearPending()
       return
     }
-    // dilepas sebelum showModal: di dalam body yang tersembunyi kartu tidak bisa difokus
+    // Kartu sudah tampil sejak sebelum JavaScript (globals.css, html[data-intro]): buka tanpa animasi
+    // masuk agar tidak berkedip (PERF-02)
+    if (document.documentElement.hasAttribute(INTRO_PENDING_ATTR)) dialog.dataset.instant = ''
     clearPending()
     dialog.showModal()
     // Fokus awal di dialog itu sendiri (pembaca layar membacakan judulnya), bukan di tombol: Chromium

@@ -3,9 +3,10 @@
 export const INTRO_SEEN_KEY = 'intro-notice-seen'
 
 // Atribut di <html> yang dipasang INTRO_PENDING_SCRIPT sebelum halaman tampil. Selama atribut ada,
-// halaman ditutup layar hitam (globals.css), agar beranda tidak sempat terlihat sebelum kartu terbuka
-// (permintaan pemilik 2026-10-19). IntroNotice melepasnya tepat sebelum kartu dibuka, atau bila kartu
-// tidak dibuka.
+// kartu pemberitahuan (sudah ada di HTML) langsung ditampilkan menutupi layar lewat CSS (globals.css),
+// agar beranda tidak sempat terlihat sebelum kartu terbuka (permintaan pemilik 2026-10-19) dan
+// pengunjung tidak menunggu JavaScript untuk melihat isi (PERF-02). IntroNotice melepasnya tepat
+// sebelum kartu dibuka sebagai modal, atau bila kartu tidak dibuka.
 export const INTRO_PENDING_ATTR = 'data-intro'
 
 // Skrip sebaris di awal <body> (CSP halaman publik mengizinkan 'unsafe-inline'). Isinya tetap, bukan
