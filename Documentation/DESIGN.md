@@ -1352,3 +1352,9 @@ Permintaan pemilik: gaya Super Admin diselaraskan dengan situs utama, dan yang s
 ## 100. Latar ungu dihapus (2026-11-01)
 
 - **Shader "neural vortex" ungu dihapus seluruhnya karena lag (permintaan pemilik 2026-11-01).** Dulu dipakai di latar hero beranda (bagian 86, latar 9), kartu pemberitahuan pembuka, dan halaman login Super Admin (demo latar 11). Ketiganya kini latar polos: hero memakai warna halaman dengan halo `--hero-glow`, kartu pembuka dan login tetap hitam dengan kartu kaca gelap. Komponen `neural-vortex-background.tsx` dan CSS `.hero-vortex` dihapus. Efek cairan armor (hover foto hero) dan globe skill tidak berubah.
+
+## 101. Kinerja tanpa mengubah tampilan (2026-11-02, audit PERF)
+
+- **Kartu pembuka tampil tanpa menunggu JavaScript.** Perilaku permintaan pemilik 2026-10-19 tetap (beranda tidak terlihat sebelum kartu muncul), tetapi kini kartu yang sudah ada di HTML langsung ditampilkan menutupi layar; dulu seluruh halaman disembunyikan sampai JavaScript membuka kartu, sehingga di jaringan lambat pengunjung melihat layar hitam kosong. Saat JavaScript siap kartu menjadi modal tanpa animasi masuk ulang.
+- **Kilau berputar 30 fps** (`steps()`), tidak terlihat bedanya untuk garis setipis itu; kilau form kontak berhenti saat di luar layar.
+
