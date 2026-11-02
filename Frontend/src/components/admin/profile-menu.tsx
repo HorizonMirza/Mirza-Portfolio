@@ -17,6 +17,10 @@ const itemClass =
 export function ProfileMenu({ adminName, photo }: AdminIdentity) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan
+  // (audit 2026-11-02, PERF-06). Ref ikut dicek karena state baru berlaku di render berikutnya.
+  const [signingOut, setSigningOut] = useState(false)
+  const signingOutRef = useRef(false)
   const root = useRef<HTMLDivElement>(null)
   const panelId = useId()
 
@@ -36,9 +40,18 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
   }, [open])
 
   async function signOut() {
-    await authClient.signOut()
-    router.replace('/admin/login')
-    router.refresh()
+    if (signingOutRef.current) return
+    signingOutRef.current = true
+    setSigningOut(true)
+    try {
+      await authClient.signOut()
+      router.replace('/admin/login')
+      router.refresh()
+    } catch {
+      // gagal (mis. koneksi putus): tombol bisa ditekan lagi
+      signingOutRef.current = false
+      setSigningOut(false)
+    }
   }
 
   return (
@@ -79,9 +92,15 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
             Lihat situs
             <span className="sr-only">(membuka tab baru)</span>
           </a>
-          <button type="button" className={itemClass} onClick={signOut}>
+          <button
+            type="button"
+            className={`${itemClass} disabled:cursor-wait disabled:opacity-60`}
+            onClick={signOut}
+            disabled={signingOut}
+            aria-busy={signingOut || undefined}
+          >
             <LogOut className="size-4" aria-hidden="true" />
-            Keluar
+            {signingOut ? 'Keluar…' : 'Keluar'}
           </button>
         </div>
       ) : null}
