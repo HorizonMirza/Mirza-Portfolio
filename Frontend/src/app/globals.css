@@ -928,7 +928,10 @@
 }
 
 /* Login admin: kilau berjalan mengelilingi kotak email dan password. Bingkai 1px berupa
-   gradien conic yang diputar lewat @property; browser tanpa @property memakai bingkai diam. */
+   gradien conic yang diputar lewat @property; browser tanpa @property memakai bingkai diam.
+   Animasi variabel @property dihitung ulang di thread utama tiap bingkai, jadi semua kilau memakai
+   steps(): 30 bingkai per detik, bukan 60, tetap mulus untuk garis tipis (audit 2026-11-02, PERF-01).
+   Kilau di form kontak juga dijeda saat di luar layar (data-offscreen dari reveal-observer.tsx). */
 @property --shine-angle {
   syntax: '<angle>';
   initial-value: 0deg;
@@ -950,7 +953,7 @@
       rgb(255 255 255 / 0.08),
       rgb(255 255 255 / 0.22)
     );
-  animation: login-shine 4s linear infinite;
+  animation: login-shine 4s steps(120) infinite;
 }
 .login-field-delay {
   animation-delay: -2s;
@@ -1010,7 +1013,7 @@
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
-  animation: login-shine 5s linear infinite;
+  animation: login-shine 5s steps(150) infinite;
 }
 @keyframes login-shine {
   to {
@@ -1367,7 +1370,11 @@
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
-  animation: login-shine 4s linear var(--shine-delay, 0s) infinite;
+  animation: login-shine 4s steps(120) var(--shine-delay, 0s) infinite;
+}
+.field-shine[data-offscreen]::after,
+.send-btn[data-offscreen]::before {
+  animation-play-state: paused;
 }
 .field-shine:focus-within::after {
   background: conic-gradient(
@@ -1443,7 +1450,7 @@
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
-  animation: login-shine 3s linear infinite;
+  animation: login-shine 3s steps(90) infinite;
 }
 .send-btn[data-state='idle']:hover {
   background: var(--text);

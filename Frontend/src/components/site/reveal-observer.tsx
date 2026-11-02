@@ -11,8 +11,9 @@ import { usePathname } from '@/i18n/navigation'
 export function RevealObserver() {
   const pathname = usePathname()
 
-  // Animasi berulang (pita project) dijeda saat di luar layar agar tidak terus dirender (laporan lag
-  // pemilik 2026-10-20); ditandai data-offscreen, dibaca globals.css
+  // Animasi berulang (pita project, kilau kolom dan tombol kirim kontak) dijeda saat di luar layar
+  // agar tidak terus dirender (laporan lag pemilik 2026-10-20, audit PERF-01); ditandai
+  // data-offscreen, dibaca globals.css
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return
     const io = new IntersectionObserver((entries) => {
@@ -22,7 +23,10 @@ export function RevealObserver() {
         else el.dataset.offscreen = ''
       }
     })
-    for (const el of document.querySelectorAll<HTMLElement>('.home-marquee')) io.observe(el)
+    for (const el of document.querySelectorAll<HTMLElement>(
+      '.home-marquee, .field-shine, .send-btn',
+    ))
+      io.observe(el)
     return () => io.disconnect()
   }, [pathname])
 
