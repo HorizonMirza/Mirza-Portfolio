@@ -13,6 +13,7 @@ import {
   verifyUploadSignature,
 } from '@/lib/cloudinary'
 import { getDb } from '@/lib/db'
+import { lockOrderScope } from '@/lib/order-lock'
 import { revalidateContent } from '@/lib/revalidate'
 import { requiredText } from '@/lib/validation'
 
@@ -237,6 +238,7 @@ export async function attachUploadedAsset(
         await tx.project.update({ where: { id: projectId!.data }, data: { coverId: asset.id } })
       } else {
         await tx.project.findUniqueOrThrow({ where: { id: projectId!.data }, select: { id: true } })
+        await lockOrderScope(tx, `project-image:${projectId!.data}`)
         const last = await tx.projectImage.aggregate({
           where: { projectId: projectId!.data },
           _max: { order: true },

@@ -7,6 +7,7 @@ import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/li
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
+import { lockOrderScope } from '@/lib/order-lock'
 import { type MoveDirection, moveItem } from '@/lib/reorder'
 import { revalidateContent } from '@/lib/revalidate'
 import { emptyToNull } from '@/lib/validation'
@@ -65,6 +66,7 @@ export async function saveSkillCategory(
         })
         return
       }
+      await lockOrderScope(tx, 'skill-category')
       const last = await tx.skillCategory.aggregate({ _max: { order: true } })
       const created = await tx.skillCategory.create({
         data: { ...parsed.data, order: (last._max.order ?? -1) + 1 },
@@ -163,6 +165,7 @@ export async function saveSkill(skillId: string | null, input: unknown): Promise
     const { name, icon, categoryId } = parsed.data
     await getDb().$transaction(async (tx) => {
       const nextOrder = async () => {
+        await lockOrderScope(tx, `skill:${categoryId}`)
         const last = await tx.skill.aggregate({ where: { categoryId }, _max: { order: true } })
         return (last._max.order ?? -1) + 1
       }
