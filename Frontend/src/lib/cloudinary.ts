@@ -78,3 +78,48 @@ export async function destroyRemoteAsset(publicId: string, resourceType: 'image'
     console.warn('[cloudinary] destroy gagal')
   }
 }
+
+export type RemoteResource = { publicId: string; createdAt: string; resourceType: 'image' | 'raw' }
+
+// Daftar berkas di Cloudinary dengan awalan tertentu (Admin API, Basic auth key:secret), paling
+// banyak `maxPages` x 500 berkas. Dipakai pembersih berkas yatim di cron harian. Gagal = daftar
+// kosong, sehingga pembersih tidak pernah menghapus apa pun saat API bermasalah.
+export async function listRemoteResources(
+  prefix: string,
+  resourceType: 'image' | 'raw',
+  maxPages = 4,
+): Promise<RemoteResource[]> {
+  const config = getCloudinaryConfig()
+  if (!config) return []
+  const auth = Buffer.from(`${config.apiKey}:${config.apiSecret}`).toString('base64')
+  const out: RemoteResource[] = []
+  let cursor: string | undefined
+  try {
+    for (let page = 0; page < maxPages; page++) {
+      const query = new URLSearchParams({ type: 'upload', prefix, max_results: '500' })
+      if (cursor) query.set('next_cursor', cursor)
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${config.cloudName}/resources/${resourceType}?${query}`,
+        { headers: { authorization: `Basic ${auth}` }, signal: AbortSignal.timeout(8000) },
+      )
+      if (!res.ok) {
+        console.warn('[cloudinary] list status', res.status)
+        return []
+      }
+      const body = (await res.json()) as {
+        resources?: { public_id?: unknown; created_at?: unknown }[]
+        next_cursor?: unknown
+      }
+      for (const r of body.resources ?? []) {
+        if (typeof r.public_id === 'string' && typeof r.created_at === 'string')
+          out.push({ publicId: r.public_id, createdAt: r.created_at, resourceType })
+      }
+      if (typeof body.next_cursor !== 'string') break
+      cursor = body.next_cursor
+    }
+  } catch {
+    console.warn('[cloudinary] list gagal')
+    return []
+  }
+  return out
+}

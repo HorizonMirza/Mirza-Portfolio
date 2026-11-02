@@ -108,12 +108,22 @@ export function AssetUploader({
         return
       }
       setStage('Menyimpan…')
-      const saved = await attachUploadedAsset(
-        target,
-        targetId ?? null,
-        uploaded,
-        isImage ? alt : null,
-      )
+      // Berkas sudah di Cloudinary: bila koneksi putus saat menyimpan, coba sekali lagi. Bila tetap
+      // gagal, berkas tanpa pemilik dibersihkan cron harian setelah 48 jam (audit 2026-11-02, DB-07).
+      const attach = () =>
+        attachUploadedAsset(target, targetId ?? null, uploaded, isImage ? alt : null)
+      let saved: Awaited<ReturnType<typeof attach>>
+      try {
+        saved = await attach()
+      } catch {
+        try {
+          saved = await attach()
+        } catch {
+          setStage(null)
+          toast.error('Berkas terunggah tetapi gagal disimpan. Periksa koneksi lalu unggah lagi.')
+          return
+        }
+      }
       setStage(null)
       if (!saved.ok) {
         toast.error(saved.message)
