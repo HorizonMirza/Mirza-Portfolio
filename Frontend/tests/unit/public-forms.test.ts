@@ -15,6 +15,14 @@ const sendEmail = vi.fn(async () => undefined)
 let emailConfig: unknown = null
 
 vi.mock('@/lib/db', () => ({ getDb: () => db }))
+// after() menjalankan tugas setelah jawaban terkirim; di tes dikumpulkan lalu ditunggu
+const afterTasks: Promise<unknown>[] = []
+vi.mock('next/server', () => ({
+  after: (task: () => unknown) => {
+    afterTasks.push(Promise.resolve().then(task))
+  },
+}))
+const flushAfter = () => Promise.all(afterTasks.splice(0))
 vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9' }),
 }))
@@ -103,6 +111,7 @@ describe('submitContact', () => {
     sendEmail.mockRejectedValueOnce(new Error('down'))
     const r = await submitContact(idle, form(validContact))
     expect(r.status).toBe('success')
+    await flushAfter()
     expect(sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({ to: 'owner@example.com', replyTo: 'rina@example.com' }),
     )
@@ -118,6 +127,7 @@ describe('submitContact', () => {
       form({ ...validContact, name: 'Rina\r\nBcc: korban@example.com\u0007' }),
     )
     expect(r.status).toBe('success')
+    await flushAfter()
     const calls = sendEmail.mock.calls as unknown as [{ subject: string }][]
     const sent = calls.at(-1)![0]
     expect(sent.subject).toBe('Pesan baru: Rina Bcc: korban@example.com')

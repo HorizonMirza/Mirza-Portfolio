@@ -2,6 +2,7 @@
 
 import { render } from '@react-email/render'
 import { headers } from 'next/headers'
+import { after } from 'next/server'
 
 import { ContactNotificationEmail } from '@/emails/contact-notification'
 import { clientIp } from '@/lib/client-ip'
@@ -59,9 +60,12 @@ export async function submitContact(
       select: { id: true },
     })
 
-    // Pesan sudah tersimpan; gagal kirim notifikasi tidak menggagalkan pengunjung.
+    // Pesan sudah tersimpan; notifikasi dikirim setelah jawaban sampai ke pengunjung (after), jadi
+    // pengunjung tidak ikut menunggu Resend (sampai 10 detik, audit 2026-11-02 PERF-05). Gagal kirim
+    // tidak menggagalkan pengunjung.
     const config = getEmailConfig()
-    if (config?.CONTACT_TO_EMAIL) {
+    const to = config?.CONTACT_TO_EMAIL
+    if (to) {
       const email = ContactNotificationEmail({
         name: data.name,
         email: data.email,
@@ -70,18 +74,20 @@ export async function submitContact(
         locale: data.locale,
         adminUrl: `${siteUrl()}/admin/messages/${saved.id}`,
       })
-      try {
-        await sendEmail({
-          to: config.CONTACT_TO_EMAIL,
-          // nama dan subjek sudah satu baris dari skema; dibersihkan lagi sebagai pengaman header email
-          subject: toSingleLine(`Pesan baru: ${data.subject || data.name}`).slice(0, 150),
-          html: await render(email),
-          text: await render(email, { plainText: true }),
-          replyTo: data.email,
-        })
-      } catch {
-        console.warn('[contact] notifikasi email gagal')
-      }
+      after(async () => {
+        try {
+          await sendEmail({
+            to,
+            // nama dan subjek sudah satu baris dari skema; dibersihkan lagi sebagai pengaman header
+            subject: toSingleLine(`Pesan baru: ${data.subject || data.name}`).slice(0, 150),
+            html: await render(email),
+            text: await render(email, { plainText: true }),
+            replyTo: data.email,
+          })
+        } catch {
+          console.warn('[contact] notifikasi email gagal')
+        }
+      })
     }
     // isian dan waktu kirim dikembalikan untuk tiket ringkasan setelah terkirim
     return {
