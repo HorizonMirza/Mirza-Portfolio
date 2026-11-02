@@ -1247,6 +1247,12 @@
   opacity: 0 !important;
   will-change: auto;
 }
+/* Di mode canvas tombol hanya target sentuh/fokus tak terlihat, posisinya diperbarui jarang
+   (domTick di skill-globe.tsx): tanpa lapisan GPU sendiri, hemat ±31 lapisan (audit 2026-11-02,
+   PERF-03). */
+.globe-stage[data-canvas] .globe-item {
+  will-change: auto;
+}
 .globe-filter {
   position: relative;
   margin-top: 1rem;
