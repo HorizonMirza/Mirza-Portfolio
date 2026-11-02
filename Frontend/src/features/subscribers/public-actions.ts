@@ -65,13 +65,14 @@ export async function subscribeNewsletter(
     if (existing?.status === 'CONFIRMED') return { status: 'success', message: 'success' }
 
     const { token, tokenHash } = newConfirmToken()
-    const subscriber = existing
-      ? await db.subscriber.update({
-          where: { id: existing.id },
-          data: { status: 'PENDING', tokenHash, locale, unsubscribedAt: null },
-          select: { id: true },
-        })
-      : await db.subscriber.create({ data: { email, tokenHash, locale }, select: { id: true } })
+    // upsert, bukan findUnique lalu create: dua pendaftaran bersamaan dengan email yang sama tidak
+    // lagi bertabrakan di indeks unik email (audit 2026-11-02, DB-04)
+    const subscriber = await db.subscriber.upsert({
+      where: { email },
+      create: { email, tokenHash, locale },
+      update: { status: 'PENDING', tokenHash, locale, unsubscribedAt: null },
+      select: { id: true },
+    })
 
     const t = await getTranslations({ locale, namespace: 'Newsletter' })
     const base = siteUrl()

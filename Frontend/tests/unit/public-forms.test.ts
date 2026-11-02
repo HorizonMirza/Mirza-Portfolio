@@ -7,6 +7,7 @@ const db = {
     findUnique: vi.fn(async (): Promise<unknown> => null),
     create: vi.fn(async () => ({ id: '01a0f218-0209-7656-a356-02d34f1c52c3' })),
     update: vi.fn(async () => ({ id: '01a0f218-0209-7656-a356-02d34f1c52c3' })),
+    upsert: vi.fn(async () => ({ id: '01a0f218-0209-7656-a356-02d34f1c52c3' })),
   },
 }
 const rate = { allowed: true }
@@ -132,15 +133,20 @@ describe('subscribeNewsletter', () => {
   it('belum aktif tanpa Resend dan tidak menyimpan apa pun', async () => {
     const r = await subscribeNewsletter(idle, form({ email: 'a@example.com', locale: 'id' }))
     expect(r).toMatchObject({ status: 'error', message: 'unavailable' })
-    expect(db.subscriber.create).not.toHaveBeenCalled()
+    expect(db.subscriber.upsert).not.toHaveBeenCalled()
   })
   it('pendaftar baru disimpan PENDING dengan hash token, email konfirmasi dikirim', async () => {
     emailConfig = { RESEND_API_KEY: 'x', EMAIL_FROM: 'a@b.c' }
     const r = await subscribeNewsletter(idle, form({ email: 'Baru@Example.com', locale: 'en' }))
     expect(r.status).toBe('success')
-    const data = (
-      db.subscriber.create.mock.calls[0] as unknown as [{ data: Record<string, string> }]
-    )[0].data
+    // upsert pada email: pendaftaran bersamaan tidak bertabrakan di indeks unik (DB-04)
+    const call = (
+      db.subscriber.upsert.mock.calls[0] as unknown as [
+        { where: { email: string }; create: Record<string, string> },
+      ]
+    )[0]
+    expect(call.where.email).toBe('baru@example.com')
+    const data = call.create
     expect(data.email).toBe('baru@example.com')
     expect(data.tokenHash).toMatch(/^[0-9a-f]{64}$/)
     const sent = (
