@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 
-import { saveIntroNotice } from '@/features/settings/actions'
 import { type IntroInput, introSchema } from '@/features/settings/schema'
 
 import { saveSiteTexts } from '../actions'
@@ -87,17 +86,18 @@ export function SiteTextForm({
     setIntroErrors(introIssues)
     if (Object.keys(found).length || Object.keys(introIssues).length) return
     startTransition(async () => {
-      if (introValues) {
-        const saved = await saveIntroNotice(introValues)
-        if (!applyResult(saved)) return
-      }
-      const result = await saveSiteTexts(moduleId, { values })
+      // teks dan kartu pembuka dalam satu aksi dan satu transaksi (DB-02)
+      const result = await saveSiteTexts(moduleId, { values }, introValues ?? undefined)
       const ok = applyResult(result)
       if (!ok && !result.ok && result.fieldErrors) {
         const mapped: Record<string, string> = {}
-        for (const [name, message] of Object.entries(result.fieldErrors))
-          mapped[name.replace(/^values\./, '')] = message
+        const introMapped: Record<string, string> = {}
+        for (const [name, message] of Object.entries(result.fieldErrors)) {
+          if (name.startsWith('intro.')) introMapped[name.slice('intro.'.length)] = message
+          else mapped[name.replace(/^values\./, '')] = message
+        }
         setErrors(mapped)
+        setIntroErrors(introMapped)
       }
     })
   }

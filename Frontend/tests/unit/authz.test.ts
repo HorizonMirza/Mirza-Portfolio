@@ -77,10 +77,10 @@ async function load() {
     ['updateAssetAlt', () => assets.updateAssetAlt(id, {})],
     ['removeAsset', () => assets.removeAsset(id)],
     ['changePassword', () => account.changePassword({})],
-    // tiga action yang belum tercakup (audit 2026-10-31, GAP-04)
+    // action yang dulu belum tercakup (audit 2026-10-31, GAP-04); saveIntroNotice digabung ke
+    // saveSiteTexts (DB-02)
     ['saveSiteTexts', () => siteText.saveSiteTexts('home', {})],
     ['saveSoundVolume', () => settings.saveSoundVolume({})],
-    ['saveIntroNotice', () => settings.saveIntroNotice({})],
   )
 }
 
