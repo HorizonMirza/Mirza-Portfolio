@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 
+import { deleteUnusedAssets, destroyRemoteAssets } from '@/features/assets/cleanup'
 import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
@@ -67,17 +68,21 @@ export async function deleteExperience(experienceId: string): Promise<ActionResu
   try {
     const admin = await requireSuperAdmin()
     if (!idSchema.safeParse(experienceId).success) return fail('Data tidak valid.')
-    await getDb().$transaction(async (tx) => {
+    const removedAssets = await getDb().$transaction(async (tx) => {
       const before = await tx.experience.findUniqueOrThrow({ where: { id: experienceId } })
       await tx.experience.delete({ where: { id: experienceId } })
+      // logo dan foto ikut dihapus bila tidak dipakai entri lain (DB-01)
+      const removed = await deleteUnusedAssets(tx, [before.logoId, before.photoId])
       await writeAudit(tx, {
         actorId: admin.userId,
         action: 'delete',
         entity: 'Experience',
         entityId: experienceId,
-        before,
+        before: { ...before, removedAssets: removed.map((a) => a.publicId) },
       })
+      return removed
     })
+    await destroyRemoteAssets(removedAssets)
     revalidateContent('experience')
     return ok('Pengalaman dihapus.')
   } catch (error) {

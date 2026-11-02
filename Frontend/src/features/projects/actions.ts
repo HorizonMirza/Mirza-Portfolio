@@ -3,10 +3,12 @@
 import { z } from 'zod'
 
 import type { Prisma } from '@/generated/prisma/client'
+import { deleteUnusedAssets, destroyRemoteAssets } from '@/features/assets/cleanup'
 import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
+import { lockOrderScope } from '@/lib/order-lock'
 import { moveItem } from '@/lib/reorder'
 import { revalidateContent } from '@/lib/revalidate'
 import { emptyToNull, githubRepoSchema } from '@/lib/validation'
@@ -90,6 +92,7 @@ export async function saveProject(
         })
         return after
       }
+      await lockOrderScope(tx, 'project')
       const last = await tx.project.aggregate({ _max: { order: true } })
       const created = await tx.project.create({
         data: {
@@ -121,20 +124,31 @@ export async function deleteProject(projectId: string): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
     if (!idSchema.safeParse(projectId).success) return fail('Project tidak valid.')
-    await getDb().$transaction(async (tx) => {
+    const removedAssets = await getDb().$transaction(async (tx) => {
       const before = await tx.project.findUniqueOrThrow({
         where: { id: projectId },
         include: { skills: { select: { id: true } } },
       })
+      const images = await tx.projectImage.findMany({
+        where: { projectId },
+        select: { assetId: true },
+      })
       await tx.project.delete({ where: { id: projectId } })
+      // sampul dan gambar galeri ikut dihapus bila tidak dipakai di tempat lain (DB-01)
+      const removed = await deleteUnusedAssets(tx, [
+        before.coverId,
+        ...images.map((i) => i.assetId),
+      ])
       await writeAudit(tx, {
         actorId: admin.userId,
         action: 'delete',
         entity: 'Project',
         entityId: projectId,
-        before: snapshot(before),
+        before: { ...snapshot(before), removedAssets: removed.map((a) => a.publicId) },
       })
+      return removed
     })
+    await destroyRemoteAssets(removedAssets)
     revalidateContent('projects')
     return ok('Project dihapus.')
   } catch (error) {
