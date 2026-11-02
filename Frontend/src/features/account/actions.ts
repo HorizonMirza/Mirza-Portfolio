@@ -44,12 +44,25 @@ export async function changePassword(input: unknown): Promise<ActionResult> {
       throw error
     }
 
-    await writeAudit(getDb(), {
+    // Ganti password dijalankan Better Auth lewat API-nya sendiri, jadi tidak bisa satu transaksi
+    // dengan audit (audit 2026-11-02, DB-03). Password sudah berganti di titik ini: audit dicoba dua
+    // kali, dan bila tetap gagal dicatat ke log server (tanpa data pribadi) agar tidak hilang diam-diam.
+    // Pengguna tetap mendapat jawaban berhasil karena password memang sudah berganti.
+    const entry = {
       actorId: admin.userId,
       action: 'password',
       entity: 'User',
       entityId: admin.userId,
-    })
+    } as const
+    try {
+      await writeAudit(getDb(), entry)
+    } catch {
+      try {
+        await writeAudit(getDb(), entry)
+      } catch {
+        console.error('[account] password diganti tetapi log audit gagal ditulis')
+      }
+    }
     return ok('Password diganti. Sesi di perangkat lain sudah dikeluarkan.')
   } catch (error) {
     return toActionError(error)
