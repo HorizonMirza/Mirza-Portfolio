@@ -389,7 +389,7 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 | GET | `/api/v1/profile` | Publik | Profil publik **tanpa** email dan WhatsApp. Keputusan pemilik 2026-11-01 (audit SEC-05): keduanya tetap tampil di footer HTML untuk pengunjung, tetapi tidak disediakan sebagai data siap-mesin di API dan JSON-LD. Ini mengurangi pengambilan otomatis yang paling mudah, bukan menyembunyikannya |
 | POST | `/api/track` | Publik, same-origin, rate limit 300/jam | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
 | GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
-| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas 7 hari terakhir ke `PageViewDaily` (idempoten), hapus `PageView` > 90 hari dan `RateLimit` > 1 hari. Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
+| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` > 90 hari dan `RateLimit` > 1 hari, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
 | GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
 
 ### 6.4 Kontrak
