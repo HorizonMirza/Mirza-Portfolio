@@ -14,6 +14,21 @@ import { changePasswordSchema } from './schema'
 
 const RULE = { window: 900, max: 5 }
 
+// Galat Better Auth dibedakan menurut kodenya; dulu semuanya dianggap "password saat ini salah",
+// termasuk sesi yang berakhir atau galat server (audit 2026-11-03, ERR-05).
+function changePasswordError(error: APIError): ActionResult {
+  const code = (error.body as { code?: unknown } | undefined)?.code
+  if (code === 'INVALID_PASSWORD')
+    return fail('Password saat ini salah.', { currentPassword: 'Password saat ini salah' })
+  if (code === 'PASSWORD_TOO_SHORT' || code === 'PASSWORD_TOO_LONG')
+    return fail('Panjang password baru tidak sesuai.', {
+      newPassword: 'Panjang password baru tidak sesuai',
+    })
+  if (error.statusCode === 401) return fail('Sesi berakhir. Masuk lagi lalu ulangi.')
+  console.error('[account] ganti password gagal', code ?? error.statusCode)
+  return fail('Password gagal diganti. Coba lagi sebentar lagi.')
+}
+
 export async function changePassword(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
@@ -38,9 +53,7 @@ export async function changePassword(input: unknown): Promise<ActionResult> {
         headers: await headers(),
       })
     } catch (error) {
-      if (error instanceof APIError) {
-        return fail('Password saat ini salah.', { currentPassword: 'Password saat ini salah' })
-      }
+      if (error instanceof APIError) return changePasswordError(error)
       throw error
     }
 
