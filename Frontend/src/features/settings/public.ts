@@ -47,38 +47,45 @@ function heroImage(
   })
 }
 
-// Pengaturan situs untuk halaman publik. Bila belum pernah disimpan atau database bermasalah,
-// memakai nilai bawaan agar halaman tetap tampil (tanpa pemberitahuan pembuka).
-export const getSiteSettings = unstable_cache(
+// Galat database dilempar dari dalam cache dan baru diganti nilai bawaan di luar (getSiteSettings),
+// agar gangguan sesaat tidak menyimpan foto hero bawaan dan kartu pembuka mati di cache sampai
+// 10 menit (audit 2026-11-03, ERR-01).
+const loadSiteSettings = unstable_cache(
   async (): Promise<SiteSettings> => {
-    try {
-      const row = await getDb().siteSetting.findUnique({
-        where: { id: 1 },
-        include: { heroPortrait: true, heroArmor: true },
-      })
-      const complete =
-        row?.introEnabled &&
-        row.introTitle_id &&
-        row.introTitle_en &&
-        row.introBody_id &&
-        row.introBody_en
-      return {
-        soundVolume: row?.soundVolume ?? DEFAULT_SOUND_VOLUME,
-        heroPortrait: heroImage(row?.heroPortrait),
-        heroArmor: heroImage(row?.heroArmor),
-        intro: complete
-          ? {
-              title_id: row.introTitle_id!,
-              title_en: row.introTitle_en!,
-              body_id: row.introBody_id!,
-              body_en: row.introBody_en!,
-            }
-          : null,
-      }
-    } catch {
-      return { soundVolume: DEFAULT_SOUND_VOLUME, heroPortrait: null, heroArmor: null, intro: null }
+    const row = await getDb().siteSetting.findUnique({
+      where: { id: 1 },
+      include: { heroPortrait: true, heroArmor: true },
+    })
+    const complete =
+      row?.introEnabled &&
+      row.introTitle_id &&
+      row.introTitle_en &&
+      row.introBody_id &&
+      row.introBody_en
+    return {
+      soundVolume: row?.soundVolume ?? DEFAULT_SOUND_VOLUME,
+      heroPortrait: heroImage(row?.heroPortrait),
+      heroArmor: heroImage(row?.heroArmor),
+      intro: complete
+        ? {
+            title_id: row.introTitle_id!,
+            title_en: row.introTitle_en!,
+            body_id: row.introBody_id!,
+            body_en: row.introBody_en!,
+          }
+        : null,
     }
   },
   ['site-settings'],
   { tags: [CACHE_TAGS.settings], revalidate: PUBLIC_CACHE_SECONDS },
 )
+
+// Pengaturan situs untuk halaman publik. Bila belum pernah disimpan atau database bermasalah,
+// memakai nilai bawaan agar halaman tetap tampil (tanpa pemberitahuan pembuka).
+export async function getSiteSettings(): Promise<SiteSettings> {
+  try {
+    return await loadSiteSettings()
+  } catch {
+    return { soundVolume: DEFAULT_SOUND_VOLUME, heroPortrait: null, heroArmor: null, intro: null }
+  }
+}
