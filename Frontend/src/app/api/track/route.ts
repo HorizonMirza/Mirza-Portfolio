@@ -44,16 +44,32 @@ export async function POST(request: Request) {
   if (!parsed.success) return new Response(null, { status: 400 })
 
   const ip = clientIp(request.headers)
+  // Kunjungan hanya statistik: database gangguan tidak boleh menjadi 500 (dan laporan error) untuk
+  // setiap beacon pengunjung; cukup tidak dicatat (audit 2026-11-03, ERR-03).
+  try {
+    await record(request, parsed.data, ip, ua)
+  } catch {
+    console.warn('[track] kunjungan tidak tercatat')
+  }
+  return noContent()
+}
+
+async function record(
+  request: Request,
+  data: z.infer<typeof bodySchema>,
+  ip: string,
+  ua: string | null,
+): Promise<void> {
   const limit = await consumePublicRateLimit('track', ip, RULE)
-  if (!limit.allowed) return noContent()
+  if (!limit.allowed) return
   const daily = await consumeRateLimit('public:track:global', GLOBAL_RULE)
-  if (!daily.allowed) return noContent()
+  if (!daily.allowed) return
 
   const host = new URL(request.url).host
   let referrerHost: string | null = null
-  if (parsed.data.referrer) {
+  if (data.referrer) {
     try {
-      const h = new URL(parsed.data.referrer).host
+      const h = new URL(data.referrer).host
       referrerHost = h && h !== host ? h.slice(0, 100) : null
     } catch {
       referrerHost = null
@@ -63,12 +79,11 @@ export async function POST(request: Request) {
   const day = jakartaDayKey(new Date())
   await getDb().pageView.create({
     data: {
-      path: parsed.data.path.replace(/\/+$/, '') || '/',
-      locale: parsed.data.locale,
+      path: data.path.replace(/\/+$/, '') || '/',
+      locale: data.locale,
       referrerHost,
       device: /mobi|android|iphone/i.test(ua ?? '') ? 'mobile' : 'desktop',
       visitorHash: hashIdentifier(`visitor:${day}:${ip}:${ua ?? ''}`),
     },
   })
-  return noContent()
 }

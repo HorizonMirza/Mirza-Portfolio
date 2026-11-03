@@ -16,12 +16,14 @@ export function PageViewTracker() {
     const body = JSON.stringify({ path: pathname, locale, referrer: document.referrer || null })
     const blob = new Blob([body], { type: 'application/json' })
     if (!navigator.sendBeacon?.('/api/track', blob)) {
-      void fetch('/api/track', {
+      // statistik saja: gagal kirim (offline, pemblokir iklan) diabaikan tanpa galat "Uncaught (in
+      // promise)" di console (audit 2026-11-03, ERR-04)
+      fetch('/api/track', {
         method: 'POST',
         body,
         headers: { 'content-type': 'application/json' },
         keepalive: true,
-      })
+      }).catch(() => {})
     }
   }, [pathname, locale])
 
