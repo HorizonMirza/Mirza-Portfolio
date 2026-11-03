@@ -405,6 +405,16 @@ test.describe('route handler publik', () => {
     expect(bad.status()).toBe(400)
   })
 
+  test('alamat API yang tidak ada dijawab JSON 404', async ({ request }) => {
+    for (const path of ['/api/tidak-ada', '/api/v2/apa/saja']) {
+      const res = await request.get(path)
+      expect(res.status(), path).toBe(404)
+      expect(await res.json()).toMatchObject({ error: { code: 'NOT_FOUND' } })
+    }
+    // rute API yang ada tetap didahulukan
+    expect((await request.get('/api/health')).status()).toBe(200)
+  })
+
   test('cron harian menolak tanpa CRON_SECRET', async ({ request }) => {
     const res = await request.get('/api/cron/daily')
     expect(res.status()).toBe(401)
