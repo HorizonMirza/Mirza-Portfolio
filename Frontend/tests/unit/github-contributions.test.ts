@@ -76,4 +76,30 @@ describe('github-contributions', () => {
     expect(fetchSpy).not.toHaveBeenCalled()
     fetchSpy.mockRestore()
   })
+
+  it('GitHub gagal: null untuk halaman, tetapi galat dilempar di dalam cache agar tidak disimpan', async () => {
+    vi.stubEnv('GITHUB_TOKEN', 'x')
+    const calls: unknown[] = []
+    vi.resetModules()
+    vi.doMock('next/cache', () => ({
+      unstable_cache: (fn: (login: string) => Promise<unknown>) => async (login: string) => {
+        try {
+          const value = await fn(login)
+          calls.push({ value })
+          return value
+        } catch (error) {
+          calls.push({ error })
+          throw error
+        }
+      },
+    }))
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(new Response('down', { status: 502 }))
+    const { getGithubContributions } = await import('@/features/profile/github-contributions')
+    expect(await getGithubContributions('HorizonMirza')).toBeNull()
+    expect(calls).toEqual([{ error: expect.any(Error) }])
+    fetchSpy.mockRestore()
+    vi.doUnmock('next/cache')
+  })
 })

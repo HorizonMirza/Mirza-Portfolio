@@ -90,11 +90,17 @@ export function toCalendar(json: unknown): ContributionCalendar | null {
   }
 }
 
+// Gagal sementara (jaringan, status bukan 2xx) dilempar sebagai galat agar tidak ikut tersimpan di
+// cache 6 jam; getGithubContributions menggantinya dengan null (audit 2026-11-03, ERR-02). Tanpa
+// token atau pengguna tidak ada = null yang memang boleh di-cache.
+class GithubUnavailable extends Error {}
+
 async function fetchCalendar(login: string): Promise<ContributionCalendar | null> {
   const token = process.env.GITHUB_TOKEN
   if (!token) return null
+  let res: Response
   try {
-    const res = await fetch('https://api.github.com/graphql', {
+    res = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -105,17 +111,31 @@ async function fetchCalendar(login: string): Promise<ContributionCalendar | null
       body: JSON.stringify({ query: QUERY, variables: { login } }),
       signal: AbortSignal.timeout(8000),
     })
-    if (!res.ok) {
-      console.warn('[github-contributions] status', res.status)
-      return null
-    }
-    return toCalendar(await res.json())
   } catch {
     console.warn('[github-contributions] GitHub tidak bisa dihubungi')
+    throw new GithubUnavailable('network')
+  }
+  if (!res.ok) {
+    console.warn('[github-contributions] status', res.status)
+    throw new GithubUnavailable(`status ${res.status}`)
+  }
+  let json: unknown
+  try {
+    json = await res.json()
+  } catch {
+    throw new GithubUnavailable('json')
+  }
+  return toCalendar(json)
+}
+
+const loadCalendar = unstable_cache(fetchCalendar, ['github-contributions'], {
+  revalidate: REVALIDATE_SECONDS,
+})
+
+export async function getGithubContributions(login: string): Promise<ContributionCalendar | null> {
+  try {
+    return await loadCalendar(login)
+  } catch {
     return null
   }
 }
-
-export const getGithubContributions = unstable_cache(fetchCalendar, ['github-contributions'], {
-  revalidate: REVALIDATE_SECONDS,
-})
