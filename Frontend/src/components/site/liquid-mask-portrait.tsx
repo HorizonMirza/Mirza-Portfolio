@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { isScrolling } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
@@ -70,8 +70,15 @@ export function LiquidMaskPortrait({
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  // naik setiap konteks WebGL dipulihkan browser, agar efek dipasang ulang (ERR-06)
+  const [glEpoch, setGlEpoch] = useState(0)
+  // true sejak konteks dipulihkan sampai efek baru terpasang: cleanup tidak boleh melepas konteks
+  // yang akan dipakai lagi
+  const restoringRef = useRef(false)
 
   useEffect(() => {
+    // efek baru (cleanup efek lama sudah berjalan): cleanup berikutnya kembali melepas konteks
+    restoringRef.current = false
     const root = rootRef.current
     let canvas = canvasRef.current
     const img = root?.querySelector<HTMLImageElement>('figure img')
@@ -322,8 +329,10 @@ export function LiquidMaskPortrait({
       if (!isScrolling()) drawFog()
       if (blobs.length > 0) frame = requestAnimationFrame(loop)
     }
+    // konteks WebGL hilang: tidak ada bingkai baru sampai efek dipasang ulang (ERR-06)
+    let contextLost = false
     const wake = () => {
-      if (frame || !photo) return
+      if (frame || !photo || contextLost) return
       last = performance.now()
       frame = requestAnimationFrame(loop)
     }
@@ -472,8 +481,30 @@ export function LiquidMaskPortrait({
     syncPeekTimer()
     document.addEventListener('visibilitychange', syncPeekTimer)
 
+    // Konteks WebGL bisa hilang (GPU sibuk, driver di-reset, tab lama di latar). Dulu efek mati diam-
+    // diam sampai halaman dimuat ulang; kini loop berhenti, browser diminta memulihkan konteks
+    // (preventDefault), lalu efek dipasang ulang saat konteks kembali (audit 2026-11-03, ERR-06).
+    const onContextLost = (event: Event) => {
+      event.preventDefault()
+      contextLost = true
+      cancelAnimationFrame(frame)
+      cancelAnimationFrame(sweep)
+      frame = 0
+      sweep = 0
+    }
+    const onContextRestored = () => {
+      restoringRef.current = true
+      setGlEpoch((n) => n + 1)
+    }
+    if (fluid) {
+      reactCanvas.addEventListener('webglcontextlost', onContextLost)
+      reactCanvas.addEventListener('webglcontextrestored', onContextRestored)
+    }
+
     return () => {
       disposed = true
+      reactCanvas.removeEventListener('webglcontextlost', onContextLost)
+      reactCanvas.removeEventListener('webglcontextrestored', onContextRestored)
       cancelAnimationFrame(frame)
       cancelAnimationFrame(sweep)
       window.clearTimeout(timer)
@@ -486,13 +517,13 @@ export function LiquidMaskPortrait({
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerdown', onDown)
       document.documentElement.removeEventListener('pointerleave', onLeave)
-      fluid?.dispose()
+      fluid?.dispose(!restoringRef.current)
       if (fallback) {
         fallback.remove()
         reactCanvas.hidden = false
       }
     }
-  }, [back, bleed.x, bleed.top])
+  }, [back, bleed.x, bleed.top, glEpoch])
 
   return (
     <div ref={rootRef} className={cn('hero-mask', className)}>

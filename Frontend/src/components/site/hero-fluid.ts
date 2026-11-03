@@ -38,7 +38,8 @@ export type HeroFluid = {
   render: () => void
   clear: () => void
   setOptions: (options: Partial<FluidOptions>) => void
-  dispose: () => void
+  // releaseContext false: konteks dipakai lagi oleh efek baru (setelah konteks dipulihkan)
+  dispose: (releaseContext?: boolean) => void
 }
 
 const VERT = `#version 300 es
@@ -478,7 +479,7 @@ export function createHeroFluid(
     gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false)
   }
 
-  const dispose = () => {
+  const dispose = (releaseContext = true) => {
     for (const d of [velocity, dye, pressure]) {
       if (d) {
         free(d.read)
@@ -489,7 +490,7 @@ export function createHeroFluid(
     gl.deleteTexture(layer)
     gl.deleteBuffer(buffer)
     for (const p of Object.values(P)) gl.deleteProgram(p.program)
-    gl.getExtension('WEBGL_lose_context')?.loseContext()
+    if (releaseContext) gl.getExtension('WEBGL_lose_context')?.loseContext()
   }
 
   return {
