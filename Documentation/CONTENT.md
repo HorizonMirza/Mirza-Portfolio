@@ -132,7 +132,7 @@ Sumber: dokumen di repo GAAS (publik), laporan alur kerja di sesi Claude Code GA
 |---|---|
 | Nama | **GAAS**. Penjabaran tidak konsisten: README/PRD menulis "General Affair Application **System**", nama repo dan judul sesi "Application **Support**" **[TANYA]** |
 | Jenis | Aplikasi web internal multi-modul untuk operasional kantor (General Affair) |
-| Klien/perusahaan | README/PRD menulis **"PGN Solution"**, CV menulis **"PT PGAS Solution"** **[TANYA: yang benar yang mana?]** |
+| Klien/perusahaan | **PT PGAS Solution** (dikonfirmasi pemilik 2026-11-04, sesuai CV). README repo GAAS menulis "PGN Solution"; di situs dan seed selalu "PT PGAS Solution" |
 | Peran Mirza | "Developed GAAS" (CV). Repo mencatat pengerjaan dibantu AI coding assistant (Claude Code, Antigravity, Codex) di samping pemilik |
 | Modul (6) | Ekspedisi (pengiriman barang), Room Booking, Vehicle Booking, Office Supplies (permintaan ATK), Maintenance (perbaikan sarana), Archive (permintaan pemindahan arsip fisik) |
 | Peran pengguna (8) | Admin/Approval Departemen, Admin/Approval Divisi, Admin GA, Approval GA, KPU ("Mitra"), Super Admin |
@@ -211,7 +211,7 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 8. ~~IPK: tampilkan atau tidak?~~ Ditampilkan, 3,5/4,0 (pemilik 2026-10-19)
 9. Instagram dan nomor WhatsApp yang dipublikasikan.
 10. Foto profil dan logo/inisial.
-11. Nama perusahaan yang benar: **PT PGAS Solution** (CV) atau **PGN Solution** (README GAAS)?
+11. ~~Nama perusahaan yang benar: PT PGAS Solution (CV) atau PGN Solution (README GAAS)?~~ **PT PGAS Solution** (pemilik 2026-11-04)
 12. Nama lengkap GAAS: "General Affair Application **System**" atau "**Support**"?
 13. Boleh menulis bahwa GAAS dikembangkan dengan bantuan AI coding assistant (Claude Code, Antigravity, Codex)? Dan porsi pekerjaan Anda sendiri?
 14. Status pemakaian GAAS: sudah dipakai pengguna nyata, masih uji coba, atau prototipe? (Untuk bagian "hasil", tanpa angka karangan.)
