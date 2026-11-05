@@ -104,6 +104,32 @@ test('satu tombol tema membalik gelap dan terang, lalu tersimpan', async ({ page
   await expect(html).toHaveClass(/dark/)
 })
 
+test('tombol tema tetap berganti bila browser tidak menjalankan callback View Transition', async ({
+  page,
+}) => {
+  // Meniru WebKit di CI (run #257): startViewTransition ada, tetapi callback-nya tidak pernah dipanggil
+  await page.addInitScript(() => {
+    const never = new Promise<void>(() => {})
+    Document.prototype.startViewTransition = function () {
+      return {
+        ready: never,
+        finished: never,
+        updateCallbackDone: never,
+        skipTransition: () => {},
+        types: new Set(),
+      } as unknown as ViewTransition
+    }
+  })
+  await page.goto('/id')
+  const html = page.locator('html')
+  const toggle = page.getByRole('button', { name: 'Mode gelap' })
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true')
+  await toggle.click()
+  await expect(html).toHaveClass(/light/, { timeout: 2000 })
+  await toggle.click()
+  await expect(html).toHaveClass(/dark/, { timeout: 2000 })
+})
+
 test('tautan lewati konten muncul saat difokus dengan keyboard', async ({ page }) => {
   await page.goto('/id')
   await page.keyboard.press('Tab')

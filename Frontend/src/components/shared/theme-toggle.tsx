@@ -13,6 +13,8 @@ import { cn } from '@/lib/utils'
 const subscribe = () => () => {}
 // sama dengan durasi transisi .theme-icon di globals.css
 const ICON_ANIMATION_MS = 750
+// batas tunggu callback View Transition sebelum tema diganti langsung (lihat toggle)
+const CALLBACK_GRACE_MS = 400
 
 const SUN_RAYS = [
   'M12.4058 1.76251V3.76251',
@@ -89,7 +91,18 @@ export function ThemeToggle({ className }: { className?: string }) {
       apply()
       return
     }
-    revealChange(originOf(event.currentTarget), () => flushSync(apply))
+    // Tema diganti di dalam callback View Transition. WebKit kadang tidak menjalankan callback itu
+    // (CI 2026-11-04 run #257: klik selesai, kelas <html> tidak pernah berubah), sehingga tema tidak
+    // berganti sama sekali. Cadangan: bila callback belum berjalan setelah CALLBACK_GRACE_MS, tema
+    // diganti langsung tanpa animasi lingkaran; apply hanya pernah berjalan sekali.
+    let applied = false
+    const applyOnce = () => {
+      if (applied) return
+      applied = true
+      apply()
+    }
+    revealChange(originOf(event.currentTarget), () => flushSync(applyOnce))
+    window.setTimeout(applyOnce, CALLBACK_GRACE_MS)
   }
 
   return (
