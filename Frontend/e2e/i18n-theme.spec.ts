@@ -84,8 +84,11 @@ test('pengunjung dengan pilihan tema lama tetap mulai dari gelap', async ({ brow
   await context.close()
 })
 
+// Tombol tema ada di header setiap halaman. Diuji di halaman ringan (Privasi), bukan beranda: di WebKit
+// CI tanpa GPU, efek cairan dan globe beranda menyita thread utama sehingga klik baru diproses ±5 detik
+// kemudian (run #257 dan #259), yang menguji beban mesin CI, bukan tombolnya.
 test('satu tombol tema membalik gelap dan terang, lalu tersimpan', async ({ page }) => {
-  await page.goto('/id')
+  await page.goto('/id/privacy')
   const html = page.locator('html')
   const toggle = page.getByRole('button', { name: 'Mode gelap' })
 
@@ -120,7 +123,7 @@ test('tombol tema tetap berganti bila browser tidak menjalankan callback View Tr
       } as unknown as ViewTransition
     }
   })
-  await page.goto('/id')
+  await page.goto('/id/privacy')
   const html = page.locator('html')
   const toggle = page.getByRole('button', { name: 'Mode gelap' })
   await expect(toggle).toHaveAttribute('aria-pressed', 'true')

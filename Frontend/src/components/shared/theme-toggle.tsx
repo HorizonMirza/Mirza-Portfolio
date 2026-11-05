@@ -91,10 +91,10 @@ export function ThemeToggle({ className }: { className?: string }) {
       apply()
       return
     }
-    // Tema diganti di dalam callback View Transition. WebKit kadang tidak menjalankan callback itu
-    // (CI 2026-11-04 run #257: klik selesai, kelas <html> tidak pernah berubah), sehingga tema tidak
-    // berganti sama sekali. Cadangan: bila callback belum berjalan setelah CALLBACK_GRACE_MS, tema
-    // diganti langsung tanpa animasi lingkaran; apply hanya pernah berjalan sekali.
+    // Tema diganti di dalam callback View Transition. Bila browser tidak (atau sangat lambat)
+    // menjalankan callback itu, tema tidak akan berganti sama sekali. Pengaman: bila callback belum
+    // berjalan setelah CALLBACK_GRACE_MS, tema diganti langsung tanpa animasi lingkaran; apply hanya
+    // pernah berjalan sekali (diuji di e2e/i18n-theme.spec.ts).
     let applied = false
     const applyOnce = () => {
       if (applied) return
