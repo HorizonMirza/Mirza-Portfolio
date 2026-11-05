@@ -88,6 +88,7 @@ Catatan:
 - Data dari `unstable_cache` diserialisasi JSON, jadi query publik hanya mengembalikan nilai sederhana (tanggal sebagai string `YYYY-MM` atau ISO).
 - Build butuh database (`DATABASE_URL`) karena halaman publik dirender dari data. CI dan Vercel sudah menyediakannya.
 - **Jangan** `export const dynamicParams = false` di `app/[locale]/layout.tsx`: render ulang ISR setelah revalidasi gagal (`NoFallbackError`) dan semua halaman publik menjadi 404. Locale asing ditolak lewat `hasLocale()`.
+- **404 untuk URL tak dikenal:** tanpa titik → proxy mengalihkan ke `/id/...` atau `/en/...` lalu `[locale]/[...rest]` menampilkan 404 bahasa itu. Dengan titik (mis. `/x.txt`, `/wp-login.php`) → proxy melewatinya (matcher mengecualikan berkas), lalu rewrite `afterFiles` di `next.config.ts` menyajikan 404 bahasa Indonesia dengan URL tetap dan status 404. `afterFiles` diperiksa setelah berkas `public/`, `_next/static`, dan halaman non-dinamis, jadi berkas dan `robots.txt`/`sitemap.xml` tidak terpengaruh. `/api/*` yang tidak ada dijawab JSON 404 (`app/api/[...rest]`).
 - Halaman publik tanpa filter: filter Pengalaman dihapus 2026-10-03 dan filter Project dihapus 2026-10-08 (revisi pemilik, DESIGN.md). Filter kategori yang tersisa hanya di globe skill beranda (komponen klien).
 - Gambar publik hanya dari akun Cloudinary di `CLOUDINARY_CLOUD_NAME` (`lib/public-image.ts`); gambar lain dilewati agar halaman tidak gagal render.
 
