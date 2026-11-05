@@ -299,6 +299,24 @@ test('detail project yang tidak ada mengembalikan 404', async ({ page }) => {
   ).toHaveAttribute('href', '/id')
 })
 
+test('URL tak dikenal yang mengandung titik memakai 404 situs, berkas yang ada tetap tersaji', async ({
+  page,
+  request,
+}) => {
+  // Dulu tampil 404 bawaan Next berbahasa Inggris tanpa gaya (rewrite afterFiles di next.config.ts)
+  for (const path of ['/x.txt', '/wp-login.php', '/a/b.php']) {
+    const response = await page.goto(path)
+    expect(response?.status(), path).toBe(404)
+    await expect(page).toHaveURL(new RegExp(`${path.replace(/[.]/g, '\\.')}$`))
+    await expect(page.locator('html')).toHaveAttribute('lang', 'id')
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Boo! Halamannya hilang.')
+  }
+  // berkas statis dan rute non-dinamis tidak ikut dialihkan
+  for (const path of ['/robots.txt', '/sitemap.xml', '/favicon.ico', '/skills/bootstrap.webp']) {
+    expect((await request.get(path)).status(), path).toBe(200)
+  }
+})
+
 test.describe('form kontak', () => {
   test.use({ extraHTTPHeaders: { 'x-forwarded-for': uniqueIp() } })
 

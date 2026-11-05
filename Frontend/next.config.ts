@@ -19,12 +19,31 @@ const nextConfig: NextConfig = {
       : [],
   },
   experimental: {
-    // 404 global untuk URL di luar /[locale] (app/global-not-found.tsx)
+    // 404 global untuk URL yang tidak cocok rute mana pun (app/global-not-found.tsx). URL ber-titik yang
+    // tertangkap [locale] dialihkan lewat rewrite afterFiles di bawah.
     globalNotFound: true,
   },
   // Halaman Skill digabung ke beranda (keputusan pemilik 2026-10-01); tautan lama diarahkan ke sana.
   async redirects() {
     return [{ source: '/:locale(id|en)/skills', destination: '/:locale#skills', permanent: true }]
+  },
+  // URL tak dikenal yang mengandung titik (mis. /x.txt, /wp-login.php, /a/b.php) dilewati proxy
+  // (matcher-nya mengecualikan berkas), lalu tertangkap [locale] dengan locale tidak sah sehingga
+  // tampil 404 bawaan Next berbahasa Inggris. Rewrite afterFiles diperiksa SETELAH berkas public/,
+  // _next/static, dan halaman non-dinamis (robots.txt, sitemap.xml, favicon.ico), tetapi SEBELUM rute
+  // dinamis, jadi hanya URL yang memang tidak ada yang diarahkan ke 404 situs bahasa Indonesia; URL di
+  // browser tidak berubah dan statusnya tetap 404 (audit 2026-11-05, 404 global).
+  async rewrites() {
+    return {
+      beforeFiles: [],
+      afterFiles: [
+        {
+          source: '/:path((?!(?:id|en|admin|api|_next|_vercel)(?:/|$)).*\\..*)',
+          destination: '/id/halaman-tidak-ditemukan',
+        },
+      ],
+      fallback: [],
+    }
   },
   async headers() {
     const dev = process.env.NODE_ENV !== 'production'
