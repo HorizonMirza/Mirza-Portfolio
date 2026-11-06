@@ -150,33 +150,36 @@ export function PhotoLightbox({
           event.preventDefault()
           void close()
         }}
-        // klik di area gelap (dialog itu sendiri, bukan foto atau keterangan) menutup
+        // klik di area gelap (di luar foto, keterangan, dan tombol kembali) menutup
         onClick={(event) => {
-          if (event.target === event.currentTarget) void close()
+          if (!(event.target as Element).closest('figure, button')) void close()
         }}
       >
-        {/* tombol kembali seperti "Semua project" di detail project (revisi pemilik 2026-11-06,
-            menggantikan tombol ×) */}
-        <button type="button" className="xp-lightbox-back" onClick={() => void close()}>
-          <ArrowLeft aria-hidden className="size-4" />
-          {closeLabel}
-        </button>
-        <figure className="xp-lightbox-figure">
-          <Image
-            ref={big}
-            src={src}
-            alt={alt}
-            width={width}
-            height={height}
-            sizes="(min-width: 1100px) 920px, 84vw"
-            loading="lazy"
-            className="xp-lightbox-img"
-          />
-          <figcaption className="xp-lightbox-cap">
-            {caption}
-            <small>{detail}</small>
-          </figcaption>
-        </figure>
+        {/* Kolom selebar konten situs: tombol kembali di posisi yang sama dengan "Semua project" di
+            detail project (di bawah area navbar, rata kiri konten), foto di bawahnya (revisi pemilik
+            2026-11-06) */}
+        <div className="xp-lightbox-inner">
+          <button type="button" className="xp-lightbox-back" onClick={() => void close()}>
+            <ArrowLeft aria-hidden className="size-4" />
+            {closeLabel}
+          </button>
+          <figure className="xp-lightbox-figure">
+            <Image
+              ref={big}
+              src={src}
+              alt={alt}
+              width={width}
+              height={height}
+              sizes="(min-width: 1100px) 920px, 84vw"
+              loading="lazy"
+              className="xp-lightbox-img"
+            />
+            <figcaption className="xp-lightbox-cap">
+              {caption}
+              <small>{detail}</small>
+            </figcaption>
+          </figure>
+        </div>
       </dialog>
     </>
   )
