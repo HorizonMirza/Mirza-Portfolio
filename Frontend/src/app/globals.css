@@ -2843,7 +2843,61 @@ html[data-intro='pending'] .intro {
   position: absolute;
   inset: 0;
   touch-action: pan-y;
+  /* tanpa JavaScript tetap crosshair; HeroCursor menggantinya dengan titik + cincin */
   cursor: crosshair;
+}
+/* Kursor titik + cincin di foto beranda (pilihan pemilik 2026-11-06, demo K3, hero-cursor.tsx).
+   Hanya mouse/touchpad; warna mengikuti tema dengan garis tipis warna latar agar tetap terlihat di
+   atas jas maupun kemeja. Posisi ditulis lewat transform oleh skrip. */
+@media (hover: hover) and (pointer: fine) {
+  .hero-mask[data-cursor] {
+    cursor: none;
+  }
+}
+.hero-cursor > div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.hero-cursor[data-on] > div {
+  opacity: 1;
+}
+/* elemen luar hanya posisi (transform dari skrip); bentuk dan efek tekan di ::before, karena properti
+   scale diterapkan sebelum transform dan akan ikut mengecilkan posisi */
+.hero-cursor > div::before {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  transition:
+    scale 200ms,
+    background-color 200ms;
+}
+.hero-cursor-dot::before {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--text);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bg) 55%, transparent);
+}
+.hero-cursor-ring::before {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1.5px solid var(--text);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--bg) 35%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--bg) 35%, transparent);
+}
+.hero-cursor[data-pressed] .hero-cursor-dot::before {
+  scale: 0.75;
+}
+.hero-cursor[data-pressed] .hero-cursor-ring::before {
+  scale: 0.7;
+  background: color-mix(in srgb, var(--text) 15%, transparent);
 }
 .hero-name {
   position: absolute;
