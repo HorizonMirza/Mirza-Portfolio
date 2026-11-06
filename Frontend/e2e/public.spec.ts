@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, type Locator, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
 import { CLIENT_NAV_TIMEOUT, waitForFiniteAnimations } from './wait'
@@ -199,22 +199,29 @@ test.describe('globe skill', () => {
     const index = await items.evaluateAll((els) => els.findIndex((el) => !el.hasAttribute('inert')))
     expect(index).toBeGreaterThanOrEqual(0)
     const first = items.nth(index)
+    // Bola memutar logo terpilih ke depan (dan kembali saat dilepas), juga dengan reduced-motion.
+    // Klik pada logo yang masih bergerak meleset saat mesin CI sibuk: pointerdown di logo, pointerup
+    // sudah di kanvas (WebKit, CI #273). Klik baru dikirim setelah globe menandai dirinya diam.
+    const clickSettled = async (item: Locator) => {
+      await expect(globe).toHaveAttribute('data-idle', '')
+      await item.click()
+    }
     const firstName = (await first.locator('.globe-name').textContent()) ?? ''
-    await first.click()
+    await clickSettled(first)
     await expect(first).toHaveAttribute('aria-pressed', 'true')
     const panel = page.locator(`[id="${await first.getAttribute('aria-controls')}"]`)
     await expect(panel).toContainText(firstName)
     // tekan ulang logo, Esc, atau tekan di luar logo: pilihan lepas (bola berputar lagi)
-    await first.click()
+    await clickSettled(first)
     await expect(first).toHaveAttribute('aria-pressed', 'false')
     await expect(panel).toBeEmpty()
-    await first.click()
+    await clickSettled(first)
     await page.keyboard.press('Escape')
     await expect(first).toHaveAttribute('aria-pressed', 'false')
-    await first.click()
+    await clickSettled(first)
     await page.getByRole('heading', { name: 'Keahlian Teknis' }).click()
     await expect(first).toHaveAttribute('aria-pressed', 'false')
-    await first.click()
+    await clickSettled(first)
     await expect(first).toHaveAttribute('aria-pressed', 'true')
     // panah ke logo berikutnya, juga bila sedang di sisi belakang (diputar ke depan dulu)
     await first.press('ArrowRight')

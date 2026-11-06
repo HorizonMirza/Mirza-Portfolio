@@ -364,7 +364,10 @@ export function SkillGlobe({
       void buildSprites()
     }
 
-    const draw = () => {
+    // full: semua tombol HTML dipindah ke posisi logonya. Loop animasi hanya mengirim false selama bola
+    // masih bergerak; pemanggil lain (hover, resize, tema) dan bingkai terakhir sebelum bola diam selalu
+    // sinkron penuh, agar target klik tidak tertinggal di posisi lama (klik hilang, CI #273).
+    const draw = (full = true) => {
       drawSphere()
       if (sizes.length !== pointsRef.current.length) measure()
       const density = densityScale(pointsRef.current.length)
@@ -374,10 +377,11 @@ export function SkillGlobe({
         .map((style, i) => ({ i, rank: i === activeRef.current ? Infinity : style.zIndex }))
         .sort((a, b) => b.rank - a.rank)
       const placed: Rect[] = []
-      // Tombol HTML (tak terlihat saat canvas menggambar logo) cukup dipindah tiap bingkai ke-4, kecuali
-      // saat digeser/diputar ke logo dan untuk logo yang disorot, difokus, atau terpilih: posisi target
-      // sentuh paling jauh tertinggal ±130 ms (beberapa piksel pada putaran pelan).
-      const syncAll = !painted || drag !== null || target !== null || domTick++ % 4 === 0
+      // Tombol HTML (tak terlihat saat canvas menggambar logo) cukup dipindah tiap bingkai ke-4 selama
+      // bola bergerak, kecuali saat digeser/diputar ke logo dan untuk logo yang disorot, difokus, atau
+      // terpilih: posisi target sentuh paling jauh tertinggal ±130 ms (beberapa piksel pada putaran
+      // pelan). Begitu bola diam semuanya disinkronkan (draw(true)).
+      const syncAll = full || !painted || drag !== null || target !== null || domTick++ % 4 === 0
       const focused = document.activeElement
       for (const { i } of order) {
         const el = itemRefs.current[i]
@@ -506,7 +510,11 @@ export function SkillGlobe({
       lastDraw = time
       let moving = false
       for (let k = 0; k < steps; k++) moving = step() || moving
-      draw()
+      draw(!moving)
+      // tanda bola diam (tidak berputar ke logo, tidak kembali ke awal, tidak diseret), dipakai tes E2E
+      // agar tidak mengklik logo yang masih bergerak (CI #273); ditulis hanya bila berubah
+      const idle = !moving && !drag
+      if (stage.hasAttribute('data-idle') !== idle) stage.toggleAttribute('data-idle', idle)
       if (visible && moving) frame = requestAnimationFrame(loop)
     }
     // tidak pernah menjadwalkan bingkai setelah globe dibongkar (audit 2026-10-31, BUG-02)
@@ -520,11 +528,13 @@ export function SkillGlobe({
         target = facing(p)
         homing = false
         velocity = 0
+        stage.removeAttribute('data-idle')
         wake()
       },
       home: () => {
         target = null
         homing = true
+        stage.removeAttribute('data-idle')
         wake()
       },
       wake,
