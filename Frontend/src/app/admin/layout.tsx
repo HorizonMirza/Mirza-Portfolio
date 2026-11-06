@@ -7,6 +7,7 @@ import '@/app/globals.css'
 import { fontVariables } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
+import { getSiteSettings } from '@/features/settings/public'
 import { THEME_STORAGE_KEY } from '@/lib/theme'
 
 // Root layout kedua (tanpa awalan bahasa). Panel admin hanya dipakai pemilik, jadi berbahasa Indonesia.
@@ -17,11 +18,16 @@ export const metadata: Metadata = {
 
 export default async function AdminRootLayout({ children }: { children: ReactNode }) {
   // nonce CSP dari src/proxy.ts untuk skrip tema next-themes
-  const nonce = (await headers()).get('x-nonce') ?? undefined
+  const [nonce, settings] = await Promise.all([
+    headers().then((h) => h.get('x-nonce') ?? undefined),
+    getSiteSettings(),
+  ])
   return (
     <html
       lang="id" // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan (revisi pemilik 2026-10-26)
       className={`${fontVariables} no-scrollbar`}
+      // volume suara tombol tema dan bahasa sama dengan situs publik (diatur di Pengaturan)
+      data-sound-volume={settings.soundVolume}
       suppressHydrationWarning
     >
       <body className="bg-bg text-text">

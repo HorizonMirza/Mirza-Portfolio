@@ -288,20 +288,25 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
 test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ page }) => {
   await page.goto('/admin/pages/home')
   const bar = page.getByRole('banner')
-  await expect(bar.getByRole('button', { name: 'ID, bahasa isian Indonesia' })).toBeVisible()
+  // satu tombol bulat seperti situs publik: kode yang terlihat adalah bahasa tujuan
+  await expect(bar.getByRole('button', { name: 'EN, ganti bahasa isian ke English' })).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
 
   // bahasa isian menentukan kolom yang tampil di form dua bahasa
   await expect(page.getByLabel('Bagian keahlian (Indonesia)')).toBeVisible()
   await expect(page.getByLabel('Bagian keahlian (English)')).toHaveCount(0)
+  // klik sebelum hydration selesai belum berpengaruh; tombol ini bergantian (EN lalu ID), jadi hanya
+  // diklik ulang selama masih bertuliskan EN
+  const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa isian ke English' })
   await expect(async () => {
-    await bar.getByRole('button', { name: 'EN, bahasa isian English' }).click()
+    if (await toEnglish.count()) await toEnglish.click()
     await expect(page.getByLabel('Bagian keahlian (English)')).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByLabel('Bagian keahlian (Indonesia)')).toHaveCount(0)
   // kembalikan agar tes lain tidak terpengaruh (pilihan tersimpan di browser)
-  await bar.getByRole('button', { name: 'ID, bahasa isian Indonesia' }).click()
+  await expect(toEnglish).toHaveCount(0)
+  await bar.getByRole('button', { name: 'ID, ganti bahasa isian ke Indonesia' }).click()
 
   await bar.getByRole('button', { name: 'Menu profil' }).click()
   await expect(page.getByRole('link', { name: 'Akun' }).last()).toBeVisible()

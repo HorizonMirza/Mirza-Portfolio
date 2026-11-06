@@ -37,7 +37,7 @@ function StatTile({
 }
 
 export default async function DashboardPage() {
-  const admin = await requireSuperAdminPage()
+  await requireSuperAdminPage()
   const [stats, visits, messages] = await Promise.all([
     getDashboardStats(),
     getDailyVisits(30),
@@ -47,9 +47,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <header>
-        <h1 className="mt-2 text-h1 font-bold">Halo, {admin.name.split(' ')[0]}.</h1>
-      </header>
+      {/* judul terlihat ada di top bar ("Dashboard"); sapaan besar dihapus (revisi pemilik 2026-11-06) */}
+      <h1 className="sr-only">Dashboard</h1>
 
       <section aria-label="Ringkasan" className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatTile label="Pesan baru" value={stats.newMessages} href="/admin/messages" />

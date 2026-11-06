@@ -1,10 +1,13 @@
 'use client'
 
 import { createContext, type ReactNode, useCallback, useContext, useSyncExternalStore } from 'react'
+import { flushSync } from 'react-dom'
 
+import { scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
+import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
-// Bahasa isian konten (pilihan pemilik 2026-10-26, tombol ID/EN di top bar): form dua bahasa membuka
+// Bahasa isian konten (pilihan pemilik 2026-10-26, tombol bahasa di top bar): form dua bahasa membuka
 // bahasa ini lebih dulu. Menu dan teks admin sendiri tetap Indonesia. Tersimpan di browser pemilik.
 export type ContentLang = 'id' | 'en'
 
@@ -50,39 +53,38 @@ export function useAdminLang() {
   return useContext(Ctx)
 }
 
-// nama aksesibel diawali kode yang terlihat (WCAG 2.5.3 Label in Name, DESIGN.md bagian 102)
-const OPTIONS: { lang: ContentLang; label: string; name: string }[] = [
-  { lang: 'id', label: 'ID', name: 'ID, bahasa isian Indonesia' },
-  { lang: 'en', label: 'EN', name: 'EN, bahasa isian English' },
-]
+const LANG_NAME: Record<ContentLang, string> = { id: 'Indonesia', en: 'English' }
 
+// Satu tombol bulat seperti tombol bahasa situs publik (revisi pemilik 2026-11-06, menggantikan
+// pasangan ID | EN): kode yang terlihat adalah bahasa tujuan dan menjadi awal nama aksesibel
+// (WCAG 2.5.3, DESIGN.md bagian 102). Saat ditekan: suara acak digital yang sama, kolom isian
+// berganti bahasa, lalu teks yang berubah di layar diacak dan terurai seperti di situs publik.
 export function LangSwitch({ className }: { className?: string }) {
   const { lang, setLang } = useAdminLang()
+  const target: ContentLang = lang === 'id' ? 'en' : 'id'
+  const label = `${target.toUpperCase()}, ganti bahasa isian ke ${LANG_NAME[target]}`
+
+  function toggle() {
+    playLanguageSound(target === 'en')
+    const before = visibleTexts()
+    flushSync(() => setLang(target))
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      scrambleVisibleText(document.body, before)
+    }
+  }
+
   return (
-    <div
-      role="group"
-      aria-label="Bahasa isian konten"
-      title="Bahasa isian konten"
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={toggle}
       className={cn(
-        'inline-flex shrink-0 items-center rounded-full border border-border bg-surface p-1',
+        'inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-sm font-semibold text-text uppercase transition-colors hover:bg-surface-2',
         className,
       )}
     >
-      {OPTIONS.map((option) => (
-        <button
-          key={option.lang}
-          type="button"
-          aria-pressed={lang === option.lang}
-          aria-label={option.name}
-          onClick={() => setLang(option.lang)}
-          className={cn(
-            'min-h-9 rounded-full px-3 text-sm font-semibold transition-colors',
-            lang === option.lang ? 'bg-primary text-primary-fg' : 'text-muted hover:text-text',
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
+      {target}
+    </button>
   )
 }

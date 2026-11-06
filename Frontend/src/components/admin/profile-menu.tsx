@@ -11,7 +11,8 @@ import { authClient } from '@/lib/auth-client'
 export type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 
 const itemClass =
-  'flex min-h-11 w-full items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text'
+  // sudut kecil, bukan kapsul (revisi pemilik 2026-11-06: ujung sorotan lebih lancip)
+  'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text'
 
 // Foto bulat di pojok kanan atas; menekannya membuka akun, tautan ke situs, dan Keluar.
 export function ProfileMenu({ adminName, photo }: AdminIdentity) {

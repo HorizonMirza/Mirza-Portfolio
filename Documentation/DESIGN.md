@@ -1409,3 +1409,12 @@ Permintaan pemilik: "perbaiki design dan layout bagian admin, jangan double, bua
 - **Teks ganda digabung:** "Kata untuk sampai sekarang" kini satu isian di Experience (dipakai Experience, About, dan beranda; dulu dua isian About dan Experience). Deskripsi kartu pembuka tidak lagi mengulang deskripsi halaman; deskripsi Skill tidak mengulang kalimat.
 - **Berfungsi:** kartu angka dashboard menjadi tautan ke halamannya (grid 3 kolom setelah kartu newsletter hilang); Pesan memakai halaman 50 per halaman (dulu dipotong diam-diam di 500 pesan); Log audit dan Pesan memakai komponen `Pager` yang sama; filter Log audit memakai gaya filter yang sama dengan Pesan dan nama yang dikenal (Teks situs, Pengaturan, Kategori skill, bukan `SiteText`); kolom tabel Project tidak lagi bisa diurutkan dengan klik judul kolom karena urutan project diatur manual dan sama dengan situs.
 - **Profil:** slot Foto profil dan CV dipindah ke atas form, jadi tombol Simpan di akhir halaman jelas milik form teks (foto dan CV tersimpan sendiri saat diunggah). Tombol ubah skill kini bertulisan "Ubah" seperti tombol kategori dan Hapus.
+
+## 108. Top bar admin: judul besar, tombol bahasa seperti situs (2026-11-06 malam)
+
+Revisi pemilik setelah bagian 107:
+
+- **Nama halaman kembali di top bar, lebih besar:** Oswald huruf besar 1,25–1,5 rem (dulu teks kecil "Halaman situs / Dashboard", sempat dihapus di bagian 107). Sapaan "Halo, Muhammad." di Dashboard dihapus; judul halaman Dashboard untuk pembaca layar tetap ada (`h1` sr-only).
+- **Tombol bahasa isian seperti tombol bahasa situs publik:** pasangan ID | EN diganti satu tombol bulat yang menampilkan bahasa tujuan ("EN, ganti bahasa isian ke English"). Saat ditekan: suara acak digital yang sama (`playLanguageSound`), kolom isian berganti bahasa, dan teks yang berubah di layar diacak lalu terurai (`scrambleVisibleText`), seperti di situs. Fungsinya tetap memilih bahasa isian; menu admin tetap Indonesia (pilihan pemilik).
+- **Tombol bulan (tema):** sudah memakai komponen yang sama dengan situs (lingkaran meluas + suara angin). Admin kini membaca volume suara dari Pengaturan (`data-sound-volume` di layout admin), dulu selalu memakai volume bawaan.
+- **Menu profil:** sorotan saat disorot berujung lancip (`rounded-md`), bukan kapsul.
