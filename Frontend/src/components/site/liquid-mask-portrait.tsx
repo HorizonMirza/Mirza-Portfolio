@@ -27,6 +27,8 @@ const FLUID_PUSH = 0.2
 const FLUID_SWIRL = 28
 const FLUID_GRAIN = 0.05
 const FLUID_STEP = 6
+// resolusi maksimum kanvas cairan terhadap piksel CSS
+const FLUID_DPR_MAX = 1
 // gambar kedua dimuat setelah halaman tenang (atau saat pertama disentuh), bukan saat halaman dibuka
 const BACK_DELAY_MS = 1200
 // resolusi masker jejak terhadap piksel CSS
@@ -236,7 +238,10 @@ export function LiquidMaskPortrait({
         c.height = Math.round(height * dpr)
       }
       if (fluid) {
-        fluid.resize(width, height, dpr)
+        // Kanvas cairan menutupi seluruh hero dan digambar ulang tiap bingkai selama hover: resolusinya
+        // dibatasi 1× piksel CSS (revisi lag hover 2026-11-06). Di layar 1,25×–2× jumlah pikselnya turun
+        // 36–75%; tepi masker memang berbutir, jadi perbedaan ketajaman armor nyaris tidak terlihat.
+        fluid.resize(width, height, Math.min(dpr, FLUID_DPR_MAX))
       } else {
         out.width = Math.round(width * dpr)
         out.height = Math.round(height * dpr)
@@ -361,10 +366,21 @@ export function LiquidMaskPortrait({
         const seconds = Math.max(0.008, (now - pointer.t) / 1000)
         const vx = dx / seconds
         const vy = dy / seconds
-        const gap = fluid ? FLUID_STEP : BLOB_STEP
-        const steps = Math.max(1, Math.min(fluid ? 12 : 24, Math.floor(Math.hypot(dx, dy) / gap)))
-        for (let i = 1; i <= steps; i++)
-          add(pointer.x + (dx * i) / steps, pointer.y + (dy * i) / steps, 1, vx, vy)
+        if (fluid) {
+          // Cairan: satu percikan berbentuk garis dari posisi lama ke posisi baru (dua lintasan GPU),
+          // menggantikan sampai 12 percikan bulat (24 lintasan) per gerakan yang membuat hover lag
+          // (laporan pemilik 2026-11-06). Dorongan dikali jumlah percikan lama (maks. 3) agar alirannya
+          // tetap terasa sama.
+          const steps = Math.max(1, Math.min(12, Math.floor(Math.hypot(dx, dy) / FLUID_STEP)))
+          const r = baseRadius()
+          const push = FLUID_PUSH * Math.min(steps, 3)
+          lastSplat = now
+          fluid.splat(pointer.x, pointer.y, r * FLUID_EDGE, vx * push, vy * push, p.x, p.y)
+        } else {
+          const steps = Math.max(1, Math.min(24, Math.floor(Math.hypot(dx, dy) / BLOB_STEP)))
+          for (let i = 1; i <= steps; i++)
+            add(pointer.x + (dx * i) / steps, pointer.y + (dy * i) / steps, 1, vx, vy)
+        }
       } else add(p.x, p.y)
       pointer = { ...p, t: now }
       wake()

@@ -10,7 +10,8 @@
 const SIM_SHORT = 128
 const DYE_SCALE = 0.5
 const DYE_LONG_MAX = 1024
-const PRESSURE_ITERATIONS = 18
+// 18 → 12 (revisi lag hover 2026-11-06): sisa galat tekanan tidak terlihat pada masker bertepi tajam
+const PRESSURE_ITERATIONS = 12
 // ambang tepi masker dan lebar peralihan (dalam satuan kepekatan zat warna)
 const EDGE = 0.3
 const EDGE_SOFT = 0.035
@@ -31,8 +32,17 @@ export type FluidOptions = {
 
 export type HeroFluid = {
   resize: (width: number, height: number, dpr: number) => void
-  // titik dan jari-jari dalam piksel CSS; kecepatan dalam piksel CSS per detik
-  splat: (x: number, y: number, radius: number, vx: number, vy: number) => void
+  // titik dan jari-jari dalam piksel CSS; kecepatan dalam piksel CSS per detik; (x2, y2) opsional:
+  // ujung lain percikan berbentuk garis dari (x, y)
+  splat: (
+    x: number,
+    y: number,
+    radius: number,
+    vx: number,
+    vy: number,
+    x2?: number,
+    y2?: number,
+  ) => void
   setLayer: (source: TexImageSource) => void
   step: (dt: number) => void
   render: () => void
@@ -62,12 +72,21 @@ const SPLAT = `${head}
 uniform sampler2D uTarget;
 uniform float uAspect;
 uniform vec2 uPoint;
+uniform vec2 uPoint2;
 uniform float uRadius;
 uniform vec3 uValue;
 uniform float uCap;
 void main() {
-  vec2 p = vUv - uPoint;
-  p.x *= uAspect;
+  // percikan berbentuk kapsul dari uPoint ke uPoint2 (titik bila keduanya sama): jarak ke ruas garis,
+  // sehingga satu gerakan kursor cukup satu lintasan, bukan belasan percikan bulat (revisi lag 2026-11-06)
+  vec2 a = uPoint;
+  vec2 b = uPoint2;
+  vec2 pa = vUv - a;
+  vec2 ba = b - a;
+  pa.x *= uAspect;
+  ba.x *= uAspect;
+  float h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-8), 0.0, 1.0);
+  vec2 p = pa - ba * h;
   vec3 add = exp(-dot(p, p) / uRadius) * uValue;
   vec3 base = texture(uTarget, vUv).xyz;
   // zat warna dibatasi uCap agar percikan yang bertumpuk tidak membesar; kecepatan tidak dibatasi
@@ -358,9 +377,10 @@ export function createHeroFluid(
     dye = double(dyeW, dyeH, gl.R16F, gl.RED)
   }
 
-  const splat = (x: number, y: number, radius: number, vx: number, vy: number) => {
+  const splat = (x: number, y: number, radius: number, vx: number, vy: number, x2 = x, y2 = y) => {
     if (!velocity || !dye) return
     const point: [number, number] = [x / cssW, 1 - y / cssH]
+    const point2: [number, number] = [x2 / cssW, 1 - y2 / cssH]
     // jari-jari Gauss dalam satuan tinggi; kontur pada ambang EDGE = radius piksel CSS
     const r = radius / cssH / Math.sqrt(Math.log(PEAK / EDGE))
     const aspect = cssW / cssH
@@ -371,6 +391,7 @@ export function createHeroFluid(
     gl.uniform1i(u.uTarget!, bind(velocity.read.tex))
     gl.uniform1f(u.uAspect!, aspect)
     gl.uniform2f(u.uPoint!, point[0], point[1])
+    gl.uniform2f(u.uPoint2!, point2[0], point2[1])
     gl.uniform1f(u.uRadius!, r * r)
     gl.uniform3f(u.uValue!, vx * sx, -vy * sy, 0)
     gl.uniform1f(u.uCap!, 1e4)
@@ -380,6 +401,7 @@ export function createHeroFluid(
     gl.uniform1i(u.uTarget!, bind(dye.read.tex))
     gl.uniform1f(u.uAspect!, aspect)
     gl.uniform2f(u.uPoint!, point[0], point[1])
+    gl.uniform2f(u.uPoint2!, point2[0], point2[1])
     gl.uniform1f(u.uRadius!, r * r)
     gl.uniform3f(u.uValue!, PEAK, 0, 0)
     gl.uniform1f(u.uCap!, PEAK)
