@@ -9,19 +9,12 @@ import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tab
 import { Field } from '@/components/admin/field'
 import { FormFooter } from '@/components/admin/form-footer'
 import { MarkdownEditor } from '@/components/admin/markdown-editor'
-import { NativeSelect } from '@/components/admin/select'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 import { saveProfile } from '../actions'
-import {
-  availabilityLabel,
-  type ProfileInput,
-  profileSchema,
-  SOCIAL_KEYS,
-  socialLabel,
-} from '../schema'
+import { type ProfileInput, profileSchema, SOCIAL_KEYS, socialLabel } from '../schema'
 
 type Lang = 'id' | 'en'
 
@@ -104,18 +97,6 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         >
           {(a) => <Input {...a} {...register(`cardRole_${lang}`)} />}
         </Field>
-        <Field
-          id={`availabilityNote_${lang}`}
-          label={id ? 'Catatan ketersediaan (opsional)' : 'Availability note (optional)'}
-          hint={
-            id
-              ? 'Contoh: mulai Januari 2027. Saat ini hanya dikirim lewat API publik /api/v1, tidak tampil di situs.'
-              : 'Example: from January 2027. Currently only sent through the public API /api/v1.'
-          }
-          error={errors[`availabilityNote_${lang}`]?.message}
-        >
-          {(a) => <Input {...a} {...register(`availabilityNote_${lang}`)} />}
-        </Field>
       </>
     )
   }
@@ -129,22 +110,6 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         </Field>
         <Field id="city" label="Kota (opsional)" error={errors.city?.message}>
           {(a) => <Input {...a} {...register('city')} />}
-        </Field>
-        <Field
-          id="availability"
-          label="Status ketersediaan"
-          hint="Saat ini hanya dikirim lewat API publik /api/v1, tidak tampil di situs."
-          error={errors.availability?.message}
-        >
-          {(a) => (
-            <NativeSelect {...a} {...register('availability')}>
-              {Object.entries(availabilityLabel).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </NativeSelect>
-          )}
         </Field>
       </Card>
 

@@ -107,6 +107,8 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
                       trigger={
                         <Button variant="ghost" size="sm" aria-label={`Ubah ${skill.name}`}>
                           <Pencil aria-hidden="true" />
+                          {/* bertulisan seperti tombol Ubah kategori dan Hapus di sebelahnya */}
+                          <span className="sr-only md:not-sr-only">Ubah</span>
                         </Button>
                       }
                     />

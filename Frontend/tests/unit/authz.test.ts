@@ -34,7 +34,6 @@ async function load() {
   const experience = await import('@/features/experience/actions')
   const profile = await import('@/features/profile/actions')
   const messages = await import('@/features/messages/actions')
-  const subscribers = await import('@/features/subscribers/actions')
   const assets = await import('@/features/assets/actions')
   const account = await import('@/features/account/actions')
   const settings = await import('@/features/settings/actions')
@@ -45,7 +44,6 @@ async function load() {
     experience,
     profile,
     messages,
-    subscribers,
     assets,
     account,
     settings,
@@ -71,7 +69,6 @@ async function load() {
     ['saveProfile', () => profile.saveProfile({})],
     ['setMessageStatus', () => messages.setMessageStatus(id, 'READ')],
     ['deleteMessage', () => messages.deleteMessage(id)],
-    ['deleteSubscriber', () => subscribers.deleteSubscriber(id)],
     ['signAssetUpload', () => assets.signAssetUpload('profile-photo')],
     ['attachUploadedAsset', () => assets.attachUploadedAsset('profile-photo', null, {}, {})],
     ['updateAssetAlt', () => assets.updateAssetAlt(id, {})],

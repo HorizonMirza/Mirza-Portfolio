@@ -27,7 +27,7 @@ Every module comes in Indonesian and English, dark by default with a light theme
 
 - **Editable site text:** one page per module, in both languages, plus the hero photos
 - **Content manager:** projects (GitHub import, Cloudinary uploads, draft/published), skills, experience, education
-- **Inbox:** contact messages and newsletter subscribers
+- **Inbox:** contact messages
 - **Safe by default:** server-side Zod validation, `SUPER_ADMIN` role check, and an audit log on every action
 
 ## Tech Stack

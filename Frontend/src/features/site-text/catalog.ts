@@ -92,7 +92,7 @@ export const SITE_MODULES: readonly SiteModule[] = [
     id: 'other',
     label: 'Halaman lain',
     title: 'Halaman lain',
-    description: 'Halaman 404, halaman galat, dan halaman konfirmasi newsletter.',
+    description: 'Halaman 404 dan halaman galat.',
   },
 ]
 
@@ -202,13 +202,6 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
     ...SIZE.short,
   },
   {
-    key: 'About.present',
-    module: 'about',
-    section: 'Teks halaman',
-    label: 'Kata untuk "sampai sekarang"',
-    ...SIZE.label,
-  },
-  {
     key: 'About.metaTitle',
     module: 'about',
     section: 'SEO',
@@ -240,7 +233,7 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
     key: 'Experience.present',
     module: 'experience',
     section: 'Teks halaman',
-    label: 'Kata untuk "sampai sekarang"',
+    label: 'Kata untuk "sampai sekarang" (juga di About dan beranda)',
     ...SIZE.label,
   },
   {
@@ -622,20 +615,6 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
     ...SIZE.body,
   },
   {
-    key: 'Privacy.newsletterHeading',
-    module: 'privacy',
-    section: 'Newsletter',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Privacy.newsletterBody',
-    module: 'privacy',
-    section: 'Newsletter',
-    label: 'Isi',
-    ...SIZE.body,
-  },
-  {
     key: 'Privacy.cvHeading',
     module: 'privacy',
     section: 'Unduhan CV',
@@ -722,55 +701,6 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
     module: 'other',
     section: 'Halaman galat',
     label: 'Tombol ke beranda',
-    ...SIZE.label,
-  },
-  {
-    key: 'Newsletter.confirmedTitle',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Langganan aktif: judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Newsletter.confirmedBody',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Langganan aktif: isi',
-    ...SIZE.short,
-  },
-  {
-    key: 'Newsletter.invalidTitle',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Tautan tidak berlaku: judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Newsletter.invalidBody',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Tautan tidak berlaku: isi',
-    ...SIZE.short,
-  },
-  {
-    key: 'Newsletter.unsubscribedTitle',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Berhenti berlangganan: judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Newsletter.unsubscribedBody',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Berhenti berlangganan: isi',
-    ...SIZE.short,
-  },
-  {
-    key: 'Newsletter.backHome',
-    module: 'other',
-    section: 'Halaman newsletter',
-    label: 'Tombol kembali ke beranda',
     ...SIZE.label,
   },
 ]

@@ -58,8 +58,8 @@ describe('buildEnvelope', () => {
   it('tidak mengirim query string, header, atau data permintaan lain', () => {
     const envelope = buildEnvelope(
       Object.assign(new Error('rusak'), { digest: '123' }),
-      { path: '/id/newsletter/confirm?token=rahasia', method: 'GET' },
-      { routeType: 'render', routePath: '/[locale]/newsletter/confirm' },
+      { path: '/id/projects/gaas?token=rahasia', method: 'GET' },
+      { routeType: 'render', routePath: '/[locale]/projects/[slug]' },
       options,
     )
     const [header, item, body] = envelope
@@ -68,10 +68,10 @@ describe('buildEnvelope', () => {
       .map((line) => JSON.parse(line))
     expect(header).toMatchObject({ event_id: options.eventId, dsn: DSN })
     expect(item).toEqual({ type: 'event' })
-    expect(body.request).toEqual({ method: 'GET', url: '/id/newsletter/confirm' })
+    expect(body.request).toEqual({ method: 'GET', url: '/id/projects/gaas' })
     expect(body.exception.values[0]).toMatchObject({ type: 'Error', value: 'rusak' })
     expect(body.extra).toEqual({ digest: '123' })
-    expect(body.transaction).toBe('/[locale]/newsletter/confirm')
+    expect(body.transaction).toBe('/[locale]/projects/[slug]')
     expect(envelope).not.toContain('rahasia')
   })
 

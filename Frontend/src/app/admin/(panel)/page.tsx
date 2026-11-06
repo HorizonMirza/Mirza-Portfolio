@@ -10,13 +10,29 @@ import { formatDateTime, formatDayKey } from '@/lib/format'
 
 export const metadata: Metadata = { title: 'Dashboard' }
 
-function StatTile({ label, value, hint }: { label: string; value: number; hint?: string }) {
+// Tiap angka sekaligus pintasan ke halaman yang mengelolanya
+function StatTile({
+  label,
+  value,
+  hint,
+  href,
+}: {
+  label: string
+  value: number
+  hint?: string
+  href: string
+}) {
   return (
-    <Card className="p-4">
-      <p className="text-sm text-muted">{label}</p>
-      <p className="mt-1 text-h2 font-bold tabular-nums">{value.toLocaleString('id-ID')}</p>
-      {hint ? <p className="mt-1 text-xs text-muted">{hint}</p> : null}
-    </Card>
+    <Link
+      href={href}
+      className="block rounded-2xl border border-border bg-surface p-4 shadow-sm transition-colors hover:border-muted dark:shadow-none"
+    >
+      <span className="block text-sm text-muted">{label}</span>
+      <span className="mt-1 block text-h2 font-bold tabular-nums">
+        {value.toLocaleString('id-ID')}
+      </span>
+      {hint ? <span className="mt-1 block text-xs text-muted">{hint}</span> : null}
+    </Link>
   )
 }
 
@@ -35,17 +51,21 @@ export default async function DashboardPage() {
         <h1 className="mt-2 text-h1 font-bold">Halo, {admin.name.split(' ')[0]}.</h1>
       </header>
 
-      <section aria-label="Ringkasan" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatTile label="Pesan baru" value={stats.newMessages} />
-        <StatTile label="Kunjungan 7 hari" value={stats.views7} />
-        <StatTile label="Unduhan CV 30 hari" value={stats.cvDownloads} />
-        <StatTile label="Pelanggan newsletter" value={stats.subscribers} hint="terkonfirmasi" />
-        <StatTile label="Project terbit" value={stats.published} hint={`${stats.drafts} draf`} />
-        <StatTile label="Pengalaman" value={stats.experiences} />
-        <StatTile label="Skill" value={stats.skills} />
+      <section aria-label="Ringkasan" className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+        <StatTile label="Pesan baru" value={stats.newMessages} href="/admin/messages" />
+        <StatTile label="Kunjungan 7 hari" value={stats.views7} href="#kunjungan" />
+        <StatTile label="Unduhan CV 30 hari" value={stats.cvDownloads} href="/admin/profile" />
+        <StatTile
+          label="Project terbit"
+          value={stats.published}
+          hint={`${stats.drafts} draf`}
+          href="/admin/projects"
+        />
+        <StatTile label="Pengalaman" value={stats.experiences} href="/admin/experience" />
+        <StatTile label="Skill" value={stats.skills} href="/admin/skills" />
       </section>
 
-      <Card>
+      <Card id="kunjungan" className="scroll-mt-20">
         <h2 className="text-h3 font-semibold">Kunjungan per hari, 30 hari terakhir</h2>
         <p className="mt-1 text-sm text-muted">
           {totalVisits === 0

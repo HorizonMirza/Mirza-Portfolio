@@ -3,11 +3,15 @@ import 'server-only'
 import type { MessageStatus } from '@/generated/prisma/client'
 import { getDb } from '@/lib/db'
 
-export async function listMessages(status: MessageStatus) {
+export const MESSAGES_PAGE_SIZE = 50
+
+// Per halaman (dulu dipotong diam-diam di 500 pesan, sisanya tidak bisa dibuka)
+export async function listMessages(status: MessageStatus, page = 1) {
   return getDb().message.findMany({
     where: { status },
-    orderBy: { createdAt: 'desc' },
-    take: 500,
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    skip: (page - 1) * MESSAGES_PAGE_SIZE,
+    take: MESSAGES_PAGE_SIZE,
     select: {
       id: true,
       name: true,

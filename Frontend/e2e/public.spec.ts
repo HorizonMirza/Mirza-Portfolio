@@ -372,42 +372,12 @@ test('rate limit kontak: pesan ke-6 dalam satu jam ditolak', async ({ browser, b
   await context.close()
 })
 
-test('tautan konfirmasi newsletter tidak langsung mengubah data dan token palsu ditolak', async ({
-  page,
-}) => {
-  await page.goto('/id/newsletter/confirm?token=token-palsu-yang-cukup-panjang-12345')
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
-  await page.getByRole('button', { name: 'Konfirmasi langganan' }).click()
-  await expect(page.getByText('Tautan tidak berlaku')).toBeVisible()
+test('halaman newsletter sudah dihapus (fitur tidak dipakai, 2026-11-06)', async ({ page }) => {
+  const res = await page.goto('/id/newsletter/confirm?token=token-palsu-yang-cukup-panjang-12345')
+  expect(res?.status()).toBe(404)
 })
 
 test.describe('route handler publik', () => {
-  test('API v1 read-only dengan kontrak { data, meta } dan CORS', async ({ request }) => {
-    for (const path of [
-      '/api/v1/projects',
-      '/api/v1/skills?locale=en',
-      '/api/v1/profile?locale=id',
-    ]) {
-      const res = await request.get(path)
-      expect(res.status(), path).toBe(200)
-      expect(res.headers()['access-control-allow-origin']).toBe('*')
-      expect(res.headers()['cache-control']).toContain('s-maxage')
-      const body = await res.json()
-      expect(body).toHaveProperty('data')
-      expect(body).toHaveProperty('meta')
-    }
-    const profile = await (await request.get('/api/v1/profile')).json()
-    expect(profile.data).not.toHaveProperty('email')
-    expect(profile.data).not.toHaveProperty('whatsapp')
-    const missing = await request.get('/api/v1/projects/tidak-ada')
-    expect(missing.status()).toBe(404)
-    expect(await missing.json()).toEqual({
-      error: { code: 'NOT_FOUND', message: expect.any(String) },
-    })
-    const write = await request.post('/api/v1/projects', { data: {} })
-    expect(write.status()).toBe(405)
-  })
-
   test('beacon kunjungan menerima permintaan situs sendiri dan menolak isi aneh', async ({
     request,
   }) => {
@@ -424,7 +394,8 @@ test.describe('route handler publik', () => {
   })
 
   test('alamat API yang tidak ada dijawab JSON 404', async ({ request }) => {
-    for (const path of ['/api/tidak-ada', '/api/v2/apa/saja']) {
+    // /api/v1 dihapus 2026-11-06 (tidak dipakai)
+    for (const path of ['/api/tidak-ada', '/api/v1/projects', '/api/v2/apa/saja']) {
       const res = await request.get(path)
       expect(res.status(), path).toBe(404)
       expect(await res.json()).toMatchObject({ error: { code: 'NOT_FOUND' } })

@@ -35,8 +35,10 @@ export async function generateMetadata({
 // pendidikan sebagai entri Pengalaman berjenis Pendidikan. CV ada di footer.
 export default async function AboutPage({ params }: PageProps<'/[locale]/about'>) {
   const locale = await resolveLocale(params)
-  const [t, profile, experiences] = await Promise.all([
+  // "Sekarang" memakai satu teks bersama dengan halaman Pengalaman dan beranda (dulu dua isian admin)
+  const [t, tExp, profile, experiences] = await Promise.all([
     getTranslations({ locale, namespace: 'About' }),
+    getTranslations({ locale, namespace: 'Experience' }),
     getPublicProfile(),
     getPublicExperiences(),
   ])
@@ -152,7 +154,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                     {/* jurusan dan IPK masing-masing satu baris (revisi pemilik 2026-10-07 malam) */}
                     <p className="mt-1 text-muted">{loc(e, 'title', locale)}</p>
                     <p className="text-sm text-muted tabular-nums">
-                      {e.start.slice(0, 4)} – {e.end ? e.end.slice(0, 4) : t('present')}
+                      {e.start.slice(0, 4)} – {e.end ? e.end.slice(0, 4) : tExp('present')}
                     </p>
                     <MarkdownView
                       source={loc(e, 'description', locale)}

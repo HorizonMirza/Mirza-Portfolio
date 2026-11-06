@@ -52,14 +52,18 @@ function RowActions({ row, total }: { row: Row; total: number }) {
 export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
   const data = useMemo(() => rows.map((r, position) => ({ ...r, position })), [rows])
   const total = data.length
+  // Urutan project diatur manual (tombol naik/turun) dan sama dengan situs publik, jadi kolom tidak
+  // bisa diurutkan dengan klik judul kolom: urutan sementara itu menyesatkan dan bentrok dengan nomor.
   const columns = useMemo(
     () =>
       helper.columns([
         helper.accessor('position', {
+          enableSorting: false,
           header: 'No',
           cell: (info) => <span className="text-muted tabular-nums">{info.getValue() + 1}</span>,
         }),
         helper.accessor('title_id', {
+          enableSorting: false,
           header: 'Judul',
           cell: (info) => (
             <span className="flex items-center gap-2 font-medium">
@@ -71,18 +75,22 @@ export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
           ),
         }),
         helper.accessor('category', {
+          enableSorting: false,
           header: 'Kategori',
           cell: (info) => projectCategoryLabel[info.getValue()],
         }),
         helper.accessor('year', {
+          enableSorting: false,
           header: 'Tahun',
           cell: (info) => <span className="tabular-nums">{info.getValue()}</span>,
         }),
         helper.accessor('status', {
+          enableSorting: false,
           header: 'Status',
           cell: (info) => <StatusBadge status={info.getValue()} />,
         }),
         helper.accessor('updatedAt', {
+          enableSorting: false,
           header: 'Diubah',
           cell: (info) => (
             <span className="text-muted">{formatDateTime(new Date(info.getValue()))}</span>

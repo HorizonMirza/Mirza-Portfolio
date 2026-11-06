@@ -3,8 +3,13 @@ import Link from 'next/link'
 
 import { FilterTabs } from '@/components/admin/filter-tabs'
 import { PageHeader } from '@/components/admin/page-header'
+import { Pager, parsePage } from '@/components/admin/pager'
 import { Badge } from '@/components/ui/badge'
-import { countMessagesByStatus, listMessages } from '@/features/messages/queries'
+import {
+  countMessagesByStatus,
+  listMessages,
+  MESSAGES_PAGE_SIZE,
+} from '@/features/messages/queries'
 import {
   MESSAGE_STATUSES,
   messageStatusLabel,
@@ -17,8 +22,17 @@ export const metadata: Metadata = { title: 'Pesan' }
 
 export default async function MessagesPage({ searchParams }: PageProps<'/admin/messages'>) {
   await requireSuperAdminPage()
-  const status = parseMessageStatus((await searchParams).status)
-  const [messages, counts] = await Promise.all([listMessages(status), countMessagesByStatus()])
+  const sp = await searchParams
+  const status = parseMessageStatus(sp.status)
+  const page = parsePage(sp.page)
+  const [messages, counts] = await Promise.all([
+    listMessages(status, page),
+    countMessagesByStatus(),
+  ])
+  const pages = Math.max(1, Math.ceil(counts[status] / MESSAGES_PAGE_SIZE))
+  const base = status === 'NEW' ? '/admin/messages' : `/admin/messages?status=${status}`
+  const pageHref = (p: number) =>
+    p === 1 ? base : `${base}${base.includes('?') ? '&' : '?'}page=${p}`
 
   return (
     <>
@@ -62,6 +76,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
           ))}
         </ul>
       )}
+      <Pager label="Halaman pesan" page={page} pages={pages} href={pageHref} />
     </>
   )
 }

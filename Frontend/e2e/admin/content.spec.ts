@@ -15,7 +15,6 @@ const PAGES = [
   '/admin/experience',
   '/admin/experience/new',
   '/admin/messages',
-  '/admin/subscribers',
   '/admin/audit',
   '/admin/pages/intro',
   '/admin/pages/home',
@@ -67,17 +66,18 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   const titleId = `Project E2E ${suffix}`
   await page.goto('/admin/projects/new')
 
-  // Validasi: galat tampil dan dihitung per tab bahasa (judul dan ringkasan; deskripsi opsional
-  // sejak audit 2026-10-31 GAP-05)
+  // Validasi: galat bahasa yang tampil langsung terlihat, galat bahasa lain diberitahukan (judul dan
+  // ringkasan; deskripsi opsional sejak audit 2026-10-31 GAP-05). Pengalih bahasa isian hanya di top bar.
   await page.getByRole('button', { name: 'Buat project' }).click()
-  await expect(page.getByRole('tab', { name: /Indonesia/ })).toContainText('2')
   await expect(page.getByText('Judul wajib diisi')).toBeVisible()
+  await expect(page.getByText('2 galat di isian English.')).toBeVisible()
+  await expect(page.getByRole('tab', { name: /Indonesia|English/ })).toHaveCount(0)
 
   await page.getByLabel('Judul', { exact: true }).fill(titleId)
   await page.getByLabel('Ringkasan', { exact: true }).fill('Ringkasan untuk tes E2E.')
   await page.getByLabel('Peran saya (opsional)').fill('Peran E2E')
   await page.locator('#description_id').fill('Deskripsi **E2E**.')
-  await page.getByRole('tab', { name: /English/ }).click()
+  await page.getByRole('button', { name: 'Buka isian English' }).click()
   await page.getByLabel('Title', { exact: true }).fill(`E2E project ${suffix}`)
   await page.getByLabel('Summary', { exact: true }).fill('Summary for the E2E test.')
   await page.locator('#description_en').fill('Description.')
@@ -208,7 +208,7 @@ test('modul Home: judul beranda diubah, tampil di situs, lalu dikembalikan ke ba
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
   // Judul tab beranda dipakai karena tidak ada tes lain yang memeriksanya; judul bagian yang dulu
   // diubah di sini dibaca tes publik yang berjalan bersamaan.
-  const field = () => page.getByLabel('Indonesia untuk Judul beranda')
+  const field = () => page.getByLabel('Judul beranda (Indonesia)')
   await page.goto('/admin/pages/home')
   // placeholder menampilkan teks bawaan
   await expect(field()).toHaveAttribute(
@@ -293,13 +293,13 @@ test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
 
   // bahasa isian menentukan kolom yang tampil di form dua bahasa
-  await expect(page.getByLabel('Indonesia untuk Bagian keahlian')).toBeVisible()
-  await expect(page.getByLabel('English untuk Bagian keahlian')).toHaveCount(0)
+  await expect(page.getByLabel('Bagian keahlian (Indonesia)')).toBeVisible()
+  await expect(page.getByLabel('Bagian keahlian (English)')).toHaveCount(0)
   await expect(async () => {
     await bar.getByRole('button', { name: 'EN, bahasa isian English' }).click()
-    await expect(page.getByLabel('English untuk Bagian keahlian')).toBeVisible({ timeout: 1000 })
+    await expect(page.getByLabel('Bagian keahlian (English)')).toBeVisible({ timeout: 1000 })
   }).toPass()
-  await expect(page.getByLabel('Indonesia untuk Bagian keahlian')).toHaveCount(0)
+  await expect(page.getByLabel('Bagian keahlian (Indonesia)')).toHaveCount(0)
   // kembalikan agar tes lain tidak terpengaruh (pilihan tersimpan di browser)
   await bar.getByRole('button', { name: 'ID, bahasa isian Indonesia' }).click()
 

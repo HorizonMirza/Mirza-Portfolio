@@ -2,14 +2,6 @@ import { z } from 'zod'
 
 import { optionalText, optionalUrl, requiredText } from '@/lib/validation'
 
-export const AVAILABILITIES = ['OPEN', 'BUSY', 'NOT_LOOKING'] as const
-
-export const availabilityLabel: Record<(typeof AVAILABILITIES)[number], string> = {
-  OPEN: 'Terbuka untuk tawaran',
-  BUSY: 'Sedang sibuk',
-  NOT_LOOKING: 'Tidak mencari',
-}
-
 // Kunci link sosial yang didukung. Kolom socials (JSON) hanya menyimpan kunci ini.
 export const SOCIAL_KEYS = ['linkedin', 'github', 'instagram', 'website'] as const
 export const socialLabel: Record<(typeof SOCIAL_KEYS)[number], string> = {
@@ -31,9 +23,6 @@ export const profileSchema = z.object({
   aboutRoles_en: optionalText('Roles on the About page', 120).default(''),
   cardRole_id: optionalText('Peran di kartu ID', 60).default(''),
   cardRole_en: optionalText('Role on the ID card', 60).default(''),
-  availability: z.enum(AVAILABILITIES),
-  availabilityNote_id: optionalText('Catatan ketersediaan', 120),
-  availabilityNote_en: optionalText('Availability note', 120),
   city: optionalText('Kota', 80),
   email: z
     .string()
@@ -70,9 +59,6 @@ export const emptyProfile: ProfileInput = {
   aboutRoles_en: '',
   cardRole_id: '',
   cardRole_en: '',
-  availability: 'OPEN',
-  availabilityNote_id: '',
-  availabilityNote_en: '',
   city: '',
   email: '',
   whatsapp: '',

@@ -8,6 +8,7 @@ import { useAdminLang } from '@/components/admin/admin-lang'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
 import { FormFooter } from '@/components/admin/form-footer'
+import { LangChip } from '@/components/admin/lang-chip'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -191,8 +192,7 @@ function IntroCard({
       <div>
         <h2 className="text-h3 font-semibold">Pemberitahuan pembuka</h2>
         <p className="mt-1 text-sm text-muted">
-          Kartu singkat yang muncul sekali setiap pengunjung membuka situs, sebelum masuk ke
-          halaman. Berisi judul, isi, pilihan ID/EN, dan tombol Resume CV (bila CV ada) dan Beranda.
+          Berisi judul, isi, pilihan ID/EN, serta tombol Resume CV (bila CV ada) dan Beranda.
         </p>
       </div>
       <label className="flex min-h-11 items-center gap-3">
@@ -229,11 +229,28 @@ function TextRow({
   const other = LANGS.find((l) => l.lang !== shown)!
   const otherError = errors[`${entry.key}.${other.lang}`]
   const changed = Boolean(value.id || value.en)
-  const slug = entry.key.replace('.', '-')
+  const id = `${entry.key.replace('.', '-')}-${shown}`
+  const error = errors[`${entry.key}.${shown}`]
+  const props = {
+    id,
+    value: value[shown],
+    placeholder: defaults[shown],
+    maxLength: entry.max + 50,
+    'aria-invalid': error ? (true as const) : undefined,
+    'aria-describedby': error ? `${id}-error` : undefined,
+  }
+  // Satu label per isian; bahasanya ditandai kode kecil (dulu label kedua "Indonesia" di bawah judul
+  // isian, dobel dengan tombol bahasa di top bar)
   return (
-    <fieldset className="flex flex-col gap-3 border-0 p-0">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <legend className="float-left text-sm font-semibold">{entry.label}</legend>
+    <div className="flex flex-col gap-2">
+      <div className="flex min-h-8 flex-wrap items-center justify-between gap-2">
+        <span className="flex items-center gap-2">
+          <Label htmlFor={id} className="font-semibold">
+            {entry.label}
+            <span className="sr-only"> ({LANGS.find((l) => l.lang === shown)!.label})</span>
+          </Label>
+          <LangChip lang={shown} />
+        </span>
         {changed ? (
           <Button
             type="button"
@@ -247,42 +264,16 @@ function TextRow({
           </Button>
         ) : null}
       </div>
-      <div className="grid gap-4">
-        {LANGS.filter((l) => l.lang === shown).map(({ lang, label }) => {
-          const id = `${slug}-${lang}`
-          const error = errors[`${entry.key}.${lang}`]
-          const props = {
-            id,
-            value: value[lang],
-            placeholder: defaults[lang],
-            maxLength: entry.max + 50,
-            'aria-invalid': error ? (true as const) : undefined,
-            'aria-describedby': error ? `${id}-error` : undefined,
-          }
-          return (
-            <div key={lang} className="flex flex-col gap-2">
-              <Label htmlFor={id}>
-                {label}
-                <span className="sr-only"> untuk {entry.label}</span>
-              </Label>
-              {entry.multiline ? (
-                <Textarea
-                  rows={3}
-                  {...props}
-                  onChange={(event) => onChange(lang, event.target.value)}
-                />
-              ) : (
-                <Input {...props} onChange={(event) => onChange(lang, event.target.value)} />
-              )}
-              {error ? (
-                <p id={`${id}-error`} className="text-sm text-danger">
-                  {error}
-                </p>
-              ) : null}
-            </div>
-          )
-        })}
-      </div>
+      {entry.multiline ? (
+        <Textarea rows={3} {...props} onChange={(event) => onChange(shown, event.target.value)} />
+      ) : (
+        <Input {...props} onChange={(event) => onChange(shown, event.target.value)} />
+      )}
+      {error ? (
+        <p id={`${id}-error`} className="text-sm text-danger">
+          {error}
+        </p>
+      ) : null}
       {otherError ? (
         <p className="text-sm text-danger">
           Galat di {other.label}: {otherError}
@@ -293,6 +284,6 @@ function TextRow({
           Boleh memakai {entry.placeholders.map((p) => `{${p}}`).join(' dan ')}; diisi otomatis.
         </p>
       ) : null}
-    </fieldset>
+    </div>
   )
 }

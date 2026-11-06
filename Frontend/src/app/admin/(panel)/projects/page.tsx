@@ -17,7 +17,7 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader
-        title="Project"
+        title="Projects"
         description="Urutan di sini sama dengan urutan di situs publik. Hanya project berstatus terbit yang tampil."
         actions={
           <Button asChild>

@@ -69,8 +69,7 @@
     "title": "Tentang Saya",
     "roles": "Fullstack Developer | Community Manager",
     "educationHeading": "Pendidikan",
-    "noEducation": "Belum ada riwayat pendidikan yang diterbitkan.",
-    "present": "Sekarang"
+    "noEducation": "Belum ada riwayat pendidikan yang diterbitkan."
   },
   "Experience": {
     "photoOpen": "Perbesar foto {org}",
@@ -139,26 +138,6 @@
     "another": "Tulis pesan lain",
     "cardRole": "Fullstack Developer"
   },
-  "Newsletter": {
-    "heading": "Kabar project baru",
-    "success": "Hampir selesai. Buka email dari saya dan klik tautan konfirmasi.",
-    "unavailable": "Newsletter belum aktif. Coba lagi nanti.",
-    "error": "Pendaftaran gagal. Coba lagi sebentar lagi.",
-    "rateLimited": "Terlalu banyak percobaan. Coba lagi dalam satu jam.",
-    "emailInvalid": "Format email tidak valid",
-    "confirmedTitle": "Langganan aktif",
-    "confirmedBody": "Terima kasih. Anda akan menerima email saat ada project baru.",
-    "invalidTitle": "Tautan tidak berlaku",
-    "invalidBody": "Tautan ini sudah kedaluwarsa atau pernah dipakai.",
-    "unsubscribedTitle": "Anda sudah berhenti berlangganan",
-    "unsubscribedBody": "Anda tidak akan menerima email newsletter lagi.",
-    "backHome": "Kembali ke beranda",
-    "emailConfirmSubject": "Konfirmasi langganan newsletter Muhammad Mirza",
-    "emailConfirmIntro": "Anda (atau seseorang) mendaftarkan email ini untuk kabar project baru dari Muhammad Mirza.",
-    "emailConfirmAction": "Konfirmasi langganan",
-    "emailConfirmIgnore": "Bila bukan Anda, abaikan email ini. Tidak ada email lain yang akan dikirim.",
-    "emailUnsubscribe": "Berhenti berlangganan"
-  },
   "Privacy": {
     "metaTitle": "Kebijakan Privasi",
     "metaDescription": "Data apa yang dikumpulkan situs ini dan bagaimana dipakai.",
@@ -169,8 +148,6 @@
     "visitsBody": "Setiap halaman yang dibuka dicatat beserta bahasanya. Untuk menghitung pengunjung unik per hari, alamat IP dan jenis browser diubah menjadi kode acak satu arah dengan kunci yang berganti setiap hari, jadi Anda tidak bisa dikenali atau dilacak lintas hari. Alamat IP mentah tidak disimpan. Data mentah dihapus setelah 90 hari, hanya ringkasan harian yang disimpan.",
     "contactHeading": "Formulir kontak",
     "contactBody": "Nama, email, subjek, dan isi pesan disimpan agar saya bisa membalas. Alamat IP hanya disimpan sebagai kode acak untuk mencegah spam. Pesan disimpan sampai saya menghapusnya.",
-    "newsletterHeading": "Newsletter",
-    "newsletterBody": "Saat ini situs tidak menyediakan formulir newsletter, jadi tidak ada email baru yang dikumpulkan. Bila dibuka lagi, email hanya disimpan setelah Anda mengonfirmasi lewat tautan di email, Anda bisa berhenti kapan saja dari tautan di tiap email, dan data Anda bisa saya hapus atas permintaan.",
     "cvHeading": "Unduhan CV",
     "cvBody": "Hanya jumlah unduhan dan bahasa halaman yang dicatat, tanpa data pribadi.",
     "servicesHeading": "Layanan pihak ketiga",

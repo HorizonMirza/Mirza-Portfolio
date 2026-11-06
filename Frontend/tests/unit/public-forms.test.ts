@@ -3,12 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 // Server Action publik diuji dengan database, header, rate limit, dan email tiruan.
 const db = {
   message: { create: vi.fn(async () => ({ id: 'msg-1' })) },
-  subscriber: {
-    findUnique: vi.fn(async (): Promise<unknown> => null),
-    create: vi.fn(async () => ({ id: '01a0f218-0209-7656-a356-02d34f1c52c3' })),
-    update: vi.fn(async () => ({ id: '01a0f218-0209-7656-a356-02d34f1c52c3' })),
-    upsert: vi.fn(async () => ({ id: '01a0f218-0209-7656-a356-02d34f1c52c3' })),
-  },
 }
 const rate = { allowed: true }
 const sendEmail = vi.fn(async () => undefined)
@@ -37,10 +31,6 @@ vi.mock('@/lib/rate-limit', () => ({
 }))
 
 const { submitContact } = await import('@/features/messages/public-actions')
-const { subscribeNewsletter, confirmSubscription, unsubscribe } =
-  await import('@/features/subscribers/public-actions')
-const { CONFIRM_TOKEN_MAX_AGE_MS, confirmTokenExpired, newConfirmToken, unsubscribeToken } =
-  await import('@/features/subscribers/tokens')
 
 function form(values: Record<string, string>) {
   const fd = new FormData()
@@ -61,7 +51,6 @@ beforeEach(() => {
   vi.clearAllMocks()
   rate.allowed = true
   emailConfig = null
-  db.subscriber.findUnique.mockResolvedValue(null)
 })
 
 describe('submitContact', () => {
@@ -136,85 +125,5 @@ describe('submitContact', () => {
   it('nama yang hanya berisi karakter kontrol ditolak sebagai kosong', async () => {
     const r = await submitContact(idle, form({ ...validContact, name: '\n\t\u0000' }))
     expect(r).toMatchObject({ status: 'error', fieldErrors: { name: 'nameRequired' } })
-  })
-})
-
-describe('subscribeNewsletter', () => {
-  it('belum aktif tanpa Resend dan tidak menyimpan apa pun', async () => {
-    const r = await subscribeNewsletter(idle, form({ email: 'a@example.com', locale: 'id' }))
-    expect(r).toMatchObject({ status: 'error', message: 'unavailable' })
-    expect(db.subscriber.upsert).not.toHaveBeenCalled()
-  })
-  it('pendaftar baru disimpan PENDING dengan hash token, email konfirmasi dikirim', async () => {
-    emailConfig = { RESEND_API_KEY: 'x', EMAIL_FROM: 'a@b.c' }
-    const r = await subscribeNewsletter(idle, form({ email: 'Baru@Example.com', locale: 'en' }))
-    expect(r.status).toBe('success')
-    // upsert pada email: pendaftaran bersamaan tidak bertabrakan di indeks unik (DB-04)
-    const call = (
-      db.subscriber.upsert.mock.calls[0] as unknown as [
-        { where: { email: string }; create: Record<string, string> },
-      ]
-    )[0]
-    expect(call.where.email).toBe('baru@example.com')
-    const data = call.create
-    expect(data.email).toBe('baru@example.com')
-    expect(data.tokenHash).toMatch(/^[0-9a-f]{64}$/)
-    const sent = (
-      sendEmail.mock.calls[0] as unknown as [{ html: string; headers: Record<string, string> }]
-    )[0]
-    expect(sent.html).toContain('/en/newsletter/confirm?token=')
-    expect(sent.html).not.toContain(data.tokenHash)
-    expect(sent.headers['List-Unsubscribe']).toContain('/en/newsletter/unsubscribe?token=')
-  })
-  it('email yang sudah terkonfirmasi mendapat jawaban sama tanpa email baru (tidak bisa ditebak)', async () => {
-    emailConfig = { RESEND_API_KEY: 'x', EMAIL_FROM: 'a@b.c' }
-    db.subscriber.findUnique.mockResolvedValueOnce({ id: 'x', status: 'CONFIRMED' })
-    expect(
-      (await subscribeNewsletter(idle, form({ email: 'a@example.com', locale: 'id' }))).status,
-    ).toBe('success')
-    expect(sendEmail).not.toHaveBeenCalled()
-  })
-})
-
-describe('konfirmasi dan berhenti langganan', () => {
-  it('token konfirmasi tak dikenal ditolak', async () => {
-    expect(await confirmSubscription(idle, form({ token: 'x'.repeat(43) }))).toEqual({
-      status: 'invalid',
-    })
-  })
-  it('token PENDING dikonfirmasi lalu diganti agar hanya sekali pakai', async () => {
-    db.subscriber.findUnique.mockResolvedValueOnce({ id: 's1', status: 'PENDING' })
-    const { token } = newConfirmToken()
-    expect(await confirmSubscription(idle, form({ token }))).toEqual({
-      status: 'confirmed',
-    })
-    const data = (
-      db.subscriber.update.mock.calls[0] as unknown as [{ data: Record<string, unknown> }]
-    )[0].data
-    expect(data).toMatchObject({ status: 'CONFIRMED' })
-    expect(data.tokenHash).toMatch(/^[0-9a-f]{64}$/)
-  })
-  it('token konfirmasi yang lebih tua dari batas umur ditolak tanpa membaca database', async () => {
-    const issued = Date.now() - CONFIRM_TOKEN_MAX_AGE_MS - 60_000
-    const { token } = newConfirmToken(issued)
-    db.subscriber.findUnique.mockClear()
-    expect(await confirmSubscription(idle, form({ token }))).toEqual({ status: 'invalid' })
-    expect(db.subscriber.findUnique).not.toHaveBeenCalled()
-  })
-  it('batas umur token: baru berlaku, lama, masa depan, dan format lama ditolak', () => {
-    const now = Date.UTC(2026, 9, 31)
-    expect(confirmTokenExpired(newConfirmToken(now - 1000).token, now)).toBe(false)
-    expect(
-      confirmTokenExpired(newConfirmToken(now - CONFIRM_TOKEN_MAX_AGE_MS - 1).token, now),
-    ).toBe(true)
-    expect(confirmTokenExpired(newConfirmToken(now + 3_600_000).token, now)).toBe(true)
-    expect(confirmTokenExpired('y'.repeat(43), now)).toBe(true)
-  })
-  it('tanda tangan berhenti langganan diverifikasi', async () => {
-    const id = '01a0f218-0209-7656-a356-02d34f1c52c3'
-    expect(await unsubscribe(idle, form({ token: unsubscribeToken(id) }))).toEqual({
-      status: 'unsubscribed',
-    })
-    expect(await unsubscribe(idle, form({ token: `${id}.palsu` }))).toEqual({ status: 'invalid' })
   })
 })

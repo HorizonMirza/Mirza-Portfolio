@@ -2,11 +2,16 @@
 
 import type { ReactNode } from 'react'
 
-import { type ContentLang, useAdminLang } from '@/components/admin/admin-lang'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAdminLang } from '@/components/admin/admin-lang'
+import { FieldLangContext } from '@/components/admin/lang-chip'
+import { Button } from '@/components/ui/button'
 
-// Tab ID/EN untuk isian dua bahasa; tab yang terbuka mengikuti tombol bahasa isian di top bar. Kedua panel tetap ter-mount agar validasi berjalan di keduanya,
-// dan jumlah galat tampil di label tab supaya galat di tab tersembunyi tetap terlihat.
+const LANG_NAME = { id: 'Indonesia', en: 'English' } as const
+
+// Isian dua bahasa: yang tampil hanya bahasa yang dipilih di tombol ID/EN top bar (satu-satunya
+// pengalih bahasa isian; tab Indonesia/English di dalam kartu dihapus 2026-11-06 karena dobel).
+// Kedua bahasa tetap ter-mount agar validasi berjalan di keduanya; galat di bahasa yang tersembunyi
+// diberitahukan dengan tombol untuk pindah ke sana.
 export function BilingualTabs({
   errors,
   id,
@@ -17,43 +22,29 @@ export function BilingualTabs({
   en: ReactNode
 }) {
   const { lang, setLang } = useAdminLang()
+  const other = lang === 'id' ? 'en' : 'id'
   return (
-    <Tabs value={lang} onValueChange={(value) => setLang(value as ContentLang)}>
-      <TabsList aria-label="Bahasa isian">
-        <TabsTrigger value="id">
-          Indonesia
-          <ErrorCount count={errors.id} />
-        </TabsTrigger>
-        <TabsTrigger value="en">
-          English
-          <ErrorCount count={errors.en} />
-        </TabsTrigger>
-      </TabsList>
-      <TabsContent
-        value="id"
-        forceMount
-        className="flex flex-col gap-5 data-[state=inactive]:hidden"
-      >
-        {id}
-      </TabsContent>
-      <TabsContent
-        value="en"
-        forceMount
-        className="flex flex-col gap-5 data-[state=inactive]:hidden"
-      >
-        {en}
-      </TabsContent>
-    </Tabs>
-  )
-}
-
-function ErrorCount({ count }: { count: number }) {
-  if (count === 0) return null
-  return (
-    <span className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-danger px-1.5 text-xs font-semibold text-white dark:text-bg">
-      {count}
-      <span className="sr-only"> galat</span>
-    </span>
+    <div className="flex flex-col gap-5">
+      {errors[other] > 0 ? (
+        <div
+          role="status"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-danger/40 px-3 py-2 text-sm text-danger"
+        >
+          <span>
+            {errors[other]} galat di isian {LANG_NAME[other]}.
+          </span>
+          <Button type="button" variant="ghost" size="sm" onClick={() => setLang(other)}>
+            Buka isian {LANG_NAME[other]}
+          </Button>
+        </div>
+      ) : null}
+      <FieldLangContext value="id">
+        <div className={lang === 'id' ? 'flex flex-col gap-5' : 'hidden'}>{id}</div>
+      </FieldLangContext>
+      <FieldLangContext value="en">
+        <div className={lang === 'en' ? 'flex flex-col gap-5' : 'hidden'}>{en}</div>
+      </FieldLangContext>
+    </div>
   )
 }
 

@@ -18,12 +18,11 @@ export default async function ProfilePage() {
   return (
     <>
       <PageHeader
-        title="Profil"
-        description="Nama, bio dan peran di halaman Tentang (peran juga tampil di pojok bawah hero beranda), headline untuk gambar pratinjau tautan, status ketersediaan, dan link kontak. Foto hero beranda diatur di modul Home."
+        title="About"
+        description="Nama, bio, dan peran di halaman Tentang (peran juga tampil di bawah foto beranda), headline untuk gambar pratinjau tautan, link kontak, foto profil, dan CV. Foto hero beranda diatur di modul Home."
       />
       <ModuleTabs moduleId="about" current="/admin/profile" />
       <div className="flex flex-col gap-6">
-        <ProfileForm defaultValues={profile} />
         <div className="grid gap-6 lg:grid-cols-2">
           <AssetSlot
             title="Foto profil"
@@ -40,6 +39,9 @@ export default async function ProfilePage() {
             configured={configured}
           />
         </div>
+        {/* form teks terakhir: tombol Simpan di bawahnya hanya untuk form ini (foto dan CV tersimpan
+            sendiri saat diunggah) */}
+        <ProfileForm defaultValues={profile} />
       </div>
     </>
   )

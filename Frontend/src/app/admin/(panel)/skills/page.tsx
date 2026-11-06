@@ -14,8 +14,8 @@ export default async function SkillsPage() {
   return (
     <>
       <PageHeader
-        title="Skill"
-        description="Kelompokkan skill per kategori. Urutan di sini dipakai di situs publik. Kategori hanya bisa dihapus bila sudah kosong."
+        title="Home"
+        description="Daftar skill per kategori untuk globe Keahlian Teknis. Urutan di sini dipakai di situs publik. Kategori hanya bisa dihapus bila sudah kosong."
       />
       <ModuleTabs moduleId="home" current="/admin/skills" />
       <SkillsManager categories={categories} />

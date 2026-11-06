@@ -4,7 +4,6 @@ import type { ReactNode } from 'react'
 const colors = {
   text: '#0b1220',
   muted: '#475569',
-  primary: '#1d4fd7',
   border: '#cbd5e1',
   bg: '#f6f9fc',
 }
@@ -81,25 +80,6 @@ export function EmailLayout({
         </table>
       </body>
     </html>
-  )
-}
-
-export function EmailButton({ href, children }: { href: string; children: ReactNode }) {
-  return (
-    <a
-      href={href}
-      style={{
-        display: 'inline-block',
-        backgroundColor: colors.primary,
-        color: '#ffffff',
-        padding: '12px 20px',
-        borderRadius: 10,
-        textDecoration: 'none',
-        fontWeight: 600,
-      }}
-    >
-      {children}
-    </a>
   )
 }
 

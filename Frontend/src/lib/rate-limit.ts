@@ -60,7 +60,7 @@ export const authRateLimitStorage = {
     consumeRateLimit(`auth:${hashIdentifier(key)}`, rule),
 }
 
-// Rate limit form publik (kontak, newsletter, /api/track) per IP yang sudah di-hash.
+// Rate limit form publik (kontak, /api/track) per IP yang sudah di-hash.
 export function consumePublicRateLimit(action: string, ip: string, rule: RateLimitRule) {
   return consumeRateLimit(`public:${action}:${hashIdentifier(ip)}`, rule)
 }

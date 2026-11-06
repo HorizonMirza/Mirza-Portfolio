@@ -10,19 +10,18 @@ export async function getDashboardStats() {
   const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
   const since7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
-  const [published, drafts, experiences, skills, newMessages, subscribers, cvDownloads, views7] =
+  const [published, drafts, experiences, skills, newMessages, cvDownloads, views7] =
     await Promise.all([
       db.project.count({ where: { status: 'PUBLISHED' } }),
       db.project.count({ where: { status: 'DRAFT' } }),
       db.experience.count(),
       db.skill.count(),
       db.message.count({ where: { status: 'NEW' } }),
-      db.subscriber.count({ where: { status: 'CONFIRMED' } }),
       db.cvDownload.count({ where: { createdAt: { gte: since30 } } }),
       db.pageView.count({ where: { createdAt: { gte: since7 } } }),
     ])
 
-  return { published, drafts, experiences, skills, newMessages, subscribers, cvDownloads, views7 }
+  return { published, drafts, experiences, skills, newMessages, cvDownloads, views7 }
 }
 
 // Kunjungan per hari (hari kalender Asia/Jakarta), 30 hari terakhir, hari kosong = 0.

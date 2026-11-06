@@ -69,8 +69,7 @@
     "title": "About Me",
     "roles": "Fullstack Developer | Community Manager",
     "educationHeading": "Education",
-    "noEducation": "No education history has been published yet.",
-    "present": "Present"
+    "noEducation": "No education history has been published yet."
   },
   "Experience": {
     "photoOpen": "Enlarge photo: {org}",
@@ -139,26 +138,6 @@
     "another": "Write another message",
     "cardRole": "Fullstack Developer"
   },
-  "Newsletter": {
-    "heading": "New project updates",
-    "success": "Almost done. Open the email from me and click the confirmation link.",
-    "unavailable": "The newsletter isn't active yet. Please try again later.",
-    "error": "Sign-up failed. Please try again shortly.",
-    "rateLimited": "Too many attempts. Please try again in an hour.",
-    "emailInvalid": "Enter a valid email address",
-    "confirmedTitle": "You're subscribed",
-    "confirmedBody": "Thank you. You'll get an email when there's a new project.",
-    "invalidTitle": "This link is not valid",
-    "invalidBody": "The link has expired or has already been used.",
-    "unsubscribedTitle": "You've unsubscribed",
-    "unsubscribedBody": "You won't receive newsletter emails anymore.",
-    "backHome": "Back to home",
-    "emailConfirmSubject": "Confirm your subscription to Muhammad Mirza's newsletter",
-    "emailConfirmIntro": "You (or someone) signed this email up for new project updates from Muhammad Mirza.",
-    "emailConfirmAction": "Confirm subscription",
-    "emailConfirmIgnore": "If this wasn't you, ignore this email. Nothing else will be sent.",
-    "emailUnsubscribe": "Unsubscribe"
-  },
   "Privacy": {
     "metaTitle": "Privacy Policy",
     "metaDescription": "What data this site collects and how it is used.",
@@ -169,8 +148,6 @@
     "visitsBody": "Each page view is recorded together with its language. To count unique visitors per day, your IP address and browser type are turned into a one-way random code with a key that changes every day, so you cannot be identified or followed across days. Raw IP addresses are never stored. Raw records are deleted after 90 days; only daily totals are kept.",
     "contactHeading": "Contact form",
     "contactBody": "Your name, email, subject, and message are stored so I can reply. Your IP address is only kept as a random code to prevent spam. Messages are kept until I delete them.",
-    "newsletterHeading": "Newsletter",
-    "newsletterBody": "The site has no newsletter form right now, so no new email addresses are collected. If it opens again, your email is stored only after you confirm through the link in the email, you can unsubscribe anytime from the link in every email, and I will delete your data on request.",
     "cvHeading": "CV downloads",
     "cvBody": "Only the number of downloads and the page language are recorded, with no personal data.",
     "servicesHeading": "Third-party services",

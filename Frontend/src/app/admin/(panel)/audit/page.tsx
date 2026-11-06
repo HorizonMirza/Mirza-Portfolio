@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-
+import { FilterTabs } from '@/components/admin/filter-tabs'
 import { PageHeader } from '@/components/admin/page-header'
+import { Pager, parsePage } from '@/components/admin/pager'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { AUDIT_PAGE_SIZE, listAuditLogs } from '@/features/audit/queries'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatDateTime } from '@/lib/format'
@@ -18,6 +17,21 @@ const actionLabel: Record<string, string> = {
   import: 'impor',
   password: 'ganti password',
 }
+
+// nama entitas di database → nama yang dikenal di panel (dulu tampil mentah, mis. "SiteText")
+const entityLabel: Record<string, string> = {
+  Asset: 'Berkas',
+  Experience: 'Pengalaman',
+  Message: 'Pesan',
+  Profile: 'Profil',
+  Project: 'Project',
+  SiteSetting: 'Pengaturan',
+  SiteText: 'Teks situs',
+  Skill: 'Skill',
+  SkillCategory: 'Kategori skill',
+  User: 'Akun',
+}
+const labelOf = (entity: string) => entityLabel[entity] ?? entity
 
 type Change = { before: unknown; after: unknown }
 
@@ -39,7 +53,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
   const sp = await searchParams
   const entityParam =
     typeof sp.entity === 'string' && /^[A-Za-z]{1,40}$/.test(sp.entity) ? sp.entity : null
-  const page = Math.max(1, Math.min(10_000, Number.parseInt(String(sp.page ?? '1'), 10) || 1))
+  const page = parsePage(sp.page)
   const { rows, total, entities } = await listAuditLogs({ entity: entityParam, page })
   const pages = Math.max(1, Math.ceil(total / AUDIT_PAGE_SIZE))
 
@@ -49,18 +63,14 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
         title="Log audit"
         description="Setiap perubahan dari panel admin tercatat di sini. Data pribadi pengunjung tidak ikut dicatat."
       />
-      <nav aria-label="Filter entitas" className="mb-4 flex flex-wrap gap-2">
-        {[null, ...entities].map((e) => (
-          <Link
-            key={e ?? 'all'}
-            href={href(e, 1)}
-            aria-current={e === entityParam ? 'page' : undefined}
-            className="inline-flex min-h-9 items-center rounded-full border border-border px-3.5 text-sm aria-[current=page]:border-primary aria-[current=page]:bg-primary/10 aria-[current=page]:text-primary"
-          >
-            {e ?? 'Semua'}
-          </Link>
-        ))}
-      </nav>
+      <FilterTabs
+        label="Filter entitas"
+        items={[null, ...entities].map((e) => ({
+          href: href(e, 1),
+          label: e ? labelOf(e) : 'Semua',
+          active: e === entityParam,
+        }))}
+      />
 
       {rows.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
@@ -88,7 +98,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
                   >
                     {actionLabel[row.action] ?? row.action}
                   </Badge>
-                  <span>{row.entity}</span>
+                  <span>{labelOf(row.entity)}</span>
                   {row.entityId ? (
                     <span className="text-xs text-muted">{row.entityId.slice(0, 8)}</span>
                   ) : null}
@@ -121,23 +131,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
         </ol>
       )}
 
-      {pages > 1 ? (
-        <nav aria-label="Halaman log" className="mt-4 flex items-center justify-end gap-2 text-sm">
-          <span className="text-muted">
-            Halaman {page} dari {pages}
-          </span>
-          {page > 1 ? (
-            <Button variant="secondary" size="sm" asChild>
-              <Link href={href(entityParam, page - 1)}>Sebelumnya</Link>
-            </Button>
-          ) : null}
-          {page < pages ? (
-            <Button variant="secondary" size="sm" asChild>
-              <Link href={href(entityParam, page + 1)}>Berikutnya</Link>
-            </Button>
-          ) : null}
-        </nav>
-      ) : null}
+      <Pager label="Halaman log" page={page} pages={pages} href={(p) => href(entityParam, p)} />
     </>
   )
 }

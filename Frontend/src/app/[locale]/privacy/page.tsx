@@ -12,7 +12,7 @@ import { pageMetadata } from '@/lib/seo'
 // di kode. Suntingan lewat admin dihitung otomatis dari SiteText (getPrivacyEditedAt).
 const DEFAULT_TEXT_UPDATED_AT = '2026-10-31T00:00:00Z'
 
-const SECTIONS = ['visits', 'contact', 'newsletter', 'cv', 'services', 'rights', 'credits'] as const
+const SECTIONS = ['visits', 'contact', 'cv', 'services', 'rights', 'credits'] as const
 
 export async function generateMetadata({
   params,

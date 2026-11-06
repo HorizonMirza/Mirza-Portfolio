@@ -100,7 +100,7 @@ export function buildEnvelope(
 ): string {
   const { type, value, stack, digest } = describe(error)
   const frames = parseStack(stack)
-  // path tanpa query string: token newsletter dan sejenisnya tidak boleh ikut terkirim
+  // path tanpa query string: token dan isian di URL tidak boleh ikut terkirim
   const path = request.path.split('?')[0]
   const event = {
     event_id: options.eventId,

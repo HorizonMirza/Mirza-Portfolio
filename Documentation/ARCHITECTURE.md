@@ -28,7 +28,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Auth | **Better Auth**: email + password, pendaftaran publik dimatikan, adapter Prisma, sesi disimpan di database | Stabil, TypeScript penuh, sesi bisa dicabut, rate limit login bawaan. Auth.js v5 lama berstatus beta dan pengembangannya bergabung dengan tim Better Auth | Auth.js v5, JWT buatan sendiri (pola GAAS) |
 | Hash password | **Bawaan Better Auth** (scrypt) | Aman, tanpa dependency tambahan, konsisten dengan cara Better Auth memverifikasi login | Argon2id, bcrypt |
 | Validasi | **Zod** | Satu skema untuk server dan form | Yup |
-| Form publik (kontak, newsletter) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
+| Form publik (kontak) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
 | Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
 | Tabel admin | **TanStack Table** (M2) | Headless, cari/urut/paginasi, cocok dengan shadcn | AG Grid (berat) |
 | Grafik dashboard admin | **Recharts** lewat shadcn charts (M2), hanya dimuat di `/admin` | Standar shadcn, tidak membebani halaman publik | Chart.js |
@@ -79,7 +79,6 @@ flowchart LR
 | Home, About, Experience, Skills, Projects, detail Project | Static (SSG) + ISR. Data lewat `unstable_cache` bertag (`features/*/public.ts`); aksi admin memanggil `updateTag` + `revalidatePath` literal `/id` dan `/en` sehingga perubahan langsung tampil | Tag per entitas (`lib/cache-tags.ts`) |
 | Detail project yang terbit setelah build | Dirender saat pertama diminta (`dynamicParams = true` di `[slug]`) lalu di-cache | Tag `projects` |
 | Kontak, Privasi, 404 | Static | — |
-| Konfirmasi/berhenti newsletter | Dinamis (membaca `?token=`), `noindex` | — |
 | `/admin/*` | Dinamis, tanpa cache, `noindex` | — |
 | Metadata GitHub | Fetch server dengan `revalidate` 1 jam, gagal = tidak ditampilkan | Data cache Next |
 
@@ -189,9 +188,6 @@ erDiagram
       string email
       string whatsapp
       json socials
-      enum availability "OPEN | BUSY | NOT_LOOKING"
-      string availabilityNote_id
-      string availabilityNote_en
       string currentRole_id "posisi sekarang: gambar pratinjau, jabatan JSON-LD, cadangan footer"
       string currentRole_en
       string cvUrl "link CV di luar (Google Drive), didahulukan /api/cv"
@@ -360,7 +356,6 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Halaman situs (10 modul: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`), `saveIntroNotice` (kartu pembuka); foto hero di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `hero-portrait`, `hero-armor`) |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
-| Pelanggan | `/admin/subscribers` | `deleteSubscriber` |
 | Audit | `/admin/audit` | (baca saja) |
 | Pengaturan | `/admin/settings` | `saveSoundVolume` (volume suara tombol situs publik) |
 | Akun | `/admin/account` | `changePassword` |
@@ -369,14 +364,11 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 
 ### 6.2 Form publik (Server Actions)
 
-Form kontak dan pendaftaran newsletter memakai **Server Action** dengan `useActionState`, bukan route handler, agar tetap berfungsi tanpa JavaScript di sisi klien (diuji E2E dengan JavaScript mati). Setiap action: validasi Zod, honeypot, rate limit per IP-hash, lalu mengembalikan state `{ status, fieldErrors, message, values }`. Pesan berupa kunci terjemahan, diterjemahkan di klien dan dibacakan lewat `role="alert"`/`status`.
+Form kontak memakai **Server Action** dengan `useActionState`, bukan route handler, agar tetap berfungsi tanpa JavaScript di sisi klien (diuji E2E dengan JavaScript mati). Setiap action: validasi Zod, honeypot, rate limit per IP-hash, lalu mengembalikan state `{ status, fieldErrors, message, values }`. Pesan berupa kunci terjemahan, diterjemahkan di klien dan dibacakan lewat `role="alert"`/`status`.
 
 | Action | Fungsi |
 |---|---|
 | `submitContact` | Honeypot → validasi → rate limit 5/jam per IP-hash → simpan `Message` (IP hanya hash) → notifikasi ke `CONTACT_TO_EMAIL` lewat Resend bila diatur (gagal kirim tidak menggagalkan pengunjung) |
-| `subscribeNewsletter` | Double opt-in: `Subscriber` PENDING dengan hash token → email konfirmasi (React Email, dua bahasa) + header `List-Unsubscribe`. Jawaban sama untuk email yang sudah terdaftar (tidak bisa ditebak). Tanpa Resend: "belum aktif" |
-| `confirmSubscription` | Dipanggil dari tombol di `/[locale]/newsletter/confirm?token=` (POST, bukan saat tautan dibuka, agar pemindai tautan email tidak ikut mengonfirmasi). Token hanya sekali pakai |
-| `unsubscribe` | Dari `/[locale]/newsletter/unsubscribe?token=<id>.<hmac>`; token tanda tangan HMAC, tidak disimpan |
 
 Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). Template di `src/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
 
@@ -384,10 +376,6 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 
 | Metode | Path | Akses | Fungsi |
 |---|---|---|---|
-| GET | `/api/v1/projects` | Publik | Daftar project terbit. `?locale=id\|en` → teks satu bahasa, tanpa → `{ id, en }` |
-| GET | `/api/v1/projects/{slug}` | Publik | Detail project terbit, 404 bila tidak ada |
-| GET | `/api/v1/skills` | Publik | Skill per kategori beserta slug project yang memakainya |
-| GET | `/api/v1/profile` | Publik | Profil publik **tanpa** email dan WhatsApp. Keputusan pemilik 2026-11-01 (audit SEC-05): keduanya tetap tampil di footer HTML untuk pengunjung, tetapi tidak disediakan sebagai data siap-mesin di API dan JSON-LD. Ini mengurangi pengambilan otomatis yang paling mudah, bukan menyembunyikannya |
 | POST | `/api/track` | Publik, same-origin, rate limit 300/jam | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
 | GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
 | GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` > 90 hari dan `RateLimit` > 1 hari, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
@@ -398,18 +386,8 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 - Respons JSON, `Content-Type: application/json`.
 - Sukses: `{ "data": ..., "meta": { ... } }`. Galat: `{ "error": { "code": "VALIDATION_ERROR", "message": "...", "fields": { ... } } }`.
 - Kode HTTP: 200/201, 400 (validasi), 401, 403, 404, 429 (rate limit), 500.
-- API publik: read-only, `Cache-Control: public, s-maxage=300, stale-while-revalidate=3600`, CORS `GET` saja.
-- Versi di path (`/v1`). Perubahan yang merusak berarti `/v2`.
+- API publik `/api/v1` (project, skill, profil) dihapus 2026-11-06 karena tidak dipakai; alamat `/api/*` yang tidak ada dijawab JSON 404 `{ error }`.
 
-Contoh:
-
-```http
-GET /api/v1/projects?locale=id&page=1
-
-200 { "data": [{ "slug": "gaas", "title": "GAAS", "summary": "...", "year": 2026 }], "meta": { "page": 1, "total": 1 } }
-400 { "error": { "code": "VALIDATION_ERROR", "message": "Parameter tidak valid", "fields": { "locale": "Harus id atau en" } } }
-429 { "error": { "code": "RATE_LIMITED", "message": "Terlalu banyak permintaan, coba lagi nanti" } }
-```
 
 Contoh state yang dikembalikan Server Action form kontak (bagian 6.2):
 
@@ -514,7 +492,7 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
 | 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
 | 13 | ~~Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()`~~ **Diganti:** menu HP kini menu bawah tetap (tautan biasa, tanpa `popover`) dan filter pengalaman dihapus 2026-10-03 | Hampir tanpa JavaScript klien | Diganti (revisi pemilik, DESIGN.md) |
-| 14 | Konfirmasi dan berhenti newsletter lewat tombol (POST) di halaman, bukan GET di tautan email | Pemindai tautan email tidak ikut mengonfirmasi atau memberhentikan langganan | Final (M3, 2026-09-30) |
+| 14 | Konfirmasi dan berhenti newsletter lewat tombol (POST) di halaman, bukan GET di tautan email | Pemindai tautan email tidak ikut mengonfirmasi atau memberhentikan langganan | Tidak berlaku lagi: newsletter dihapus 2026-11-06 |
 | 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
 | 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
 | 17 | Notifikasi login baru ke email admin lewat hook Better Auth + `after()` Next.js | Tidak menunda login dan tetap terkirim di serverless | Final (M4, 2026-09-30) |
