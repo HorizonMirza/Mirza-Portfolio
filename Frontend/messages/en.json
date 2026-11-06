@@ -74,6 +74,8 @@
     "present": "Present"
   },
   "Experience": {
+    "photoOpen": "Enlarge photo: {org}",
+    "photoClose": "Close photo",
     "metaTitle": "Experience",
     "metaDescription": "Work and organization experience of Muhammad Mirza, newest first.",
     "title": "Experience",

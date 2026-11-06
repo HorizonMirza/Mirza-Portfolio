@@ -74,6 +74,8 @@
     "present": "Sekarang"
   },
   "Experience": {
+    "photoOpen": "Perbesar foto {org}",
+    "photoClose": "Tutup foto",
     "metaTitle": "Pengalaman",
     "metaDescription": "Pengalaman kerja dan organisasi Muhammad Mirza, dari yang terbaru.",
     "title": "Pengalaman",

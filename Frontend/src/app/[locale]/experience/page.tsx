@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server'
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
+import { PhotoLightbox } from '@/features/experience/components/public/photo-lightbox'
 import { getPublicExperiences, type PublicExperience } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -104,16 +105,18 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                 </div>
                 <div className="xp-side">
                   {e.photo ? (
-                    <span className="xp-frame">
-                      <Image
-                        src={e.photo.url}
-                        alt={loc(e.photo, 'alt', locale)}
-                        width={e.photo.width ?? 800}
-                        height={e.photo.height ?? 600}
-                        sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
-                        className="xp-photo"
-                      />
-                    </span>
+                    <PhotoLightbox
+                      src={e.photo.url}
+                      alt={loc(e.photo, 'alt', locale)}
+                      width={e.photo.width ?? 800}
+                      height={e.photo.height ?? 600}
+                      caption={org}
+                      detail={`${loc(e, 'title', locale)} · ${formatMonth(e.start, locale)} - ${
+                        e.end ? formatMonth(e.end, locale) : t('present')
+                      }`}
+                      openLabel={t('photoOpen', { org })}
+                      closeLabel={t('photoClose')}
+                    />
                   ) : (
                     <p className="xp-year">
                       <span className="font-display text-[2.75rem] leading-none font-bold">
