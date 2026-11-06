@@ -312,20 +312,21 @@
     filter 450ms,
     opacity 450ms;
 }
-/* C1 "Lightbox klasik" (pilihan pemilik 2026-11-06): foto bisa ditekan untuk dilihat besar */
+/* C1 "Lightbox klasik" (pilihan pemilik 2026-11-06): foto bisa ditekan untuk dilihat besar, dengan
+   efek yang sama seperti gambar di daftar project (miring + kilau dari .pj-tilt/.pj-glare, terbang
+   lewat View Transition .morph). Lebar dan dorongan kiri pindah ke pembungkus miring agar poros
+   kemiringan tepat di tengah foto. */
+.xp-tilt {
+  max-width: 20rem;
+  margin-left: var(--xp-push);
+}
 button.xp-frame {
+  position: relative;
+  max-width: none;
+  margin-left: 0;
   border: 0;
   cursor: zoom-in;
   font: inherit;
-}
-.xp-zoom .xp-photo {
-  transition:
-    filter 450ms,
-    opacity 450ms,
-    transform 400ms ease;
-}
-.xp-zoom:hover .xp-photo {
-  transform: scale(1.03);
 }
 /* cincin fokus global (--note), sedikit lebih jauh agar tidak menempel bingkai perak */
 .xp-zoom:focus-visible {
@@ -425,15 +426,17 @@ button.xp-frame {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
+/* saat foto terbang (View Transition), animasi CSS dialog dimatikan agar tidak bertumpuk */
+.xp-lightbox[data-morph],
+.xp-lightbox[data-morph]::backdrop,
+.xp-lightbox[data-morph] .xp-lightbox-figure {
+  transition: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .xp-lightbox,
   .xp-lightbox::backdrop,
-  .xp-lightbox-figure,
-  .xp-zoom .xp-photo {
+  .xp-lightbox-figure {
     transition: none;
-  }
-  .xp-zoom:hover .xp-photo {
-    transform: none;
   }
 }
 .xp-year {
@@ -470,7 +473,7 @@ button.xp-frame {
     padding-top: 0.25rem;
   }
   /* sisi foto: sisi atas foto sejajar tepat dengan sisi atas kotak logo (revisi pemilik) */
-  .xp-side:has(> .xp-frame) {
+  .xp-side:has(> .xp-tilt) {
     padding-top: 0;
   }
   /* entri ganjil: isi di kiri (rata kanan), sisi seberang di kanan */

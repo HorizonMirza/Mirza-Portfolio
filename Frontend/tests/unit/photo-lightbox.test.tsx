@@ -10,8 +10,14 @@ vi.mock('next/image', () => ({
   default: (props: Record<string, unknown>) => <img {...(props as object)} />,
 }))
 
-// jsdom belum punya showModal/close untuk <dialog>: cukup atur atribut open seperti browser
+// jsdom belum punya showModal/close untuk <dialog> dan matchMedia: cukup tiru perilaku browser
 beforeAll(() => {
+  window.matchMedia = ((query: string) => ({
+    matches: false,
+    media: query,
+    addEventListener() {},
+    removeEventListener() {},
+  })) as unknown as typeof window.matchMedia
   HTMLDialogElement.prototype.showModal = function () {
     this.setAttribute('open', '')
   }
@@ -66,5 +72,35 @@ describe('PhotoLightbox', () => {
     expect(dialog).toHaveAttribute('open')
     fireEvent.click(dialog)
     expect(dialog).not.toHaveAttribute('open')
+  })
+
+  it('dengan View Transition foto terbang: nama transisi berpindah dari foto kecil ke foto besar', async () => {
+    const names: string[] = []
+    const proto = Document.prototype as unknown as {
+      startViewTransition?: (update: () => void) => { finished: Promise<void> }
+    }
+    proto.startViewTransition = function (update) {
+      const thumb = document.querySelector<HTMLElement>('button.xp-frame')!
+      names.push(`sebelum:${thumb.style.getPropertyValue('view-transition-name')}`)
+      update()
+      const big = document.querySelector<HTMLElement>('dialog img')!
+      names.push(`sesudah:${big.style.getPropertyValue('view-transition-name')}`)
+      return { finished: Promise.resolve() }
+    }
+    try {
+      const { dialog } = setup()
+      fireEvent.click(screen.getByRole('button', { name: 'Perbesar foto PT PGAS Solution' }))
+      await vi.waitFor(() => expect(dialog).toHaveAttribute('open'))
+      expect(names).toEqual(['sebelum:xp-photo', 'sesudah:xp-photo'])
+      // nama transisi dilepas lagi setelah selesai agar tidak bentrok dengan foto lain
+      await vi.waitFor(() =>
+        expect(dialog.querySelector('img')!.style.getPropertyValue('view-transition-name')).toBe(
+          '',
+        ),
+      )
+      expect(dialog).not.toHaveAttribute('data-morph')
+    } finally {
+      delete proto.startViewTransition
+    }
   })
 })
