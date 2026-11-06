@@ -74,12 +74,16 @@ export function IdLanyard({
   name,
   role,
   photo,
+  photoCrop,
   site,
   className,
 }: {
   name: string
   role: string
   photo: string | StaticImageData
+  // bagian foto yang dipakai (pecahan lebar/tinggi asli), mis. potongan kepala dan bahu dari potret hero;
+  // tanpa ini seluruh foto dipakai
+  photoCrop?: { x: number; y: number; w: number; h: number }
   site: string
   className?: string
 }) {
@@ -324,13 +328,30 @@ export function IdLanyard({
       c.save()
       roundRect(c, x + 12, 30, CARD_W - 24, PHOTO_H, 8)
       c.clip()
-      c.fillStyle = 'rgb(255 255 255 / 0.08)'
+      // latar studio abu terang: foto hero berlatar transparan (revisi pemilik 2026-11-06)
+      const studio = c.createLinearGradient(0, 30, 0, 30 + PHOTO_H)
+      studio.addColorStop(0, '#ececee')
+      studio.addColorStop(1, '#d6d6da')
+      c.fillStyle = studio
       c.fillRect(x + 12, 30, CARD_W - 24, PHOTO_H)
       if (img.complete && img.naturalWidth) {
-        const s = Math.max((CARD_W - 24) / img.naturalWidth, PHOTO_H / img.naturalHeight)
-        const iw = img.naturalWidth * s
-        const ih = img.naturalHeight * s
-        c.drawImage(img, x + 12 + (CARD_W - 24 - iw) / 2, 30 + (PHOTO_H - ih) * 0.25, iw, ih)
+        const crop = photoCrop ?? { x: 0, y: 0, w: 1, h: 1 }
+        const sw = img.naturalWidth * crop.w
+        const sh = img.naturalHeight * crop.h
+        const s = Math.max((CARD_W - 24) / sw, PHOTO_H / sh)
+        const iw = sw * s
+        const ih = sh * s
+        c.drawImage(
+          img,
+          img.naturalWidth * crop.x,
+          img.naturalHeight * crop.y,
+          sw,
+          sh,
+          x + 12 + (CARD_W - 24 - iw) / 2,
+          30 + (PHOTO_H - ih) * 0.25,
+          iw,
+          ih,
+        )
       }
       c.restore()
       // nama satu baris (huruf mengecil bila tidak muat), peran di bawahnya (pilihan pemilik)
@@ -509,7 +530,7 @@ export function IdLanyard({
       window.removeEventListener('pointercancel', onUp)
       root.style.cursor = ''
     }
-  }, [name, role, photo, site])
+  }, [name, role, photo, photoCrop, site])
 
   return (
     <div

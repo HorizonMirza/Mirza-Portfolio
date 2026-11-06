@@ -1363,3 +1363,9 @@ Permintaan pemilik: gaya Super Admin diselaraskan dengan situs utama, dan yang s
 
 - **Nama aksesibel tombol bahasa kini diawali kode yang terlihat:** "EN, ganti bahasa ke English" dan "ID, switch language to Bahasa Indonesia" (dulu "Ganti bahasa ke English (EN)"). Pengguna kontrol suara menyebut teks yang ia lihat ("klik EN"), jadi teks itu harus menjadi awal nama (WCAG 2.5.3 Label in Name). Ditemukan saat uji situs live dengan axe 4.14 (pembaruan dependency 2026-11-06), yang menolak kode yang hanya ada di akhir label. Tampilan tombol tidak berubah.
 - **Admin:** tombol bahasa isian ID/EN di top bar ikut diubah ke pola sama: "ID, bahasa isian Indonesia" dan "EN, bahasa isian English".
+
+## 103. Revisi 6 November: foto dan kartu ID
+
+- **Kartu ID di Kontak memakai wajah beranda** (revisi pemilik 2026-11-06). Foto kartu kini potongan kepala dan bahu dari potret hero (`HERO_PORTRAIT`, atau unggahan Admin → Pengaturan bila ada) lewat `HERO_CARD_CROP` di `lib/default-photo.ts`, di atas latar studio abu terang karena potret hero berlatar transparan. Sebelumnya kartu memakai foto profil. Fisika kartu belum berubah: pemilik memilih dulu dari 10 demo gerak.
+- **Foto profil dirapikan:** titik gelap kecil di dahi (gambar dari pemilik) dihapus dari `src/assets/profile-photo.jpg` dengan inpainting lokal radius ±8 px; bagian lain foto tidak berubah (tabel kuantisasi JPEG asli dipakai lagi).
+- **Menunggu pilihan pemilik dari demo:** latar di belakang kartu pembuka (A1–A10), gerak kartu ID (B1–B10), dan tampilan foto Pengalaman yang diperbesar (C1–C10).
