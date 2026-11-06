@@ -92,7 +92,8 @@ export function LoginForm({
 
   return (
     <div lang="en" className="login-card relative w-full max-w-sm rounded-2xl">
-      <div className="relative overflow-hidden rounded-2xl bg-black/50 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
+      {/* kartu hitam pekat tanpa transparansi dan blur (revisi pemilik 2026-11-06), di atas latar kotak commit */}
+      <div className="relative overflow-hidden rounded-2xl bg-black p-6 shadow-2xl sm:p-8">
         <div
           aria-hidden="true"
           className="absolute inset-0 opacity-[0.03]"

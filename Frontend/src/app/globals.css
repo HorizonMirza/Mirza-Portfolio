@@ -2591,9 +2591,10 @@ html[data-intro='pending'] .intro {
   overflow: hidden;
   padding: 2rem;
   border-radius: inherit;
-  background: rgb(0 0 0 / 0.5);
+  /* hitam pekat tanpa transparansi dan tanpa blur (revisi pemilik 2026-11-06): kotak commit di
+     belakang tidak tembus ke kartu */
+  background: #000;
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-  backdrop-filter: blur(24px);
 }
 /* pola garis miring tipis seperti kartu login */
 .intro-grain {
