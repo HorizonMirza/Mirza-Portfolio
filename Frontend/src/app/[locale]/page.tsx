@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Pause, Play } from 'lucide-react'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
 import { notFound } from 'next/navigation'
@@ -332,14 +331,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                 )}
               </ul>
             </div>
-            <Container className="mt-5 flex justify-center">
-              <label className="home-marquee-pause">
-                <input type="checkbox" />
-                <Pause aria-hidden="true" className="home-marquee-pause-icon size-3.5" />
-                <Play aria-hidden="true" className="home-marquee-play-icon size-3.5" />
-                <span>{t('marqueePause')}</span>
-              </label>
-            </Container>
           </div>
         </section>
       ) : null}
