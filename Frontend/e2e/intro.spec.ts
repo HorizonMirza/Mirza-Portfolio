@@ -34,8 +34,10 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   // dilepas begitu kartu terbuka
   await expect(page.locator('html')).not.toHaveAttribute('data-intro', /.*/)
   await expect(dialog.getByRole('button', { name: 'Beranda' })).toBeVisible()
-  // tanpa latar shader (vortex ungu dihapus 2026-11-01 karena lag)
-  await expect(page.locator('dialog.intro canvas')).toHaveCount(0)
+  // latar gelombang commit (pilihan pemilik 2026-11-06, A42): satu kanvas hiasan di belakang kartu,
+  // tersembunyi dari pembaca layar (vortex ungu lama dihapus 2026-11-01 karena lag)
+  await expect(page.locator('dialog.intro canvas.intro-wave')).toHaveCount(1)
+  await expect(page.locator('dialog.intro canvas')).toHaveAttribute('aria-hidden', 'true')
 
   const results = await new AxeBuilder({ page })
     .include('dialog.intro')
@@ -46,7 +48,8 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   await dialog.getByRole('button', { name: 'Beranda' }).click()
   await expect(dialog).toBeHidden()
   await expect(page).toHaveURL(/\/id$/)
-  await expect(page.locator('dialog.intro canvas')).toHaveCount(0)
+  // kanvas tetap ada di dialog yang tertutup tetapi tidak lagi tampil
+  await expect(page.locator('dialog.intro canvas')).toBeHidden()
   await page.goto('/id/projects')
   // tunggu skrip klien selesai dimuat dan animasi masuk selesai; pemberitahuan tetap tertutup
   await page.waitForLoadState('networkidle')
