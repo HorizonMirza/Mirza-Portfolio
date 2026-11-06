@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/admin/login-form'
+import { CommitGrid } from '@/components/shared/commit-grid'
 import { getAdminEmailDomain, getAdminSession } from '@/lib/auth-guard'
 import { safeAdminRedirect } from '@/lib/safe-redirect'
 
@@ -16,8 +17,10 @@ export default async function LoginPage({ searchParams }: PageProps<'/admin/logi
 
   return (
     // Selalu hitam (permintaan pemilik), tidak mengikuti tema terang/gelap panel admin. Latar vortex
-    // ungu dihapus 2026-11-01 karena lag (permintaan pemilik).
+    // ungu dihapus 2026-11-01 karena lag; sejak 2026-11-06 latarnya kotak commit yang sama dengan
+    // kartu pembuka (permintaan pemilik).
     <div className="relative min-h-dvh overflow-hidden bg-black text-white [color-scheme:dark]">
+      <CommitGrid className="login-grid" />
       <main
         id="main"
         className="relative z-10 flex min-h-dvh w-full flex-col items-center justify-center px-4 py-12"

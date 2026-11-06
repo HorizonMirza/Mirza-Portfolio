@@ -11,13 +11,13 @@ import {
 } from 'react'
 
 import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
+import { CommitGrid } from '@/components/shared/commit-grid'
 import { routing } from '@/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
 import { INTRO_PENDING_ATTR, INTRO_SEEN_KEY } from '../../intro-pending'
-import { CommitGrid } from './commit-grid'
 
 type Locale = (typeof routing.locales)[number]
 

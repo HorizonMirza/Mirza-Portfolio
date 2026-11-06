@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 
-// Latar kartu pembuka: kotak-kotak seperti grafik kontribusi GitHub dalam biru situs (--note mode
-// gelap, karena kartu pembuka selalu gelap). Pilihan pemilik 2026-11-06 dari 50 demo (A42
+// Latar kartu pembuka dan halaman login Super Admin (sejak 2026-11-06): kotak-kotak seperti grafik kontribusi GitHub dalam biru situs (--note mode
+// gelap, karena kartu pembuka dan login selalu gelap). Pilihan pemilik 2026-11-06 dari 50 demo (A42
 // "Gelombang commit"), lalu gelombang cahaya yang menyapu kotak dihapus atas permintaan pemilik di
 // hari yang sama: polanya kini diam. Pola kotak hiasan acak, bukan data kontribusi.
 // Diam, jadi tanpa loop animasi: digambar sekali saat dialog terbuka dan diulang hanya bila ukuran
@@ -13,7 +13,7 @@ const NOTE = '77 163 255'
 // tingkat terang kotak seperti tingkat kontribusi GitHub (0 = kosong)
 const LEVEL_ALPHA = [0.05, 0.18, 0.32, 0.5, 0.7]
 
-export function CommitGrid() {
+export function CommitGrid({ className = 'intro-wave' }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -52,13 +52,14 @@ export function CommitGrid() {
       }
     }
 
-    // Dialog dibuka oleh efek IntroNotice yang berjalan setelah efek ini, jadi dicek pada bingkai
-    // berikutnya. Pengunjung yang sudah melihat kartu: dialog tetap tertutup, kanvas tidak digambar.
+    // Di dalam dialog (kartu pembuka): dialog dibuka oleh efek IntroNotice yang berjalan setelah efek
+    // ini, jadi dicek pada bingkai berikutnya; pengunjung yang sudah melihat kartu tidak memicu gambar.
+    // Di luar dialog (halaman login) langsung digambar.
     const dialog = canvas.closest('dialog')
     const observer = new ResizeObserver(draw)
     const stop = () => observer.disconnect()
     const frame = requestAnimationFrame(() => {
-      if (!dialog?.open) return
+      if (dialog && !dialog.open) return
       draw()
       observer.observe(canvas)
     })
@@ -70,5 +71,5 @@ export function CommitGrid() {
     }
   }, [])
 
-  return <canvas ref={ref} aria-hidden="true" className="intro-wave" />
+  return <canvas ref={ref} aria-hidden="true" className={className} />
 }
