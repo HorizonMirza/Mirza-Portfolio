@@ -143,6 +143,9 @@ export function LoginForm({
                   name="email"
                   type="email"
                   autoComplete="username"
+                  // halaman login hanya berisi form ini: kursor langsung siap di kolom email
+                  // (permintaan pemilik 2026-11-06)
+                  autoFocus
                   required
                   placeholder="mirzaganteng@gmail.com"
                   aria-invalid={emailError ? true : undefined}

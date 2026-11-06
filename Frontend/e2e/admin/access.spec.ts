@@ -24,6 +24,11 @@ test.describe('akses admin tanpa sesi', () => {
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/)
   })
 
+  test('kolom email langsung terfokus saat halaman login dibuka', async ({ page }) => {
+    await page.goto('/admin/login')
+    await expect(page.getByLabel('Email')).toBeFocused()
+  })
+
   test('cookie sesi palsu ditolak', async ({ page, context, baseURL }) => {
     await context.addCookies([{ name: 'mm.session_token', value: 'palsu.palsu', url: baseURL! }])
     await page.goto('/admin')
