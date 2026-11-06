@@ -1,6 +1,6 @@
 import { expect, test, type Browser } from '@playwright/test'
 
-import { waitForFiniteAnimations } from './wait'
+import { CLIENT_NAV_TIMEOUT, waitForFiniteAnimations } from './wait'
 
 async function openRootWithLocale(browser: Browser, locale: string) {
   const context = await browser.newContext({ locale })
@@ -33,12 +33,12 @@ test('bahasa lain jatuh ke bahasa bawaan /id', async ({ browser }) => {
 test('tombol bahasa berpindah ke versi Inggris di halaman yang sama', async ({ page }) => {
   await page.goto('/id/experience')
   await page.getByRole('link', { name: 'EN, ganti bahasa ke English' }).click()
-  await expect(page).toHaveURL(/\/en\/experience$/)
+  await expect(page).toHaveURL(/\/en\/experience$/, { timeout: CLIENT_NAV_TIMEOUT })
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Experience')
   // tombol yang sama kembali ke bahasa Indonesia
   await page.getByRole('link', { name: 'ID, switch language to Bahasa Indonesia' }).click()
-  await expect(page).toHaveURL(/\/id\/experience$/)
+  await expect(page).toHaveURL(/\/id\/experience$/, { timeout: CLIENT_NAV_TIMEOUT })
 })
 
 test('ganti bahasa tidak membuat tema berkedip', async ({ browser }) => {

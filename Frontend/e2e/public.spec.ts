@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
-import { waitForFiniteAnimations } from './wait'
+import { CLIENT_NAV_TIMEOUT, waitForFiniteAnimations } from './wait'
 
 test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }) => {
   await page.goto('/id')
@@ -93,7 +93,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   const href = await firstCover.getAttribute('href')
   // klik lewat event: sampul terus bergerak, klik berdasarkan koordinat bisa mengenai sampul sebelahnya
   await firstCover.dispatchEvent('click')
-  await expect(page).toHaveURL(new RegExp(`${href}$`))
+  await expect(page).toHaveURL(new RegExp(`${href}$`), { timeout: CLIENT_NAV_TIMEOUT })
 })
 
 test('menu bawah HP tetap di atas isi saat menggulir antarbagian beranda', async ({

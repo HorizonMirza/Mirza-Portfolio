@@ -14,3 +14,9 @@ export async function waitForFiniteAnimations(target: Page | Locator) {
   if ('evaluate' in target && 'goto' in target) await target.evaluate(run)
   else await (target as Locator).evaluate(run)
 }
+
+// Batas tunggu alamat berganti setelah navigasi klien (klik tautan, View Transition). Di WebKit CI
+// tanpa GPU, halaman tujuan sudah tampil dalam ±0,25 detik tetapi alamat baru berganti setelah lebih
+// dari 5 detik (batas bawaan) karena animasi transisi selesai terlambat (trace CI #261 dan #266,
+// 2026-11-06); di WebKit lokal versi sama selalu < 1 detik. Isi halaman tetap dicek dengan batas biasa.
+export const CLIENT_NAV_TIMEOUT = 15_000
