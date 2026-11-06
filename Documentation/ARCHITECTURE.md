@@ -264,19 +264,6 @@ erDiagram
       enum status "NEW | READ | ARCHIVED"
       string ipHash
     }
-    Subscriber {
-      string id PK
-      string email UK
-      enum status "PENDING | CONFIRMED | UNSUBSCRIBED"
-      string tokenHash
-      string locale
-    }
-    Broadcast {
-      string id PK
-      string subject
-      text body
-      datetime sentAt
-    }
     PageView {
       string id PK
       string path
