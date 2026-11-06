@@ -50,9 +50,10 @@ export function useAdminLang() {
   return useContext(Ctx)
 }
 
+// nama aksesibel diawali kode yang terlihat (WCAG 2.5.3 Label in Name, DESIGN.md bagian 102)
 const OPTIONS: { lang: ContentLang; label: string; name: string }[] = [
-  { lang: 'id', label: 'ID', name: 'Bahasa isian: Indonesia' },
-  { lang: 'en', label: 'EN', name: 'Bahasa isian: English' },
+  { lang: 'id', label: 'ID', name: 'ID, bahasa isian Indonesia' },
+  { lang: 'en', label: 'EN', name: 'EN, bahasa isian English' },
 ]
 
 export function LangSwitch({ className }: { className?: string }) {

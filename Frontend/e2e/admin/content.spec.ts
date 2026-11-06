@@ -288,7 +288,7 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
 test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ page }) => {
   await page.goto('/admin/pages/home')
   const bar = page.getByRole('banner')
-  await expect(bar.getByRole('button', { name: 'Bahasa isian: Indonesia' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'ID, bahasa isian Indonesia' })).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
 
@@ -296,12 +296,12 @@ test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.getByLabel('Indonesia untuk Bagian keahlian')).toBeVisible()
   await expect(page.getByLabel('English untuk Bagian keahlian')).toHaveCount(0)
   await expect(async () => {
-    await bar.getByRole('button', { name: 'Bahasa isian: English' }).click()
+    await bar.getByRole('button', { name: 'EN, bahasa isian English' }).click()
     await expect(page.getByLabel('English untuk Bagian keahlian')).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByLabel('Indonesia untuk Bagian keahlian')).toHaveCount(0)
   // kembalikan agar tes lain tidak terpengaruh (pilihan tersimpan di browser)
-  await bar.getByRole('button', { name: 'Bahasa isian: Indonesia' }).click()
+  await bar.getByRole('button', { name: 'ID, bahasa isian Indonesia' }).click()
 
   await bar.getByRole('button', { name: 'Menu profil' }).click()
   await expect(page.getByRole('link', { name: 'Akun' }).last()).toBeVisible()

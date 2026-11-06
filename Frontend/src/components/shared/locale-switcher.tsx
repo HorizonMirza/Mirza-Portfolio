@@ -9,7 +9,9 @@ import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 // Satu tombol bulat yang berpindah ke bahasa lain di halaman yang sama. Kode yang terlihat
-// (mis. "EN") adalah bahasa tujuan dan ikut tercantum di nama aksesibel.
+// (mis. "EN") adalah bahasa tujuan dan menjadi AWAL nama aksesibel ("EN, ganti bahasa ke English"),
+// agar pengguna kontrol suara bisa menyebut teks yang ia lihat (WCAG 2.5.3 Label in Name; axe 4.14
+// menolak kode yang hanya ada di akhir label, temuan uji situs live 2026-11-06).
 // Animasi: setelah halaman berganti bahasa, teks yang terlihat (termasuk kode di tombol ini) diacak
 // lalu terurai ke bahasa baru (lib/text-scramble.ts lewat LanguageScramble di layout), diiringi
 // suara acak digital (lib/ui-sounds.ts).

@@ -1358,3 +1358,8 @@ Permintaan pemilik: gaya Super Admin diselaraskan dengan situs utama, dan yang s
 - **Kartu pembuka tampil tanpa menunggu JavaScript.** Perilaku permintaan pemilik 2026-10-19 tetap (beranda tidak terlihat sebelum kartu muncul), tetapi kini kartu yang sudah ada di HTML langsung ditampilkan menutupi layar; dulu seluruh halaman disembunyikan sampai JavaScript membuka kartu, sehingga di jaringan lambat pengunjung melihat layar hitam kosong. Saat JavaScript siap kartu menjadi modal tanpa animasi masuk ulang.
 - **Kilau berputar 30 fps** (`steps()`), tidak terlihat bedanya untuk garis setipis itu; kilau form kontak berhenti saat di luar layar.
 
+
+## 102. Label tombol bahasa (2026-11-06)
+
+- **Nama aksesibel tombol bahasa kini diawali kode yang terlihat:** "EN, ganti bahasa ke English" dan "ID, switch language to Bahasa Indonesia" (dulu "Ganti bahasa ke English (EN)"). Pengguna kontrol suara menyebut teks yang ia lihat ("klik EN"), jadi teks itu harus menjadi awal nama (WCAG 2.5.3 Label in Name). Ditemukan saat uji situs live dengan axe 4.14 (pembaruan dependency 2026-11-06), yang menolak kode yang hanya ada di akhir label. Tampilan tombol tidak berubah.
+- **Admin:** tombol bahasa isian ID/EN di top bar ikut diubah ke pola sama: "ID, bahasa isian Indonesia" dan "EN, bahasa isian English".

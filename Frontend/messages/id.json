@@ -10,7 +10,7 @@
   "Locale": {
     "id": "Bahasa Indonesia",
     "en": "English",
-    "switchTo": "Ganti bahasa ke {language} ({code})"
+    "switchTo": "{code}, ganti bahasa ke {language}"
   },
   "Theme": {
     "darkMode": "Mode gelap"
