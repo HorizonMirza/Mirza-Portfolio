@@ -2597,12 +2597,6 @@ html[data-intro='pending'] .intro {
     animation: intro-fade 700ms ease-out backwards;
   }
 }
-/* tanpa garis cahaya berputar di tepi kartu (revisi pemilik 2026-11-06, "hapus efek mengkilat"):
-   bingkai tipis diam, menimpa .login-card::before yang dipakai bersama login admin */
-.intro-card.login-card::before {
-  background: linear-gradient(rgb(255 255 255 / 0.22), rgb(255 255 255 / 0.22));
-  animation: none;
-}
 .intro-card {
   position: relative;
   z-index: 1;
