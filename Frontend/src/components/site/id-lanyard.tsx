@@ -25,11 +25,15 @@ const BOUNCE = 0.55
 // Area tempat kartu bisa ditarik: lebih lebar dari kolom agar kartu bebas berayun; klik di luar kartu
 // tetap tembus. Dulu tetap 560 px; diperluas atas permintaan pemilik 2026-11-06: sampai SIDE_MAX px
 // ke kiri dan kanan dari tengah kolom (dibatasi tepi layar agar halaman tidak bisa digeser menyamping)
-// dan EXTRA_BOTTOM px di bawah kotak, tanpa mengubah tata letak halaman.
+// dan ke bawah sampai garis atas footer (revisi pemilik 2026-11-06, dulu tetap 220 px di bawah kotak),
+// tanpa mengubah tata letak halaman.
 const CANVAS_W = 560
 const SIDE_MAX = 520
+// cadangan bila footer tidak ditemukan
 const EXTRA_BOTTOM = 220
 const SCREEN_GAP = 8
+// jarak sudut terbawah kartu dari garis footer
+const FLOOR_GAP = 4
 const PHOTO_H = 160
 // Tinggi dalam px, bukan rem: fisika memakai px, sedangkan rem menyusut di desktop (87,5%). Bila
 // kotak lebih pendek dari tali + kartu + jarak tepi, kartu menyentuh lantai dan diam miring.
@@ -158,6 +162,10 @@ export function IdLanyard({
       anchorX = left
       el!.style.left = `${box.width / 2 - left}px`
       el!.style.width = `${left + right}px`
+      // batas bawah: garis atas footer situs (border-top), minimal setinggi kotak kartu
+      const footer = document.querySelector('body footer')
+      const floor = footer ? footer.getBoundingClientRect().top - box.top : BOX_H + EXTRA_BOTTOM
+      el!.style.height = `${Math.max(BOX_H, Math.round(floor))}px`
       const rect = el!.getBoundingClientRect()
       dpr = Math.min(2, window.devicePixelRatio || 1)
       width = rect.width
@@ -186,7 +194,8 @@ export function IdLanyard({
       b.x -= dx * diff * (b.inv / total)
       b.y -= dy * diff * (b.inv / total)
     }
-    function walls(p: Point, m = 6) {
+    // m: jarak dari tepi kiri, kanan, dan atas; floor: jarak dari tepi bawah
+    function walls(p: Point, m = 6, floor = m) {
       if (p.inv === 0) return
       if (p.x < m) {
         const v = p.x - p.px
@@ -204,10 +213,28 @@ export function IdLanyard({
         p.y = m
         p.py = m + v * BOUNCE
       }
-      if (p.y > height - m) {
+      if (p.y > height - floor) {
         const v = p.y - p.py
-        p.y = height - m
-        p.py = height - m + v * BOUNCE
+        p.y = height - floor
+        p.py = height - floor + v * BOUNCE
+      }
+    }
+    // Batas bawah = garis atas footer (revisi pemilik 2026-11-06): sudut terbawah kartu, pada sudut
+    // putar berapa pun, tidak boleh melewati garis itu (FLOOR_GAP px di atasnya). Bila lewat, kartu
+    // diangkat utuh dan kecepatan turunnya dipantulkan.
+    function cardFloor() {
+      const dx = bot.x - top.x
+      const dy = bot.y - top.y
+      const len = Math.hypot(dx, dy) || 1
+      const halfW = Math.abs((dx / len) * (CARD_W / 2))
+      const lowest = Math.max(top.y, bot.y) + halfW
+      const limit = height - FLOOR_GAP
+      if (lowest <= limit) return
+      const d = lowest - limit
+      for (const p of [top, bot]) {
+        const v = p.y - p.py
+        p.y -= d
+        p.py = v > 0 ? p.y + v * BOUNCE : p.y - v
       }
     }
     function step(dt: number) {
@@ -232,8 +259,10 @@ export function IdLanyard({
         top.y -= dy * 0.3
         link(top, bot, CARD_H)
         for (const p of ropes) walls(p)
-        walls(top, CARD_EDGE)
-        walls(bot, CARD_EDGE)
+        // titik kartu: bawah hanya dijaga tipis, sudut terbawah kartu dijaga cardFloor()
+        walls(top, CARD_EDGE, 6)
+        walls(bot, CARD_EDGE, 6)
+        cardFloor()
       }
       const ang = Math.atan2(bot.y - top.y, bot.x - top.x)
       let dA = ang - angPrev
