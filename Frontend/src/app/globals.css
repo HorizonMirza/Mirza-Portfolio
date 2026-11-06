@@ -373,7 +373,8 @@ button.xp-frame {
   display: grid;
   gap: 0.75rem;
   justify-items: center;
-  max-width: min(92vw, 1100px);
+  /* tidak selebar layar (revisi pemilik 2026-11-06): foto sedikit lebih kecil */
+  max-width: min(84vw, 920px);
   transform: scale(0.92);
   transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -394,7 +395,7 @@ button.xp-frame {
   width: auto;
   height: auto;
   max-width: 100%;
-  max-height: 78vh;
+  max-height: 64vh;
   border-radius: 12px;
   box-shadow: 0 30px 80px rgb(0 0 0 / 0.6);
 }
@@ -408,21 +409,26 @@ button.xp-frame {
   font-size: 0.8125rem;
   color: #a1a1aa;
 }
-.xp-lightbox-close {
+.xp-lightbox-back {
   position: fixed;
-  top: max(0.875rem, env(safe-area-inset-top, 0px));
-  right: max(0.875rem, env(safe-area-inset-right, 0px));
-  display: grid;
-  place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  border-radius: 9999px;
-  border: 1px solid #52525b;
-  background: #18181b;
-  color: #fff;
+  top: max(1rem, env(safe-area-inset-top, 0px));
+  left: max(1rem, env(safe-area-inset-left, 0px));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: #a1a1aa;
   cursor: pointer;
 }
-.xp-lightbox-close:focus-visible {
+.xp-lightbox-back:hover {
+  color: #fff;
+}
+.xp-lightbox-back:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
 }

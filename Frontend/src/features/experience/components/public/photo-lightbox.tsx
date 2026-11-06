@@ -1,6 +1,6 @@
 'use client'
 
-import { X } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { useRef } from 'react'
 
@@ -155,13 +155,11 @@ export function PhotoLightbox({
           if (event.target === event.currentTarget) void close()
         }}
       >
-        <button
-          type="button"
-          className="xp-lightbox-close"
-          aria-label={closeLabel}
-          onClick={() => void close()}
-        >
-          <X aria-hidden className="size-5" />
+        {/* tombol kembali seperti "Semua project" di detail project (revisi pemilik 2026-11-06,
+            menggantikan tombol ×) */}
+        <button type="button" className="xp-lightbox-back" onClick={() => void close()}>
+          <ArrowLeft aria-hidden className="size-4" />
+          {closeLabel}
         </button>
         <figure className="xp-lightbox-figure">
           <Image
@@ -170,7 +168,7 @@ export function PhotoLightbox({
             alt={alt}
             width={width}
             height={height}
-            sizes="(min-width: 1200px) 1100px, 92vw"
+            sizes="(min-width: 1100px) 920px, 84vw"
             loading="lazy"
             className="xp-lightbox-img"
           />

@@ -38,7 +38,7 @@ function setup() {
       caption="PT PGAS Solution"
       detail="Fullstack Developer · Jul 2026 - Sekarang"
       openLabel="Perbesar foto PT PGAS Solution"
-      closeLabel="Tutup foto"
+      closeLabel="Semua pengalaman"
     />,
   )
   const dialog = document.querySelector('dialog')!
@@ -64,7 +64,7 @@ describe('PhotoLightbox', () => {
     const open = screen.getByRole('button', { name: 'Perbesar foto PT PGAS Solution' })
 
     fireEvent.click(open)
-    fireEvent.click(screen.getByRole('button', { name: 'Tutup foto', hidden: true }))
+    fireEvent.click(screen.getByRole('button', { name: 'Semua pengalaman', hidden: true }))
     expect(dialog).not.toHaveAttribute('open')
 
     fireEvent.click(open)
