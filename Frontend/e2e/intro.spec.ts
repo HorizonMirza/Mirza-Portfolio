@@ -34,7 +34,7 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   // dilepas begitu kartu terbuka
   await expect(page.locator('html')).not.toHaveAttribute('data-intro', /.*/)
   await expect(dialog.getByRole('button', { name: 'Beranda' })).toBeVisible()
-  // latar gelombang commit (pilihan pemilik 2026-11-06, A42): satu kanvas hiasan di belakang kartu,
+  // latar kotak commit (pilihan pemilik 2026-11-06, A42, tanpa gelombang cahaya): satu kanvas hiasan di belakang kartu,
   // tersembunyi dari pembaca layar (vortex ungu lama dihapus 2026-11-01 karena lag)
   await expect(page.locator('dialog.intro canvas.intro-wave')).toHaveCount(1)
   await expect(page.locator('dialog.intro canvas')).toHaveAttribute('aria-hidden', 'true')

@@ -17,7 +17,7 @@ import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
 import { INTRO_PENDING_ATTR, INTRO_SEEN_KEY } from '../../intro-pending'
-import { CommitWave } from './commit-wave'
+import { CommitGrid } from './commit-grid'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -60,7 +60,7 @@ function markSeen() {
 // ramping di tengah layar. Latar dan kartu sama dengan halaman login Super Admin (pilihan pemilik
 // 2026-10-15, demo latar 11): latar hitam dan kartu kaca gelap, selalu gelap di tema terang maupun
 // gelap (shader vortex ungu dihapus 2026-11-01 karena lag, permintaan pemilik). Sejak 2026-11-06 latarnya
-// gelombang commit ringan (commit-wave.tsx, pilihan pemilik A42). Memakai <dialog> bawaan
+// kotak commit diam (commit-grid.tsx, pilihan pemilik A42 tanpa gelombang cahaya). Memakai <dialog> bawaan
 // (showModal): fokus terkunci di dalam kartu, Esc menutup, halaman di belakang tidak bisa diklik.
 // Dibuka setelah halaman tampil, jadi isi situs tetap dirender server dan terbaca mesin pencari.
 // Tombol ID/EN mengganti bahasa kartu di tempat (efek acak huruf dan suara seperti tombol bahasa di
@@ -195,8 +195,8 @@ export function IntroNotice({
       onKeyDown={onDialogKeyDown}
       onClick={onDialogClick}
     >
-      {/* latar gelombang commit (pilihan pemilik 2026-11-06, demo A42) */}
-      <CommitWave />
+      {/* latar kotak commit (pilihan pemilik 2026-11-06, demo A42, tanpa gelombang cahaya) */}
+      <CommitGrid />
       {/* kartu kaca seperti login admin (components/admin/login-form.tsx) */}
       <div className="intro-card login-card">
         <div className="intro-panel">
