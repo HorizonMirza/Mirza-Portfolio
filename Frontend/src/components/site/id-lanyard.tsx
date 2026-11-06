@@ -14,8 +14,11 @@ import { cn } from '@/lib/utils'
 // standar (tali tidak melar, pantulan sedang), bukan fisika melayang demo 10.
 // Murni hiasan: informasi yang sama ada di halaman lain, jadi disembunyikan dari pembaca layar.
 
-const CARD_W = 200
-const CARD_H = 300
+// jarak isi ke tepi kiri-kanan kartu (revisi pemilik 2026-11-06: dulu 12 px, terasa sempit); foto dan
+// barcode tetap 176 px, jadi kartu melebar dan bagian bawah ikut dilonggarkan
+const PAD = 22
+const CARD_W = 176 + PAD * 2
+const CARD_H = 322
 const ROPE_LEN = 200
 const ROPE_POINTS = 14
 const ROPE_W = 16
@@ -326,19 +329,19 @@ export function IdLanyard({
       c.fill()
       // foto
       c.save()
-      roundRect(c, x + 12, 30, CARD_W - 24, PHOTO_H, 8)
+      roundRect(c, x + PAD, 30, CARD_W - PAD * 2, PHOTO_H, 8)
       c.clip()
       // latar studio abu terang: foto hero berlatar transparan (revisi pemilik 2026-11-06)
       const studio = c.createLinearGradient(0, 30, 0, 30 + PHOTO_H)
       studio.addColorStop(0, '#ececee')
       studio.addColorStop(1, '#d6d6da')
       c.fillStyle = studio
-      c.fillRect(x + 12, 30, CARD_W - 24, PHOTO_H)
+      c.fillRect(x + PAD, 30, CARD_W - PAD * 2, PHOTO_H)
       if (img.complete && img.naturalWidth) {
         const crop = photoCrop ?? { x: 0, y: 0, w: 1, h: 1 }
         const sw = img.naturalWidth * crop.w
         const sh = img.naturalHeight * crop.h
-        const s = Math.max((CARD_W - 24) / sw, PHOTO_H / sh)
+        const s = Math.max((CARD_W - PAD * 2) / sw, PHOTO_H / sh)
         const iw = sw * s
         const ih = sh * s
         c.drawImage(
@@ -347,7 +350,7 @@ export function IdLanyard({
           img.naturalHeight * crop.y,
           sw,
           sh,
-          x + 12 + (CARD_W - 24 - iw) / 2,
+          x + PAD + (CARD_W - PAD * 2 - iw) / 2,
           30 + (PHOTO_H - ih) * 0.25,
           iw,
           ih,
@@ -360,21 +363,21 @@ export function IdLanyard({
       const label = name.toUpperCase()
       let size = 19
       c.font = `700 ${size}px ${fonts.display}`
-      while (size > 12 && c.measureText(label).width > CARD_W - 24) {
+      while (size > 12 && c.measureText(label).width > CARD_W - PAD * 2) {
         size -= 0.5
         c.font = `700 ${size}px ${fonts.display}`
       }
-      c.fillText(label, x + 12, PHOTO_H + 42)
+      c.fillText(label, x + PAD, PHOTO_H + 42)
       c.fillStyle = sub
       c.font = `600 10.5px ${fonts.sans}`
-      c.fillText(role.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
+      c.fillText(role.toUpperCase(), x + PAD, PHOTO_H + 66, CARD_W - PAD * 2)
       // barcode dan host di bagian bawah
       c.fillStyle = ink
-      for (const b of bars) c.fillRect(x + 12 + b.x, CARD_H - 40, b.w, 18)
+      for (const b of bars) c.fillRect(x + PAD + b.x, CARD_H - 62, b.w, 18)
       c.fillStyle = sub
       c.font = `500 8.5px ${fonts.mono}`
       c.textAlign = 'center'
-      c.fillText(site.toUpperCase().split('').join(' '), 0, CARD_H - 17)
+      c.fillText(site.toUpperCase().split('').join(' '), 0, CARD_H - 39)
       c.textAlign = 'left'
     }
     function draw() {
