@@ -14,19 +14,22 @@ import { cn } from '@/lib/utils'
 // standar (tali tidak melar, pantulan sedang), bukan fisika melayang demo 10.
 // Murni hiasan: informasi yang sama ada di halaman lain, jadi disembunyikan dari pembaca layar.
 
-// jarak isi ke tepi kiri-kanan kartu (revisi pemilik 2026-11-06: dulu 12 px, terasa sempit); foto dan
-// barcode tetap 176 px, jadi kartu melebar dan bagian bawah ikut dilonggarkan
-const PAD = 22
-const CARD_W = 176 + PAD * 2
-const CARD_H = 322
+const CARD_W = 200
+const CARD_H = 300
 const ROPE_LEN = 200
 const ROPE_POINTS = 14
 const ROPE_W = 16
 const GRAVITY = 2100
 const DAMPING = 0.992
 const BOUNCE = 0.55
-// kanvas lebih lebar dari kolom agar kartu bebas berayun; klik di luar kartu tetap tembus
+// Area tempat kartu bisa ditarik: lebih lebar dari kolom agar kartu bebas berayun; klik di luar kartu
+// tetap tembus. Dulu tetap 560 px; diperluas atas permintaan pemilik 2026-11-06: sampai SIDE_MAX px
+// ke kiri dan kanan dari tengah kolom (dibatasi tepi layar agar halaman tidak bisa digeser menyamping)
+// dan EXTRA_BOTTOM px di bawah kotak, tanpa mengubah tata letak halaman.
 const CANVAS_W = 560
+const SIDE_MAX = 520
+const EXTRA_BOTTOM = 220
+const SCREEN_GAP = 8
 const PHOTO_H = 160
 // Tinggi dalam px, bukan rem: fisika memakai px, sedangkan rem menyusut di desktop (87,5%). Bila
 // kotak lebih pendek dari tali + kartu + jarak tepi, kartu menyentuh lantai dan diam miring.
@@ -124,12 +127,14 @@ export function IdLanyard({
     let top = point(0, 0, 0.35)
     let bot = point(0, 0, 0.35)
     let anchor = { x: 0, y: 0 }
+    // jarak tengah kolom (titik gantung tali) dari tepi kiri kanvas
+    let anchorX = CANVAS_W / 2
     let angPrev = Math.PI / 2
     let yaw = 0
     let grab: { p: Point; tx: number; ty: number } | null = null
 
     function build() {
-      anchor = { x: width / 2, y: -2 }
+      anchor = { x: anchorX, y: -2 }
       ropes = Array.from({ length: ROPE_POINTS + 1 }, (_, i) =>
         point(anchor.x, (ROPE_LEN * i) / ROPE_POINTS, i === 0 ? 0 : 1),
       )
@@ -143,6 +148,16 @@ export function IdLanyard({
     }
 
     function resize() {
+      // lebar area tarik dihitung dari posisi kolom di layar
+      const box = wrapEl!.getBoundingClientRect()
+      const center = box.left + box.width / 2
+      const screenW = document.documentElement.clientWidth
+      const least = CARD_EDGE + SCREEN_GAP
+      const left = Math.max(least, Math.min(SIDE_MAX, center - SCREEN_GAP))
+      const right = Math.max(least, Math.min(SIDE_MAX, screenW - center - SCREEN_GAP))
+      anchorX = left
+      el!.style.left = `${box.width / 2 - left}px`
+      el!.style.width = `${left + right}px`
       const rect = el!.getBoundingClientRect()
       dpr = Math.min(2, window.devicePixelRatio || 1)
       width = rect.width
@@ -329,19 +344,19 @@ export function IdLanyard({
       c.fill()
       // foto
       c.save()
-      roundRect(c, x + PAD, 30, CARD_W - PAD * 2, PHOTO_H, 8)
+      roundRect(c, x + 12, 30, CARD_W - 24, PHOTO_H, 8)
       c.clip()
       // latar studio abu terang: foto hero berlatar transparan (revisi pemilik 2026-11-06)
       const studio = c.createLinearGradient(0, 30, 0, 30 + PHOTO_H)
       studio.addColorStop(0, '#ececee')
       studio.addColorStop(1, '#d6d6da')
       c.fillStyle = studio
-      c.fillRect(x + PAD, 30, CARD_W - PAD * 2, PHOTO_H)
+      c.fillRect(x + 12, 30, CARD_W - 24, PHOTO_H)
       if (img.complete && img.naturalWidth) {
         const crop = photoCrop ?? { x: 0, y: 0, w: 1, h: 1 }
         const sw = img.naturalWidth * crop.w
         const sh = img.naturalHeight * crop.h
-        const s = Math.max((CARD_W - PAD * 2) / sw, PHOTO_H / sh)
+        const s = Math.max((CARD_W - 24) / sw, PHOTO_H / sh)
         const iw = sw * s
         const ih = sh * s
         c.drawImage(
@@ -350,7 +365,7 @@ export function IdLanyard({
           img.naturalHeight * crop.y,
           sw,
           sh,
-          x + PAD + (CARD_W - PAD * 2 - iw) / 2,
+          x + 12 + (CARD_W - 24 - iw) / 2,
           30 + (PHOTO_H - ih) * 0.25,
           iw,
           ih,
@@ -363,21 +378,21 @@ export function IdLanyard({
       const label = name.toUpperCase()
       let size = 19
       c.font = `700 ${size}px ${fonts.display}`
-      while (size > 12 && c.measureText(label).width > CARD_W - PAD * 2) {
+      while (size > 12 && c.measureText(label).width > CARD_W - 24) {
         size -= 0.5
         c.font = `700 ${size}px ${fonts.display}`
       }
-      c.fillText(label, x + PAD, PHOTO_H + 42)
+      c.fillText(label, x + 12, PHOTO_H + 42)
       c.fillStyle = sub
       c.font = `600 10.5px ${fonts.sans}`
-      c.fillText(role.toUpperCase(), x + PAD, PHOTO_H + 66, CARD_W - PAD * 2)
+      c.fillText(role.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
       // barcode dan host di bagian bawah
       c.fillStyle = ink
-      for (const b of bars) c.fillRect(x + PAD + b.x, CARD_H - 62, b.w, 18)
+      for (const b of bars) c.fillRect(x + 12 + b.x, CARD_H - 40, b.w, 18)
       c.fillStyle = sub
       c.font = `500 8.5px ${fonts.mono}`
       c.textAlign = 'center'
-      c.fillText(site.toUpperCase().split('').join(' '), 0, CARD_H - 39)
+      c.fillText(site.toUpperCase().split('').join(' '), 0, CARD_H - 17)
       c.textAlign = 'left'
     }
     function draw() {
@@ -515,6 +530,15 @@ export function IdLanyard({
       if (!reduce) wake()
     })
     ro.observe(el)
+    ro.observe(wrapEl)
+    // posisi kolom di layar berubah (jendela diubah ukurannya): area tarik dihitung ulang
+    const onResize = () => {
+      resize()
+      build()
+      draw()
+      if (!reduce) wake()
+    }
+    window.addEventListener('resize', onResize)
     // tema berganti: gambar ulang dengan warna tema baru
     const mo = new MutationObserver(() => draw())
     mo.observe(root, { attributes: true, attributeFilter: ['class'] })
@@ -531,6 +555,7 @@ export function IdLanyard({
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
       window.removeEventListener('pointercancel', onUp)
+      window.removeEventListener('resize', onResize)
       root.style.cursor = ''
     }
   }, [name, role, photo, photoCrop, site])
@@ -544,8 +569,13 @@ export function IdLanyard({
     >
       <canvas
         ref={canvas}
-        className="pointer-events-none absolute top-0 left-1/2 h-full -translate-x-1/2"
-        style={{ width: CANVAS_W }}
+        className="pointer-events-none absolute top-0"
+        // sebelum JavaScript: selebar CANVAS_W di tengah kolom; resize() memperluasnya
+        style={{
+          width: CANVAS_W,
+          left: `calc(50% - ${CANVAS_W / 2}px)`,
+          height: BOX_H + EXTRA_BOTTOM,
+        }}
       />
     </div>
   )
