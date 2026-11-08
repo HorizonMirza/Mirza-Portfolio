@@ -20,3 +20,8 @@ export async function waitForFiniteAnimations(target: Page | Locator) {
 // dari 5 detik (batas bawaan) karena animasi transisi selesai terlambat (trace CI #261 dan #266,
 // 2026-11-06); di WebKit lokal versi sama selalu < 1 detik. Isi halaman tetap dicek dengan batas biasa.
 export const CLIENT_NAV_TIMEOUT = 15_000
+
+// Halaman publik di-cache (ISR) dan dibuat ulang setelah admin menyimpan; selama itu permintaan
+// masih mendapat salinan lama. Saat semua proyek tes berjalan paralel, pembuatan ulang bisa lebih
+// lama dari batas bawaan expect.poll (5 detik): terjadi di uji lokal 2026-11-08, tes volume suara.
+export const ISR_REFRESH_TIMEOUT = 15_000

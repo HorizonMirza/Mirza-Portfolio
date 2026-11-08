@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
+import { ISR_REFRESH_TIMEOUT } from '../wait'
 import { ADMIN_STATE, hasAdminEnv } from './helpers'
 
 test.skip(!hasAdminEnv, 'butuh ADMIN_EMAIL dan ADMIN_PASSWORD')
@@ -190,7 +191,7 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
   // dicek langsung ke server agar cache browser WebKit/Firefox tidak menyajikan halaman lama
   await expect
-    .poll(async () => (await page.request.get('/id')).text())
+    .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
     .toContain('data-sound-volume="35"')
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
   await page.goto('/admin/settings')
@@ -224,7 +225,7 @@ test('modul Home: judul beranda diubah, tampil di situs, lalu dikembalikan ke ba
   await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
   // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
   await expect
-    .poll(async () => (await page.request.get('/id')).text())
+    .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
     .toContain('Beranda Uji Otomatis')
   // bahasa lain tidak ikut berubah
   expect(await (await page.request.get('/en')).text()).toContain('community builder')
@@ -243,7 +244,7 @@ test('modul Home: judul beranda diubah, tampil di situs, lalu dikembalikan ke ba
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
   await expect
-    .poll(async () => (await page.request.get('/id')).text())
+    .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
     .toContain('pembangun komunitas')
 })
 
