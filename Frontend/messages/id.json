@@ -137,7 +137,8 @@
     "ticketMessage": "Pesan",
     "ticketTime": "Waktu",
     "another": "Tulis pesan lain",
-    "cardRole": "Fullstack Developer"
+    "cardRole": "Fullstack Developer",
+    "cardSite": "mmirza.site"
   },
   "Privacy": {
     "metaTitle": "Kebijakan Privasi",

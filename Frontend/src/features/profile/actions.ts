@@ -23,8 +23,6 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
       bio_en: v.bio_en,
       currentRole_id: emptyToNull(v.currentRole_id),
       currentRole_en: emptyToNull(v.currentRole_en),
-      cardRole_id: emptyToNull(v.cardRole_id),
-      cardRole_en: emptyToNull(v.cardRole_en),
       city: emptyToNull(v.city),
     }
     await getDb().$transaction(async (tx) => {

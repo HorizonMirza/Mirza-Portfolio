@@ -71,20 +71,6 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         >
           {(a) => <Input {...a} {...register(`currentRole_${lang}`)} />}
         </Field>
-        <Field
-          id={`cardRole_${lang}`}
-          label={
-            id ? 'Peran di kartu ID Kontak (opsional)' : 'Role on the Contact ID card (optional)'
-          }
-          hint={
-            id
-              ? 'Tulisan di bawah nama pada kartu bertali halaman Kontak, mis. "Fullstack Developer".'
-              : 'Text under the name on the Contact page lanyard card.'
-          }
-          error={errors[`cardRole_${lang}`]?.message}
-        >
-          {(a) => <Input {...a} {...register(`cardRole_${lang}`)} />}
-        </Field>
       </>
     )
   }

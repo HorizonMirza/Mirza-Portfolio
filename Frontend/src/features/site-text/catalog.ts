@@ -245,8 +245,15 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
   {
     key: 'Contact.cardRole',
     module: 'contact',
-    section: 'Judul dan pembuka',
-    label: 'Jabatan di kartu pesan terkirim',
+    section: 'Kartu ID',
+    label: 'Jabatan di kartu ID (juga di kartu pesan terkirim)',
+    ...SIZE.label,
+  },
+  {
+    key: 'Contact.cardSite',
+    module: 'contact',
+    section: 'Kartu ID',
+    label: 'Alamat situs di tali dan barcode kartu ID',
     ...SIZE.label,
   },
   {

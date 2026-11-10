@@ -137,7 +137,8 @@
     "ticketMessage": "Message",
     "ticketTime": "Time",
     "another": "Write another message",
-    "cardRole": "Fullstack Developer"
+    "cardRole": "Fullstack Developer",
+    "cardSite": "mmirza.site"
   },
   "Privacy": {
     "metaTitle": "Privacy Policy",

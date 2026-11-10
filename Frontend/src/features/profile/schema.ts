@@ -19,8 +19,6 @@ export const profileSchema = z.object({
   bio_en: requiredText('Bio', 4000),
   currentRole_id: optionalText('Posisi sekarang', 160),
   currentRole_en: optionalText('Current role', 160),
-  cardRole_id: optionalText('Peran di kartu ID', 60).default(''),
-  cardRole_en: optionalText('Role on the ID card', 60).default(''),
   city: optionalText('Kota', 80),
 })
 
@@ -60,8 +58,6 @@ export const emptyProfile: ProfileInput = {
   bio_en: '',
   currentRole_id: '',
   currentRole_en: '',
-  cardRole_id: '',
-  cardRole_en: '',
   city: '',
 }
 

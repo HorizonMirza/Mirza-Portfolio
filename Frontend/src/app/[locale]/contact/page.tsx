@@ -7,8 +7,6 @@ import { ContactForm } from '@/features/messages/components/public/contact-form'
 import { getPublicProfile } from '@/features/profile/public'
 import { getSiteSettings } from '@/features/settings/public'
 import { HERO_CARD_CROP, HERO_PORTRAIT } from '@/lib/default-photo'
-import { siteHost } from '@/lib/env'
-import { loc } from '@/lib/localized'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { pageMetadata } from '@/lib/seo'
 
@@ -44,13 +42,13 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
         <IdLanyard
           className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
           name={profile?.name ?? 'Muhammad Mirza'}
-          // peran diatur di admin (Profil); teks bawaan bila kosong
-          role={(profile && loc(profile, 'cardRole', locale)) || t('cardRole')}
+          // jabatan dan alamat situs di kartu diatur di Admin → Contact, bagian Kartu ID (2026-11-10)
+          role={t('cardRole')}
           // wajah sama dengan beranda (revisi pemilik 2026-11-06): potret hero, termasuk unggahan
           // dari Admin → Pengaturan bila ada, dipotong kepala dan bahu
           photo={settings.heroPortrait?.url ?? HERO_PORTRAIT}
           photoCrop={HERO_CARD_CROP}
-          site={siteHost()}
+          site={t('cardSite')}
         />
         {/* contact-col: setelah terkirim, kotak tiket selebar kalimat pengantar (globals.css) */}
         <div className="contact-col">

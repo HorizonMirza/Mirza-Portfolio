@@ -19,8 +19,6 @@ export type PublicProfile = {
   currentRole_en: string | null
   aboutRoles_id: string | null
   aboutRoles_en: string | null
-  cardRole_id: string | null
-  cardRole_en: string | null
   city: string | null
   email: string | null
   whatsapp: string | null
@@ -79,8 +77,6 @@ const load = unstable_cache(
       currentRole_en: p.currentRole_en,
       aboutRoles_id: p.aboutRoles_id,
       aboutRoles_en: p.aboutRoles_en,
-      cardRole_id: p.cardRole_id,
-      cardRole_en: p.cardRole_en,
       city: p.city,
       email: p.email,
       whatsapp: p.whatsapp,

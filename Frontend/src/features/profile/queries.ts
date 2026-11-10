@@ -21,8 +21,6 @@ export async function getProfileForEdit(): Promise<ProfileInput> {
     bio_en: p.bio_en,
     currentRole_id: p.currentRole_id ?? '',
     currentRole_en: p.currentRole_en ?? '',
-    cardRole_id: p.cardRole_id ?? '',
-    cardRole_en: p.cardRole_en ?? '',
     city: p.city ?? '',
   }
 }
