@@ -2,13 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { introSchema, soundSchema } from '@/features/settings/schema'
 
-const intro = {
-  introEnabled: true,
-  introTitle_id: 'Sebelum masuk',
-  introTitle_en: 'Before you enter',
-  introBody_id: 'Isi singkat.',
-  introBody_en: 'Short text.',
-}
+const intro = { introBody_id: 'Isi singkat.', introBody_en: 'Short text.' }
 
 describe('soundSchema', () => {
   it('volume 0 sampai 100 diterima', () => {
@@ -26,14 +20,14 @@ describe('soundSchema', () => {
 })
 
 describe('introSchema', () => {
-  it('pemberitahuan pembuka aktif wajib berisi judul dan isi dua bahasa', () => {
+  // sejak 2026-11-10 hanya isi kartu pembuka yang bisa diubah; judul dan saklar tampil dihapus
+  it('isi dua bahasa wajib diisi', () => {
+    expect(introSchema.safeParse(intro).success).toBe(true)
     expect(introSchema.safeParse({ ...intro, introBody_en: '' }).success).toBe(false)
-    expect(introSchema.safeParse({ ...intro, introTitle_id: '  ' }).success).toBe(false)
+    expect(introSchema.safeParse({ ...intro, introBody_id: '   ' }).success).toBe(false)
   })
 
-  it('pemberitahuan pembuka mati boleh kosong, isi terlalu panjang ditolak', () => {
-    const empty = { introTitle_id: '', introTitle_en: '', introBody_id: '', introBody_en: '' }
-    expect(introSchema.safeParse({ introEnabled: false, ...empty }).success).toBe(true)
+  it('isi terlalu panjang ditolak', () => {
     expect(introSchema.safeParse({ ...intro, introBody_id: 'a'.repeat(601) }).success).toBe(false)
   })
 })

@@ -198,18 +198,14 @@ export async function attachUploadedAsset(
         const data: Prisma.ProfileUncheckedUpdateInput =
           field === 'photo' ? { photoId: asset.id } : { cvId: asset.id }
         await tx.profile.update({ where: { id: 1 }, data })
-      } else if (t.data === 'hero-portrait' || t.data === 'hero-armor') {
-        const field = t.data === 'hero-portrait' ? 'heroPortrait' : 'heroArmor'
+      } else if (t.data === 'hero-portrait') {
+        // armor hero tidak bisa diganti lagi sejak 2026-11-10 (selalu gambar bawaan repo)
         const current = await tx.siteSetting.findUnique({
           where: { id: 1 },
-          select: {
-            heroPortrait: { select: { id: true, publicId: true } },
-            heroArmor: { select: { id: true, publicId: true } },
-          },
+          select: { heroPortrait: { select: { id: true, publicId: true } } },
         })
-        old = current?.[field] ?? null
-        const data: Prisma.SiteSettingUncheckedUpdateInput =
-          field === 'heroPortrait' ? { heroPortraitId: asset.id } : { heroArmorId: asset.id }
+        old = current?.heroPortrait ?? null
+        const data: Prisma.SiteSettingUncheckedUpdateInput = { heroPortraitId: asset.id }
         await tx.siteSetting.upsert({
           where: { id: 1 },
           create: { id: 1, ...data } as Prisma.SiteSettingUncheckedCreateInput,

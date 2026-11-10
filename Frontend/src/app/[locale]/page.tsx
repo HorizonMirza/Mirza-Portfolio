@@ -138,11 +138,10 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       }
     : null
 
-  // Potret hero: foto khusus beranda (bukan foto profil). Memakai unggahan dari Admin → Pengaturan bila ada,
+  // Potret hero: foto khusus beranda (bukan foto profil). Memakai unggahan dari Admin → Home bila ada,
   // jika tidak foto bawaan di repo. Unggahan berasal dari Cloudinary, jadi dimuat dengan CORS agar bisa
   // digambar di canvas dan WebGL (efek liquid mask).
   const customPortrait = settings.heroPortrait
-  const customArmor = settings.heroArmor
   const portrait = (
     <Image
       src={customPortrait?.url ?? HERO_PORTRAIT}
@@ -201,7 +200,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
           .hero, tepat di bawah navbar. Latar vortex ungu dihapus 2026-11-01 karena lag (permintaan pemilik). */}
       <section aria-labelledby="hero-title" className="hero-shell">
-        <LiquidMaskPortrait back={customArmor?.url ?? HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
+        <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
           {/* kursor titik + cincin di atas foto (pilihan pemilik 2026-11-06, demo K3) */}
           <HeroCursor />
           <div className="hero">

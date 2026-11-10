@@ -1418,3 +1418,12 @@ Revisi pemilik setelah bagian 107:
 - **Tombol bahasa isian seperti tombol bahasa situs publik:** pasangan ID | EN diganti satu tombol bulat yang menampilkan bahasa tujuan ("EN, ganti bahasa isian ke English"). Saat ditekan: suara acak digital yang sama (`playLanguageSound`), kolom isian berganti bahasa, dan teks yang berubah di layar diacak lalu terurai (`scrambleVisibleText`), seperti di situs. Fungsinya tetap memilih bahasa isian; menu admin tetap Indonesia (pilihan pemilik).
 - **Tombol bulan (tema):** sudah memakai komponen yang sama dengan situs (lingkaran meluas + suara angin). Admin kini membaca volume suara dari Pengaturan (`data-sound-volume` di layout admin), dulu selalu memakai volume bawaan.
 - **Menu profil:** sorotan saat disorot berujung lancip (`rounded-md`), bukan kapsul.
+
+## 109. Bagian Awal dan Home di admin: hanya yang diminta pemilik (2026-11-10)
+
+Permintaan pemilik (dikonfirmasi lewat pilihan): untuk kartu pembuka dan beranda, admin hanya mengelola hal berikut, "selain itu tidak". Modul lain dibahas nanti per halaman.
+
+- **Bagian Awal:** hanya isi kartu (ID dan EN, keduanya wajib; form `IntroForm`, action `saveIntroNotice`). Judul "Informasi Penting / Important Information" kini teks tetap `Intro.title` di `messages/*.json`, sama seperti label "Portofolio - {nama}", label bahasa, dan tombol Resume CV / Beranda. Saklar tampil/sembunyi dihapus: kartu selalu tampil selama isinya lengkap.
+- **Home:** foto profil (kiri atas navbar; juga footer, kartu Tentang, kartu ID Kontak; dipindah dari About → Profil), foto utama beranda, dan peran di bawah foto ("Fullstack Developer | Community Manager"; juga pita Tentang dan footer; dipindah dari form Profil, action `saveHeroRoles`), ditambah tab Skill. Armor hero tidak bisa diganti lagi (selalu gambar bawaan, pembingkaian foto utama tetap mengikuti foto bawaan). Judul bagian (Keahlian Teknis, GitHub, Project, Pengalaman) dan SEO beranda tidak lagi bisa diubah.
+- **Experience, Projects, Technical Skills di beranda** sudah mengikuti modul pusatnya: pengalaman dari Experience, project terbit dari Projects (urutan manual), skill dari tab Skill Home (tambah, ubah, hapus, urutkan).
+- Teks yang dulu pernah diubah lewat admin tetap tampil apa adanya (baris `SiteText` tetap diterapkan selama kuncinya ada di `messages/*.json`); hanya tidak bisa diubah lagi. Kolom `SiteSetting.introEnabled`, `introTitle_id/en`, dan `heroArmorId` tidak dipakai lagi; penghapusannya lewat migrasi menunggu persetujuan pemilik.

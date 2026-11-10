@@ -52,7 +52,11 @@ describe('daftar teks situs', () => {
 describe('modul situs', () => {
   it('tiap teks milik modul yang dikenal, dan tiap modul berisi teks', () => {
     for (const entry of TEXT_CATALOG) expect(findModule(entry.module), entry.key).toBeDefined()
-    for (const site of SITE_MODULES) expect(entriesOf(site.id).length, site.id).toBeGreaterThan(0)
+    // Bagian Awal dan Home tanpa teks yang bisa diubah sejak 2026-11-10 (form khusus: isi kartu
+    // pembuka; foto dan peran), modul lain berisi teks
+    for (const site of SITE_MODULES)
+      if (site.id === 'intro' || site.id === 'home') expect(entriesOf(site.id), site.id).toEqual([])
+      else expect(entriesOf(site.id).length, site.id).toBeGreaterThan(0)
   })
 
   it('tiap topik hanya punya satu menu: tanpa label ganda dan halaman data lewat tab modul', async () => {
@@ -82,7 +86,7 @@ describe('modul situs', () => {
 })
 
 describe('aturan isi teks', () => {
-  const plain = findTextEntry('Home.stackHeading')!
+  const plain = findTextEntry('About.title')!
   const copyright = findTextEntry('Footer.copyright')!
   const intro = findTextEntry('Contact.intro')!
 
@@ -107,10 +111,10 @@ describe('aturan isi teks', () => {
 describe('skema simpan teks situs', () => {
   it('menerima isian valid dan kosong', () => {
     const parsed = siteTextsSchema.safeParse({
-      values: { 'Home.stackHeading': { id: ' Keahlian ', en: '' } },
+      values: { 'About.title': { id: ' Tentang Saya ', en: '' } },
     })
     expect(parsed.success).toBe(true)
-    if (parsed.success) expect(parsed.data.values['Home.stackHeading']!.id).toBe('Keahlian')
+    if (parsed.success) expect(parsed.data.values['About.title']!.id).toBe('Tentang Saya')
   })
 
   it('menolak kunci di luar daftar', () => {
@@ -122,7 +126,7 @@ describe('skema simpan teks situs', () => {
 
   it('menolak isi yang melanggar aturan teks', () => {
     const parsed = siteTextsSchema.safeParse({
-      values: { 'Home.stackHeading': { id: '{rusak}', en: '' } },
+      values: { 'About.title': { id: '{rusak}', en: '' } },
     })
     expect(parsed.success).toBe(false)
   })

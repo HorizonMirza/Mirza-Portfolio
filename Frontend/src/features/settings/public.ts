@@ -8,9 +8,8 @@ import { getDb } from '@/lib/db'
 import { safeImage } from '@/lib/public-image'
 import { DEFAULT_SOUND_VOLUME } from '@/lib/ui-sounds'
 
+// hanya isi; judul kartu teks tetap (Intro.title di messages/*.json, 2026-11-10)
 export type IntroNoticeContent = {
-  title_id: string
-  title_en: string
   body_id: string
   body_en: string
 }
@@ -19,7 +18,6 @@ export type SiteSettings = {
   soundVolume: number
   // foto hero dari admin; null = foto bawaan di repo
   heroPortrait: PublicImage | null
-  heroArmor: PublicImage | null
   // null: pemberitahuan pembuka dimatikan atau belum lengkap
   intro: IntroNoticeContent | null
 }
@@ -54,22 +52,15 @@ const loadSiteSettings = unstable_cache(
   async (): Promise<SiteSettings> => {
     const row = await getDb().siteSetting.findUnique({
       where: { id: 1 },
-      include: { heroPortrait: true, heroArmor: true },
+      include: { heroPortrait: true },
     })
-    const complete =
-      row?.introEnabled &&
-      row.introTitle_id &&
-      row.introTitle_en &&
-      row.introBody_id &&
-      row.introBody_en
+    // kartu selalu tampil selama isinya lengkap (saklar tampil/sembunyi dihapus 2026-11-10)
+    const complete = row?.introBody_id && row.introBody_en
     return {
       soundVolume: row?.soundVolume ?? DEFAULT_SOUND_VOLUME,
       heroPortrait: heroImage(row?.heroPortrait),
-      heroArmor: heroImage(row?.heroArmor),
       intro: complete
         ? {
-            title_id: row.introTitle_id!,
-            title_en: row.introTitle_en!,
             body_id: row.introBody_id!,
             body_en: row.introBody_en!,
           }
@@ -86,6 +77,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   try {
     return await loadSiteSettings()
   } catch {
-    return { soundVolume: DEFAULT_SOUND_VOLUME, heroPortrait: null, heroArmor: null, intro: null }
+    return { soundVolume: DEFAULT_SOUND_VOLUME, heroPortrait: null, intro: null }
   }
 }

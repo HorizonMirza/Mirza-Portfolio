@@ -72,18 +72,6 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
           {(a) => <Input {...a} {...register(`currentRole_${lang}`)} />}
         </Field>
         <Field
-          id={`aboutRoles_${lang}`}
-          label={id ? 'Peran (opsional)' : 'Roles (optional)'}
-          hint={
-            id
-              ? 'Dipisah | , mis. "Fullstack Developer | Community Manager". Tampil di bawah foto beranda, di bawah nama pada pita hitam Tentang, dan di footer.'
-              : 'Separated by |. Shown under the home photo, under the name on the About band, and in the footer.'
-          }
-          error={errors[`aboutRoles_${lang}`]?.message}
-        >
-          {(a) => <Input {...a} {...register(`aboutRoles_${lang}`)} />}
-        </Field>
-        <Field
           id={`cardRole_${lang}`}
           label={
             id ? 'Peran di kartu ID Kontak (opsional)' : 'Role on the Contact ID card (optional)'

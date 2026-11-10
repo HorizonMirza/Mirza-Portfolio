@@ -299,7 +299,7 @@ erDiagram
       int id PK "singleton"
       int soundVolume "0-100, atribut data-sound-volume"
       string heroPortraitId FK "foto hero dari admin, kosong = foto bawaan repo"
-      string heroArmorId FK "armor hero dari admin, kosong = armor bawaan repo"
+      string heroArmorId FK "tidak dipakai sejak 2026-11-10: armor selalu gambar bawaan repo"
     }
     SiteText {
       string key PK "Namespace.nama, dibatasi daftar di features/site-text/catalog.ts"
@@ -340,7 +340,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project (tab modul Projects) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
-| Halaman situs (10 modul: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`), `saveIntroNotice` (kartu pembuka); foto hero di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `hero-portrait`, `hero-armor`) |
+| Halaman situs (10 modul: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto profil dan foto utama di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `profile-photo`, `hero-portrait`) |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Audit | `/admin/audit` | (baca saja) |

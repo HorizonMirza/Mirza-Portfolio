@@ -68,18 +68,6 @@ export const UPLOAD_TARGETS = {
     accept: 'image/png,image/webp,image/avif',
     ratio: { w: 1120, h: 1100, tolerance: 0.03, minWidth: 700 },
   },
-  'hero-armor': {
-    label: 'Armor hero',
-    kind: 'IMAGE',
-    resourceType: 'image',
-    folder: 'portfolio/hero',
-    maxBytes: 4 * 1024 * 1024,
-    formats: ['png', 'webp', 'avif'],
-    accept: 'image/png,image/webp,image/avif',
-    ratio: { w: 1280, h: 1300, tolerance: 0.03, minWidth: 800 },
-    // hiasan: tidak dibacakan pembaca layar, jadi tanpa teks alternatif
-    decorative: true,
-  },
 } as const
 
 export type UploadTarget = keyof typeof UPLOAD_TARGETS

@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-const introTitle = z.string().trim().max(60, 'Judul paling panjang 60 karakter')
 const introBody = z.string().trim().max(600, 'Isi paling panjang 600 karakter')
 
 // Volume suara tombol situs publik (Admin → Pengaturan)
@@ -12,23 +11,13 @@ export const soundSchema = z.object({
     .max(100, 'Volume paling besar 100'),
 })
 
-// Kartu pemberitahuan pembuka (Admin → Bagian Awal)
-export const introSchema = z
-  .object({
-    introEnabled: z.boolean(),
-    introTitle_id: introTitle,
-    introTitle_en: introTitle,
-    introBody_id: introBody,
-    introBody_en: introBody,
-  })
-  .superRefine((value, ctx) => {
-    if (!value.introEnabled) return
-    // saat aktif, kedua bahasa wajib diisi agar pengunjung ID dan EN melihat isi yang lengkap
-    for (const key of ['introTitle_id', 'introTitle_en', 'introBody_id', 'introBody_en'] as const) {
-      if (!value[key])
-        ctx.addIssue({ code: 'custom', path: [key], message: 'Wajib diisi saat aktif' })
-    }
-  })
+// Kartu pemberitahuan pembuka (Admin → Bagian Awal). Sejak 2026-11-10 hanya isinya yang bisa diubah
+// (permintaan pemilik); judul, label, dan tombol kartu adalah teks tetap di messages/*.json dan kartu
+// selalu tampil. Kedua bahasa wajib diisi agar pengunjung ID dan EN melihat isi yang lengkap.
+export const introSchema = z.object({
+  introBody_id: introBody.min(1, 'Wajib diisi'),
+  introBody_en: introBody.min(1, 'Wajib diisi'),
+})
 
 export type SoundInput = z.input<typeof soundSchema>
 export type IntroInput = z.input<typeof introSchema>

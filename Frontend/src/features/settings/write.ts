@@ -29,16 +29,9 @@ export async function writeSetting(
   })
 }
 
-// Isian kartu pembuka yang sudah lolos introSchema → kolom SiteSetting (kosong disimpan null).
+// Isi kartu pembuka yang sudah lolos introSchema → kolom SiteSetting.
 export function introSettingData(
   values: ReturnType<typeof introSchema.parse>,
 ): Prisma.SiteSettingUncheckedUpdateInput {
-  const { introTitle_id, introTitle_en, introBody_id, introBody_en, introEnabled } = values
-  return {
-    introEnabled,
-    introTitle_id: introTitle_id || null,
-    introTitle_en: introTitle_en || null,
-    introBody_id: introBody_id || null,
-    introBody_en: introBody_en || null,
-  }
+  return { introBody_id: values.introBody_id, introBody_en: values.introBody_en }
 }

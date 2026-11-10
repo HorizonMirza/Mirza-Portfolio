@@ -17,6 +17,7 @@
   },
   "Intro": {
     "eyebrow": "Portfolio - {name}",
+    "title": "Important Information",
     "language": "Language",
     "downloadCv": "Resume CV",
     "home": "Home"

@@ -4,7 +4,7 @@ import { FilterTabs } from '@/components/admin/filter-tabs'
 // project) dipisah sebagai tab di dalam modul itu, bukan menu kedua di sidebar.
 const TABS = {
   home: [
-    { label: 'Teks dan foto hero', href: '/admin/pages/home' },
+    { label: 'Foto dan peran', href: '/admin/pages/home' },
     { label: 'Skill', href: '/admin/skills' },
   ],
   about: [

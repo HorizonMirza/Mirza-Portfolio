@@ -7,7 +7,7 @@ import { getDb } from '@/lib/db'
 import { revalidateContent } from '@/lib/revalidate'
 import { emptyToNull } from '@/lib/validation'
 
-import { profileSchema } from './schema'
+import { heroRolesSchema, profileSchema } from './schema'
 
 export async function saveProfile(input: unknown): Promise<ActionResult> {
   try {
@@ -25,8 +25,6 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
       bio_en: v.bio_en,
       currentRole_id: emptyToNull(v.currentRole_id),
       currentRole_en: emptyToNull(v.currentRole_en),
-      aboutRoles_id: emptyToNull(v.aboutRoles_id),
-      aboutRoles_en: emptyToNull(v.aboutRoles_en),
       cardRole_id: emptyToNull(v.cardRole_id),
       cardRole_en: emptyToNull(v.cardRole_en),
       city: emptyToNull(v.city),
@@ -68,6 +66,42 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
     })
     revalidateContent('profile')
     return ok('Profil disimpan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+// Peran di bawah foto beranda (Admin → Home). Profil harus sudah ada (dibuat seed), karena kolom
+// wajibnya (nama, headline, bio) diisi di About → Profil.
+export async function saveHeroRoles(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = heroRolesSchema.safeParse(input)
+    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    const data = {
+      aboutRoles_id: emptyToNull(parsed.data.aboutRoles_id),
+      aboutRoles_en: emptyToNull(parsed.data.aboutRoles_en),
+    }
+    const saved = await getDb().$transaction(async (tx) => {
+      const before = await tx.profile.findUnique({
+        where: { id: 1 },
+        select: { aboutRoles_id: true, aboutRoles_en: true },
+      })
+      if (!before) return false
+      await tx.profile.update({ where: { id: 1 }, data })
+      await writeAudit(tx, {
+        actorId: admin.userId,
+        action: 'update',
+        entity: 'Profile',
+        entityId: '1',
+        before,
+        after: data,
+      })
+      return true
+    })
+    if (!saved) return fail('Isi profil di About → Profil dulu.')
+    revalidateContent('profile')
+    return ok('Peran disimpan.')
   } catch (error) {
     return toActionError(error)
   }

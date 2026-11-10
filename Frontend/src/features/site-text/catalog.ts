@@ -36,14 +36,14 @@ export const SITE_MODULES: readonly SiteModule[] = [
     label: 'Bagian Awal',
     title: 'Bagian Awal',
     description:
-      'Kartu pemberitahuan yang muncul sekali saat situs dibuka, sebelum masuk ke halaman.',
+      'Kartu pemberitahuan yang muncul sekali saat situs dibuka. Hanya isinya yang bisa diubah; judul, label, dan tombol kartu tetap.',
   },
   {
     id: 'home',
     label: 'Home',
     title: 'Home',
     description:
-      'Beranda: foto hero, judul bagian, dan SEO. Nama dan peran di hero ada di About → tab Profil; daftar skill di tab Skill.',
+      'Beranda: foto profil di kiri atas, foto utama, dan peran di bawah foto. Daftar skill di tab Skill; pengalaman dan project mengikuti modul Experience dan Projects.',
   },
   {
     id: 'about',
@@ -108,84 +108,6 @@ const SIZE = {
 } as const
 
 export const TEXT_CATALOG: readonly TextEntry[] = [
-  {
-    key: 'Intro.eyebrow',
-    module: 'intro',
-    section: 'Teks di kartu',
-    label: 'Label kecil di atas judul',
-    ...SIZE.label,
-    placeholders: ['name'],
-  },
-  {
-    key: 'Intro.language',
-    module: 'intro',
-    section: 'Teks di kartu',
-    label: 'Label pilihan bahasa',
-    ...SIZE.label,
-  },
-  {
-    key: 'Intro.downloadCv',
-    module: 'intro',
-    section: 'Teks di kartu',
-    label: 'Tombol CV',
-    ...SIZE.label,
-  },
-  {
-    key: 'Intro.home',
-    module: 'intro',
-    section: 'Teks di kartu',
-    label: 'Tombol ke beranda',
-    ...SIZE.label,
-  },
-  {
-    key: 'Home.stackHeading',
-    module: 'home',
-    section: 'Judul bagian',
-    label: 'Bagian keahlian',
-    ...SIZE.title,
-  },
-  {
-    key: 'Home.githubHeading',
-    module: 'home',
-    section: 'Judul bagian',
-    label: 'Bagian GitHub',
-    ...SIZE.title,
-  },
-  {
-    key: 'Home.projectsHeading',
-    module: 'home',
-    section: 'Judul bagian',
-    label: 'Bagian project',
-    ...SIZE.title,
-  },
-  {
-    key: 'Home.experienceHeading',
-    module: 'home',
-    section: 'Judul bagian',
-    label: 'Bagian pengalaman',
-    ...SIZE.title,
-  },
-  {
-    key: 'Home.metaTitle',
-    module: 'home',
-    section: 'SEO',
-    label: 'Judul beranda',
-    ...SIZE.metaTitle,
-  },
-  {
-    key: 'Metadata.title',
-    module: 'home',
-    section: 'SEO',
-    label: 'Judul situs bawaan',
-    ...SIZE.metaTitle,
-  },
-  {
-    key: 'Metadata.description',
-    module: 'home',
-    section: 'SEO',
-    label: 'Deskripsi situs',
-    ...SIZE.metaDesc,
-  },
   { key: 'About.title', module: 'about', section: 'Teks halaman', label: 'Judul', ...SIZE.title },
   {
     key: 'About.educationHeading',

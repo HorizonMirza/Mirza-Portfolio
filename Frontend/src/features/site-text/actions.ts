@@ -4,8 +4,6 @@ import { type ActionResult, fail, ok, toActionError } from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
-import { introSchema } from '@/features/settings/schema'
-import { introSettingData, writeSetting } from '@/features/settings/write'
 import { revalidateContent } from '@/lib/revalidate'
 
 import { findModule, findTextEntry } from './catalog'
@@ -21,13 +19,7 @@ function snapshot(rows: { key: string; value_id: string | null; value_en: string
   return out
 }
 
-// `intro` hanya untuk modul Bagian Awal: kartu pembuka disimpan dalam transaksi yang sama dengan
-// teksnya, sehingga satu tombol Simpan tidak bisa tersimpan setengah (audit 2026-11-02, DB-02).
-export async function saveSiteTexts(
-  moduleId: unknown,
-  input: unknown,
-  intro?: unknown,
-): Promise<ActionResult> {
+export async function saveSiteTexts(moduleId: unknown, input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
     const siteModule = typeof moduleId === 'string' ? findModule(moduleId) : undefined
@@ -45,18 +37,6 @@ export async function saveSiteTexts(
     // satu halaman hanya boleh mengubah teks miliknya
     if (Object.keys(parsed.data.values).some((key) => findTextEntry(key)?.module !== siteModule.id))
       return fail('Ada teks yang bukan milik halaman ini.')
-    let introData: ReturnType<typeof introSettingData> | null = null
-    if (intro !== undefined) {
-      if (siteModule.id !== 'intro') return fail('Kartu pembuka hanya ada di Bagian Awal.')
-      const introParsed = introSchema.safeParse(intro)
-      if (!introParsed.success) {
-        const fieldErrors: Record<string, string> = {}
-        for (const issue of introParsed.error.issues)
-          fieldErrors[`intro.${String(issue.path[0])}`] ??= issue.message
-        return fail('Periksa kembali isian kartu pembuka.', fieldErrors)
-      }
-      introData = introSettingData(introParsed.data)
-    }
     const keys = Object.keys(parsed.data.values)
     await getDb().$transaction(async (tx) => {
       const before = await tx.siteText.findMany({ where: { key: { in: keys } } })
@@ -86,10 +66,8 @@ export async function saveSiteTexts(
         before: snapshot(before),
         after: snapshot(after),
       })
-      if (introData) await writeSetting(tx, admin.userId, introData)
     })
-    if (introData) revalidateContent('siteText', 'settings')
-    else revalidateContent('siteText')
+    revalidateContent('siteText')
     return ok(`Teks ${siteModule.title} disimpan.`)
   } catch (error) {
     return toActionError(error)

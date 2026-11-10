@@ -19,8 +19,6 @@ export const profileSchema = z.object({
   bio_en: requiredText('Bio', 4000),
   currentRole_id: optionalText('Posisi sekarang', 160),
   currentRole_en: optionalText('Current role', 160),
-  aboutRoles_id: optionalText('Peran di halaman Tentang', 120).default(''),
-  aboutRoles_en: optionalText('Roles on the About page', 120).default(''),
   cardRole_id: optionalText('Peran di kartu ID', 60).default(''),
   cardRole_en: optionalText('Role on the ID card', 60).default(''),
   city: optionalText('Kota', 80),
@@ -55,8 +53,6 @@ export const emptyProfile: ProfileInput = {
   bio_en: '',
   currentRole_id: '',
   currentRole_en: '',
-  aboutRoles_id: '',
-  aboutRoles_en: '',
   cardRole_id: '',
   cardRole_en: '',
   city: '',
@@ -65,3 +61,12 @@ export const emptyProfile: ProfileInput = {
   cvUrl: '',
   socials: { linkedin: '', github: '', instagram: '', website: '' },
 }
+
+// Peran di bawah foto beranda (Admin → Home, sejak 2026-11-10 dipindah dari form Profil), juga dipakai
+// di pita halaman Tentang dan footer. Dipisah "|", mis. "Fullstack Developer | Community Manager".
+export const heroRolesSchema = z.object({
+  aboutRoles_id: optionalText('Peran', 120),
+  aboutRoles_en: optionalText('Roles', 120),
+})
+
+export type HeroRolesInput = z.input<typeof heroRolesSchema>

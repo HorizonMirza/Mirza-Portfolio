@@ -203,66 +203,64 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
   await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
 })
 
-test('modul Home: judul beranda diubah, tampil di situs, lalu dikembalikan ke bawaan', async ({
+test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
-  // Judul tab beranda dipakai karena tidak ada tes lain yang memeriksanya; judul bagian yang dulu
-  // diubah di sini dibaca tes publik yang berjalan bersamaan.
-  const field = () => page.getByLabel('Judul beranda (Indonesia)')
+  // sejak 2026-11-10 Home hanya mengelola foto profil, foto utama, dan peran (permintaan pemilik)
+  const field = () => page.getByLabel('Peran', { exact: true })
   await page.goto('/admin/pages/home')
-  // placeholder menampilkan teks bawaan
-  await expect(field()).toHaveAttribute(
-    'placeholder',
-    'Muhammad Mirza · Fullstack developer dan pembangun komunitas',
-  )
-
+  const original = await field().inputValue()
   await expect(async () => {
-    await field().fill('Beranda Uji Otomatis')
-    await expect(field()).toHaveValue('Beranda Uji Otomatis', { timeout: 1000 })
+    await field().fill('Peran Uji Otomatis | Peran Kedua Uji')
+    await expect(field()).toHaveValue('Peran Uji Otomatis | Peran Kedua Uji', { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
+  await expect(page.getByText('Peran disimpan.')).toBeVisible()
   // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
   await expect
     .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
-    .toContain('Beranda Uji Otomatis')
-  // bahasa lain tidak ikut berubah
-  expect(await (await page.request.get('/en')).text()).toContain('community builder')
+    .toContain('Peran Kedua Uji')
 
-  // kurung kurawal di teks tanpa placeholder ditolak
+  // kembalikan agar tes lain tidak terpengaruh
+  await page.goto('/admin/pages/home')
   await expect(async () => {
-    await field().fill('Beranda {rusak}')
-    await expect(field()).toHaveValue('Beranda {rusak}', { timeout: 1000 })
+    await field().fill(original)
+    await expect(field()).toHaveValue(original, { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Tidak boleh memakai tanda kurung kurawal { }')).toBeVisible()
-
-  // kembalikan ke bawaan agar tes lain tidak terpengaruh
-  await page.goto('/admin/pages/home')
-  await page.getByRole('button', { name: 'Kembalikan bawaan: Judul beranda' }).click()
-  await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Teks Home disimpan.')).toBeVisible()
+  await expect(page.getByText('Peran disimpan.')).toBeVisible()
   await expect
     .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
-    .toContain('pembangun komunitas')
+    .not.toContain('Peran Kedua Uji')
 })
 
-test('modul Home menampilkan slot potret dan armor hero beranda', async ({ page }) => {
+test('modul Home hanya berisi foto profil, foto utama, dan peran', async ({ page }) => {
   await page.goto('/admin/pages/home')
-  for (const title of ['Potret hero', 'Armor hero']) {
+  for (const title of ['Foto profil', 'Foto utama', 'Peran di bawah foto']) {
     await expect(page.getByRole('heading', { name: title })).toBeVisible()
   }
-  // belum ada unggahan: foto bawaan dipakai, dan contoh bawaan bisa diunduh sebagai acuan
-  await expect(page.getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' })).toHaveCount(2)
+  // armor, judul bagian, dan SEO tidak bisa diubah lagi
+  for (const old of ['Armor hero', 'Judul bagian', 'SEO']) {
+    await expect(page.getByRole('heading', { name: old, exact: true })).toHaveCount(0)
+  }
+  // belum ada unggahan: foto utama bawaan bisa diunduh sebagai acuan
+  await expect(page.getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' })).toHaveCount(1)
+  // foto profil pindah ke Home: tidak dobel di About → Profil
+  await page.goto('/admin/profile')
+  await expect(page.getByRole('heading', { name: 'Foto profil' })).toHaveCount(0)
+  await expect(page.getByLabel('Peran', { exact: true })).toHaveCount(0)
 })
 
-test('Bagian Awal: kartu pembuka dan teksnya disimpan dengan satu tombol Simpan', async ({
-  page,
-}) => {
+test('Bagian Awal: hanya isi kartu pembuka yang bisa diubah', async ({ page }) => {
   await page.goto('/admin/pages/intro')
   await expect(page.getByRole('button', { name: 'Simpan' })).toHaveCount(1)
-  await expect(page.getByRole('heading', { name: 'Pemberitahuan pembuka' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Isi kartu pembuka' })).toBeVisible()
+  await expect(page.getByLabel('Isi', { exact: true })).toBeVisible()
+  // judul, saklar tampil, label, dan tombol kartu adalah teks tetap
+  await expect(page.getByLabel('Judul', { exact: true })).toHaveCount(0)
+  await expect(page.getByLabel('Tampilkan pemberitahuan pembuka')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Teks di kartu' })).toHaveCount(0)
 })
 
 test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan menu kedua', async ({
@@ -287,7 +285,7 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
 })
 
 test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ page }) => {
-  await page.goto('/admin/pages/home')
+  await page.goto('/admin/pages/about')
   const bar = page.getByRole('banner')
   // satu tombol bulat seperti situs publik: kode yang terlihat adalah bahasa tujuan
   await expect(bar.getByRole('button', { name: 'EN, ganti bahasa isian ke English' })).toBeVisible()
@@ -295,16 +293,16 @@ test('top bar: bahasa isian, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
 
   // bahasa isian menentukan kolom yang tampil di form dua bahasa
-  await expect(page.getByLabel('Bagian keahlian (Indonesia)')).toBeVisible()
-  await expect(page.getByLabel('Bagian keahlian (English)')).toHaveCount(0)
+  await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toBeVisible()
+  await expect(page.getByLabel('Judul (English)', { exact: true })).toHaveCount(0)
   // klik sebelum hydration selesai belum berpengaruh; tombol ini bergantian (EN lalu ID), jadi hanya
   // diklik ulang selama masih bertuliskan EN
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa isian ke English' })
   await expect(async () => {
     if (await toEnglish.count()) await toEnglish.click()
-    await expect(page.getByLabel('Bagian keahlian (English)')).toBeVisible({ timeout: 1000 })
+    await expect(page.getByLabel('Judul (English)', { exact: true })).toBeVisible({ timeout: 1000 })
   }).toPass()
-  await expect(page.getByLabel('Bagian keahlian (Indonesia)')).toHaveCount(0)
+  await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toHaveCount(0)
   // kembalikan agar tes lain tidak terpengaruh (pilihan tersimpan di browser)
   await expect(toEnglish).toHaveCount(0)
   await bar.getByRole('button', { name: 'ID, ganti bahasa isian ke Indonesia' }).click()

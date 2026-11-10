@@ -2,7 +2,7 @@ import 'server-only'
 
 import { getDb } from '@/lib/db'
 
-import { emptyProfile, type ProfileInput, SOCIAL_KEYS } from './schema'
+import { emptyProfile, type HeroRolesInput, type ProfileInput, SOCIAL_KEYS } from './schema'
 
 export async function getProfileForEdit(): Promise<ProfileInput> {
   const p = await getDb().profile.findUnique({ where: { id: 1 } })
@@ -16,8 +16,6 @@ export async function getProfileForEdit(): Promise<ProfileInput> {
     bio_en: p.bio_en,
     currentRole_id: p.currentRole_id ?? '',
     currentRole_en: p.currentRole_en ?? '',
-    aboutRoles_id: p.aboutRoles_id ?? '',
-    aboutRoles_en: p.aboutRoles_en ?? '',
     cardRole_id: p.cardRole_id ?? '',
     cardRole_en: p.cardRole_en ?? '',
     city: p.city ?? '',
@@ -28,4 +26,12 @@ export async function getProfileForEdit(): Promise<ProfileInput> {
       SOCIAL_KEYS.map((k) => [k, typeof socials[k] === 'string' ? socials[k] : '']),
     ) as ProfileInput['socials'],
   }
+}
+
+export async function getHeroRolesForEdit(): Promise<HeroRolesInput> {
+  const p = await getDb().profile.findUnique({
+    where: { id: 1 },
+    select: { aboutRoles_id: true, aboutRoles_en: true },
+  })
+  return { aboutRoles_id: p?.aboutRoles_id ?? '', aboutRoles_en: p?.aboutRoles_en ?? '' }
 }

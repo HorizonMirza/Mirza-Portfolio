@@ -19,28 +19,19 @@ export default async function ProfilePage() {
     <>
       <PageHeader
         title="About"
-        description="Nama, bio, dan peran di halaman Tentang (peran juga tampil di bawah foto beranda), headline untuk gambar pratinjau tautan, link kontak, foto profil, dan CV. Foto hero beranda diatur di modul Home."
+        description="Nama dan bio di halaman Tentang, headline untuk gambar pratinjau tautan, link kontak, dan CV. Foto profil, foto utama beranda, dan peran diatur di modul Home."
       />
       <ModuleTabs moduleId="about" current="/admin/profile" />
       <div className="flex flex-col gap-6">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <AssetSlot
-            title="Foto profil"
-            description="Tampil di avatar navbar dan footer, kartu halaman Tentang, dan kartu lanyard halaman Kontak. Rasio persegi atau potret."
-            target="profile-photo"
-            asset={assets.photo}
-            configured={configured}
-          />
-          <AssetSlot
-            title="CV"
-            description="Berkas PDF yang diunduh dari tombol Resume CV."
-            target="profile-cv"
-            asset={assets.cv}
-            configured={configured}
-          />
-        </div>
-        {/* form teks terakhir: tombol Simpan di bawahnya hanya untuk form ini (foto dan CV tersimpan
-            sendiri saat diunggah) */}
+        <AssetSlot
+          title="CV"
+          description="Berkas PDF yang diunduh dari tombol Resume CV."
+          target="profile-cv"
+          asset={assets.cv}
+          configured={configured}
+        />
+        {/* form teks terakhir: tombol Simpan di bawahnya hanya untuk form ini (CV tersimpan sendiri saat
+            diunggah) */}
         <ProfileForm defaultValues={profile} />
       </div>
     </>

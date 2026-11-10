@@ -6,8 +6,8 @@ import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
 import { revalidateContent } from '@/lib/revalidate'
 
-import { soundSchema } from './schema'
-import { writeSetting } from './write'
+import { introSchema, soundSchema } from './schema'
+import { introSettingData, writeSetting } from './write'
 
 // Simpan SiteSetting dalam transaksinya sendiri, lalu perbarui cache.
 async function saveSetting(
@@ -25,6 +25,19 @@ export async function saveSoundVolume(input: unknown): Promise<ActionResult> {
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
     await saveSetting(admin.userId, parsed.data)
     return ok('Pengaturan disimpan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+// Isi kartu pembuka (Admin → Bagian Awal), satu-satunya bagian kartu yang bisa diubah.
+export async function saveIntroNotice(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = introSchema.safeParse(input)
+    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    await saveSetting(admin.userId, introSettingData(parsed.data))
+    return ok('Kartu pembuka disimpan.')
   } catch (error) {
     return toActionError(error)
   }
