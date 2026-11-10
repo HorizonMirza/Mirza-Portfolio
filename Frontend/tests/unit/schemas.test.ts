@@ -7,7 +7,7 @@ import {
   experienceSchema,
   monthToDate,
 } from '@/features/experience/schema'
-import { emptyProfile, profileSchema } from '@/features/profile/schema'
+import { contactLinksSchema, emptyProfile, profileSchema } from '@/features/profile/schema'
 import { emptyProject, projectSchema } from '@/features/projects/schema'
 import { skillCategorySchema, skillSchema } from '@/features/skills/schema'
 
@@ -100,23 +100,37 @@ describe('experienceSchema', () => {
 })
 
 describe('profileSchema', () => {
-  const base = {
-    ...emptyProfile,
-    name: 'Muhammad Mirza',
-    headline_id: 'h',
-    headline_en: 'h',
-    bio_id: 'b',
-    bio_en: 'b',
+  it('nama, headline, dan bio wajib', () => {
+    const base = {
+      ...emptyProfile,
+      name: 'Muhammad Mirza',
+      headline_id: 'h',
+      headline_en: 'h',
+      bio_id: 'b',
+      bio_en: 'b',
+    }
+    expect(profileSchema.safeParse(base).success).toBe(true)
+    expect(fieldsOf(profileSchema.safeParse({ ...base, name: '' }))).toEqual(['name'])
+  })
+})
+
+// kontak footer dipisah dari profil (Admin → Footer, 2026-11-10)
+describe('contactLinksSchema', () => {
+  const empty = {
+    email: '',
+    whatsapp: '',
+    cvUrl: '',
+    socials: { linkedin: '', github: '', instagram: '', website: '' },
   }
   it('kontak boleh kosong', () => {
-    expect(profileSchema.safeParse(base).success).toBe(true)
+    expect(contactLinksSchema.safeParse(empty).success).toBe(true)
   })
   it('memvalidasi email, WhatsApp, dan URL sosial', () => {
-    const r = profileSchema.safeParse({
-      ...base,
+    const r = contactLinksSchema.safeParse({
+      ...empty,
       email: 'bukan-email',
       whatsapp: '08-12',
-      socials: { ...base.socials, github: 'javascript:alert(1)' },
+      socials: { ...empty.socials, github: 'javascript:alert(1)' },
     })
     expect(fieldsOf(r)).toEqual(expect.arrayContaining(['email', 'whatsapp', 'socials.github']))
   })

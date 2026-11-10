@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 import { saveProfile } from '../actions'
-import { type ProfileInput, profileSchema, SOCIAL_KEYS, socialLabel } from '../schema'
+import { type ProfileInput, profileSchema } from '../schema'
 
 type Lang = 'id' | 'en'
 
@@ -108,47 +108,6 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
           id={langFields('id')}
           en={langFields('en')}
         />
-      </Card>
-
-      <Card className="grid gap-5 md:grid-cols-2">
-        <div className="md:col-span-2">
-          <h2 className="text-h3 font-semibold">Kontak dan link sosial</h2>
-          <p className="mt-1 text-sm text-muted">
-            Email dan WhatsApp hanya disimpan di database, tidak di repo. Kosongkan bila tidak ingin
-            ditampilkan.
-          </p>
-        </div>
-        <Field id="email" label="Email publik (opsional)" error={errors.email?.message}>
-          {(a) => <Input type="email" autoComplete="email" {...a} {...register('email')} />}
-        </Field>
-        <Field
-          id="whatsapp"
-          label="WhatsApp (opsional)"
-          hint="Contoh: +6281234567890"
-          error={errors.whatsapp?.message}
-        >
-          {(a) => <Input type="tel" inputMode="tel" {...a} {...register('whatsapp')} />}
-        </Field>
-        <Field
-          id="cvUrl"
-          label="Link CV (opsional)"
-          hint={
-            'Mis. link Google Drive dengan akses "Siapa saja yang memiliki link". Bila diisi, semua tombol CV membuka link ini; bila kosong, memakai PDF yang di-upload.'
-          }
-          error={errors.cvUrl?.message}
-        >
-          {(a) => <Input type="url" inputMode="url" {...a} {...register('cvUrl')} />}
-        </Field>
-        {SOCIAL_KEYS.map((key) => (
-          <Field
-            key={key}
-            id={`socials-${key}`}
-            label={`${socialLabel[key]} (opsional)`}
-            error={errors.socials?.[key]?.message}
-          >
-            {(a) => <Input type="url" inputMode="url" {...a} {...register(`socials.${key}`)} />}
-          </Field>
-        ))}
       </Card>
 
       <FormFooter pending={pending} />

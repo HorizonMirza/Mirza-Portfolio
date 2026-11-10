@@ -78,6 +78,7 @@ async function load() {
     ['saveSiteTexts', () => siteText.saveSiteTexts('about', {})],
     ['saveIntroNotice', () => settings.saveIntroNotice({})],
     ['saveHeroRoles', () => profile.saveHeroRoles({})],
+    ['saveContactLinks', () => profile.saveContactLinks({})],
     ['saveSoundVolume', () => settings.saveSoundVolume({})],
   )
 }

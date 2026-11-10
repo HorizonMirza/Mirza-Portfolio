@@ -7,7 +7,7 @@ import { getDb } from '@/lib/db'
 import { revalidateContent } from '@/lib/revalidate'
 import { emptyToNull } from '@/lib/validation'
 
-import { heroRolesSchema, profileSchema } from './schema'
+import { contactLinksSchema, heroRolesSchema, profileSchema } from './schema'
 
 export async function saveProfile(input: unknown): Promise<ActionResult> {
   try {
@@ -15,8 +15,6 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
     const parsed = profileSchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
     const v = parsed.data
-    // Link sosial yang kosong tidak disimpan.
-    const socials = Object.fromEntries(Object.entries(v.socials).filter(([, url]) => url !== ''))
     const data = {
       name: v.name,
       headline_id: v.headline_id,
@@ -28,10 +26,6 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
       cardRole_id: emptyToNull(v.cardRole_id),
       cardRole_en: emptyToNull(v.cardRole_en),
       city: emptyToNull(v.city),
-      email: emptyToNull(v.email),
-      whatsapp: emptyToNull(v.whatsapp),
-      cvUrl: emptyToNull(v.cvUrl),
-      socials,
     }
     await getDb().$transaction(async (tx) => {
       const before = await tx.profile.findUnique({ where: { id: 1 } })
@@ -45,27 +39,70 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
         action: before ? 'update' : 'create',
         entity: 'Profile',
         entityId: '1',
-        // Email dan WhatsApp tidak dicatat isinya di audit, cukup tanda berubah.
-        before: before
-          ? {
-              ...before,
-              email: before.email ? '•••' : null,
-              whatsapp: before.whatsapp ? '•••' : null,
-            }
-          : null,
-        after: {
-          ...after,
-          email: after.email ? (after.email === before?.email ? '•••' : '••• (baru)') : null,
-          whatsapp: after.whatsapp
-            ? after.whatsapp === before?.whatsapp
-              ? '•••'
-              : '••• (baru)'
-            : null,
-        },
+        before: before ? maskContacts(before) : null,
+        after: maskContacts(after, before),
       })
     })
     revalidateContent('profile')
     return ok('Profil disimpan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+// Email dan WhatsApp tidak dicatat isinya di audit, cukup tanda berubah.
+function maskContacts<T extends { email: string | null; whatsapp: string | null }>(
+  row: T,
+  before?: { email: string | null; whatsapp: string | null } | null,
+): T {
+  const mark = (value: string | null, old: string | null | undefined) =>
+    value ? (before === undefined || value === old ? '•••' : '••• (baru)') : null
+  return {
+    ...row,
+    email: mark(row.email, before?.email),
+    whatsapp: mark(row.whatsapp, before?.whatsapp),
+  }
+}
+
+// Kontak dan Resume CV di footer (Admin → Footer). Profil harus sudah ada (dibuat seed).
+export async function saveContactLinks(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = contactLinksSchema.safeParse(input)
+    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    const v = parsed.data
+    // Link sosial yang kosong tidak disimpan.
+    const socials = Object.fromEntries(Object.entries(v.socials).filter(([, url]) => url !== ''))
+    const data = {
+      email: emptyToNull(v.email),
+      whatsapp: emptyToNull(v.whatsapp),
+      cvUrl: emptyToNull(v.cvUrl),
+      socials,
+    }
+    const saved = await getDb().$transaction(async (tx) => {
+      const before = await tx.profile.findUnique({
+        where: { id: 1 },
+        select: { email: true, whatsapp: true, cvUrl: true, socials: true },
+      })
+      if (!before) return false
+      const after = await tx.profile.update({
+        where: { id: 1 },
+        data,
+        select: { email: true, whatsapp: true, cvUrl: true, socials: true },
+      })
+      await writeAudit(tx, {
+        actorId: admin.userId,
+        action: 'update',
+        entity: 'Profile',
+        entityId: '1',
+        before: maskContacts(before),
+        after: maskContacts(after, before),
+      })
+      return true
+    })
+    if (!saved) return fail('Isi profil di About → Profil dulu.')
+    revalidateContent('profile')
+    return ok('Kontak disimpan.')
   } catch (error) {
     return toActionError(error)
   }

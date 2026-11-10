@@ -22,6 +22,11 @@ export const profileSchema = z.object({
   cardRole_id: optionalText('Peran di kartu ID', 60).default(''),
   cardRole_en: optionalText('Role on the ID card', 60).default(''),
   city: optionalText('Kota', 80),
+})
+
+// Kontak dan Resume CV di footer (Admin → Footer, dipindah dari form Profil 2026-11-10). Email dan
+// WhatsApp hanya disimpan di database, tidak di repo.
+export const contactLinksSchema = z.object({
   email: z
     .string()
     .trim()
@@ -43,6 +48,8 @@ export const profileSchema = z.object({
   }),
 })
 
+export type ContactLinksInput = z.input<typeof contactLinksSchema>
+
 export type ProfileInput = z.input<typeof profileSchema>
 
 export const emptyProfile: ProfileInput = {
@@ -56,10 +63,6 @@ export const emptyProfile: ProfileInput = {
   cardRole_id: '',
   cardRole_en: '',
   city: '',
-  email: '',
-  whatsapp: '',
-  cvUrl: '',
-  socials: { linkedin: '', github: '', instagram: '', website: '' },
 }
 
 // Peran di bawah foto beranda (Admin → Home, sejak 2026-11-10 dipindah dari form Profil), juga dipakai

@@ -6,8 +6,9 @@ import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getHeroPortraitAsset, getProfileAssets } from '@/features/assets/queries'
+import { ContactLinksForm } from '@/features/profile/components/contact-links-form'
 import { HeroRolesForm } from '@/features/profile/components/hero-roles-form'
-import { getHeroRolesForEdit } from '@/features/profile/queries'
+import { getContactLinksForEdit, getHeroRolesForEdit } from '@/features/profile/queries'
 import { IntroForm } from '@/features/settings/components/intro-form'
 import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
@@ -43,6 +44,7 @@ export default async function SiteModulePage({ params }: Params) {
             pembuka; foto profil, foto utama, dan peran. Teks lain di keduanya tetap. */}
         {moduleId === 'intro' ? <IntroForm defaultValues={await getIntroForEdit()} /> : null}
         {moduleId === 'home' ? <HomeHero /> : null}
+        {moduleId === 'footer' ? <FooterContacts /> : null}
         {moduleId !== 'intro' && moduleId !== 'home' ? <ModuleTexts moduleId={moduleId} /> : null}
       </div>
     </>
@@ -100,6 +102,23 @@ async function HomeHero() {
         />
       </div>
       <HeroRolesForm defaultValues={roles} placeholders={{ id: tId('roles'), en: tEn('roles') }} />
+    </>
+  )
+}
+
+// Admin → Footer: kontak dan Resume CV (dipindah dari About → Profil 2026-11-10), di atas teks footer
+async function FooterContacts() {
+  const [links, assets] = await Promise.all([getContactLinksForEdit(), getProfileAssets()])
+  return (
+    <>
+      <ContactLinksForm defaultValues={links} />
+      <AssetSlot
+        title="Berkas Resume CV"
+        description="PDF yang dibuka tombol Resume CV bila Link CV di atas kosong."
+        target="profile-cv"
+        asset={assets.cv}
+        configured={isUploadConfigured()}
+      />
     </>
   )
 }
