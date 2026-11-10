@@ -211,23 +211,32 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
-  // sejak 2026-11-10 Home hanya mengelola foto profil, foto utama, dan peran (permintaan pemilik)
-  const field = () => page.getByLabel('Peran', { exact: true })
-  await page.goto('/admin/pages/home')
+  // sejak 2026-11-10 Home hanya mengelola foto profil, foto utama, dan peran (permintaan pemilik).
+  // Yang diubah peran bahasa Inggris dan dicek di /en: tes halaman Tentang (/id/about) berjalan
+  // bersamaan dan memeriksa peran bahasa Indonesia, jadi keduanya tidak saling mengganggu.
+  const field = () => page.getByLabel('Roles', { exact: true })
+  // bahasa isian EN disetel lewat penyimpanan browser sebelum halaman dibuka (sama seperti pilihan
+  // tombol bahasa di top bar), agar tidak berpacu dengan hidrasi tombol
+  await page.addInitScript(() => localStorage.setItem('mmirza-admin-lang', 'en'))
+  const openEnglish = async () => {
+    await page.goto('/admin/pages/home')
+    await expect(field()).toBeVisible()
+  }
+  await openEnglish()
   const original = await field().inputValue()
   await expect(async () => {
-    await field().fill('Peran Uji Otomatis | Peran Kedua Uji')
-    await expect(field()).toHaveValue('Peran Uji Otomatis | Peran Kedua Uji', { timeout: 1000 })
+    await field().fill('Test Role One | Test Role Two')
+    await expect(field()).toHaveValue('Test Role One | Test Role Two', { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Peran disimpan.')).toBeVisible()
   // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
   await expect
-    .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
-    .toContain('Peran Kedua Uji')
+    .poll(async () => (await page.request.get('/en')).text(), { timeout: ISR_REFRESH_TIMEOUT })
+    .toContain('Test Role Two')
 
   // kembalikan agar tes lain tidak terpengaruh
-  await page.goto('/admin/pages/home')
+  await openEnglish()
   await expect(async () => {
     await field().fill(original)
     await expect(field()).toHaveValue(original, { timeout: 1000 })
@@ -235,8 +244,8 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
   await page.getByRole('button', { name: 'Simpan' }).click()
   await expect(page.getByText('Peran disimpan.')).toBeVisible()
   await expect
-    .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
-    .not.toContain('Peran Kedua Uji')
+    .poll(async () => (await page.request.get('/en')).text(), { timeout: ISR_REFRESH_TIMEOUT })
+    .not.toContain('Test Role Two')
 })
 
 test('modul Home hanya berisi foto profil, foto utama, dan peran', async ({ page }) => {
