@@ -181,9 +181,10 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
   await page.goto('/admin/settings')
   const slider = page.getByLabel('Volume')
   const output = page.locator('output[for="soundVolume"]')
-  // Safari iPhone kadang menerima isian sebelum React selesai hidrasi, sehingga label tidak ikut
-  // berubah; ulangi sampai form benar-benar membaca nilainya
+  // Isian bisa masuk sebelum React selesai hidrasi, sehingga label tidak ikut berubah. Tiap
+  // percobaan mengisi nilai lain dulu: mengisi nilai yang sudah ada tidak memicu event input.
   await expect(async () => {
+    await slider.fill('30')
     await slider.fill('35')
     await expect(output).toHaveText('35%', { timeout: 1000 })
   }).toPass()
@@ -196,7 +197,8 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
   await page.goto('/admin/settings')
   await expect(async () => {
-    await page.getByLabel('Volume').fill('80')
+    await slider.fill('75')
+    await slider.fill('80')
     await expect(output).toHaveText('80%', { timeout: 1000 })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan' }).click()
