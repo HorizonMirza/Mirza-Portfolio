@@ -12,7 +12,7 @@ export default async function NewExperiencePage() {
   return (
     <>
       <PageHeader title="Tambah pengalaman" />
-      <ExperienceForm experienceId={null} defaultValues={emptyExperience} />
+      <ExperienceForm experienceId={null} defaultValues={emptyExperience} kind="experience" />
     </>
   )
 }

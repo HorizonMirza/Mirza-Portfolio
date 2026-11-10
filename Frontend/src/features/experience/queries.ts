@@ -2,11 +2,13 @@ import 'server-only'
 
 import { getDb } from '@/lib/db'
 
-import { dateToMonth, type ExperienceInput } from './schema'
+import { dateToMonth, type ExperienceInput, type ExperienceKind } from './schema'
 
-// Terbaru di atas, sama seperti timeline publik.
-export async function listExperiencesAdmin() {
+// Terbaru di atas, sama seperti timeline publik. Pendidikan dikelola di About → Pendidikan, kerja dan
+// organisasi di Experience (2026-11-10).
+export async function listExperiencesAdmin(kind: ExperienceKind) {
   return getDb().experience.findMany({
+    where: kind === 'education' ? { type: 'EDUCATION' } : { type: { not: 'EDUCATION' } },
     orderBy: [{ startDate: 'desc' }, { order: 'asc' }],
     select: {
       id: true,

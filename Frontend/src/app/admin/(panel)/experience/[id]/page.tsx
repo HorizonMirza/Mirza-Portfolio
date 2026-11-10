@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { PageHeader } from '@/components/admin/page-header'
@@ -21,13 +21,15 @@ export default async function EditExperiencePage({ params }: PageProps<'/admin/e
     getExperienceAssets(id),
   ])
   if (!experience) notFound()
+  // pendidikan diubah di About → Pendidikan
+  if (experience.type === 'EDUCATION') redirect(`/admin/education/${id}`)
   const configured = isUploadConfigured()
   return (
     <>
       <PageHeader title={experience.title_id} description={experience.organization} />
       <div className="flex flex-col gap-6">
         <ExperienceForm key={id} experienceId={id} defaultValues={experience} />
-        {/* Logo dan foto tampil di timeline publik (DESIGN.md bagian 38); pendidikan tidak tampil di sana */}
+        {/* Logo dan foto tampil di timeline publik (DESIGN.md bagian 38) */}
         <AssetSlot
           title="Logo instansi"
           description="Tampil bulat di garis timeline. PNG berlatar transparan atau logo persegi paling rapi; maks. 2 MB."

@@ -42,7 +42,7 @@ export const adminNav: readonly NavItem[] = [
     label: 'About',
     icon: User,
     group: 'Halaman situs',
-    match: ['/admin/profile'],
+    match: ['/admin/profile', '/admin/education'],
   },
   {
     href: '/admin/pages/experience',

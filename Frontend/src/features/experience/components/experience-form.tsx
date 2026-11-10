@@ -19,18 +19,26 @@ import {
   employmentTypeLabel,
   type ExperienceInput,
   experienceSchema,
+  type ExperienceKind,
   experienceTypeLabel,
+  kindBasePath,
 } from '../schema'
 
 type Lang = 'id' | 'en'
 
+// kind "education": About → Pendidikan (jenis tetap Pendidikan, uraian menjadi Grade/GPA, tanpa isian
+// khusus kerja); "experience": kerja dan organisasi (2026-11-10)
 export function ExperienceForm({
   experienceId,
   defaultValues,
+  kind = 'experience',
 }: {
   experienceId: string | null
   defaultValues: ExperienceInput
+  kind?: ExperienceKind
 }) {
+  const education = kind === 'education'
+  const basePath = kindBasePath[kind]
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const form = useForm<ExperienceInput>({ resolver: zodResolver(experienceSchema), defaultValues })
@@ -45,7 +53,7 @@ export function ExperienceForm({
       const result = await saveExperience(experienceId, values)
       if (!applyResult(result, form.setError) || !result.ok) return
       if (experienceId) form.reset(values)
-      else if (result.data) router.replace(`/admin/experience/${result.data.id}`)
+      else if (result.data) router.replace(`${basePath}/${result.data.id}`)
     })
   })
 
@@ -53,18 +61,37 @@ export function ExperienceForm({
     <>
       <Field
         id={`title_${lang}`}
-        label={lang === 'id' ? 'Peran' : 'Role'}
+        label={
+          education
+            ? lang === 'id'
+              ? 'Jenjang / jurusan'
+              : 'Degree / major'
+            : lang === 'id'
+              ? 'Peran'
+              : 'Role'
+        }
+        hint={
+          education
+            ? lang === 'id'
+              ? 'Mis. "SMA, Jurusan IPA" atau "S1 Ilmu Komputer – Kecerdasan Buatan".'
+              : 'E.g. "Bachelor of Computer Science – Artificial Intelligence".'
+            : undefined
+        }
         error={errors[`title_${lang}`]?.message}
       >
         {(a) => <Input {...a} {...register(`title_${lang}`)} />}
       </Field>
       <Field
         id={`description_${lang}`}
-        label={lang === 'id' ? 'Uraian' : 'Description'}
+        label={education ? 'Grade / GPA' : lang === 'id' ? 'Uraian' : 'Description'}
         hint={
-          lang === 'id'
-            ? 'Tulis hasil yang bisa dibuktikan, satu poin per baris dengan "- ".'
-            : 'Outcomes, one bullet per line.'
+          education
+            ? lang === 'id'
+              ? 'Tampil di bawah tahun pada kartu pendidikan halaman Tentang, mis. "Nilai: 88,3" atau "IPK kumulatif: 3,5/4,0".'
+              : 'Shown under the years, e.g. "Grade: 88.3" or "Cumulative GPA: 3.5/4.0".'
+            : lang === 'id'
+              ? 'Tulis hasil yang bisa dibuktikan, satu poin per baris dengan "- ".'
+              : 'Outcomes, one bullet per line.'
         }
         error={errors[`description_${lang}`]?.message}
       >
@@ -83,18 +110,25 @@ export function ExperienceForm({
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="grid gap-5 md:grid-cols-2">
         <h2 className="text-h3 font-semibold md:col-span-2">Detail</h2>
-        <Field id="type" label="Jenis" error={errors.type?.message}>
-          {(a) => (
-            <NativeSelect {...a} {...register('type')}>
-              {Object.entries(experienceTypeLabel).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </NativeSelect>
-          )}
-        </Field>
-        <Field id="organization" label="Instansi" error={errors.organization?.message}>
+        {/* pendidikan: jenis tetap (nilai awal EDUCATION), tidak dipilih */}
+        {education ? null : (
+          <Field id="type" label="Jenis" error={errors.type?.message}>
+            {(a) => (
+              <NativeSelect {...a} {...register('type')}>
+                {(['WORK', 'ORGANIZATION'] as const).map((value) => (
+                  <option key={value} value={value}>
+                    {experienceTypeLabel[value]}
+                  </option>
+                ))}
+              </NativeSelect>
+            )}
+          </Field>
+        )}
+        <Field
+          id="organization"
+          label={education ? 'Sekolah / kampus' : 'Instansi'}
+          error={errors.organization?.message}
+        >
           {(a) => <Input {...a} {...register('organization')} />}
         </Field>
         <Field
@@ -116,33 +150,37 @@ export function ExperienceForm({
         >
           {(a) => <Input type="month" {...a} {...register('endMonth')} />}
         </Field>
-        <Field
-          id="employmentType"
-          label="Jenis pekerjaan (opsional)"
-          hint='Tampil di samping instansi, mis. "PT PGAS Solution · Internship".'
-          error={errors.employmentType?.message}
-        >
-          {(a) => (
-            <NativeSelect {...a} {...register('employmentType')}>
-              <option value="">Tidak ditampilkan</option>
-              {Object.entries(employmentTypeLabel).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </NativeSelect>
-          )}
-        </Field>
-        <Field id="location" label="Lokasi (opsional)" error={errors.location?.message}>
-          {(a) => <Input {...a} {...register('location')} />}
-        </Field>
-        <label className="flex min-h-11 items-center gap-3 md:col-span-2">
-          <input type="checkbox" className="size-5 accent-primary" {...register('inStory')} />
-          <span>
-            Tandai sebagai titik garis cerita (bagian beranda Dari komunitas ke software sedang
-            tidak ditampilkan)
-          </span>
-        </label>
+        {education ? null : (
+          <>
+            <Field
+              id="employmentType"
+              label="Jenis pekerjaan (opsional)"
+              hint='Tampil di samping instansi, mis. "PT PGAS Solution · Internship".'
+              error={errors.employmentType?.message}
+            >
+              {(a) => (
+                <NativeSelect {...a} {...register('employmentType')}>
+                  <option value="">Tidak ditampilkan</option>
+                  {Object.entries(employmentTypeLabel).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </NativeSelect>
+              )}
+            </Field>
+            <Field id="location" label="Lokasi (opsional)" error={errors.location?.message}>
+              {(a) => <Input {...a} {...register('location')} />}
+            </Field>
+            <label className="flex min-h-11 items-center gap-3 md:col-span-2">
+              <input type="checkbox" className="size-5 accent-primary" {...register('inStory')} />
+              <span>
+                Tandai sebagai titik garis cerita (bagian beranda Dari komunitas ke software sedang
+                tidak ditampilkan)
+              </span>
+            </label>
+          </>
+        )}
         <Field
           id="status"
           label="Status"
@@ -169,8 +207,10 @@ export function ExperienceForm({
 
       <FormFooter
         pending={pending}
-        cancelHref="/admin/experience"
-        submitLabel={experienceId ? 'Simpan' : 'Tambah pengalaman'}
+        cancelHref={basePath}
+        submitLabel={
+          experienceId ? 'Simpan' : education ? 'Tambah pendidikan' : 'Tambah pengalaman'
+        }
       />
     </form>
   )

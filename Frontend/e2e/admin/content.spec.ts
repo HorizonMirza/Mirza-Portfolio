@@ -15,6 +15,8 @@ const PAGES = [
   '/admin/skills',
   '/admin/experience',
   '/admin/experience/new',
+  '/admin/education',
+  '/admin/education/new',
   '/admin/messages',
   '/admin/audit',
   '/admin/pages/intro',
@@ -263,6 +265,36 @@ test('Bagian Awal: hanya isi kartu pembuka yang bisa diubah', async ({ page }) =
   await expect(page.getByLabel('Judul', { exact: true })).toHaveCount(0)
   await expect(page.getByLabel('Tampilkan pemberitahuan pembuka')).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Teks di kartu' })).toHaveCount(0)
+})
+
+test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan organisasi', async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto('/admin/education')
+  await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  // di layar sempit tabel tampil sebagai kartu tanpa judul kolom
+  if (!isMobile)
+    await expect(page.getByRole('columnheader', { name: 'Sekolah / kampus' })).toBeVisible()
+  await page.goto('/admin/education/new')
+  await expect(page.getByLabel('Sekolah / kampus')).toBeVisible()
+  // satu isian per bahasa; hanya bahasa isian yang aktif yang terlihat
+  await expect(page.getByLabel('Grade / GPA')).toHaveCount(2)
+  await expect(page.getByLabel('Grade / GPA').first()).toBeVisible()
+  // jenis tetap Pendidikan dan isian khusus kerja disembunyikan
+  for (const label of ['Jenis', 'Lokasi (opsional)'])
+    await expect(page.getByLabel(label, { exact: true })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Batal' })).toHaveAttribute(
+    'href',
+    '/admin/education',
+  )
+  // pilihan jenis di Experience tanpa Pendidikan
+  await page.goto('/admin/experience/new')
+  const type = page.getByLabel('Jenis', { exact: true })
+  await expect(type.locator('option')).toHaveText(['Kerja', 'Organisasi'])
 })
 
 test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan menu kedua', async ({

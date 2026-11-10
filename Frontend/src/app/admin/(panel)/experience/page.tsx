@@ -15,12 +15,12 @@ export const metadata: Metadata = { title: 'Pengalaman' }
 
 export default async function ExperiencePage() {
   await requireSuperAdminPage()
-  const items = await listExperiencesAdmin()
+  const items = await listExperiencesAdmin('experience')
   return (
     <>
       <PageHeader
         title="Experience"
-        description="Pengalaman dan pendidikan. Timeline publik diurutkan otomatis: yang masih berjalan di atas, lalu dari tanggal selesai terbaru."
+        description="Kerja dan organisasi (pendidikan ada di About → Pendidikan). Timeline publik diurutkan otomatis: yang masih berjalan di atas, lalu dari tanggal selesai terbaru."
         actions={
           <Button asChild>
             <Link href="/admin/experience/new">

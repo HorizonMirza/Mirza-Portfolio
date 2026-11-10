@@ -10,6 +10,15 @@ export const experienceTypeLabel: Record<(typeof EXPERIENCE_TYPES)[number], stri
   ORGANIZATION: 'Organisasi',
 }
 
+// Menu admin: kerja dan organisasi di Experience, pendidikan di About → Pendidikan (2026-11-10)
+export type ExperienceKind = 'experience' | 'education'
+export const kindBasePath: Record<ExperienceKind, string> = {
+  experience: '/admin/experience',
+  education: '/admin/education',
+}
+export const kindOf = (type: (typeof EXPERIENCE_TYPES)[number]): ExperienceKind =>
+  type === 'EDUCATION' ? 'education' : 'experience'
+
 // Jenis pekerjaan seperti di LinkedIn ("PT PGAS Solution · Internship"); opsional.
 export const EMPLOYMENT_TYPES = [
   'FULL_TIME',
@@ -61,6 +70,8 @@ export const experienceSchema = z
   })
 
 export type ExperienceInput = z.input<typeof experienceSchema>
+
+export const emptyEducation = (): ExperienceInput => ({ ...emptyExperience, type: 'EDUCATION' })
 
 export const emptyExperience: ExperienceInput = {
   type: 'WORK',
