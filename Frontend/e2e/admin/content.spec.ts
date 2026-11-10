@@ -280,7 +280,7 @@ test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan o
   if (!isMobile)
     await expect(page.getByRole('columnheader', { name: 'Sekolah / kampus' })).toBeVisible()
   await page.goto('/admin/education/new')
-  await expect(page.getByLabel('Sekolah / kampus')).toBeVisible()
+  await expect(page.getByLabel('Sekolah / kampus', { exact: true })).toBeVisible()
   // satu isian per bahasa; hanya bahasa isian yang aktif yang terlihat
   await expect(page.getByLabel('Grade / GPA')).toHaveCount(2)
   await expect(page.getByLabel('Grade / GPA').first()).toBeVisible()

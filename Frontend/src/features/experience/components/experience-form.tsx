@@ -133,7 +133,11 @@ export function ExperienceForm({
         </Field>
         <Field
           id="organization_en"
-          label="Instansi dalam bahasa Inggris (opsional)"
+          label={
+            education
+              ? 'Sekolah / kampus dalam bahasa Inggris (opsional)'
+              : 'Instansi dalam bahasa Inggris (opsional)'
+          }
           hint='Isi bila nama di halaman English berbeda, mis. "Bina Nusantara University". Kosong = sama.'
           error={errors.organization_en?.message}
         >
