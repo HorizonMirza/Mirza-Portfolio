@@ -48,8 +48,6 @@ async function main() {
         currentRole_en: profile.currentRole.en,
         aboutRoles_id: profile.aboutRoles.id,
         aboutRoles_en: profile.aboutRoles.en,
-        cardRole_id: profile.cardRole.id,
-        cardRole_en: profile.cardRole.en,
       },
     })
 

@@ -299,7 +299,6 @@ erDiagram
       int id PK "singleton"
       int soundVolume "0-100, atribut data-sound-volume"
       string heroPortraitId FK "foto hero dari admin, kosong = foto bawaan repo"
-      string heroArmorId FK "tidak dipakai sejak 2026-11-10: armor selalu gambar bawaan repo"
     }
     SiteText {
       string key PK "Namespace.nama, dibatasi daftar di features/site-text/catalog.ts"

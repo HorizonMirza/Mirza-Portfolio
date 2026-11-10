@@ -147,8 +147,6 @@ model Profile {
   aboutRoles_id     String?
   aboutRoles_en     String?
   // peran di kartu ID bertali halaman Kontak, mis. "Fullstack Developer"
-  cardRole_id       String?
-  cardRole_en       String?
   photoId           String?  @unique @db.Uuid
   photo             Asset?   @relation("ProfilePhoto", fields: [photoId], references: [id], onDelete: SetNull)
   // foto kartu halaman Tentang (Admin → About → Profil, 2026-11-10); kosong = foto profil
@@ -286,7 +284,6 @@ model Asset {
   experiences      Experience[]   @relation("ExperienceLogo")
   experiencePhotos Experience[]   @relation("ExperiencePhoto")
   heroPortraitOf   SiteSetting?   @relation("HeroPortrait")
-  heroArmorOf      SiteSetting?   @relation("HeroArmor")
 }
 
 model Message {
@@ -362,16 +359,11 @@ model SiteSetting {
   // volume suara tombol di situs publik (tema, bahasa, menu), 0 = tanpa suara, 100 = paling keras
   soundVolume    Int      @default(80)
   // pemberitahuan pembuka: kartu sebelum masuk situs, sekali setiap situs dibuka (per sesi browser)
-  introEnabled   Boolean  @default(true)
-  introTitle_id  String?
-  introTitle_en  String?
   introBody_id   String?  @db.Text
   introBody_en   String?  @db.Text
   // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
   heroPortraitId String?  @unique @db.Uuid
   heroPortrait   Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
-  heroArmorId    String?  @unique @db.Uuid
-  heroArmor      Asset?   @relation("HeroArmor", fields: [heroArmorId], references: [id], onDelete: SetNull)
   updatedAt      DateTime @updatedAt @db.Timestamptz(3)
 }
 

@@ -70,9 +70,8 @@ function usageOf(asset: {
   experiences: { id: string }[]
   experiencePhotos: { id: string }[]
   heroPortraitOf?: { id: number } | null
-  heroArmorOf?: { id: number } | null
 }) {
-  if (asset.heroPortraitOf || asset.heroArmorOf) return 'settings' as const
+  if (asset.heroPortraitOf) return 'settings' as const
   if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf) return 'profile' as const
   if (asset.experiences.length || asset.experiencePhotos.length) return 'experience' as const
   return 'projects' as const
@@ -304,7 +303,6 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
-          heroArmorOf: { select: { id: true } },
         },
       })
       const after = await tx.asset.update({
@@ -346,7 +344,6 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
-          heroArmorOf: { select: { id: true } },
         },
       })
       // Relasi ke profil/project menjadi null, baris galeri ikut terhapus (onDelete di skema).

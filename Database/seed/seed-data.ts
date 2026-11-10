@@ -12,7 +12,6 @@ export type SeedProfile = {
   socials: Record<string, string>;
   currentRole: Bilingual;
   aboutRoles: Bilingual;
-  cardRole: Bilingual;
 };
 
 export type SeedExperience = {
@@ -71,7 +70,6 @@ export const profile: SeedProfile = {
     id: "Fullstack Developer | Community Manager",
     en: "Fullstack Developer | Community Manager",
   },
-  cardRole: { id: "Fullstack Developer", en: "Fullstack Developer" },
 };
 
 export const experiences: SeedExperience[] = [

@@ -26,7 +26,6 @@ export async function deleteUnusedAssets(
       experiences: { none: {} },
       experiencePhotos: { none: {} },
       heroPortraitOf: { is: null },
-      heroArmorOf: { is: null },
     },
     select: { id: true, publicId: true, kind: true },
   })
