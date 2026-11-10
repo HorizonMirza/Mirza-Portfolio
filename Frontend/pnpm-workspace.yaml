@@ -18,6 +18,12 @@ overrides:
   deepmerge-ts: ^8.0.0
   source-map-js: ^1.2.2
   vite: ^8.3.3
+  # minimatch lewat eslint dan @eslint/config-array (GHSA-g3hv-75wg-m249, DoS pola glob; aman di
+  # >=11.0.1). Dikunci 11.0.4 dan dependensi barunya 1.0.3: versi terbaru (11.0.5, 1.1.0) belum
+  # berumur 7 hari (WORKFLOW.md 10a). API yang dipakai ESLint (Minimatch, match, pattern) tetap ada
+  # di 11. Hapus bila eslint sudah memakai minimatch 11 sendiri.
+  'minimatch@>=10 <11.0.1': 11.0.4
+  '@isaacs/nonrecursive-glob-match': 1.0.3
 
 # Advisory tanpa versi perbaikan (patched: <0.0.0) yang hanya ada di alat pengembangan:
 # braces lewat eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch
