@@ -10,6 +10,7 @@ import {
   prefersReducedMotion,
   touchFirstDevice,
 } from '@/lib/view-transition'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 // Foto kegiatan di timeline Pengalaman yang bisa ditekan untuk dilihat besar. Pilihan pemilik
 // 2026-11-06: C1 "Lightbox klasik", lalu "semua efeknya sama seperti di Project": foto miring 3D
@@ -130,6 +131,7 @@ export function PhotoLightbox({
             onFocus={preload}
           >
             <Image
+              placeholder={SHIMMER_PLACEHOLDER}
               src={src}
               alt={alt}
               width={width}
@@ -165,6 +167,7 @@ export function PhotoLightbox({
           </button>
           <figure className="xp-lightbox-figure">
             <Image
+              placeholder={SHIMMER_PLACEHOLDER}
               ref={big}
               src={src}
               alt={alt}

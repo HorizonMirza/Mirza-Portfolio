@@ -11,6 +11,7 @@ import { initials, organizationName, sortByLatest } from '@/features/experience/
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { formatMonth, loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export async function generateMetadata({
   params,
@@ -74,6 +75,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                 <div className="xp-node" aria-hidden={e.logo ? undefined : true}>
                   {e.logo ? (
                     <Image
+                      placeholder={SHIMMER_PLACEHOLDER}
                       src={e.logo.url}
                       alt={logoAlt}
                       width={112}

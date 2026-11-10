@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 
 import { authClient } from '@/lib/auth-client'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 
@@ -66,6 +67,7 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
         className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface p-0.5"
       >
         <Image
+          placeholder={SHIMMER_PLACEHOLDER}
           src={photo}
           alt=""
           width={40}

@@ -5,6 +5,7 @@ import { type KeyboardEvent, type MouseEvent, useState, ViewTransition } from 'r
 
 import { imageRatio } from '@/features/projects/browser-address'
 import { playSlideSound } from '@/lib/ui-sounds'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
 
@@ -97,6 +98,7 @@ export function ProjectGallery({
               {images.map((img, i) =>
                 mounted(i) ? (
                   <Image
+                    placeholder={SHIMMER_PLACEHOLDER}
                     key={img.url}
                     src={img.url}
                     alt={i === active ? img.alt : ''}
@@ -125,7 +127,14 @@ export function ProjectGallery({
                 aria-pressed={i === active}
                 onClick={() => go(i)}
               >
-                <Image src={img.url} alt="" fill sizes="76px" className="object-cover object-top" />
+                <Image
+                  placeholder={SHIMMER_PLACEHOLDER}
+                  src={img.url}
+                  alt=""
+                  fill
+                  sizes="76px"
+                  className="object-cover object-top"
+                />
               </button>
             ))}
           </div>

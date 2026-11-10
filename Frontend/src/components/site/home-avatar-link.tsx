@@ -6,6 +6,7 @@ import { Link, usePathname } from '@/i18n/navigation'
 import { scrollToTop } from '@/lib/scroll'
 import { playNavSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 // Foto profil di topbar: kembali ke beranda dengan suara dan arah geser yang sama seperti menu
 // Beranda (menu paling kiri, jadi selalu mundur). Di beranda sendiri: gulir ke bagian paling atas.
@@ -37,6 +38,7 @@ export function HomeAvatarLink({
       )}
     >
       <Image
+        placeholder={SHIMMER_PLACEHOLDER}
         src={photo}
         alt=""
         width={72}

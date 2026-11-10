@@ -12,6 +12,7 @@ import { loc } from '@/lib/localized'
 import { cn } from '@/lib/utils'
 
 import { TechChips } from './tech-chips'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 // Satu baris di halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag", DESIGN.md bagian 48):
 // gambar dan teks berdampingan, sisi gambar bergantian tiap baris di layar lebar; di HP gambar di
@@ -74,6 +75,7 @@ export async function ProjectRow({
                   >
                     {project.cover ? (
                       <Image
+                        placeholder={SHIMMER_PLACEHOLDER}
                         src={project.cover.url}
                         alt=""
                         fill

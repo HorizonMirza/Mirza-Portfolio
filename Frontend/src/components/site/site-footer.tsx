@@ -17,6 +17,7 @@ import { loc } from '@/lib/localized'
 import { cn } from '@/lib/utils'
 
 import { type FooterLinkKey, footerLinks, isDriveHost } from './footer-links'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 function BrandIcon({ slug, className = 'size-5' }: { slug: string; className?: string }) {
   return (
@@ -106,6 +107,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
 
   const avatarImage = (size: number, className?: string) => (
     <Image
+      placeholder={SHIMMER_PLACEHOLDER}
       src={avatar}
       alt=""
       width={size * 2}

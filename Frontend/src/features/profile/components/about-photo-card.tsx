@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import type { ReactNode } from 'react'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export type PhotoCardChip = {
   name: string
@@ -32,6 +33,7 @@ export function AboutPhotoCard({
           <span className="ab-pc-logo" aria-hidden="true">
             {chip.logo ? (
               <Image
+                placeholder={SHIMMER_PLACEHOLDER}
                 src={chip.logo.url}
                 alt=""
                 width={72}

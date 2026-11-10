@@ -181,6 +181,29 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
   await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
+// Halaman publik sengaja tanpa loading.tsx (DESIGN.md bagian 111): dengan skeleton, HTML statis
+// dikirim berisi skeleton dan isi aslinya disembunyikan sampai ditukar skrip, sehingga tanpa
+// JavaScript yang tampil hanya skeleton, dan halaman bisa berubah menjadi dirender tiap permintaan.
+test('halaman publik tetap statis (ISR) dan terbaca tanpa JavaScript', async ({
+  browser,
+  request,
+}) => {
+  const paths = ['/id', '/en/about', '/id/experience', '/id/projects', '/id/contact', '/id/privacy']
+  for (const path of paths) {
+    const res = await request.get(path)
+    expect(res.status(), path).toBe(200)
+    expect(res.headers()['x-nextjs-cache'], path).toBeDefined()
+  }
+  const ctx = await browser.newContext({ javaScriptEnabled: false })
+  const page = await ctx.newPage()
+  for (const path of paths) {
+    await page.goto(path)
+    await expect(page.locator('main :is(h1, h2)').first(), path).toBeVisible()
+    await expect(page.locator('main [aria-busy="true"]'), path).toHaveCount(0)
+  }
+  await ctx.close()
+})
+
 test.describe('globe skill', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
   test('logo menampilkan rincian, kategori meredupkan yang lain, bisa dengan keyboard', async ({

@@ -9,6 +9,7 @@ import { removeAsset } from '../actions'
 import { formatBytes, needsAlt, UPLOAD_TARGETS, type UploadTarget } from '../targets'
 import { AssetAltForm } from './asset-alt-form'
 import { AssetUploader } from './asset-uploader'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export type AssetView = {
   id: string
@@ -48,6 +49,7 @@ function AssetPreview({ asset, label }: { asset: AssetView; label: string }) {
   }
   return (
     <Image
+      placeholder={SHIMMER_PLACEHOLDER}
       src={asset.url}
       alt={asset.alt_id ?? ''}
       width={asset.width ?? 640}

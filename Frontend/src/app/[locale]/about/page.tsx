@@ -14,6 +14,7 @@ import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { loc } from '@/lib/localized'
 import { pageMetadata } from '@/lib/seo'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export async function generateMetadata({
   params,
@@ -62,6 +63,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
   const cardPhoto = profile?.aboutPhoto ?? profile?.photo ?? null
   const photo = cardPhoto ? (
     <Image
+      placeholder={SHIMMER_PLACEHOLDER}
       src={cardPhoto.url}
       alt={loc(cardPhoto, 'alt', locale)}
       width={cardPhoto.width ?? 480}
@@ -143,6 +145,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                   <span className="ab-edu-logo" aria-hidden="true">
                     {e.logo ? (
                       <Image
+                        placeholder={SHIMMER_PLACEHOLDER}
                         src={e.logo.url}
                         alt=""
                         width={128}

@@ -306,6 +306,28 @@ test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan o
   await expect(type.locator('option')).toHaveText(['Kerja', 'Organisasi'])
 })
 
+test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {
+  // data halaman tujuan ditahan sebentar setelah kerangkanya diambil lewat prefetch
+  await page.goto('/admin', { waitUntil: 'networkidle' })
+  await page.route('**/*', async (route) => {
+    const h = route.request().headers()
+    // hanya permintaan navigasi; prefetch kerangka halaman tujuan dibiarkan lewat
+    if (h['rsc'] === '1' && !h['next-router-prefetch'])
+      await new Promise((r) => setTimeout(r, 1500))
+    await route.continue().catch(() => {})
+  })
+  const loading = page.getByRole('status').filter({ hasText: 'Memuat halaman…' })
+  const tile = page.getByRole('link', { name: 'Pesan baru' })
+  await tile.hover()
+  await page.waitForLoadState('networkidle')
+  await tile.click()
+  await expect(loading).toBeAttached()
+  await expect(page.getByRole('heading', { name: 'Pesan', level: 1 })).toBeVisible({
+    timeout: 15_000,
+  })
+  await expect(loading).toHaveCount(0)
+})
+
 test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan menu kedua', async ({
   page,
   isMobile,
