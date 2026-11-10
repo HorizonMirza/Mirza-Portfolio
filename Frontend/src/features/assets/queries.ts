@@ -18,12 +18,17 @@ const assetSelect = {
 export async function getProfileAssets(): Promise<{
   photo: AssetView | null
   cv: AssetView | null
+  aboutPhoto: AssetView | null
 }> {
   const p = await getDb().profile.findUnique({
     where: { id: 1 },
-    select: { photo: { select: assetSelect }, cv: { select: assetSelect } },
+    select: {
+      photo: { select: assetSelect },
+      cv: { select: assetSelect },
+      aboutPhoto: { select: assetSelect },
+    },
   })
-  return { photo: p?.photo ?? null, cv: p?.cv ?? null }
+  return { photo: p?.photo ?? null, cv: p?.cv ?? null, aboutPhoto: p?.aboutPhoto ?? null }
 }
 
 export async function getHeroPortraitAsset(): Promise<AssetView | null> {

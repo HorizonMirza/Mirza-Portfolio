@@ -10,7 +10,16 @@ export type PhotoCardChip = {
 // Kartu foto halaman Tentang (pilihan C, DESIGN.md bagian 39): foto tanpa bingkai tebal dan tanpa
 // siku bidik, chip kampus di sudut atas, dan chip bendera (kaca, warnanya ikut tema).
 // Chip kampus hanya tampil bila datanya ada; fotonya dipasang oleh halaman lewat `photo`.
-export function AboutPhotoCard({ photo, chip }: { photo: ReactNode; chip: PhotoCardChip | null }) {
+export function AboutPhotoCard({
+  photo,
+  chip,
+  flag = true,
+}: {
+  photo: ReactNode
+  chip: PhotoCardChip | null
+  // chip bendera bisa dimatikan di Admin → About → Profil (2026-11-10)
+  flag?: boolean
+}) {
   return (
     <figure className="ab-pc" data-tilt-target="">
       <div className="ab-pc-frame">
@@ -37,9 +46,11 @@ export function AboutPhotoCard({ photo, chip }: { photo: ReactNode; chip: PhotoC
           <span>{chip.name}</span>
         </div>
       ) : null}
-      <span className="ab-pc-flag" aria-hidden="true">
-        <i />
-      </span>
+      {flag ? (
+        <span className="ab-pc-flag" aria-hidden="true">
+          <i />
+        </span>
+      ) : null}
     </figure>
   )
 }

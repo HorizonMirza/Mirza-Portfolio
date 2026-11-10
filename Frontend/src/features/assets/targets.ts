@@ -9,6 +9,16 @@ export const UPLOAD_TARGETS = {
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
+  // kartu foto halaman Tentang (2026-11-10); kosong = foto profil
+  'about-photo': {
+    label: 'Foto kartu About',
+    kind: 'IMAGE',
+    resourceType: 'image',
+    folder: 'portfolio/profile',
+    maxBytes: 5 * 1024 * 1024,
+    formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+    accept: 'image/jpeg,image/png,image/webp,image/avif',
+  },
   'profile-cv': {
     label: 'CV (PDF)',
     kind: 'DOCUMENT',

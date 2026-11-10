@@ -71,6 +71,18 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         >
           {(a) => <Input {...a} {...register(`currentRole_${lang}`)} />}
         </Field>
+        <Field
+          id={`aboutBandRoles_${lang}`}
+          label={id ? 'Peran di halaman Tentang (opsional)' : 'Roles on the About page (optional)'}
+          hint={
+            id
+              ? 'Di bawah nama pada pita halaman Tentang, dipisah |. Kosong: memakai peran beranda (Home).'
+              : 'Under the name on the About band, separated by |. Empty: uses the home roles.'
+          }
+          error={errors[`aboutBandRoles_${lang}`]?.message}
+        >
+          {(a) => <Input {...a} {...register(`aboutBandRoles_${lang}`)} />}
+        </Field>
       </>
     )
   }
@@ -85,6 +97,22 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
         <Field id="city" label="Kota (opsional)" error={errors.city?.message}>
           {(a) => <Input {...a} {...register('city')} />}
         </Field>
+      </Card>
+
+      <Card className="flex flex-col gap-3">
+        <h2 className="text-h3 font-semibold">Kartu foto</h2>
+        <label className="flex min-h-11 items-center gap-3">
+          <input
+            type="checkbox"
+            className="size-5 accent-primary"
+            {...register('showCampusChip')}
+          />
+          <span>Tampilkan chip kampus (nama dan logo pendidikan terbaru) di atas foto</span>
+        </label>
+        <label className="flex min-h-11 items-center gap-3">
+          <input type="checkbox" className="size-5 accent-primary" {...register('showFlag')} />
+          <span>Tampilkan chip bendera Indonesia di bawah foto</span>
+        </label>
       </Card>
 
       <Card className="flex flex-col gap-4">

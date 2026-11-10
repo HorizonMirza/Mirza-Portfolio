@@ -20,6 +20,7 @@ export async function deleteUnusedAssets(
       id: { in: unique },
       profilePhoto: { is: null },
       profileCv: { is: null },
+      profileAboutOf: { is: null },
       projectCovers: { none: {} },
       projectImages: { none: {} },
       experiences: { none: {} },

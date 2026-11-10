@@ -49,17 +49,23 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
     .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0))
   const current = education.find((e) => !e.end) ?? education.at(-1) ?? null
 
-  const roles = ((profile && loc(profile, 'aboutRoles', locale)) || t('roles'))
+  // peran khusus halaman Tentang, bila kosong peran beranda, lalu teks bawaan
+  const roles = (
+    (profile && (loc(profile, 'aboutBandRoles', locale) || loc(profile, 'aboutRoles', locale))) ||
+    t('roles')
+  )
     .split('|')
     .map((r) => r.trim())
     .filter(Boolean)
 
-  const photo = profile?.photo ? (
+  // foto kartu khusus Tentang, bila kosong foto profil, lalu foto bawaan
+  const cardPhoto = profile?.aboutPhoto ?? profile?.photo ?? null
+  const photo = cardPhoto ? (
     <Image
-      src={profile.photo.url}
-      alt={loc(profile.photo, 'alt', locale)}
-      width={profile.photo.width ?? 480}
-      height={profile.photo.height ?? 600}
+      src={cardPhoto.url}
+      alt={loc(cardPhoto, 'alt', locale)}
+      width={cardPhoto.width ?? 480}
+      height={cardPhoto.height ?? 600}
       sizes="(min-width: 860px) 300px, 80vw"
       priority
       className="ab-pc-photo"
@@ -82,8 +88,9 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
         <PhotoTilt>
           <AboutPhotoCard
             photo={photo}
+            flag={profile?.showFlag ?? true}
             chip={
-              current
+              current && (profile?.showCampusChip ?? true)
                 ? {
                     name: organizationName(current, locale),
                     initials: initials(current.organization),

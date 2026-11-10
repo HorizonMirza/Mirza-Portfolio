@@ -21,6 +21,10 @@ export async function getProfileForEdit(): Promise<ProfileInput> {
     bio_en: p.bio_en,
     currentRole_id: p.currentRole_id ?? '',
     currentRole_en: p.currentRole_en ?? '',
+    aboutBandRoles_id: p.aboutBandRoles_id ?? '',
+    aboutBandRoles_en: p.aboutBandRoles_en ?? '',
+    showCampusChip: p.showCampusChip,
+    showFlag: p.showFlag,
     city: p.city ?? '',
   }
 }

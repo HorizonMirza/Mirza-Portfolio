@@ -19,6 +19,12 @@ export type PublicProfile = {
   currentRole_en: string | null
   aboutRoles_id: string | null
   aboutRoles_en: string | null
+  // kartu foto halaman Tentang: peran, foto, dan chip yang bisa dimatikan (2026-11-10)
+  aboutBandRoles_id: string | null
+  aboutBandRoles_en: string | null
+  aboutPhoto: PublicImage | null
+  showCampusChip: boolean
+  showFlag: boolean
   city: string | null
   email: string | null
   whatsapp: string | null
@@ -53,6 +59,9 @@ const load = unstable_cache(
         where: { id: 1 },
         include: {
           photo: { select: { url: true, width: true, height: true, alt_id: true, alt_en: true } },
+          aboutPhoto: {
+            select: { url: true, width: true, height: true, alt_id: true, alt_en: true },
+          },
           cv: { select: { id: true } },
         },
       }),
@@ -77,6 +86,11 @@ const load = unstable_cache(
       currentRole_en: p.currentRole_en,
       aboutRoles_id: p.aboutRoles_id,
       aboutRoles_en: p.aboutRoles_en,
+      aboutBandRoles_id: p.aboutBandRoles_id,
+      aboutBandRoles_en: p.aboutBandRoles_en,
+      aboutPhoto: safeImage(p.aboutPhoto),
+      showCampusChip: p.showCampusChip,
+      showFlag: p.showFlag,
       city: p.city,
       email: p.email,
       whatsapp: p.whatsapp,

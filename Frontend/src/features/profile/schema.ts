@@ -19,6 +19,11 @@ export const profileSchema = z.object({
   bio_en: requiredText('Bio', 4000),
   currentRole_id: optionalText('Posisi sekarang', 160),
   currentRole_en: optionalText('Current role', 160),
+  // kartu foto halaman Tentang (2026-11-10)
+  aboutBandRoles_id: optionalText('Peran di halaman Tentang', 120).default(''),
+  aboutBandRoles_en: optionalText('Roles on the About page', 120).default(''),
+  showCampusChip: z.boolean().default(true),
+  showFlag: z.boolean().default(true),
   city: optionalText('Kota', 80),
 })
 
@@ -58,6 +63,10 @@ export const emptyProfile: ProfileInput = {
   bio_en: '',
   currentRole_id: '',
   currentRole_en: '',
+  aboutBandRoles_id: '',
+  aboutBandRoles_en: '',
+  showCampusChip: true,
+  showFlag: true,
   city: '',
 }
 

@@ -66,13 +66,14 @@ function revalidateFor(target: UploadTarget) {
 function usageOf(asset: {
   profilePhoto: { id: number } | null
   profileCv?: { id: number } | null
+  profileAboutOf?: { id: number } | null
   experiences: { id: string }[]
   experiencePhotos: { id: string }[]
   heroPortraitOf?: { id: number } | null
   heroArmorOf?: { id: number } | null
 }) {
   if (asset.heroPortraitOf || asset.heroArmorOf) return 'settings' as const
-  if (asset.profilePhoto || asset.profileCv) return 'profile' as const
+  if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf) return 'profile' as const
   if (asset.experiences.length || asset.experiencePhotos.length) return 'experience' as const
   return 'projects' as const
 }
@@ -184,19 +185,25 @@ export async function attachUploadedAsset(
       })
       let old: { id: string; publicId: string } | null = null
 
-      if (t.data === 'profile-photo' || t.data === 'profile-cv') {
-        const field = t.data === 'profile-photo' ? 'photo' : 'cv'
+      if (t.data === 'profile-photo' || t.data === 'profile-cv' || t.data === 'about-photo') {
+        const field =
+          t.data === 'profile-photo' ? 'photo' : t.data === 'about-photo' ? 'aboutPhoto' : 'cv'
         const profile = await tx.profile.findUnique({
           where: { id: 1 },
           select: {
             photo: { select: { id: true, publicId: true } },
             cv: { select: { id: true, publicId: true } },
+            aboutPhoto: { select: { id: true, publicId: true } },
           },
         })
         if (!profile) throw new ProfileMissingError()
         old = profile[field]
         const data: Prisma.ProfileUncheckedUpdateInput =
-          field === 'photo' ? { photoId: asset.id } : { cvId: asset.id }
+          field === 'photo'
+            ? { photoId: asset.id }
+            : field === 'aboutPhoto'
+              ? { aboutPhotoId: asset.id }
+              : { cvId: asset.id }
         await tx.profile.update({ where: { id: 1 }, data })
       } else if (t.data === 'hero-portrait') {
         // armor hero tidak bisa diganti lagi sejak 2026-11-10 (selalu gambar bawaan repo)
@@ -293,6 +300,7 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
           alt_id: true,
           alt_en: true,
           profilePhoto: { select: { id: true } },
+          profileAboutOf: { select: { id: true } },
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
@@ -334,6 +342,7 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           kind: true,
           profilePhoto: { select: { id: true } },
           profileCv: { select: { id: true } },
+          profileAboutOf: { select: { id: true } },
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
