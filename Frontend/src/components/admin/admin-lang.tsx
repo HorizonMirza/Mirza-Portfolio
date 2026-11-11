@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useSyncExternalStore,
 } from 'react'
 import { flushSync } from 'react-dom'
@@ -18,7 +19,7 @@ import {
   type AdminVars,
   parseAdminLang,
 } from '@/lib/admin-i18n'
-import { scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
+import { scrambleLanguageSwitch, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
@@ -29,6 +30,8 @@ import { cn } from '@/lib/utils'
 export type ContentLang = AdminLang
 
 const listeners = new Set<() => void>()
+// panel admin: kolom form ikut diacak, dan batas node lebih besar karena satu layar memuat banyak teks
+const SCRAMBLE = { fields: true, max: 600 }
 
 function readCookie(): string | null {
   const match = document.cookie.match(new RegExp(`(?:^|; )${ADMIN_LANG_COOKIE}=([^;]*)`))
@@ -66,16 +69,27 @@ export function AdminLangProvider({
 }) {
   const router = useRouter()
   const lang = useSyncExternalStore(subscribe, read, () => initial)
+  // sesi animasi yang sedang berjalan; dihentikan bila bahasa diganti lagi
+  const stopScramble = useRef<(() => void) | null>(null)
+
+  // Seluruh teks yang berubah ikut efek acak huruf (permintaan pemilik 2026-11-11, DESIGN.md bagian
+  // 116): teks client component berganti seketika dan langsung diacak; teks server component (judul
+  // halaman, deskripsi, kartu) tiba bertahap setelah router.refresh(), jadi DOM diamati beberapa detik
+  // dan teks baru diacak begitu muncul.
   const setLang = useCallback(
     (next: AdminLang) => {
+      const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const before = animate ? visibleTexts(document.body, SCRAMBLE) : []
       document.cookie = `${ADMIN_LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`
       document.documentElement.lang = next
-      listeners.forEach((listener) => listener())
-      // judul halaman dan isi dashboard dirender server: muat ulang dalam bahasa baru
+      flushSync(() => listeners.forEach((listener) => listener()))
+      stopScramble.current?.()
+      stopScramble.current = animate ? scrambleLanguageSwitch(before, SCRAMBLE) : null
       router.refresh()
     },
     [router],
   )
+
   return <Ctx.Provider value={{ lang, setLang }}>{children}</Ctx.Provider>
 }
 
@@ -98,7 +112,8 @@ export function AdminText({ text }: { text: string }) {
 // Satu tombol bulat seperti tombol bahasa situs publik (revisi pemilik 2026-11-06, menggantikan
 // pasangan ID | EN): kode yang terlihat adalah bahasa tujuan dan menjadi awal nama aksesibel
 // (WCAG 2.5.3, DESIGN.md bagian 102). Saat ditekan: suara acak digital yang sama, tampilan dan kolom
-// isian berganti bahasa, lalu teks yang berubah di layar diacak dan terurai seperti di situs publik.
+// isian berganti bahasa, lalu semua teks yang berubah di layar diacak dan terurai seperti di situs
+// publik (lihat AdminLangProvider).
 export function LangSwitch({ className }: { className?: string }) {
   const { lang, setLang } = useAdminLang()
   const target: AdminLang = lang === 'id' ? 'en' : 'id'
@@ -107,11 +122,7 @@ export function LangSwitch({ className }: { className?: string }) {
 
   function toggle() {
     playLanguageSound(target === 'en')
-    const before = visibleTexts()
-    flushSync(() => setLang(target))
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      scrambleVisibleText(document.body, before)
-    }
+    setLang(target)
   }
 
   return (

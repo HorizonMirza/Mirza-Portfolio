@@ -349,9 +349,15 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
   )
   if (!isMobile) {
     const menu = page.getByRole('navigation', { name: 'Menu admin' })
-    await expect(menu.getByRole('link', { name: 'About' })).toHaveAttribute('aria-current', 'page')
-    for (const old of ['Profil', 'Project', 'Skill', 'Pengalaman'])
-      await expect(menu.getByRole('link', { name: old, exact: true })).toHaveCount(0)
+    // nama menu situs berbahasa Indonesia di mode Indonesia (About → Tentang)
+    await expect(menu.getByRole('link', { name: 'Tentang' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    )
+    // halaman data (profil, project, skill, pengalaman) hanya lewat tab modul, bukan menu sendiri.
+    // Dicek lewat alamat: nama menu Projects/Experience di mode Indonesia memang Project/Pengalaman.
+    for (const old of ['/admin/profile', '/admin/projects', '/admin/skills', '/admin/experience'])
+      await expect(menu.locator(`a[href="${old}"]`)).toHaveCount(0)
   }
 })
 
@@ -364,7 +370,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
   // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; DESIGN.md bagian 113)
-  const title = bar.getByText('About', { exact: true })
+  const title = bar.getByText('Tentang', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
   // logo dan nama panel pindah ke sidebar; Akun tidak lagi di sidebar (revisi 2026-11-11)
@@ -475,6 +481,62 @@ test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   await page.getByRole('link', { name: 'Dashboard' }).first().click()
   await expect(page).toHaveURL(/\/admin$/)
   await expect.poll(() => main.evaluate((el) => el.scrollTop)).toBe(0)
+})
+
+test.describe('animasi ganti bahasa admin', () => {
+  // tes lain mematikan animasi (reducedMotion); di sini animasi harus berjalan
+  test.use({ contextOptions: { reducedMotion: 'no-preference' } })
+
+  test('judul dari server dan isi kolom form ikut efek acak huruf', async ({ page }) => {
+    // permintaan pemilik 2026-11-11 (DESIGN.md bagian 116): SELURUH teks yang berganti ikut efek,
+    // termasuk judul halaman yang baru tiba setelah router.refresh() dan isi kolom form. Halaman About:
+    // judul dan kolom pertama langsung terlihat di layar biasa (layar sangat tinggi membuat WebKit
+    // berskala 2-3x di sandbox hanya menggambar sekitar 1 frame per detik).
+    await page.goto('/admin/pages/about')
+    const h1 = page.locator('main h1')
+    await expect(h1).toHaveText('Tentang')
+    // rekam setiap teks judul dan isi kolom Judul (nilai atau placeholder) yang tampil, tiap frame
+    await page.evaluate(() => {
+      const seen = { title: new Set<string>(), field: new Set<string>() }
+      Object.assign(window, { __seen: seen })
+      const tick = () => {
+        seen.title.add(document.querySelector('main h1')?.textContent ?? '')
+        const field = document.querySelector<HTMLInputElement>('#About-title-id, #About-title-en')
+        if (field) seen.field.add(field.value || field.placeholder)
+        requestAnimationFrame(tick)
+      }
+      tick()
+    })
+    const fieldText = async () =>
+      page
+        .locator('#About-title-id, #About-title-en')
+        .evaluate((el: HTMLInputElement) => el.value || el.placeholder)
+    const idValue = await fieldText()
+    const toEnglish = page.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
+    await expect(async () => {
+      if (await toEnglish.count()) await toEnglish.click()
+      await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 1000 })
+    }).toPass()
+    await expect(h1).toHaveText('About')
+    await expect(page.locator('#About-title-en')).toBeVisible()
+    // tunggu animasi selesai, lalu ambil teks akhir kolom
+    await expect.poll(fieldText).not.toMatch(/^$/)
+    await page.waitForTimeout(1200)
+    const enValue = await fieldText()
+    // ada tulisan antara (huruf acak) selain teks lama dan teks baru; judul dari server diacak setelah
+    // teksnya tiba, jadi ditunggu
+    const between = (key: 'title' | 'field', known: string[]) =>
+      page.evaluate(
+        ({ key, known }) => {
+          const s = (window as unknown as { __seen: Record<string, Set<string>> }).__seen
+          return [...s[key]!].filter((v) => v && !known.includes(v)).length
+        },
+        { key, known },
+      )
+    await expect.poll(() => between('title', ['Tentang', 'About'])).toBeGreaterThan(0)
+    await expect.poll(() => between('field', [idValue, enValue])).toBeGreaterThan(0)
+    await expect(h1).toHaveText('About')
+  })
 })
 
 test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {

@@ -15,6 +15,19 @@ export function parseAdminLang(value: string | null | undefined): AdminLang {
 
 export type AdminVars = Record<string, string | number>
 
+// Nama halaman situs yang di kode ditulis dalam bahasa Inggris (sama dengan menu situs publik versi
+// Inggris). Dalam mode Indonesia memakai nama menu situs publik versi Indonesia (messages/id.json Nav)
+// agar tidak ada nama Inggris di tampilan Indonesia (permintaan pemilik 2026-11-11, DESIGN.md bagian 116).
+const ID: Record<string, string> = {
+  Home: 'Beranda',
+  About: 'Tentang',
+  Experience: 'Pengalaman',
+  Projects: 'Project',
+  Contact: 'Kontak',
+  Navbar: 'Navigasi',
+  Footer: 'Kaki Halaman',
+}
+
 // Kalimat yang memuat nama isian atau angka (pesan validasi dan hasil aksi dari server). Bagian
 // yang berubah diterjemahkan lagi lewat kamus bila ada (mis. nama isian).
 const PATTERNS: [RegExp, (m: RegExpExecArray, tr: (text: string) => string) => string][] = [
@@ -73,7 +86,7 @@ function fill(text: string, vars?: AdminVars) {
 
 // Terjemahkan teks admin. Teks yang tidak ada di kamus tampil apa adanya (mis. nama project).
 export function adminT(lang: AdminLang, text: string, vars?: AdminVars): string {
-  return fill(lang === 'en' ? translate(text) : text, vars)
+  return fill(lang === 'en' ? translate(text) : (ID[text] ?? text), vars)
 }
 
 // Teks bertemplat (angka di dalam kalimat)
