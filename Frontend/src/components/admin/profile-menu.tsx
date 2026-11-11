@@ -79,7 +79,7 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
       {open ? (
         <div
           id={panelId}
-          className="absolute top-full right-0 z-40 mt-2 w-64 rounded-2xl border border-border bg-surface p-2 shadow-lg"
+          className="admin-pop absolute top-full right-0 z-40 mt-3 w-64 rounded-2xl border border-border p-2 shadow-2xl"
         >
           <div className="px-3.5 py-2">
             <p className="text-sm leading-snug font-semibold">{adminName}</p>

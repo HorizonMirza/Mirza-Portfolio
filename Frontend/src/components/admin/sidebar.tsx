@@ -18,13 +18,19 @@ function Lamp() {
   )
 }
 
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+// rail: sidebar kaca di tablet hanya ikon (label tetap ada untuk pembaca layar), penuh di desktop
+function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?: boolean }) {
   const pathname = usePathname()
   return (
-    <nav aria-label="Menu admin" className="flex flex-col gap-5">
+    <nav aria-label="Menu admin" className={cn('flex flex-col', rail ? 'gap-3 lg:gap-5' : 'gap-5')}>
       {adminNavGroups.map((group) => (
         <div key={group}>
-          <p className="mb-1.5 px-3.5 text-[0.6875rem] font-semibold tracking-widest text-muted uppercase">
+          <p
+            className={cn(
+              'mb-1.5 px-3.5 text-[0.6875rem] font-semibold tracking-widest text-muted uppercase',
+              rail && 'sr-only lg:not-sr-only',
+            )}
+          >
             {group}
           </p>
           <ul className="flex flex-col gap-0.5">
@@ -39,13 +45,15 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
                       href={href}
                       onClick={onNavigate}
                       aria-current={active ? 'page' : undefined}
+                      title={rail ? label : undefined}
                       className={cn(
-                        'relative flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2/60 hover:text-text',
+                        'relative flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text',
+                        rail && 'max-lg:justify-center max-lg:px-0',
                         active && 'bg-surface-2 text-text',
                       )}
                     >
-                      <Icon className="size-4" aria-hidden="true" />
-                      {label}
+                      <Icon className="size-4 shrink-0" aria-hidden="true" />
+                      <span className={rail ? 'max-lg:sr-only' : undefined}>{label}</span>
                       {active ? <Lamp /> : null}
                     </Link>
                   </li>
@@ -74,13 +82,14 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-// Desktop (≥ 1024 px): sidebar penuh di tepi kiri setinggi layar (bisa digulir sendiri tanpa batang
-// gulir), jadi semua menu tetap terlihat walau halamannya panjang.
+// Sidebar kaca (desain 5+, DESIGN.md bagian 112): menempel di bawah top bar setinggi sisa layar (bisa
+// digulir sendiri tanpa batang gulir). Tablet (768-1023 px): rel ikon; desktop: menu penuh. Di HP
+// menu dibuka lewat laci dan dock bawah (top-bar.tsx). Nama panel ada di top bar.
 export function AdminSidebar() {
   return (
-    <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 border-r border-border bg-surface lg:block">
-      <div className="flex h-full flex-col gap-6 overflow-y-auto overscroll-contain p-4">
-        <SidebarNav />
+    <aside className="admin-glass-panel sticky top-[5.5rem] hidden h-[calc(100dvh-6.5rem)] w-[4.75rem] shrink-0 rounded-[23px] md:block lg:w-60">
+      <div className="h-full overflow-y-auto overscroll-contain px-2.5 py-4 lg:px-3">
+        <NavLinks rail />
       </div>
     </aside>
   )

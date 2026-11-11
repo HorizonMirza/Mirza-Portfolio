@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { AdminLangProvider } from '@/components/admin/admin-lang'
+import { AdminGlassShell } from '@/components/admin/glass-settings'
 import { AdminSidebar } from '@/components/admin/sidebar'
 import { AdminTopBar } from '@/components/admin/top-bar'
 import { getPublicProfile } from '@/features/profile/public'
@@ -15,15 +16,20 @@ export default async function PanelLayout({ children }: { children: ReactNode })
   const identity = { adminName: admin.name, photo: profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR }
   return (
     <AdminLangProvider>
-      <div className="min-h-dvh lg:flex">
-        <AdminSidebar />
-        <div className="min-w-0 flex-1">
-          <AdminTopBar {...identity} />
-          <main id="main" className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-            {children}
+      {/* Desain 5+ (pilihan pemilik 2026-11-11, DESIGN.md bagian 112): top bar, sidebar, dan panel isi
+          dari kaca buram hitam-putih di atas latar yang bisa diatur lewat tombol Atur kaca */}
+      <AdminGlassShell>
+        <AdminTopBar {...identity} />
+        <div className="mt-3 flex items-start gap-4 md:mt-4">
+          <AdminSidebar />
+          <main
+            id="main"
+            className="admin-glass-panel min-h-[calc(100dvh-6.5rem)] min-w-0 flex-1 rounded-[20px] px-4 pt-6 pb-28 sm:px-6 md:rounded-[27px] md:pb-10 lg:px-8 lg:pt-8"
+          >
+            <div className="admin-main-in mx-auto w-full max-w-6xl">{children}</div>
           </main>
         </div>
-      </div>
+      </AdminGlassShell>
     </AdminLangProvider>
   )
 }

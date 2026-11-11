@@ -13,7 +13,7 @@ export function FormFooter({
   submitLabel?: string
 }) {
   return (
-    <div className="sticky bottom-0 -mx-4 flex justify-end gap-2 border-t border-border bg-bg/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:backdrop-blur-none">
+    <div className="sticky bottom-20 -mx-2 flex justify-end gap-2 rounded-2xl border border-border bg-bg/95 px-3 py-3 backdrop-blur md:static md:mx-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:backdrop-blur-none">
       {cancelHref ? (
         <Button variant="secondary" asChild>
           <Link href={cancelHref}>Batal</Link>
