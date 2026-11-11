@@ -23,7 +23,7 @@ test.describe('Admin → Akun', () => {
     await expect(devices).toHaveAttribute('aria-expanded', 'false')
     await devices.click()
     await expect(devices).toHaveAttribute('aria-expanded', 'true')
-    await expect(main.getByText('Perangkat ini')).toBeVisible()
+    await expect(main.getByText('Perangkat ini', { exact: true })).toBeVisible()
   })
 
   test('ganti password: aturan dicentang dan meter kekuatan saat mengetik', async ({ page }) => {
@@ -154,8 +154,13 @@ test.describe('Admin → Pengaturan', () => {
   test('batas pesan per jam di luar 1–50 ditandai tanpa disimpan', async ({ page }) => {
     await page.goto('/admin/settings')
     const limit = page.getByRole('spinbutton', { name: 'Batas pesan per jam' })
-    await limit.fill('0')
-    await expect(limit).toHaveAttribute('aria-invalid', 'true')
+    // Isian bisa masuk sebelum React selesai hidrasi (WebKit di CI): diulang sampai tanda galat
+    // muncul. Hanya nilai tidak sah yang diisi, jadi tidak ada yang tersimpan.
+    await expect(async () => {
+      await limit.fill('')
+      await limit.fill('0')
+      await expect(limit).toHaveAttribute('aria-invalid', 'true', { timeout: 1000 })
+    }).toPass()
     await expect(page.getByText('Isi angka 1 sampai 50')).toBeVisible()
     await page.reload()
     await expect(page.getByRole('spinbutton', { name: 'Batas pesan per jam' })).not.toHaveValue('0')
@@ -179,7 +184,7 @@ test.describe('Log audit', () => {
     await expect(page).toHaveURL(/q=tidak-ada-zzzz-123/)
     // saringan aksi tetap dipakai bersama pencarian
     await expect(page).toHaveURL(/action=delete/)
-    await expect(page.getByText('Tidak ada catatan yang cocok.')).toBeVisible()
+    await expect(page.locator('main').getByText('Tidak ada catatan yang cocok.')).toBeVisible()
     await page.getByRole('link', { name: 'Hapus saringan' }).click()
     await expect(page).toHaveURL(/\/admin\/audit$/)
   })

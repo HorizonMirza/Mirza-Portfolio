@@ -1560,3 +1560,7 @@ Pemilik memilih desain 1 dari 10 demo Pengaturan ("buat paling lengkap"). Nama m
 - **Saring:** kotak cari "Cari target atau kolom" (isi perubahan, nama data, nama entitas dalam ID/EN, awal ID), chip aksi (Semua, buat, ubah, hapus, urutkan, password, keluarkan perangkat), dan chip data (Semua data, Pesan, Profil, Project, …). Semuanya parameter URL dan bisa digabung. **Muat lagi** menambah 50 baris (maks. 2.000).
 - Pencarian isi perubahan memakai SQL berparameter (`diff::text ILIKE`, `%` dan `_` di-escape).
 
+## 122. Menu sidebar admin berujung seperti menu profil (2026-11-11 sore)
+
+- Permintaan pemilik: efek menu sidebar yang ditekan/aktif sama dengan item menu profil di top bar. Sorotan item sidebar kini kotak bersudut kecil (`rounded-md`, latar `surface-2`), bukan kapsul (`rounded-full`), dan lampu di tepi kiri menu aktif dihapus (bagian 107/113), jadi sorotan aktif dan saat disorot sama persis dengan menu profil. Berlaku juga di rel ikon tablet dan laci HP.
+

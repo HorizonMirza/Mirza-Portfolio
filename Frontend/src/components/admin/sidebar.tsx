@@ -7,18 +7,6 @@ import { useAdminT } from '@/components/admin/admin-lang'
 import { adminNav, adminNavGroups, isNavActive } from '@/components/admin/nav'
 import { cn } from '@/lib/utils'
 
-// Lampu hitam/putih (ikut warna teks tema) di tepi kiri menu aktif, seperti topbar situs publik.
-function Lamp() {
-  return (
-    <span
-      aria-hidden="true"
-      className="pointer-events-none absolute top-1/2 -left-[5px] h-6 w-1 -translate-y-1/2 rounded-l-full bg-text"
-    >
-      <span className="absolute -top-2 -left-3 h-10 w-6 rounded-full bg-text/20 blur-md" />
-    </span>
-  )
-}
-
 // Logo dan nama panel di puncak sidebar (revisi pemilik 2026-11-11: pindah dari top bar)
 function Brand({ rail = false, onNavigate }: { rail?: boolean; onNavigate?: () => void }) {
   return (
@@ -79,14 +67,13 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
                         aria-current={active ? 'page' : undefined}
                         title={rail ? label : undefined}
                         className={cn(
-                          'relative flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text',
+                          'relative flex min-h-10 items-center gap-3 rounded-md px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text',
                           rail && 'max-lg:justify-center max-lg:px-0',
                           active && 'bg-surface-2 text-text',
                         )}
                       >
                         <Icon className="size-4 shrink-0" aria-hidden="true" />
                         <span className={rail ? 'max-lg:sr-only' : undefined}>{label}</span>
-                        {active ? <Lamp /> : null}
                       </Link>
                     </li>
                   )
