@@ -39,10 +39,6 @@ const EN: Record<string, string> = {
   // Atur kaca
   'Atur kaca': 'Glass',
   'Tampilan kaca': 'Glass appearance',
-  'Tutup pengaturan kaca': 'Close glass settings',
-  'Berlaku di seluruh panel admin dan tersimpan di browser ini.':
-    'Applies to the whole admin panel and is saved in this browser.',
-  'Contoh material': 'Material preview',
   'Preset kaca': 'Glass presets',
   Bening: 'Clear',
   Buram: 'Frosted',
@@ -52,7 +48,7 @@ const EN: Record<string, string> = {
   Latar: 'Background',
   'Latar panel admin': 'Admin background',
   Gradasi: 'Gradient',
-  'Kotak commit': 'Commit grid',
+  Titik: 'Dots',
   Polos: 'Plain',
   'Atur ulang tampilan': 'Reset appearance',
   // dashboard

@@ -36,7 +36,7 @@ export function AdminTopBar(props: AdminIdentity) {
   const onSitePage = !DOCK.some((item) => dockItem(item.href))
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <header className="admin-glass-panel sticky top-3 z-30 flex h-[3.875rem] items-center gap-1.5 rounded-[18px] px-2 sm:gap-2 sm:px-3 md:top-4 md:rounded-[20px] md:pr-3 md:pl-5">
+      <header className="admin-glass-panel relative z-30 flex h-[3.875rem] shrink-0 items-center gap-1.5 rounded-[18px] px-2 sm:gap-2 sm:px-3 md:rounded-[20px] md:pr-3 md:pl-5">
         <SheetTrigger asChild>
           <button
             type="button"

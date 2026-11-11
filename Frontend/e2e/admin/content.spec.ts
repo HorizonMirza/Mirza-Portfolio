@@ -367,9 +367,9 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
   // logo dan nama panel pindah ke sidebar; Akun tidak lagi di sidebar (revisi 2026-11-11)
   await expect(bar.getByText('Super Admin', { exact: true })).toHaveCount(0)
-  await expect(
-    page.getByRole('navigation', { name: 'Menu admin' }).getByRole('link', { name: 'Akun' }),
-  ).toHaveCount(0)
+  const sidebar = page.getByRole('navigation', { name: 'Menu admin' })
+  for (const moved of ['Akun', 'Log audit', 'Pengaturan'])
+    await expect(sidebar.getByRole('link', { name: moved })).toHaveCount(0)
 
   // bahasa admin menentukan kolom yang tampil di form dua bahasa
   await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toBeVisible()
@@ -393,7 +393,12 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.getByRole('link', { name: 'Page text' })).toBeVisible()
-  await bar.getByRole('button', { name: 'Profile menu' }).click()
+  const profileEn = bar.getByRole('button', { name: 'Profile menu' })
+  await profileEn.click()
+  // urutan mengikuti panjang tulisan dalam bahasa yang tampil
+  await expect(
+    page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
+  ).toHaveText(['Account', 'Settings', /^View site/, 'Audit log'])
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
   // kembalikan ke Indonesia
@@ -404,12 +409,19 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   }).toPass()
   await expect(page.getByRole('link', { name: 'Teks halaman' })).toBeVisible()
 
-  // menu profil: kepala (nama dan peran), lalu Lihat situs, Akun, dan Keluar berwarna merah
+  // menu profil: kepala (nama dan peran), lalu tautan dari tulisan terpendek (Log audit dan Pengaturan
+  // pindah dari sidebar, revisi 2026-11-11), dan Keluar berwarna merah paling bawah
   const profile = bar.getByRole('button', { name: 'Menu profil' })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
   await expect(panel.getByText('Super Admin', { exact: true })).toBeVisible()
-  await expect(panel.locator('a, button')).toHaveText([/Lihat situs/, /Akun/, /Keluar/])
+  await expect(panel.locator('a, button')).toHaveText([
+    /^Akun$/,
+    /^Log audit$/,
+    /^Pengaturan$/,
+    /^Lihat situs/,
+    /^Keluar$/,
+  ])
   // warna yang benar-benar tampil, bukan sekadar nama kelas: Keluar merah, beda dari Akun
   const color = (name: string) =>
     panel
@@ -427,6 +439,33 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   expect(await color('Akun')).not.toBe(danger)
   await page.keyboard.press('Escape')
   await expect(page.getByRole('button', { name: 'Keluar' })).toHaveCount(0)
+})
+
+test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
+  page,
+  browserName,
+  isMobile,
+}) => {
+  // revisi pemilik 2026-11-11 (DESIGN.md bagian 114): top bar dan sidebar diam, isi digulir di dalam
+  await page.goto('/admin/messages')
+  const main = page.locator('main')
+  const bar = page.getByRole('banner')
+  const before = await bar.boundingBox()
+  await expect.poll(() => main.evaluate((el) => el.scrollHeight > el.clientHeight + 100)).toBe(true)
+  if (browserName === 'webkit' && isMobile) {
+    // roda tetikus tidak didukung WebKit mobile di Playwright: gulir panel isi langsung
+    await main.evaluate((el) => el.scrollBy(0, 900))
+  } else {
+    await main.hover()
+    await page.mouse.wheel(0, 900)
+  }
+  await expect.poll(() => main.evaluate((el) => el.scrollTop)).toBeGreaterThan(200)
+  expect(await page.evaluate(() => window.scrollY)).toBe(0)
+  expect(await bar.boundingBox()).toEqual(before)
+  // pindah menu: isi halaman baru mulai dari atas lagi
+  await page.getByRole('link', { name: 'Dashboard' }).first().click()
+  await expect(page).toHaveURL(/\/admin$/)
+  await expect.poll(() => main.evaluate((el) => el.scrollTop)).toBe(0)
 })
 
 test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
@@ -450,5 +489,10 @@ test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
       () => window.innerWidth - document.documentElement.clientWidth,
     )
     expect(gutter, `${path} masih punya batang gulir`).toBe(0)
+    // isi halaman digulir di dalam panel besar; batang gulirnya juga disembunyikan
+    const inner = await page
+      .locator('main')
+      .evaluate((el: HTMLElement) => el.offsetWidth - el.clientWidth)
+    expect(inner, `${path} panel isi masih punya batang gulir`).toBe(0)
   }
 })

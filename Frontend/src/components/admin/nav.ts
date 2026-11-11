@@ -66,9 +66,16 @@ export const adminNav: readonly NavItem[] = [
   { href: '/admin/pages/privacy', label: 'Privasi', icon: ShieldCheck, group: 'Halaman situs' },
   { href: '/admin/pages/other', label: 'Halaman lain', icon: Ghost, group: 'Halaman situs' },
   { href: '/admin/messages', label: 'Pesan', icon: Inbox, group: 'Kotak masuk' },
-  { href: '/admin/audit', label: 'Log audit', icon: History, group: 'Sistem' },
-  { href: '/admin/settings', label: 'Pengaturan', icon: Settings, group: 'Sistem' },
-  // Akun dibuka dari menu profil di top bar, tidak di sidebar (revisi pemilik 2026-11-11)
+  // Log audit, Pengaturan, dan Akun dibuka dari menu profil di top bar, tidak di sidebar (revisi
+  // pemilik 2026-11-11); tetap terdaftar agar nama halaman di top bar dan dock HP berfungsi
+  { href: '/admin/audit', label: 'Log audit', icon: History, group: 'Sistem', inSidebar: false },
+  {
+    href: '/admin/settings',
+    label: 'Pengaturan',
+    icon: Settings,
+    group: 'Sistem',
+    inSidebar: false,
+  },
   { href: '/admin/account', label: 'Akun', icon: KeyRound, group: 'Sistem', inSidebar: false },
 ]
 

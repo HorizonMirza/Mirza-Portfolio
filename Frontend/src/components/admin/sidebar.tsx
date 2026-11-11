@@ -50,46 +50,50 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
       aria-label={t('Menu admin')}
       className={cn('flex flex-col', rail ? 'gap-3 lg:gap-5' : 'gap-5')}
     >
-      {adminNavGroups.map((group) => (
-        <div key={group}>
-          <p
-            className={cn(
-              'mb-1.5 px-3.5 text-xs font-medium text-muted',
-              rail && 'sr-only lg:not-sr-only',
-            )}
-          >
-            {t(group)}
-          </p>
-          <ul className="flex flex-col gap-0.5">
-            {adminNav
-              .filter((item) => item.group === group && item.inSidebar !== false)
-              .map((item) => {
-                const { href, icon: Icon } = item
-                const label = t(item.label)
-                const active = isNavActive(pathname, item)
-                return (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      onClick={onNavigate}
-                      aria-current={active ? 'page' : undefined}
-                      title={rail ? label : undefined}
-                      className={cn(
-                        'relative flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text',
-                        rail && 'max-lg:justify-center max-lg:px-0',
-                        active && 'bg-surface-2 text-text',
-                      )}
-                    >
-                      <Icon className="size-4 shrink-0" aria-hidden="true" />
-                      <span className={rail ? 'max-lg:sr-only' : undefined}>{label}</span>
-                      {active ? <Lamp /> : null}
-                    </Link>
-                  </li>
-                )
-              })}
-          </ul>
-        </div>
-      ))}
+      {adminNavGroups
+        .filter((group) =>
+          adminNav.some((item) => item.group === group && item.inSidebar !== false),
+        )
+        .map((group) => (
+          <div key={group}>
+            <p
+              className={cn(
+                'mb-1.5 px-3.5 text-xs font-medium text-muted',
+                rail && 'sr-only lg:not-sr-only',
+              )}
+            >
+              {t(group)}
+            </p>
+            <ul className="flex flex-col gap-0.5">
+              {adminNav
+                .filter((item) => item.group === group && item.inSidebar !== false)
+                .map((item) => {
+                  const { href, icon: Icon } = item
+                  const label = t(item.label)
+                  const active = isNavActive(pathname, item)
+                  return (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        onClick={onNavigate}
+                        aria-current={active ? 'page' : undefined}
+                        title={rail ? label : undefined}
+                        className={cn(
+                          'relative flex min-h-10 items-center gap-3 rounded-full px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text',
+                          rail && 'max-lg:justify-center max-lg:px-0',
+                          active && 'bg-surface-2 text-text',
+                        )}
+                      >
+                        <Icon className="size-4 shrink-0" aria-hidden="true" />
+                        <span className={rail ? 'max-lg:sr-only' : undefined}>{label}</span>
+                        {active ? <Lamp /> : null}
+                      </Link>
+                    </li>
+                  )
+                })}
+            </ul>
+          </div>
+        ))}
     </nav>
   )
 }
@@ -104,12 +108,12 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-// Sidebar kaca (desain 5+, DESIGN.md bagian 112-113): penuh dari atas sampai bawah layar di kiri top
-// bar dan panel isi, berisi logo dan nama panel lalu menu (bisa digulir sendiri tanpa batang gulir).
+// Sidebar kaca (desain 5+, DESIGN.md bagian 112-114): penuh dari atas sampai bawah layar di kiri top
+// bar dan panel isi, tidak ikut bergulir, berisi logo dan nama panel lalu menu (bisa digulir sendiri tanpa batang gulir).
 // Tablet (768-1023 px): rel ikon; desktop: menu penuh. Di HP menu dibuka lewat laci dan dock bawah.
 export function AdminSidebar() {
   return (
-    <aside className="admin-glass-panel sticky top-4 hidden h-[calc(100dvh-2rem)] w-[4.75rem] shrink-0 rounded-[23px] md:block lg:w-60">
+    <aside className="admin-glass-panel hidden h-full w-[4.75rem] shrink-0 rounded-[23px] md:block lg:w-60">
       <div className="flex h-full flex-col gap-5 overflow-y-auto overscroll-contain px-2.5 py-3 lg:px-3">
         <Brand rail />
         <NavLinks rail />

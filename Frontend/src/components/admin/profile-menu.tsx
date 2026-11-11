@@ -1,6 +1,6 @@
 'use client'
 
-import { ExternalLink, KeyRound, LogOut } from 'lucide-react'
+import { ExternalLink, History, KeyRound, LogOut, Settings } from 'lucide-react'
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -18,11 +18,22 @@ const itemBase =
   'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-sm font-semibold transition-colors'
 const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 
-// Foto bulat di pojok kanan atas; menekannya membuka kepala menu (foto, nama, peran), lalu Lihat situs,
-// Akun, dan Keluar (urutan dari pemilik 2026-11-11).
+// Isi menu profil (revisi pemilik 2026-11-11): Log audit dan Pengaturan pindah ke sini dari sidebar.
+// Diurutkan dari tulisan terpendek ke terpanjang dalam bahasa yang tampil; Keluar tetap paling bawah.
+const MENU_ITEMS = [
+  { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
+  { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
+  { label: 'Log audit', href: '/admin/audit', icon: History, external: false },
+  { label: 'Pengaturan', href: '/admin/settings', icon: Settings, external: false },
+] as const
+
+// Foto bulat di pojok kanan atas; menekannya membuka kepala menu (foto, nama, peran), lalu tautan menu
+// (terpendek dulu) dan Keluar berwarna merah.
 export function ProfileMenu({ adminName, photo }: AdminIdentity) {
   const router = useRouter()
   const t = useAdminT()
+  // sort stabil: label sama panjang tetap dalam urutan MENU_ITEMS
+  const items = [...MENU_ITEMS].sort((a, b) => t(a.label).length - t(b.label).length)
   const [open, setOpen] = useState(false)
   // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan
   // (audit 2026-11-02, PERF-06). Ref ikut dicek karena state baru berlaku di render berikutnya.
@@ -102,15 +113,26 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
             </div>
           </div>
           <div className="my-1 border-t border-border" />
-          <a href="/id" target="_blank" rel="noopener noreferrer" className={itemClass}>
-            <ExternalLink className="size-4" aria-hidden="true" />
-            {t('Lihat situs')}
-            <span className="sr-only">{t('(membuka tab baru)')}</span>
-          </a>
-          <Link href="/admin/account" className={itemClass} onClick={() => setOpen(false)}>
-            <KeyRound className="size-4" aria-hidden="true" />
-            {t('Akun')}
-          </Link>
+          {items.map(({ label, href, icon: Icon, external }) =>
+            external ? (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={itemClass}
+              >
+                <Icon className="size-4" aria-hidden="true" />
+                {t(label)}
+                <span className="sr-only">{t('(membuka tab baru)')}</span>
+              </a>
+            ) : (
+              <Link key={href} href={href} className={itemClass} onClick={() => setOpen(false)}>
+                <Icon className="size-4" aria-hidden="true" />
+                {t(label)}
+              </Link>
+            ),
+          )}
           <div className="my-1 border-t border-border" />
           {/* Keluar berwarna merah, terpisah garis (revisi pemilik 2026-11-11) */}
           <button
