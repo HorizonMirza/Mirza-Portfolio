@@ -14,6 +14,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { cn } from '@/lib/utils'
 
 // Tampilan kaca panel admin (pilihan pemilik 2026-11-11, demo 5+, DESIGN.md bagian 112): blur,
@@ -148,6 +149,7 @@ function Range({
 
 // Tombol "Atur kaca" di top bar beserta panelnya.
 export function GlassControl() {
+  const t = useAdminT()
   const glass = useContext(Ctx)
   const [open, setOpen] = useState(false)
   const root = useRef<HTMLDivElement>(null)
@@ -179,7 +181,7 @@ export function GlassControl() {
   )?.[0]
 
   return (
-    <div ref={root} className="relative">
+    <div ref={root} className="relative flex shrink-0">
       <button
         ref={trigger}
         type="button"
@@ -192,20 +194,20 @@ export function GlassControl() {
         )}
       >
         <SlidersHorizontal className="size-4" aria-hidden="true" />
-        <span className="max-md:sr-only">Atur kaca</span>
+        <span className="max-md:sr-only">{t('Atur kaca')}</span>
       </button>
       {open ? (
         <div
           id={panelId}
           role="group"
-          aria-label="Tampilan kaca"
+          aria-label={t('Tampilan kaca')}
           className="admin-pop fixed inset-x-3 top-20 z-40 flex flex-col gap-4 rounded-[22px] border border-border p-5 shadow-2xl sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mt-3 sm:w-80"
         >
           <div className="flex items-center justify-between gap-3">
-            <p className="text-base font-semibold">Tampilan kaca</p>
+            <p className="text-base font-semibold">{t('Tampilan kaca')}</p>
             <button
               type="button"
-              aria-label="Tutup pengaturan kaca"
+              aria-label={t('Tutup pengaturan kaca')}
               onClick={() => {
                 setOpen(false)
                 trigger.current?.focus()
@@ -216,15 +218,15 @@ export function GlassControl() {
             </button>
           </div>
           <p className="-mt-2 text-xs text-muted">
-            Berlaku di seluruh panel admin dan tersimpan di browser ini.
+            {t('Berlaku di seluruh panel admin dan tersimpan di browser ini.')}
           </p>
           <div
             aria-hidden="true"
             className="admin-glass-panel grid h-16 place-items-center rounded-xl text-xs"
           >
-            Contoh material
+            {t('Contoh material')}
           </div>
-          <div className="grid grid-cols-3 gap-1.5" role="group" aria-label="Preset kaca">
+          <div className="grid grid-cols-3 gap-1.5" role="group" aria-label={t('Preset kaca')}>
             {Object.entries(PRESETS).map(([name, value]) => (
               <button
                 key={name}
@@ -233,7 +235,7 @@ export function GlassControl() {
                 onClick={() => update(value)}
                 className="min-h-9 rounded-lg border border-border text-xs font-semibold aria-pressed:border-transparent aria-pressed:bg-text aria-pressed:text-bg"
               >
-                {name}
+                {t(name)}
               </button>
             ))}
           </div>
@@ -249,7 +251,7 @@ export function GlassControl() {
           />
           <Range
             id={`${id}-opacity`}
-            label="Kepekatan"
+            label={t('Kepekatan')}
             value={Math.round(glass.opacity * 100)}
             output={`${Math.round(glass.opacity * 100)}%`}
             min={8}
@@ -259,7 +261,7 @@ export function GlassControl() {
           />
           <Range
             id={`${id}-edge`}
-            label="Cahaya tepi"
+            label={t('Cahaya tepi')}
             value={Math.round(glass.edge * 100)}
             output={`${Math.round(glass.edge * 100)}%`}
             min={0}
@@ -268,10 +270,10 @@ export function GlassControl() {
             onChange={(value) => update({ edge: value / 100 })}
           />
           <div className="flex flex-col gap-1.5">
-            <p className="text-xs font-semibold">Latar</p>
+            <p className="text-xs font-semibold">{t('Latar')}</p>
             <div
               role="group"
-              aria-label="Latar panel admin"
+              aria-label={t('Latar panel admin')}
               className="grid grid-cols-3 gap-1 rounded-full border border-border bg-surface-2 p-1"
             >
               {BACKGROUNDS.map((b) => (
@@ -282,7 +284,7 @@ export function GlassControl() {
                   onClick={() => update({ bg: b.id })}
                   className="min-h-8 rounded-full px-2 text-xs font-semibold text-muted aria-pressed:bg-text aria-pressed:text-bg"
                 >
-                  {b.label}
+                  {t(b.label)}
                 </button>
               ))}
             </div>
@@ -293,7 +295,7 @@ export function GlassControl() {
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-border text-xs font-semibold hover:bg-surface-2"
           >
             <RotateCcw className="size-3.5" aria-hidden="true" />
-            Atur ulang tampilan
+            {t('Atur ulang tampilan')}
           </button>
         </div>
       ) : null}

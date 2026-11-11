@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ReactNode } from 'react'
 
@@ -8,9 +8,11 @@ import { fontVariables } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { getSiteSettings } from '@/features/settings/public'
+import { ADMIN_LANG_COOKIE, parseAdminLang } from '@/lib/admin-i18n'
 import { THEME_STORAGE_KEY } from '@/lib/theme'
 
-// Root layout kedua (tanpa awalan bahasa). Panel admin hanya dipakai pemilik, jadi berbahasa Indonesia.
+// Root layout kedua (tanpa awalan bahasa). Panel admin berbahasa Indonesia, bisa diganti ke Inggris
+// lewat tombol ID/EN di top bar (cookie, DESIGN.md bagian 113).
 export const metadata: Metadata = {
   title: { default: 'Admin', template: '%s · Admin' },
   robots: { index: false, follow: false },
@@ -18,19 +20,22 @@ export const metadata: Metadata = {
 
 export default async function AdminRootLayout({ children }: { children: ReactNode }) {
   // nonce CSP dari src/proxy.ts untuk skrip tema next-themes
-  const [nonce, settings] = await Promise.all([
+  const [nonce, settings, lang] = await Promise.all([
     headers().then((h) => h.get('x-nonce') ?? undefined),
     getSiteSettings(),
+    // bahasa tampilan admin dari tombol ID/EN di top bar (DESIGN.md bagian 113)
+    cookies().then((c) => parseAdminLang(c.get(ADMIN_LANG_COOKIE)?.value)),
   ])
   return (
     <html
-      lang="id" // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan (revisi pemilik 2026-10-26)
+      lang={lang} // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan (revisi pemilik 2026-10-26)
       className={`${fontVariables} no-scrollbar`}
       // volume suara tombol tema dan bahasa sama dengan situs publik (diatur di Pengaturan)
       data-sound-volume={settings.soundVolume}
       suppressHydrationWarning
     >
-      <body className="bg-bg text-text">
+      {/* admin-ui: seluruh panel admin memakai Inter biasa tanpa huruf kapital (globals.css, DESIGN.md bagian 113) */}
+      <body className="admin-ui bg-bg text-text">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:shadow-lg"

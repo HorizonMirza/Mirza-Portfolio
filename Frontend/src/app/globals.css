@@ -3378,3 +3378,16 @@ html[data-intro='pending'] .intro {
     animation: none;
   }
 }
+
+/* Panel admin: semua huruf Inter biasa seperti teks utama, termasuk judul (h1-h3) dan utilitas
+   font-display; tanpa huruf kapital (pilihan pemilik 2026-11-11, DESIGN.md bagian 113). Variabel
+   --font-display di :root sudah terurai ke Oswald, jadi keduanya ditimpa di sini. */
+@layer base {
+  .admin-ui {
+    --font-oswald: var(--font-inter);
+    --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  }
+  .admin-ui :is(h1, h2, h3) {
+    text-transform: none;
+  }
+}

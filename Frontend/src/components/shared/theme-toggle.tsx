@@ -58,8 +58,10 @@ function SolarSwitch() {
 // Satu tombol bulat: menyala = mode gelap. Tema baru meluas melingkar dari tombol
 // (lib/circle-reveal.ts), diiringi suara desir angin (lib/ui-sounds.ts). Tanpa dukungan browser atau
 // dengan reduced-motion: langsung ganti.
-export function ThemeToggle({ className }: { className?: string }) {
+// label: nama tombol dari luar (panel admin memakai bahasa tampilan admin, bukan messages/*.json)
+export function ThemeToggle({ className, label }: { className?: string; label?: string }) {
   const t = useTranslations('Theme')
+  const name = label ?? t('darkMode')
   const { resolvedTheme, setTheme } = useTheme()
   const mounted = useSyncExternalStore(
     subscribe,
@@ -109,7 +111,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     <button
       type="button"
       aria-pressed={mounted ? resolvedTheme === 'dark' : undefined}
-      title={t('darkMode')}
+      title={name}
       onClick={toggle}
       className={cn(
         'inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-text transition-colors hover:bg-surface-2',
@@ -117,7 +119,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       )}
     >
       <SolarSwitch />
-      <span className="sr-only">{t('darkMode')}</span>
+      <span className="sr-only">{name}</span>
     </button>
   )
 }

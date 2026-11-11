@@ -1,4 +1,5 @@
 import { FilterTabs } from '@/components/admin/filter-tabs'
+import { getAdminT } from '@/lib/admin-lang-server'
 
 // Tiap modul situs publik punya satu menu; teks halamannya dan datanya (profil, skill, pengalaman,
 // project) dipisah sebagai tab di dalam modul itu, bukan menu kedua di sidebar.
@@ -28,11 +29,22 @@ export function isTabbedModule(id: string): id is TabbedModule {
   return id in TABS
 }
 
-export function ModuleTabs({ moduleId, current }: { moduleId: TabbedModule; current: string }) {
+export async function ModuleTabs({
+  moduleId,
+  current,
+}: {
+  moduleId: TabbedModule
+  current: string
+}) {
+  const { t } = await getAdminT()
   return (
     <FilterTabs
-      label="Bagian halaman"
-      items={TABS[moduleId].map((tab) => ({ ...tab, active: tab.href === current }))}
+      label={t('Bagian halaman')}
+      items={TABS[moduleId].map((tab) => ({
+        ...tab,
+        label: t(tab.label),
+        active: tab.href === current,
+      }))}
     />
   )
 }

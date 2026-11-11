@@ -24,6 +24,8 @@ type NavItem = {
   group: (typeof adminNavGroups)[number]
   // halaman data yang terhubung ke menu ini (tab di halaman modul), supaya menu tetap menyala di sana
   match?: readonly string[]
+  // false: tidak tampil di sidebar (hanya untuk nama halaman di top bar)
+  inSidebar?: boolean
 }
 
 export const adminNav: readonly NavItem[] = [
@@ -66,7 +68,8 @@ export const adminNav: readonly NavItem[] = [
   { href: '/admin/messages', label: 'Pesan', icon: Inbox, group: 'Kotak masuk' },
   { href: '/admin/audit', label: 'Log audit', icon: History, group: 'Sistem' },
   { href: '/admin/settings', label: 'Pengaturan', icon: Settings, group: 'Sistem' },
-  { href: '/admin/account', label: 'Akun', icon: KeyRound, group: 'Sistem' },
+  // Akun dibuka dari menu profil di top bar, tidak di sidebar (revisi pemilik 2026-11-11)
+  { href: '/admin/account', label: 'Akun', icon: KeyRound, group: 'Sistem', inSidebar: false },
 ]
 
 // Urutan kelompok menu di sidebar admin; tiap item memilih kelompoknya lewat `group`.

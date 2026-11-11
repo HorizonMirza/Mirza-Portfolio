@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { authClient } from '@/lib/auth-client'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
@@ -15,9 +16,11 @@ const itemClass =
   // sudut kecil, bukan kapsul (revisi pemilik 2026-11-06: ujung sorotan lebih lancip)
   'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text'
 
-// Foto bulat di pojok kanan atas; menekannya membuka akun, tautan ke situs, dan Keluar.
+// Foto bulat di pojok kanan atas; menekannya membuka kepala menu (foto, nama, peran), lalu Lihat situs,
+// Akun, dan Keluar (urutan dari pemilik 2026-11-11).
 export function ProfileMenu({ adminName, photo }: AdminIdentity) {
   const router = useRouter()
+  const t = useAdminT()
   const [open, setOpen] = useState(false)
   // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan
   // (audit 2026-11-02, PERF-06). Ref ikut dicek karena state baru berlaku di render berikutnya.
@@ -57,10 +60,10 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
   }
 
   return (
-    <div ref={root} className="relative">
+    <div ref={root} className="relative flex shrink-0">
       <button
         type="button"
-        aria-label="Menu profil"
+        aria-label={t('Menu profil')}
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
         onClick={() => setOpen((value) => !value)}
@@ -81,29 +84,42 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
           id={panelId}
           className="admin-pop absolute top-full right-0 z-40 mt-3 w-64 rounded-2xl border border-border p-2 shadow-2xl"
         >
-          <div className="px-3.5 py-2">
-            <p className="text-sm leading-snug font-semibold">{adminName}</p>
-            <p className="text-xs text-muted">Super Admin</p>
+          <div className="flex items-center gap-3 px-2 py-2">
+            <Image
+              placeholder={SHIMMER_PLACEHOLDER}
+              src={photo}
+              alt=""
+              width={40}
+              height={40}
+              sizes="40px"
+              className="size-10 shrink-0 rounded-full bg-text object-cover"
+            />
+            <div className="min-w-0">
+              <p className="truncate text-sm leading-snug font-semibold">{adminName}</p>
+              <p className="text-xs text-muted">Super Admin</p>
+            </div>
           </div>
           <div className="my-1 border-t border-border" />
-          <Link href="/admin/account" className={itemClass} onClick={() => setOpen(false)}>
-            <KeyRound className="size-4" aria-hidden="true" />
-            Akun
-          </Link>
           <a href="/id" target="_blank" rel="noopener noreferrer" className={itemClass}>
             <ExternalLink className="size-4" aria-hidden="true" />
-            Lihat situs
-            <span className="sr-only">(membuka tab baru)</span>
+            {t('Lihat situs')}
+            <span className="sr-only">{t('(membuka tab baru)')}</span>
           </a>
+          <Link href="/admin/account" className={itemClass} onClick={() => setOpen(false)}>
+            <KeyRound className="size-4" aria-hidden="true" />
+            {t('Akun')}
+          </Link>
+          <div className="my-1 border-t border-border" />
+          {/* Keluar berwarna merah, terpisah garis (revisi pemilik 2026-11-11) */}
           <button
             type="button"
-            className={`${itemClass} disabled:cursor-wait disabled:opacity-60`}
+            className={`${itemClass} text-danger hover:bg-danger/10 hover:text-danger disabled:cursor-wait disabled:opacity-60`}
             onClick={signOut}
             disabled={signingOut}
             aria-busy={signingOut || undefined}
           >
             <LogOut className="size-4" aria-hidden="true" />
-            {signingOut ? 'Keluar…' : 'Keluar'}
+            {signingOut ? t('Keluar…') : t('Keluar')}
           </button>
         </div>
       ) : null}

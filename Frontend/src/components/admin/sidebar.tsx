@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { adminNav, adminNavGroups, isNavActive } from '@/components/admin/nav'
 import { cn } from '@/lib/utils'
 
@@ -18,26 +19,53 @@ function Lamp() {
   )
 }
 
+// Logo dan nama panel di puncak sidebar (revisi pemilik 2026-11-11: pindah dari top bar)
+function Brand({ rail = false, onNavigate }: { rail?: boolean; onNavigate?: () => void }) {
+  return (
+    <Link
+      href="/admin"
+      onClick={onNavigate}
+      className={cn(
+        'flex min-h-11 items-center gap-2.5 px-2',
+        rail && 'max-lg:justify-center max-lg:px-0',
+      )}
+    >
+      <span
+        aria-hidden="true"
+        className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-text text-sm font-bold text-bg"
+      >
+        MM
+      </span>
+      <span className={cn('text-base font-semibold', rail && 'max-lg:sr-only')}>Super Admin</span>
+    </Link>
+  )
+}
+
 // rail: sidebar kaca di tablet hanya ikon (label tetap ada untuk pembaca layar), penuh di desktop
 function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?: boolean }) {
   const pathname = usePathname()
+  const t = useAdminT()
   return (
-    <nav aria-label="Menu admin" className={cn('flex flex-col', rail ? 'gap-3 lg:gap-5' : 'gap-5')}>
+    <nav
+      aria-label={t('Menu admin')}
+      className={cn('flex flex-col', rail ? 'gap-3 lg:gap-5' : 'gap-5')}
+    >
       {adminNavGroups.map((group) => (
         <div key={group}>
           <p
             className={cn(
-              'mb-1.5 px-3.5 text-[0.6875rem] font-semibold tracking-widest text-muted uppercase',
+              'mb-1.5 px-3.5 text-xs font-medium text-muted',
               rail && 'sr-only lg:not-sr-only',
             )}
           >
-            {group}
+            {t(group)}
           </p>
           <ul className="flex flex-col gap-0.5">
             {adminNav
-              .filter((item) => item.group === group)
+              .filter((item) => item.group === group && item.inSidebar !== false)
               .map((item) => {
-                const { href, label, icon: Icon } = item
+                const { href, icon: Icon } = item
+                const label = t(item.label)
                 const active = isNavActive(pathname, item)
                 return (
                   <li key={href}>
@@ -66,29 +94,24 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
   )
 }
 
-// Isi sidebar: nama panel dan menu per kelompok. Dipakai sidebar desktop dan laci di HP.
+// Isi laci menu di HP: nama panel dan menu per kelompok.
 export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <>
-      <Link
-        href="/admin"
-        onClick={onNavigate}
-        className="px-3.5 font-display text-xl font-bold tracking-wide uppercase"
-      >
-        Super Admin
-      </Link>
+      <Brand onNavigate={onNavigate} />
       <NavLinks onNavigate={onNavigate} />
     </>
   )
 }
 
-// Sidebar kaca (desain 5+, DESIGN.md bagian 112): menempel di bawah top bar setinggi sisa layar (bisa
-// digulir sendiri tanpa batang gulir). Tablet (768-1023 px): rel ikon; desktop: menu penuh. Di HP
-// menu dibuka lewat laci dan dock bawah (top-bar.tsx). Nama panel ada di top bar.
+// Sidebar kaca (desain 5+, DESIGN.md bagian 112-113): penuh dari atas sampai bawah layar di kiri top
+// bar dan panel isi, berisi logo dan nama panel lalu menu (bisa digulir sendiri tanpa batang gulir).
+// Tablet (768-1023 px): rel ikon; desktop: menu penuh. Di HP menu dibuka lewat laci dan dock bawah.
 export function AdminSidebar() {
   return (
-    <aside className="admin-glass-panel sticky top-[5.5rem] hidden h-[calc(100dvh-6.5rem)] w-[4.75rem] shrink-0 rounded-[23px] md:block lg:w-60">
-      <div className="h-full overflow-y-auto overscroll-contain px-2.5 py-4 lg:px-3">
+    <aside className="admin-glass-panel sticky top-4 hidden h-[calc(100dvh-2rem)] w-[4.75rem] shrink-0 rounded-[23px] md:block lg:w-60">
+      <div className="flex h-full flex-col gap-5 overflow-y-auto overscroll-contain px-2.5 py-3 lg:px-3">
+        <Brand rail />
         <NavLinks rail />
       </div>
     </aside>
