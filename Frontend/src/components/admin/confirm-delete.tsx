@@ -4,6 +4,7 @@ import { Trash2 } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,6 +25,7 @@ export function ConfirmDelete({
   onConfirm: () => Promise<ActionResult<unknown>>
   onDone?: () => void
 }) {
+  const t = useAdminT()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
 
@@ -31,11 +33,11 @@ export function ConfirmDelete({
     startTransition(async () => {
       const result = await onConfirm()
       if (result.ok) {
-        toast.success(result.message)
+        toast.success(t(result.message))
         setOpen(false)
         onDone?.()
       } else {
-        toast.error(result.message)
+        toast.error(t(result.message))
       }
     })
   }
@@ -43,26 +45,26 @@ export function ConfirmDelete({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label={`Hapus ${itemLabel}`}>
+        <Button variant="ghost" size="sm" aria-label={t('Hapus {item}', { item: itemLabel })}>
           <Trash2 aria-hidden="true" />
-          <span className="sr-only md:not-sr-only">Hapus</span>
+          <span className="sr-only md:not-sr-only">{t('Hapus')}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Hapus {itemLabel}?</DialogTitle>
+        <DialogTitle>{t('Hapus {item}?', { item: itemLabel })}</DialogTitle>
         <DialogDescription>
-          Data yang dihapus tidak bisa dikembalikan. Tindakan ini tercatat di log audit.
+          {t('Data yang dihapus tidak bisa dikembalikan. Tindakan ini tercatat di log audit.')}
         </DialogDescription>
         <div className="mt-6 flex justify-end gap-2">
           <DialogClose asChild>
-            <Button variant="secondary">Batal</Button>
+            <Button variant="secondary">{t('Batal')}</Button>
           </DialogClose>
           <Button
             onClick={confirm}
             disabled={pending}
             className="bg-danger text-white hover:bg-danger/90 dark:text-bg"
           >
-            {pending ? 'Menghapus…' : 'Hapus'}
+            {pending ? t('Menghapus…') : t('Hapus')}
           </Button>
         </div>
       </DialogContent>

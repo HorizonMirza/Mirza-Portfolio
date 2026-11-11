@@ -11,6 +11,7 @@ export async function listProjectsAdmin() {
       id: true,
       slug: true,
       title_id: true,
+      title_en: true,
       status: true,
       category: true,
       year: true,

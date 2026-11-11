@@ -4,6 +4,7 @@ import { Pencil, Star } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { adminColumnHelper, DataTable } from '@/components/admin/data-table'
 import { ReorderButtons } from '@/components/admin/reorder-buttons'
@@ -18,7 +19,7 @@ import { projectCategoryLabel } from '../schema'
 type Row = {
   id: string
   slug: string
-  title_id: string
+  title: string
   status: 'DRAFT' | 'PUBLISHED'
   category: keyof typeof projectCategoryLabel
   year: number
@@ -30,26 +31,29 @@ type Row = {
 const helper = adminColumnHelper<Row>()
 
 function RowActions({ row, total }: { row: Row; total: number }) {
+  const t = useAdminT()
   return (
     <div className="flex items-center justify-end gap-1">
       <ReorderButtons
-        itemLabel={row.title_id}
+        itemLabel={row.title}
         isFirst={row.position === 0}
         isLast={row.position === total - 1}
         onMove={(dir) => moveProject(row.id, dir)}
       />
       <Button variant="ghost" size="sm" asChild>
-        <Link href={`/admin/projects/${row.id}`} aria-label={`Ubah ${row.title_id}`}>
+        <Link href={`/admin/projects/${row.id}`} aria-label={t('Ubah {item}', { item: row.title })}>
           <Pencil aria-hidden="true" />
-          <span className="sr-only md:not-sr-only">Ubah</span>
+          <span className="sr-only md:not-sr-only">{t('Ubah')}</span>
         </Link>
       </Button>
-      <ConfirmDelete itemLabel={row.title_id} onConfirm={() => deleteProject(row.id)} />
+      <ConfirmDelete itemLabel={row.title} onConfirm={() => deleteProject(row.id)} />
     </div>
   )
 }
 
 export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
+  const t = useAdminT()
+  const { lang } = useAdminLang()
   const data = useMemo(() => rows.map((r, position) => ({ ...r, position })), [rows])
   const total = data.length
   // Urutan project diatur manual (tombol naik/turun) dan sama dengan situs publik, jadi kolom tidak
@@ -59,16 +63,16 @@ export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
       helper.columns([
         helper.accessor('position', {
           enableSorting: false,
-          header: 'No',
+          header: t('No'),
           cell: (info) => <span className="text-muted tabular-nums">{info.getValue() + 1}</span>,
         }),
-        helper.accessor('title_id', {
+        helper.accessor('title', {
           enableSorting: false,
-          header: 'Judul',
+          header: t('Judul'),
           cell: (info) => (
             <span className="flex items-center gap-2 font-medium">
               {info.row.original.featured ? (
-                <Star className="size-4 fill-primary text-primary" aria-label="Unggulan" />
+                <Star className="size-4 fill-primary text-primary" aria-label={t('Unggulan')} />
               ) : null}
               {info.getValue()}
             </span>
@@ -76,33 +80,33 @@ export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
         }),
         helper.accessor('category', {
           enableSorting: false,
-          header: 'Kategori',
-          cell: (info) => projectCategoryLabel[info.getValue()],
+          header: t('Kategori'),
+          cell: (info) => t(projectCategoryLabel[info.getValue()]),
         }),
         helper.accessor('year', {
           enableSorting: false,
-          header: 'Tahun',
+          header: t('Tahun'),
           cell: (info) => <span className="tabular-nums">{info.getValue()}</span>,
         }),
         helper.accessor('status', {
           enableSorting: false,
-          header: 'Status',
+          header: t('Status'),
           cell: (info) => <StatusBadge status={info.getValue()} />,
         }),
         helper.accessor('updatedAt', {
           enableSorting: false,
-          header: 'Diubah',
+          header: t('Diubah'),
           cell: (info) => (
-            <span className="text-muted">{formatDateTime(new Date(info.getValue()))}</span>
+            <span className="text-muted">{formatDateTime(new Date(info.getValue()), lang)}</span>
           ),
         }),
         helper.display({
           id: 'actions',
-          header: () => <span className="sr-only">Aksi</span>,
+          header: () => <span className="sr-only">{t('Aksi')}</span>,
           cell: (info) => <RowActions row={info.row.original} total={total} />,
         }),
       ]),
-    [total],
+    [total, t, lang],
   )
 
   return (
@@ -110,16 +114,16 @@ export function ProjectTable({ rows }: { rows: Omit<Row, 'position'>[] }) {
       data={data}
       columns={columns}
       getRowId={(r) => r.id}
-      searchLabel="Cari project"
-      emptyText="Belum ada project yang cocok."
+      searchLabel={t('Cari project')}
+      emptyText={t('Belum ada project yang cocok.')}
       renderCard={(row) => (
         <Card className="flex flex-col gap-3 p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="font-medium">{row.title_id}</p>
+              <p className="font-medium">{row.title}</p>
               <p className="mt-1 text-sm text-muted">
-                {projectCategoryLabel[row.category]} · {row.year}
-                {row.featured ? ' · unggulan' : ''}
+                {t(projectCategoryLabel[row.category])} · {row.year}
+                {row.featured ? ` · ${t('unggulan')}` : ''}
               </p>
             </div>
             <StatusBadge status={row.status} />

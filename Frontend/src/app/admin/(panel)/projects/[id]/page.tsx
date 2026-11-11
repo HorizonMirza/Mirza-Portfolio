@@ -8,10 +8,15 @@ import { getProjectAssets } from '@/features/assets/queries'
 import { ProjectForm } from '@/features/projects/components/project-form'
 import { getProjectForEdit } from '@/features/projects/queries'
 import { listSkillOptions } from '@/features/skills/queries'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { isUploadConfigured } from '@/lib/uploads'
 
-export const metadata: Metadata = { title: 'Ubah project' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Ubah project') }
+}
 
 export default async function EditProjectPage({ params }: PageProps<'/admin/projects/[id]'>) {
   await requireSuperAdminPage()
@@ -24,9 +29,13 @@ export default async function EditProjectPage({ params }: PageProps<'/admin/proj
   ])
   if (!project) notFound()
   const configured = isUploadConfigured()
+  const en = (await getAdminLang()) === 'en'
   return (
     <>
-      <PageHeader title={project.title_id} description={`/projects/${project.slug}`} />
+      <PageHeader
+        title={(en && project.title_en) || project.title_id}
+        description={`/projects/${project.slug}`}
+      />
       <div className="flex flex-col gap-6">
         <ProjectForm key={id} projectId={id} defaultValues={project} skillGroups={skillGroups} />
         <AssetSlot

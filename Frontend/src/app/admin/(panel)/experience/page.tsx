@@ -8,14 +8,20 @@ import { Button } from '@/components/ui/button'
 import { ExperienceTable } from '@/features/experience/components/experience-table'
 import { listExperiencesAdmin } from '@/features/experience/queries'
 import { dateToMonth } from '@/features/experience/schema'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatPeriod } from '@/lib/format'
 
-export const metadata: Metadata = { title: 'Pengalaman' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Pengalaman') }
+}
 
 export default async function ExperiencePage() {
   await requireSuperAdminPage()
   const items = await listExperiencesAdmin('experience')
+  const { lang, t } = await getAdminT()
   return (
     <>
       <PageHeader
@@ -25,7 +31,7 @@ export default async function ExperiencePage() {
           <Button asChild>
             <Link href="/admin/experience/new">
               <Plus aria-hidden="true" />
-              Tambah
+              {t('Tambah')}
             </Link>
           </Button>
         }
@@ -35,10 +41,11 @@ export default async function ExperiencePage() {
         rows={items.map((e) => ({
           id: e.id,
           type: e.type,
-          organization: e.organization,
-          title_id: e.title_id,
+          // isi data ikut bahasa admin bila versi Inggrisnya ada
+          organization: (lang === 'en' && e.organization_en) || e.organization,
+          title: (lang === 'en' && e.title_en) || e.title_id,
           start: dateToMonth(e.startDate),
-          period: formatPeriod(e.startDate, e.endDate),
+          period: formatPeriod(e.startDate, e.endDate, lang),
           status: e.status,
         }))}
       />

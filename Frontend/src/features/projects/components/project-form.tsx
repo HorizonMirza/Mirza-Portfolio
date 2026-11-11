@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
@@ -39,6 +40,8 @@ export function ProjectForm({
   skillGroups: SkillOptionGroup[]
 }) {
   const router = useRouter()
+  const t = useAdminT()
+  const { lang: uiLang } = useAdminLang()
   const [pending, startTransition] = useTransition()
   const [importing, startImport] = useTransition()
   const [importNote, setImportNote] = useState<string | null>(null)
@@ -90,9 +93,16 @@ export function ProjectForm({
       setValue('skillIds', merged, opts)
       const extra = [d.language, ...d.topics].filter(Boolean).join(', ')
       setImportNote(
-        `Terisi: URL repo, tahun, ${d.demoUrl ? 'URL demo, ' : ''}${d.skillIds.length} skill cocok.` +
-          (extra ? ` Topik repo: ${extra}.` : '') +
-          ' Teks bahasa Indonesia tetap ditulis manual.',
+        [
+          t('Terisi: URL repo, tahun, {demo}{count} skill cocok.', {
+            demo: d.demoUrl ? t('URL demo, ') : '',
+            count: d.skillIds.length,
+          }),
+          extra ? t('Topik repo: {topics}.', { topics: extra }) : '',
+          t('Teks bahasa Indonesia tetap ditulis manual.'),
+        ]
+          .filter(Boolean)
+          .join(' '),
       )
     })
   }
@@ -168,7 +178,7 @@ export function ProjectForm({
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">Isi dua bahasa</h2>
+        <h2 className="text-h3 font-semibold">{t('Isi dua bahasa')}</h2>
         <BilingualTabs
           errors={countLangErrors(errors)}
           id={langFields('id')}
@@ -177,7 +187,7 @@ export function ProjectForm({
       </Card>
 
       <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">Impor dari GitHub</h2>
+        <h2 className="text-h3 font-semibold">{t('Impor dari GitHub')}</h2>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <Field
             id="githubRepo"
@@ -203,7 +213,7 @@ export function ProjectForm({
             className="sm:mt-7"
           >
             <Download aria-hidden="true" />
-            {importing ? 'Memuat…' : 'Impor'}
+            {importing ? t('Memuat…') : t('Impor')}
           </Button>
         </div>
         <p role="status" className="text-sm text-muted empty:hidden">
@@ -212,7 +222,7 @@ export function ProjectForm({
       </Card>
 
       <Card className="grid gap-5 md:grid-cols-2">
-        <h2 className="text-h3 font-semibold md:col-span-2">Detail</h2>
+        <h2 className="text-h3 font-semibold md:col-span-2">{t('Detail')}</h2>
         <Field
           id="slug"
           label="Slug"
@@ -236,7 +246,7 @@ export function ProjectForm({
             <NativeSelect {...a} {...register('category')}>
               {Object.entries(projectCategoryLabel).map(([value, label]) => (
                 <option key={value} value={value}>
-                  {label}
+                  {t(label)}
                 </option>
               ))}
             </NativeSelect>
@@ -250,8 +260,8 @@ export function ProjectForm({
         >
           {(a) => (
             <NativeSelect {...a} {...register('status')}>
-              <option value="DRAFT">Draf</option>
-              <option value="PUBLISHED">Terbit</option>
+              <option value="DRAFT">{t('Draf')}</option>
+              <option value="PUBLISHED">{t('Terbit')}</option>
             </NativeSelect>
           )}
         </Field>
@@ -262,33 +272,34 @@ export function ProjectForm({
           {(a) => <Input type="url" inputMode="url" {...a} {...register('repoUrl')} />}
         </Field>
         <fieldset className="flex flex-col gap-1 md:col-span-2">
-          <legend className="text-sm font-medium">Tombol di halaman detail</legend>
+          <legend className="text-sm font-medium">{t('Tombol di halaman detail')}</legend>
           <p className="text-sm text-muted">
-            Pilih keduanya, salah satu, atau tidak sama sekali. Tombol hanya tampil bila URL-nya
-            diisi.
+            {t(
+              'Pilih keduanya, salah satu, atau tidak sama sekali. Tombol hanya tampil bila URL-nya diisi.',
+            )}
           </p>
           <label className="flex min-h-11 items-center gap-3">
             <input type="checkbox" className="size-5 accent-primary" {...register('showDemo')} />
-            <span>Tampilkan tombol &quot;Lihat aplikasi&quot; (URL demo)</span>
+            <span>{t('Tampilkan tombol "Lihat aplikasi" (URL demo)')}</span>
           </label>
           <label className="flex min-h-11 items-center gap-3">
             <input type="checkbox" className="size-5 accent-primary" {...register('showRepo')} />
-            <span>Tampilkan tombol &quot;GitHub&quot; (URL repo)</span>
+            <span>{t('Tampilkan tombol "GitHub" (URL repo)')}</span>
           </label>
         </fieldset>
         <label className="flex min-h-11 items-center gap-3 md:col-span-2">
           <input type="checkbox" className="size-5 accent-primary" {...register('featured')} />
-          <span>Tampilkan sebagai project unggulan di beranda</span>
+          <span>{t('Tampilkan sebagai project unggulan di beranda')}</span>
         </label>
       </Card>
 
       <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">Skill yang dipakai</h2>
+        <h2 className="text-h3 font-semibold">{t('Skill yang dipakai')}</h2>
         {errors.skillIds?.message ? (
-          <p className="text-sm text-danger">{errors.skillIds.message}</p>
+          <p className="text-sm text-danger">{t(errors.skillIds.message)}</p>
         ) : null}
         {skillGroups.length === 0 ? (
-          <p className="text-sm text-muted">Belum ada skill. Tambahkan di menu Skill.</p>
+          <p className="text-sm text-muted">{t('Belum ada skill. Tambahkan di menu Skill.')}</p>
         ) : (
           <Controller
             control={control}
@@ -297,7 +308,9 @@ export function ProjectForm({
               <div className="flex flex-col gap-5">
                 {skillGroups.map((group) => (
                   <fieldset key={group.id}>
-                    <legend className="mb-2 text-sm font-medium text-muted">{group.name}</legend>
+                    <legend className="mb-2 text-sm font-medium text-muted">
+                      {uiLang === 'en' ? group.name_en : group.name}
+                    </legend>
                     <div className="flex flex-wrap gap-2">
                       {group.skills.map((skill) => {
                         const checked = field.value.includes(skill.id)

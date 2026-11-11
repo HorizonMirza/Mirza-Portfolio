@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { Card } from '@/components/ui/card'
+import { getAdminT } from '@/lib/admin-lang-server'
 
 import { removeAsset } from '../actions'
 import { formatBytes, needsAlt, UPLOAD_TARGETS, type UploadTarget } from '../targets'
@@ -22,17 +23,28 @@ export type AssetView = {
   alt_en: string | null
 }
 
-function NotConfigured() {
+async function NotConfigured() {
+  const { t } = await getAdminT()
   return (
     <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted">
-      Unggah belum aktif. Isi <code className="font-mono">CLOUDINARY_CLOUD_NAME</code>,{' '}
-      <code className="font-mono">CLOUDINARY_API_KEY</code>, dan{' '}
-      <code className="font-mono">CLOUDINARY_API_SECRET</code> di environment, lalu deploy ulang.
+      {t('Unggah belum aktif. Isi')} <code className="font-mono">CLOUDINARY_CLOUD_NAME</code>,{' '}
+      <code className="font-mono">CLOUDINARY_API_KEY</code>, {t('dan')}{' '}
+      <code className="font-mono">CLOUDINARY_API_SECRET</code>{' '}
+      {t('di environment, lalu deploy ulang.')}
     </p>
   )
 }
 
-function AssetPreview({ asset, label }: { asset: AssetView; label: string }) {
+function AssetPreview({
+  asset,
+  label,
+  viewLabel,
+}: {
+  asset: AssetView
+  label: string
+  // teks tautan dokumen, mis. "Lihat cv (pdf)"
+  viewLabel?: string
+}) {
   if (asset.kind === 'DOCUMENT') {
     return (
       <a
@@ -42,7 +54,7 @@ function AssetPreview({ asset, label }: { asset: AssetView; label: string }) {
         className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border px-3 text-sm hover:bg-surface-2"
       >
         <FileText className="size-4" aria-hidden="true" />
-        Lihat {label}
+        {viewLabel ?? label}
         {asset.bytes ? <span className="text-muted">({formatBytes(asset.bytes)})</span> : null}
       </a>
     )
@@ -61,7 +73,7 @@ function AssetPreview({ asset, label }: { asset: AssetView; label: string }) {
 }
 
 // Satu slot berkas (foto profil, CV, sampul project): pratinjau, teks alternatif, ganti, hapus.
-export function AssetSlot({
+export async function AssetSlot({
   title,
   description,
   target,
@@ -79,16 +91,22 @@ export function AssetSlot({
   asset: AssetView | null
   configured: boolean
 }) {
+  const { t } = await getAdminT()
+  const name = t(title)
   return (
     <Card className="flex flex-col gap-4">
       <div>
-        <h2 className="text-h3 font-semibold">{title}</h2>
-        {description ? <p className="mt-1 text-sm text-muted">{description}</p> : null}
+        <h2 className="text-h3 font-semibold">{name}</h2>
+        {description ? <p className="mt-1 text-sm text-muted">{t(description)}</p> : null}
         {note ? <div className="mt-2 text-sm text-muted">{note}</div> : null}
       </div>
       {asset ? (
         <div className="flex flex-col gap-4 md:flex-row md:items-start">
-          <AssetPreview asset={asset} label={title.toLowerCase()} />
+          <AssetPreview
+            asset={asset}
+            label={name.toLowerCase()}
+            viewLabel={t('Lihat {item}', { item: name.toLowerCase() })}
+          />
           <div className="flex flex-1 flex-col gap-3">
             {needsAlt(UPLOAD_TARGETS[target]) ? (
               <AssetAltForm
@@ -100,21 +118,21 @@ export function AssetSlot({
             ) : null}
             <div>
               <ConfirmDelete
-                itemLabel={title.toLowerCase()}
+                itemLabel={name.toLowerCase()}
                 onConfirm={removeAsset.bind(null, asset.id)}
               />
             </div>
           </div>
         </div>
       ) : (
-        <p className="text-sm text-muted">Belum ada berkas.</p>
+        <p className="text-sm text-muted">{t('Belum ada berkas.')}</p>
       )}
       {configured ? (
         <div className="border-t border-border pt-4">
           <AssetUploader
             target={target}
             targetId={targetId}
-            buttonLabel={asset ? 'Ganti berkas' : 'Unggah'}
+            buttonLabel={asset ? t('Ganti berkas') : t('Unggah')}
           />
         </div>
       ) : (
@@ -124,7 +142,7 @@ export function AssetSlot({
   )
 }
 
-export function GalleryPanel({
+export async function GalleryPanel({
   projectId,
   images,
   configured,
@@ -133,19 +151,20 @@ export function GalleryPanel({
   images: AssetView[]
   configured: boolean
 }) {
+  const { t } = await getAdminT()
   return (
     <Card className="flex flex-col gap-4">
       <div>
-        <h2 className="text-h3 font-semibold">Galeri</h2>
+        <h2 className="text-h3 font-semibold">{t('Galeri')}</h2>
         <p className="mt-1 text-sm text-muted">
-          Tangkapan layar untuk halaman detail project, tampil sesuai urutan unggah.
+          {t('Tangkapan layar untuk halaman detail project, tampil sesuai urutan unggah.')}
         </p>
       </div>
-      {images.length === 0 ? <p className="text-sm text-muted">Belum ada gambar.</p> : null}
+      {images.length === 0 ? <p className="text-sm text-muted">{t('Belum ada gambar.')}</p> : null}
       <ul className="grid gap-4 md:grid-cols-2">
         {images.map((image, i) => (
           <li key={image.id} className="flex flex-col gap-3 rounded-md border border-border p-3">
-            <AssetPreview asset={image} label={`gambar ${i + 1}`} />
+            <AssetPreview asset={image} label={t('gambar {n}', { n: i + 1 })} />
             <AssetAltForm
               assetId={image.id}
               alt_id={image.alt_id ?? ''}
@@ -153,7 +172,7 @@ export function GalleryPanel({
             />
             <div>
               <ConfirmDelete
-                itemLabel={`gambar galeri ${i + 1}`}
+                itemLabel={t('gambar galeri {n}', { n: i + 1 })}
                 onConfirm={removeAsset.bind(null, image.id)}
               />
             </div>
@@ -165,7 +184,7 @@ export function GalleryPanel({
           <AssetUploader
             target="project-gallery"
             targetId={projectId}
-            buttonLabel="Tambah ke galeri"
+            buttonLabel={t('Tambah ke galeri')}
           />
         </div>
       ) : (

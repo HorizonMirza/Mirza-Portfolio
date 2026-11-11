@@ -7,13 +7,19 @@ import { PageHeader } from '@/components/admin/page-header'
 import { Button } from '@/components/ui/button'
 import { ProjectTable } from '@/features/projects/components/project-table'
 import { listProjectsAdmin } from '@/features/projects/queries'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 
-export const metadata: Metadata = { title: 'Project' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Project') }
+}
 
 export default async function ProjectsPage() {
   await requireSuperAdminPage()
   const projects = await listProjectsAdmin()
+  const { lang, t } = await getAdminT()
   return (
     <>
       <PageHeader
@@ -23,13 +29,20 @@ export default async function ProjectsPage() {
           <Button asChild>
             <Link href="/admin/projects/new">
               <Plus aria-hidden="true" />
-              Project baru
+              {t('Project baru')}
             </Link>
           </Button>
         }
       />
       <ModuleTabs moduleId="projects" current="/admin/projects" />
-      <ProjectTable rows={projects.map((p) => ({ ...p, updatedAt: p.updatedAt.toISOString() }))} />
+      <ProjectTable
+        rows={projects.map(({ title_id, title_en, ...p }) => ({
+          ...p,
+          // judul ikut bahasa admin
+          title: lang === 'en' ? title_en : title_id,
+          updatedAt: p.updatedAt.toISOString(),
+        }))}
+      />
     </>
   )
 }

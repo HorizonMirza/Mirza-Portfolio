@@ -2,6 +2,7 @@
 
 import { Pencil, Plus } from 'lucide-react'
 
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { ReorderButtons } from '@/components/admin/reorder-buttons'
 import { Button } from '@/components/ui/button'
@@ -12,7 +13,11 @@ import type { SkillCategoryAdmin } from '../queries'
 import { CategoryDialog, SkillDialog } from './skill-dialogs'
 
 export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[] }) {
-  const options = categories.map((c) => ({ id: c.id, name: c.name_id }))
+  const t = useAdminT()
+  const en = useAdminLang().lang === 'en'
+  // nama kategori dalam bahasa admin; bahasa lainnya tampil kecil di bawahnya
+  const nameOf = (c: { name_id: string; name_en: string }) => (en ? c.name_en : c.name_id)
+  const options = categories.map((c) => ({ id: c.id, name: nameOf(c) }))
 
   return (
     <div className="flex flex-col gap-6">
@@ -22,7 +27,7 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
           trigger={
             <Button>
               <Plus aria-hidden="true" />
-              Kategori baru
+              {t('Kategori baru')}
             </Button>
           }
         />
@@ -30,7 +35,7 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
 
       {categories.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
-          Belum ada kategori. Buat kategori dulu, lalu tambahkan skill di dalamnya.
+          {t('Belum ada kategori. Buat kategori dulu, lalu tambahkan skill di dalamnya.')}
         </p>
       ) : null}
 
@@ -38,14 +43,14 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
         <Card key={category.id} className="flex flex-col gap-4">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-h3 font-semibold">{category.name_id}</h2>
-              <p className="text-sm text-muted" lang="en">
-                {category.name_en}
+              <h2 className="text-h3 font-semibold">{nameOf(category)}</h2>
+              <p className="text-sm text-muted" lang={en ? 'id' : 'en'}>
+                {en ? category.name_id : category.name_en}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-1">
               <ReorderButtons
-                itemLabel={`kategori ${category.name_id}`}
+                itemLabel={t('kategori {name}', { name: nameOf(category) })}
                 isFirst={ci === 0}
                 isLast={ci === categories.length - 1}
                 onMove={(dir) => moveSkillCategory(category.id, dir)}
@@ -57,22 +62,22 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
                   <Button
                     variant="ghost"
                     size="sm"
-                    aria-label={`Ubah kategori ${category.name_id}`}
+                    aria-label={t('Ubah kategori {name}', { name: nameOf(category) })}
                   >
                     <Pencil aria-hidden="true" />
-                    <span className="sr-only md:not-sr-only">Ubah</span>
+                    <span className="sr-only md:not-sr-only">{t('Ubah')}</span>
                   </Button>
                 }
               />
               <ConfirmDelete
-                itemLabel={`kategori ${category.name_id}`}
+                itemLabel={t('kategori {name}', { name: nameOf(category) })}
                 onConfirm={() => deleteSkillCategory(category.id)}
               />
             </div>
           </div>
 
           {category.skills.length === 0 ? (
-            <p className="text-sm text-muted">Belum ada skill di kategori ini.</p>
+            <p className="text-sm text-muted">{t('Belum ada skill di kategori ini.')}</p>
           ) : (
             <ul className="divide-y divide-border rounded-md border border-border">
               {category.skills.map((skill, si) => (
@@ -84,9 +89,9 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
                     <p className="font-medium">{skill.name}</p>
                     <p className="text-xs text-muted">
                       {skill._count.projects > 0
-                        ? `Dipakai di ${skill._count.projects} project`
-                        : 'Belum dipakai project'}
-                      {skill.icon ? ` · ikon ${skill.icon}` : ''}
+                        ? t('Dipakai di {count} project', { count: skill._count.projects })
+                        : t('Belum dipakai project')}
+                      {skill.icon ? ` · ${t('ikon {icon}', { icon: skill.icon })}` : ''}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
@@ -105,10 +110,14 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
                         categoryId: category.id,
                       }}
                       trigger={
-                        <Button variant="ghost" size="sm" aria-label={`Ubah ${skill.name}`}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={t('Ubah {item}', { item: skill.name })}
+                        >
                           <Pencil aria-hidden="true" />
                           {/* bertulisan seperti tombol Ubah kategori dan Hapus di sebelahnya */}
-                          <span className="sr-only md:not-sr-only">Ubah</span>
+                          <span className="sr-only md:not-sr-only">{t('Ubah')}</span>
                         </Button>
                       }
                     />
@@ -127,7 +136,7 @@ export function SkillsManager({ categories }: { categories: SkillCategoryAdmin[]
               trigger={
                 <Button variant="secondary" size="sm">
                   <Plus aria-hidden="true" />
-                  Tambah skill ke {category.name_id}
+                  {t('Tambah skill ke {name}', { name: nameOf(category) })}
                 </Button>
               }
             />

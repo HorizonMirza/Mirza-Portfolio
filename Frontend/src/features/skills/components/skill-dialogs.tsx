@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { type ReactNode, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { NativeSelect } from '@/components/admin/select'
@@ -27,15 +28,16 @@ import {
 } from '../schema'
 
 function DialogActions({ pending }: { pending: boolean }) {
+  const t = useAdminT()
   return (
     <div className="mt-2 flex justify-end gap-2">
       <DialogClose asChild>
         <Button type="button" variant="secondary">
-          Batal
+          {t('Batal')}
         </Button>
       </DialogClose>
       <Button type="submit" disabled={pending}>
-        {pending ? 'Menyimpan…' : 'Simpan'}
+        {pending ? t('Menyimpan…') : t('Simpan')}
       </Button>
     </div>
   )
@@ -50,6 +52,7 @@ export function CategoryDialog({
   defaultValues?: SkillCategoryInput
   trigger: ReactNode
 }) {
+  const t = useAdminT()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const form = useForm<SkillCategoryInput>({
@@ -76,9 +79,9 @@ export function CategoryDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogTitle>{categoryId ? 'Ubah kategori' : 'Kategori baru'}</DialogTitle>
+        <DialogTitle>{categoryId ? t('Ubah kategori') : t('Kategori baru')}</DialogTitle>
         <DialogDescription>
-          Nama kategori tampil di pilihan Kategori pada globe Keahlian Teknis di beranda.
+          {t('Nama kategori tampil di pilihan Kategori pada globe Keahlian Teknis di beranda.')}
         </DialogDescription>
         <form onSubmit={onSubmit} noValidate className="mt-4 flex flex-col gap-4">
           <Field
@@ -109,6 +112,7 @@ export function SkillDialog({
   categories: { id: string; name: string }[]
   trigger: ReactNode
 }) {
+  const t = useAdminT()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
   const form = useForm<SkillInput>({ resolver: zodResolver(skillSchema), defaultValues })
@@ -132,9 +136,9 @@ export function SkillDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogTitle>{skillId ? 'Ubah skill' : 'Skill baru'}</DialogTitle>
+        <DialogTitle>{skillId ? t('Ubah skill') : t('Skill baru')}</DialogTitle>
         <DialogDescription>
-          Nama skill ditulis dengan kapitalisasi resminya, misalnya Next.js atau PostgreSQL.
+          {t('Nama skill ditulis dengan kapitalisasi resminya, misalnya Next.js atau PostgreSQL.')}
         </DialogDescription>
         <form onSubmit={onSubmit} noValidate className="mt-4 flex flex-col gap-4">
           <Field id={`${idPrefix}-name`} label="Nama skill" error={errors.name?.message}>

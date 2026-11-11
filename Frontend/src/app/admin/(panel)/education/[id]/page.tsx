@@ -7,10 +7,15 @@ import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getExperienceAssets } from '@/features/assets/queries'
 import { ExperienceForm } from '@/features/experience/components/experience-form'
 import { getExperienceForEdit } from '@/features/experience/queries'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { isUploadConfigured } from '@/lib/uploads'
 
-export const metadata: Metadata = { title: 'Ubah pendidikan' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Ubah pendidikan') }
+}
 
 export default async function EditEducationPage({ params }: PageProps<'/admin/education/[id]'>) {
   await requireSuperAdminPage()
@@ -20,9 +25,13 @@ export default async function EditEducationPage({ params }: PageProps<'/admin/ed
   if (!education) notFound()
   // kerja dan organisasi diubah di menu Experience
   if (education.type !== 'EDUCATION') redirect(`/admin/experience/${id}`)
+  const en = (await getAdminLang()) === 'en'
   return (
     <>
-      <PageHeader title={education.organization} description={education.title_id} />
+      <PageHeader
+        title={(en && education.organization_en) || education.organization}
+        description={(en && education.title_en) || education.title_id}
+      />
       <div className="flex flex-col gap-6">
         <ExperienceForm key={id} experienceId={id} defaultValues={education} kind="education" />
         {/* logo bulat di kartu pendidikan halaman Tentang dan chip kampus di kartu foto */}

@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
@@ -24,6 +25,7 @@ export function HeroRolesForm({
   // teks bawaan (About.roles) yang tampil di situs selama kolom ini kosong
   placeholders: Record<'id' | 'en', string>
 }) {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
   const form = useForm<HeroRolesInput>({ resolver: zodResolver(heroRolesSchema), defaultValues })
   const {
@@ -59,7 +61,7 @@ export function HeroRolesForm({
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">Peran di bawah foto</h2>
+        <h2 className="text-h3 font-semibold">{t('Peran di bawah foto')}</h2>
         <BilingualTabs errors={countLangErrors(errors)} id={roles('id')} en={roles('en')} />
       </Card>
       <FormFooter pending={pending} />

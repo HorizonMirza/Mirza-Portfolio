@@ -10,7 +10,11 @@ import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatDateTime, formatDayKey } from '@/lib/format'
 
-export const metadata: Metadata = { title: 'Dashboard' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Dashboard') }
+}
 
 // Tiap angka sekaligus pintasan ke halaman yang mengelolanya
 function StatTile({
@@ -120,7 +124,7 @@ export default async function DashboardPage() {
             <tbody>
               {visits.map((v) => (
                 <tr key={v.day} className="border-t border-border">
-                  <td className="py-1">{formatDayKey(v.day)}</td>
+                  <td className="py-1">{formatDayKey(v.day, lang)}</td>
                   <td className="py-1 text-right tabular-nums">{v.views}</td>
                 </tr>
               ))}
@@ -150,7 +154,7 @@ export default async function DashboardPage() {
                 <div className="min-w-0">
                   <p className="truncate font-medium">{m.subject || t('(tanpa subjek)')}</p>
                   <p className="text-sm text-muted">
-                    {m.name} · {formatDateTime(m.createdAt)}
+                    {m.name} · {formatDateTime(m.createdAt, lang)}
                   </p>
                 </div>
                 {m.status === 'NEW' ? <Badge tone="primary">{t('Baru')}</Badge> : null}

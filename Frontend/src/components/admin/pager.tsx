@@ -1,9 +1,10 @@
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
+import { getAdminT } from '@/lib/admin-lang-server'
 
 // Navigasi halaman daftar admin (log audit, pesan) lewat tautan ?page=, bekerja tanpa JavaScript.
-export function Pager({
+export async function Pager({
   label,
   page,
   pages,
@@ -15,19 +16,18 @@ export function Pager({
   href: (page: number) => string
 }) {
   if (pages <= 1) return null
+  const { t } = await getAdminT()
   return (
     <nav aria-label={label} className="mt-4 flex items-center justify-end gap-2 text-sm">
-      <span className="text-muted">
-        Halaman {page} dari {pages}
-      </span>
+      <span className="text-muted">{t('Halaman {page} dari {pages}', { page, pages })}</span>
       {page > 1 ? (
         <Button variant="secondary" size="sm" asChild>
-          <Link href={href(page - 1)}>Sebelumnya</Link>
+          <Link href={href(page - 1)}>{t('Sebelumnya')}</Link>
         </Button>
       ) : null}
       {page < pages ? (
         <Button variant="secondary" size="sm" asChild>
-          <Link href={href(page + 1)}>Berikutnya</Link>
+          <Link href={href(page + 1)}>{t('Berikutnya')}</Link>
         </Button>
       ) : null}
     </nav>

@@ -11,7 +11,13 @@ import {
 } from 'react'
 import { flushSync } from 'react-dom'
 
-import { ADMIN_LANG_COOKIE, type AdminLang, adminT, parseAdminLang } from '@/lib/admin-i18n'
+import {
+  ADMIN_LANG_COOKIE,
+  type AdminLang,
+  adminT,
+  type AdminVars,
+  parseAdminLang,
+} from '@/lib/admin-i18n'
 import { scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
@@ -31,6 +37,11 @@ function readCookie(): string | null {
 
 function read(): AdminLang {
   return parseAdminLang(readCookie())
+}
+
+// Bahasa admin saat ini untuk kode di luar komponen (mis. notifikasi hasil aksi)
+export function currentAdminLang(): AdminLang {
+  return typeof document === 'undefined' ? 'id' : read()
 }
 
 function subscribe(onChange: () => void) {
@@ -75,7 +86,13 @@ export function useAdminLang() {
 // Penerjemah teks admin untuk client component
 export function useAdminT() {
   const { lang } = useAdminLang()
-  return useMemo(() => (text: string) => adminT(lang, text), [lang])
+  return useMemo(() => (text: string, vars?: AdminVars) => adminT(lang, text, vars), [lang])
+}
+
+// Teks admin yang diterjemahkan di dalam server component tanpa membaca cookie (mis. label skeleton
+// di loading.tsx, agar skeleton tetap langsung tampil)
+export function AdminText({ text }: { text: string }) {
+  return useAdminT()(text)
 }
 
 // Satu tombol bulat seperti tombol bahasa situs publik (revisi pemilik 2026-11-06, menggantikan

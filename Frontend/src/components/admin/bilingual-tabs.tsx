@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 
-import { useAdminLang } from '@/components/admin/admin-lang'
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { FieldLangContext } from '@/components/admin/lang-chip'
 import { Button } from '@/components/ui/button'
 
@@ -22,6 +22,7 @@ export function BilingualTabs({
   en: ReactNode
 }) {
   const { lang, setLang } = useAdminLang()
+  const t = useAdminT()
   const other = lang === 'id' ? 'en' : 'id'
   return (
     <div className="flex flex-col gap-5">
@@ -31,10 +32,10 @@ export function BilingualTabs({
           className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-danger/40 px-3 py-2 text-sm text-danger"
         >
           <span>
-            {errors[other]} galat di isian {LANG_NAME[other]}.
+            {t('{count} galat di isian {lang}.', { count: errors[other], lang: LANG_NAME[other] })}
           </span>
           <Button type="button" variant="ghost" size="sm" onClick={() => setLang(other)}>
-            Buka isian {LANG_NAME[other]}
+            {t('Buka isian {lang}', { lang: LANG_NAME[other] })}
           </Button>
         </div>
       ) : null}

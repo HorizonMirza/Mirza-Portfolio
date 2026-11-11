@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { AdminText } from '@/components/admin/admin-lang'
 import { Skeleton, SkeletonLines, SkeletonPage } from '@/components/shared/skeleton'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -10,7 +11,7 @@ import { cn } from '@/lib/utils'
 // data, daftar, dan kartu form.
 
 function Loading({ children }: { children: ReactNode }) {
-  return <SkeletonPage label="Memuat halaman…">{children}</SkeletonPage>
+  return <SkeletonPage label={<AdminText text="Memuat halaman…" />}>{children}</SkeletonPage>
 }
 
 function HeaderSkeleton({ action = false }: { action?: boolean }) {

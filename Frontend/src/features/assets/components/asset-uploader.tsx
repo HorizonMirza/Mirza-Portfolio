@@ -4,6 +4,7 @@ import { Upload } from 'lucide-react'
 import { useId, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -34,12 +35,13 @@ async function readImageSize(file: File): Promise<{ width: number; height: numbe
 export function AssetUploader({
   target,
   targetId,
-  buttonLabel = 'Unggah',
+  buttonLabel,
 }: {
   target: UploadTarget
   targetId?: string
   buttonLabel?: string
 }) {
+  const t = useAdminT()
   const spec = UPLOAD_TARGETS[target]
   const uid = useId()
   const fileRef = useRef<HTMLInputElement>(null)
@@ -75,10 +77,10 @@ export function AssetUploader({
           return
         }
       }
-      setStage('Menyiapkan…')
+      setStage(t('Menyiapkan…'))
       const signed = await signAssetUpload(target)
       if (!signed.ok || !signed.data) {
-        toast.error(signed.message)
+        toast.error(t(signed.message))
         setStage(null)
         return
       }
@@ -90,7 +92,7 @@ export function AssetUploader({
       body.set('signature', s.signature)
       body.set('folder', s.folder)
       if (s.allowedFormats) body.set('allowed_formats', s.allowedFormats)
-      setStage('Mengunggah…')
+      setStage(t('Mengunggah…'))
       let uploaded: unknown
       try {
         const res = await fetch(
@@ -103,11 +105,11 @@ export function AssetUploader({
         uploaded = await res.json()
         if (!res.ok) throw new Error('upload')
       } catch {
-        toast.error('Unggah ke Cloudinary gagal. Periksa koneksi lalu coba lagi.')
+        toast.error(t('Unggah ke Cloudinary gagal. Periksa koneksi lalu coba lagi.'))
         setStage(null)
         return
       }
-      setStage('Menyimpan…')
+      setStage(t('Menyimpan…'))
       // Berkas sudah di Cloudinary: bila koneksi putus saat menyimpan, coba sekali lagi. Bila tetap
       // gagal, berkas tanpa pemilik dibersihkan cron harian setelah 48 jam (audit 2026-11-02, DB-07).
       const attach = () =>
@@ -120,17 +122,19 @@ export function AssetUploader({
           saved = await attach()
         } catch {
           setStage(null)
-          toast.error('Berkas terunggah tetapi gagal disimpan. Periksa koneksi lalu unggah lagi.')
+          toast.error(
+            t('Berkas terunggah tetapi gagal disimpan. Periksa koneksi lalu unggah lagi.'),
+          )
           return
         }
       }
       setStage(null)
       if (!saved.ok) {
-        toast.error(saved.message)
+        toast.error(t(saved.message))
         if (saved.fieldErrors) setErrors(saved.fieldErrors)
         return
       }
-      toast.success(saved.message)
+      toast.success(t(saved.message))
       setFile(null)
       setAlt({ alt_id: '', alt_en: '' })
       if (fileRef.current) fileRef.current.value = ''
@@ -142,7 +146,10 @@ export function AssetUploader({
       <Field
         id={`${uid}-file`}
         label={spec.label}
-        hint={`${spec.formats.join(', ').toUpperCase()}, maksimal ${formatBytes(spec.maxBytes)}.`}
+        hint={t('{formats}, maksimal {size}.', {
+          formats: spec.formats.join(', ').toUpperCase(),
+          size: formatBytes(spec.maxBytes),
+        })}
         error={errors.file}
       >
         {(a) => (
@@ -186,7 +193,7 @@ export function AssetUploader({
       <div className="flex items-center gap-3">
         <Button type="button" variant="secondary" onClick={upload} disabled={pending}>
           <Upload aria-hidden="true" />
-          {pending ? 'Memproses…' : buttonLabel}
+          {pending ? t('Memproses…') : (buttonLabel ?? t('Unggah'))}
         </Button>
         <p role="status" className="text-sm text-muted">
           {stage}

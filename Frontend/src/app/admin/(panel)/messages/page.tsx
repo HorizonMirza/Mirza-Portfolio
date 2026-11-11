@@ -15,10 +15,15 @@ import {
   messageStatusLabel,
   parseMessageStatus,
 } from '@/features/messages/schema'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatDateTime } from '@/lib/format'
 
-export const metadata: Metadata = { title: 'Pesan' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Pesan') }
+}
 
 export default async function MessagesPage({ searchParams }: PageProps<'/admin/messages'>) {
   await requireSuperAdminPage()
@@ -31,6 +36,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
   ])
   const pages = Math.max(1, Math.ceil(counts[status] / MESSAGES_PAGE_SIZE))
   const base = status === 'NEW' ? '/admin/messages' : `/admin/messages?status=${status}`
+  const { lang, t } = await getAdminT()
   const pageHref = (p: number) =>
     p === 1 ? base : `${base}${base.includes('?') ? '&' : '?'}page=${p}`
 
@@ -38,10 +44,10 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
     <>
       <PageHeader title="Pesan" description="Pesan dari formulir kontak. Waktu dalam WIB." />
       <FilterTabs
-        label="Filter status pesan"
+        label={t('Filter status pesan')}
         items={MESSAGE_STATUSES.map((s) => ({
           href: s === 'NEW' ? '/admin/messages' : `/admin/messages?status=${s}`,
-          label: messageStatusLabel[s],
+          label: t(messageStatusLabel[s]),
           count: counts[s],
           active: s === status,
         }))}
@@ -49,8 +55,10 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
       {messages.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
           {status === 'NEW'
-            ? 'Tidak ada pesan baru.'
-            : `Tidak ada pesan berstatus ${messageStatusLabel[status].toLowerCase()}.`}
+            ? t('Tidak ada pesan baru.')
+            : t('Tidak ada pesan berstatus {status}.', {
+                status: t(messageStatusLabel[status]).toLowerCase(),
+              })}
         </p>
       ) : (
         <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
@@ -61,7 +69,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
                 className="flex flex-col gap-1 px-4 py-3 hover:bg-surface-2 sm:flex-row sm:items-baseline sm:gap-4"
               >
                 <span className="flex min-w-0 items-center gap-2 sm:w-56 sm:shrink-0">
-                  {m.status === 'NEW' ? <Badge tone="primary">Baru</Badge> : null}
+                  {m.status === 'NEW' ? <Badge tone="primary">{t('Baru')}</Badge> : null}
                   <span className="truncate font-medium">{m.name}</span>
                 </span>
                 <span className="min-w-0 flex-1 truncate text-sm">
@@ -69,14 +77,14 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
                   <span className="text-muted">{m.body.slice(0, 140)}</span>
                 </span>
                 <span className="shrink-0 text-xs text-muted tabular-nums">
-                  {formatDateTime(m.createdAt)}
+                  {formatDateTime(m.createdAt, lang)}
                 </span>
               </Link>
             </li>
           ))}
         </ul>
       )}
-      <Pager label="Halaman pesan" page={page} pages={pages} href={pageHref} />
+      <Pager label={t('Halaman pesan')} page={page} pages={pages} href={pageHref} />
     </>
   )
 }

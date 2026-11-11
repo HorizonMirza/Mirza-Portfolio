@@ -20,6 +20,7 @@ import {
 import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -66,6 +67,7 @@ export function DataTable<T extends Record<string, unknown>>({
   getRowId,
   pageSize = 20,
 }: DataTableProps<T>) {
+  const t = useAdminT()
   const table = useTable({
     features: adminTableFeatures,
     columns,
@@ -170,9 +172,15 @@ export function DataTable<T extends Record<string, unknown>>({
       )}
 
       {table.getPageCount() > 1 ? (
-        <nav aria-label="Halaman tabel" className="flex items-center justify-end gap-2 text-sm">
+        <nav
+          aria-label={t('Halaman tabel')}
+          className="flex items-center justify-end gap-2 text-sm"
+        >
           <span className="text-muted">
-            Halaman {table.state.pagination.pageIndex + 1} dari {table.getPageCount()}
+            {t('Halaman {page} dari {pages}', {
+              page: table.state.pagination.pageIndex + 1,
+              pages: table.getPageCount(),
+            })}
           </span>
           <Button
             variant="secondary"
@@ -180,7 +188,7 @@ export function DataTable<T extends Record<string, unknown>>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Sebelumnya
+            {t('Sebelumnya')}
           </Button>
           <Button
             variant="secondary"
@@ -188,7 +196,7 @@ export function DataTable<T extends Record<string, unknown>>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Berikutnya
+            {t('Berikutnya')}
           </Button>
         </nav>
       ) : null}

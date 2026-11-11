@@ -4,10 +4,15 @@ import { PageHeader } from '@/components/admin/page-header'
 import { Pager, parsePage } from '@/components/admin/pager'
 import { Badge } from '@/components/ui/badge'
 import { AUDIT_PAGE_SIZE, listAuditLogs } from '@/features/audit/queries'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatDateTime } from '@/lib/format'
 
-export const metadata: Metadata = { title: 'Log audit' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Log audit') }
+}
 
 const actionLabel: Record<string, string> = {
   create: 'buat',
@@ -31,7 +36,6 @@ const entityLabel: Record<string, string> = {
   SkillCategory: 'Kategori skill',
   User: 'Akun',
 }
-const labelOf = (entity: string) => entityLabel[entity] ?? entity
 
 type Change = { before: unknown; after: unknown }
 
@@ -56,6 +60,8 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
   const page = parsePage(sp.page)
   const { rows, total, entities } = await listAuditLogs({ entity: entityParam, page })
   const pages = Math.max(1, Math.ceil(total / AUDIT_PAGE_SIZE))
+  const { lang, t } = await getAdminT()
+  const labelOf = (entity: string) => t(entityLabel[entity] ?? entity)
 
   return (
     <>
@@ -64,17 +70,17 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
         description="Setiap perubahan dari panel admin tercatat di sini. Data pribadi pengunjung tidak ikut dicatat."
       />
       <FilterTabs
-        label="Filter entitas"
+        label={t('Filter entitas')}
         items={[null, ...entities].map((e) => ({
           href: href(e, 1),
-          label: e ? labelOf(e) : 'Semua',
+          label: e ? labelOf(e) : t('Semua'),
           active: e === entityParam,
         }))}
       />
 
       {rows.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
-          Belum ada catatan.
+          {t('Belum ada catatan.')}
         </p>
       ) : (
         <ol className="flex flex-col gap-2">
@@ -84,9 +90,9 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
               <li key={row.id} className="rounded-2xl border border-border bg-surface px-4 py-3">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm">
                   <time dateTime={row.createdAt.toISOString()} className="text-muted tabular-nums">
-                    {formatDateTime(row.createdAt)}
+                    {formatDateTime(row.createdAt, lang)}
                   </time>
-                  <span className="font-medium">{row.actor?.name ?? 'Sistem'}</span>
+                  <span className="font-medium">{row.actor?.name ?? t('Sistem')}</span>
                   <Badge
                     tone={
                       row.action === 'delete'
@@ -96,7 +102,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
                           : 'neutral'
                     }
                   >
-                    {actionLabel[row.action] ?? row.action}
+                    {t(actionLabel[row.action] ?? row.action)}
                   </Badge>
                   <span>{labelOf(row.entity)}</span>
                   {row.entityId ? (
@@ -106,7 +112,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
                 {changes.length > 0 ? (
                   <details className="mt-2 text-sm">
                     <summary className="cursor-pointer text-primary">
-                      {changes.length} field berubah
+                      {t('{count} field berubah', { count: changes.length })}
                     </summary>
                     <dl className="mt-2 grid gap-2">
                       {changes.map(([field, change]) => (
@@ -117,7 +123,7 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
                               {show(change.before)}
                             </span>
                             <span aria-hidden="true"> → </span>
-                            <span className="sr-only"> menjadi </span>
+                            <span className="sr-only"> {t('menjadi')} </span>
                             <span>{show(change.after)}</span>
                           </dd>
                         </div>
@@ -131,7 +137,12 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
         </ol>
       )}
 
-      <Pager label="Halaman log" page={page} pages={pages} href={(p) => href(entityParam, p)} />
+      <Pager
+        label={t('Halaman log')}
+        page={page}
+        pages={pages}
+        href={(p) => href(entityParam, p)}
+      />
     </>
   )
 }

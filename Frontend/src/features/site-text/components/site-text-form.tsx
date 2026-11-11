@@ -4,7 +4,7 @@ import { RotateCcw } from 'lucide-react'
 import { useState, useTransition } from 'react'
 
 import { applyResult } from '@/components/admin/apply-result'
-import { useAdminLang } from '@/components/admin/admin-lang'
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { FormFooter } from '@/components/admin/form-footer'
 import { LangChip } from '@/components/admin/lang-chip'
 import { Button } from '@/components/ui/button'
@@ -35,6 +35,7 @@ export function SiteTextForm({
   initialValues: Values
   defaults: Defaults
 }) {
+  const t = useAdminT()
   const entries = entriesOf(moduleId)
   // kartu per bagian, urut sesuai kemunculan pertama di daftar
   const sections = [...new Set(entries.map((entry) => entry.section))]
@@ -85,7 +86,7 @@ export function SiteTextForm({
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       {sections.map((section) => (
         <Card key={section} className="flex flex-col gap-5">
-          <h2 className="text-h3 font-semibold">{section}</h2>
+          <h2 className="text-h3 font-semibold">{t(section)}</h2>
           {entries
             .filter((entry) => entry.section === section)
             .map((entry) => (
@@ -123,6 +124,8 @@ function TextRow({
 }) {
   // hanya bahasa yang dipilih di top bar yang tampil; galat di bahasa lain tetap diberitahukan
   const { lang: shown } = useAdminLang()
+  const t = useAdminT()
+  const label = t(entry.label)
   const other = LANGS.find((l) => l.lang !== shown)!
   const otherError = errors[`${entry.key}.${other.lang}`]
   const changed = Boolean(value.id || value.en)
@@ -143,7 +146,7 @@ function TextRow({
       <div className="flex min-h-8 flex-wrap items-center justify-between gap-2">
         <span className="flex items-center gap-2">
           <Label htmlFor={id} className="font-semibold">
-            {entry.label}
+            {label}
             <span className="sr-only"> ({LANGS.find((l) => l.lang === shown)!.label})</span>
           </Label>
           <LangChip lang={shown} />
@@ -153,11 +156,11 @@ function TextRow({
             type="button"
             variant="ghost"
             size="sm"
-            aria-label={`Kembalikan bawaan: ${entry.label}`}
+            aria-label={t('Kembalikan bawaan: {label}', { label })}
             onClick={onReset}
           >
             <RotateCcw aria-hidden="true" />
-            Kembalikan bawaan
+            {t('Kembalikan bawaan')}
           </Button>
         ) : null}
       </div>
@@ -168,17 +171,19 @@ function TextRow({
       )}
       {error ? (
         <p id={`${id}-error`} className="text-sm text-danger">
-          {error}
+          {t(error)}
         </p>
       ) : null}
       {otherError ? (
         <p className="text-sm text-danger">
-          Galat di {other.label}: {otherError}
+          {t('Galat di {lang}: {error}', { lang: other.label, error: t(otherError) })}
         </p>
       ) : null}
       {entry.placeholders?.length ? (
         <p className="text-xs text-muted">
-          Boleh memakai {entry.placeholders.map((p) => `{${p}}`).join(' dan ')}; diisi otomatis.
+          {t('Boleh memakai {names}; diisi otomatis.', {
+            names: entry.placeholders.map((p) => `{${p}}`).join(` ${t('dan')} `),
+          })}
         </p>
       ) : null}
     </div>

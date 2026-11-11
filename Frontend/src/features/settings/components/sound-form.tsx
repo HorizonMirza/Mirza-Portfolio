@@ -5,6 +5,7 @@ import { Volume2, VolumeX } from 'lucide-react'
 import { useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { FormFooter } from '@/components/admin/form-footer'
 import { Button } from '@/components/ui/button'
@@ -15,6 +16,7 @@ import { saveSoundVolume } from '../actions'
 import { type SoundInput, soundSchema } from '../schema'
 
 export function SoundForm({ defaultValues }: { defaultValues: SoundInput }) {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
   const form = useForm<SoundInput>({ resolver: zodResolver(soundSchema), defaultValues })
   const {
@@ -35,10 +37,11 @@ export function SoundForm({ defaultValues }: { defaultValues: SoundInput }) {
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="flex flex-col gap-4">
         <div>
-          <h2 className="text-h3 font-semibold">Suara tombol</h2>
+          <h2 className="text-h3 font-semibold">{t('Suara tombol')}</h2>
           <p className="mt-1 text-sm text-muted">
-            Satu volume untuk suara tombol tema, bahasa, dan menu di situs publik. 0 berarti tanpa
-            suara. Pengunjung tetap bisa mengecilkan suara dari perangkatnya.
+            {t(
+              'Satu volume untuk suara tombol tema, bahasa, dan menu di situs publik. 0 berarti tanpa suara. Pengunjung tetap bisa mengecilkan suara dari perangkatnya.',
+            )}
           </p>
         </div>
         <div className="flex flex-col gap-2">
@@ -67,7 +70,7 @@ export function SoundForm({ defaultValues }: { defaultValues: SoundInput }) {
           </div>
           {errors.soundVolume ? (
             <p id="soundVolume-error" className="text-sm text-danger">
-              {errors.soundVolume.message}
+              {t(errors.soundVolume.message ?? '')}
             </p>
           ) : null}
         </div>
@@ -78,7 +81,7 @@ export function SoundForm({ defaultValues }: { defaultValues: SoundInput }) {
             onClick={() => previewSound(Number(volume) || 0)}
           >
             <Volume2 aria-hidden="true" />
-            Coba suara
+            {t('Coba suara')}
           </Button>
         </div>
       </Card>

@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import type { ActionResult } from '@/lib/action-result'
 import type { MoveDirection } from '@/lib/reorder'
@@ -20,12 +21,13 @@ export function ReorderButtons({
   isLast: boolean
   onMove: (direction: MoveDirection) => Promise<ActionResult<unknown>>
 }) {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
 
   function move(direction: MoveDirection) {
     startTransition(async () => {
       const result = await onMove(direction)
-      if (!result.ok) toast.error(result.message)
+      if (!result.ok) toast.error(t(result.message))
     })
   }
 
@@ -35,7 +37,7 @@ export function ReorderButtons({
         variant="ghost"
         size="sm"
         className="px-2"
-        aria-label={`Naikkan ${itemLabel}`}
+        aria-label={t('Naikkan {item}', { item: itemLabel })}
         disabled={isFirst || pending}
         onClick={() => move('up')}
       >
@@ -45,7 +47,7 @@ export function ReorderButtons({
         variant="ghost"
         size="sm"
         className="px-2"
-        aria-label={`Turunkan ${itemLabel}`}
+        aria-label={t('Turunkan {item}', { item: itemLabel })}
         disabled={isLast || pending}
         onClick={() => move('down')}
       >

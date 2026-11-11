@@ -2,6 +2,7 @@
 
 import { useId, useState, useTransition } from 'react'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,7 @@ export function AssetAltForm({
   alt_id: string
   alt_en: string
 }) {
+  const t = useAdminT()
   const uid = useId()
   const [values, setValues] = useState({ alt_id, alt_en })
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -60,7 +62,7 @@ export function AssetAltForm({
           onClick={save}
           disabled={pending || !dirty}
         >
-          {pending ? 'Menyimpan…' : 'Simpan teks alternatif'}
+          {pending ? t('Menyimpan…') : t('Simpan teks alternatif')}
         </Button>
       </div>
     </div>

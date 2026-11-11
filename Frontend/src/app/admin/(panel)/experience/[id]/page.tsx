@@ -7,10 +7,15 @@ import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getExperienceAssets } from '@/features/assets/queries'
 import { ExperienceForm } from '@/features/experience/components/experience-form'
 import { getExperienceForEdit } from '@/features/experience/queries'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { isUploadConfigured } from '@/lib/uploads'
 
-export const metadata: Metadata = { title: 'Ubah pengalaman' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Ubah pengalaman') }
+}
 
 export default async function EditExperiencePage({ params }: PageProps<'/admin/experience/[id]'>) {
   await requireSuperAdminPage()
@@ -24,9 +29,13 @@ export default async function EditExperiencePage({ params }: PageProps<'/admin/e
   // pendidikan diubah di About → Pendidikan
   if (experience.type === 'EDUCATION') redirect(`/admin/education/${id}`)
   const configured = isUploadConfigured()
+  const en = (await getAdminLang()) === 'en'
   return (
     <>
-      <PageHeader title={experience.title_id} description={experience.organization} />
+      <PageHeader
+        title={(en && experience.title_en) || experience.title_id}
+        description={(en && experience.organization_en) || experience.organization}
+      />
       <div className="flex flex-col gap-6">
         <ExperienceForm key={id} experienceId={id} defaultValues={experience} />
         {/* Logo dan foto tampil di timeline publik (DESIGN.md bagian 38) */}

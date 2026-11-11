@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ import { type ChangePasswordInput, changePasswordSchema } from '../schema'
 const empty: ChangePasswordInput = { currentPassword: '', newPassword: '', confirmPassword: '' }
 
 export function ChangePasswordForm() {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
   const form = useForm<ChangePasswordInput>({
     resolver: zodResolver(changePasswordSchema),
@@ -35,7 +37,7 @@ export function ChangePasswordForm() {
 
   return (
     <Card className="max-w-lg">
-      <h2 className="text-h3 font-semibold">Ganti password</h2>
+      <h2 className="text-h3 font-semibold">{t('Ganti password')}</h2>
       <form onSubmit={onSubmit} noValidate className="mt-4 flex flex-col gap-4">
         {/* username tersembunyi membantu pengelola password mengenali akun */}
         <input type="text" name="username" autoComplete="username" hidden readOnly />
@@ -56,7 +58,9 @@ export function ChangePasswordForm() {
         <Field
           id="newPassword"
           label="Password baru"
-          hint={`Minimal ${MIN_PASSWORD_LENGTH} karakter. Frasa panjang lebih kuat daripada simbol acak.`}
+          hint={t('Minimal {min} karakter. Frasa panjang lebih kuat daripada simbol acak.', {
+            min: MIN_PASSWORD_LENGTH,
+          })}
           error={errors.newPassword?.message}
         >
           {(a) => (
@@ -84,7 +88,7 @@ export function ChangePasswordForm() {
         </Field>
         <div>
           <Button type="submit" disabled={pending}>
-            {pending ? 'Menyimpan…' : 'Ganti password'}
+            {pending ? t('Menyimpan…') : t('Ganti password')}
           </Button>
         </div>
       </form>

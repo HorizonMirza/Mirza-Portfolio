@@ -32,6 +32,7 @@ export async function listSkillOptions() {
   return categories.map((c) => ({
     id: c.id,
     name: c.name_id,
+    name_en: c.name_en,
     skills: c.skills.map((s) => ({ id: s.id, name: s.name })),
   }))
 }

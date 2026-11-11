@@ -6,10 +6,15 @@ import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getProfileAssets } from '@/features/assets/queries'
 import { ProfileForm } from '@/features/profile/components/profile-form'
 import { getProfileForEdit } from '@/features/profile/queries'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { isUploadConfigured } from '@/lib/uploads'
 
-export const metadata: Metadata = { title: 'Profil' }
+// judul tab browser ikut bahasa admin
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getAdminT()
+  return { title: t('Profil') }
+}
 
 export default async function ProfilePage() {
   await requireSuperAdminPage()

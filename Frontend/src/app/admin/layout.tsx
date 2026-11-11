@@ -40,7 +40,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2 focus:shadow-lg"
         >
-          Lewati ke konten utama
+          {lang === 'en' ? 'Skip to main content' : 'Lewati ke konten utama'}
         </a>
         <ThemeProvider
           nonce={nonce}

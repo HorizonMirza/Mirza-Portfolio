@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
@@ -17,6 +18,7 @@ import { type IntroInput, introSchema } from '../schema'
 // Admin → Bagian Awal: hanya isi kartu pembuka yang bisa diubah (permintaan pemilik 2026-11-10).
 // Judul "Informasi Penting", label, dan tombol kartu adalah teks tetap.
 export function IntroForm({ defaultValues }: { defaultValues: IntroInput }) {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
   const form = useForm<IntroInput>({ resolver: zodResolver(introSchema), defaultValues })
   const {
@@ -53,10 +55,9 @@ export function IntroForm({ defaultValues }: { defaultValues: IntroInput }) {
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="flex flex-col gap-4">
         <div>
-          <h2 className="text-h3 font-semibold">Isi kartu pembuka</h2>
+          <h2 className="text-h3 font-semibold">{t('Isi kartu pembuka')}</h2>
           <p className="mt-1 text-sm text-muted">
-            Kalimat di bawah judul &quot;Informasi Penting&quot;, dalam bahasa Indonesia dan
-            Inggris.
+            {t('Kalimat di bawah judul "Informasi Penting", dalam bahasa Indonesia dan Inggris.')}
           </p>
         </div>
         <BilingualTabs errors={countLangErrors(errors)} id={body('id')} en={body('en')} />

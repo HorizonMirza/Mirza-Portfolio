@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { FormFooter } from '@/components/admin/form-footer'
@@ -16,6 +17,7 @@ import { type ContactLinksInput, contactLinksSchema, SOCIAL_KEYS, socialLabel } 
 // Admin → Footer: WhatsApp, Email, LinkedIn, GitHub, Instagram, situs lain, dan link Resume CV di
 // kotak kontak footer (dipindah dari form Profil 2026-11-10, permintaan pemilik).
 export function ContactLinksForm({ defaultValues }: { defaultValues: ContactLinksInput }) {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
   const form = useForm<ContactLinksInput>({
     resolver: zodResolver(contactLinksSchema),
@@ -37,10 +39,11 @@ export function ContactLinksForm({ defaultValues }: { defaultValues: ContactLink
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="grid gap-5 md:grid-cols-2">
         <div className="md:col-span-2">
-          <h2 className="text-h3 font-semibold">Kontak dan Resume CV</h2>
+          <h2 className="text-h3 font-semibold">{t('Kontak dan Resume CV')}</h2>
           <p className="mt-1 text-sm text-muted">
-            Kotak kontak di footer setiap halaman. Email dan WhatsApp hanya disimpan di database,
-            tidak di repo. Kosongkan bila tidak ingin ditampilkan.
+            {t(
+              'Kotak kontak di footer setiap halaman. Email dan WhatsApp hanya disimpan di database, tidak di repo. Kosongkan bila tidak ingin ditampilkan.',
+            )}
           </p>
         </div>
         <Field id="email" label="Email publik (opsional)" error={errors.email?.message}>
@@ -68,7 +71,7 @@ export function ContactLinksForm({ defaultValues }: { defaultValues: ContactLink
           <Field
             key={key}
             id={`socials-${key}`}
-            label={`${socialLabel[key]} (opsional)`}
+            label={t('{name} (opsional)', { name: t(socialLabel[key]) })}
             error={errors.socials?.[key]?.message}
           >
             {(a) => <Input type="url" inputMode="url" {...a} {...register(`socials.${key}`)} />}

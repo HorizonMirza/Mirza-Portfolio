@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
@@ -19,6 +20,7 @@ import { type ProfileInput, profileSchema } from '../schema'
 type Lang = 'id' | 'en'
 
 export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) {
+  const t = useAdminT()
   const [pending, startTransition] = useTransition()
   const form = useForm<ProfileInput>({ resolver: zodResolver(profileSchema), defaultValues })
   const {
@@ -90,7 +92,7 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="grid gap-5 md:grid-cols-2">
-        <h2 className="text-h3 font-semibold md:col-span-2">Identitas</h2>
+        <h2 className="text-h3 font-semibold md:col-span-2">{t('Identitas')}</h2>
         <Field id="name" label="Nama" error={errors.name?.message}>
           {(a) => <Input autoComplete="name" {...a} {...register('name')} />}
         </Field>
@@ -100,23 +102,23 @@ export function ProfileForm({ defaultValues }: { defaultValues: ProfileInput }) 
       </Card>
 
       <Card className="flex flex-col gap-3">
-        <h2 className="text-h3 font-semibold">Kartu foto</h2>
+        <h2 className="text-h3 font-semibold">{t('Kartu foto')}</h2>
         <label className="flex min-h-11 items-center gap-3">
           <input
             type="checkbox"
             className="size-5 accent-primary"
             {...register('showCampusChip')}
           />
-          <span>Tampilkan chip kampus (nama dan logo pendidikan terbaru) di atas foto</span>
+          <span>{t('Tampilkan chip kampus (nama dan logo pendidikan terbaru) di atas foto')}</span>
         </label>
         <label className="flex min-h-11 items-center gap-3">
           <input type="checkbox" className="size-5 accent-primary" {...register('showFlag')} />
-          <span>Tampilkan chip bendera Indonesia di bawah foto</span>
+          <span>{t('Tampilkan chip bendera Indonesia di bawah foto')}</span>
         </label>
       </Card>
 
       <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">Teks dua bahasa</h2>
+        <h2 className="text-h3 font-semibold">{t('Teks dua bahasa')}</h2>
         <BilingualTabs
           errors={countLangErrors(errors)}
           id={langFields('id')}

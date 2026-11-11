@@ -14,6 +14,7 @@ import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
 import { SiteTextForm } from '@/features/site-text/components/site-text-form'
 import { getDefaultTexts, getTextsForEdit } from '@/features/site-text/queries'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { HERO_PORTRAIT } from '@/lib/default-photo'
 import { isUploadConfigured } from '@/lib/uploads'
@@ -22,7 +23,8 @@ type Params = { params: Promise<{ module: string }> }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const found = findModule((await params).module)
-  return { title: found?.label ?? 'Halaman situs' }
+  const { t } = await getAdminT()
+  return { title: t(found?.label ?? 'Halaman situs') }
 }
 
 // Satu halaman admin per modul situs publik. Teks dua bahasa dari daftar di features/site-text/catalog.ts;
@@ -60,6 +62,7 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
 }
 
 async function HomeHero() {
+  const { t } = await getAdminT()
   const [profileAssets, portrait, roles, tId, tEn] = await Promise.all([
     getProfileAssets(),
     getHeroPortraitAsset(),
@@ -83,17 +86,17 @@ async function HomeHero() {
           description="Foto besar di beranda. WebP, PNG, atau AVIF dengan perbandingan sekitar 1120:1100, lebar minimal 700 px."
           note={
             <>
-              Pembingkaian halaman dan gambar armor dihitung dari foto bawaan, jadi pengganti harus
-              dibingkai sama: kepala, wajah, dan tangan di posisi yang sama, rata bawah, latar
-              transparan.{' '}
+              {t(
+                'Pembingkaian halaman dan gambar armor dihitung dari foto bawaan, jadi pengganti harus dibingkai sama: kepala, wajah, dan tangan di posisi yang sama, rata bawah, latar transparan.',
+              )}{' '}
               <a
                 href={HERO_PORTRAIT.src}
                 download
                 className="text-primary underline underline-offset-4"
               >
-                Unduh foto bawaan sebagai acuan
+                {t('Unduh foto bawaan sebagai acuan')}
               </a>
-              . Hapus berkas untuk kembali ke foto bawaan.
+              . {t('Hapus berkas untuk kembali ke foto bawaan.')}
             </>
           }
           target="hero-portrait"

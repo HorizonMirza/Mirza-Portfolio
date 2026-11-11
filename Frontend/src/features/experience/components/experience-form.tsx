@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
+import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
 import { Field } from '@/components/admin/field'
@@ -37,6 +38,7 @@ export function ExperienceForm({
   defaultValues: ExperienceInput
   kind?: ExperienceKind
 }) {
+  const t = useAdminT()
   const education = kind === 'education'
   const basePath = kindBasePath[kind]
   const router = useRouter()
@@ -109,7 +111,7 @@ export function ExperienceForm({
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
       <Card className="grid gap-5 md:grid-cols-2">
-        <h2 className="text-h3 font-semibold md:col-span-2">Detail</h2>
+        <h2 className="text-h3 font-semibold md:col-span-2">{t('Detail')}</h2>
         {/* pendidikan: jenis tetap (nilai awal EDUCATION), tidak dipilih */}
         {education ? null : (
           <Field id="type" label="Jenis" error={errors.type?.message}>
@@ -117,7 +119,7 @@ export function ExperienceForm({
               <NativeSelect {...a} {...register('type')}>
                 {(['WORK', 'ORGANIZATION'] as const).map((value) => (
                   <option key={value} value={value}>
-                    {experienceTypeLabel[value]}
+                    {t(experienceTypeLabel[value])}
                   </option>
                 ))}
               </NativeSelect>
@@ -164,10 +166,10 @@ export function ExperienceForm({
             >
               {(a) => (
                 <NativeSelect {...a} {...register('employmentType')}>
-                  <option value="">Tidak ditampilkan</option>
+                  <option value="">{t('Tidak ditampilkan')}</option>
                   {Object.entries(employmentTypeLabel).map(([value, label]) => (
                     <option key={value} value={value}>
-                      {label}
+                      {t(label)}
                     </option>
                   ))}
                 </NativeSelect>
@@ -179,8 +181,9 @@ export function ExperienceForm({
             <label className="flex min-h-11 items-center gap-3 md:col-span-2">
               <input type="checkbox" className="size-5 accent-primary" {...register('inStory')} />
               <span>
-                Tandai sebagai titik garis cerita (bagian beranda Dari komunitas ke software sedang
-                tidak ditampilkan)
+                {t(
+                  'Tandai sebagai titik garis cerita (bagian beranda Dari komunitas ke software sedang tidak ditampilkan)',
+                )}
               </span>
             </label>
           </>
@@ -193,15 +196,15 @@ export function ExperienceForm({
         >
           {(a) => (
             <NativeSelect {...a} {...register('status')}>
-              <option value="PUBLISHED">Terbit</option>
-              <option value="DRAFT">Draf</option>
+              <option value="PUBLISHED">{t('Terbit')}</option>
+              <option value="DRAFT">{t('Draf')}</option>
             </NativeSelect>
           )}
         </Field>
       </Card>
 
       <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">Isi dua bahasa</h2>
+        <h2 className="text-h3 font-semibold">{t('Isi dua bahasa')}</h2>
         <BilingualTabs
           errors={countLangErrors(errors)}
           id={langFields('id')}

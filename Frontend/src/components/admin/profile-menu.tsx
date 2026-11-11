@@ -19,21 +19,19 @@ const itemBase =
 const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 
 // Isi menu profil (revisi pemilik 2026-11-11): Log audit dan Pengaturan pindah ke sini dari sidebar.
-// Diurutkan dari tulisan terpendek ke terpanjang dalam bahasa yang tampil; Keluar tetap paling bawah.
+// Urutan tetap pilihan pemilik di kedua bahasa; Keluar tetap paling bawah.
 const MENU_ITEMS = [
-  { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
   { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
-  { label: 'Log audit', href: '/admin/audit', icon: History, external: false },
   { label: 'Pengaturan', href: '/admin/settings', icon: Settings, external: false },
+  { label: 'Log audit', href: '/admin/audit', icon: History, external: false },
+  { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
 ] as const
 
 // Foto bulat di pojok kanan atas; menekannya membuka kepala menu (foto, nama, peran), lalu tautan menu
-// (terpendek dulu) dan Keluar berwarna merah.
+// dan Keluar berwarna merah.
 export function ProfileMenu({ adminName, photo }: AdminIdentity) {
   const router = useRouter()
   const t = useAdminT()
-  // sort stabil: label sama panjang tetap dalam urutan MENU_ITEMS
-  const items = [...MENU_ITEMS].sort((a, b) => t(a.label).length - t(b.label).length)
   const [open, setOpen] = useState(false)
   // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan
   // (audit 2026-11-02, PERF-06). Ref ikut dicek karena state baru berlaku di render berikutnya.
@@ -113,7 +111,7 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
             </div>
           </div>
           <div className="my-1 border-t border-border" />
-          {items.map(({ label, href, icon: Icon, external }) =>
+          {MENU_ITEMS.map(({ label, href, icon: Icon, external }) =>
             external ? (
               <a
                 key={href}
