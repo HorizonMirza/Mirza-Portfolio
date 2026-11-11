@@ -37,7 +37,7 @@ export async function saveSiteOption(input: unknown): Promise<ActionResult> {
   }
 }
 
-// Isi kartu pembuka (Admin → Bagian Awal), satu-satunya bagian kartu yang bisa diubah.
+// Isi kartu pembuka (Admin → Home, tab Kartu pembuka), satu-satunya bagian kartu yang bisa diubah.
 export async function saveIntroNotice(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

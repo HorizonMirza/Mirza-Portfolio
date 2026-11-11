@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { saveIntroNotice } from '../actions'
 import { type IntroInput, introSchema } from '../schema'
 
-// Admin → Bagian Awal: hanya isi kartu pembuka yang bisa diubah (permintaan pemilik 2026-11-10).
+// Admin → Home, tab Kartu pembuka: hanya isi kartu pembuka yang bisa diubah (permintaan pemilik 2026-11-10).
 // Judul "Informasi Penting", label, dan tombol kartu adalah teks tetap.
 export function IntroForm({ defaultValues }: { defaultValues: IntroInput }) {
   const t = useAdminT()

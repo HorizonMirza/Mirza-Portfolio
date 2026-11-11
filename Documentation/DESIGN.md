@@ -1601,3 +1601,11 @@ Permintaan pemilik, lima poin (rujukan: sidebar panel GAAS yang bisa diciutkan j
   - Label kelompok menu (Utama, Halaman situs, Kotak masuk) sudah dihapus di bagian 123; pengelompokan di kode ikut dihapus.
 - **Tombol hamburger** di kiri top bar, di semua ukuran layar. Desktop: menciutkan sidebar menjadi rel ikon (76 px, lebar beranimasi 300 ms, mati dengan reduced-motion) dan melebarkannya lagi; nama menu muncul saat kursor di atas ikon dan tetap untuk pembaca layar; lampu menu aktif tetap. Menu profil saat sidebar ciut terbuka di samping foto. Pilihan diingat di cookie `mmirza-admin-sidebar` (dibaca server, jadi tidak melompat saat dimuat). HP dan tablet: membuka laci berisi seluruh menu. `aria-expanded` mengikuti keadaannya.
 
+## 127. Sidebar menciut pelan, Pengaturan di sidebar, Log audit dihapus, Bagian Awal ke Home (2026-11-11 malam)
+
+Revisi pemilik atas bagian 126:
+
+- **Transisi lebih lama dan halus:** lebar sidebar berganti dalam 500 ms (dulu 300 ms) dengan kurva pelan di awal dan akhir (`--ease-in-out-soft`, `cubic-bezier(0.65, 0, 0.35, 1)`). Ikon menu dan foto profil tidak lagi melompat ke tengah saat menciut: padding-nya sama di kedua keadaan sehingga ikon selalu tepat di tengah rel 4.75rem. Tulisan (nama menu, nama admin, Super Admin, panah menu profil) memudar dalam 150 ms saat menciut dan muncul lagi 300 ms setelah jeda 200 ms saat melebar, jadi tidak terlihat terpotong. Tulisan tetap terbaca pembaca layar. Semua mati dengan reduced-motion.
+- **Menu profil** hanya Akun, Lihat situs, lalu Keluar. **Pengaturan** kembali ke sidebar, di bawah Pesan.
+- **Log audit dihapus dari panel:** halaman `/admin/audit`, skeleton, dan kode umpannya dihapus (kini 404). Pencatatan `AuditLog` di setiap aksi admin tetap berjalan (aturan keamanan), hanya tidak ditampilkan. Keputusan pemilik; PRD A9 diperbarui.
+- **Bagian Awal masuk ke Home:** menu sendiri dihapus; isi kartu pembuka kini tab kedua di Home ("Foto dan peran", "Kartu pembuka", "Skill"). Alamat `/admin/pages/intro` tetap, dengan judul, deskripsi, dan menu Home menyala.

@@ -24,22 +24,26 @@ type Params = { params: Promise<{ module: string }> }
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const found = findModule((await params).module)
   const { t } = await getAdminT()
+  if (found?.id === 'intro') return { title: `${t('Kartu pembuka')} · Home` }
   return { title: t(found?.label ?? 'Halaman situs') }
 }
 
 // Satu halaman admin per modul situs publik. Teks dua bahasa dari daftar di features/site-text/catalog.ts;
 // Bagian Awal (isi kartu pembuka) dan Home (foto dan peran) memakai form khusus tanpa teks lain.
+// Bagian Awal tampil sebagai tab di Home (revisi pemilik 2026-11-11): judul dan tab milik Home.
 export default async function SiteModulePage({ params }: Params) {
   await requireSuperAdminPage()
   const found = findModule((await params).module)
   if (!found) notFound()
   const moduleId: ModuleId = found.id
+  const header = moduleId === 'intro' ? (findModule('home') ?? found) : found
+  const tabsOf = moduleId === 'intro' ? 'home' : moduleId
 
   return (
     <>
-      <PageHeader title={found.title} description={found.description} />
-      {isTabbedModule(moduleId) ? (
-        <ModuleTabs moduleId={moduleId} current={`/admin/pages/${moduleId}`} />
+      <PageHeader title={header.title} description={header.description} />
+      {isTabbedModule(tabsOf) ? (
+        <ModuleTabs moduleId={tabsOf} current={`/admin/pages/${moduleId}`} />
       ) : null}
       <div className="flex flex-col gap-6">
         {/* Bagian Awal dan Home hanya mengelola yang diminta pemilik (2026-11-10): isi kartu

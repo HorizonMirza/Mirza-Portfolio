@@ -127,7 +127,7 @@ export function SiteSettingsList({
         <Row
           title={t('Kartu pembuka')}
           description={t(
-            'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Halaman situs, Bagian Awal.',
+            'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.',
           )}
           control={(ids) => (
             <Switch ids={ids} on={values.introEnabled} onChange={(v) => save('introEnabled', v)} />

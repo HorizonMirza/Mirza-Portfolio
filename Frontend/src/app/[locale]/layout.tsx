@@ -146,7 +146,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             {settings.whatsappButton && !maintenance ? <WhatsAppFloat /> : null}
             {/* skeleton shimmer saat pindah halaman, hanya di browser (DESIGN.md bagian 125) */}
             {maintenance ? null : <NavigationSkeleton />}
-            {/* pemberitahuan pembuka dari Admin → Bagian Awal, frekuensinya dari Admin → Pengaturan */}
+            {/* pemberitahuan pembuka dari Admin → Home, tab Kartu pembuka, frekuensinya dari Admin → Pengaturan */}
             {intro ? <IntroNoticeSlot locale={locale} intro={intro} /> : null}
             {/* Hanya di Vercel: di luar Vercel skrip /_vercel/* tidak ada (404 di CI dan lokal) */}
             {process.env.VERCEL === '1' && <VercelInsights />}

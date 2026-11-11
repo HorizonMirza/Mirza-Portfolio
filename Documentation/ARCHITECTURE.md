@@ -357,10 +357,9 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Project (tab modul Projects) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
-| Halaman situs (10 modul: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto profil dan foto utama di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `profile-photo`, `hero-portrait`) |
+| Halaman situs (8 modul: Bagian Awal sebagai tab "Kartu pembuka" di Home sejak 2026-11-11, Home, About, Experience, Projects, Contact, Navbar, Footer; Privasi dan Halaman lain dihapus 2026-11-11) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto profil dan foto utama di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `profile-photo`, `hero-portrait`) |
 | Berkas | di Profil, Project, dan Pengalaman (logo + foto kegiatan) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
-| Audit | `/admin/audit` | (baca saja) |
 | Pengaturan | `/admin/settings` | `saveSoundVolume` (volume suara tombol situs publik) |
 | Akun | `/admin/account` | `changePassword` |
 
@@ -476,7 +475,7 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 - **Uptime monitor:** memeriksa `/api/health` (cek koneksi database). Notifikasi ke email dan Telegram.
 - **Vercel Analytics + Speed Insights:** tren traffic dan Web Vitals lapangan, hanya dimuat di Vercel, query string dibuang lewat `beforeSend`.
 - **Backup:** `backup.yml` harian 02.30 WIB: `pg_dump` (Postgres 17) → gpg AES-256 → artifact 30 hari, lalu **diuji pulih otomatis setiap kali** ke Postgres sementara (jumlah Profile, Super Admin, migrasi). Ditambah pemulihan bawaan Neon. Langkah pemulihan manual di `Documentation/DEPLOYMENT.md`.
-- **Log audit:** di database, hanya bisa dibaca admin.
+- **Log audit:** di database (`AuditLog`). Halaman bacanya di panel dihapus 2026-11-11 atas keputusan pemilik; pencatatan tetap wajib di setiap aksi admin.
 
 ## 12. Catatan Keputusan (ADR ringkas)
 

@@ -27,6 +27,7 @@ export const SITE_MODULES: readonly SiteModule[] = [
     label: 'Bagian Awal',
     title: 'Bagian Awal',
     description:
+      // sejak 2026-11-11 tab "Kartu pembuka" di Home, bukan menu sendiri
       'Kartu pemberitahuan yang muncul sekali saat situs dibuka. Hanya isinya yang bisa diubah; judul, label, dan tombol kartu tetap.',
   },
   {
@@ -34,7 +35,7 @@ export const SITE_MODULES: readonly SiteModule[] = [
     label: 'Home',
     title: 'Home',
     description:
-      'Beranda: foto profil di kiri atas, foto utama, dan peran di bawah foto. Daftar skill di tab Skill; pengalaman dan project mengikuti modul Experience dan Projects.',
+      'Beranda: foto profil di kiri atas, foto utama, dan peran di bawah foto. Kartu yang muncul saat situs dibuka di tab Kartu pembuka, daftar skill di tab Skill; pengalaman dan project mengikuti modul Experience dan Projects.',
   },
   {
     id: 'about',

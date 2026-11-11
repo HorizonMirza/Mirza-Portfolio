@@ -76,7 +76,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | A6 | Edit Profil dan teks hero, link sosial, upload foto dan CV | P0 |
 | A7 | Kotak masuk pesan (baru/dibaca/arsip) | P0 |
 | A8 | ~~Newsletter: daftar pelanggan dan kirim broadcast~~ **Dihapus 2026-11-06** (F13) | — |
-| A9 | Log audit (siapa mengubah apa, kapan) | P0 |
+| A9 | Log audit (siapa mengubah apa, kapan) | P0 · halaman panel **dihapus 2026-11-11** atas keputusan pemilik; pencatatan `AuditLog` di database tetap berjalan |
 | A10 | Pratinjau perubahan sebelum diterbitkan (draf) | P1 |
 
 ## 6. User Stories dan Kriteria Penerimaan

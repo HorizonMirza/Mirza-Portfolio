@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import { maskEmail } from '@/features/account/mask-email'
 import { passwordStrength } from '@/features/account/password-strength'
-import { fieldLabel } from '@/features/audit/labels'
 import { deviceParts } from '@/lib/device'
 
 describe('Admin → Akun', () => {
@@ -26,14 +25,6 @@ describe('Admin → Akun', () => {
       ),
     ).toEqual({ browser: 'Safari', os: 'iOS', mobile: true })
     expect(deviceParts(null)).toEqual({ browser: null, os: null, mobile: false })
-  })
-})
-
-describe('label log audit', () => {
-  it('kolom dua bahasa diberi tanda bahasanya', () => {
-    expect(fieldLabel('title_en')).toEqual({ base: 'Judul', lang: 'EN' })
-    expect(fieldLabel('maintenanceMode')).toEqual({ base: 'Mode perawatan', lang: null })
-    expect(fieldLabel('kolomAsing')).toBeNull()
   })
 })
 

@@ -178,14 +178,6 @@ test.describe('Admin → Pengaturan', () => {
     await expect(toggle()).toHaveAttribute('aria-checked', before!)
     await page.reload()
     await expect(toggle()).toHaveAttribute('aria-checked', before!)
-
-    // kedua perubahan tercatat di log audit sebagai kalimat, dengan nama kolom yang dikenal
-    await page.goto('/admin/audit?entity=SiteSetting&action=update&q=emailOnMessage')
-    const row = page.locator('main li[data-audit="update"]').first()
-    await expect(row).toContainText('mengubah pengaturan situs')
-    await row.locator('summary').click()
-    await expect(row.getByRole('table')).toContainText('Email saat ada pesan baru')
-    await expect(row.getByRole('link', { name: 'Buka' })).toHaveAttribute('href', '/admin/settings')
   })
 
   test('mode perawatan minta konfirmasi dulu', async ({ page }) => {
@@ -215,28 +207,5 @@ test.describe('Admin → Pengaturan', () => {
     await expect(page.getByText('Isi angka 1 sampai 50')).toBeVisible()
     await page.reload()
     await expect(page.getByRole('spinbutton', { name: 'Batas pesan per jam' })).not.toHaveValue('0')
-  })
-})
-
-test.describe('Log audit', () => {
-  test('saring aksi dan cari tanpa hasil', async ({ page }) => {
-    await page.goto('/admin/audit?action=delete')
-    await expect(page.getByRole('link', { name: 'hapus', exact: true })).toHaveAttribute(
-      'aria-current',
-      'page',
-    )
-    for (const action of await page
-      .locator('main li[data-audit]')
-      .evaluateAll((els) => els.map((e) => e.getAttribute('data-audit'))))
-      expect(action).toBe('delete')
-
-    await page.getByRole('searchbox', { name: 'Cari target atau kolom' }).fill('tidak-ada-zzzz-123')
-    await page.getByRole('button', { name: 'Cari', exact: true }).click()
-    await expect(page).toHaveURL(/q=tidak-ada-zzzz-123/)
-    // saringan aksi tetap dipakai bersama pencarian
-    await expect(page).toHaveURL(/action=delete/)
-    await expect(page.locator('main').getByText('Tidak ada catatan yang cocok.')).toBeVisible()
-    await page.getByRole('link', { name: 'Hapus saringan' }).click()
-    await expect(page).toHaveURL(/\/admin\/audit$/)
   })
 })

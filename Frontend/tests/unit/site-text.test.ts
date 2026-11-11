@@ -76,10 +76,12 @@ describe('modul situs', () => {
   })
 
   it('kunci menu admin sesuai modul', async () => {
-    const { adminNav } = await import('@/components/admin/nav')
+    const { adminNav, isNavActive } = await import('@/components/admin/nav')
+    // tiap modul punya menu sendiri atau menjadi tab modul lain (Bagian Awal di Home sejak
+    // 2026-11-11), sehingga selalu ada menu yang menyala
     for (const site of SITE_MODULES)
       expect(
-        adminNav.some((item) => item.href === `/admin/pages/${site.id}`),
+        adminNav.some((item) => isNavActive(`/admin/pages/${site.id}`, item)),
         site.id,
       ).toBe(true)
   })

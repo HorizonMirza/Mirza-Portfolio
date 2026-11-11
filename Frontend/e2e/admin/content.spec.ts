@@ -18,7 +18,6 @@ const PAGES = [
   '/admin/education',
   '/admin/education/new',
   '/admin/messages',
-  '/admin/audit',
   '/admin/pages/intro',
   '/admin/pages/home',
   '/admin/pages/about',
@@ -60,9 +59,7 @@ test('halaman admin yang tidak ada mengembalikan 404', async ({ page }) => {
   expect(response?.status()).toBe(404)
 })
 
-test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit', async ({
-  page,
-}, testInfo) => {
+test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, testInfo) => {
   const suffix = `${testInfo.project.name}-${Date.now()}`
   const titleId = `Project E2E ${suffix}`
   await page.goto('/admin/projects/new')
@@ -98,7 +95,6 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.getByRole('button', { name: 'Create project' }).click()
   await expect(page.getByText('Project created.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
-  const projectId = page.url().split('/').pop()!
 
   // Ubah status menjadi terbit
   await page.getByLabel('Status').selectOption('PUBLISHED')
@@ -153,16 +149,6 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   // lama dari cache browser. Di Vercel, CDN mengganti Cache-Control ke browser.
   const gone = await page.request.get(`/id/projects/${slug}`)
   expect(gone.status()).toBe(404)
-
-  await page.goto('/admin/audit?entity=Project&action=delete')
-  // dicari lewat ID project ini: tes browser lain bisa menulis log audit pada saat yang sama.
-  // Umpan berupa kalimat (desain 1, 2026-11-11); admin sedang berbahasa Inggris di tes ini.
-  const deleted = page.locator(`main li[data-entity-id="${projectId}"][data-audit="delete"]`)
-  await expect(deleted).toHaveCount(1)
-  await expect(deleted).toContainText(`deleted project ${titleEn}`)
-  // baris dibuka: tabel kolom yang berubah, dengan nama kolom yang dikenal
-  await deleted.locator('summary').click()
-  await expect(deleted.getByRole('table')).toContainText('Title')
 
   // Regresi: revalidasi setelah simpan tidak boleh membuat halaman publik menjadi 404. Dicek langsung
   // ke server (seperti status 404 di atas): navigasi Firefox bisa dijawab cache browser dengan 304
@@ -275,8 +261,20 @@ test('modul Home hanya berisi foto profil, foto utama, dan peran', async ({ page
   await expect(page.getByLabel('Peran', { exact: true })).toHaveCount(0)
 })
 
-test('Bagian Awal: hanya isi kartu pembuka yang bisa diubah', async ({ page }) => {
+test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', async ({ page }) => {
   await page.goto('/admin/pages/intro')
+  // bukan menu sendiri lagi: tab kedua di Home, menu Home tetap menyala (revisi 2026-11-11)
+  await expect(page.getByRole('link', { name: 'Kartu pembuka', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  await expect(page.getByRole('link', { name: 'Foto dan peran', exact: true })).toBeVisible()
+  // nama halaman di top bar dan menu yang menyala milik Home (Beranda di bahasa admin Indonesia)
+  await expect(page.getByRole('banner').getByText('Beranda', { exact: true })).toBeVisible()
+  await expect(page.locator('aside a[href="/admin/pages/home"]')).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
   await expect(page.getByRole('button', { name: 'Simpan' })).toHaveCount(1)
   await expect(page.getByRole('heading', { name: 'Isi kartu pembuka' })).toBeVisible()
   await expect(page.getByLabel('Isi', { exact: true })).toBeVisible()
@@ -378,11 +376,14 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const title = bar.getByText('Tentang', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
-  // logo dan nama panel pindah ke sidebar; Akun tidak lagi di sidebar (revisi 2026-11-11)
+  // logo dan nama panel pindah ke sidebar; Akun hanya di menu profil, Pengaturan kembali ke sidebar,
+  // Log audit dan menu Bagian Awal dihapus (revisi 2026-11-11)
   await expect(bar.getByText('Super Admin', { exact: true })).toHaveCount(0)
   const sidebar = page.getByRole('navigation', { name: 'Menu admin' })
-  for (const moved of ['Akun', 'Log audit', 'Pengaturan'])
-    await expect(sidebar.getByRole('link', { name: moved })).toHaveCount(0)
+  for (const gone of ['Akun', 'Log audit', 'Bagian Awal'])
+    await expect(sidebar.getByRole('link', { name: gone })).toHaveCount(0)
+  // dicek lewat DOM: di HP sidebar tersembunyi (menunya di laci)
+  await expect(page.locator('aside a[href="/admin/settings"]')).toHaveCount(1)
 
   // bahasa admin menentukan kolom yang tampil di form dua bahasa
   await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toBeVisible()
@@ -413,10 +414,10 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.getByRole('link', { name: 'Page text' })).toBeVisible()
   const profileEn = page.getByRole('button', { name: /Profile menu$/ })
   await profileEn.click()
-  // urutan tetap pilihan pemilik: Akun, Pengaturan, Log audit, Lihat situs
+  // urutan tetap pilihan pemilik: Akun, Lihat situs
   await expect(
     page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
-  ).toHaveText(['Account', 'Settings', 'Audit log', /^View site/])
+  ).toHaveText(['Account', /^View site/])
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
   // kembalikan ke Indonesia
@@ -427,8 +428,8 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   }).toPass()
   await expect(page.getByRole('link', { name: 'Teks halaman' })).toBeVisible()
 
-  // menu profil: kepala (nama dan peran), lalu Akun, Pengaturan, Log audit, Lihat situs (Log audit dan
-  // Pengaturan pindah dari sidebar, revisi 2026-11-11), dan Keluar berwarna merah paling bawah
+  // menu profil: kepala (nama dan peran, hanya di HP), lalu Akun dan Lihat situs (revisi 2026-11-11,
+  // kedua), dan Keluar berwarna merah paling bawah
   const profile = page.getByRole('button', { name: /Menu profil$/ })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
@@ -436,13 +437,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.getByText('Super Admin', { exact: true }).locator('visible=true')).toHaveCount(
     1,
   )
-  await expect(panel.locator('a, button')).toHaveText([
-    /^Akun$/,
-    /^Pengaturan$/,
-    /^Log audit$/,
-    /^Lihat situs/,
-    /^Keluar$/,
-  ])
+  await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat situs/, /^Keluar$/])
   // warna yang benar-benar tampil, bukan sekadar nama kelas: Keluar merah, beda dari Akun
   const color = (name: string) =>
     panel
@@ -488,10 +483,24 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   expect(await width()).toBeGreaterThan(260)
   await expect(hamburger).toHaveAttribute('aria-expanded', 'true')
 
+  // ikon tidak melompat saat menciut: posisinya sama di kedua keadaan, hanya tulisan yang memudar
+  const icon = menu.locator('a[href="/admin/messages"] svg')
+  const iconX = async () => (await icon.boundingBox())!.x
+  const xOpen = await iconX()
+  const label = menu.locator('a[href="/admin/messages"] span').first()
+
   await hamburger.click()
   await expect(aside).toHaveAttribute('data-collapsed', 'true')
   await expect(hamburger).toHaveAttribute('aria-expanded', 'false')
   await expect.poll(width).toBeLessThan(90)
+  expect(Math.abs((await iconX()) - xOpen)).toBeLessThan(1.5)
+  await expect(label).toHaveCSS('opacity', '0')
+  // ikon tepat di tengah rel
+  const asideBox = (await aside.boundingBox())!
+  const iconBox = (await icon.boundingBox())!
+  expect(Math.abs(iconBox.x + iconBox.width / 2 - (asideBox.x + asideBox.width / 2))).toBeLessThan(
+    1.5,
+  )
   // label tetap untuk pembaca layar, nama muncul saat kursor di atas ikon
   await expect(menu.getByRole('link', { name: 'Pesan' })).toHaveAttribute('title', 'Pesan')
   // pilihan diingat setelah dimuat ulang (cookie dibaca server)

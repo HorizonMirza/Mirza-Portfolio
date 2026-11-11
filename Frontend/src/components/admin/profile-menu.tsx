@@ -1,12 +1,13 @@
 'use client'
 
-import { ChevronsUpDown, ExternalLink, History, KeyRound, LogOut, Settings } from 'lucide-react'
+import { ChevronsUpDown, ExternalLink, KeyRound, LogOut } from 'lucide-react'
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
+import { fadeLabel } from '@/components/admin/sidebar-state'
 import { authClient } from '@/lib/auth-client'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
@@ -19,12 +20,10 @@ const itemBase =
   'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-sm font-semibold transition-colors'
 const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 
-// Isi menu profil (revisi pemilik 2026-11-11): Log audit dan Pengaturan pindah ke sini dari sidebar.
-// Urutan tetap pilihan pemilik di kedua bahasa; Keluar tetap paling bawah.
+// Isi menu profil (revisi pemilik 2026-11-11, kedua): hanya Akun dan Lihat situs, lalu Keluar.
+// Pengaturan kembali ke sidebar; Log audit dihapus dari panel.
 const MENU_ITEMS = [
   { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
-  { label: 'Pengaturan', href: '/admin/settings', icon: Settings, external: false },
-  { label: 'Log audit', href: '/admin/audit', icon: History, external: false },
   { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
 ] as const
 
@@ -47,7 +46,7 @@ function Photo({ photo, size }: { photo: string | StaticImageData; size: number 
 //   tombolnya; menu terbuka di bawahnya (di samping saat sidebar hanya ikon).
 // - variant "avatar" (HP, sidebar tersembunyi): foto bulat di top bar; menu terbuka dengan kepala
 //   berisi foto, nama, dan peran.
-// Isi menu: Akun, Pengaturan, Log audit, Lihat situs, lalu Keluar berwarna merah.
+// Isi menu: Akun, Lihat situs, lalu Keluar berwarna merah.
 export function ProfileMenu({
   adminName,
   photo,
@@ -101,8 +100,8 @@ export function ProfileMenu({
   }
 
   const sidebar = variant === 'sidebar'
-  // teks identitas disembunyikan (tetap untuk pembaca layar) saat sidebar hanya ikon
-  const hideText = cn('max-lg:sr-only', compact && 'lg:sr-only')
+  // teks identitas: tablet disembunyikan (tetap untuk pembaca layar); desktop memudar saat menciut
+  const hideText = cn('max-lg:sr-only', fadeLabel(compact))
 
   return (
     <div ref={root} className={cn('relative flex shrink-0', className)}>
@@ -113,9 +112,9 @@ export function ProfileMenu({
           aria-controls={open ? panelId : undefined}
           onClick={() => setOpen((value) => !value)}
           className={cn(
-            'flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-2 py-1.5 text-left hover:bg-surface-2',
+            // foto tepat di tengah rel 4.75rem di kedua keadaan: (4.75 - 2 x 0.75 - 2.5) / 2
+            'flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-1.5 py-1.5 text-left hover:bg-surface-2',
             'max-lg:justify-center max-lg:px-0',
-            compact && 'lg:justify-center lg:px-0',
           )}
         >
           <span className="size-10 shrink-0">

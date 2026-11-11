@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { adminNav, isNavActive } from '@/components/admin/nav'
 import { type AdminIdentity, ProfileMenu } from '@/components/admin/profile-menu'
-import { useSidebarState } from '@/components/admin/sidebar-state'
+import { fadeLabel, useSidebarState } from '@/components/admin/sidebar-state'
 import { cn } from '@/lib/utils'
 
 // Lampu hitam/putih (ikut warna teks tema) di tepi kiri menu aktif, seperti topbar situs publik.
@@ -35,7 +35,7 @@ function NavLinks({
 }) {
   const pathname = usePathname()
   const t = useAdminT()
-  const hideText = cn(rail && 'max-lg:sr-only', compact && 'lg:sr-only')
+  const hideText = cn(rail && 'max-lg:sr-only', rail && fadeLabel(compact))
   return (
     <nav
       aria-label={t('Menu admin')}
@@ -59,8 +59,8 @@ function NavLinks({
                   title={rail || compact ? label : undefined}
                   className={cn(
                     'relative flex min-h-10 items-center gap-3 rounded-md px-3.5 text-sm font-semibold whitespace-nowrap text-muted transition-colors hover:bg-surface-2 hover:text-text',
-                    rail && 'max-lg:justify-center max-lg:px-0',
-                    compact && 'lg:justify-center lg:px-0',
+                    // ikon tepat di tengah rel 4.75rem: (4.75 - 2 x 0.75 padding sidebar - 1 ikon) / 2
+                    rail && 'max-lg:justify-center max-lg:px-0 lg:px-[1.125rem]',
                     active && 'bg-surface-2 text-text',
                   )}
                 >
@@ -93,7 +93,8 @@ export function AdminSidebar(identity: AdminIdentity) {
     <aside
       data-collapsed={collapsed ? 'true' : 'false'}
       className={cn(
-        'admin-glass-panel relative z-40 hidden h-full w-[4.75rem] shrink-0 flex-col rounded-[23px] transition-[width] duration-300 ease-out-soft motion-reduce:transition-none md:flex',
+        // lebar berganti pelan dan halus (revisi pemilik 2026-11-11: sebelumnya 300 ms terlalu cepat)
+        'admin-glass-panel relative z-40 hidden h-full w-[4.75rem] shrink-0 flex-col rounded-[23px] transition-[width] duration-500 ease-in-out-soft motion-reduce:transition-none md:flex',
         collapsed ? 'lg:w-[4.75rem]' : 'lg:w-[20rem]',
       )}
     >

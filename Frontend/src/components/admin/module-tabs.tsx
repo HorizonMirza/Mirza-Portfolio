@@ -6,6 +6,8 @@ import { getAdminT } from '@/lib/admin-lang-server'
 const TABS = {
   home: [
     { label: 'Foto dan peran', href: '/admin/pages/home' },
+    // Bagian Awal masuk ke Home sebagai tab (revisi pemilik 2026-11-11)
+    { label: 'Kartu pembuka', href: '/admin/pages/intro' },
     { label: 'Skill', href: '/admin/skills' },
   ],
   about: [
