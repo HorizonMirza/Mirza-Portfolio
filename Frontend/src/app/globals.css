@@ -3337,17 +3337,14 @@ html[data-intro='pending'] .intro {
     inset 0 0 0 1px rgb(var(--g-hl) / calc(var(--g-edge) * 0.12)),
     0 20px 52px -25px rgb(0 0 0 / 0.7);
 }
-/* panel melayang di dalam admin (menu profil, Atur kaca): hampir padat. Panel ini berada di dalam
-   top bar kaca, dan backdrop-filter bertingkat tidak bisa mem-blur isi halaman di luar top bar,
-   jadi tembus pandang tinggi membuat teks halaman terbaca di belakangnya. */
+/* panel melayang di dalam admin (menu profil, Atur kaca): padat. Panel ini berada di dalam top bar
+   kaca, dan backdrop-filter bertingkat tidak bisa mem-blur isi halaman di luar top bar, jadi latar
+   tembus pandang membuat tulisan halaman terlihat di belakangnya. */
 .admin-pop {
-  background: rgb(var(--g-tint) / 0.96);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  backdrop-filter: blur(24px) saturate(1.2);
+  background: rgb(var(--g-tint));
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .admin-glass-panel,
-  .admin-pop {
+  .admin-glass-panel {
     background: rgb(var(--g-tint) / 0.94);
   }
 }
