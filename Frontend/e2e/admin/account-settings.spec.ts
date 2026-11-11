@@ -89,15 +89,17 @@ test.describe('Admin → Akun', () => {
       data: { email: process.env.ADMIN_EMAIL, password: 'password-salah-untuk-tes' },
     })
     expect(res.status()).toBe(401)
-    await page.goto('/admin/account')
+    test.setTimeout(60_000)
     const main = page.locator('main')
-    // dicatat lewat after(), sesaat setelah respons login terkirim
+    // Dicatat lewat after(), sesaat setelah respons login terkirim: halaman dibuka ulang sampai
+    // kejadiannya ada. Tiap putaran diberi waktu cukup untuk animasi masuk halaman (WebKit di CI lambat;
+    // dulu 1 detik per klik dan selalu habis, CI #298).
     await expect(async () => {
-      await page.reload()
-      await main.getByRole('button', { name: /^Lihat semua aktivitas/ }).click({ timeout: 1000 })
-      await page.getByRole('button', { name: /^Gagal \(\d+\)$/ }).click({ timeout: 1000 })
-      await expect(main.locator('[data-event="failed"]').first()).toBeVisible({ timeout: 1000 })
-    }).toPass()
+      await page.goto('/admin/account')
+      await main.getByRole('button', { name: /^Lihat semua aktivitas/ }).click()
+      await page.getByRole('button', { name: /^Gagal \(\d+\)$/ }).click()
+      await expect(main.locator('[data-event="failed"]').first()).toBeVisible({ timeout: 3000 })
+    }).toPass({ timeout: 45_000 })
     await expect(main.locator('[data-event="success"]')).toHaveCount(0)
     await expect(main.locator('[data-event="failed"]').first()).toContainText('Gagal masuk')
   })
