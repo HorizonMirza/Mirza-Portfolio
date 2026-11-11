@@ -7,6 +7,19 @@ import { useAdminT } from '@/components/admin/admin-lang'
 import { adminNav, adminNavGroups, isNavActive } from '@/components/admin/nav'
 import { cn } from '@/lib/utils'
 
+// Lampu hitam/putih (ikut warna teks tema) di tepi kiri menu aktif, seperti topbar situs publik.
+// Dikembalikan atas permintaan pemilik 2026-11-11 (sempat dihapus di DESIGN.md bagian 122).
+function Lamp() {
+  return (
+    <span
+      aria-hidden="true"
+      className="pointer-events-none absolute top-1/2 -left-[5px] h-6 w-1 -translate-y-1/2 rounded-l-full bg-text"
+    >
+      <span className="absolute -top-2 -left-3 h-10 w-6 rounded-full bg-text/20 blur-md" />
+    </span>
+  )
+}
+
 // Logo dan nama panel di puncak sidebar (revisi pemilik 2026-11-11: pindah dari top bar)
 function Brand({ rail = false, onNavigate }: { rail?: boolean; onNavigate?: () => void }) {
   return (
@@ -74,6 +87,7 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
                       >
                         <Icon className="size-4 shrink-0" aria-hidden="true" />
                         <span className={rail ? 'max-lg:sr-only' : undefined}>{label}</span>
+                        {active ? <Lamp /> : null}
                       </Link>
                     </li>
                   )

@@ -1562,5 +1562,5 @@ Pemilik memilih desain 1 dari 10 demo Pengaturan ("buat paling lengkap"). Nama m
 
 ## 122. Menu sidebar admin berujung seperti menu profil (2026-11-11 sore)
 
-- Permintaan pemilik: efek menu sidebar yang ditekan/aktif sama dengan item menu profil di top bar. Sorotan item sidebar kini kotak bersudut kecil (`rounded-md`, latar `surface-2`), bukan kapsul (`rounded-full`), dan lampu di tepi kiri menu aktif dihapus (bagian 107/113), jadi sorotan aktif dan saat disorot sama persis dengan menu profil. Berlaku juga di rel ikon tablet dan laci HP.
+- Permintaan pemilik: efek menu sidebar yang ditekan/aktif sama dengan item menu profil di top bar. Sorotan item sidebar kini kotak bersudut kecil (`rounded-md`, latar `surface-2`), bukan kapsul (`rounded-full`), jadi bentuk sorotan aktif dan saat disorot sama dengan menu profil. Lampu hitam/putih di tepi kiri menu aktif sempat dihapus, lalu dikembalikan atas permintaan pemilik (hari yang sama). Berlaku juga di rel ikon tablet dan laci HP.
 
