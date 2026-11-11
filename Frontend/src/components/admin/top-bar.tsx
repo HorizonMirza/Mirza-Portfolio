@@ -88,7 +88,7 @@ export function AdminTopBar(props: AdminIdentity) {
         className="admin-sheet admin-glass-panel gap-6 overflow-y-auto overscroll-contain rounded-r-[23px] border-0"
       >
         <SheetTitle className="sr-only">{t('Menu admin')}</SheetTitle>
-        <SidebarNav onNavigate={() => setOpen(false)} />
+        <SidebarNav {...props} onNavigate={() => setOpen(false)} />
       </SheetContent>
     </Sheet>
   )

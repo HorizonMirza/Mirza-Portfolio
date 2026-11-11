@@ -1564,3 +1564,9 @@ Pemilik memilih desain 1 dari 10 demo Pengaturan ("buat paling lengkap"). Nama m
 
 - Permintaan pemilik: efek menu sidebar yang ditekan/aktif sama dengan item menu profil di top bar. Sorotan item sidebar kini kotak bersudut kecil (`rounded-md`, latar `surface-2`), bukan kapsul (`rounded-full`), jadi bentuk sorotan aktif dan saat disorot sama dengan menu profil. Lampu hitam/putih di tepi kiri menu aktif sempat dihapus, lalu dikembalikan atas permintaan pemilik (hari yang sama). Berlaku juga di rel ikon tablet dan laci HP.
 
+## 123. Sidebar: foto dan nama admin, tanpa label kelompok (2026-11-11 malam)
+
+- **Puncak sidebar** kini foto bulat, nama admin, dan "Super Admin" di bawahnya, sama dengan kepala menu profil (logo kotak MM dihapus). Rel ikon tablet hanya foto; nama tetap untuk pembaca layar. Laci HP sama.
+- **Label kelompok** (Utama, Halaman situs, Kotak masuk) dihapus beserta jaraknya: menu menjadi satu daftar menyambung. Urutan menu tidak berubah.
+- **Akun:** pemilik meminta desain ulang dengan semua bagian langsung terlihat (tanpa panel Ganti password/Perangkat yang harus dibuka). Lima demo pertama dinilai terlalu berantakan; lima demo baru mengikuti pola halaman akun yang umum (daftar berkelompok seperti WhatsApp dan situs lain), menunggu pilihan pemilik. Halaman Akun bagian 120 tetap berlaku sampai ada pilihan.
+

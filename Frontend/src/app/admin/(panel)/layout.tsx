@@ -25,7 +25,7 @@ export default async function PanelLayout({ children }: { children: ReactNode })
             penuh dari atas sampai bawah, top bar selebar panel isi, keduanya tidak ikut bergulir. Hanya
             isi di dalam panel besar yang digulir (batang gulir disembunyikan). */}
         <div className="flex h-full gap-4">
-          <AdminSidebar />
+          <AdminSidebar {...identity} />
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 md:gap-4">
             <AdminTopBar {...identity} />
             <main

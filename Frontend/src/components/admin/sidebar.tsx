@@ -1,10 +1,13 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { adminNav, adminNavGroups, isNavActive } from '@/components/admin/nav'
+import type { AdminIdentity } from '@/components/admin/profile-menu'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
 // Lampu hitam/putih (ikut warna teks tema) di tepi kiri menu aktif, seperti topbar situs publik.
@@ -20,24 +23,36 @@ function Lamp() {
   )
 }
 
-// Logo dan nama panel di puncak sidebar (revisi pemilik 2026-11-11: pindah dari top bar)
-function Brand({ rail = false, onNavigate }: { rail?: boolean; onNavigate?: () => void }) {
+// Puncak sidebar: foto, nama, dan "Super Admin" seperti kepala menu profil (revisi pemilik
+// 2026-11-11, menggantikan logo MM). Rel ikon tablet hanya foto; nama tetap untuk pembaca layar.
+function Brand({
+  adminName,
+  photo,
+  rail = false,
+  onNavigate,
+}: AdminIdentity & { rail?: boolean; onNavigate?: () => void }) {
   return (
     <Link
       href="/admin"
       onClick={onNavigate}
       className={cn(
-        'flex min-h-11 items-center gap-2.5 px-2',
+        'flex min-h-11 items-center gap-3 rounded-md px-2 py-1',
         rail && 'max-lg:justify-center max-lg:px-0',
       )}
     >
-      <span
-        aria-hidden="true"
-        className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-text text-sm font-bold text-bg"
-      >
-        MM
+      <Image
+        placeholder={SHIMMER_PLACEHOLDER}
+        src={photo}
+        alt=""
+        width={40}
+        height={40}
+        sizes="40px"
+        className="size-10 shrink-0 rounded-full bg-text object-cover"
+      />
+      <span className={cn('min-w-0', rail && 'max-lg:sr-only')}>
+        <span className="block truncate text-sm leading-snug font-semibold">{adminName}</span>
+        <span className="block text-xs text-muted">Super Admin</span>
       </span>
-      <span className={cn('text-base font-semibold', rail && 'max-lg:sr-only')}>Super Admin</span>
     </Link>
   )
 }
@@ -49,7 +64,8 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
   return (
     <nav
       aria-label={t('Menu admin')}
-      className={cn('flex flex-col', rail ? 'gap-3 lg:gap-5' : 'gap-5')}
+      // satu daftar menyambung tanpa label dan jarak kelompok (revisi pemilik 2026-11-11)
+      className="flex flex-col gap-0.5"
     >
       {adminNavGroups
         .filter((group) =>
@@ -57,14 +73,6 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
         )
         .map((group) => (
           <div key={group}>
-            <p
-              className={cn(
-                'mb-1.5 px-3.5 text-xs font-medium text-muted',
-                rail && 'sr-only lg:not-sr-only',
-              )}
-            >
-              {t(group)}
-            </p>
             <ul className="flex flex-col gap-0.5">
               {adminNav
                 .filter((item) => item.group === group && item.inSidebar !== false)
@@ -99,11 +107,14 @@ function NavLinks({ onNavigate, rail = false }: { onNavigate?: () => void; rail?
   )
 }
 
-// Isi laci menu di HP: nama panel dan menu per kelompok.
-export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+// Isi laci menu di HP: identitas admin dan menu per kelompok.
+export function SidebarNav({
+  onNavigate,
+  ...identity
+}: AdminIdentity & { onNavigate?: () => void }) {
   return (
     <>
-      <Brand onNavigate={onNavigate} />
+      <Brand {...identity} onNavigate={onNavigate} />
       <NavLinks onNavigate={onNavigate} />
     </>
   )
@@ -112,11 +123,11 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 // Sidebar kaca (desain 5+, DESIGN.md bagian 112-114): penuh dari atas sampai bawah layar di kiri top
 // bar dan panel isi, tidak ikut bergulir, berisi logo dan nama panel lalu menu (bisa digulir sendiri tanpa batang gulir).
 // Tablet (768-1023 px): rel ikon; desktop: menu penuh. Di HP menu dibuka lewat laci dan dock bawah.
-export function AdminSidebar() {
+export function AdminSidebar(identity: AdminIdentity) {
   return (
     <aside className="admin-glass-panel hidden h-full w-[4.75rem] shrink-0 rounded-[23px] md:block lg:w-60">
       <div className="flex h-full flex-col gap-5 overflow-y-auto overscroll-contain px-2.5 py-3 lg:px-3">
-        <Brand rail />
+        <Brand {...identity} rail />
         <NavLinks rail />
       </div>
     </aside>
