@@ -12,9 +12,11 @@ import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 
-const itemClass =
-  // sudut kecil, bukan kapsul (revisi pemilik 2026-11-06: ujung sorotan lebih lancip)
-  'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-sm font-semibold text-muted transition-colors hover:bg-surface-2 hover:text-text'
+// sudut kecil, bukan kapsul (revisi pemilik 2026-11-06: ujung sorotan lebih lancip). Warna dipisah
+// agar Keluar merah tidak bertabrakan dengan text-muted (urutan kelas di CSS tidak bisa diandalkan).
+const itemBase =
+  'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-sm font-semibold transition-colors'
+const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 
 // Foto bulat di pojok kanan atas; menekannya membuka kepala menu (foto, nama, peran), lalu Lihat situs,
 // Akun, dan Keluar (urutan dari pemilik 2026-11-11).
@@ -113,7 +115,7 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
           {/* Keluar berwarna merah, terpisah garis (revisi pemilik 2026-11-11) */}
           <button
             type="button"
-            className={`${itemClass} text-danger hover:bg-danger/10 hover:text-danger disabled:cursor-wait disabled:opacity-60`}
+            className={`${itemBase} text-danger hover:bg-danger/10 disabled:cursor-wait disabled:opacity-60`}
             onClick={signOut}
             disabled={signingOut}
             aria-busy={signingOut || undefined}

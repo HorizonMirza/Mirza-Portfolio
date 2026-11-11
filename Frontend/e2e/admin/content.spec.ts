@@ -410,7 +410,21 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
   await expect(panel.getByText('Super Admin', { exact: true })).toBeVisible()
   await expect(panel.locator('a, button')).toHaveText([/Lihat situs/, /Akun/, /Keluar/])
-  await expect(page.getByRole('button', { name: 'Keluar' })).toHaveClass(/text-danger/)
+  // warna yang benar-benar tampil, bukan sekadar nama kelas: Keluar merah, beda dari Akun
+  const color = (name: string) =>
+    panel
+      .getByRole(name === 'Keluar' ? 'button' : 'link', { name })
+      .evaluate((el) => getComputedStyle(el).color)
+  const danger = await panel.evaluate((el) => {
+    const probe = document.createElement('span')
+    probe.style.color = 'var(--danger)'
+    el.append(probe)
+    const value = getComputedStyle(probe).color
+    probe.remove()
+    return value
+  })
+  expect(await color('Keluar')).toBe(danger)
+  expect(await color('Akun')).not.toBe(danger)
   await page.keyboard.press('Escape')
   await expect(page.getByRole('button', { name: 'Keluar' })).toHaveCount(0)
 })
