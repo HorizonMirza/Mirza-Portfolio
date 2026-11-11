@@ -33,7 +33,7 @@ export default async function PanelLayout({ children }: { children: ReactNode })
           <div className="flex h-full gap-4">
             <AdminSidebar {...identity} />
             <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-3 md:gap-4">
-              <AdminTopBar {...identity} />
+              <AdminTopBar />
               <main
                 id="main"
                 className="admin-glass-panel no-scrollbar min-h-0 flex-1 scroll-pt-6 overflow-y-auto overscroll-contain rounded-[20px] px-4 pt-6 pb-10 sm:px-6 md:rounded-[27px] lg:scroll-pt-8 lg:px-8 lg:pt-8"

@@ -1609,3 +1609,10 @@ Revisi pemilik atas bagian 126:
 - **Menu profil** hanya Akun, Lihat situs, lalu Keluar. **Pengaturan** kembali ke sidebar, di bawah Pesan.
 - **Log audit dihapus dari panel:** halaman `/admin/audit`, skeleton, dan kode umpannya dihapus (kini 404). Pencatatan `AuditLog` di setiap aksi admin tetap berjalan (aturan keamanan), hanya tidak ditampilkan. Keputusan pemilik; PRD A9 diperbarui.
 - **Bagian Awal masuk ke Home:** menu sendiri dihapus; isi kartu pembuka kini tab kedua di Home ("Foto dan peran", "Kartu pembuka", "Skill"). Alamat `/admin/pages/intro` tetap, dengan judul, deskripsi, dan menu Home menyala.
+
+## 128. Satu wajah admin: identitas sidebar ke Dashboard, menu profil titik tiga (2026-11-11 malam)
+
+Revisi pemilik ("kalau profile ada 2 wajah saya aneh"), dipilih dari 5 demo tanpa wajah kedua: **demo 3 "Titik tiga"**.
+
+- **Identitas di puncak sidebar** (foto, nama, Super Admin) kini tautan ke Dashboard; ditekan di Dashboard sendiri, datanya dimuat ulang (`router.refresh`). Panah ⇅ dihapus karena tidak lagi membuka menu. Satu-satunya wajah admin di panel. Saat sidebar ciut, foto tetap di tengah rel dan tulisannya memudar (bagian 127).
+- **Menu profil** pindah ke top bar, di samping tombol tema, di semua ukuran layar: tombol bulat bergaris dengan ikon titik tiga tegak (`EllipsisVertical`), bentuknya sama dengan tombol bahasa dan tema. Menunya tanpa foto dan nama: Akun ("Nama, foto, password, perangkat"), Lihat situs ("mmirza.site, tab baru"), garis, lalu Keluar merah. Foto bulat di top bar HP dihapus.

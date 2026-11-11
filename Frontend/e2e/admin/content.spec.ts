@@ -370,8 +370,8 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
   await expect(toEnglish).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
-  // menu profil: di desktop dan tablet foto + nama di puncak sidebar, di HP foto di top bar (bagian 126)
-  await expect(page.getByRole('button', { name: /Menu profil$/ })).toBeVisible()
+  // menu profil: tombol titik tiga di top bar di semua ukuran layar (demo 3, DESIGN.md bagian 128)
+  await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
   // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; DESIGN.md bagian 113)
   const title = bar.getByText('Tentang', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
@@ -417,7 +417,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // urutan tetap pilihan pemilik: Akun, Lihat situs
   await expect(
     page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
-  ).toHaveText(['Account', /^View site/])
+  ).toHaveText([/^Account/, /^View site/])
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
   // kembalikan ke Indonesia
@@ -428,16 +428,18 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   }).toPass()
   await expect(page.getByRole('link', { name: 'Teks halaman' })).toBeVisible()
 
-  // menu profil: kepala (nama dan peran, hanya di HP), lalu Akun dan Lihat situs (revisi 2026-11-11,
-  // kedua), dan Keluar berwarna merah paling bawah
-  const profile = page.getByRole('button', { name: /Menu profil$/ })
+  // menu profil: Akun dan Lihat situs dengan keterangan, lalu Keluar berwarna merah paling bawah
+  const profile = bar.getByRole('button', { name: 'Menu profil' })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
-  // nama dan peran tampil sekali saja: di tombol sidebar (desktop) atau di kepala menu (HP)
-  await expect(page.getByText('Super Admin', { exact: true }).locator('visible=true')).toHaveCount(
-    1,
-  )
-  await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat situs/, /^Keluar$/])
+  await expect(panel.locator('a, button')).toHaveText([
+    /^Akun\s*Nama, foto, password, perangkat$/,
+    /^Lihat situs\s*mmirza\.site, tab baru$/,
+    /^Keluar$/,
+  ])
+  // tanpa wajah kedua: foto dan nama admin hanya di puncak sidebar (revisi 2026-11-11)
+  await expect(panel.locator('img')).toHaveCount(0)
+  await expect(panel.getByText('Super Admin')).toHaveCount(0)
   // warna yang benar-benar tampil, bukan sekadar nama kelas: Keluar merah, beda dari Akun
   const color = (name: string) =>
     panel
@@ -476,7 +478,8 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   const width = async () => (await aside.boundingBox())!.width
   await expect(aside).toHaveAttribute('data-collapsed', 'false')
   // nama lengkap tidak terpotong di sidebar lebar
-  const name = aside.getByRole('button', { name: /Menu profil$/ }).locator('span.truncate')
+  const identity = aside.getByRole('link', { name: /kembali ke Dashboard$/ })
+  const name = identity.locator('span.truncate')
   expect(await name.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
   await expect(menu.getByRole('link', { name: 'Privasi' })).toHaveCount(0)
   await expect(menu.getByRole('link', { name: 'Halaman lain' })).toHaveCount(0)
@@ -509,6 +512,11 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   await hamburger.click()
   await expect(aside).toHaveAttribute('data-collapsed', 'false')
   await expect.poll(width).toBeGreaterThan(260)
+
+  // foto dan nama di puncak sidebar membawa kembali ke Dashboard (revisi 2026-11-11, DESIGN.md bagian 128)
+  await page.goto('/admin/pages/about')
+  await identity.click()
+  await expect(page).toHaveURL(/\/admin$/)
 })
 
 test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({

@@ -18,10 +18,13 @@ export const EN: Record<string, string> = {
   'Tutup menu': 'Close menu',
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
+  'Kembali ke Dashboard': 'Back to Dashboard',
+  ', kembali ke Dashboard': ', back to Dashboard',
+  'Nama, foto, password, perangkat': 'Name, photo, password, devices',
+  'mmirza.site, tab baru': 'mmirza.site, new tab',
   'Lihat situs': 'View site',
   Keluar: 'Log out',
   'Keluar…': 'Logging out…',
-  '(membuka tab baru)': '(opens in a new tab)',
   'Mode gelap': 'Dark mode',
   // tombol Tampilan (dulu Atur kaca) dan panelnya
   Tampilan: 'Appearance',

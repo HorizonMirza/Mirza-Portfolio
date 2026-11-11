@@ -7,7 +7,7 @@ import { useState, useSyncExternalStore } from 'react'
 import { LangSwitch, useAdminT } from '@/components/admin/admin-lang'
 import { GlassControl } from '@/components/admin/glass-settings'
 import { adminNav, isNavActive } from '@/components/admin/nav'
-import { type AdminIdentity, ProfileMenu } from '@/components/admin/profile-menu'
+import { ProfileMenu } from '@/components/admin/profile-menu'
 import { SidebarNav } from '@/components/admin/sidebar'
 import { useSidebarState } from '@/components/admin/sidebar-state'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
@@ -22,10 +22,10 @@ function subscribeDesktop(onChange: () => void) {
 }
 
 // Top bar kaca (DESIGN.md bagian 112-113, 126): di kiri tombol hamburger dan nama halaman; di kanan
-// Tampilan, bahasa tampilan ID/EN, dan tema. Hamburger di desktop menciutkan sidebar menjadi ikon atau
-// melebarkannya lagi; di HP dan tablet membuka laci berisi seluruh menu. Foto profil hanya di HP
-// (di tablet dan desktop identitas dan menu profil ada di puncak sidebar, tidak diulang di sini).
-export function AdminTopBar(props: AdminIdentity) {
+// Tampilan, bahasa tampilan ID/EN, tema, dan menu profil titik tiga (bagian 128). Hamburger di desktop
+// menciutkan sidebar menjadi ikon atau melebarkannya lagi; di HP dan tablet membuka laci berisi seluruh
+// menu. Foto admin hanya di puncak sidebar, tidak diulang di sini.
+export function AdminTopBar() {
   const pathname = usePathname()
   const t = useAdminT()
   const [open, setOpen] = useState(false)
@@ -55,7 +55,7 @@ export function AdminTopBar(props: AdminIdentity) {
         <GlassControl />
         <LangSwitch />
         <ThemeToggle className="size-11" label={t('Mode gelap')} />
-        <ProfileMenu {...props} variant="avatar" className="md:hidden" />
+        <ProfileMenu />
       </header>
       {/* bisa digulir: di HP pendek menu terbawah tetap terjangkau */}
       <SheetContent

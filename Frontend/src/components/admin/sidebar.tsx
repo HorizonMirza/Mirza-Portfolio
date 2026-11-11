@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { adminNav, isNavActive } from '@/components/admin/nav'
-import { type AdminIdentity, ProfileMenu } from '@/components/admin/profile-menu'
+import { type AdminIdentity, SidebarIdentity } from '@/components/admin/profile-menu'
 import { fadeLabel, useSidebarState } from '@/components/admin/sidebar-state'
 import { cn } from '@/lib/utils'
 
@@ -82,9 +82,9 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return <NavLinks onNavigate={onNavigate} />
 }
 
-// Sidebar kaca (DESIGN.md bagian 112-114, 126): penuh dari atas sampai bawah layar di kiri top bar dan
-// panel isi, tidak ikut bergulir. Puncaknya foto, nama, dan Super Admin sekaligus tombol menu profil
-// (satu-satunya tempat identitas di tablet dan desktop), lalu menu (digulir sendiri tanpa batang
+// Sidebar kaca (DESIGN.md bagian 112-114, 126, 128): penuh dari atas sampai bawah layar di kiri top bar
+// dan panel isi, tidak ikut bergulir. Puncaknya foto, nama, dan Super Admin sekaligus tombol kembali ke
+// Dashboard (satu-satunya wajah admin di panel), lalu menu (digulir sendiri tanpa batang
 // gulir). Tablet (768-1023 px): rel ikon. Desktop: 20rem (280 px, rem desktop 14 px) agar nama lengkap tidak terpotong, atau rel
 // ikon saat diciutkan lewat tombol hamburger di top bar (lebar beranimasi, pilihan diingat cookie).
 export function AdminSidebar(identity: AdminIdentity) {
@@ -99,7 +99,7 @@ export function AdminSidebar(identity: AdminIdentity) {
       )}
     >
       <div className="shrink-0 px-2.5 pt-3 lg:px-3">
-        <ProfileMenu {...identity} variant="sidebar" compact={collapsed} className="w-full" />
+        <SidebarIdentity {...identity} compact={collapsed} />
       </div>
       <div className="no-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-2.5 pt-4 pb-3 lg:px-3">
         <NavLinks rail compact={collapsed} />
