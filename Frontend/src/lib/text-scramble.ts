@@ -30,7 +30,9 @@ export function scrambleFrame(target: string, progress: number, glyph = randomGl
   let out = ''
   for (let i = 0; i < target.length; i++) {
     const ch = target[i]
-    const lock = 0.25 + (i / target.length) * 0.75
+    // huruf terakhir terkunci tepat di akhir (progress 1), berapa pun panjang teksnya, agar teks
+    // pendek dan panjang selesai bersamaan (DESIGN.md bagian 117)
+    const lock = 0.25 + ((i + 1) / target.length) * 0.75
     out += progress >= lock || !/[\p{L}\p{N}]/u.test(ch) ? ch : glyph()
   }
   return out

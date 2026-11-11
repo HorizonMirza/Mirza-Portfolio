@@ -19,4 +19,10 @@ describe('scrambleFrame', () => {
     expect(mid.endsWith('####!')).toBe(true)
     expect(mid).toHaveLength(target.length)
   })
+
+  it('huruf terakhir teks pendek dan panjang baru terkunci di akhir, jadi selesai bersamaan', () => {
+    expect(scrambleFrame('About', 0.99, () => '#')).toBe('Abou#')
+    expect(scrambleFrame('About page. Bio, photo, name', 0.99, () => '#').endsWith('#')).toBe(true)
+    expect(scrambleFrame('About', 1, () => '#')).toBe('About')
+  })
 })

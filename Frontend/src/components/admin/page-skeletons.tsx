@@ -17,8 +17,8 @@ function Loading({ children }: { children: ReactNode }) {
 function HeaderSkeleton({ action = false }: { action?: boolean }) {
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      {/* judul besar tidak lagi tampil di panel isi (DESIGN.md bagian 118), hanya deskripsi */}
       <span className="flex min-w-0 flex-1 flex-col gap-3">
-        <Skeleton className="h-10 w-48 sm:h-14 sm:w-64" />
         <Skeleton className="h-4 w-[min(100%,32rem)]" />
       </span>
       {action ? <Skeleton className="h-11 w-28 rounded-full" /> : null}

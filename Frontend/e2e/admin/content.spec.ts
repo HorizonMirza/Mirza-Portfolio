@@ -500,8 +500,12 @@ test.describe('animasi ganti bahasa admin', () => {
     // judul dan kolom pertama langsung terlihat di layar biasa (layar sangat tinggi membuat WebKit
     // berskala 2-3x di sandbox hanya menggambar sekitar 1 frame per detik).
     await page.goto('/admin/pages/about')
-    const h1 = page.locator('main h1')
-    await expect(h1).toHaveText('Tentang')
+    // judul besar hanya untuk pembaca layar (DESIGN.md bagian 118); teks server yang terlihat adalah
+    // deskripsi halaman
+    const idDesc = 'Halaman Tentang. Bio, foto, nama, dan peran ada di tab Profil.'
+    const enDesc = 'About page. Bio, photo, name, and roles are in the Profile tab.'
+    const h1 = page.locator('main header p')
+    await expect(h1).toHaveText(idDesc)
     // rekam setiap teks judul dan isi kolom Judul (nilai atau placeholder) yang tampil, tiap frame
     await page.evaluate(() => {
       const seen = { title: new Set<string>(), field: new Set<string>() }
@@ -511,7 +515,7 @@ test.describe('animasi ganti bahasa admin', () => {
       Object.assign(window, { __seen: seen, __last: last })
       const tick = () => {
         const now = {
-          title: document.querySelector('main h1')?.textContent ?? '',
+          title: document.querySelector('main header p')?.textContent ?? '',
           bar: document.querySelector('header p')?.textContent ?? '',
         }
         if (now.title !== prev.title) last.title = performance.now()
@@ -534,7 +538,7 @@ test.describe('animasi ganti bahasa admin', () => {
       if (await toEnglish.count()) await toEnglish.click()
       await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 1000 })
     }).toPass()
-    await expect(h1).toHaveText('About')
+    await expect(h1).toHaveText(enDesc)
     await expect(page.locator('#About-title-en')).toBeVisible()
     // tunggu animasi selesai, lalu ambil teks akhir kolom
     await expect.poll(fieldText).not.toMatch(/^$/)
@@ -550,9 +554,9 @@ test.describe('animasi ganti bahasa admin', () => {
         },
         { key, known },
       )
-    await expect.poll(() => between('title', ['Tentang', 'About'])).toBeGreaterThan(0)
+    await expect.poll(() => between('title', [idDesc, enDesc])).toBeGreaterThan(0)
     await expect.poll(() => between('field', [idValue, enValue])).toBeGreaterThan(0)
-    await expect(h1).toHaveText('About')
+    await expect(h1).toHaveText(enDesc)
     // teks dari server dan dari browser selesai mengetik bersamaan (DESIGN.md bagian 117)
     await expect(page.getByRole('banner').getByText('About', { exact: true })).toBeVisible()
     const last = await page.evaluate(

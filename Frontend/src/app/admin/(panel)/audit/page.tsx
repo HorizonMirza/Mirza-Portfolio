@@ -65,10 +65,8 @@ export default async function AuditPage({ searchParams }: PageProps<'/admin/audi
 
   return (
     <>
-      <PageHeader
-        title="Log audit"
-        description="Setiap perubahan dari panel admin tercatat di sini. Data pribadi pengunjung tidak ikut dicatat."
-      />
+      {/* deskripsi dihapus (revisi pemilik 2026-11-11) */}
+      <PageHeader title="Log audit" />
       <FilterTabs
         label={t('Filter entitas')}
         items={[null, ...entities].map((e) => ({

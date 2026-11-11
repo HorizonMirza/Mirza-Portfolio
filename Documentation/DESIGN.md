@@ -1511,3 +1511,10 @@ Pemilik meminta seluruh animasi ketik/acak saat ganti bahasa berjalan bersamaan.
 - Acakan pertama ditulis langsung (sebelum layar digambar), jadi teks baru tidak sempat terlihat utuh sebelum animasi. Isian data yang tidak ada di kamus (mis. judul project versi Inggris) ikut ditahan begitu tiba.
 - Tes E2E memastikan judul halaman (server) dan nama halaman di top bar (client) selesai dalam selisih kurang dari 150 ms. Rekaman di Chromium: judul, top bar, dan sidebar mulai teracak di 146 ms dan selesai di frame yang sama (1086 ms).
 - Tes CRUD project kini mencari entri log audit lewat ID project-nya sendiri, karena tes browser lain bisa menulis log audit bersamaan.
+
+## 118. Judul besar panel isi dihapus (2026-11-11 siang)
+
+- **Judul halaman di panel isi** (mis. "Account", "Settings", "Audit log") tidak lagi tampil karena sudah ada di top bar. `PageHeader` tetap merender `h1` untuk pembaca layar (`sr-only`) dan judul tab browser; yang terlihat hanya deskripsi dan tombol aksi (mis. "Tambah"). Bila halaman tidak punya deskripsi dan aksi, header tidak memakan ruang. Skeleton halaman ikut tanpa blok judul.
+- **Log audit:** deskripsi "Setiap perubahan dari panel admin tercatat di sini…" dihapus.
+- **Efek acak huruf:** huruf terakhir setiap teks kini terkunci tepat di akhir durasi (dulu teks pendek seperti "About" sudah selesai di 85% durasi), sehingga teks pendek dan panjang selesai di frame yang sama. Berlaku juga di situs publik.
+- **Demo yang bisa diklik** untuk desain ulang halaman Akun, Pengaturan (termasuk usulan fitur tambahan dan nama menu), dan Log audit: 10 desain per bagian, menunggu pilihan pemilik. Fitur yang belum ada ditandai "baru" di demo.
