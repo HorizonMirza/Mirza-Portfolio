@@ -26,9 +26,18 @@ function HeaderSkeleton({ action = false }: { action?: boolean }) {
   )
 }
 
-// tab modul (ModuleTabs) dan tab filter (FilterTabs) memakai kapsul yang sama
-function TabsSkeleton({ count }: { count: number }) {
+// tab modul (ModuleTabs) dan tab filter (FilterTabs) memakai kapsul yang sama; stretch: satu baris
+// tombol sama lebar seperti tab Home (bagian 129)
+function TabsSkeleton({ count, stretch = false }: { count: number; stretch?: boolean }) {
   if (count === 0) return null
+  if (stretch)
+    return (
+      <div className="mb-6 flex gap-2 py-1">
+        {Array.from({ length: count }, (_, i) => (
+          <Skeleton key={i} className="h-11 min-w-20 flex-1 rounded-md" />
+        ))}
+      </div>
+    )
   return (
     <div className="mb-4 flex flex-wrap gap-1 rounded-3xl border border-border bg-surface-2 p-1 sm:inline-flex">
       {Array.from({ length: count }, (_, i) => (
@@ -171,15 +180,18 @@ export function AdminFormSkeleton({
     { fields: 3, tall: 1 },
   ],
   narrow = false,
+  stretchTabs = false,
 }: {
   tabs?: number
   cards?: FormCard[]
   narrow?: boolean
+  // tab Home: satu baris selebar panel, tanpa deskripsi di atasnya
+  stretchTabs?: boolean
 }) {
   return (
     <Loading>
-      <HeaderSkeleton />
-      <TabsSkeleton count={tabs} />
+      {stretchTabs ? null : <HeaderSkeleton />}
+      <TabsSkeleton count={tabs} stretch={stretchTabs} />
       <div className={cn('flex flex-col gap-6', narrow && 'max-w-lg')}>
         {cards.map((card, i) => (
           <Card key={i} className="flex flex-col gap-5">

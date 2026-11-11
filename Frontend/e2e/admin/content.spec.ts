@@ -20,6 +20,7 @@ const PAGES = [
   '/admin/messages',
   '/admin/pages/intro',
   '/admin/pages/home',
+  '/admin/roles',
   '/admin/pages/about',
   '/admin/pages/experience',
   '/admin/pages/projects',
@@ -215,7 +216,7 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
     .context()
     .addCookies([{ name: 'mmirza-admin-lang', value: 'en', url: testInfo.project.use.baseURL! }])
   const openEnglish = async () => {
-    await page.goto('/admin/pages/home')
+    await page.goto('/admin/roles')
     await expect(field()).toBeVisible()
   }
   await openEnglish()
@@ -244,11 +245,32 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
     .not.toContain('Test Role Two')
 })
 
-test('modul Home hanya berisi foto profil, foto utama, dan peran', async ({ page }) => {
+test('modul Home: empat tab selebar panel, foto dan peran di tab masing-masing', async ({
+  page,
+}) => {
   await page.goto('/admin/pages/home')
-  for (const title of ['Foto profil', 'Foto utama', 'Peran di bawah foto']) {
+  // tanpa deskripsi; empat tab satu baris dengan urutan pilihan pemilik (DESIGN.md bagian 129)
+  const tabs = page.getByRole('navigation', { name: 'Bagian halaman' }).getByRole('link')
+  await expect(tabs).toHaveText(['Kartu pembuka', 'Foto beranda', 'Peran beranda', 'Skill teknis'])
+  await expect(page.getByRole('link', { name: 'Foto beranda' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  await expect(page.locator('main').getByText(/^Beranda: foto profil/)).toHaveCount(0)
+  // satu baris: semua tab sejajar di atas
+  const tops = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
+  expect(new Set(tops).size).toBe(1)
+  for (const title of ['Foto profil', 'Foto utama']) {
     await expect(page.getByRole('heading', { name: title })).toBeVisible()
   }
+  await expect(page.getByRole('heading', { name: 'Peran di bawah foto' })).toHaveCount(0)
+  await page.goto('/admin/roles')
+  await expect(page.getByRole('heading', { name: 'Peran di bawah foto' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Peran beranda' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  await page.goto('/admin/pages/home')
   // armor, judul bagian, dan SEO tidak bisa diubah lagi
   for (const old of ['Armor hero', 'Judul bagian', 'SEO']) {
     await expect(page.getByRole('heading', { name: old, exact: true })).toHaveCount(0)
@@ -263,15 +285,15 @@ test('modul Home hanya berisi foto profil, foto utama, dan peran', async ({ page
 
 test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', async ({ page }) => {
   await page.goto('/admin/pages/intro')
-  // bukan menu sendiri lagi: tab kedua di Home, menu Home tetap menyala (revisi 2026-11-11)
+  // bukan menu sendiri lagi: tab pertama Home, tujuan menu Home (revisi 2026-11-11)
   await expect(page.getByRole('link', { name: 'Kartu pembuka', exact: true })).toHaveAttribute(
     'aria-current',
     'page',
   )
-  await expect(page.getByRole('link', { name: 'Foto dan peran', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Foto beranda', exact: true })).toBeVisible()
   // nama halaman di top bar dan menu yang menyala milik Home (Beranda di bahasa admin Indonesia)
   await expect(page.getByRole('banner').getByText('Beranda', { exact: true })).toBeVisible()
-  await expect(page.locator('aside a[href="/admin/pages/home"]')).toHaveAttribute(
+  await expect(page.locator('aside a[href="/admin/pages/intro"]')).toHaveAttribute(
     'aria-current',
     'page',
   )
@@ -417,7 +439,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // urutan tetap pilihan pemilik: Akun, Lihat situs
   await expect(
     page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
-  ).toHaveText([/^Account/, /^View site/])
+  ).toHaveText(['Account', /^View site/])
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
   // kembalikan ke Indonesia
@@ -432,11 +454,8 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const profile = bar.getByRole('button', { name: 'Menu profil' })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
-  await expect(panel.locator('a, button')).toHaveText([
-    /^Akun\s*Nama, foto, password, perangkat$/,
-    /^Lihat situs\s*mmirza\.site, tab baru$/,
-    /^Keluar$/,
-  ])
+  // tanpa keterangan di bawah pilihan (revisi pemilik 2026-11-11)
+  await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat situs/, /^Keluar$/])
   // tanpa wajah kedua: foto dan nama admin hanya di puncak sidebar (revisi 2026-11-11)
   await expect(panel.locator('img')).toHaveCount(0)
   await expect(panel.getByText('Super Admin')).toHaveCount(0)
@@ -483,7 +502,7 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   expect(await name.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
   await expect(menu.getByRole('link', { name: 'Privasi' })).toHaveCount(0)
   await expect(menu.getByRole('link', { name: 'Halaman lain' })).toHaveCount(0)
-  expect(await width()).toBeGreaterThan(260)
+  expect(await width()).toBeGreaterThan(225)
   await expect(hamburger).toHaveAttribute('aria-expanded', 'true')
 
   // ikon tidak melompat saat menciut: posisinya sama di kedua keadaan, hanya tulisan yang memudar
@@ -511,7 +530,7 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   await expect(aside).toHaveAttribute('data-collapsed', 'true')
   await hamburger.click()
   await expect(aside).toHaveAttribute('data-collapsed', 'false')
-  await expect.poll(width).toBeGreaterThan(260)
+  await expect.poll(width).toBeGreaterThan(225)
 
   // foto dan nama di puncak sidebar membawa kembali ke Dashboard (revisi 2026-11-11, DESIGN.md bagian 128)
   await page.goto('/admin/pages/about')

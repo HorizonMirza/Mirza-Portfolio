@@ -18,25 +18,13 @@ export type AdminIdentity = { adminName: string; photo: string | StaticImageData
 // agar Keluar merah tidak bertabrakan dengan text-muted (urutan kelas di CSS tidak bisa diandalkan).
 const itemBase =
   'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-left text-sm font-semibold transition-colors'
-const itemClass = `${itemBase} py-2 text-muted hover:bg-surface-2 hover:text-text`
+const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 
-// Isi menu (demo 3 pilihan pemilik 2026-11-11): Akun dan Lihat situs dengan keterangan singkat,
-// lalu Keluar. Urutan tetap di kedua bahasa.
+// Isi menu: Akun dan Lihat situs, lalu Keluar; tanpa keterangan di bawahnya (revisi pemilik
+// 2026-11-11). Urutan tetap di kedua bahasa.
 const MENU_ITEMS = [
-  {
-    label: 'Akun',
-    hint: 'Nama, foto, password, perangkat',
-    href: '/admin/account',
-    icon: KeyRound,
-    external: false,
-  },
-  {
-    label: 'Lihat situs',
-    hint: 'mmirza.site, tab baru',
-    href: '/id',
-    icon: ExternalLink,
-    external: true,
-  },
+  { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
+  { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
 ] as const
 
 // Identitas admin di puncak sidebar (DESIGN.md bagian 128): foto, nama, dan Super Admin sekaligus
@@ -142,19 +130,10 @@ export function ProfileMenu() {
       {open ? (
         <div
           id={panelId}
-          className="admin-pop absolute top-full right-0 z-50 mt-3 w-64 rounded-2xl border border-border p-2 shadow-2xl"
+          className="admin-pop absolute top-full right-0 z-50 mt-3 w-56 rounded-2xl border border-border p-2 shadow-2xl"
         >
-          {MENU_ITEMS.map(({ label, hint, href, icon: Icon, external }) => {
-            const body = (
-              <>
-                <Icon className="size-4 shrink-0" aria-hidden="true" />
-                <span className="min-w-0">
-                  {t(label)}
-                  <span className="block text-xs font-normal text-muted">{t(hint)}</span>
-                </span>
-              </>
-            )
-            return external ? (
+          {MENU_ITEMS.map(({ label, href, icon: Icon, external }) =>
+            external ? (
               <a
                 key={href}
                 href={href}
@@ -162,14 +141,17 @@ export function ProfileMenu() {
                 rel="noopener noreferrer"
                 className={itemClass}
               >
-                {body}
+                <Icon className="size-4 shrink-0" aria-hidden="true" />
+                {t(label)}
+                <span className="sr-only">{t('(membuka tab baru)')}</span>
               </a>
             ) : (
               <Link key={href} href={href} className={itemClass} onClick={() => setOpen(false)}>
-                {body}
+                <Icon className="size-4 shrink-0" aria-hidden="true" />
+                {t(label)}
               </Link>
-            )
-          })}
+            ),
+          )}
           <div className="my-1 border-t border-border" />
           {/* Keluar berwarna merah, terpisah garis (revisi pemilik 2026-11-11) */}
           <button

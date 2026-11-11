@@ -1616,3 +1616,11 @@ Revisi pemilik ("kalau profile ada 2 wajah saya aneh"), dipilih dari 5 demo tanp
 
 - **Identitas di puncak sidebar** (foto, nama, Super Admin) kini tautan ke Dashboard; ditekan di Dashboard sendiri, datanya dimuat ulang (`router.refresh`). Panah ⇅ dihapus karena tidak lagi membuka menu. Satu-satunya wajah admin di panel. Saat sidebar ciut, foto tetap di tengah rel dan tulisannya memudar (bagian 127).
 - **Menu profil** pindah ke top bar, di samping tombol tema, di semua ukuran layar: tombol bulat bergaris dengan ikon titik tiga tegak (`EllipsisVertical`), bentuknya sama dengan tombol bahasa dan tema. Menunya tanpa foto dan nama: Akun ("Nama, foto, password, perangkat"), Lihat situs ("mmirza.site, tab baru"), garis, lalu Keluar merah. Foto bulat di top bar HP dihapus.
+
+## 129. Menu profil tanpa keterangan, sidebar 17rem, tab Home satu baris (2026-11-11 malam)
+
+Revisi pemilik:
+
+- **Menu profil** hanya Akun, Lihat situs, dan Keluar; keterangan di bawah pilihan dihapus, panel 14rem.
+- **Sidebar desktop 17rem** (238 px, dulu 20rem): nama "Muhammad Mirza Wirya" butuh 222 px (foto, jarak, padding, dan teks 144 px diukur di browser), sisa 16 px untuk huruf cadangan saat Inter belum dimuat. Tes E2E tetap memastikan nama tidak terpotong.
+- **Home tanpa deskripsi**, empat tab satu baris selebar panel (rujukan: tab bergaya tombol terpisah yang sama lebar): Kartu pembuka (`/admin/pages/intro`), Foto beranda (`/admin/pages/home`, foto profil dan foto utama), Peran beranda (`/admin/roles`, halaman baru; peran dipisah dari tab foto), Skill teknis (`/admin/skills`). EN: Introduction card, Photos, Roles, Technical skills. Tab aktif terisi warna teks (putih di mode gelap), yang lain bergaris; sudut kecil `rounded-md` seperti sorotan sidebar. Di layar sempit baris digeser menyamping. Menu Home di sidebar kini membuka tab pertama (Kartu pembuka). Gaya ini (`FilterTabs stretch`) baru dipakai di Home; modul lain tetap kapsul.

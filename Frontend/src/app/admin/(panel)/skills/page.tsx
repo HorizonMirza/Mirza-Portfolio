@@ -10,7 +10,7 @@ import { requireSuperAdminPage } from '@/lib/auth-guard'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: t('Skill') }
+  return { title: `${t('Skill teknis')} · Home` }
 }
 
 export default async function SkillsPage() {
@@ -18,10 +18,8 @@ export default async function SkillsPage() {
   const categories = await listSkillCategoriesAdmin()
   return (
     <>
-      <PageHeader
-        title="Home"
-        description="Daftar skill per kategori untuk globe Keahlian Teknis. Urutan di sini dipakai di situs publik. Kategori hanya bisa dihapus bila sudah kosong."
-      />
+      {/* tanpa deskripsi: tab Home langsung di atas (revisi pemilik 2026-11-11) */}
+      <PageHeader title="Home" />
       <ModuleTabs moduleId="home" current="/admin/skills" />
       <SkillsManager categories={categories} />
     </>

@@ -69,7 +69,9 @@ describe('modul situs', () => {
     const active = (path: string) =>
       adminNav.filter((item) => isNavActive(path, item)).map((item) => item.href)
     expect(active('/admin/profile')).toEqual(['/admin/pages/about'])
-    expect(active('/admin/skills')).toEqual(['/admin/pages/home'])
+    // tab Home (bagian 129): menu Home membuka tab pertama, kartu pembuka
+    for (const tab of ['/admin/pages/home', '/admin/roles', '/admin/skills'])
+      expect(active(tab), tab).toEqual(['/admin/pages/intro'])
     expect(active('/admin/experience/abc')).toEqual(['/admin/pages/experience'])
     expect(active('/admin/projects/new')).toEqual(['/admin/pages/projects'])
     expect(active('/admin')).toEqual(['/admin'])

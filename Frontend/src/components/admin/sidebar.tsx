@@ -85,7 +85,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 // Sidebar kaca (DESIGN.md bagian 112-114, 126, 128): penuh dari atas sampai bawah layar di kiri top bar
 // dan panel isi, tidak ikut bergulir. Puncaknya foto, nama, dan Super Admin sekaligus tombol kembali ke
 // Dashboard (satu-satunya wajah admin di panel), lalu menu (digulir sendiri tanpa batang
-// gulir). Tablet (768-1023 px): rel ikon. Desktop: 20rem (280 px, rem desktop 14 px) agar nama lengkap tidak terpotong, atau rel
+// gulir). Tablet (768-1023 px): rel ikon. Desktop: 17rem (238 px, rem desktop 14 px): nama lengkap butuh 222 px, sisa 16 px untuk huruf cadangan, atau rel
 // ikon saat diciutkan lewat tombol hamburger di top bar (lebar beranimasi, pilihan diingat cookie).
 export function AdminSidebar(identity: AdminIdentity) {
   const { collapsed } = useSidebarState()
@@ -95,7 +95,7 @@ export function AdminSidebar(identity: AdminIdentity) {
       className={cn(
         // lebar berganti pelan dan halus (revisi pemilik 2026-11-11: sebelumnya 300 ms terlalu cepat)
         'admin-glass-panel relative z-40 hidden h-full w-[4.75rem] shrink-0 flex-col rounded-[23px] transition-[width] duration-500 ease-in-out-soft motion-reduce:transition-none md:flex',
-        collapsed ? 'lg:w-[4.75rem]' : 'lg:w-[20rem]',
+        collapsed ? 'lg:w-[4.75rem]' : 'lg:w-[17rem]',
       )}
     >
       <div className="shrink-0 px-2.5 pt-3 lg:px-3">

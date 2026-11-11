@@ -27,11 +27,11 @@ export const adminNav: readonly NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   // satu halaman per modul situs publik (features/site-text/catalog.ts SITE_MODULES)
   {
-    href: '/admin/pages/home',
+    // tab pertama Home adalah kartu pembuka (Bagian Awal), lalu foto, peran, dan skill (2026-11-11)
+    href: '/admin/pages/intro',
     label: 'Home',
     icon: House,
-    // kartu pembuka (Bagian Awal) menjadi tab Home sejak 2026-11-11
-    match: ['/admin/pages/intro', '/admin/skills'],
+    match: ['/admin/pages/home', '/admin/roles', '/admin/skills'],
   },
   {
     href: '/admin/pages/about',

@@ -1,14 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getTranslations } from 'next-intl/server'
 
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getHeroPortraitAsset, getProfileAssets } from '@/features/assets/queries'
 import { ContactLinksForm } from '@/features/profile/components/contact-links-form'
-import { HeroRolesForm } from '@/features/profile/components/hero-roles-form'
-import { getContactLinksForEdit, getHeroRolesForEdit } from '@/features/profile/queries'
+import { getContactLinksForEdit } from '@/features/profile/queries'
 import { IntroForm } from '@/features/settings/components/intro-form'
 import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
@@ -25,6 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const found = findModule((await params).module)
   const { t } = await getAdminT()
   if (found?.id === 'intro') return { title: `${t('Kartu pembuka')} · Home` }
+  if (found?.id === 'home') return { title: `${t('Foto beranda')} · Home` }
   return { title: t(found?.label ?? 'Halaman situs') }
 }
 
@@ -36,12 +35,16 @@ export default async function SiteModulePage({ params }: Params) {
   const found = findModule((await params).module)
   if (!found) notFound()
   const moduleId: ModuleId = found.id
-  const header = moduleId === 'intro' ? (findModule('home') ?? found) : found
-  const tabsOf = moduleId === 'intro' ? 'home' : moduleId
+  // Bagian Awal dan Home satu kelompok tab Home, tanpa deskripsi (revisi pemilik 2026-11-11)
+  const inHome = moduleId === 'intro' || moduleId === 'home'
+  const tabsOf = inHome ? 'home' : moduleId
 
   return (
     <>
-      <PageHeader title={header.title} description={header.description} />
+      <PageHeader
+        title={inHome ? 'Home' : found.title}
+        description={inHome ? undefined : found.description}
+      />
       {isTabbedModule(tabsOf) ? (
         <ModuleTabs moduleId={tabsOf} current={`/admin/pages/${moduleId}`} />
       ) : null}
@@ -49,7 +52,7 @@ export default async function SiteModulePage({ params }: Params) {
         {/* Bagian Awal dan Home hanya mengelola yang diminta pemilik (2026-11-10): isi kartu
             pembuka; foto profil, foto utama, dan peran. Teks lain di keduanya tetap. */}
         {moduleId === 'intro' ? <IntroForm defaultValues={await getIntroForEdit()} /> : null}
-        {moduleId === 'home' ? <HomeHero /> : null}
+        {moduleId === 'home' ? <HomePhotos /> : null}
         {moduleId === 'footer' ? <FooterContacts /> : null}
         {moduleId !== 'intro' && moduleId !== 'home' ? <ModuleTexts moduleId={moduleId} /> : null}
       </div>
@@ -65,15 +68,10 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
   return <SiteTextForm moduleId={moduleId} initialValues={texts.values} defaults={defaults} />
 }
 
-async function HomeHero() {
+// Home → Foto beranda: foto profil dan foto utama (peran pindah ke tab sendiri, /admin/roles)
+async function HomePhotos() {
   const { t } = await getAdminT()
-  const [profileAssets, portrait, roles, tId, tEn] = await Promise.all([
-    getProfileAssets(),
-    getHeroPortraitAsset(),
-    getHeroRolesForEdit(),
-    getTranslations({ locale: 'id', namespace: 'About' }),
-    getTranslations({ locale: 'en', namespace: 'About' }),
-  ])
+  const [profileAssets, portrait] = await Promise.all([getProfileAssets(), getHeroPortraitAsset()])
   const configured = isUploadConfigured()
   return (
     <>
@@ -108,7 +106,6 @@ async function HomeHero() {
           configured={configured}
         />
       </div>
-      <HeroRolesForm defaultValues={roles} placeholders={{ id: tId('roles'), en: tEn('roles') }} />
     </>
   )
 }

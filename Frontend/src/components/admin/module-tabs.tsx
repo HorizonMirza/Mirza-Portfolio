@@ -4,11 +4,12 @@ import { getAdminT } from '@/lib/admin-lang-server'
 // Tiap modul situs publik punya satu menu; teks halamannya dan datanya (profil, skill, pengalaman,
 // project) dipisah sebagai tab di dalam modul itu, bukan menu kedua di sidebar.
 const TABS = {
+  // Home: empat tab selebar panel, urutan pilihan pemilik (2026-11-11, DESIGN.md bagian 129)
   home: [
-    { label: 'Foto dan peran', href: '/admin/pages/home' },
-    // Bagian Awal masuk ke Home sebagai tab (revisi pemilik 2026-11-11)
     { label: 'Kartu pembuka', href: '/admin/pages/intro' },
-    { label: 'Skill', href: '/admin/skills' },
+    { label: 'Foto beranda', href: '/admin/pages/home' },
+    { label: 'Peran beranda', href: '/admin/roles' },
+    { label: 'Skill teknis', href: '/admin/skills' },
   ],
   about: [
     { label: 'Teks halaman', href: '/admin/pages/about' },
@@ -42,6 +43,7 @@ export async function ModuleTabs({
   return (
     <FilterTabs
       label={t('Bagian halaman')}
+      stretch={moduleId === 'home'}
       items={TABS[moduleId].map((tab) => ({
         ...tab,
         label: t(tab.label),

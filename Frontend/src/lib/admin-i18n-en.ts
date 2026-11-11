@@ -20,8 +20,7 @@ export const EN: Record<string, string> = {
   'Menu profil': 'Profile menu',
   'Kembali ke Dashboard': 'Back to Dashboard',
   ', kembali ke Dashboard': ', back to Dashboard',
-  'Nama, foto, password, perangkat': 'Name, photo, password, devices',
-  'mmirza.site, tab baru': 'mmirza.site, new tab',
+  '(membuka tab baru)': '(opens in a new tab)',
   'Lihat situs': 'View site',
   Keluar: 'Log out',
   'Keluar…': 'Logging out…',
@@ -65,7 +64,6 @@ export const EN: Record<string, string> = {
   'Teks halaman': 'Page text',
   Profil: 'Profile',
   Pendidikan: 'Education',
-  'Foto dan peran': 'Photos and roles',
   Project: 'Projects',
   // footer form
   Simpan: 'Save',
@@ -96,8 +94,6 @@ export const EN: Record<string, string> = {
   'Isi halaman Kebijakan Privasi. Tulis apa adanya, jangan menjanjikan hal yang tidak dilakukan situs.':
     'Privacy Policy content. Write it as it is; do not promise anything the site does not do.',
   'Halaman 404 dan halaman galat.': '404 and error pages.',
-  'Daftar skill per kategori untuk globe Keahlian Teknis. Urutan di sini dipakai di situs publik. Kategori hanya bisa dihapus bila sudah kosong.':
-    'Skills per category for the Technical Skills globe. The order here is used on the public site. A category can only be deleted when it is empty.',
   'Kartu dan teks halaman Tentang: foto kartu, nama, peran, bio, chip kampus dan bendera, dan headline untuk gambar pratinjau tautan. Kontak dan Resume CV diatur di Footer; foto profil, foto utama, dan peran beranda di Home.':
     'About page card and text: card photo, name, roles, bio, campus and flag chips, and the headline for link previews. Contacts and the CV are in Footer; the profile photo, main photo, and home roles are in Home.',
   'Kerja dan organisasi (pendidikan ada di About → Pendidikan). Timeline publik diurutkan otomatis: yang masih berjalan di atas, lalu dari tanggal selesai terbaru.':
@@ -450,7 +446,7 @@ export const EN: Record<string, string> = {
   'Isi profil di About → Profil dulu.': 'Fill in the profile in About → Profile first.',
   'Kontak disimpan.': 'Contacts saved.',
   'Peran disimpan.': 'Roles saved.',
-  'Isi kartu pembuka': 'Intro card text',
+  'Isi kartu pembuka': 'Introduction card text',
   'Kalimat di bawah judul "Informasi Penting", dalam bahasa Indonesia dan Inggris.':
     'The sentences under the "Informasi Penting" heading, in Indonesian and English.',
   Isi: 'Text',
@@ -468,7 +464,7 @@ export const EN: Record<string, string> = {
   'Volume paling besar 100': 'Volume must be at most 100',
   'Wajib diisi': 'Required',
   'Pengaturan disimpan.': 'Settings saved.',
-  'Kartu pembuka disimpan.': 'Intro card saved.',
+  'Kartu pembuka disimpan.': 'Introduction card saved.',
   'Kembalikan bawaan: {label}': 'Restore default: {label}',
   'Kembalikan bawaan': 'Restore default',
   'Galat di {lang}: {error}': 'Error in {lang}: {error}',
@@ -626,9 +622,12 @@ export const EN: Record<string, string> = {
   'Isi angka {min} sampai {max}': 'Enter a number from {min} to {max}',
   'Izinkan mesin pencari': 'Allow search engines',
   'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.':
-    'The Important Information card when the site opens. Edit its text in Home, Intro card tab.',
-  'Kartu pembuka': 'Intro card',
-  'Kartu pembuka muncul': 'Intro card shows',
+    'The Important Information card when the site opens. Edit its text in Home, Introduction card tab.',
+  'Kartu pembuka': 'Introduction card',
+  'Foto beranda': 'Photos',
+  'Peran beranda': 'Roles',
+  'Skill teknis': 'Technical skills',
+  'Kartu pembuka muncul': 'Introduction card shows',
   'Kekuatan password tampil saat Anda mengetik.': 'Password strength appears as you type.',
   'Kekuatan: {level}': 'Strength: {level}',
   Keluarkan: 'Sign out',

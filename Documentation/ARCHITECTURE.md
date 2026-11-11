@@ -355,6 +355,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 |---|---|---|
 | Profil (tab modul About) | `/admin/profile` | `saveProfile` |
 | Project (tab modul Projects) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
+| Peran beranda (tab modul Home, sejak 2026-11-11) | `/admin/roles` | `saveHeroRoles` |
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill` |
 | Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
 | Halaman situs (8 modul: Bagian Awal sebagai tab "Kartu pembuka" di Home sejak 2026-11-11, Home, About, Experience, Projects, Contact, Navbar, Footer; Privasi dan Halaman lain dihapus 2026-11-11) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto profil dan foto utama di modul Home lewat `signAssetUpload`/`attachUploadedAsset` (target `profile-photo`, `hero-portrait`) |

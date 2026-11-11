@@ -3,13 +3,40 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 // Filter sebagai tautan (?status=...) agar bisa dibagikan dan bekerja tanpa JavaScript.
+// stretch: satu baris selebar panel, tombol terpisah sama lebar, yang aktif terisi penuh
+// (tab Home, revisi pemilik 2026-11-11, DESIGN.md bagian 129). Di layar sempit digeser menyamping.
 export function FilterTabs({
   label,
   items,
+  stretch = false,
 }: {
   label: string
   items: { href: string; label: string; count?: number; active: boolean }[]
+  stretch?: boolean
 }) {
+  if (stretch)
+    return (
+      <nav
+        aria-label={label}
+        className="no-scrollbar -mx-1 mb-6 flex gap-2 overflow-x-auto overscroll-x-contain px-1 py-1"
+      >
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={item.active ? 'page' : undefined}
+            className={cn(
+              'inline-flex min-h-11 min-w-fit flex-1 basis-0 items-center justify-center rounded-md px-4 text-sm font-semibold whitespace-nowrap transition-colors',
+              item.active
+                ? 'bg-text text-bg'
+                : 'border border-border bg-surface text-muted hover:bg-surface-2 hover:text-text',
+            )}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
+    )
   return (
     <nav
       aria-label={label}
