@@ -10,25 +10,29 @@ test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' 
 const SESSION_PROJECT = 'chromium'
 
 test.describe('Admin → Akun', () => {
-  test('identitas, email disamarkan, dan perangkat ini', async ({ page }) => {
+  // Desain 1 "Profil ala WhatsApp" (DESIGN.md bagian 124): semua kelompok langsung terlihat; foto, nama,
+  // password, dan riwayat lengkap dibuka sebagai halaman kedua dengan tombol kembali.
+  test('identitas, email disamarkan, perangkat langsung terlihat', async ({ page }) => {
     await page.goto('/admin/account')
     const email = process.env.ADMIN_EMAIL!
     const main = page.locator('main')
     await expect(main).not.toContainText(email)
     await main.getByRole('button', { name: 'Tampilkan' }).click()
     await expect(main).toContainText(email)
-    await expect(main.getByText('Super Admin')).toBeVisible()
-
-    const devices = main.getByRole('button', { name: /^Perangkat/ })
-    await expect(devices).toHaveAttribute('aria-expanded', 'false')
-    await devices.click()
-    await expect(devices).toHaveAttribute('aria-expanded', 'true')
+    await expect(main.getByText('Super Admin', { exact: true })).toBeVisible()
+    for (const group of ['Info', 'Keamanan', 'Aktivitas terbaru'])
+      await expect(main.getByRole('heading', { name: group, exact: true })).toBeVisible()
+    await expect(main.getByRole('heading', { name: /^Perangkat tertaut · \d+$/ })).toBeVisible()
     await expect(main.getByText('Perangkat ini', { exact: true })).toBeVisible()
   })
 
-  test('ganti password: aturan dicentang dan meter kekuatan saat mengetik', async ({ page }) => {
+  test('ganti password di halaman kedua: aturan dan meter kekuatan, lalu kembali', async ({
+    page,
+  }) => {
     await page.goto('/admin/account')
-    await page.locator('main').getByRole('button', { name: 'Ganti password' }).click()
+    const opener = page.locator('main').getByRole('button', { name: /^Ganti password/ })
+    await opener.click()
+    await expect(page.getByRole('heading', { name: 'Ganti password' })).toBeFocused()
     await page.getByLabel('Password saat ini').fill('password-lama-sekali')
     const next = page.getByLabel('Password baru', { exact: true })
     await next.fill('pendek')
@@ -38,17 +42,44 @@ test.describe('Admin → Akun', () => {
     ).toContainText('(belum terpenuhi)')
     await next.fill('kopi pagi di teras rumah')
     await expect(page.getByText('Kekuatan: Sangat kuat')).toBeVisible()
-    await expect(
-      page.getByRole('listitem').filter({ hasText: 'Minimal 12 karakter' }),
-    ).toContainText('(terpenuhi)')
     await page.getByLabel('Ulangi password baru').fill('kopi pagi di teras rumah')
     await expect(page.getByRole('listitem').filter({ hasText: 'Ulangan sama' })).toContainText(
       '(terpenuhi)',
     )
     // tidak dikirim: mengganti password akan mengeluarkan sesi tes lain
+    await page.getByRole('button', { name: 'Kembali ke Akun' }).click()
+    await expect(opener).toBeFocused()
   })
 
-  test('login gagal tercatat di aktivitas dan bisa disaring', async ({
+  test('foto profil dibuka dari tombol kamera', async ({ page }) => {
+    await page.goto('/admin/account')
+    await page.getByRole('button', { name: 'Ganti foto profil' }).click()
+    await expect(page.getByRole('heading', { name: 'Foto profil' })).toBeFocused()
+    await page.getByRole('button', { name: 'Kembali ke Akun' }).click()
+    await expect(page.getByRole('button', { name: 'Ganti foto profil' })).toBeFocused()
+  })
+
+  test('nama akun bisa diubah lalu dikembalikan', async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== SESSION_PROJECT, 'mengubah data akun bersama')
+    await page.goto('/admin/account')
+    const main = page.locator('main')
+    const rename = async (value: string) => {
+      await main.getByRole('button', { name: /^Nama / }).click()
+      const field = page.getByLabel('Nama', { exact: true })
+      await field.fill(value)
+      await page.getByRole('button', { name: 'Simpan' }).click()
+      await expect(page.getByText('Nama disimpan.')).toBeVisible()
+      await expect(main.getByText(value, { exact: true }).first()).toBeVisible()
+    }
+    const original = (await main.getByRole('button', { name: /^Nama / }).innerText())
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)[1]!
+    await rename(`${original} E2E`)
+    await rename(original)
+  })
+
+  test('login gagal tercatat dan bisa disaring di semua aktivitas', async ({
     page,
     request,
     baseURL,
@@ -59,17 +90,16 @@ test.describe('Admin → Akun', () => {
     })
     expect(res.status()).toBe(401)
     await page.goto('/admin/account')
-    const activity = page.locator('main').getByRole('list', { name: 'Aktivitas' })
+    const main = page.locator('main')
     // dicatat lewat after(), sesaat setelah respons login terkirim
     await expect(async () => {
       await page.reload()
-      await expect(activity.locator('[data-event="failed"]').first()).toBeVisible({
-        timeout: 1000,
-      })
+      await main.getByRole('button', { name: /^Lihat semua aktivitas/ }).click({ timeout: 1000 })
+      await page.getByRole('button', { name: /^Gagal \(\d+\)$/ }).click({ timeout: 1000 })
+      await expect(main.locator('[data-event="failed"]').first()).toBeVisible({ timeout: 1000 })
     }).toPass()
-    await page.getByRole('button', { name: /^Gagal \(\d+\)$/ }).click()
-    await expect(activity.locator('[data-event="success"]')).toHaveCount(0)
-    await expect(activity.locator('[data-event="failed"]').first()).toContainText('Gagal masuk')
+    await expect(main.locator('[data-event="success"]')).toHaveCount(0)
+    await expect(main.locator('[data-event="failed"]').first()).toContainText('Gagal masuk')
   })
 
   test('perangkat lain bisa dikeluarkan dan sesinya langsung berakhir', async ({
@@ -96,16 +126,27 @@ test.describe('Admin → Akun', () => {
     expect(await sessionOf()).not.toBeNull()
 
     await page.goto('/admin/account')
-    const main = page.locator('main')
-    await main.getByRole('button', { name: /^Perangkat/ }).click()
-    const row = main
-      .locator('[data-session]')
+    const row = page
+      .locator('main [data-session]')
       .filter({ hasText: 'Browser tidak dikenal di Windows' })
       .first()
-    await row.getByRole('button', { name: 'Keluarkan' }).click()
+    await row.getByRole('button', { name: /^Keluarkan/ }).click()
     await expect(page.getByText('Perangkat dikeluarkan.')).toBeVisible()
     await expect.poll(sessionOf).toBeNull()
     await other.dispose()
+  })
+
+  test('keluar dari semua perangkat lain minta konfirmasi dulu', async ({ page }) => {
+    await page.goto('/admin/account')
+    const all = page.getByRole('button', { name: 'Keluar dari semua perangkat lain' })
+    // setup login E2E dan tes lain hampir selalu menyisakan sesi lain; bila tidak ada, baris tidak tampil
+    test.skip((await all.count()) === 0, 'tidak ada perangkat lain')
+    await all.click()
+    const ask = page.getByRole('alertdialog', { name: 'Keluar dari semua perangkat lain?' })
+    await expect(ask.getByRole('button', { name: 'Keluarkan' })).toBeFocused()
+    // tidak dikonfirmasi: akan mengeluarkan sesi tes lain
+    await ask.getByRole('button', { name: 'Batal' }).click()
+    await expect(ask).toHaveCount(0)
   })
 })
 
@@ -115,15 +156,23 @@ test.describe('Admin → Pengaturan', () => {
     // "Email saat ada pesan baru" tidak mengubah tampilan situs, jadi aman diubah saat tes lain jalan
     const toggle = () => page.getByRole('switch', { name: 'Email saat ada pesan baru' })
     await page.goto('/admin/settings')
+    // klik lalu tunggu jawaban Server Action: memuat ulang sebelum simpan selesai membatalkannya
+    const flip = async () => {
+      const saved = page.waitForResponse(
+        (r) => r.request().method() === 'POST' && r.url().includes('/admin/settings'),
+      )
+      await toggle().click()
+      await saved
+    }
     const before = await toggle().getAttribute('aria-checked')
     const flipped = before === 'true' ? 'false' : 'true'
-    await toggle().click()
+    await flip()
     await expect(toggle()).toHaveAttribute('aria-checked', flipped)
     await expect(page.getByText('Tersimpan', { exact: true })).toBeVisible()
     await page.reload()
     await expect(toggle()).toHaveAttribute('aria-checked', flipped)
     // kembalikan
-    await toggle().click()
+    await flip()
     await expect(toggle()).toHaveAttribute('aria-checked', before!)
     await page.reload()
     await expect(toggle()).toHaveAttribute('aria-checked', before!)

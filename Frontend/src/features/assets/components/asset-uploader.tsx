@@ -36,10 +36,13 @@ export function AssetUploader({
   target,
   targetId,
   buttonLabel,
+  onDone,
 }: {
   target: UploadTarget
   targetId?: string
   buttonLabel?: string
+  // dipanggil setelah berkas tersimpan (mis. Admin → Akun memuat ulang data dan kembali)
+  onDone?: () => void
 }) {
   const t = useAdminT()
   const spec = UPLOAD_TARGETS[target]
@@ -138,6 +141,7 @@ export function AssetUploader({
       setFile(null)
       setAlt({ alt_id: '', alt_en: '' })
       if (fileRef.current) fileRef.current.value = ''
+      onDone?.()
     })
   }
 

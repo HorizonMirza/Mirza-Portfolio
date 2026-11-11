@@ -1570,3 +1570,13 @@ Pemilik memilih desain 1 dari 10 demo Pengaturan ("buat paling lengkap"). Nama m
 - **Label kelompok** (Utama, Halaman situs, Kotak masuk) dihapus beserta jaraknya: menu menjadi satu daftar menyambung. Urutan menu tidak berubah.
 - **Akun:** pemilik meminta desain ulang dengan semua bagian langsung terlihat (tanpa panel Ganti password/Perangkat yang harus dibuka). Lima demo pertama dinilai terlalu berantakan; lima demo baru mengikuti pola halaman akun yang umum (daftar berkelompok seperti WhatsApp dan situs lain), menunggu pilihan pemilik. Halaman Akun bagian 120 tetap berlaku sampai ada pilihan.
 
+## 124. Akun: desain 1 "Profil ala WhatsApp" (2026-11-11 malam)
+
+Pemilik memilih desain 1 dari lima demo baru ("buat paling lengkap"). Menggantikan tata letak bagian 120 (linimasa dua kolom); data dan fitur di baliknya (riwayat masuk, keluarkan perangkat, saklar email login) tetap.
+
+- **Kepala:** foto profil bulat 128 px di tengah dengan tombol kamera di pojok, nama akun, dan label Super Admin. Satu kolom selebar `max-w-xl` di tengah panel isi.
+- **Kelompok daftar** (judul kecil, kartu bersudut 16 px, baris minimal 64 px dengan ikon di kotak kecil): **Info** (Nama dengan ikon pensil, Email disamarkan dengan Tampilkan/Sembunyikan, Admin sejak), **Keamanan** (Ganti password dengan tanggal terakhir diganti dari log audit, saklar Email saat ada login baru), **Perangkat tertaut · jumlah** (semua sesi langsung terlihat, "Aktif sekarang" hijau untuk perangkat ini, Keluarkan per perangkat, baris merah "Keluar dari semua perangkat lain" dengan konfirmasi di tempat), dan **Aktivitas terbaru** (5 kejadian terakhir, lalu "Lihat semua aktivitas").
+- **Halaman kedua seperti aplikasi:** foto profil, nama, ganti password, dan semua aktivitas dibuka di tempat dengan tombol kembali bulat dan judul (fokus pindah ke judul, lalu kembali ke baris pembukanya). Foto profil memakai pengunggah yang sama dengan menu Beranda (target `profile-photo`); tanpa Cloudinary tampil petunjuk pengaturan. Semua aktivitas bisa disaring Semua / Gagal (jumlah).
+- **Fitur baru: ganti nama akun** (`renameAccount`, Zod 2–80 karakter, dicatat di log audit sebagai perubahan Akun). Nama ini tampil di sidebar, menu profil, dan log audit; nama di situs publik tetap dari Profil.
+- Tes E2E: identitas dan kelompok terlihat, halaman kedua password dan foto dengan fokus kembali, ganti nama lalu dikembalikan, login gagal di semua aktivitas, keluarkan perangkat lain, konfirmasi keluar semua (dibatalkan).
+

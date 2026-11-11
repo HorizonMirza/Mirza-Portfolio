@@ -10,7 +10,7 @@ import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
 import { consumeRateLimit, hashIdentifier } from '@/lib/rate-limit'
 
-import { changePasswordSchema } from './schema'
+import { accountNameSchema, changePasswordSchema } from './schema'
 
 const RULE = { window: 900, max: 5 }
 
@@ -77,6 +77,31 @@ export async function changePassword(input: unknown): Promise<ActionResult> {
       }
     }
     return ok('Password diganti. Sesi di perangkat lain sudah dikeluarkan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+// Ganti nama akun panel (Admin → Akun, desain 1). Dicatat di log audit.
+export async function renameAccount(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = accountNameSchema.safeParse(input)
+    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    const name = parsed.data.name
+    if (name === admin.name) return ok('Nama disimpan.')
+    await getDb().$transaction(async (tx) => {
+      await tx.user.update({ where: { id: admin.userId }, data: { name } })
+      await writeAudit(tx, {
+        actorId: admin.userId,
+        action: 'update',
+        entity: 'User',
+        entityId: admin.userId,
+        before: { name: admin.name },
+        after: { name },
+      })
+    })
+    return ok('Nama disimpan.')
   } catch (error) {
     return toActionError(error)
   }

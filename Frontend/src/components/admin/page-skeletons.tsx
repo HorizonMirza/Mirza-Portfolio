@@ -241,38 +241,32 @@ export function AdminSettingsSkeleton() {
   )
 }
 
-// Akun: kartu identitas di kiri, linimasa aktivitas di kanan
+// Akun (desain 1): foto besar di tengah, nama, lalu kelompok daftar
 export function AdminAccountSkeleton() {
   return (
     <Loading>
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
-        <Card className="flex flex-col gap-5">
-          <span className="flex items-center gap-4">
-            <Skeleton className="size-14 rounded-full" />
-            <span className="flex flex-1 flex-col gap-2">
-              <Skeleton className="h-5 w-40" />
-              <Skeleton className="h-3.5 w-52" />
-              <Skeleton className="h-3 w-32" />
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-7">
+        <span className="flex flex-col items-center gap-3 pt-2">
+          <Skeleton className="size-32 rounded-full" />
+          <Skeleton className="h-6 w-56" />
+          <Skeleton className="h-5 w-24" />
+        </span>
+        {[3, 2, 3, 5].map((rows, g) => (
+          <span key={g} className="flex flex-col gap-2">
+            <Skeleton className="ml-1 h-3.5 w-24" />
+            <span className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+              {Array.from({ length: rows }, (_, i) => (
+                <span key={i} className="flex min-h-16 items-center gap-3.5 px-4 py-2.5">
+                  <Skeleton className="size-9 rounded-[10px]" />
+                  <span className="flex flex-1 flex-col gap-1.5">
+                    <Skeleton className="h-4 w-[min(60%,14rem)]" />
+                    <Skeleton className="h-3 w-[min(80%,18rem)]" />
+                  </span>
+                </span>
+              ))}
             </span>
           </span>
-          <span className="flex gap-2">
-            <Skeleton className="h-11 w-40 rounded-full" />
-            <Skeleton className="h-11 w-32 rounded-full" />
-          </span>
-          <Skeleton className="h-12 w-full" />
-        </Card>
-        <Card className="flex flex-col gap-5">
-          <span className="flex justify-between">
-            <Skeleton className="h-6 w-24" />
-            <Skeleton className="h-9 w-36" />
-          </span>
-          {Array.from({ length: 6 }, (_, i) => (
-            <span key={i} className="flex flex-col gap-1.5 pl-5">
-              <Skeleton className="h-4 w-[min(80%,22rem)]" />
-              <Skeleton className="h-3 w-40" />
-            </span>
-          ))}
-        </Card>
+        ))}
       </div>
     </Loading>
   )

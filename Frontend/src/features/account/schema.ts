@@ -21,3 +21,11 @@ export const changePasswordSchema = z
   })
 
 export type ChangePasswordInput = z.input<typeof changePasswordSchema>
+
+// Nama akun panel admin (Admin → Akun): tampil di menu profil, sidebar, dan log audit. Nama di situs
+// publik tetap dari Profil.
+export const accountNameSchema = z.object({
+  name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(80, 'Nama maksimal 80 karakter'),
+})
+
+export type AccountNameInput = z.input<typeof accountNameSchema>

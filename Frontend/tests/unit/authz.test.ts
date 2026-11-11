@@ -38,6 +38,7 @@ async function load() {
   const account = await import('@/features/account/actions')
   const settings = await import('@/features/settings/actions')
   const siteText = await import('@/features/site-text/actions')
+  const sessions = await import('@/features/account/session-actions')
   for (const mod of [
     projects,
     skills,
@@ -48,6 +49,7 @@ async function load() {
     account,
     settings,
     siteText,
+    sessions,
   ]) {
     for (const [name, value] of Object.entries(mod)) {
       if (typeof value === 'function') exported.push(name)
@@ -74,6 +76,9 @@ async function load() {
     ['updateAssetAlt', () => assets.updateAssetAlt(id, {})],
     ['removeAsset', () => assets.removeAsset(id)],
     ['changePassword', () => account.changePassword({})],
+    ['renameAccount', () => account.renameAccount({ name: 'Nama Baru' })],
+    ['revokeSession', () => sessions.revokeSession(id)],
+    ['revokeOtherSessions', () => sessions.revokeOtherSessions()],
     // action yang dulu belum tercakup (audit 2026-10-31, GAP-04)
     ['saveSiteTexts', () => siteText.saveSiteTexts('about', {})],
     ['saveIntroNotice', () => settings.saveIntroNotice({})],

@@ -763,4 +763,33 @@ export const EN: Record<string, string> = {
   'Sesi aktif': 'Active sessions',
   'Berkas ikut dihapus': 'Files removed with it',
   Diarsipkan: 'Archived',
+  // Akun desain 1 (DESIGN.md bagian 124)
+  'Admin sejak': 'Admin since',
+  'Aktif sekarang': 'Active now',
+  'Aktivitas terbaru': 'Recent activity',
+  'Belum pernah diganti dari panel': 'Not changed from the panel yet',
+  'Butuh Resend. Pilihan tetap disimpan.': 'Needs Resend. Your choice is still saved.',
+  'Foto bulat yang sama dengan kiri atas situs, footer, kartu halaman Tentang, kartu ID Kontak, sidebar, dan menu profil. Rasio persegi atau potret.':
+    'The same round photo as the top left of the site, the footer, the About page card, the Contact ID card, the sidebar, and the profile menu. Square or portrait ratio.',
+  'Ganti foto profil': 'Change profile photo',
+  Info: 'Info',
+  Keamanan: 'Security',
+  'Keluar dari semua perangkat lain': 'Sign out of all other devices',
+  'Keluar dari semua perangkat lain?': 'Sign out of all other devices?',
+  'Keluarkan {count} perangkat lain? Perangkat ini tetap masuk.':
+    'Sign out {count} other devices? This device stays signed in.',
+  'Kembali ke Akun': 'Back to Account',
+  'Lihat semua aktivitas': 'See all activity',
+  'Nama akun': 'Account name',
+  'Perangkat lain otomatis keluar setelah password diganti.':
+    'Other devices are signed out after the password changes.',
+  'Perangkat tertaut · {count}': 'Linked devices · {count}',
+  'Tampil di menu profil, sidebar, dan log audit. Nama di situs publik diubah di menu Tentang, Profil.':
+    'Shown in the profile menu, sidebar, and audit log. The name on the public site is edited in About, Profile.',
+  'Terakhir aktif {time}': 'Last active {time}',
+  'Terakhir diganti {date}': 'Last changed {date}',
+  '{count} kejadian, bisa disaring yang gagal': '{count} events, filter for failed ones',
+  'Nama disimpan.': 'Name saved.',
+  'Nama minimal 2 karakter': 'Name must be at least 2 characters',
+  'Nama maksimal 80 karakter': 'Name must be at most 80 characters',
 }

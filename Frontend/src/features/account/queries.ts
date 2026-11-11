@@ -30,7 +30,7 @@ export type AccountEvent = {
 export async function getAccountOverview(userId: string, currentSessionId: string) {
   const db = getDb()
   const now = new Date()
-  const [user, sessions, logins, changes] = await Promise.all([
+  const [user, sessions, logins, changes, lastPassword] = await Promise.all([
     db.user.findUnique({ where: { id: userId }, select: { createdAt: true } }),
     db.session.findMany({
       where: { userId, expiresAt: { gt: now } },
@@ -62,6 +62,12 @@ export async function getAccountOverview(userId: string, currentSessionId: strin
       orderBy: { createdAt: 'desc' },
       take: ACTIVITY_LIMIT,
       select: { id: true, action: true, createdAt: true },
+    }),
+    // ganti password terakhir (baris "Terakhir diganti …")
+    db.auditLog.findFirst({
+      where: { action: 'password', entity: 'User', entityId: userId },
+      orderBy: { createdAt: 'desc' },
+      select: { createdAt: true },
     }),
   ])
 
@@ -98,6 +104,7 @@ export async function getAccountOverview(userId: string, currentSessionId: strin
 
   return {
     adminSince: user?.createdAt.toISOString() ?? null,
+    passwordChangedAt: lastPassword?.createdAt.toISOString() ?? null,
     sessions: sessions.map((s): AccountSession => ({
       id: s.id,
       device: deviceParts(s.userAgent),

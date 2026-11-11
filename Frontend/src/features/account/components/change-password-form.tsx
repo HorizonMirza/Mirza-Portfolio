@@ -25,7 +25,7 @@ const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat kuat'] as
 // Ganti password di panel Akun (DESIGN.md bagian 120): aturan wajib dicentang langsung saat mengetik
 // dan meter kekuatan empat ruas. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
 // perangkat ikut berubah (perangkat lain dikeluarkan).
-export function ChangePasswordForm() {
+export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
   const t = useAdminT()
   const router = useRouter()
   const [pending, startTransition] = useTransition()
@@ -56,7 +56,8 @@ export function ChangePasswordForm() {
     startTransition(async () => {
       if (applyResult(await changePassword(values), form.setError)) {
         form.reset(empty)
-        router.refresh()
+        if (onDone) onDone()
+        else router.refresh()
       }
     })
   })
