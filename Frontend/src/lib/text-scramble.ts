@@ -185,34 +185,165 @@ export function scrambleVisibleText(
   requestAnimationFrame(frame)
 }
 
-// Sesi ganti bahasa: acak teks yang berubah sekarang, lalu amati DOM selama `watchMs` dan acak juga
-// teks yang datang belakangan (mis. server component yang tiba bertahap setelah router.refresh()).
-// Tiap node hanya diacak sekali per teks akhirnya. Mengembalikan fungsi untuk menghentikan sesi.
+// Sesi ganti bahasa panel admin (DESIGN.md bagian 117): semua teks yang berubah diacak dan selesai
+// BERSAMAAN. Teks client component berganti seketika, teks server component tiba belakangan dan
+// bertahap setelah router.refresh(). Maka:
+// 1. tahan: teks yang berubah, serta teks lama yang diperkirakan akan berganti (`willChange`, mis.
+//    judul dari server), langsung tampil sebagai huruf acak dan ditahan acak;
+// 2. teks baru yang tiba dari server (MutationObserver) ikut ditahan; nilai akhir tiap node selalu
+//    diambil dari tulisan terakhir React;
+// 3. lepas: setelah `settled()` benar dan DOM tenang `quietMs`, atau paling lama `holdMs`, semua
+//    teks terurai serempak dengan durasi dan awal yang sama (tanpa jeda bertingkat).
+// Mengembalikan fungsi untuk menghentikan sesi (teks langsung dikembalikan ke nilai akhirnya).
 export function scrambleLanguageSwitch(
   before: string[],
-  options: ScrambleOptions & { watchMs?: number } = {},
+  options: ScrambleOptions & {
+    willChange?: (text: string) => boolean
+    settled?: () => boolean
+    holdMs?: number
+    quietMs?: number
+  } = {},
 ) {
-  const handled = new WeakMap<object, string>()
-  const opts = { ...options, handled }
-  let scheduled = 0
-  const run = () => {
-    scheduled = 0
-    scrambleVisibleText(document.body, before, opts)
+  const skip = new Set(before)
+  const max = options.max ?? MAX_NODES
+  const items = new Map<object, Item>()
+  const sessionStart = performance.now()
+  let lastAppChange = sessionStart
+  let releasedAt = 0
+  let frameId = 0
+  let stopped = false
+
+  // acakan pertama ditulis langsung (sebelum layar digambar), agar teks baru tidak sempat terlihat utuh
+  const hold = (item: Item) => {
+    item.written = scrambleFrame(item.target, 0)
+    item.write(item.written)
+    active.add(item.key)
   }
-  run()
+
+  const addNode = (node: Text) => {
+    if (items.has(node) || items.size >= max) return
+    const value = node.nodeValue ?? ''
+    const item: Item = {
+      read: () => (node.isConnected ? node.nodeValue : null),
+      write: (v) => {
+        node.nodeValue = v
+      },
+      key: node,
+      target: value,
+      written: value,
+      delay: 0,
+      done: false,
+    }
+    items.set(node, item)
+    hold(item)
+  }
+  const addField = (field: Field, prop: 'value' | 'placeholder', text: string) => {
+    if (items.has(field) || items.size >= max) return
+    const item: Item = {
+      read: () =>
+        !field.isConnected || field === document.activeElement
+          ? null
+          : prop === 'value'
+            ? field.value
+            : field.placeholder,
+      write: (v) => {
+        if (prop === 'value') field.value = v
+        else field.placeholder = v
+      },
+      key: field,
+      target: text,
+      written: text,
+      delay: 0,
+      done: false,
+    }
+    items.set(field, item)
+    hold(item)
+  }
+
+  // cari teks yang berubah (bukan teks lama) atau teks lama yang diperkirakan berganti
+  const collect = () => {
+    const predict = options.willChange
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const value = node.nodeValue ?? ''
+        if (!value.trim() || items.has(node)) return NodeFilter.FILTER_REJECT
+        if (skip.has(value) && !predict?.(value)) return NodeFilter.FILTER_REJECT
+        const parent = node.parentElement
+        if (!parent) return NodeFilter.FILTER_REJECT
+        if (parent.closest('script, style, noscript, textarea, [aria-live], [data-no-scramble]'))
+          return NodeFilter.FILTER_REJECT
+        const box =
+          parent instanceof HTMLOptionElement
+            ? parent.selected
+              ? parent.closest('select')
+              : null
+            : parent
+        return onScreen(box) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+      },
+    })
+    while (walker.nextNode() && items.size < max) addNode(walker.currentNode as Text)
+    if (options.fields) {
+      for (const { field, prop, text } of visibleFields(document.body)) {
+        if (!items.has(field) && !skip.has(text)) addField(field, prop, text)
+      }
+    }
+  }
+
+  const frame = (now: number) => {
+    frameId = 0
+    if (stopped) return
+    if (
+      !releasedAt &&
+      (now - sessionStart >= (options.holdMs ?? 1500) ||
+        ((options.settled?.() ?? true) && now - lastAppChange >= (options.quietMs ?? 150)))
+    )
+      releasedAt = now
+    let running = !releasedAt
+    for (const item of items.values()) {
+      if (item.done) continue
+      const current = item.read()
+      if (current === null) {
+        // node dilepas React atau kolom mulai diketik: berhenti tanpa menulis apa pun
+        item.done = true
+        active.delete(item.key)
+        continue
+      }
+      // React menulis teks baru (mis. judul dari server tiba): itulah teks akhirnya
+      if (current !== item.written) item.target = current
+      const progress = releasedAt ? (now - releasedAt) / DURATION : 0
+      item.written = progress >= 1 ? item.target : scrambleFrame(item.target, progress)
+      item.write(item.written)
+      if (progress >= 1) {
+        item.done = true
+        active.delete(item.key)
+      } else running = true
+    }
+    if (running) frameId = requestAnimationFrame(frame)
+    else stop()
+  }
+
   const observer = new MutationObserver((records) => {
-    // tulisan animasi sendiri (node yang sedang diacak) tidak memicu pencarian ulang tiap frame
-    const fromApp = records.some((r) => r.type === 'childList' || !active.has(r.target))
-    if (fromApp && !scheduled) scheduled = requestAnimationFrame(run)
+    // tulisan animasi sendiri (node yang sedang diacak) tidak dihitung sebagai perubahan halaman
+    if (!records.some((r) => r.type === 'childList' || !active.has(r.target))) return
+    lastAppChange = performance.now()
+    if (!stopped) collect()
   })
-  observer.observe(document.body, { childList: true, subtree: true, characterData: true })
-  const stop = () => {
+
+  function stop() {
+    if (stopped) return
+    stopped = true
     observer.disconnect()
-    if (scheduled) cancelAnimationFrame(scheduled)
+    if (frameId) cancelAnimationFrame(frameId)
+    for (const item of items.values()) {
+      if (item.done) continue
+      const current = item.read()
+      if (current !== null) item.write(current === item.written ? item.target : current)
+      active.delete(item.key)
+    }
   }
-  const timer = window.setTimeout(stop, options.watchMs ?? 6000)
-  return () => {
-    window.clearTimeout(timer)
-    stop()
-  }
+
+  collect()
+  observer.observe(document.body, { childList: true, subtree: true, characterData: true })
+  frameId = requestAnimationFrame(frame)
+  return stop
 }

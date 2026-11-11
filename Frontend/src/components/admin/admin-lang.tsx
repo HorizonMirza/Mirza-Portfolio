@@ -6,9 +6,11 @@ import {
   type ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useSyncExternalStore,
+  useTransition,
 } from 'react'
 import { flushSync } from 'react-dom'
 
@@ -16,6 +18,7 @@ import {
   ADMIN_LANG_COOKIE,
   type AdminLang,
   adminT,
+  adminTextWillChange,
   type AdminVars,
   parseAdminLang,
 } from '@/lib/admin-i18n'
@@ -71,11 +74,18 @@ export function AdminLangProvider({
   const lang = useSyncExternalStore(subscribe, read, () => initial)
   // sesi animasi yang sedang berjalan; dihentikan bila bahasa diganti lagi
   const stopScramble = useRef<(() => void) | null>(null)
+  // status muat ulang dari server: animasi ditahan acak sampai teks server tiba
+  const [refreshing, startRefresh] = useTransition()
+  const refresh = useRef({ seen: false, done: true })
+  useEffect(() => {
+    if (refreshing) refresh.current.seen = true
+    else if (refresh.current.seen) refresh.current.done = true
+  }, [refreshing])
 
-  // Seluruh teks yang berubah ikut efek acak huruf (permintaan pemilik 2026-11-11, DESIGN.md bagian
-  // 116): teks client component berganti seketika dan langsung diacak; teks server component (judul
-  // halaman, deskripsi, kartu) tiba bertahap setelah router.refresh(), jadi DOM diamati beberapa detik
-  // dan teks baru diacak begitu muncul.
+  // Seluruh teks yang berubah ikut efek acak huruf dan selesai BERSAMAAN (permintaan pemilik
+  // 2026-11-11, DESIGN.md bagian 116-117): teks client component berganti seketika, teks server
+  // component (judul, deskripsi, kartu) tiba bertahap setelah router.refresh(). Semua ditahan acak
+  // sampai muat ulang selesai dan halaman tenang, lalu terurai serempak.
   const setLang = useCallback(
     (next: AdminLang) => {
       const animate = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -84,8 +94,16 @@ export function AdminLangProvider({
       document.documentElement.lang = next
       flushSync(() => listeners.forEach((listener) => listener()))
       stopScramble.current?.()
-      stopScramble.current = animate ? scrambleLanguageSwitch(before, SCRAMBLE) : null
-      router.refresh()
+      const state = { seen: false, done: false }
+      refresh.current = state
+      stopScramble.current = animate
+        ? scrambleLanguageSwitch(before, {
+            ...SCRAMBLE,
+            willChange: (text) => adminTextWillChange(text, next),
+            settled: () => state.done,
+          })
+        : null
+      startRefresh(() => router.refresh())
     },
     [router],
   )

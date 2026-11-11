@@ -27,6 +27,9 @@ const ID: Record<string, string> = {
   Navbar: 'Navigasi',
   Footer: 'Kaki Halaman',
 }
+const ID_REVERSE: Record<string, string> = Object.fromEntries(
+  Object.entries(ID).map(([en, id]) => [id, en]),
+)
 
 // Kalimat yang memuat nama isian atau angka (pesan validasi dan hasil aksi dari server). Bagian
 // yang berubah diterjemahkan lagi lewat kamus bila ada (mis. nama isian).
@@ -87,6 +90,17 @@ function fill(text: string, vars?: AdminVars) {
 // Terjemahkan teks admin. Teks yang tidak ada di kamus tampil apa adanya (mis. nama project).
 export function adminT(lang: AdminLang, text: string, vars?: AdminVars): string {
   return fill(lang === 'en' ? translate(text) : (ID[text] ?? text), vars)
+}
+
+// Perkiraan apakah teks yang sedang tampil akan berganti saat bahasa admin diganti ke `next`. Dipakai
+// efek acak huruf agar teks dari server ikut diacak sejak tombol ditekan, sebelum teks barunya tiba
+// (DESIGN.md bagian 117). Hanya teks kamus; isian data (mis. judul project) ikut saat teksnya tiba.
+let reverse: Map<string, string> | null = null
+export function adminTextWillChange(text: string, next: AdminLang): boolean {
+  if (next === 'en') return translate(text) !== text || text in ID_REVERSE
+  reverse ??= new Map(Object.entries(EN).map(([id, en]) => [en, id]))
+  const id = reverse.get(text)
+  return (id !== undefined && (ID[id] ?? id) !== text) || text in ID
 }
 
 // Teks bertemplat (angka di dalam kalimat)

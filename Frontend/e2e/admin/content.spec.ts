@@ -100,6 +100,7 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   await page.getByRole('button', { name: 'Create project' }).click()
   await expect(page.getByText('Project created.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
+  const projectId = page.url().split('/').pop()!
 
   // Ubah status menjadi terbit
   await page.getByLabel('Status').selectOption('PUBLISHED')
@@ -156,7 +157,13 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   expect(gone.status()).toBe(404)
 
   await page.goto('/admin/audit?entity=Project')
-  await expect(page.locator('main ol > li').first()).toContainText('delete')
+  // dicari lewat ID project ini: tes browser lain bisa menulis log audit pada saat yang sama
+  await expect(
+    page
+      .locator('main ol > li')
+      .filter({ hasText: projectId.slice(0, 8) })
+      .first(),
+  ).toContainText('delete')
 
   // Regresi: revalidasi setelah simpan tidak boleh membuat halaman publik menjadi 404. Dicek langsung
   // ke server (seperti status 404 di atas): navigasi Firefox bisa dijawab cache browser dengan 304
@@ -498,9 +505,19 @@ test.describe('animasi ganti bahasa admin', () => {
     // rekam setiap teks judul dan isi kolom Judul (nilai atau placeholder) yang tampil, tiap frame
     await page.evaluate(() => {
       const seen = { title: new Set<string>(), field: new Set<string>() }
-      Object.assign(window, { __seen: seen })
+      // waktu terakhir judul halaman (server) dan nama halaman di top bar (client) berubah
+      const last = { title: 0, bar: 0 }
+      let prev = { title: '', bar: '' }
+      Object.assign(window, { __seen: seen, __last: last })
       const tick = () => {
-        seen.title.add(document.querySelector('main h1')?.textContent ?? '')
+        const now = {
+          title: document.querySelector('main h1')?.textContent ?? '',
+          bar: document.querySelector('header p')?.textContent ?? '',
+        }
+        if (now.title !== prev.title) last.title = performance.now()
+        if (now.bar !== prev.bar) last.bar = performance.now()
+        prev = now
+        seen.title.add(now.title)
         const field = document.querySelector<HTMLInputElement>('#About-title-id, #About-title-en')
         if (field) seen.field.add(field.value || field.placeholder)
         requestAnimationFrame(tick)
@@ -536,6 +553,12 @@ test.describe('animasi ganti bahasa admin', () => {
     await expect.poll(() => between('title', ['Tentang', 'About'])).toBeGreaterThan(0)
     await expect.poll(() => between('field', [idValue, enValue])).toBeGreaterThan(0)
     await expect(h1).toHaveText('About')
+    // teks dari server dan dari browser selesai mengetik bersamaan (DESIGN.md bagian 117)
+    await expect(page.getByRole('banner').getByText('About', { exact: true })).toBeVisible()
+    const last = await page.evaluate(
+      () => (window as unknown as { __last: Record<string, number> }).__last,
+    )
+    expect(Math.abs(last.title! - last.bar!)).toBeLessThan(150)
   })
 })
 
