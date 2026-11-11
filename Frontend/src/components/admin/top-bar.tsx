@@ -24,7 +24,7 @@ const DOCK = [
 ] as const
 
 // Top bar kaca di semua ukuran layar (desain 5+, DESIGN.md bagian 112-113): selebar panel isi (logo
-// panel ada di sidebar). Di kiri tombol menu (HP) dan nama halaman; di kanan Atur kaca, bahasa tampilan
+// panel ada di sidebar). Di kiri tombol menu (HP) dan nama halaman; di kanan Tampilan, bahasa tampilan
 // ID/EN, tema gelap/terang, dan profil, semuanya di tengah tinggi bar.
 export function AdminTopBar(props: AdminIdentity) {
   const pathname = usePathname()

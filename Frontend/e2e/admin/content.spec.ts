@@ -386,7 +386,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toHaveCount(0)
   // tampilan admin ikut berganti: menu, top bar, judul halaman dari server, dan html lang
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-  await expect(bar.getByRole('button', { name: 'Glass' })).toBeAttached()
+  await expect(bar.getByRole('button', { name: 'Appearance' })).toBeAttached()
   await expect(bar.getByRole('button', { name: 'Dark mode' })).toBeVisible()
   await expect(
     page.getByText('About page. Bio, photo, name, and roles are in the Profile tab.'),

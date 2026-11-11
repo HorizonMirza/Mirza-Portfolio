@@ -156,9 +156,9 @@ function Range({
 const choiceClass =
   'min-h-9 rounded-md border border-border px-2 text-xs font-semibold transition-colors not-aria-pressed:hover:bg-surface-2 aria-pressed:border-transparent aria-pressed:bg-text aria-pressed:text-bg'
 
-// Tombol "Atur kaca" di top bar beserta panelnya. Isi panel langsung pengaturan, tanpa judul,
+// Tombol "Tampilan" (dulu "Atur kaca", nama dipilih pemilik 2026-11-11) di top bar beserta panelnya. Isi panel langsung pengaturan, tanpa judul,
 // keterangan, dan contoh material (revisi pemilik 2026-11-11); tutup dengan Esc, klik di luar, atau
-// tombol Atur kaca lagi.
+// tombol Tampilan lagi.
 export function GlassControl() {
   const t = useAdminT()
   const glass = useContext(Ctx)
@@ -205,13 +205,13 @@ export function GlassControl() {
         )}
       >
         <SlidersHorizontal className="size-4" aria-hidden="true" />
-        <span className="max-md:sr-only">{t('Atur kaca')}</span>
+        <span className="max-md:sr-only">{t('Tampilan')}</span>
       </button>
       {open ? (
         <div
           id={panelId}
           role="group"
-          aria-label={t('Tampilan kaca')}
+          aria-label={t('Pengaturan tampilan')}
           className="admin-pop fixed inset-x-3 top-20 z-40 flex flex-col gap-4 rounded-[22px] border border-border p-5 shadow-2xl sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mt-3 sm:w-80"
         >
           <div className="grid grid-cols-3 gap-1.5" role="group" aria-label={t('Preset kaca')}>

@@ -26,9 +26,9 @@ export const EN: Record<string, string> = {
   'Keluar…': 'Logging out…',
   '(membuka tab baru)': '(opens in a new tab)',
   'Mode gelap': 'Dark mode',
-  // Atur kaca
-  'Atur kaca': 'Glass',
-  'Tampilan kaca': 'Glass appearance',
+  // tombol Tampilan (dulu Atur kaca) dan panelnya
+  Tampilan: 'Appearance',
+  'Pengaturan tampilan': 'Appearance settings',
   'Preset kaca': 'Glass presets',
   Bening: 'Clear',
   Buram: 'Frosted',

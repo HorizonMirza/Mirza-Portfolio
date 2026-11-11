@@ -19,7 +19,7 @@ export default async function PanelLayout({ children }: { children: ReactNode })
   return (
     <AdminLangProvider initial={lang}>
       {/* Desain 5+ (pilihan pemilik 2026-11-11, DESIGN.md bagian 112): top bar, sidebar, dan panel isi
-          dari kaca buram hitam-putih di atas latar yang bisa diatur lewat tombol Atur kaca */}
+          dari kaca buram hitam-putih di atas latar yang bisa diatur lewat tombol Tampilan */}
       <AdminGlassShell>
         {/* Kerangka tetap setinggi layar (revisi pemilik 2026-11-11, DESIGN.md bagian 114): sidebar
             penuh dari atas sampai bawah, top bar selebar panel isi, keduanya tidak ikut bergulir. Hanya
