@@ -6,7 +6,8 @@
   "Common": {
     "skipToContent": "Skip to main content",
     "openInNewTab": "(opens in a new tab)",
-    "whatsapp": "Chat on WhatsApp"
+    "whatsapp": "Chat on WhatsApp",
+    "loadingPage": "Loading page…"
   },
   "Locale": {
     "id": "Bahasa Indonesia",

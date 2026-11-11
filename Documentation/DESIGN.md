@@ -1580,3 +1580,12 @@ Pemilik memilih desain 1 dari lima demo baru ("buat paling lengkap"). Menggantik
 - **Fitur baru: ganti nama akun** (`renameAccount`, Zod 2–80 karakter, dicatat di log audit sebagai perubahan Akun). Nama ini tampil di sidebar, menu profil, dan log audit; nama di situs publik tetap dari Profil.
 - Tes E2E: identitas dan kelompok terlihat, halaman kedua password dan foto dengan fokus kembali, ganti nama lalu dikembalikan, login gagal di semua aktivitas, keluarkan perangkat lain, konfirmasi keluar semua (dibatalkan).
 
+## 125. Skeleton shimmer saat pindah halaman di situs publik (2026-11-11 malam)
+
+Permintaan pemilik: seluruh aplikasi memakai skeleton shimmer. Panel admin (17 halaman, `loading.tsx`) dan gambar konten sudah memakainya sejak bagian 111; yang belum hanya perpindahan halaman di situs publik. Pemilik memilih cara aman dari tiga pilihan.
+
+- **Hanya di browser** (`components/site/navigation-skeleton.tsx`, dipasang di layout publik): saat tautan internal ditekan (atau tombol kembali/maju browser), skeleton muncul bila halaman tujuan belum siap dalam 150 ms, menutupi isi lama di bawah navbar (navbar dan menu bawah HP tetap terlihat), lalu hilang pada render yang sama dengan isi halaman baru. Pengaman: hilang sendiri setelah 10 detik bila navigasi batal.
+- **Bentuk mengikuti halaman tujuan:** Beranda (foto besar dan kartu), Tentang (foto dan paragraf), Pengalaman (garis waktu), Project (chip dan kisi kartu), detail project (judul, sampul, paragraf), Kontak (kartu ID dan kolom form), lainnya (judul dan paragraf). Kelas `.skeleton` yang sama dengan admin, diam saat `prefers-reduced-motion`. `role="status"` dengan teks "Memuat halaman… / Loading page…" untuk pembaca layar.
+- **Tiga masalah `loading.tsx` publik di bagian 111 tidak muncul:** HTML statis tidak berubah (tanpa JavaScript tetap terbaca, mesin pencari melihat isi asli), status 404 tetap 404, dan pemantau layout tidak terlewat. Halaman publik tetap statis (ISR). Karena halaman publik sudah diambil lebih dulu (prefetch), skeleton biasanya hanya terlihat di jaringan lambat.
+- Tes E2E: permintaan data halaman diperlambat 1,5 detik, skeleton bentuk Tentang tampil lalu hilang setelah halaman baru muncul; tes halaman statis tanpa JavaScript tetap lulus.
+

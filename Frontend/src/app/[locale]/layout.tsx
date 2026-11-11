@@ -15,6 +15,7 @@ import { RevealObserver } from '@/components/site/reveal-observer'
 import { SiteFooter } from '@/components/site/site-footer'
 import { SiteHeader } from '@/components/site/site-header'
 import { MaintenanceNotice } from '@/components/site/maintenance-notice'
+import { NavigationSkeleton } from '@/components/site/navigation-skeleton'
 import { VercelInsights } from '@/components/site/vercel-insights'
 import { WhatsAppFloat } from '@/components/site/whatsapp-float'
 import { routing } from '@/i18n/routing'
@@ -143,6 +144,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             {/* statistik kunjungan bisa dimatikan di Admin → Pengaturan (/api/track juga menolak) */}
             {settings.trackVisits && !maintenance ? <PageViewTracker /> : null}
             {settings.whatsappButton && !maintenance ? <WhatsAppFloat /> : null}
+            {/* skeleton shimmer saat pindah halaman, hanya di browser (DESIGN.md bagian 125) */}
+            {maintenance ? null : <NavigationSkeleton />}
             {/* pemberitahuan pembuka dari Admin → Bagian Awal, frekuensinya dari Admin → Pengaturan */}
             {intro ? <IntroNoticeSlot locale={locale} intro={intro} /> : null}
             {/* Hanya di Vercel: di luar Vercel skrip /_vercel/* tidak ada (404 di CI dan lokal) */}

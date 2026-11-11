@@ -204,6 +204,28 @@ test('halaman publik tetap statis (ISR) dan terbaca tanpa JavaScript', async ({
   await ctx.close()
 })
 
+// Skeleton shimmer saat pindah halaman (DESIGN.md bagian 125): hanya di browser, muncul bila halaman
+// tujuan belum siap dalam 150 ms, lalu hilang begitu halaman baru tampil. HTML statis tetap tanpa
+// skeleton (tes di atas). Permintaan data halaman (RSC) diperlambat 1,5 detik agar skeleton terlihat.
+test('skeleton shimmer tampil saat halaman tujuan lambat, lalu hilang', async ({ page }) => {
+  await page.route(
+    (url) => url.searchParams.has('_rsc'),
+    async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await route.continue()
+    },
+  )
+  await page.goto('/id/privacy')
+  // menu atas di desktop, menu bawah di HP
+  await page.locator('a[href="/id/about"]:visible').first().click()
+  const skeleton = page.locator('[data-navigation-skeleton="about"]')
+  await expect(skeleton).toBeVisible()
+  await expect(skeleton).toHaveAttribute('aria-busy', 'true')
+  await expect(page).toHaveURL(/\/id\/about$/, { timeout: CLIENT_NAV_TIMEOUT })
+  await expect(skeleton).toHaveCount(0)
+  await expect(page.locator('main h1')).toBeVisible()
+})
+
 test.describe('globe skill', () => {
   test.use({ contextOptions: { reducedMotion: 'reduce' } })
   test('logo menampilkan rincian, kategori meredupkan yang lain, bisa dengan keyboard', async ({

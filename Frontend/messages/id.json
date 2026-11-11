@@ -6,7 +6,8 @@
   "Common": {
     "skipToContent": "Lewati ke konten utama",
     "openInNewTab": "(membuka tab baru)",
-    "whatsapp": "Chat lewat WhatsApp"
+    "whatsapp": "Chat lewat WhatsApp",
+    "loadingPage": "Memuat halaman…"
   },
   "Locale": {
     "id": "Bahasa Indonesia",

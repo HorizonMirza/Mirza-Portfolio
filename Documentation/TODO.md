@@ -239,6 +239,7 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-11 | Tombol "Atur kaca" / "Glass" diganti "Tampilan" / "Appearance" (pilihan pemilik, DESIGN.md bagian 115) |
 | 2026-11-11 | Efek acak huruf saat ganti bahasa admin mengenai seluruh teks: teks dari server (putaran kedua setelah refresh) dan isi kolom form. Nama menu halaman situs berbahasa Indonesia di mode ID (Beranda, Tentang, Pengalaman, Project, Kontak, Navigasi, Kaki Halaman). DESIGN.md bagian 116 |
 | 2026-11-11 | Efek acak huruf ganti bahasa admin selesai bersamaan: semua teks ditahan acak sampai teks dari server tiba, lalu terurai serempak (DESIGN.md bagian 117) |
+| 2026-11-11 | Skeleton shimmer saat pindah halaman di situs publik, hanya di browser (HTML statis, 404, dan tanpa-JavaScript tidak berubah); admin dan gambar sudah sejak bagian 111 (DESIGN.md bagian 125) |
 | 2026-11-11 | Akun desain 1 "Profil ala WhatsApp" lengkap: foto besar dengan tombol kamera (unggah langsung), Info/Keamanan/Perangkat tertaut/Aktivitas terbaru, halaman kedua untuk foto, nama, password, dan semua aktivitas; fitur baru ganti nama akun (DESIGN.md bagian 124) |
 | 2026-11-11 | Sidebar admin: foto, nama, dan Super Admin menggantikan logo MM; label kelompok menu dihapus. 5 demo Akun (semua bagian terlihat) menunggu pilihan pemilik (DESIGN.md bagian 123) |
 | 2026-11-11 | Lampu tepi kiri menu aktif sidebar dikembalikan (permintaan pemilik), sorotan tetap bersudut kecil (DESIGN.md bagian 122) |
