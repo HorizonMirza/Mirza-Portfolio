@@ -454,7 +454,9 @@ test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   isMobile,
 }) => {
   // revisi pemilik 2026-11-11 (DESIGN.md bagian 114): top bar dan sidebar diam, isi digulir di dalam
-  await page.goto('/admin/messages')
+  // form Project baru selalu lebih tinggi dari layar, tidak bergantung pada jumlah data di database
+  // (database CI baru dan hampir kosong, CI #287)
+  await page.goto('/admin/projects/new')
   const main = page.locator('main')
   const bar = page.getByRole('banner')
   const before = await bar.boundingBox()
