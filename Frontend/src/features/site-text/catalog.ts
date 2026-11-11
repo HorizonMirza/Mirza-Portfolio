@@ -4,16 +4,7 @@
 // (mis. "{count} kontribusi") dan label aksesibilitas teknis sengaja tidak ada: itu bagian kode.
 
 export type ModuleId =
-  | 'intro'
-  | 'home'
-  | 'about'
-  | 'experience'
-  | 'projects'
-  | 'contact'
-  | 'navbar'
-  | 'footer'
-  | 'privacy'
-  | 'other'
+  'intro' | 'home' | 'about' | 'experience' | 'projects' | 'contact' | 'navbar' | 'footer'
 
 export type TextEntry = {
   key: string
@@ -80,19 +71,6 @@ export const SITE_MODULES: readonly SiteModule[] = [
     label: 'Footer',
     title: 'Footer',
     description: 'Teks di bagian bawah setiap halaman.',
-  },
-  {
-    id: 'privacy',
-    label: 'Privasi',
-    title: 'Kebijakan Privasi',
-    description:
-      'Isi halaman Kebijakan Privasi. Tulis apa adanya, jangan menjanjikan hal yang tidak dilakukan situs.',
-  },
-  {
-    id: 'other',
-    label: 'Halaman lain',
-    title: 'Halaman lain',
-    description: 'Halaman 404 dan halaman galat.',
   },
 ]
 
@@ -492,146 +470,6 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
     module: 'footer',
     section: 'Petunjuk saat disorot',
     label: 'GitHub',
-    ...SIZE.label,
-  },
-  {
-    key: 'Privacy.title',
-    module: 'privacy',
-    section: 'Judul dan pembuka',
-    label: 'Judul halaman',
-    ...SIZE.title,
-  },
-  {
-    key: 'Privacy.intro',
-    module: 'privacy',
-    section: 'Judul dan pembuka',
-    label: 'Pembuka',
-    ...SIZE.text,
-  },
-  {
-    key: 'Privacy.contactLink',
-    module: 'privacy',
-    section: 'Judul dan pembuka',
-    label: 'Tautan ke halaman kontak',
-    ...SIZE.label,
-  },
-  {
-    key: 'Privacy.visitsHeading',
-    module: 'privacy',
-    section: 'Statistik kunjungan',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Privacy.visitsBody',
-    module: 'privacy',
-    section: 'Statistik kunjungan',
-    label: 'Isi',
-    // {days} = masa simpan kunjungan mentah dari Admin → Pengaturan
-    placeholders: ['days'],
-    ...SIZE.body,
-  },
-  {
-    key: 'Privacy.contactHeading',
-    module: 'privacy',
-    section: 'Formulir kontak',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Privacy.contactBody',
-    module: 'privacy',
-    section: 'Formulir kontak',
-    label: 'Isi',
-    ...SIZE.body,
-  },
-  {
-    key: 'Privacy.cvHeading',
-    module: 'privacy',
-    section: 'Unduhan CV',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  { key: 'Privacy.cvBody', module: 'privacy', section: 'Unduhan CV', label: 'Isi', ...SIZE.body },
-  {
-    key: 'Privacy.servicesHeading',
-    module: 'privacy',
-    section: 'Layanan pihak ketiga',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Privacy.servicesBody',
-    module: 'privacy',
-    section: 'Layanan pihak ketiga',
-    label: 'Isi',
-    ...SIZE.body,
-  },
-  {
-    key: 'Privacy.rightsHeading',
-    module: 'privacy',
-    section: 'Hak pengunjung',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  {
-    key: 'Privacy.rightsBody',
-    module: 'privacy',
-    section: 'Hak pengunjung',
-    label: 'Isi',
-    ...SIZE.body,
-  },
-  {
-    key: 'Privacy.creditsHeading',
-    module: 'privacy',
-    section: 'Kredit',
-    label: 'Judul',
-    ...SIZE.title,
-  },
-  { key: 'Privacy.creditsBody', module: 'privacy', section: 'Kredit', label: 'Isi', ...SIZE.body },
-  {
-    key: 'Privacy.metaTitle',
-    module: 'privacy',
-    section: 'SEO',
-    label: 'Judul halaman',
-    ...SIZE.metaTitle,
-  },
-  {
-    key: 'Privacy.metaDescription',
-    module: 'privacy',
-    section: 'SEO',
-    label: 'Deskripsi halaman',
-    ...SIZE.metaDesc,
-  },
-  { key: 'NotFound.title', module: 'other', section: 'Halaman 404', label: 'Judul', ...SIZE.title },
-  {
-    key: 'NotFound.body',
-    module: 'other',
-    section: 'Halaman 404',
-    label: 'Kalimat',
-    ...SIZE.short,
-  },
-  {
-    key: 'NotFound.home',
-    module: 'other',
-    section: 'Halaman 404',
-    label: 'Tombol ke beranda',
-    ...SIZE.label,
-  },
-  { key: 'Error.title', module: 'other', section: 'Halaman galat', label: 'Judul', ...SIZE.title },
-  { key: 'Error.body', module: 'other', section: 'Halaman galat', label: 'Kalimat', ...SIZE.short },
-  {
-    key: 'Error.retry',
-    module: 'other',
-    section: 'Halaman galat',
-    label: 'Tombol coba lagi',
-    ...SIZE.label,
-  },
-  {
-    key: 'Error.home',
-    module: 'other',
-    section: 'Halaman galat',
-    label: 'Tombol ke beranda',
     ...SIZE.label,
   },
 ]

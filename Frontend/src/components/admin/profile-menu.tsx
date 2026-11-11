@@ -1,6 +1,6 @@
 'use client'
 
-import { ExternalLink, History, KeyRound, LogOut, Settings } from 'lucide-react'
+import { ChevronsUpDown, ExternalLink, History, KeyRound, LogOut, Settings } from 'lucide-react'
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -9,6 +9,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { authClient } from '@/lib/auth-client'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
+import { cn } from '@/lib/utils'
 
 export type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 
@@ -27,9 +28,38 @@ const MENU_ITEMS = [
   { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
 ] as const
 
-// Foto bulat di pojok kanan atas; menekannya membuka kepala menu (foto, nama, peran), lalu tautan menu
-// dan Keluar berwarna merah.
-export function ProfileMenu({ adminName, photo }: AdminIdentity) {
+function Photo({ photo, size }: { photo: string | StaticImageData; size: number }) {
+  return (
+    <Image
+      placeholder={SHIMMER_PLACEHOLDER}
+      src={photo}
+      alt=""
+      width={size}
+      height={size}
+      sizes={`${size}px`}
+      className="size-full rounded-full bg-text object-cover"
+    />
+  )
+}
+
+// Menu profil (DESIGN.md bagian 126). Identitas admin hanya ada di satu tempat:
+// - variant "sidebar" (tablet dan desktop): foto, nama, dan "Super Admin" di puncak sidebar adalah
+//   tombolnya; menu terbuka di bawahnya (di samping saat sidebar hanya ikon).
+// - variant "avatar" (HP, sidebar tersembunyi): foto bulat di top bar; menu terbuka dengan kepala
+//   berisi foto, nama, dan peran.
+// Isi menu: Akun, Pengaturan, Log audit, Lihat situs, lalu Keluar berwarna merah.
+export function ProfileMenu({
+  adminName,
+  photo,
+  variant,
+  compact = false,
+  className,
+}: AdminIdentity & {
+  variant: 'sidebar' | 'avatar'
+  // sidebar sedang hanya ikon di desktop (di tablet selalu hanya ikon)
+  compact?: boolean
+  className?: string
+}) {
   const router = useRouter()
   const t = useAdminT()
   const [open, setOpen] = useState(false)
@@ -70,47 +100,77 @@ export function ProfileMenu({ adminName, photo }: AdminIdentity) {
     }
   }
 
+  const sidebar = variant === 'sidebar'
+  // teks identitas disembunyikan (tetap untuk pembaca layar) saat sidebar hanya ikon
+  const hideText = cn('max-lg:sr-only', compact && 'lg:sr-only')
+
   return (
-    <div ref={root} className="relative flex shrink-0">
-      <button
-        type="button"
-        aria-label={t('Menu profil')}
-        aria-expanded={open}
-        aria-controls={open ? panelId : undefined}
-        onClick={() => setOpen((value) => !value)}
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface p-0.5"
-      >
-        <Image
-          placeholder={SHIMMER_PLACEHOLDER}
-          src={photo}
-          alt=""
-          width={40}
-          height={40}
-          sizes="40px"
-          className="size-full rounded-full bg-text object-cover"
-        />
-      </button>
+    <div ref={root} className={cn('relative flex shrink-0', className)}>
+      {sidebar ? (
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={open ? panelId : undefined}
+          onClick={() => setOpen((value) => !value)}
+          className={cn(
+            'flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-2 py-1.5 text-left hover:bg-surface-2',
+            'max-lg:justify-center max-lg:px-0',
+            compact && 'lg:justify-center lg:px-0',
+          )}
+        >
+          <span className="size-10 shrink-0">
+            <Photo photo={photo} size={40} />
+          </span>
+          <span className={cn('min-w-0 flex-1', hideText)}>
+            <span className="block truncate text-sm leading-snug font-semibold">{adminName}</span>
+            <span className="block text-xs text-muted">Super Admin</span>
+          </span>
+          <span className="sr-only">{t('Menu profil')}</span>
+          <ChevronsUpDown
+            className={cn('size-4 shrink-0 text-muted', hideText)}
+            aria-hidden="true"
+          />
+        </button>
+      ) : (
+        <button
+          type="button"
+          aria-label={t('Menu profil')}
+          aria-expanded={open}
+          aria-controls={open ? panelId : undefined}
+          onClick={() => setOpen((value) => !value)}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface p-0.5"
+        >
+          <Photo photo={photo} size={40} />
+        </button>
+      )}
       {open ? (
         <div
           id={panelId}
-          className="admin-pop absolute top-full right-0 z-40 mt-3 w-64 rounded-2xl border border-border p-2 shadow-2xl"
+          className={cn(
+            'admin-pop absolute z-50 w-64 rounded-2xl border border-border p-2 shadow-2xl',
+            sidebar
+              ? cn(
+                  // di bawah identitas saat sidebar lebar, di sampingnya saat hanya ikon
+                  'top-0 left-full ml-3 lg:top-full lg:right-0 lg:left-0 lg:mt-2 lg:ml-0 lg:w-auto',
+                  compact && 'lg:top-0 lg:right-auto lg:left-full lg:mt-0 lg:ml-3 lg:w-64',
+                )
+              : 'top-full right-0 mt-3',
+          )}
         >
-          <div className="flex items-center gap-3 px-2 py-2">
-            <Image
-              placeholder={SHIMMER_PLACEHOLDER}
-              src={photo}
-              alt=""
-              width={40}
-              height={40}
-              sizes="40px"
-              className="size-10 shrink-0 rounded-full bg-text object-cover"
-            />
-            <div className="min-w-0">
-              <p className="truncate text-sm leading-snug font-semibold">{adminName}</p>
-              <p className="text-xs text-muted">Super Admin</p>
-            </div>
-          </div>
-          <div className="my-1 border-t border-border" />
+          {sidebar ? null : (
+            <>
+              <div className="flex items-center gap-3 px-2 py-2">
+                <span className="size-10 shrink-0">
+                  <Photo photo={photo} size={40} />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-sm leading-snug font-semibold">{adminName}</p>
+                  <p className="text-xs text-muted">Super Admin</p>
+                </div>
+              </div>
+              <div className="my-1 border-t border-border" />
+            </>
+          )}
           {MENU_ITEMS.map(({ label, href, icon: Icon, external }) =>
             external ? (
               <a

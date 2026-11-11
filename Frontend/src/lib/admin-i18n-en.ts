@@ -15,10 +15,8 @@ export const EN: Record<string, string> = {
   Pengaturan: 'Settings',
   Akun: 'Account',
   'Menu admin': 'Admin menu',
-  'Menu cepat': 'Quick menu',
-  'Buka menu admin': 'Open admin menu',
+  'Menu samping': 'Sidebar',
   'Tutup menu': 'Close menu',
-  'Halaman situs dan menu lain': 'Site pages and more',
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
   'Lihat situs': 'View site',

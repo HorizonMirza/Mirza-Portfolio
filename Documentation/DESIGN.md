@@ -1589,3 +1589,15 @@ Permintaan pemilik: seluruh aplikasi memakai skeleton shimmer. Panel admin (17 h
 - **Tiga masalah `loading.tsx` publik di bagian 111 tidak muncul:** HTML statis tidak berubah (tanpa JavaScript tetap terbaca, mesin pencari melihat isi asli), status 404 tetap 404, dan pemantau layout tidak terlewat. Halaman publik tetap statis (ISR). Karena halaman publik sudah diambil lebih dulu (prefetch), skeleton biasanya hanya terlihat di jaringan lambat.
 - Tes E2E: permintaan data halaman diperlambat 1,5 detik, skeleton bentuk Tentang tampil lalu hilang setelah halaman baru muncul; tes halaman statis tanpa JavaScript tetap lulus.
 
+## 126. Rombak sidebar admin: lebih lebar, hamburger, tanpa yang dobel (2026-11-11 malam)
+
+Permintaan pemilik, lima poin (rujukan: sidebar panel GAAS yang bisa diciutkan jadi ikon):
+
+- **Lebih lebar:** sidebar desktop 20rem (280 px; rem desktop 14 px) agar "Muhammad Mirza Wirya" tidak terpotong (dulu 15rem, nama terpotong 4 px). Tes E2E memastikan nama tidak terpotong.
+- **Privasi dan Halaman lain dihapus** dari menu, beserta modulnya (`SITE_MODULES`) dan entri teks di katalog; `/admin/pages/privacy` dan `/admin/pages/other` kini 404. Teks halaman Privasi dan halaman galat/404 kembali hanya dari `messages/*.json`; teks yang dulu pernah diubah lewat admin tetap tampil (baris `SiteText` tetap diterapkan), hanya tidak bisa diubah lagi.
+- **Tanpa yang dobel:**
+  - Identitas (foto, nama, Super Admin) hanya satu: di puncak sidebar, sekaligus tombol menu profil (Akun, Pengaturan, Log audit, Lihat situs, Keluar). Foto profil di top bar dihapus di tablet dan desktop; di HP (sidebar tersembunyi) foto tetap di top bar dan menu profilnya berkepala nama. Laci menu HP tidak lagi mengulang identitas.
+  - Dock kaca di bawah layar HP dihapus: isinya (Dashboard, Halaman situs, Pesan, Log audit, Pengaturan) sudah ada di laci menu dan menu profil. Jarak bawah panel isi dan tombol Simpan yang menempel di HP disesuaikan.
+  - Label kelompok menu (Utama, Halaman situs, Kotak masuk) sudah dihapus di bagian 123; pengelompokan di kode ikut dihapus.
+- **Tombol hamburger** di kiri top bar, di semua ukuran layar. Desktop: menciutkan sidebar menjadi rel ikon (76 px, lebar beranimasi 300 ms, mati dengan reduced-motion) dan melebarkannya lagi; nama menu muncul saat kursor di atas ikon dan tetap untuk pembaca layar; lampu menu aktif tetap. Menu profil saat sidebar ciut terbuka di samping foto. Pilihan diingat di cookie `mmirza-admin-sidebar` (dibaca server, jadi tidak melompat saat dimuat). HP dan tablet: membuka laci berisi seluruh menu. `aria-expanded` mengikuti keadaannya.
+

@@ -27,8 +27,6 @@ const PAGES = [
   '/admin/pages/contact',
   '/admin/pages/navbar',
   '/admin/pages/footer',
-  '/admin/pages/privacy',
-  '/admin/pages/other',
   '/admin/settings',
   '/admin/account',
 ]
@@ -374,7 +372,8 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
   await expect(toEnglish).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
-  await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
+  // menu profil: di desktop dan tablet foto + nama di puncak sidebar, di HP foto di top bar (bagian 126)
+  await expect(page.getByRole('button', { name: /Menu profil$/ })).toBeVisible()
   // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; DESIGN.md bagian 113)
   const title = bar.getByText('Tentang', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
@@ -412,7 +411,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.getByRole('link', { name: 'Page text' })).toBeVisible()
-  const profileEn = bar.getByRole('button', { name: 'Profile menu' })
+  const profileEn = page.getByRole('button', { name: /Profile menu$/ })
   await profileEn.click()
   // urutan tetap pilihan pemilik: Akun, Pengaturan, Log audit, Lihat situs
   await expect(
@@ -430,10 +429,13 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
 
   // menu profil: kepala (nama dan peran), lalu Akun, Pengaturan, Log audit, Lihat situs (Log audit dan
   // Pengaturan pindah dari sidebar, revisi 2026-11-11), dan Keluar berwarna merah paling bawah
-  const profile = bar.getByRole('button', { name: 'Menu profil' })
+  const profile = page.getByRole('button', { name: /Menu profil$/ })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
-  await expect(panel.getByText('Super Admin', { exact: true })).toBeVisible()
+  // nama dan peran tampil sekali saja: di tombol sidebar (desktop) atau di kepala menu (HP)
+  await expect(page.getByText('Super Admin', { exact: true }).locator('visible=true')).toHaveCount(
+    1,
+  )
   await expect(panel.locator('a, button')).toHaveText([
     /^Akun$/,
     /^Pengaturan$/,
@@ -460,6 +462,46 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.getByRole('button', { name: 'Keluar' })).toHaveCount(0)
 })
 
+test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka laci', async ({
+  page,
+  isMobile,
+}) => {
+  // revisi pemilik 2026-11-11 (DESIGN.md bagian 126); tanpa Privasi dan Halaman lain
+  await page.goto('/admin')
+  const hamburger = page.getByRole('button', { name: 'Menu samping' })
+  const menu = page.getByRole('navigation', { name: 'Menu admin' }).locator('visible=true')
+  if (isMobile) {
+    await hamburger.click()
+    await expect(menu.getByRole('link', { name: 'Pesan' })).toBeVisible()
+    await expect(menu.getByRole('link', { name: 'Privasi' })).toHaveCount(0)
+    await page.keyboard.press('Escape')
+    return
+  }
+  const aside = page.locator('aside[data-collapsed]')
+  const width = async () => (await aside.boundingBox())!.width
+  await expect(aside).toHaveAttribute('data-collapsed', 'false')
+  // nama lengkap tidak terpotong di sidebar lebar
+  const name = aside.getByRole('button', { name: /Menu profil$/ }).locator('span.truncate')
+  expect(await name.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
+  await expect(menu.getByRole('link', { name: 'Privasi' })).toHaveCount(0)
+  await expect(menu.getByRole('link', { name: 'Halaman lain' })).toHaveCount(0)
+  expect(await width()).toBeGreaterThan(260)
+  await expect(hamburger).toHaveAttribute('aria-expanded', 'true')
+
+  await hamburger.click()
+  await expect(aside).toHaveAttribute('data-collapsed', 'true')
+  await expect(hamburger).toHaveAttribute('aria-expanded', 'false')
+  await expect.poll(width).toBeLessThan(90)
+  // label tetap untuk pembaca layar, nama muncul saat kursor di atas ikon
+  await expect(menu.getByRole('link', { name: 'Pesan' })).toHaveAttribute('title', 'Pesan')
+  // pilihan diingat setelah dimuat ulang (cookie dibaca server)
+  await page.reload()
+  await expect(aside).toHaveAttribute('data-collapsed', 'true')
+  await hamburger.click()
+  await expect(aside).toHaveAttribute('data-collapsed', 'false')
+  await expect.poll(width).toBeGreaterThan(260)
+})
+
 test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   page,
   browserName,
@@ -483,8 +525,13 @@ test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   await expect.poll(() => main.evaluate((el) => el.scrollTop)).toBeGreaterThan(200)
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
   expect(await bar.boundingBox()).toEqual(before)
-  // pindah menu: isi halaman baru mulai dari atas lagi
-  await page.getByRole('link', { name: 'Dashboard' }).first().click()
+  // pindah menu: isi halaman baru mulai dari atas lagi (di HP lewat laci dari tombol hamburger)
+  if (isMobile) await page.getByRole('button', { name: 'Menu samping' }).click()
+  await page
+    .getByRole('navigation', { name: 'Menu admin' })
+    .locator('visible=true')
+    .getByRole('link', { name: 'Dashboard' })
+    .click()
   await expect(page).toHaveURL(/\/admin$/)
   await expect.poll(() => main.evaluate((el) => el.scrollTop)).toBe(0)
 })
