@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
+import { getSiteSettings } from '@/features/settings/public'
 import { getPrivacyEditedAt } from '@/features/site-text/public'
 import { Link } from '@/i18n/navigation'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -10,7 +11,7 @@ import { pageMetadata } from '@/lib/seo'
 
 // Tanggal perubahan teks bawaan (messages/*.json); perbarui setiap kali isi bawaan kebijakan diubah
 // di kode. Suntingan lewat admin dihitung otomatis dari SiteText (getPrivacyEditedAt).
-const DEFAULT_TEXT_UPDATED_AT = '2026-10-31T00:00:00Z'
+const DEFAULT_TEXT_UPDATED_AT = '2026-11-11T00:00:00Z'
 
 const SECTIONS = ['visits', 'contact', 'cv', 'services', 'rights', 'credits'] as const
 
@@ -30,9 +31,10 @@ export async function generateMetadata({
 
 export default async function PrivacyPage({ params }: PageProps<'/[locale]/privacy'>) {
   const locale = await resolveLocale(params)
-  const [t, editedAt] = await Promise.all([
+  const [t, editedAt, settings] = await Promise.all([
     getTranslations({ locale, namespace: 'Privacy' }),
     getPrivacyEditedAt(),
+    getSiteSettings(),
   ])
   // yang lebih baru di antara perubahan teks bawaan dan suntingan admin
   const updatedAt =
@@ -50,7 +52,10 @@ export default async function PrivacyPage({ params }: PageProps<'/[locale]/priva
             <h2 id={`privacy-${s}`} className="text-h3 font-semibold">
               {t(`${s}Heading`)}
             </h2>
-            <p className="mt-2 text-muted">{t(`${s}Body`)}</p>
+            <p className="mt-2 text-muted">
+              {/* masa simpan kunjungan mengikuti Admin → Pengaturan */}
+              {t(`${s}Body`, { days: settings.visitRetentionDays })}
+            </p>
           </section>
         ))}
         <p>

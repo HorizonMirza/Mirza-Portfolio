@@ -299,6 +299,23 @@ erDiagram
       int id PK "singleton"
       int soundVolume "0-100, atribut data-sound-volume"
       string heroPortraitId FK "foto hero dari admin, kosong = foto bawaan repo"
+      string defaultTheme "dark | light | system"
+      string defaultLocale "browser | id | en, dibaca proxy.ts"
+      string introFrequency "once | visit | weekly"
+      bool introEnabled_heroAnimation_whatsappButton "saklar tampilan"
+      bool contactOpen_emailOnMessage_loginNotify "pesan dan email"
+      int contactPerHour "1-50"
+      bool trackVisits_allowIndexing_maintenanceMode "privasi dan lanjutan"
+      int visitRetentionDays "30 | 90 | 365"
+    }
+    LoginEvent {
+      string id PK
+      string userId FK "null = email tidak terdaftar"
+      string kind "success | failed"
+      string sessionId "sesi dari login berhasil"
+      string userAgent
+      string location "kota, negara dari header Vercel"
+      datetime createdAt "dihapus cron setelah 90 hari"
     }
     SiteText {
       string key PK "Namespace.nama, dibatasi daftar di features/site-text/catalog.ts"
@@ -309,6 +326,7 @@ erDiagram
 
 Catatan:
 - `User`, `Session`, `Account`, dan `Verification` mengikuti skema Better Auth (dibuat di M2 dengan `@better-auth/cli generate`, lalu disesuaikan). Hash password disimpan di `Account.password`, bukan di `User`. Kolom `passwordHash` di skema M1 dihapus lewat migrasi M2 (tabelnya masih kosong).
+- `SiteSetting` (Admin → Pengaturan, DESIGN.md bagian 119) disimpan per kolom lewat `saveSiteOption` (`features/settings/options.ts` membatasi kolom dan nilai). `LoginEvent` (Admin → Akun, bagian 120) diisi hook `hooks.after` Better Auth untuk `/sign-in/email`: login berhasil (dengan id sesinya) dan password salah. Tanpa IP dan tanpa email yang diketik. Keluarkan perangkat menghapus baris `Session` dan menulis `AuditLog` berjenis `signout`.
 - `User.role` ditambahkan sebagai additional field Better Auth: `USER` atau `SUPER_ADMIN`. Hanya satu `SUPER_ADMIN` yang dibuat lewat seed. Tidak ada registrasi publik.
 - `RateLimit` dipakai helper rate limit untuk form publik dan `/api/track`. Baris lama dibersihkan Vercel Cron.
 - `PageView.visitorHash` = hash(IP + user-agent + garam harian). Garam berganti tiap hari sehingga pengunjung tidak bisa dilacak lintas hari.

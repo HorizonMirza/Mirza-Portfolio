@@ -6,16 +6,24 @@ import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import type { PublicImage } from '@/lib/public-image'
 import { getDb } from '@/lib/db'
 import { safeImage } from '@/lib/public-image'
-import { DEFAULT_SOUND_VOLUME } from '@/lib/ui-sounds'
+
+import {
+  DEFAULT_SITE_OPTIONS,
+  type IntroFrequency,
+  type SiteOptions,
+  toSiteOptions,
+} from './options'
 
 // hanya isi; judul kartu teks tetap (Intro.title di messages/*.json, 2026-11-10)
 export type IntroNoticeContent = {
   body_id: string
   body_en: string
+  // seberapa sering kartu muncul lagi (Admin → Pengaturan)
+  frequency: IntroFrequency
 }
 
-export type SiteSettings = {
-  soundVolume: number
+// Semua pilihan Admin → Pengaturan, ditambah foto hero dan kartu pembuka.
+export type SiteSettings = SiteOptions & {
   // foto hero dari admin; null = foto bawaan di repo
   heroPortrait: PublicImage | null
   // null: pemberitahuan pembuka dimatikan atau belum lengkap
@@ -54,15 +62,17 @@ const loadSiteSettings = unstable_cache(
       where: { id: 1 },
       include: { heroPortrait: true },
     })
-    // kartu selalu tampil selama isinya lengkap (saklar tampil/sembunyi dihapus 2026-11-10)
-    const complete = row?.introBody_id && row.introBody_en
+    const options = toSiteOptions(row)
+    // kartu tampil bila dinyalakan di Pengaturan dan isinya lengkap di kedua bahasa
+    const complete = options.introEnabled && row?.introBody_id && row.introBody_en
     return {
-      soundVolume: row?.soundVolume ?? DEFAULT_SOUND_VOLUME,
+      ...options,
       heroPortrait: heroImage(row?.heroPortrait),
       intro: complete
         ? {
             body_id: row.introBody_id!,
             body_en: row.introBody_en!,
+            frequency: options.introFrequency,
           }
         : null,
     }
@@ -77,6 +87,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   try {
     return await loadSiteSettings()
   } catch {
-    return { soundVolume: DEFAULT_SOUND_VOLUME, heroPortrait: null, intro: null }
+    return { ...DEFAULT_SITE_OPTIONS, heroPortrait: null, intro: null }
   }
 }

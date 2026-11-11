@@ -60,6 +60,12 @@ const PATTERNS: [RegExp, (m: RegExpExecArray, tr: (text: string) => string) => s
       `The image ratio must be ${m[1]}:${m[2]} (about ${m[3]}); this image is ${m[4]}×${m[5]}.`,
   ],
   [
+    /^(\d+) perangkat lain dikeluarkan\.$/,
+    (m) => `${m[1]} other device${m[1] === '1' ? '' : 's'} signed out.`,
+  ],
+  [/^Batas paling kecil (\d+)$/, (m) => `The limit must be at least ${m[1]}`],
+  [/^Batas paling besar (\d+)$/, (m) => `The limit must be at most ${m[1]}`],
+  [
     /^Lebar gambar minimal (\d+) px, gambar ini (\d+) px\.$/,
     (m) => `The image must be at least ${m[1]} px wide; this image is ${m[2]} px.`,
   ],

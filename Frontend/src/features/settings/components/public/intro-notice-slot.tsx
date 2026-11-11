@@ -45,6 +45,7 @@ export async function IntroNoticeSlot({
   )
   return (
     <IntroNotice
+      frequency={intro.frequency}
       locale={locale}
       versions={Object.fromEntries(versions) as Record<Locale, IntroNoticeVersion>}
     />

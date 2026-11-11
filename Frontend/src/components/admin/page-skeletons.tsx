@@ -214,3 +214,101 @@ export function AdminMessageSkeleton() {
     </Loading>
   )
 }
+
+// Pengaturan: kelompok berjudul kecil berisi baris judul + keterangan dengan kontrol di kanan
+export function AdminSettingsSkeleton() {
+  return (
+    <Loading>
+      <div className="flex flex-col gap-8">
+        {[3, 4, 3].map((rows, g) => (
+          <div key={g} className="flex flex-col gap-2">
+            <Skeleton className="ml-1 h-3.5 w-20" />
+            <Card className="divide-y divide-border p-0">
+              {Array.from({ length: rows }, (_, i) => (
+                <span key={i} className="flex items-center justify-between gap-6 px-5 py-4">
+                  <span className="flex min-w-0 flex-1 flex-col gap-2">
+                    <Skeleton className="h-4 w-[min(60%,14rem)]" />
+                    <Skeleton className="h-3 w-[min(90%,26rem)]" />
+                  </span>
+                  <Skeleton className="h-7 w-12 rounded-full" />
+                </span>
+              ))}
+            </Card>
+          </div>
+        ))}
+      </div>
+    </Loading>
+  )
+}
+
+// Akun: kartu identitas di kiri, linimasa aktivitas di kanan
+export function AdminAccountSkeleton() {
+  return (
+    <Loading>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
+        <Card className="flex flex-col gap-5">
+          <span className="flex items-center gap-4">
+            <Skeleton className="size-14 rounded-full" />
+            <span className="flex flex-1 flex-col gap-2">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-3.5 w-52" />
+              <Skeleton className="h-3 w-32" />
+            </span>
+          </span>
+          <span className="flex gap-2">
+            <Skeleton className="h-11 w-40 rounded-full" />
+            <Skeleton className="h-11 w-32 rounded-full" />
+          </span>
+          <Skeleton className="h-12 w-full" />
+        </Card>
+        <Card className="flex flex-col gap-5">
+          <span className="flex justify-between">
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-9 w-36" />
+          </span>
+          {Array.from({ length: 6 }, (_, i) => (
+            <span key={i} className="flex flex-col gap-1.5 pl-5">
+              <Skeleton className="h-4 w-[min(80%,22rem)]" />
+              <Skeleton className="h-3 w-40" />
+            </span>
+          ))}
+        </Card>
+      </div>
+    </Loading>
+  )
+}
+
+// Log audit: cari, chip aksi, lalu kelompok per hari
+export function AdminAuditSkeleton() {
+  return (
+    <Loading>
+      <div className="mb-6 flex flex-col gap-3">
+        <span className="flex gap-2">
+          <Skeleton className="h-11 flex-1 rounded-md" />
+          <Skeleton className="h-11 w-20 rounded-full" />
+        </span>
+        <span className="flex flex-wrap gap-1.5">
+          {Array.from({ length: 7 }, (_, i) => (
+            <Skeleton key={i} className="h-9 w-16 rounded-md" />
+          ))}
+        </span>
+      </div>
+      <div className="flex flex-col gap-6">
+        {[4, 3].map((rows, d) => (
+          <div key={d} className="flex flex-col gap-2">
+            <Skeleton className="ml-1 h-3.5 w-24" />
+            <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+              {Array.from({ length: rows }, (_, i) => (
+                <li key={i} className="flex items-center gap-3 px-4 py-3">
+                  <Skeleton className="size-8 rounded-full" />
+                  <Skeleton className="h-4 flex-1" />
+                  <Skeleton className="h-3 w-10" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </Loading>
+  )
+}

@@ -33,7 +33,8 @@ export async function writeAudit(
   tx: Tx,
   input: {
     actorId: string
-    action: 'create' | 'update' | 'delete' | 'reorder' | 'import' | 'password'
+    // signout: sesi di perangkat lain dikeluarkan dari Admin → Akun
+    action: 'create' | 'update' | 'delete' | 'reorder' | 'import' | 'password' | 'signout'
     entity: string
     entityId?: string | null
     before?: Snapshot | null

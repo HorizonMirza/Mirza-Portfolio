@@ -156,14 +156,15 @@ test('CRUD project: buat, tampil di daftar, ubah, hapus, dan tercatat di audit',
   const gone = await page.request.get(`/id/projects/${slug}`)
   expect(gone.status()).toBe(404)
 
-  await page.goto('/admin/audit?entity=Project')
-  // dicari lewat ID project ini: tes browser lain bisa menulis log audit pada saat yang sama
-  await expect(
-    page
-      .locator('main ol > li')
-      .filter({ hasText: projectId.slice(0, 8) })
-      .first(),
-  ).toContainText('delete')
+  await page.goto('/admin/audit?entity=Project&action=delete')
+  // dicari lewat ID project ini: tes browser lain bisa menulis log audit pada saat yang sama.
+  // Umpan berupa kalimat (desain 1, 2026-11-11); admin sedang berbahasa Inggris di tes ini.
+  const deleted = page.locator(`main li[data-entity-id="${projectId}"][data-audit="delete"]`)
+  await expect(deleted).toHaveCount(1)
+  await expect(deleted).toContainText(`deleted project ${titleEn}`)
+  // baris dibuka: tabel kolom yang berubah, dengan nama kolom yang dikenal
+  await deleted.locator('summary').click()
+  await expect(deleted.getByRole('table')).toContainText('Title')
 
   // Regresi: revalidasi setelah simpan tidak boleh membuat halaman publik menjadi 404. Dicek langsung
   // ke server (seperti status 404 di atas): navigasi Firefox bisa dijawab cache browser dengan 304
@@ -191,31 +192,29 @@ const globalMutationReason = 'mengubah data global bersama; satu proyek saja aga
 
 test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
-  await page.goto('/admin/settings')
-  const slider = page.getByLabel('Volume')
-  const output = page.locator('output[for="soundVolume"]')
-  // Isian bisa masuk sebelum React selesai hidrasi, sehingga label tidak ikut berubah. Tiap
-  // percobaan mengisi nilai lain dulu: mengisi nilai yang sudah ada tidak memicu event input.
-  await expect(async () => {
-    await slider.fill('30')
-    await slider.fill('35')
-    await expect(output).toHaveText('35%', { timeout: 1000 })
-  }).toPass()
-  await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
+  // Pengaturan disimpan otomatis setiap kontrol diubah (desain 1, DESIGN.md bagian 119)
+  const setVolume = async (value: string, other: string) => {
+    await page.goto('/admin/settings')
+    const slider = page.getByRole('slider', { name: 'Suara tombol' })
+    // Isian bisa masuk sebelum React selesai hidrasi. Tiap percobaan mengisi nilai lain dulu: mengisi
+    // nilai yang sudah ada tidak memicu event input.
+    await expect(async () => {
+      await slider.fill(other)
+      await slider.fill(value)
+      await expect(page.getByText(`${value}%`, { exact: true })).toBeVisible({ timeout: 1000 })
+    }).toPass()
+    await expect(page.getByText('Tersimpan', { exact: true })).toBeVisible()
+    // nilai tersimpan di server, bukan hanya di layar
+    await page.reload()
+    await expect(page.getByRole('slider', { name: 'Suara tombol' })).toHaveValue(value)
+  }
+  await setVolume('35', '30')
   // dicek langsung ke server agar cache browser WebKit/Firefox tidak menyajikan halaman lama
   await expect
     .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
     .toContain('data-sound-volume="35"')
   // kembalikan ke bawaan agar tes lain tidak terpengaruh
-  await page.goto('/admin/settings')
-  await expect(async () => {
-    await slider.fill('75')
-    await slider.fill('80')
-    await expect(output).toHaveText('80%', { timeout: 1000 })
-  }).toPass()
-  await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Pengaturan disimpan.')).toBeVisible()
+  await setVolume('80', '75')
 })
 
 test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan', async ({

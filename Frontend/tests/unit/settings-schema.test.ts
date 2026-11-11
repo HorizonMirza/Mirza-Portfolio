@@ -1,21 +1,58 @@
 import { describe, expect, it } from 'vitest'
 
-import { introSchema, soundSchema } from '@/features/settings/schema'
+import { DEFAULT_SITE_OPTIONS, siteOptionSchema, toSiteOptions } from '@/features/settings/options'
+import { introSchema } from '@/features/settings/schema'
 
 const intro = { introBody_id: 'Isi singkat.', introBody_en: 'Short text.' }
 
-describe('soundSchema', () => {
+const ok = (input: unknown) => siteOptionSchema.safeParse(input).success
+
+describe('siteOptionSchema', () => {
   it('volume 0 sampai 100 diterima', () => {
-    expect(soundSchema.safeParse({ soundVolume: 0 }).success).toBe(true)
-    expect(soundSchema.safeParse({ soundVolume: 100 }).success).toBe(true)
+    expect(ok({ key: 'soundVolume', value: 0 })).toBe(true)
+    expect(ok({ key: 'soundVolume', value: 100 })).toBe(true)
   })
 
-  it('di luar rentang, pecahan, atau bukan angka ditolak', () => {
-    expect(soundSchema.safeParse({ soundVolume: -5 }).success).toBe(false)
-    expect(soundSchema.safeParse({ soundVolume: 101 }).success).toBe(false)
-    expect(soundSchema.safeParse({ soundVolume: 12.5 }).success).toBe(false)
-    expect(soundSchema.safeParse({ soundVolume: Number.NaN }).success).toBe(false)
-    expect(soundSchema.safeParse({ soundVolume: '50' }).success).toBe(false)
+  it('volume di luar rentang, pecahan, atau bukan angka ditolak', () => {
+    for (const value of [-5, 101, 12.5, Number.NaN, '50'])
+      expect(ok({ key: 'soundVolume', value })).toBe(false)
+  })
+
+  it('pilihan teks hanya dari daftar', () => {
+    expect(ok({ key: 'defaultTheme', value: 'system' })).toBe(true)
+    expect(ok({ key: 'defaultTheme', value: 'blue' })).toBe(false)
+    expect(ok({ key: 'defaultLocale', value: 'en' })).toBe(true)
+    expect(ok({ key: 'defaultLocale', value: 'fr' })).toBe(false)
+    expect(ok({ key: 'introFrequency', value: 'weekly' })).toBe(true)
+    expect(ok({ key: 'introFrequency', value: 'daily' })).toBe(false)
+  })
+
+  it('batas pesan per jam 1 sampai 50, masa simpan hanya 30, 90, atau 365 hari', () => {
+    expect(ok({ key: 'contactPerHour', value: 1 })).toBe(true)
+    expect(ok({ key: 'contactPerHour', value: 0 })).toBe(false)
+    expect(ok({ key: 'contactPerHour', value: 51 })).toBe(false)
+    expect(ok({ key: 'visitRetentionDays', value: 365 })).toBe(true)
+    expect(ok({ key: 'visitRetentionDays', value: 60 })).toBe(false)
+  })
+
+  it('saklar hanya boolean, kolom lain di SiteSetting tidak bisa ditulis', () => {
+    expect(ok({ key: 'maintenanceMode', value: true })).toBe(true)
+    expect(ok({ key: 'maintenanceMode', value: 'true' })).toBe(false)
+    expect(ok({ key: 'heroPortraitId', value: 'x' })).toBe(false)
+    expect(ok({ key: 'introBody_id', value: 'x' })).toBe(false)
+  })
+})
+
+describe('toSiteOptions', () => {
+  it('baris kosong memakai bawaan', () => {
+    expect(toSiteOptions(null)).toEqual(DEFAULT_SITE_OPTIONS)
+  })
+
+  it('isi tidak dikenal dari database kembali ke bawaan', () => {
+    const v = toSiteOptions({ defaultTheme: 'ungu', contactPerHour: 999, visitRetentionDays: 7 })
+    expect(v.defaultTheme).toBe('dark')
+    expect(v.contactPerHour).toBe(5)
+    expect(v.visitRetentionDays).toBe(90)
   })
 })
 

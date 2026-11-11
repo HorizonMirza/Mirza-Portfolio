@@ -527,6 +527,8 @@ export const TEXT_CATALOG: readonly TextEntry[] = [
     module: 'privacy',
     section: 'Statistik kunjungan',
     label: 'Isi',
+    // {days} = masa simpan kunjungan mentah dari Admin → Pengaturan
+    placeholders: ['days'],
     ...SIZE.body,
   },
   {

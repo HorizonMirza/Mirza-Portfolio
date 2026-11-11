@@ -1518,3 +1518,45 @@ Pemilik meminta seluruh animasi ketik/acak saat ganti bahasa berjalan bersamaan.
 - **Log audit:** deskripsi "Setiap perubahan dari panel admin tercatat di sini…" dihapus.
 - **Efek acak huruf:** huruf terakhir setiap teks kini terkunci tepat di akhir durasi (dulu teks pendek seperti "About" sudah selesai di 85% durasi), sehingga teks pendek dan panjang selesai di frame yang sama. Berlaku juga di situs publik.
 - **Demo yang bisa diklik** untuk desain ulang halaman Akun, Pengaturan (termasuk usulan fitur tambahan dan nama menu), dan Log audit: 10 desain per bagian, menunggu pilihan pemilik. Fitur yang belum ada ditandai "baru" di demo.
+
+## 119. Pengaturan: desain 1 "Daftar berkelompok" dengan fitur baru (2026-11-11 sore)
+
+Pemilik memilih desain 1 dari 10 demo Pengaturan ("buat paling lengkap"). Nama menu tetap **Pengaturan** / **Settings**: isinya kini pengaturan seluruh situs, bukan hanya suara (alasan nama lama terasa kurang cocok), jadi tidak ada nama baru yang perlu dipilih.
+
+- **Tampilan:** lima kelompok (Tampilan, Konten, Pesan, Privasi, Lanjutan) berjudul kecil berhuruf biasa (admin tanpa huruf kapital, bagian 113), masing-masing satu kartu berisi baris judul + keterangan dengan kontrol di kanan (saklar, pilihan, geser, angka). Di HP kontrol turun ke bawah teks. **Tanpa tombol Simpan:** setiap perubahan langsung disimpan (`saveSiteOption`, satu kolom per panggilan, divalidasi Zod di server, ditulis ke log audit) lalu muncul notifikasi "Tersimpan" yang diperbarui, bukan ditumpuk. Geser volume dan isian angka disimpan 0,6 detik setelah berhenti. Gagal simpan: kontrol kembali ke nilai terakhir. Angka di luar 1–50 ditandai merah dan tidak disimpan.
+- **Mode perawatan** minta konfirmasi di baris itu sendiri ("Nyalakan mode perawatan? …" dengan Batal / Nyalakan, tombol Nyalakan langsung terfokus, Esc membatalkan); saklar dan label "Menyala" berwarna merah.
+- **Fitur yang benar-benar bekerja di situs publik:**
+  - *Suara tombol* (sudah ada) dengan tombol coba suara.
+  - *Tema awal pengunjung* Gelap (bawaan) / Terang / Ikuti perangkat: `next-themes` `defaultTheme` + atribut `data-default-theme` di `<html>` yang dibaca `lib/theme.ts`. Pilihan pengunjung tetap didahulukan.
+  - *Animasi hero*: mati = tanpa kanvas cairan dan kursor titik+cincin, foto dan nama tetap.
+  - *Bahasa saat pertama dibuka* Ikuti browser (bawaan) / Indonesia / English: hanya untuk alamat tanpa `/id` atau `/en`, dan hanya bila pengunjung belum pernah memilih bahasa (cookie `NEXT_LOCALE`). Dibaca `proxy.ts` dari database, diingat 60 detik per instance server.
+  - *Kartu pembuka* (saklar tampil dikembalikan atas pilihan desain ini, setelah dihapus di bagian 109) dan *Kartu pembuka muncul*: Sekali saja (localStorage), Setiap kunjungan baru (sessionStorage, perilaku lama dan bawaan), Seminggu sekali (localStorage berisi waktu terakhir dilihat). Skrip sebaris sebelum halaman tampil memakai logika yang sama (diuji unit).
+  - *Tombol WhatsApp melayang* (bawaan mati): tombol bulat 48 px di pojok kanan bawah, di HP di atas menu bawah, membuka chat ke nomor WhatsApp di menu Footer. Tanpa nomor, tombol tidak dipasang dan barisnya bertanda "Nomor belum diisi".
+  - *Terima pesan dari form kontak*: mati = form di halaman Kontak diganti kotak "Form pesan sedang ditutup" (ID/EN) dan server action juga menolak.
+  - *Batas pesan per jam* 1–50 (bawaan 5) dipakai rate limit form kontak per jaringan.
+  - *Email saat ada pesan baru*: saklar untuk notifikasi Resend; bertanda "Butuh Resend" selama Resend belum diatur (ditunda pemilik), pesan tetap tersimpan.
+  - *Hitung kunjungan*: mati = pelacak tidak dipasang dan `/api/track` tidak mencatat.
+  - *Simpan data kunjungan* 30 hari / 90 hari (bawaan) / 1 tahun: cron harian menghapus kunjungan mentah sesuai pilihan; halaman Privasi menyebut angkanya (`{days}` di teks `Privacy.visitsBody`, tanggal kebijakan diperbarui ke 11 Nov 2026).
+  - *Izinkan mesin pencari*: mati = `robots.txt` `Disallow: /` dan meta `noindex, nofollow` di semua halaman publik.
+  - *Mode perawatan*: pengunjung hanya melihat "Sedang diperbarui / Being updated" (nama, judul, satu kalimat; tanpa kartu pembuka, pelacak, dan tombol WhatsApp), tidak diindeks. Panel admin tetap bisa dipakai. Halaman tetap statis (status 200), jadi admin juga melihat halaman perawatan saat membuka situs publik.
+- Semua nilai bawaan sama dengan perilaku sebelumnya; migrasi `20261111120000_site_settings_login_events` hanya menambah kolom dan tabel.
+- **Yang tidak diuji E2E di situs publik:** saklar yang mengubah tampilan publik (perawatan, form kontak, indeks, tema, bahasa awal, WhatsApp, animasi hero) tidak dinyalakan di tes karena tes situs publik berjalan bersamaan di database yang sama. Yang diuji: simpan otomatis + bertahan setelah muat ulang + tercatat di log audit, konfirmasi mode perawatan, validasi angka, volume sampai ke situs publik, logika frekuensi kartu (unit), skema (unit).
+
+## 120. Akun: desain 6 "Linimasa aktivitas akun" (2026-11-11 sore)
+
+- **Kiri:** foto inisial, nama, email disamarkan (`ad•••••@domain`, tombol Tampilkan/Sembunyikan), label Super Admin, "Admin sejak …". Tombol **Ganti password** dan **Perangkat (jumlah)** membuka panelnya (`aria-expanded`).
+  - *Ganti password:* meter kekuatan empat ruas (merah → abu → hijau; panjang paling berpengaruh) dan tiga aturan yang dicentang saat mengetik: minimal 12 karakter, berbeda dari password saat ini, ulangan sama (dengan status untuk pembaca layar). Setelah berhasil, perangkat lain keluar (seperti sebelumnya) dan halaman dimuat ulang.
+  - *Perangkat:* semua sesi aktif (browser dan sistem, ikon HP/komputer, kota bila ada, waktu aktif terakhir), "Perangkat ini" untuk sesi sekarang, **Keluarkan** per perangkat, dan **Keluarkan semua perangkat lain**. Perangkat yang dikeluarkan langsung kembali ke login (Better Auth memeriksa sesi ke database). Dicatat di log audit (`signout`).
+  - *Email saat ada login baru*: saklar (bertanda "Butuh Resend" selama Resend belum diatur).
+- **Kanan, Aktivitas:** satu garis waktu berisi Masuk (titik hijau), Gagal masuk (merah, termasuk percobaan dengan email tidak terdaftar), Password diganti, dan Perangkat dikeluarkan (abu), dengan perangkat, waktu WIB, dan kota. Saring **Semua / Gagal (jumlah)**. 40 kejadian terakhir.
+- **Riwayat masuk baru** (`LoginEvent`): dicatat hook Better Auth setelah `/sign-in/email`, lewat `after()` sehingga tidak menunda login. Tanpa IP dan tanpa email yang diketik (hanya dipakai mencari akunnya). Kota/negara dari header geolokasi Vercel (tanpa layanan tambahan; di luar Vercel kosong). Percobaan yang ditolak rate limit tidak tercatat. Dihapus cron setelah 90 hari.
+- Lokasi pada demo ("Jakarta") kini nyata hanya di Vercel; tidak dikarang di lingkungan lain.
+
+## 121. Log audit: desain 1 "Umpan per hari" (2026-11-11 sore)
+
+- **Umpan kalimat:** "**Mirza** mengubah project **RIPE.AI**" (EN "updated project"), dikelompokkan **Hari ini / Kemarin / tanggal** menurut WIB, jam di kanan (huruf mono). Avatar inisial bercincin hijau (buat), merah (hapus), atau abu (lainnya). Kata kerja: membuat, mengubah, menghapus, mengurutkan, mengimpor, mengganti password akun, mengeluarkan (perangkat).
+- **Klik baris** (`<details>`, tanpa JavaScript) membuka tabel **Kolom / Sebelum (dicoret) / Sesudah** dengan nama kolom yang dikenal (Judul EN, Mode perawatan, …; kolom tak dikenal tampil nama aslinya), nilai Aktif/Mati dan nama pilihan, tanda data + ID singkat, waktu lengkap, dan tautan **Buka** ke halaman admin datanya (bila masih ada). Ganti password: "Isi password tidak dicatat."
+- **Nama target:** dari data yang masih ada (judul project dalam bahasa admin, instansi pendidikan, nama skill/kategori, subjek pesan, modul teks situs); untuk data yang sudah dihapus dari isi perubahan baris itu atau baris lain untuk data yang sama.
+- **Saring:** kotak cari "Cari target atau kolom" (isi perubahan, nama data, nama entitas dalam ID/EN, awal ID), chip aksi (Semua, buat, ubah, hapus, urutkan, password, keluarkan perangkat), dan chip data (Semua data, Pesan, Profil, Project, …). Semuanya parameter URL dan bisa digabung. **Muat lagi** menambah 50 baris (maks. 2.000).
+- Pencarian isi perubahan memakai SQL berparameter (`diff::text ILIKE`, `%` dan `_` di-escape).
+

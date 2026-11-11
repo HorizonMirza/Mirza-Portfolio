@@ -53,7 +53,20 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
         {/* contact-col: setelah terkirim, kotak tiket selebar kalimat pengantar (globals.css) */}
         <div className="contact-col">
           <PageIntro title={t('title')} intro={t('intro')} />
-          <ContactForm />
+          {/* form bisa ditutup di Admin → Pengaturan; action juga menolak pesan saat ditutup */}
+          {settings.contactOpen ? (
+            <ContactForm />
+          ) : (
+            <section
+              aria-labelledby="contact-closed"
+              className="rounded-2xl border border-border bg-surface p-6"
+            >
+              <h2 id="contact-closed" className="text-h3 font-semibold">
+                {t('closedTitle')}
+              </h2>
+              <p className="mt-2 text-muted">{t('closedBody')}</p>
+            </section>
+          )}
         </div>
       </div>
     </Container>

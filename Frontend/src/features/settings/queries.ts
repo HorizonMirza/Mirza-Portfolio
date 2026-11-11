@@ -1,13 +1,14 @@
 import 'server-only'
 
 import { getDb } from '@/lib/db'
-import { DEFAULT_SOUND_VOLUME } from '@/lib/ui-sounds'
 
-import type { IntroInput, SoundInput } from './schema'
+import { type SiteOptions, toSiteOptions } from './options'
+import type { IntroInput } from './schema'
 
-export async function getSoundForEdit(): Promise<SoundInput> {
+// Nilai terbaru langsung dari database (bukan cache publik) untuk Admin → Pengaturan.
+export async function getSiteOptionsForEdit(): Promise<SiteOptions> {
   const row = await getDb().siteSetting.findUnique({ where: { id: 1 } })
-  return { soundVolume: row?.soundVolume ?? DEFAULT_SOUND_VOLUME }
+  return toSiteOptions(row)
 }
 
 export async function getIntroForEdit(): Promise<IntroInput> {

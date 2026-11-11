@@ -11,6 +11,8 @@ export type AdminSession = {
   userId: string
   name: string
   email: string
+  // sesi yang sedang dipakai (Admin → Akun: "Perangkat ini", tidak bisa dikeluarkan dari daftar)
+  sessionId: string
 }
 
 // Satu kali per request: ambil sesi dan pastikan perannya SUPER_ADMIN.
@@ -19,7 +21,12 @@ export const getAdminSession = cache(async (): Promise<AdminSession | null> => {
   if (!session) return null
   const role = (session.user as { role?: string }).role
   if (role !== 'SUPER_ADMIN') return null
-  return { userId: session.user.id, name: session.user.name, email: session.user.email }
+  return {
+    userId: session.user.id,
+    name: session.user.name,
+    email: session.user.email,
+    sessionId: session.session.id,
+  }
 })
 
 // Untuk halaman dan layout admin: arahkan ke login bila belum masuk.

@@ -5,7 +5,8 @@
   },
   "Common": {
     "skipToContent": "Lewati ke konten utama",
-    "openInNewTab": "(membuka tab baru)"
+    "openInNewTab": "(membuka tab baru)",
+    "whatsapp": "Chat lewat WhatsApp"
   },
   "Locale": {
     "id": "Bahasa Indonesia",
@@ -26,6 +27,10 @@
     "title": "Boo! Halamannya hilang.",
     "body": "Sepertinya halaman ini hantu: dicari ada, dibuka tidak ada.",
     "home": "Beranda"
+  },
+  "Maintenance": {
+    "title": "Sedang diperbarui",
+    "body": "Situs ini sedang diperbarui. Silakan buka lagi beberapa saat lagi."
   },
   "Nav": {
     "label": "Navigasi utama",
@@ -138,7 +143,10 @@
     "ticketTime": "Waktu",
     "another": "Tulis pesan lain",
     "cardRole": "Fullstack Developer",
-    "cardSite": "mmirza.site"
+    "cardSite": "mmirza.site",
+    "closedTitle": "Form pesan sedang ditutup",
+    "closedBody": "Saat ini saya tidak menerima pesan lewat form. Hubungi saya lewat tautan di bagian bawah halaman.",
+    "closed": "Form pesan sedang ditutup. Hubungi saya lewat tautan di bagian bawah halaman."
   },
   "Privacy": {
     "metaTitle": "Kebijakan Privasi",
@@ -147,7 +155,7 @@
     "updated": "Terakhir diperbarui {date}",
     "intro": "Situs ini tidak memakai cookie pelacak dan tidak menjual data. Berikut data yang dikumpulkan dan alasannya.",
     "visitsHeading": "Statistik kunjungan",
-    "visitsBody": "Setiap halaman yang dibuka dicatat beserta bahasanya. Untuk menghitung pengunjung unik per hari, alamat IP dan jenis browser diubah menjadi kode acak satu arah dengan kunci yang berganti setiap hari, jadi Anda tidak bisa dikenali atau dilacak lintas hari. Alamat IP mentah tidak disimpan. Data mentah dihapus setelah 90 hari, hanya ringkasan harian yang disimpan.",
+    "visitsBody": "Setiap halaman yang dibuka dicatat beserta bahasanya. Untuk menghitung pengunjung unik per hari, alamat IP dan jenis browser diubah menjadi kode acak satu arah dengan kunci yang berganti setiap hari, jadi Anda tidak bisa dikenali atau dilacak lintas hari. Alamat IP mentah tidak disimpan. Data mentah dihapus setelah {days} hari, hanya ringkasan harian yang disimpan.",
     "contactHeading": "Formulir kontak",
     "contactBody": "Nama, email, subjek, dan isi pesan disimpan agar saya bisa membalas. Alamat IP hanya disimpan sebagai kode acak untuk mencegah spam. Pesan disimpan sampai saya menghapusnya.",
     "cvHeading": "Unduhan CV",

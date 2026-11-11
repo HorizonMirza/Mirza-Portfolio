@@ -5,6 +5,7 @@ import { getDb } from '@/lib/db'
 import { jakartaDayKey } from '@/lib/format'
 import { consumePublicRateLimit, consumeRateLimit, hashIdentifier } from '@/lib/rate-limit'
 import { isBot, isSameOrigin } from '@/lib/request'
+import { getSiteSettings } from '@/features/settings/public'
 
 const bodySchema = z.object({
   // path tanpa awalan bahasa, misalnya "/" atau "/projects/gaas"
@@ -20,7 +21,7 @@ const bodySchema = z.object({
 const RULE = { window: 3600, max: 120 }
 // Batas global per hari. Cek asal (sec-fetch-site/origin) bisa dipalsukan klien di luar browser, jadi
 // batas ini yang menjamin tabel PageView tidak bisa dibanjiri sampai kuota database habis: paling
-// banyak ±1 MB per hari, ±90 MB untuk 90 hari data mentah (audit 2026-11-01, SEC-01). Kunjungan di atas
+// banyak ±1 MB per hari: ±90 MB untuk masa simpan 90 hari, ±365 MB bila dipilih 1 tahun di Admin → Pengaturan (audit 2026-11-01, SEC-01). Kunjungan di atas
 // batas tidak dicatat, halaman tetap jalan.
 const GLOBAL_RULE = { window: 86_400, max: 5_000 }
 
@@ -42,6 +43,10 @@ export async function POST(request: Request) {
   }
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) return new Response(null, { status: 400 })
+
+  // "Hitung kunjungan" mati di Admin → Pengaturan: tidak ada yang dicatat (pelacak juga tidak dipasang;
+  // ini pengaman untuk halaman lama yang masih terbuka)
+  if (!(await getSiteSettings()).trackVisits) return noContent()
 
   const ip = clientIp(request.headers)
   // Kunjungan hanya statistik: database gangguan tidak boleh menjadi 500 (dan laporan error) untuk

@@ -20,4 +20,5 @@ export const contactSchema = z.object({
   locale: z.enum(['id', 'en']),
 })
 
+// jendela satu jam; max di sini hanya bawaan, nilai yang berlaku dari Admin → Pengaturan
 export const CONTACT_RATE_LIMIT = { window: 3600, max: 5 }

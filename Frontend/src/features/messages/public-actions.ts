@@ -11,6 +11,7 @@ import { getEmailConfig, sendEmail } from '@/lib/email'
 import { siteUrl } from '@/lib/env'
 import type { PublicFormState } from '@/lib/form-state'
 import { consumePublicRateLimit, hashIdentifier } from '@/lib/rate-limit'
+import { getSiteSettings } from '@/features/settings/public'
 
 import { CONTACT_RATE_LIMIT, contactSchema, toSingleLine } from './public-schema'
 
@@ -43,8 +44,14 @@ export async function submitContact(
   }
 
   try {
+    // Admin → Pengaturan: form ditutup, batas pesan per jam, dan email pesan baru
+    const settings = await getSiteSettings()
+    if (!settings.contactOpen) return { status: 'error', message: 'closed', values }
     const ip = clientIp(await headers())
-    const limit = await consumePublicRateLimit('contact', ip, CONTACT_RATE_LIMIT)
+    const limit = await consumePublicRateLimit('contact', ip, {
+      ...CONTACT_RATE_LIMIT,
+      max: settings.contactPerHour,
+    })
     if (!limit.allowed) return { status: 'error', message: 'rateLimited', values }
 
     const data = parsed.data
@@ -63,7 +70,7 @@ export async function submitContact(
     // Pesan sudah tersimpan; notifikasi dikirim setelah jawaban sampai ke pengunjung (after), jadi
     // pengunjung tidak ikut menunggu Resend (sampai 10 detik, audit 2026-11-02 PERF-05). Gagal kirim
     // tidak menggagalkan pengunjung.
-    const config = getEmailConfig()
+    const config = settings.emailOnMessage ? getEmailConfig() : null
     const to = config?.CONTACT_TO_EMAIL
     if (to) {
       const email = ContactNotificationEmail({

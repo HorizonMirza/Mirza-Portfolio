@@ -2,6 +2,7 @@ import { getSessionCookie } from 'better-auth/cookies'
 import { type NextRequest, NextResponse } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 
+import { siteDefaultLocale } from './features/settings/default-locale'
 import { routing } from './i18n/routing'
 import { buildCsp } from './lib/csp'
 
@@ -27,7 +28,7 @@ function adminResponse(request: NextRequest) {
 
 // Lapis pertama perlindungan /admin: tanpa cookie sesi langsung diarahkan ke login.
 // Validasi sesi dan peran yang sebenarnya dilakukan di server (lib/auth-guard.ts).
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname === '/admin' || pathname.startsWith('/admin/')) {
@@ -37,6 +38,20 @@ export default function proxy(request: NextRequest) {
       return NextResponse.redirect(url)
     }
     return adminResponse(request)
+  }
+
+  // Alamat tanpa awalan bahasa (mis. mmirza.site/): bahasa awal dari Admin → Pengaturan. "Ikuti browser"
+  // dan pengunjung yang pernah memilih bahasa (cookie NEXT_LOCALE dari next-intl) tetap lewat next-intl.
+  const prefixed = routing.locales.some(
+    (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`),
+  )
+  if (!prefixed && !request.cookies.has('NEXT_LOCALE')) {
+    const choice = await siteDefaultLocale()
+    if (choice !== 'browser') {
+      const url = request.nextUrl.clone()
+      url.pathname = `/${choice}${pathname === '/' ? '' : pathname}`
+      return NextResponse.redirect(url)
+    }
   }
 
   // Situs publik: arahkan ke /id atau /en sesuai preferensi bahasa browser.

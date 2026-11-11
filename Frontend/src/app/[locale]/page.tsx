@@ -201,9 +201,15 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
           .hero, tepat di bawah navbar. Latar vortex ungu dihapus 2026-11-01 karena lag (permintaan pemilik). */}
       <section aria-labelledby="hero-title" className="hero-shell">
-        <LiquidMaskPortrait back={HERO_ARMOR.src} bleed={HERO_ARMOR_BLEED}>
+        {/* Animasi hero bisa dimatikan di Admin → Pengaturan: foto dan nama tetap, tanpa efek cairan
+            dan kursor titik + cincin */}
+        <LiquidMaskPortrait
+          back={HERO_ARMOR.src}
+          bleed={HERO_ARMOR_BLEED}
+          disabled={!settings.heroAnimation}
+        >
           {/* kursor titik + cincin di atas foto (pilihan pemilik 2026-11-06, demo K3) */}
-          <HeroCursor />
+          {settings.heroAnimation ? <HeroCursor /> : null}
           <div className="hero">
             {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
             <div aria-hidden="true" className="hero-glow" />

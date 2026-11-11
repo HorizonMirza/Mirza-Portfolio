@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { SoundForm } from '@/features/settings/components/sound-form'
-import { getSoundForEdit } from '@/features/settings/queries'
+import { getPublicProfile } from '@/features/profile/public'
+import { SiteSettingsList } from '@/features/settings/components/site-settings-list'
+import { getSiteOptionsForEdit } from '@/features/settings/queries'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { getEmailConfig } from '@/lib/email'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -12,16 +14,19 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Pengaturan') }
 }
 
+// Nama menu tetap "Pengaturan": sekarang berisi pengaturan seluruh situs, bukan hanya suara
+// (revisi pemilik 2026-11-11, DESIGN.md bagian 119).
 export default async function SettingsPage() {
   await requireSuperAdminPage()
-  const sound = await getSoundForEdit()
+  const [options, profile] = await Promise.all([getSiteOptionsForEdit(), getPublicProfile()])
   return (
     <>
-      <PageHeader
-        title="Pengaturan"
-        description="Pengaturan teknis yang berlaku untuk seluruh situs publik. Teks, foto, dan kartu pembuka ada di menu Halaman situs."
+      <PageHeader title="Pengaturan" />
+      <SiteSettingsList
+        initial={options}
+        emailReady={getEmailConfig() !== null}
+        hasWhatsapp={Boolean(profile?.whatsapp)}
       />
-      <SoundForm defaultValues={sound} />
     </>
   )
 }

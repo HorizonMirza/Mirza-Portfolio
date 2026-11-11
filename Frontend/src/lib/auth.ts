@@ -1,13 +1,15 @@
 import 'server-only'
 
-import { betterAuth } from 'better-auth'
+import { APIError, betterAuth } from 'better-auth'
 import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { createAuthMiddleware } from 'better-auth/api'
 import { nextCookies } from 'better-auth/next-js'
 import { after } from 'next/server'
 
 import { trustedProxies } from '@/lib/client-ip'
 import { getDb } from '@/lib/db'
 import { getAuthEnv, resolveBaseUrl, trustedAuthOrigins } from '@/lib/env'
+import { recordLoginEvent } from '@/lib/login-events'
 import { notifyLogin } from '@/lib/login-notice'
 import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
 import { authRateLimitStorage, hashIdentifier } from '@/lib/rate-limit'
@@ -69,6 +71,31 @@ function createAuth() {
           },
         },
       },
+    },
+    hooks: {
+      // Riwayat masuk untuk Admin → Akun: login berhasil (beserta sesinya) dan password salah. Percobaan
+      // yang ditolak rate limit tidak sampai ke sini. Dicatat lewat after() agar tidak menunda respons.
+      after: createAuthMiddleware(async (ctx) => {
+        if (ctx.path !== '/sign-in/email') return
+        const created = ctx.context.newSession
+        const returned = ctx.context.returned
+        const failed = returned instanceof APIError && returned.statusCode === 401
+        if (!created && !failed) return
+        const headers = ctx.headers ?? ctx.request?.headers ?? null
+        const email = typeof ctx.body?.email === 'string' ? ctx.body.email : null
+        after(() =>
+          recordLoginEvent(
+            created
+              ? {
+                  kind: 'success',
+                  userId: created.user.id,
+                  sessionId: created.session.id,
+                  headers,
+                }
+              : { kind: 'failed', email, headers },
+          ),
+        )
+      }),
     },
     advanced: {
       cookiePrefix: 'mm',

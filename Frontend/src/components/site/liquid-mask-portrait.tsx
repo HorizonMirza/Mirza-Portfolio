@@ -61,8 +61,11 @@ export function LiquidMaskPortrait({
   back,
   bleed,
   className,
+  disabled = false,
 }: {
   children: ReactNode
+  // Admin → Pengaturan "Animasi hero" mati: hanya isi HTML, tanpa canvas dan tanpa pendengar kursor
+  disabled?: boolean
   // alamat gambar kedua (satu origin dengan situs, atau Cloudinary yang mengirim header CORS)
   back: string
   // ruang tambahan gambar kedua di luar bingkai foto, sebagai bagian lebar/tinggi foto (kiri-kanan, atas),
@@ -81,6 +84,7 @@ export function LiquidMaskPortrait({
   useEffect(() => {
     // efek baru (cleanup efek lama sudah berjalan): cleanup berikutnya kembali melepas konteks
     restoringRef.current = false
+    if (disabled) return
     const root = rootRef.current
     let canvas = canvasRef.current
     const img = root?.querySelector<HTMLImageElement>('figure img')
@@ -539,12 +543,12 @@ export function LiquidMaskPortrait({
         reactCanvas.hidden = false
       }
     }
-  }, [back, bleed.x, bleed.top, glEpoch])
+  }, [back, bleed.x, bleed.top, glEpoch, disabled])
 
   return (
     <div ref={rootRef} className={cn('hero-mask', className)}>
       {children}
-      <canvas ref={canvasRef} aria-hidden="true" className="hero-mask-canvas" />
+      {disabled ? null : <canvas ref={canvasRef} aria-hidden="true" className="hero-mask-canvas" />}
     </div>
   )
 }

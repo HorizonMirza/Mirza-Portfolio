@@ -72,6 +72,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   auditLogs     AuditLog[]
+  loginEvents   LoginEvent[]
 }
 
 model Session {
@@ -364,7 +365,53 @@ model SiteSetting {
   // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
   heroPortraitId String?  @unique @db.Uuid
   heroPortrait   Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
-  updatedAt      DateTime @updatedAt @db.Timestamptz(3)
+  // Admin → Pengaturan (DESIGN.md bagian 119). Pilihan teks divalidasi Zod (features/settings/options.ts).
+  // tema awal pengunjung yang belum memilih: dark | light | system
+  defaultTheme       String   @default("dark")
+  // efek cairan dan kursor titik+cincin di foto beranda
+  heroAnimation      Boolean  @default(true)
+  // bahasa saat alamat dibuka tanpa /id atau /en: browser | id | en
+  defaultLocale      String   @default("browser")
+  // kartu pembuka tampil (selama isinya lengkap) dan seberapa sering: once | visit | weekly
+  introEnabled       Boolean  @default(true)
+  introFrequency     String   @default("visit")
+  // tombol WhatsApp melayang di pojok kanan bawah situs publik
+  whatsappButton     Boolean  @default(false)
+  // form kontak menerima pesan, batas pesan per jam per IP, dan email ke pemilik saat ada pesan baru
+  contactOpen        Boolean  @default(true)
+  contactPerHour     Int      @default(5)
+  emailOnMessage     Boolean  @default(true)
+  // email ke pemilik setiap ada login baru ke panel admin (butuh Resend)
+  loginNotify        Boolean  @default(true)
+  // statistik kunjungan dan lama kunjungan mentah disimpan (hari)
+  trackVisits        Boolean  @default(true)
+  visitRetentionDays Int      @default(90)
+  // mesin pencari boleh mengindeks situs (robots.txt dan meta robots)
+  allowIndexing      Boolean  @default(true)
+  // pengunjung melihat halaman "Sedang diperbarui"; panel admin tetap bisa dipakai
+  maintenanceMode    Boolean  @default(false)
+  updatedAt          DateTime @updatedAt @db.Timestamptz(3)
+}
+
+// Riwayat masuk panel admin (Admin → Akun, DESIGN.md bagian 120): berhasil dan gagal. Tanpa IP dan
+// tanpa email yang diketik; hanya user-agent (diringkas saat ditampilkan) dan kota/negara dari header
+// Vercel. Dihapus setelah 90 hari oleh cron harian.
+model LoginEvent {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  // null: percobaan dengan email yang tidak terdaftar
+  userId    String?  @db.Uuid
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // success | failed
+  kind      String
+  // sesi yang dibuat oleh login berhasil (tanpa relasi: sesi dihapus saat keluar)
+  sessionId String?  @db.Uuid
+  userAgent String?  @db.VarChar(300)
+  location  String?  @db.VarChar(120)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
+  @@index([sessionId])
 }
 
 // Teks situs yang diubah admin (judul bagian, SEO, kebijakan privasi, ...). Menimpa teks bawaan di

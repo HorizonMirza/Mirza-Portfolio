@@ -79,7 +79,7 @@ async function load() {
     ['saveIntroNotice', () => settings.saveIntroNotice({})],
     ['saveHeroRoles', () => profile.saveHeroRoles({})],
     ['saveContactLinks', () => profile.saveContactLinks({})],
-    ['saveSoundVolume', () => settings.saveSoundVolume({})],
+    ['saveSiteOption', () => settings.saveSiteOption({ key: 'heroAnimation', value: false })],
   )
 }
 

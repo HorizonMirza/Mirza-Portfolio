@@ -5,7 +5,8 @@
   },
   "Common": {
     "skipToContent": "Skip to main content",
-    "openInNewTab": "(opens in a new tab)"
+    "openInNewTab": "(opens in a new tab)",
+    "whatsapp": "Chat on WhatsApp"
   },
   "Locale": {
     "id": "Bahasa Indonesia",
@@ -26,6 +27,10 @@
     "title": "Boo! Page missing.",
     "body": "This page must be a ghost: it is not here.",
     "home": "Home"
+  },
+  "Maintenance": {
+    "title": "Being updated",
+    "body": "This site is being updated. Please check back in a little while."
   },
   "Nav": {
     "label": "Main navigation",
@@ -138,7 +143,10 @@
     "ticketTime": "Time",
     "another": "Write another message",
     "cardRole": "Fullstack Developer",
-    "cardSite": "mmirza.site"
+    "cardSite": "mmirza.site",
+    "closedTitle": "The message form is closed",
+    "closedBody": "I am not taking messages through the form right now. Reach me through the links at the bottom of the page.",
+    "closed": "The message form is closed. Reach me through the links at the bottom of the page."
   },
   "Privacy": {
     "metaTitle": "Privacy Policy",
@@ -147,7 +155,7 @@
     "updated": "Last updated {date}",
     "intro": "This site uses no tracking cookies and never sells data. Here is what is collected and why.",
     "visitsHeading": "Visit statistics",
-    "visitsBody": "Each page view is recorded together with its language. To count unique visitors per day, your IP address and browser type are turned into a one-way random code with a key that changes every day, so you cannot be identified or followed across days. Raw IP addresses are never stored. Raw records are deleted after 90 days; only daily totals are kept.",
+    "visitsBody": "Each page view is recorded together with its language. To count unique visitors per day, your IP address and browser type are turned into a one-way random code with a key that changes every day, so you cannot be identified or followed across days. Raw IP addresses are never stored. Raw records are deleted after {days} days; only daily totals are kept.",
     "contactHeading": "Contact form",
     "contactBody": "Your name, email, subject, and message are stored so I can reply. Your IP address is only kept as a random code to prevent spam. Messages are kept until I delete them.",
     "cvHeading": "CV downloads",

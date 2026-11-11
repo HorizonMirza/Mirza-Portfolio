@@ -17,7 +17,8 @@ import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
-import { INTRO_PENDING_ATTR, INTRO_SEEN_KEY } from '../../intro-pending'
+import { INTRO_PENDING_ATTR, introSeen, markIntroSeen } from '../../intro-pending'
+import type { IntroFrequency } from '../../options'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -40,22 +41,6 @@ const HOME_LEAVE_MS = 450
 // bahasa di header). Bila alamat belum berganti setelah waktu ini, halaman dimuat biasa ke bahasa tujuan.
 const LOCALE_FALLBACK_MS = 1500
 
-function alreadySeen() {
-  try {
-    return sessionStorage.getItem(INTRO_SEEN_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function markSeen() {
-  try {
-    sessionStorage.setItem(INTRO_SEEN_KEY, '1')
-  } catch {
-    // penyimpanan diblokir: pemberitahuan bisa muncul lagi di halaman berikutnya
-  }
-}
-
 // Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah"; revisi 2026-10-15): kartu
 // ramping di tengah layar. Latar dan kartu sama dengan halaman login Super Admin (pilihan pemilik
 // 2026-10-15, demo latar 11): latar hitam dan kartu kaca gelap, selalu gelap di tema terang maupun
@@ -69,9 +54,12 @@ function markSeen() {
 export function IntroNotice({
   locale,
   versions,
+  frequency,
 }: {
   locale: Locale
   versions: Record<Locale, IntroNoticeVersion>
+  // seberapa sering kartu muncul (Admin → Pengaturan)
+  frequency: IntroFrequency
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   // selesai saat tombol Esc yang menutup kartu sudah dilepas (lihat catatan Firefox di close)
@@ -86,7 +74,7 @@ export function IntroNotice({
   useEffect(() => {
     const dialog = ref.current
     // otomatisasi (tes E2E, Lighthouse) tidak perlu melihat pemberitahuan
-    if (!dialog || dialog.open || navigator.webdriver || alreadySeen()) {
+    if (!dialog || dialog.open || navigator.webdriver || introSeen(frequency)) {
       clearPending()
       return
     }
@@ -98,7 +86,7 @@ export function IntroNotice({
     // Fokus awal di dialog itu sendiri (pembaca layar membacakan judulnya), bukan di tombol: Chromium
     // menampilkan garis fokus untuk fokus dari skrip sebelum ada interaksi. Tab menuju tombol pertama.
     dialog.focus()
-  }, [])
+  }, [frequency])
 
   // efek acak huruf setelah teks kartu berganti bahasa
   useEffect(() => {
@@ -121,7 +109,7 @@ export function IntroNotice({
     const dialog = ref.current
     // sudah sedang ditutup: Esc atau klik kedua tidak memulai ulang
     if (!dialog?.open || dialog.dataset.leaving !== undefined) return
-    markSeen()
+    markIntroSeen(frequency)
     const finish = () => {
       dialog.close()
       delete dialog.dataset.leaving

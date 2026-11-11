@@ -6,7 +6,8 @@ import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
 import { revalidateContent } from '@/lib/revalidate'
 
-import { introSchema, soundSchema } from './schema'
+import { siteOptionSchema } from './options'
+import { introSchema } from './schema'
 import { introSettingData, writeSetting } from './write'
 
 // Simpan SiteSetting dalam transaksinya sendiri, lalu perbarui cache.
@@ -18,13 +19,19 @@ async function saveSetting(
   revalidateContent('settings')
 }
 
-export async function saveSoundVolume(input: unknown): Promise<ActionResult> {
+// Satu pengaturan dari Admin → Pengaturan, disimpan otomatis setiap kontrol diubah (DESIGN.md
+// bagian 119). Hanya kolom di siteOptionSchema yang bisa ditulis; setiap perubahan masuk log audit.
+export async function saveSiteOption(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
-    const parsed = soundSchema.safeParse(input)
-    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
-    await saveSetting(admin.userId, parsed.data)
-    return ok('Pengaturan disimpan.')
+    const parsed = siteOptionSchema.safeParse(input)
+    if (!parsed.success) {
+      const message = parsed.error.issues.find((i) => i.path[0] === 'value')?.message
+      return fail(message ?? 'Pengaturan tidak dikenal.')
+    }
+    const { key, value } = parsed.data
+    await saveSetting(admin.userId, { [key]: value })
+    return ok('Tersimpan')
   } catch (error) {
     return toActionError(error)
   }

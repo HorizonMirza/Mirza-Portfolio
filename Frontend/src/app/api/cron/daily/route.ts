@@ -2,7 +2,12 @@ import { timingSafeEqual } from 'node:crypto'
 
 import { getDb } from '@/lib/db'
 import { removeOrphanUploads } from '@/lib/orphan-uploads'
-import { RETENTION_DAYS, summaryStart } from '@/lib/page-view-summary'
+import { summaryStart } from '@/lib/page-view-summary'
+import { toSiteOptions } from '@/features/settings/options'
+
+const DAY_MS = 24 * 60 * 60 * 1000
+// masa simpan riwayat masuk panel admin (Admin → Akun)
+const LOGIN_EVENT_DAYS = 90
 
 // Dipanggil Vercel Cron sekali sehari (vercel.json). Vercel mengirim "Authorization: Bearer <CRON_SECRET>".
 function authorized(request: Request) {
@@ -37,9 +42,17 @@ export async function GET(request: Request) {
     DO UPDATE SET "views" = EXCLUDED."views", "visitors" = EXCLUDED."visitors"
   `
 
-  // 2) Hapus kunjungan mentah yang lewat masa simpan dan baris rate limit kedaluwarsa (> 1 hari).
-  const cutoff = new Date(Date.now() - RETENTION_DAYS * 24 * 60 * 60 * 1000)
+  // 2) Hapus kunjungan mentah yang lewat masa simpan (Admin → Pengaturan: 30, 90, atau 365 hari; dibaca
+  // langsung dari database, bukan cache), riwayat masuk admin > 90 hari, dan baris rate limit
+  // kedaluwarsa (> 1 hari).
+  const { visitRetentionDays } = toSiteOptions(
+    await db.siteSetting.findUnique({ where: { id: 1 } }),
+  )
+  const cutoff = new Date(Date.now() - visitRetentionDays * DAY_MS)
   const removedViews = await db.pageView.deleteMany({ where: { createdAt: { lt: cutoff } } })
+  const removedLogins = await db.loginEvent.deleteMany({
+    where: { createdAt: { lt: new Date(Date.now() - LOGIN_EVENT_DAYS * DAY_MS) } },
+  })
   const removedLimits = await db.rateLimit.deleteMany({
     where: { windowStart: { lt: BigInt(Date.now() - 24 * 60 * 60 * 1000) } },
   })
@@ -51,6 +64,7 @@ export async function GET(request: Request) {
     data: {
       summarized,
       removedPageViews: removedViews.count,
+      removedLoginEvents: removedLogins.count,
       removedRateLimits: removedLimits.count,
       removedOrphanUploads,
     },
