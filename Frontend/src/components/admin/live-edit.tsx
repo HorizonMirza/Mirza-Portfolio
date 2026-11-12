@@ -6,9 +6,10 @@ import {
   type Ref,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'react'
 
-import { useAdminT } from '@/components/admin/admin-lang'
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { cn } from '@/lib/utils'
 
 // Alat bersama "ubah langsung di pratinjau" (DESIGN.md bagian 133): halaman admin tampil seperti di
@@ -16,6 +17,19 @@ import { cn } from '@/lib/utils'
 
 export type Lang = 'id' | 'en'
 export const LANG_NAME: Record<Lang, string> = { id: 'Indonesia', en: 'Inggris' }
+
+// Bahasa isi yang sedang diubah: awalnya sama dengan bahasa tampilan admin dan ikut berganti saat
+// bahasa admin diganti di top bar; tombol ID/EN di panggung bisa memilih bahasa lain.
+export function useEditLang(): [Lang, (lang: Lang) => void] {
+  const { lang: adminLang } = useAdminLang()
+  const [lang, setLang] = useState<Lang>(adminLang)
+  const [followed, setFollowed] = useState<Lang>(adminLang)
+  if (adminLang !== followed) {
+    setFollowed(adminLang)
+    setLang(adminLang)
+  }
+  return [lang, setLang]
+}
 
 // panggung pratinjau selebar panel isi sampai tepi kiri-kanan, sudut kecil seperti tab
 export function LiveStage({ children, className }: { children: ReactNode; className?: string }) {

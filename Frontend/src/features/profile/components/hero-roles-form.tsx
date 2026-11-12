@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { StaticImageData } from 'next/image'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -16,6 +16,7 @@ import {
   LiveErrors,
   LiveStage,
   SaveBar,
+  useEditLang,
 } from '@/components/admin/live-edit'
 
 import { saveHeroRoles } from '../actions'
@@ -43,7 +44,7 @@ export function HeroRolesForm({
 }) {
   const t = useAdminT()
   const [pending, startTransition] = useTransition()
-  const [lang, setLang] = useState<Lang>('id')
+  const [lang, setLang] = useEditLang()
   const form = useForm<HeroRolesInput>({ resolver: zodResolver(heroRolesSchema), defaultValues })
   const {
     control,

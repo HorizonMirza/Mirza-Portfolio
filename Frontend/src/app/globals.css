@@ -2680,30 +2680,34 @@ html[data-intro='pending'] .intro {
 }
 /* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx, DESIGN.md bagian
    133): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
-.admin-inline {
-  /* lebar mengikuti isi di browser yang mendukung; lainnya memakai atribut size */
-  field-sizing: content;
-  min-width: 1ch;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  letter-spacing: inherit;
-  text-align: inherit;
-  text-transform: inherit;
-  outline: none;
-  caret-color: currentColor;
+/* dalam layer components agar kelas Tailwind di elemen yang sama (ukuran, tebal, rata tengah) menang */
+@layer components {
+  .admin-inline {
+    /* lebar mengikuti isi di browser yang mendukung; lainnya memakai atribut size */
+    field-sizing: content;
+    min-width: 1ch;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    text-transform: inherit;
+    outline: none;
+    caret-color: currentColor;
+  }
+  .admin-inline::placeholder {
+    color: currentColor;
+    opacity: 0.4;
+  }
+  /* isian yang salah: garis merah di bawah teks */
+  .admin-inline-bad {
+    box-shadow: inset 0 -2px 0 var(--danger);
+  }
 }
-.admin-inline::placeholder {
-  color: currentColor;
-  opacity: 0.4;
-}
-/* isian yang salah: garis merah di bawah teks */
-.admin-inline-bad {
-  box-shadow: inset 0 -2px 0 var(--danger);
-}
+
 /* Tiruan hero beranda di admin (components/admin/hero-preview.tsx, DESIGN.md bagian 133). Ukuran
    mengikuti lebar panggung lewat container query, bukan layar. */
 .admin-hero {

@@ -10,9 +10,9 @@ import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import {
   InlineInput,
   LANG_NAME,
-  type Lang,
   LangToggle,
   LiveStage,
+  useEditLang,
 } from '@/components/admin/live-edit'
 import { ReorderButtons } from '@/components/admin/reorder-buttons'
 import type { ActionResult } from '@/lib/action-result'
@@ -172,7 +172,7 @@ export function SkillsLive({
   globeLabels: GlobeLabels
 }) {
   const t = useAdminT()
-  const [lang, setLang] = useState<Lang>('id')
+  const [lang, setLang] = useEditLang()
   const nameOf = (c: SkillCategoryAdmin) => (lang === 'en' ? c.name_en : c.name_id)
   const options = categories.map((c) => ({ id: c.id, name: nameOf(c) }))
   const tools =

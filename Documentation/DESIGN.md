@@ -1662,3 +1662,12 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Tambah: chip bergaris putus "+ Skill baru" di tiap kategori dan baris "+ Kategori baru" di bawah; Enter membuat butir. Kategori baru memakai nama yang sama untuk kedua bahasa sampai diubah.
 - Naik/turun, hapus (dengan konfirmasi), serta ikon dan pindah kategori (tombol ⋯, jendela lama) muncul saat butir disorot atau difokus; di skill sebagai toolbar kecil melayang di atas chip agar chip tetap ringkas, di HP saat nama skill diketuk.
 - `skills-manager.tsx` (daftar kartu lama) dihapus. Lebar kolom ketik mengikuti isi (`field-sizing: content`, cadangan atribut `size`).
+
+## 135. Ubah langsung di pratinjau: teks halaman (About, Experience, Projects, Contact, Navbar, Footer) (2026-11-12)
+
+- `SiteTextForm` (kartu berisi kolom per teks) diganti `SiteTextLive` + `SiteTextLayout` (features/site-text/components). Tiap modul tampil sebagai tiruan halamannya di panggung: judul besar di tengah, judul bagian, kotak bergaris putus untuk teks yang di situs hanya muncul pada keadaan tertentu (keadaan kosong, pesan galat formulir, kartu pesan terkirim, nama menu untuk pembaca layar), dan cuplikan hasil mesin pencari untuk judul dan deskripsi halaman (SEO). Contact: kartu ID, formulir dengan label dan tombol, daftar pesan galat, kartu tiket. Navbar: bilah menu. Footer: ikon kontak dengan petunjuk sorot, tombol CV, hak cipta.
+- Yang tampil selalu teks yang dilihat pengunjung (ubahan admin atau teks bawaan). Teks yang dikembalikan sama dengan bawaan, atau dikosongkan, disimpan kosong (kembali ke bawaan); tombol "Kembalikan bawaan" tidak diperlukan lagi. Contoh isi data (riwayat, nama project, chip teknologi) redup dan tidak bisa diketik.
+- Bahasa isi yang diubah (`useEditLang`) awalnya mengikuti bahasa tampilan admin dan ikut berganti bila bahasa admin diganti; tombol ID/EN di panggung memilih bahasa lain. Id kolom tetap seperti form lama (mis. `About-title-id`) agar efek acak huruf saat ganti bahasa tetap berjalan.
+- Semua modul: tanpa deskripsi di atas, tab selebar panel (gaya bagian 129/131 kini untuk semua modul).
+- `.admin-inline` dipindah ke `@layer components` agar kelas Tailwind di kolom yang sama (ukuran judul, tebal, rata tengah) menang.
+- Footer: form "Kontak dan Resume CV" (data profil) masih form lama di bawah pratinjau; ikut diubah di tahap data.

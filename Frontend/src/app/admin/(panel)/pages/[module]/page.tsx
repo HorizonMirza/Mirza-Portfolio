@@ -13,7 +13,8 @@ import { getContactLinksForEdit } from '@/features/profile/queries'
 import { IntroForm, type IntroPreviewTexts } from '@/features/settings/components/intro-form'
 import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
-import { SiteTextForm } from '@/features/site-text/components/site-text-form'
+import { SiteTextLayout } from '@/features/site-text/components/site-text-layouts'
+import { SiteTextLive } from '@/features/site-text/components/site-text-live'
 import { getDefaultTexts, getTextsForEdit } from '@/features/site-text/queries'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
@@ -44,10 +45,8 @@ export default async function SiteModulePage({ params }: Params) {
 
   return (
     <>
-      <PageHeader
-        title={inHome ? 'Home' : found.title}
-        description={inHome ? undefined : found.description}
-      />
+      {/* tanpa deskripsi: tab dan pratinjau langsung di atas (revisi pemilik 2026-11-12) */}
+      <PageHeader title={inHome ? 'Home' : found.title} />
       {isTabbedModule(tabsOf) ? (
         <ModuleTabs moduleId={tabsOf} current={`/admin/pages/${moduleId}`} />
       ) : null}
@@ -56,8 +55,8 @@ export default async function SiteModulePage({ params }: Params) {
             pembuka; foto profil, foto utama, dan peran. Teks lain di keduanya tetap. */}
         {moduleId === 'intro' ? <IntroEditor /> : null}
         {moduleId === 'home' ? <HomePhotos /> : null}
-        {moduleId === 'footer' ? <FooterContacts /> : null}
         {moduleId !== 'intro' && moduleId !== 'home' ? <ModuleTexts moduleId={moduleId} /> : null}
+        {moduleId === 'footer' ? <FooterContacts /> : null}
       </div>
     </>
   )
@@ -97,7 +96,12 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
     getTextsForEdit(moduleId),
     getDefaultTexts(moduleId),
   ])
-  return <SiteTextForm moduleId={moduleId} initialValues={texts.values} defaults={defaults} />
+  const profile = moduleId === 'contact' ? await getPublicProfile() : null
+  return (
+    <SiteTextLive moduleId={moduleId} initialValues={texts.values} defaults={defaults}>
+      <SiteTextLayout moduleId={moduleId} name={profile?.name ?? 'Muhammad Mirza'} />
+    </SiteTextLive>
+  )
 }
 
 // Home → Foto beranda: hero seperti di situs, foto ditekan untuk diganti (DESIGN.md bagian 133)

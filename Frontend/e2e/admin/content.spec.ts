@@ -459,28 +459,27 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // dicek lewat DOM: di HP sidebar tersembunyi (menunya di laci)
   await expect(page.locator('aside a[href="/admin/settings"]')).toHaveCount(1)
 
-  // bahasa admin menentukan kolom yang tampil di form dua bahasa
-  await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toBeVisible()
-  await expect(page.getByLabel('Title (English)', { exact: true })).toHaveCount(0)
+  // bahasa admin menentukan bahasa isi yang diubah di pratinjau (DESIGN.md bagian 135)
+  await expect(page.getByRole('textbox', { name: 'Judul (Indonesia)', exact: true })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Title (English)', exact: true })).toHaveCount(0)
   // klik sebelum hydration selesai belum berpengaruh; tombol ini bergantian (EN lalu ID), jadi hanya
   // diklik ulang selama masih bertuliskan EN
   await expect(async () => {
     if (await toEnglish.count()) await toEnglish.click()
     // label isian ikut berbahasa Inggris (seluruh tampilan admin, DESIGN.md bagian 115)
-    await expect(page.getByLabel('Title (English)', { exact: true })).toBeVisible({ timeout: 1000 })
+    await expect(page.getByRole('textbox', { name: 'Title (English)', exact: true })).toBeVisible({
+      timeout: 1000,
+    })
   }).toPass()
-  await expect(page.getByLabel('Judul (Indonesia)', { exact: true })).toHaveCount(0)
+  await expect(page.getByRole('textbox', { name: 'Judul (Indonesia)', exact: true })).toHaveCount(0)
   // tampilan admin ikut berganti: menu, top bar, judul halaman dari server, dan html lang
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(bar.getByRole('button', { name: 'Appearance' })).toBeAttached()
   await expect(bar.getByRole('button', { name: 'Dark mode' })).toBeVisible()
-  await expect(
-    page.getByText('About page. Bio, photo, name, and roles are in the Profile tab.'),
-  ).toBeVisible()
   await expect(page.getByRole('link', { name: 'Page text' })).toBeVisible()
-  // isi halaman juga berbahasa Inggris: judul kartu dan tombol form
-  await expect(page.getByRole('heading', { name: 'Page text', exact: true })).toBeVisible()
+  // isi halaman juga berbahasa Inggris: tombol Simpan; deskripsi halaman tidak ada lagi
   await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible()
+  await expect(page.getByText(/^About page\. Bio/)).toHaveCount(0)
   await expect(page.getByText('Teks halaman', { exact: true })).toHaveCount(0)
   // dimuat ulang tetap berbahasa Inggris (cookie dibaca server)
   await page.reload()
@@ -634,11 +633,10 @@ test.describe('animasi ganti bahasa admin', () => {
     // judul dan kolom pertama langsung terlihat di layar biasa (layar sangat tinggi membuat WebKit
     // berskala 2-3x di sandbox hanya menggambar sekitar 1 frame per detik).
     await page.goto('/admin/pages/about')
-    // judul besar hanya untuk pembaca layar (DESIGN.md bagian 118); teks server yang terlihat adalah
-    // deskripsi halaman
-    const idDesc = 'Halaman Tentang. Bio, foto, nama, dan peran ada di tab Profil.'
-    const enDesc = 'About page. Bio, photo, name, and roles are in the Profile tab.'
-    const h1 = page.locator('main header p')
+    // teks dari server yang terlihat di panel isi: tab aktif (deskripsi halaman dihapus 2026-11-12)
+    const idDesc = 'Teks halaman'
+    const enDesc = 'Page text'
+    const h1 = page.locator('main nav a[aria-current="page"]')
     await expect(h1).toHaveText(idDesc)
     // rekam setiap teks judul dan isi kolom Judul (nilai atau placeholder) yang tampil, tiap frame
     await page.evaluate(() => {
@@ -649,7 +647,7 @@ test.describe('animasi ganti bahasa admin', () => {
       Object.assign(window, { __seen: seen, __last: last })
       const tick = () => {
         const now = {
-          title: document.querySelector('main header p')?.textContent ?? '',
+          title: document.querySelector('main nav a[aria-current="page"]')?.textContent ?? '',
           bar: document.querySelector('header p')?.textContent ?? '',
         }
         if (now.title !== prev.title) last.title = performance.now()

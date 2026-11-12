@@ -43,7 +43,8 @@ export async function ModuleTabs({
   return (
     <FilterTabs
       label={t('Bagian halaman')}
-      stretch={moduleId === 'home'}
+      // tab selebar panel di semua modul (revisi pemilik 2026-11-12, DESIGN.md bagian 135)
+      stretch
       items={TABS[moduleId].map((tab) => ({
         ...tab,
         label: t(tab.label),

@@ -2,12 +2,12 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FileText, House } from 'lucide-react'
-import { useLayoutEffect, useRef, useState, useTransition } from 'react'
+import { useLayoutEffect, useRef, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
-import { LANG_NAME, type Lang, SaveBar } from '@/components/admin/live-edit'
+import { LANG_NAME, type Lang, SaveBar, useEditLang } from '@/components/admin/live-edit'
 import { cn } from '@/lib/utils'
 
 import { saveIntroNotice } from '../actions'
@@ -38,7 +38,7 @@ export function IntroForm({
 }) {
   const t = useAdminT()
   const [pending, startTransition] = useTransition()
-  const [lang, setLang] = useState<Lang>('id')
+  const [lang, setLang] = useEditLang()
   const form = useForm<IntroInput>({ resolver: zodResolver(introSchema), defaultValues })
   const {
     register,
