@@ -3,13 +3,15 @@ import { notFound } from 'next/navigation'
 import { z } from 'zod'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { AssetSlot, GalleryPanel } from '@/features/assets/components/asset-panels'
+import { GalleryPanel } from '@/features/assets/components/asset-panels'
 import { getProjectAssets } from '@/features/assets/queries'
-import { ProjectForm } from '@/features/projects/components/project-form'
+import { projectPreviewTexts } from '@/features/projects/admin-texts'
+import { ProjectLive } from '@/features/projects/components/project-live'
 import { getProjectForEdit } from '@/features/projects/queries'
 import { listSkillOptions } from '@/features/skills/queries'
-import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { siteHost } from '@/lib/env'
 import { isUploadConfigured } from '@/lib/uploads'
 
 // judul tab browser ikut bahasa admin
@@ -18,36 +20,33 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Ubah project') }
 }
 
+// satu project seperti halaman detail situs, diubah langsung (DESIGN.md bagian 138)
 export default async function EditProjectPage({ params }: PageProps<'/admin/projects/[id]'>) {
   await requireSuperAdminPage()
   const { id } = await params
   if (!z.uuid().safeParse(id).success) notFound()
-  const [project, skillGroups, assets] = await Promise.all([
+  const [project, skillGroups, assets, texts] = await Promise.all([
     getProjectForEdit(id),
     listSkillOptions(),
     getProjectAssets(id),
+    projectPreviewTexts(),
   ])
   if (!project) notFound()
   const configured = isUploadConfigured()
-  const en = (await getAdminLang()) === 'en'
   return (
     <>
-      <PageHeader
-        title={(en && project.title_en) || project.title_id}
-        description={`/projects/${project.slug}`}
+      <PageHeader title="Projects" />
+      <ProjectLive
+        key={id}
+        projectId={id}
+        defaultValues={project}
+        skillGroups={skillGroups}
+        cover={assets.cover}
+        configured={configured}
+        texts={texts}
+        host={siteHost()}
+        gallery={<GalleryPanel projectId={id} images={assets.images} configured={configured} />}
       />
-      <div className="flex flex-col gap-6">
-        <ProjectForm key={id} projectId={id} defaultValues={project} skillGroups={skillGroups} />
-        <AssetSlot
-          title="Sampul"
-          description="Gambar utama di daftar project, pita project beranda, dan foto pertama galeri halaman detail. Rasio 16:9 disarankan."
-          target="project-cover"
-          targetId={id}
-          asset={assets.cover}
-          configured={configured}
-        />
-        <GalleryPanel projectId={id} images={assets.images} configured={configured} />
-      </div>
     </>
   )
 }

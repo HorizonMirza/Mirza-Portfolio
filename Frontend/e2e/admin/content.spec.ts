@@ -65,42 +65,61 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const titleId = `Project E2E ${suffix}`
   await page.goto('/admin/projects/new')
 
-  // Validasi: galat bahasa yang tampil langsung terlihat, galat bahasa lain diberitahukan (judul dan
-  // ringkasan; deskripsi opsional sejak audit 2026-10-31 GAP-05). Pengalih bahasa isian hanya di top bar.
-  await page.getByRole('button', { name: 'Buat project' }).click()
-  await expect(page.getByText('Judul wajib diisi')).toBeVisible()
-  await expect(page.getByText('2 galat di isian English.')).toBeVisible()
-  await expect(page.getByRole('tab', { name: /Indonesia|English/ })).toHaveCount(0)
+  // Ubah langsung di pratinjau halaman detail (DESIGN.md bagian 138). Validasi: galat kedua bahasa
+  // tampil di bawah panggung (judul dan ringkasan; deskripsi opsional sejak audit 2026-10-31 GAP-05).
+  // Diulang sampai hidrasi selesai. getByRole: hanya yang terlihat (Next menyimpan salinan halaman
+  // tersembunyi untuk navigasi kembali).
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Buat project' }).click()
+    await expect(page.getByText('title (Indonesia): Judul wajib diisi')).toBeVisible({
+      timeout: 1000,
+    })
+  }).toPass()
+  await expect(page.getByText(/^summary \(Inggris\): /)).toBeVisible()
 
-  await page.getByLabel('Judul', { exact: true }).fill(titleId)
-  await page.getByLabel('Ringkasan', { exact: true }).fill('Ringkasan untuk tes E2E.')
-  await page.getByLabel('Peran saya (opsional)').fill('Peran E2E')
+  const box = (name: string) => page.getByRole('textbox', { name, exact: true })
+  await box('Judul (Indonesia)').fill(titleId)
+  await box('Ringkasan (Indonesia)').fill('Ringkasan untuk tes E2E.')
+  await box('Peran saya (opsional) (Indonesia)').fill('Peran E2E')
   await page.locator('#description_id').fill('Deskripsi **E2E**.')
-  // "Buka isian English" mengganti seluruh tampilan admin ke bahasa Inggris (DESIGN.md bagian 115):
-  // label, tombol, notifikasi, dan daftar sesudah ini berbahasa Inggris
-  await page.getByRole('button', { name: 'Buka isian English' }).click()
-  await page.getByLabel('Title', { exact: true }).fill(`E2E project ${suffix}`)
-  await page.getByLabel('Summary', { exact: true }).fill('Summary for the E2E test.')
-  await page.locator('#description_en').fill('Description.')
-  await page.getByLabel('Slug').fill(`e2e-${suffix}`.toLowerCase())
-  // tombol detail: demo tampil, GitHub dimatikan Super Admin walau URL-nya diisi
-  await page.getByLabel('Demo URL (optional)').fill('https://example.com/demo')
-  await page.getByLabel('Repo URL (optional)').fill('https://github.com/example/repo')
-  await page.getByLabel('Show the "GitHub" button (repo URL)').uncheck()
-  // satu skill agar chip teknologi project ikut diuji
+  // bahasa Inggris lewat tombol EN di panggung; tampilan admin tetap berbahasa Indonesia
   await page
-    .locator('fieldset')
-    .filter({ hasText: 'Programming Languages' })
-    .getByText('TypeScript', { exact: true })
+    .getByRole('group', { name: 'Bahasa yang diubah' })
+    .getByRole('button', { name: 'EN' })
     .click()
-  await page.getByRole('button', { name: 'Create project' }).click()
-  await expect(page.getByText('Project created.')).toBeVisible()
+  const titleEn = `E2E project ${suffix}`
+  await box('Judul (Inggris)').fill(titleEn)
+  await box('Ringkasan (Inggris)').fill('Summary for the E2E test.')
+  await page.locator('#description_en').fill('Description.')
+  await box('Slug').fill(`e2e-${suffix}`.toLowerCase())
+  // tombol detail: demo tampil, GitHub dimatikan Super Admin walau URL-nya diisi
+  await box('URL demo (opsional)').fill('https://example.com/demo')
+  await box('URL repo (opsional)').fill('https://github.com/example/repo')
+  const main = page.getByRole('main')
+  const repoButton = main
+    .getByRole('group', { name: 'Tombol di halaman detail' })
+    .getByRole('button', { name: 'GitHub', exact: true })
+  await repoButton.click()
+  await expect(repoButton).toHaveAttribute('aria-pressed', 'false')
+  // satu skill agar chip teknologi project ikut diuji
+  const skill = main.getByRole('button', { name: 'TypeScript', exact: true })
+  await skill.click()
+  await expect(skill).toHaveAttribute('aria-pressed', 'true')
+  await page.getByRole('button', { name: 'Buat project' }).click()
+  await expect(page.getByText('Project dibuat.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
 
-  // Ubah status menjadi terbit
-  await page.getByLabel('Status').selectOption('PUBLISHED')
-  await page.getByRole('button', { name: 'Save', exact: true }).click()
-  await expect(page.getByText('Project saved.')).toBeVisible()
+  // Ubah status menjadi terbit (diulang sampai halaman edit terhidrasi)
+  await expect(async () => {
+    await main.getByRole('button', { name: 'Terbit', exact: true }).click({ timeout: 2000 })
+    await expect(main.getByRole('button', { name: 'Terbit', exact: true })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+      { timeout: 1000 },
+    )
+  }).toPass()
+  await page.getByRole('button', { name: 'Simpan', exact: true }).click()
+  await expect(page.getByText('Project disimpan.')).toBeVisible()
 
   // Project yang terbit setelah build langsung tampil di situs publik (revalidasi + dynamicParams).
   const slug = `e2e-${suffix}`.toLowerCase()
@@ -108,7 +127,6 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   expect(detail?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(titleId)
   await expect(page.getByText('Peran E2E')).toBeVisible()
-  const main = page.getByRole('main')
   await expect(main.getByRole('link', { name: /Lihat aplikasi/ })).toHaveAttribute(
     'href',
     'https://example.com/demo',
@@ -128,22 +146,16 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   }
   expect(publicFailures).toEqual([])
 
-  // daftar admin masih berbahasa Inggris: judul project tampil versi Inggrisnya
-  const titleEn = `E2E project ${suffix}`
+  // daftar admin seperti halaman Project situs: judul dalam bahasa admin (Indonesia)
   await page.goto('/admin/projects')
-  await page.getByRole('searchbox', { name: 'Search projects' }).fill(suffix)
-  const item = page.getByText(titleEn).locator('visible=true').first()
-  await expect(item).toBeVisible()
+  await expect(page.getByRole('link', { name: titleId })).toBeVisible()
+  await expect(page.getByText('Peran E2E').locator('visible=true').first()).toBeVisible()
 
   // Hapus dengan konfirmasi
-  await page
-    .getByRole('button', { name: `Delete ${titleEn}` })
-    .locator('visible=true')
-    .first()
-    .click()
-  await page.getByRole('dialog').getByRole('button', { name: 'Delete' }).click()
-  await expect(page.getByText('Project deleted.')).toBeVisible()
-  await expect(page.getByText(titleEn)).toHaveCount(0)
+  await page.getByRole('button', { name: `Hapus ${titleId}` }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
+  await expect(page.getByText('Project dihapus.')).toBeVisible()
+  await expect(page.getByRole('link', { name: titleId })).toHaveCount(0)
 
   // Status dicek langsung ke server, tanpa cache HTTP browser. Firefox menerapkan
   // stale-while-revalidate juga untuk navigasi, jadi `next start` lokal bisa menyajikan salinan

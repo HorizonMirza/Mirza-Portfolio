@@ -1,14 +1,13 @@
-import { Plus } from 'lucide-react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 
 import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
-import { Button } from '@/components/ui/button'
-import { ProjectTable } from '@/features/projects/components/project-table'
+import { browserAddress } from '@/features/projects/browser-address'
+import { ProjectListLive } from '@/features/projects/components/project-list-live'
 import { listProjectsAdmin } from '@/features/projects/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { siteHost } from '@/lib/env'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,31 +15,26 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Project') }
 }
 
+// daftar project seperti di situs; baris ditekan untuk diubah (DESIGN.md bagian 138)
 export default async function ProjectsPage() {
   await requireSuperAdminPage()
-  const projects = await listProjectsAdmin()
-  const { lang, t } = await getAdminT()
+  const [projects, lang] = await Promise.all([listProjectsAdmin(), getAdminLang()])
+  const en = lang === 'en'
+  const host = siteHost()
   return (
     <>
-      <PageHeader
-        title="Projects"
-        description="Urutan di sini sama dengan urutan di situs publik. Hanya project berstatus terbit yang tampil."
-        actions={
-          <Button asChild>
-            <Link href="/admin/projects/new">
-              <Plus aria-hidden="true" />
-              {t('Project baru')}
-            </Link>
-          </Button>
-        }
-      />
+      <PageHeader title="Projects" />
       <ModuleTabs moduleId="projects" current="/admin/projects" />
-      <ProjectTable
-        rows={projects.map(({ title_id, title_en, ...p }) => ({
-          ...p,
-          // judul ikut bahasa admin
-          title: lang === 'en' ? title_en : title_id,
-          updatedAt: p.updatedAt.toISOString(),
+      <ProjectListLive
+        rows={projects.map((p) => ({
+          id: p.id,
+          title: (en && p.title_en) || p.title_id,
+          role: (en && p.role_en) || p.role_id || '',
+          summary: (en && p.summary_en) || p.summary_id,
+          status: p.status,
+          featured: p.featured,
+          address: browserAddress(p, host),
+          cover: p.cover?.url ?? null,
         }))}
       />
     </>

@@ -12,11 +12,15 @@ export async function listProjectsAdmin() {
       slug: true,
       title_id: true,
       title_en: true,
+      role_id: true,
+      role_en: true,
+      summary_id: true,
+      summary_en: true,
       status: true,
-      category: true,
-      year: true,
       featured: true,
-      updatedAt: true,
+      demoUrl: true,
+      // sampul untuk daftar admin yang tampil seperti daftar project situs
+      cover: { select: { url: true } },
     },
   })
 }
