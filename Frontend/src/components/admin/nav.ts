@@ -27,7 +27,7 @@ export const adminNav: readonly NavItem[] = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   // satu halaman per modul situs publik (features/site-text/catalog.ts SITE_MODULES)
   {
-    // tab pertama Home adalah kartu pembuka (Bagian Awal), lalu foto, peran, dan skill (2026-11-11)
+    // tab pertama Home adalah kartu pembuka (Bagian Awal), lalu peran dan skill (2026-11-12)
     href: '/admin/pages/intro',
     label: 'Home',
     icon: House,

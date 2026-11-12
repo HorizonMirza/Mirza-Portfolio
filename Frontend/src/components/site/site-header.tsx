@@ -18,7 +18,14 @@ const pill = `flex items-center gap-1 rounded-full p-1 ${floating}`
 // Topbar "tubelight" tiga bagian: foto bulat di kiri, kapsul menu di tengah (desktop),
 // tombol bahasa dan tema di kanan, masing-masing lingkaran sendiri.
 // HP: menu pindah ke kapsul ikon di bawah layar.
-export async function SiteHeader({ locale }: { locale: AppLocale }) {
+export async function SiteHeader({
+  locale,
+  currentPath,
+}: {
+  locale: AppLocale
+  // pratinjau admin (DESIGN.md bagian 141): halaman situs yang ditiru, untuk menu yang menyala
+  currentPath?: string
+}) {
   const [t, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Nav' }),
     getPublicProfile(),
@@ -40,7 +47,7 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
           </div>
           <nav aria-label={t('label')} className="hidden lg:block">
             <div className={pill}>
-              <NavLinks variant="top" />
+              <NavLinks variant="top" currentPath={currentPath} />
             </div>
           </nav>
           <div className="col-start-3 flex items-center gap-2 justify-self-end">
@@ -56,7 +63,7 @@ export async function SiteHeader({ locale }: { locale: AppLocale }) {
         {/* tanpa backdrop-blur: latar sudah 95% pekat, sedangkan blur di elemen fixed dihitung ulang
             setiap frame saat halaman bergerak di belakangnya (berat di HP) */}
         <div className="flex w-full max-w-md items-center rounded-full border border-border bg-surface/95 p-1.5 shadow-lg">
-          <NavLinks variant="bottom" />
+          <NavLinks variant="bottom" currentPath={currentPath} />
         </div>
       </nav>
     </>

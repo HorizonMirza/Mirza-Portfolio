@@ -6,6 +6,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
+import { HeroContent } from '@/components/site/hero-content'
 import { HeroCursor } from '@/components/site/hero-cursor'
 import { LiquidMaskPortrait } from '@/components/site/liquid-mask-portrait'
 import { Container } from '@/components/site/section-heading'
@@ -175,23 +176,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
     .split('|')
     .map((r) => r.trim())
     .filter(Boolean)
-  const nameWords = name.split(/\s+/)
-  // Baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca nama utuh.
-  // Kata pertama dibagi tiga (mis. MUH·AM·MAD): bagian tengah diberi ruang selebar wajah agar sisi
-  // kiri dan kanannya sejajar dan utuh di kiri-kanan wajah (revisi pemilik 2026-10-19).
-  const first = nameWords[0] ?? ''
-  const edge = Math.max(0, Math.floor((first.length - 2) / 2))
-  const nameLines = (
-    <>
-      <span>
-        {first.slice(0, edge)}
-        <span className="hero-name-mid">{first.slice(edge, first.length - edge)}</span>
-        {first.slice(first.length - edge)}
-      </span>
-      {nameWords.length > 1 ? <span> {nameWords.slice(1).join(' ')}</span> : null}
-    </>
-  )
-
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
@@ -210,24 +194,19 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         >
           {/* kursor titik + cincin di atas foto (pilihan pemilik 2026-11-06, demo K3) */}
           {settings.heroAnimation ? <HeroCursor /> : null}
-          <div className="hero">
-            {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
-            <div aria-hidden="true" className="hero-glow" />
-            <h1 id="hero-title" className="hero-name">
-              {nameLines}
-            </h1>
-            <figure className="hero-portrait">{portrait}</figure>
-            <div aria-hidden="true" className="hero-name-front">
-              <p className="hero-name">{nameLines}</p>
-            </div>
-            {roles.length > 0 ? (
-              <ul className="hero-roles">
-                {roles.map((role) => (
-                  <li key={role}>{role}</li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
+          <HeroContent
+            name={name}
+            portrait={portrait}
+            roles={
+              roles.length > 0 ? (
+                <ul className="hero-roles">
+                  {roles.map((role) => (
+                    <li key={role}>{role}</li>
+                  ))}
+                </ul>
+              ) : null
+            }
+          />
         </LiquidMaskPortrait>
       </section>
 

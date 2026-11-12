@@ -143,8 +143,20 @@ export function InlineArea({
   useLayoutEffect(() => {
     const el = area.current
     if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
+    const fit = () => {
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight}px`
+    }
+    fit()
+    // lebar berubah (panel atau bingkai pratinjau berubah ukuran): tinggi dihitung ulang
+    let width = el.clientWidth
+    const observer = new ResizeObserver(() => {
+      if (el.clientWidth === width) return
+      width = el.clientWidth
+      fit()
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
   }, [measure])
   return (
     <textarea

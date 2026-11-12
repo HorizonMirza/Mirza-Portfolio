@@ -4,10 +4,10 @@ import { getAdminT } from '@/lib/admin-lang-server'
 // Tiap modul situs publik punya satu menu; teks halamannya dan datanya (profil, skill, pengalaman,
 // project) dipisah sebagai tab di dalam modul itu, bukan menu kedua di sidebar.
 const TABS = {
-  // Home: empat tab selebar panel, urutan pilihan pemilik (2026-11-11, DESIGN.md bagian 129)
+  // Home: tab selebar panel, urutan pilihan pemilik (2026-11-11, DESIGN.md bagian 129); tab Foto
+  // beranda dihapus 2026-11-12 (foto utama diganti dari tab Peran, foto profil dari Akun)
   home: [
     { label: 'Kartu pembuka', href: '/admin/pages/intro' },
-    { label: 'Foto beranda', href: '/admin/pages/home' },
     { label: 'Peran beranda', href: '/admin/roles' },
     { label: 'Skill teknis', href: '/admin/skills' },
   ],

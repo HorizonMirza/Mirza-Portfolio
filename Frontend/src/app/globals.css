@@ -2720,83 +2720,12 @@ html[data-intro='pending'] .intro {
   }
 }
 
-/* Tiruan hero beranda di admin (components/admin/hero-preview.tsx, DESIGN.md bagian 133). Ukuran
-   mengikuti lebar panggung lewat container query, bukan layar. */
-.admin-hero {
-  --hero-glow: color-mix(in srgb, var(--note) 16%, transparent);
-  position: relative;
-  container-type: inline-size;
-  aspect-ratio: 16 / 9;
-  min-height: 22rem;
-  max-height: 38rem;
-  width: 100%;
-  overflow: hidden;
-  background: var(--bg);
-  color: var(--text);
-}
-@media (max-width: 640px) {
-  .admin-hero {
-    aspect-ratio: 3 / 4;
-  }
-}
-.dark .admin-hero {
-  --hero-glow: rgb(255 255 255 / 0.18);
-}
-.admin-hero-glow {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 38%, var(--hero-glow), transparent 55%);
-  pointer-events: none;
-}
-.admin-hero-name {
-  position: absolute;
-  /* di bawah tempat navbar (foto profil bulat di kiri atas), seperti di situs */
-  inset: 4.5rem 0 auto;
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 13cqi, 9rem);
-  font-weight: 700;
-  line-height: 0.9;
-  text-align: center;
-  text-transform: uppercase;
-  -webkit-mask-image: linear-gradient(#000 30%, transparent 95%);
-  mask-image: linear-gradient(#000 30%, transparent 95%);
-  pointer-events: none;
-}
-.admin-hero-name > span {
-  display: block;
-}
-.admin-hero-portrait {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  height: 90%;
-  aspect-ratio: 1120 / 1100;
-  translate: -50% 0;
-}
-.admin-hero-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: bottom;
-}
-/* peran di kiri dan kanan bawah, huruf seperti .hero-roles situs */
-.admin-hero-roles {
-  position: absolute;
-  inset: auto 4cqi 5% 4cqi;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  font-family: var(--font-sans);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  text-shadow:
-    0 0 6px var(--bg),
-    0 0 14px var(--bg);
-}
-.admin-hero-roles > :last-child:not(:first-child) {
-  text-align: right;
+/* Bingkai layar pratinjau 1:1 di admin (components/admin/site-frame.tsx, DESIGN.md bagian 141): isi
+   berukuran satu layar penuh lalu diperkecil. Elemen fixed di dalamnya (latar kartu pembuka, menu
+   bawah HP) menempel pada bingkai karena transform. Peran hero bisa diketik (di situs tidak bisa
+   ditekan). */
+.site-frame .hero-roles {
+  pointer-events: auto;
 }
 /* Admin → Home, Kartu pembuka: isi kartu diketik langsung (DESIGN.md bagian 132). Tanpa bingkai
    dan garis fokus; hanya kursor berkedip, huruf sama dengan teks kartu. */
@@ -3514,13 +3443,25 @@ html[data-intro='pending'] .intro {
 
 /* Panel admin: semua huruf Inter biasa seperti teks utama, termasuk judul (h1-h3) dan utilitas
    font-display; tanpa huruf kapital (pilihan pemilik 2026-11-11, DESIGN.md bagian 113). Variabel
-   --font-display di :root sudah terurai ke Oswald, jadi keduanya ditimpa di sini. */
+   --font-display di :root sudah terurai ke Oswald, jadi ditimpa di sini. */
 @layer base {
   .admin-ui {
-    --font-oswald: var(--font-inter);
     --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   }
   .admin-ui :is(h1, h2, h3) {
+    text-transform: none;
+  }
+  /* Pratinjau 1:1 di admin (components/admin/site-frame.tsx, DESIGN.md bagian 141): di dalam bingkai
+     layar huruf dan huruf kapital kembali seperti situs (Oswald untuk judul). --font-oswald sengaja
+     tidak ditimpa .admin-ui agar bisa dipakai di sini. */
+  .admin-ui .site-ui {
+    --font-display: var(--font-oswald), 'Arial Narrow', sans-serif;
+    font-family: var(--font-sans);
+  }
+  .admin-ui .site-ui :is(h1, h2) {
+    text-transform: uppercase;
+  }
+  .admin-ui .site-ui h3 {
     text-transform: none;
   }
 }

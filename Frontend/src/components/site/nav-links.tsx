@@ -66,9 +66,17 @@ function BottomLamp({ index }: { index: number }) {
 
 // top: teks di kapsul atas (desktop). bottom: bilah bawah HP berisi ikon besar saja, seperti bilah
 // tab aplikasi (revisi pemilik 2026-10-07); nama menu tetap ada untuk pembaca layar.
-export function NavLinks({ variant }: { variant: 'top' | 'bottom' }) {
+export function NavLinks({
+  variant,
+  currentPath,
+}: {
+  variant: 'top' | 'bottom'
+  // pratinjau admin (DESIGN.md bagian 141): halaman situs yang sedang ditiru, mis. '/' untuk beranda
+  currentPath?: string
+}) {
   const t = useTranslations('Nav')
-  const pathname = usePathname()
+  const routePath = usePathname()
+  const pathname = currentPath ?? routePath
   // arah geser halaman mengikuti urutan menu: ke kanan = maju, ke kiri = mundur (globals.css .nav-*)
   const currentIndex = siteNav.findIndex((item) => isSiteNavActive(pathname, item.href))
   return (

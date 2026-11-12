@@ -19,7 +19,6 @@ const PAGES = [
   '/admin/education/new',
   '/admin/messages',
   '/admin/pages/intro',
-  '/admin/pages/home',
   '/admin/roles',
   '/admin/pages/about',
   '/admin/pages/experience',
@@ -227,24 +226,20 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
   // sejak 2026-11-10 Home hanya mengelola foto profil, foto utama, dan peran (permintaan pemilik).
   // Yang diubah peran bahasa Inggris dan dicek di /en: tes halaman Tentang (/id/about) berjalan
   // bersamaan dan memeriksa peran bahasa Indonesia, jadi keduanya tidak saling mengganggu.
-  // peran diketik langsung di pratinjau hero (DESIGN.md bagian 133), bahasa dipilih di panggung
+  // peran diketik langsung di pratinjau beranda 1:1 (DESIGN.md bagian 133 dan 141); bahasanya
+  // mengikuti bahasa admin (tanpa tombol ID/EN di panggung)
   // getByRole: hanya yang terlihat (Next menyimpan salinan halaman tersembunyi untuk navigasi kembali)
   const roles = page.getByRole('textbox', { name: /^Role \d+ \(English\)$/ })
   // bahasa admin EN disetel lewat cookie sebelum halaman dibuka (sama seperti pilihan tombol bahasa
-  // di top bar), agar tidak berpacu dengan hidrasi tombol. Tampilan admin ikut berbahasa Inggris.
+  // di top bar). Tampilan admin ikut berbahasa Inggris.
   await page
     .context()
     .addCookies([{ name: 'mmirza-admin-lang', value: 'en', url: testInfo.project.use.baseURL! }])
   const openEnglish = async () => {
     await page.goto('/admin/roles')
-    // tombol EN baru berfungsi setelah hidrasi: diulang sampai kolom bahasa Inggris tampil
-    await expect(async () => {
-      await page
-        .getByRole('group', { name: 'Language being edited' })
-        .getByRole('button', { name: 'EN' })
-        .click({ timeout: 2000 })
-      await expect(roles.first()).toBeVisible({ timeout: 1000 })
-    }).toPass()
+    // bingkai pratinjau baru terlihat setelah diukur di browser (setelah hidrasi)
+    await expect(roles.first()).toBeVisible()
+    await expect(page.getByRole('group', { name: 'Language being edited' })).toHaveCount(0)
   }
   await openEnglish()
   const original = await roles.evaluateAll((els) => els.map((el) => (el as HTMLInputElement).value))
@@ -269,37 +264,28 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
     .not.toContain('Test Role Two')
 })
 
-test('modul Home: empat tab selebar panel, foto dan peran di tab masing-masing', async ({
+test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Peran', async ({
   page,
 }) => {
+  // tab Foto beranda dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 141): alamat lamanya
+  // diarahkan ke tab Peran
   await page.goto('/admin/pages/home')
-  // tanpa deskripsi; empat tab satu baris dengan urutan pilihan pemilik (DESIGN.md bagian 129)
+  await expect(page).toHaveURL(/\/admin\/roles$/)
   const tabs = page.getByRole('navigation', { name: 'Bagian halaman' }).getByRole('link')
-  await expect(tabs).toHaveText(['Kartu pembuka', 'Foto beranda', 'Peran beranda', 'Skill teknis'])
-  await expect(page.getByRole('link', { name: 'Foto beranda' })).toHaveAttribute(
-    'aria-current',
-    'page',
-  )
-  await expect(page.locator('main').getByText(/^Beranda: foto profil/)).toHaveCount(0)
-  // satu baris: semua tab sejajar di atas
-  const tops = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
-  expect(new Set(tops).size).toBe(1)
-  // Foto beranda: hero seperti di situs, foto ditekan untuk diganti (DESIGN.md bagian 133)
-  for (const label of ['Ganti foto profil', 'Ganti foto utama'])
-    await expect(page.getByRole('button', { name: label })).toBeVisible()
-  await expect(page.getByRole('textbox', { name: /^Peran ke-1/ })).toHaveCount(0)
-  await page.goto('/admin/roles')
-  await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).toBeVisible()
-  await expect(page.getByRole('textbox', { name: 'Peran ke-2 (Indonesia)' })).toBeVisible()
+  await expect(tabs).toHaveText(['Kartu pembuka', 'Peran beranda', 'Skill teknis'])
   await expect(page.getByRole('link', { name: 'Peran beranda' })).toHaveAttribute(
     'aria-current',
     'page',
   )
-  await page.goto('/admin/pages/home')
-  // armor, judul bagian, dan SEO tidak bisa diubah lagi
-  for (const old of ['Armor hero', 'Judul bagian', 'SEO']) {
-    await expect(page.getByRole('heading', { name: old, exact: true })).toHaveCount(0)
-  }
+  // satu baris: semua tab sejajar di atas
+  const tops = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
+  expect(new Set(tops).size).toBe(1)
+  // beranda 1:1: navbar situs asli (tidak bisa ditekan) dan peran diketik di tempatnya
+  await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Peran ke-2 (Indonesia)' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).not.toHaveValue('')
+  await expect(page.locator('.site-frame [inert] .site-bar').first()).toBeAttached()
+  await expect(page.getByRole('button', { name: 'Ganti foto profil' })).toHaveCount(0)
   // foto utama ditekan: jendela kecil dengan acuan foto bawaan yang bisa diunduh
   await expect(async () => {
     await page.getByRole('button', { name: 'Ganti foto utama' }).click({ timeout: 2000 })
@@ -330,7 +316,7 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
     'aria-current',
     'page',
   )
-  await expect(page.getByRole('link', { name: 'Foto beranda', exact: true })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Foto beranda', exact: true })).toHaveCount(0)
   // nama halaman di top bar dan menu yang menyala milik Home (Beranda di bahasa admin Indonesia)
   await expect(page.getByRole('banner').getByText('Beranda', { exact: true })).toBeVisible()
   await expect(page.locator('aside a[href="/admin/pages/intro"]')).toHaveAttribute(
@@ -721,7 +707,7 @@ test.describe('animasi ganti bahasa admin', () => {
 })
 
 test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
-  for (const path of ['/admin', '/admin/pages/home', '/admin/profile', '/admin/messages']) {
+  for (const path of ['/admin', '/admin/roles', '/admin/profile', '/admin/messages']) {
     await page.goto(path)
     const blue = await page.evaluate(() => {
       const found: string[] = []

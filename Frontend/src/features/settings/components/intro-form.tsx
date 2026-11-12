@@ -8,6 +8,8 @@ import { useForm, useWatch } from 'react-hook-form'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { LANG_NAME, type Lang, SaveBar, useEditLang } from '@/components/admin/live-edit'
+import { SiteFrame } from '@/components/admin/site-frame'
+import { CommitGrid } from '@/components/shared/commit-grid'
 import { cn } from '@/lib/utils'
 
 import { saveIntroNotice } from '../actions'
@@ -21,10 +23,10 @@ export type IntroPreviewTexts = Record<
 
 const MAX = 600
 
-// Admin → Home, tab Kartu pembuka (revisi pemilik 2026-11-12, DESIGN.md bagian 131-132): kartu
-// "Informasi Penting" tampil seperti yang dilihat pengunjung, di panggung hitam selebar panel. Isi
-// kartu langsung bisa diketik di tempatnya, tanpa kotak isian dan tanpa ikon (hanya kursor
-// berkedip), seperti mengetik di kolom pesan. Tombol ID/EN di kartu memilih bahasa yang diubah.
+// Admin → Home, tab Kartu pembuka (revisi pemilik 2026-11-12, DESIGN.md bagian 131-132 dan 141):
+// layar kartu "Informasi Penting" tampil 1:1 seperti yang dilihat pengunjung (latar kotak commit,
+// huruf situs) di bingkai layar SiteFrame. Isi kartu langsung bisa diketik di tempatnya, tanpa kotak
+// isian dan tanpa ikon (hanya kursor berkedip), seperti mengetik di kolom pesan. Tombol ID/EN di kartu memilih bahasa yang diubah.
 // Judul, label, dan tombol kartu tetap (hanya pratinjau, tidak bisa ditekan). Simpan satu baris
 // penuh di bawah kartu.
 export function IntroForm({
@@ -58,8 +60,20 @@ export function IntroForm({
   useLayoutEffect(() => {
     const el = area.current
     if (!el) return
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
+    const fit = () => {
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight}px`
+    }
+    fit()
+    // lebar kartu berubah (bingkai layar selesai diukur, panel berubah lebar): tinggi dihitung ulang
+    let width = el.clientWidth
+    const observer = new ResizeObserver(() => {
+      if (el.clientWidth === width) return
+      width = el.clientWidth
+      fit()
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
   }, [value, lang])
 
   const onSubmit = form.handleSubmit(
@@ -77,80 +91,84 @@ export function IntroForm({
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
-      {/* panggung hitam seperti latar kartu di situs, selebar panel isi sampai tepi kiri-kanan */}
-      <div className="admin-bleed flex justify-center rounded-md bg-black px-0 py-8 sm:px-4 sm:py-16">
-        <div className="intro-card login-card" lang={lang}>
-          <div className="intro-panel">
-            <div aria-hidden="true" className="intro-grain" />
-            <div className="intro-box text-white">
-              <div className="flex items-center justify-between gap-4">
-                <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
-                <div role="group" aria-label={t('Bahasa yang diubah')} className="intro-lang">
-                  {(['id', 'en'] as const).map((l) => (
-                    <button
-                      key={l}
-                      type="button"
-                      aria-pressed={l === lang}
-                      onClick={() => setLang(l)}
-                      className="relative"
-                    >
-                      {l.toUpperCase()}
-                      {/* titik: bahasa ini sudah diubah dan belum disimpan */}
-                      {dirtyFields[`introBody_${l}`] ? (
-                        <span
-                          aria-hidden="true"
-                          className="absolute top-1 right-1 size-1.5 rounded-full bg-current"
-                        />
-                      ) : null}
-                    </button>
-                  ))}
+      {/* 1:1 seperti di situs (revisi pemilik 2026-11-12, DESIGN.md bagian 141): layar kartu pembuka
+          (.intro, latar kotak commit) di bingkai layar SiteFrame */}
+      <SiteFrame>
+        <div className="intro flex" lang={lang}>
+          <CommitGrid />
+          <div className="intro-card login-card">
+            <div className="intro-panel">
+              <div aria-hidden="true" className="intro-grain" />
+              <div className="intro-box">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
+                  <div role="group" aria-label={t('Bahasa yang diubah')} className="intro-lang">
+                    {(['id', 'en'] as const).map((l) => (
+                      <button
+                        key={l}
+                        type="button"
+                        aria-pressed={l === lang}
+                        onClick={() => setLang(l)}
+                        className="relative"
+                      >
+                        {l.toUpperCase()}
+                        {/* titik: bahasa ini sudah diubah dan belum disimpan */}
+                        {dirtyFields[`introBody_${l}`] ? (
+                          <span
+                            aria-hidden="true"
+                            className="absolute top-1 right-1 size-1.5 rounded-full bg-current"
+                          />
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <p className="intro-title" aria-hidden="true">
-                {card.title}
-              </p>
-              <label htmlFor={name} className="sr-only">
-                {t('Isi kartu pembuka ({lang})', { lang: t(LANG_NAME[lang]) })}
-              </label>
-              {/* teks kartu yang bisa diketik langsung: tanpa latar, bingkai, atau ikon */}
-              <textarea
-                key={name}
-                id={name}
-                rows={3}
-                maxLength={MAX}
-                spellCheck={false}
-                aria-invalid={error ? true : undefined}
-                aria-describedby={error ? `${name}-error` : undefined}
-                {...field}
-                ref={(el) => {
-                  fieldRef(el)
-                  area.current = el
-                }}
-                className="intro-body intro-type block w-full resize-none overflow-hidden border-0 bg-transparent p-0"
-              />
-              {/* tombol kartu hanya pratinjau */}
-              <div
-                aria-hidden="true"
-                className={cn(
-                  'pointer-events-none',
-                  hasCv ? 'intro-actions intro-actions-2' : 'intro-actions',
-                )}
-              >
-                {hasCv ? (
-                  <span className="intro-btn intro-btn-primary">
-                    <FileText />
-                    {card.downloadCv}
+                <p className="intro-title" aria-hidden="true">
+                  {card.title}
+                </p>
+                <label htmlFor={name} className="sr-only">
+                  {t('Isi kartu pembuka ({lang})', { lang: t(LANG_NAME[lang]) })}
+                </label>
+                {/* teks kartu yang bisa diketik langsung: tanpa latar, bingkai, atau ikon */}
+                <textarea
+                  key={name}
+                  id={name}
+                  rows={3}
+                  maxLength={MAX}
+                  spellCheck={false}
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={error ? `${name}-error` : undefined}
+                  {...field}
+                  ref={(el) => {
+                    fieldRef(el)
+                    area.current = el
+                  }}
+                  className="intro-body intro-type block w-full resize-none overflow-hidden border-0 bg-transparent p-0"
+                />
+                {/* tombol kartu hanya pratinjau */}
+                <div
+                  aria-hidden="true"
+                  className={cn(
+                    'pointer-events-none',
+                    hasCv ? 'intro-actions intro-actions-2' : 'intro-actions',
+                  )}
+                >
+                  {hasCv ? (
+                    <span className="intro-btn intro-btn-primary">
+                      <FileText />
+                      {card.downloadCv}
+                    </span>
+                  ) : null}
+                  <span className="intro-btn intro-btn-secondary">
+                    <House />
+                    {card.home}
                   </span>
-                ) : null}
-                <span className="intro-btn intro-btn-secondary">
-                  <House />
-                  {card.home}
-                </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </SiteFrame>
       {error ? (
         <p id={`${name}-error`} className="text-sm text-danger">
           {t(error)}

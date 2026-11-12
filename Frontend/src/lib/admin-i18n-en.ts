@@ -443,8 +443,6 @@ export const EN: Record<string, string> = {
   'Ada teks yang bukan milik halaman ini.': 'Some text does not belong to this page.',
   'Teks ini tidak bisa diubah': 'This text cannot be changed',
   'Foto utama': 'Main photo',
-  'Foto bulat di kiri atas. Juga tampil di footer, kartu halaman Tentang, dan kartu ID halaman Kontak. Rasio persegi atau potret.':
-    'Round photo at the top left. Also shown in the footer, on the About page card, and on the Contact page ID card. Square or portrait ratio.',
   'Foto besar di beranda. WebP, PNG, atau AVIF dengan perbandingan sekitar 1120:1100, lebar minimal 700 px.':
     'Large photo on the home page. WebP, PNG, or AVIF with a ratio of about 1120:1100, at least 700 px wide.',
   'Pembingkaian halaman dan gambar armor dihitung dari foto bawaan, jadi pengganti harus dibingkai sama: kepala, wajah, dan tangan di posisi yang sama, rata bawah, latar transparan.':
