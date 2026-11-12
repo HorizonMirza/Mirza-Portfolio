@@ -20,12 +20,8 @@ export const EN: Record<string, string> = {
   'Menu profil': 'Profile menu',
   'Bahasa yang diubah': 'Language being edited',
   'Isi kartu pembuka ({lang})': 'Introduction card text ({lang})',
-  'Ubah isi kartu ({lang})': 'Edit card text ({lang})',
   Indonesia: 'Indonesian',
   Inggris: 'English',
-  'Tekan untuk menulis isi kartu': 'Tap to write the card text',
-  'Tekan isi kartu untuk mengubahnya dan Esc untuk melihat hasilnya; pilih ID atau EN di kartu untuk bahasa lain. Tulis **teks** untuk huruf tebal. {count}/{max} karakter.':
-    'Tap the card text to edit it and press Esc to see the result; choose ID or EN on the card for the other language. Use **text** for bold. {count}/{max} characters.',
   'Isi {lang}: {error}': '{lang} text: {error}',
   'Hapus foto unggahan untuk kembali ke foto bawaan.':
     'Delete the uploaded photo to go back to the default photo.',

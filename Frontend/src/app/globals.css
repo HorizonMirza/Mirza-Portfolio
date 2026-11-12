@@ -2678,6 +2678,14 @@ html[data-intro='pending'] .intro {
   text-align: justify;
   hyphens: auto;
 }
+/* Admin → Home, Kartu pembuka: isi kartu diketik langsung (DESIGN.md bagian 132). Tanpa bingkai
+   dan garis fokus; hanya kursor berkedip, huruf sama dengan teks kartu. */
+.intro-type {
+  font: inherit;
+  letter-spacing: inherit;
+  outline: none;
+  caret-color: #fff;
+}
 .intro-body strong {
   color: #fff;
 }

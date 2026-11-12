@@ -307,33 +307,32 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
   })
   expect(Math.abs(widths.nav - widths.inner)).toBeLessThan(2)
 
-  // kartu tampil seperti di situs; isinya ditekan untuk diubah di tempat, Simpan di bawah kartu
-  await expect(page.getByRole('button', { name: 'Simpan' })).toHaveCount(1)
+  // kartu tampil seperti di situs dan isinya langsung bisa diketik, tanpa kotak isian, ikon pensil,
+  // atau petunjuk (revisi 2026-11-12, DESIGN.md bagian 132); Simpan satu baris penuh
+  const save = page.getByRole('button', { name: 'Simpan' })
+  await expect(save).toHaveCount(1)
+  const saveWidth = (await save.boundingBox())!.width
+  expect(Math.abs(saveWidth - widths.inner)).toBeLessThan(2)
   await expect(page.getByText('Informasi Penting', { exact: true })).toBeVisible()
-  await expect(async () => {
-    await page
-      .getByRole('button', { name: /Ubah isi kartu \(Indonesia\)/ })
-      .click({ timeout: 2000 })
-    await expect(page.getByLabel('Isi kartu pembuka (Indonesia)')).toBeFocused({ timeout: 1000 })
-  }).toPass()
+  await expect(page.getByText(/Esc|\*\*teks\*\*/)).toHaveCount(0)
   const body = page.getByLabel('Isi kartu pembuka (Indonesia)')
+  await expect(body).toBeVisible()
+  expect(await body.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgba(0, 0, 0, 0)')
   const original = await body.inputValue()
   expect(original.length).toBeGreaterThan(0)
-  // isi kosong ditolak tanpa tersimpan
-  await body.fill('')
-  await page.getByRole('button', { name: 'Simpan' }).click()
-  await expect(page.getByText('Wajib diisi')).toBeVisible()
-  await expect(page.getByLabel('Isi kartu pembuka (Indonesia)')).toBeVisible()
+  // isi kosong ditolak tanpa tersimpan (diulang sampai hidrasi selesai)
+  await expect(async () => {
+    await body.fill('')
+    await save.click()
+    await expect(page.getByText('Wajib diisi')).toBeVisible({ timeout: 1000 })
+  }).toPass()
   // bahasa lain lewat tombol EN di kartu, judul ikut berbahasa Inggris
   await page
     .getByRole('group', { name: 'Bahasa yang diubah' })
     .getByRole('button', { name: 'EN' })
     .click()
   await expect(page.getByText('Important Information', { exact: true })).toBeVisible()
-  // tetap dalam mode ubah untuk bahasa yang dipilih; Esc menampilkan hasilnya di kartu
   await expect(page.getByLabel('Isi kartu pembuka (Inggris)')).toBeVisible()
-  await page.getByLabel('Isi kartu pembuka (Inggris)').press('Escape')
-  await expect(page.getByRole('button', { name: /Ubah isi kartu \(Inggris\)/ })).toBeVisible()
   // judul, saklar tampil, label, dan tombol kartu adalah teks tetap
   await expect(page.getByLabel('Judul', { exact: true })).toHaveCount(0)
   await expect(page.getByLabel('Tampilkan pemberitahuan pembuka')).toHaveCount(0)

@@ -1635,3 +1635,11 @@ Revisi pemilik:
 
 - **Tab Home selebar panel isi** sampai tepi kiri-kanan, keluar dari batas `max-w-6xl` isi halaman. `<main>` panel admin menjadi `@container/main`; kelas `.admin-bleed` (globals.css) memakai `width: 100cqw; margin-inline: calc(50% - 50cqw)`. Di layar yang lebih sempit dari batas itu hasilnya sama dengan 100%. Tes E2E memastikan lebar tab sama dengan lebar isi `<main>`.
 - **Kartu pembuka tanpa form biasa.** Admin melihat kartu "Informasi Penting" seperti di situs: panggung hitam, kartu kaca dengan garis cahaya, label nama, tombol ID/EN, judul, isi, dan tombol Resume CV/Beranda (hanya pratinjau, tidak bisa ditekan). Tombol ID/EN di kartu memilih bahasa yang diubah (titik kecil menandai bahasa yang sudah diubah tapi belum disimpan). Isi kartu ditekan untuk mengubahnya di tempat (ikon pensil); kotak isian tetap terbuka sampai disimpan atau Esc, agar tombol Simpan tidak bergeser saat ditekan. Pratinjau mendukung paragraf dan `**tebal**` (dibangun sebagai elemen React, tanpa HTML mentah); situs tetap memakai Markdown yang disanitasi di server. Petunjuk dan jumlah karakter (maks. 600) di bawah kartu, lalu Simpan. Galat bahasa lain ditampilkan dan kartu pindah ke bahasa itu saat disimpan. Di HP panggung selebar panel agar kartu selebar di situs.
+
+## 132. Kartu pembuka: mengetik langsung di kartu, panggung dan Simpan selebar panel (2026-11-12)
+
+Revisi pemilik atas bagian 131:
+
+- Petunjuk di bawah kartu (Esc, `**teks**`, jumlah karakter) dihapus. Batas 600 karakter tetap dijaga kolom dan server; galat tetap tampil di bawah kartu.
+- Ikon pensil dan mode lihat/ubah dihapus. Isi kartu adalah kolom ketik tanpa latar, bingkai, atau garis fokus (`.intro-type` di globals.css: huruf sama dengan teks kartu, kursor putih berkedip), tingginya mengikuti isi. Ditekan langsung bisa diketik, "seperti mengetik di Claude". Akibatnya `**tebal**` tampil sebagai teks mentah saat diubah; di situs tetap tebal.
+- Panggung hitam dan tombol Simpan selebar panel isi sampai tepi kiri-kanan (`.admin-bleed`), sudut kecil `rounded-md` seperti tab Home. Simpan satu baris penuh, putih (warna teks tema) dengan tulisan gelap.
