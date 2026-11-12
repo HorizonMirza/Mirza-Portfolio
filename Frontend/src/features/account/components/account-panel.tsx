@@ -27,6 +27,8 @@ import type { DeviceParts } from '@/lib/device'
 import { formatDateTime } from '@/lib/format'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
+import { ConfirmDelete } from '@/components/admin/confirm-delete'
+import { removeAsset } from '@/features/assets/actions'
 import { AssetUploader } from '@/features/assets/components/asset-uploader'
 import { saveSiteOption } from '@/features/settings/actions'
 
@@ -72,6 +74,7 @@ export function AccountPanel({
   name,
   email,
   photo,
+  photoAssetId,
   adminSince,
   passwordChangedAt,
   sessions,
@@ -83,6 +86,8 @@ export function AccountPanel({
   name: string
   email: string
   photo: string | StaticImageData
+  // id berkas foto unggahan; null bila memakai foto bawaan
+  photoAssetId: string | null
   adminSince: string | null
   passwordChangedAt: string | null
   sessions: AccountSession[]
@@ -153,7 +158,12 @@ export function AccountPanel({
         ) : null}
         {view === 'name' ? <NameForm current={name} onDone={done} /> : null}
         {view === 'photo' ? (
-          <PhotoView photo={photo} uploadReady={uploadReady} onDone={done} />
+          <PhotoView
+            photo={photo}
+            photoAssetId={photoAssetId}
+            uploadReady={uploadReady}
+            onDone={done}
+          />
         ) : null}
         {view === 'activity' ? <ActivityList events={events} filterable /> : null}
       </div>
@@ -665,10 +675,12 @@ function NameForm({ current, onDone }: { current: string; onDone: () => void }) 
 
 function PhotoView({
   photo,
+  photoAssetId,
   uploadReady,
   onDone,
 }: {
   photo: string | StaticImageData
+  photoAssetId: string | null
   uploadReady: boolean
   onDone: () => void
 }) {
@@ -691,6 +703,20 @@ function PhotoView({
           'Foto bulat yang sama dengan kiri atas situs, footer, kartu halaman Tentang, kartu ID Kontak, sidebar, dan menu profil. Rasio persegi atau potret.',
         )}
       </p>
+      {/* foto unggahan bisa dihapus untuk kembali ke foto bawaan (permintaan pemilik 2026-11-12,
+          setelah foto salah terunggah) */}
+      {photoAssetId ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-4">
+          <p className="text-sm text-muted">
+            {t('Hapus foto unggahan untuk kembali ke foto bawaan.')}
+          </p>
+          <ConfirmDelete
+            itemLabel={t('foto unggahan')}
+            onConfirm={removeAsset.bind(null, photoAssetId)}
+            onDone={onDone}
+          />
+        </div>
+      ) : null}
       {uploadReady ? (
         <AssetUploader target="profile-photo" onDone={onDone} />
       ) : (

@@ -18,6 +18,9 @@ export const EN: Record<string, string> = {
   'Tutup menu': 'Close menu',
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
+  'Hapus foto unggahan untuk kembali ke foto bawaan.':
+    'Delete the uploaded photo to go back to the default photo.',
+  'foto unggahan': 'uploaded photo',
   'Kembali ke Dashboard': 'Back to Dashboard',
   ', kembali ke Dashboard': ', back to Dashboard',
   '(membuka tab baru)': '(opens in a new tab)',
