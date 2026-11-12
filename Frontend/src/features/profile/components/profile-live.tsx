@@ -132,7 +132,7 @@ export function ProfileLive({
                 <button
                   type="button"
                   onClick={() => setPhotoOpen(true)}
-                  className="cursor-pointer rounded-2xl outline-offset-4 hover:outline-2 hover:outline-current/30 focus-visible:outline-2 focus-visible:outline-current"
+                  className="admin-editable cursor-pointer rounded-2xl outline-offset-4 hover:outline-2 hover:outline-current/30 focus-visible:outline-2 focus-visible:outline-current"
                 >
                   <AboutPhotoCard
                     photo={

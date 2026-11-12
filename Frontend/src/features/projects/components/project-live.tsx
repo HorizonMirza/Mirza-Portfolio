@@ -328,7 +328,7 @@ export function ProjectLive({
                 type="button"
                 disabled={!projectId}
                 onClick={() => setCoverOpen(true)}
-                className="relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
+                className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
               >
                 {cover ? (
                   <Image

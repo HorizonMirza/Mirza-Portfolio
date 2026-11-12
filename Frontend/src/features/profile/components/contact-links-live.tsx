@@ -186,7 +186,7 @@ export function ContactLinksLive({
                 <button
                   type="button"
                   onClick={() => setCvOpen(true)}
-                  className="grid size-9 place-items-center rounded-lg outline-offset-2 hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-current"
+                  className="admin-editable grid size-9 place-items-center rounded-lg outline-offset-2 hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-current"
                 >
                   {cv ? (
                     <FileText className="size-5" aria-hidden="true" />

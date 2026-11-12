@@ -1725,3 +1725,8 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Tiap skill tampil sebagai chip berisi logo dan nama. Logo ditekan untuk membuka jendela logo (`AssetEditDialog`, target unggah baru `skill-logo`: PNG/WebP/AVIF/JPG maksimal 1 MB, hiasan tanpa teks alternatif karena nama skill selalu tertulis). Skill tanpa logo menampilkan kotak bergaris putus dengan ikon gambar. Skill baru langsung membuka jendela logonya setelah dibuat.
 - Data: kolom opsional `Skill.logoId` (migrasi `skill_logo`, hanya menambah kolom). Logo unggahan didahulukan dari logo bawaan `public/skills` di globe beranda dan chip teknologi project (`resolveLogo`); kosong = perilaku lama. Logo ikut dihapus saat skill dihapus, dan cache `skills` + `projects` dibuang setelah logo diubah.
 - Ikon slug Simple Icons dan pindah kategori tetap lewat tombol "…" di alat kecil chip.
+
+## 144. Penanda bagian yang bisa diubah: garis putus-putus berkedip (2026-11-12)
+
+- Permintaan pemilik: di pratinjau "ubah langsung" bagian yang bisa diubah harus terlihat. Semua teks yang bisa diketik (`.admin-inline`, isi kartu pembuka `.intro-type`) dan foto/logo yang bisa ditekan untuk diganti (`.admin-editable`: foto utama di Peran, foto kartu About, sampul project, logo dan foto pengalaman, logo skill, ikon PDF Resume CV) diberi garis putus-putus tipis warna teks yang berkedip pelan (1,6 detik).
+- Kedip berhenti saat kolom sedang diketik atau tombol difokus; tombol yang belum aktif (mis. sampul sebelum project disimpan) tidak berkedip. Garis berupa outline sehingga tata letak tidak bergeser dan pratinjau tetap 1:1. Pengguna yang memilih gerak dikurangi melihat garis diam tanpa kedip.

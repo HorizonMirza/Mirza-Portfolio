@@ -240,7 +240,7 @@ export function SkillsLive({
                       type="button"
                       onClick={() => setLogoFor({ id: skill.id, name: skill.name })}
                       className={cn(
-                        'grid size-8 shrink-0 place-items-center rounded-md hover:bg-surface-2',
+                        'admin-editable grid size-8 shrink-0 place-items-center rounded-md hover:bg-surface-2',
                         !skill.shown && 'border border-dashed border-border text-muted',
                       )}
                     >

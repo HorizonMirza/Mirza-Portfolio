@@ -116,7 +116,7 @@ export function HeroRolesForm({
                   <button
                     type="button"
                     onClick={() => setPhotoOpen(true)}
-                    className="absolute inset-0 cursor-pointer outline-offset-[-4px] focus-visible:outline-2 focus-visible:outline-current"
+                    className="admin-editable absolute inset-0 cursor-pointer outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current"
                   >
                     <Image
                       src={portrait?.url ?? defaultPortrait}

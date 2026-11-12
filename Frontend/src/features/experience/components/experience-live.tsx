@@ -130,7 +130,7 @@ export function ExperienceLive({
       title={experienceId ? undefined : t('Simpan dulu untuk menambah logo dan foto')}
       onClick={() => setSlot(which)}
       className={cn(
-        'cursor-pointer outline-offset-4 hover:outline-2 hover:outline-current/30 focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed',
+        'admin-editable cursor-pointer outline-offset-4 hover:outline-2 hover:outline-current/30 focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed',
         className,
       )}
     >
