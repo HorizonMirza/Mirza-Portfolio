@@ -68,7 +68,9 @@ describe('modul situs', () => {
     // halaman data menyalakan menu modulnya, bukan menu sendiri
     const active = (path: string) =>
       adminNav.filter((item) => isNavActive(path, item)).map((item) => item.href)
-    expect(active('/admin/profile')).toEqual(['/admin/pages/about'])
+    // About: menu langsung ke tab Profil (tab Teks halaman About dihapus 2026-11-12)
+    expect(active('/admin/profile')).toEqual(['/admin/profile'])
+    expect(active('/admin/education')).toEqual(['/admin/profile'])
     // tab Home (bagian 129): menu Home membuka tab pertama, kartu pembuka
     for (const tab of ['/admin/pages/home', '/admin/roles', '/admin/skills'])
       expect(active(tab), tab).toEqual(['/admin/pages/intro'])

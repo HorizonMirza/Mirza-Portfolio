@@ -11,8 +11,8 @@ const TABS = {
     { label: 'Peran beranda', href: '/admin/roles' },
     { label: 'Skill teknis', href: '/admin/skills' },
   ],
+  // tab Teks halaman About dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 142)
   about: [
-    { label: 'Teks halaman', href: '/admin/pages/about' },
     { label: 'Profil', href: '/admin/profile' },
     { label: 'Pendidikan', href: '/admin/education' },
   ],

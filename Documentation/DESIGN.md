@@ -1712,3 +1712,8 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - **Kartu pembuka:** layar `.intro` lengkap dengan latar kotak commit (`CommitGrid`) seperti dialog di situs. Tombol ID/EN di kartu tetap ada karena memang bagian kartu di situs (memilih bahasa isi yang diubah). Tinggi kotak ketik dihitung ulang saat lebar kartu berubah.
 - **Peran:** navbar situs asli (`SitePreviewHeader`: `SiteHeader` dalam bahasa admin, menu Beranda menyala, `inert` sehingga tidak bisa ditekan) dan isi hero asli (`components/site/hero-content.tsx`, dipakai juga oleh beranda). Peran diketik di tempatnya; peran bawaan tampil sebagai teks biasa (bukan samar), dan teks yang sama dengan bawaan disimpan kosong. Tombol ID/EN di panggung dihapus: bahasa mengikuti tombol bahasa admin di top bar. Area sentuh kolom peran diperbesar dengan padding transparan dan margin negatif (axe target-size) tanpa menggeser teks.
 - **Tab Foto beranda dihapus.** Foto utama diganti dengan menekan foto di tab Peran (jendela yang sama: acuan foto bawaan, hapus, unggah); foto profil diganti di Akun. Alamat `/admin/pages/home` diarahkan ke `/admin/roles`. `HomePhotosEditor`, `HeroPreview`, dan CSS `.admin-hero*` dihapus.
+
+## 142. About tanpa tab Teks halaman (2026-11-12)
+
+- Permintaan pemilik: tab "Teks halaman" di About dihapus. About kini hanya tab Profil dan Pendidikan; menu About langsung membuka Profil, dan alamat lama `/admin/pages/about` diarahkan ke `/admin/profile`.
+- Teks halaman Tentang (judul, judul Pendidikan, teks kosong, SEO) tetap tampil di situs dengan isi bawaan atau yang tersimpan sebelumnya, hanya tidak diubah dari admin lagi. Kuncinya tetap di katalog teks situs. Modul lain (Experience, Projects, Contact, Navbar, Footer) tetap punya teks halaman.

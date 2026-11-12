@@ -20,7 +20,6 @@ const PAGES = [
   '/admin/messages',
   '/admin/pages/intro',
   '/admin/roles',
-  '/admin/pages/about',
   '/admin/pages/experience',
   '/admin/pages/projects',
   '/admin/pages/contact',
@@ -423,9 +422,11 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
   isMobile,
 }) => {
   await page.goto('/admin/profile')
-  await expect(page.getByRole('link', { name: 'Teks halaman' })).toHaveAttribute(
+  // tab Teks halaman About dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 142)
+  await expect(page.getByRole('link', { name: 'Teks halaman' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveAttribute(
     'href',
-    '/admin/pages/about',
+    '/admin/education',
   )
   await expect(page.getByRole('link', { name: 'Profil', exact: true })).toHaveAttribute(
     'aria-current',
@@ -440,13 +441,15 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
     )
     // halaman data (profil, project, skill, pengalaman) hanya lewat tab modul, bukan menu sendiri.
     // Dicek lewat alamat: nama menu Projects/Experience di mode Indonesia memang Project/Pengalaman.
-    for (const old of ['/admin/profile', '/admin/projects', '/admin/skills', '/admin/experience'])
+    // menu About langsung ke tab Profil sejak tab Teks halaman About dihapus (2026-11-12)
+    await expect(menu.locator('a[href="/admin/profile"]')).toHaveCount(1)
+    for (const old of ['/admin/projects', '/admin/skills', '/admin/experience'])
       await expect(menu.locator(`a[href="${old}"]`)).toHaveCount(0)
   }
 })
 
 test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ page }) => {
-  await page.goto('/admin/pages/about')
+  await page.goto('/admin/pages/experience')
   const bar = page.getByRole('banner')
   // satu tombol bulat seperti situs publik: kode yang terlihat adalah bahasa tujuan
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
@@ -455,7 +458,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // menu profil: tombol titik tiga di top bar di semua ukuran layar (demo 3, DESIGN.md bagian 128)
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
   // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; DESIGN.md bagian 113)
-  const title = bar.getByText('Tentang', { exact: true })
+  const title = bar.getByText('Pengalaman', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
   // logo dan nama panel pindah ke sidebar; Akun hanya di menu profil, Pengaturan kembali ke sidebar,
@@ -637,10 +640,10 @@ test.describe('animasi ganti bahasa admin', () => {
 
   test('judul dari server dan isi kolom form ikut efek acak huruf', async ({ page }) => {
     // permintaan pemilik 2026-11-11 (DESIGN.md bagian 116): SELURUH teks yang berganti ikut efek,
-    // termasuk judul halaman yang baru tiba setelah router.refresh() dan isi kolom form. Halaman About:
+    // termasuk judul halaman yang baru tiba setelah router.refresh() dan isi kolom form. Halaman Experience (About tanpa tab Teks halaman sejak 2026-11-12):
     // judul dan kolom pertama langsung terlihat di layar biasa (layar sangat tinggi membuat WebKit
     // berskala 2-3x di sandbox hanya menggambar sekitar 1 frame per detik).
-    await page.goto('/admin/pages/about')
+    await page.goto('/admin/pages/experience')
     // teks dari server yang terlihat di panel isi: tab aktif (deskripsi halaman dihapus 2026-11-12)
     const idDesc = 'Teks halaman'
     const enDesc = 'Page text'
@@ -662,7 +665,9 @@ test.describe('animasi ganti bahasa admin', () => {
         if (now.bar !== prev.bar) last.bar = performance.now()
         prev = now
         seen.title.add(now.title)
-        const field = document.querySelector<HTMLInputElement>('#About-title-id, #About-title-en')
+        const field = document.querySelector<HTMLInputElement>(
+          '#Experience-title-id, #Experience-title-en',
+        )
         if (field) seen.field.add(field.value || field.placeholder)
         requestAnimationFrame(tick)
       }
@@ -670,7 +675,7 @@ test.describe('animasi ganti bahasa admin', () => {
     })
     const fieldText = async () =>
       page
-        .locator('#About-title-id, #About-title-en')
+        .locator('#Experience-title-id, #Experience-title-en')
         .evaluate((el: HTMLInputElement) => el.value || el.placeholder)
     const idValue = await fieldText()
     const toEnglish = page.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
@@ -679,7 +684,7 @@ test.describe('animasi ganti bahasa admin', () => {
       await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 1000 })
     }).toPass()
     await expect(h1).toHaveText(enDesc)
-    await expect(page.locator('#About-title-en')).toBeVisible()
+    await expect(page.locator('#Experience-title-en')).toBeVisible()
     // tunggu animasi selesai, lalu ambil teks akhir kolom
     await expect.poll(fieldText).not.toMatch(/^$/)
     await page.waitForTimeout(1200)
@@ -698,7 +703,7 @@ test.describe('animasi ganti bahasa admin', () => {
     await expect.poll(() => between('field', [idValue, enValue])).toBeGreaterThan(0)
     await expect(h1).toHaveText(enDesc)
     // teks dari server dan dari browser selesai mengetik bersamaan (DESIGN.md bagian 117)
-    await expect(page.getByRole('banner').getByText('About', { exact: true })).toBeVisible()
+    await expect(page.getByRole('banner').getByText('Experience', { exact: true })).toBeVisible()
     const last = await page.evaluate(
       () => (window as unknown as { __last: Record<string, number> }).__last,
     )

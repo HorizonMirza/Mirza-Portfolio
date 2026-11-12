@@ -34,10 +34,11 @@ export const adminNav: readonly NavItem[] = [
     match: ['/admin/pages/home', '/admin/roles', '/admin/skills'],
   },
   {
-    href: '/admin/pages/about',
+    // tab pertama About adalah Profil sejak tab Teks halaman dihapus (2026-11-12)
+    href: '/admin/profile',
     label: 'About',
     icon: User,
-    match: ['/admin/profile', '/admin/education'],
+    match: ['/admin/pages/about', '/admin/education'],
   },
   {
     href: '/admin/pages/experience',

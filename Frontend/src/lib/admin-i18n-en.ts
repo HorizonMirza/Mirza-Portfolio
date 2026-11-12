@@ -46,9 +46,6 @@ export const EN: Record<string, string> = {
   'Belum tampil di situs (dipakai nanti)': 'Not shown on the site yet (for later)',
   'Unggulan di beranda': 'Featured on home',
   Headline: 'Headline',
-  'Riwayat pendidikan dari tab Pendidikan tampil di sini.':
-    'Education history from the Education tab appears here.',
-  'Tampil bila belum ada pendidikan': 'Shown when there is no education yet',
   'Contoh riwayat': 'Sample entry',
   Posisi: 'Position',
   'Tampil bila belum ada pengalaman': 'Shown when there is no experience yet',
