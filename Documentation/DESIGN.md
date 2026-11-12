@@ -143,7 +143,7 @@ Berbasis shadcn/ui, disesuaikan dengan token di atas. Semua punya keadaan: defau
 | **Form field** | Label selalu terlihat, teks bantuan, galat inline dengan `aria-describedby`. Form publik: Server Action + `useActionState` (tanpa library form). Form admin: React Hook Form |
 | **Toast** | Untuk hasil aksi admin (`role="status"`) |
 | **Dialog / Sheet** | Fokus terkunci, tutup dengan Esc |
-| **Table (admin)** | TanStack Table: pengurutan, pencarian, paginasi, ubah jadi kartu di HP |
+| **Daftar (admin)** | Seperti daftar di situs (timeline, baris project), entri ditekan untuk diubah; urutan dengan tombol naik/turun (bagian 137–138). Tabel TanStack dihapus 2026-11-12 |
 | **Empty / Error state** | Pesan jelas dan aksi lanjutan |
 | **Skeleton** | Untuk data yang dimuat |
 
@@ -1700,3 +1700,8 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Kartu Resume CV disorot (warna utama) seperti di situs bila ada link atau PDF. Link (mis. Google Drive) diketik di kartu; ikon kartu ditekan untuk membuka jendela berkas PDF (`AssetEditDialog`: buka berkas, hapus, unggah pengganti). Link didahulukan bila keduanya ada.
 - Panggung kartu kontak berada di bawah teks footer dengan tombol Simpan sendiri (dua form terpisah: teks situs dan data kontak).
 - `AssetSlot` dan `ContactLinksForm` dihapus (tidak dipakai lagi); `AssetEditDialog` kini menampilkan tautan "Buka berkas" untuk dokumen.
+
+## 140. Rapikan komponen admin lama (2026-11-12)
+
+- Setelah semua modul memakai "ubah langsung di pratinjau", komponen form/tabel lama tidak dipakai lagi dan dihapus: `DataTable`, `StatusBadge`, `BilingualTabs` (+ `countLangErrors`), `MarkdownEditor`, `FormFooter`, `LangChip`, dan `ui/tabs`. `Field` tetap untuk form biasa (akun, dialog skill, unggah, teks alternatif); labelnya kini selalu mengikuti bahasa tampilan admin.
+- Dependency `@tanstack/react-table` dan `@radix-ui/react-tabs` dihapus (lockfile hanya berkurang). Catatan bagian sebelumnya yang menyebut komponen ini adalah riwayat.

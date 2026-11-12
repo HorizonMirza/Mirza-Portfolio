@@ -161,7 +161,6 @@ export const EN: Record<string, string> = {
   'Data yang dihapus tidak bisa dikembalikan. Tindakan ini tercatat di log audit.':
     'Deleted data cannot be restored. This action is recorded in the audit log.',
   'Menghapus…': 'Deleting…',
-  'Halaman tabel': 'Table pages',
   'Halaman {page} dari {pages}': 'Page {page} of {pages}',
   Sebelumnya: 'Previous',
   Berikutnya: 'Next',
@@ -171,9 +170,6 @@ export const EN: Record<string, string> = {
   'Turunkan {item}': 'Move {item} down',
   Tulis: 'Write',
   Pratinjau: 'Preview',
-  'Markdown: **tebal**, *miring*, ## judul, - daftar, [teks](https://tautan). HTML tidak didukung.':
-    'Markdown: **bold**, *italic*, ## heading, - list, [text](https://link). HTML is not supported.',
-  'Belum ada isi.': 'Nothing here yet.',
   'Memuat halaman…': 'Loading page…',
   Galat: 'Error',
   'Halaman admin gagal dimuat': 'The admin page failed to load',
@@ -181,8 +177,6 @@ export const EN: Record<string, string> = {
     'Try reloading. If it still fails, check the database connection or the server log.',
   'Kode:': 'Code:',
   'Coba lagi': 'Try again',
-  '{count} galat di isian {lang}.': '{count} error(s) in the {lang} fields.',
-  'Buka isian {lang}': 'Open {lang} fields',
   'Ganti password': 'Change password',
   'Password saat ini': 'Current password',
   'Password baru': 'New password',
