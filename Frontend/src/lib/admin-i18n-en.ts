@@ -34,6 +34,9 @@ export const EN: Record<string, string> = {
   'Chip bendera': 'Flag chip',
   'Ganti foto kartu About': 'Change About card photo',
   'Ganti sampul': 'Change cover',
+  'Logo {item}': '{item} logo',
+  'Logo di globe Keahlian Teknis beranda dan chip teknologi project. Persegi dengan latar transparan (PNG, WebP, atau AVIF), maksimal 1 MB. Kosong: logo bawaan bila ada.':
+    'Logo in the Technical Skills globe on the home page and the project tech chips. Square with a transparent background (PNG, WebP, or AVIF), up to 1 MB. Empty: the built-in logo if there is one.',
   'Buka berkas': 'Open file',
   'PDF terunggah · atau tempel link': 'PDF uploaded · or paste a link',
   'Kartu kontak di footer · kosong = tidak tampil': 'Footer contact cards · empty = hidden',
@@ -243,6 +246,7 @@ export const EN: Record<string, string> = {
   'Sampul project': 'Project cover',
   'Galeri project': 'Project gallery',
   'Logo instansi': 'Organization logo',
+  'Logo skill': 'Skill logo',
   'Foto kegiatan': 'Activity photo',
   'Potret hero': 'Hero portrait',
   'Ukuran gambar tidak terbaca.': 'The image size could not be read.',

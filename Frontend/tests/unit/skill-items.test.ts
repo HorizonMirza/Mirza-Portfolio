@@ -46,6 +46,10 @@ describe('skill-items', () => {
       })
     expect(missing).toEqual([])
     expect(resolveLogo('Codex', null)).toEqual({ src: '/skills/openai.webp', invertDark: true })
+    // logo unggahan Super Admin didahulukan dari logo bawaan (2026-11-12)
+    const url = 'https://res.cloudinary.com/demo/image/upload/v1/portfolio/skills/ts.webp'
+    expect(resolveLogo('TypeScript', null, { url })).toEqual({ src: url, invertDark: false })
+    expect(resolveLogo('Skill Baru', null, null)).toBeNull()
   })
 
   it('logo hampir hitam mengikuti warna teks, logo lain memakai warna brand', () => {

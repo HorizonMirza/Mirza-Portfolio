@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { assetSelect } from '@/features/assets/queries'
 import { getDb } from '@/lib/db'
 
 // Kategori beserta skill, untuk halaman admin skill dan pilihan skill di form project.
@@ -18,6 +19,7 @@ export async function listSkillCategoriesAdmin() {
           name: true,
           icon: true,
           order: true,
+          logo: { select: assetSelect },
           _count: { select: { projects: true } },
         },
       },

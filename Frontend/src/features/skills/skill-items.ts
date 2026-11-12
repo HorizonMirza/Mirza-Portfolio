@@ -92,8 +92,10 @@ function monogram(name: string) {
     : name.slice(0, 2)
 }
 
-// logo asli berwarna (public/skills) bila ada, dicari dengan aturan slug yang sama dengan resolveIcon
-export function resolveLogo(name: string, icon: string | null) {
+// Logo unggahan Super Admin (Cloudinary) didahulukan; lalu logo asli berwarna (public/skills) bila
+// ada, dicari dengan aturan slug yang sama dengan resolveIcon
+export function resolveLogo(name: string, icon: string | null, uploaded?: { url: string } | null) {
+  if (uploaded) return { src: uploaded.url, invertDark: false }
   const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
   for (const candidate of candidates) {
     const slug = ALIASES[candidate] ?? candidate
@@ -115,7 +117,7 @@ export function resolveIcon(name: string, icon: string | null) {
 export function toSkillItems(categories: PublicSkillCategory[], locale: AppLocale): SkillItem[] {
   return categories.flatMap((c, categoryIndex) =>
     c.skills.map((s) => {
-      const logo = resolveLogo(s.name, s.icon)
+      const logo = resolveLogo(s.name, s.icon, s.logo)
       const brand = resolveIcon(s.name, s.icon)
       const generic = brand ? undefined : GENERIC.find((g) => g.pattern.test(s.name))
       return {

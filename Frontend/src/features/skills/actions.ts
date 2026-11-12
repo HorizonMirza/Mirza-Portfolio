@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 
+import { deleteUnusedAssets, destroyRemoteAssets } from '@/features/assets/cleanup'
 import type { Prisma } from '@/generated/prisma/client'
 import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
@@ -156,14 +157,17 @@ export async function moveSkillCategory(
 
 // ---------- Skill ----------
 
-export async function saveSkill(skillId: string | null, input: unknown): Promise<ActionResult> {
+export async function saveSkill(
+  skillId: string | null,
+  input: unknown,
+): Promise<ActionResult<{ id: string }>> {
   try {
     const admin = await requireSuperAdmin()
     if (skillId !== null && !idSchema.safeParse(skillId).success) return fail('Skill tidak valid.')
     const parsed = skillSchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
     const { name, icon, categoryId } = parsed.data
-    await getDb().$transaction(async (tx) => {
+    const id = await getDb().$transaction(async (tx) => {
       const nextOrder = async () => {
         await lockOrderScope(tx, `skill:${categoryId}`)
         const last = await tx.skill.aggregate({ where: { categoryId }, _max: { order: true } })
@@ -183,7 +187,7 @@ export async function saveSkill(skillId: string | null, input: unknown): Promise
           before,
           after,
         })
-        return
+        return skillId
       }
       const created = await tx.skill.create({
         data: { name, icon: emptyToNull(icon), categoryId, order: await nextOrder() },
@@ -195,9 +199,11 @@ export async function saveSkill(skillId: string | null, input: unknown): Promise
         entityId: created.id,
         after: created,
       })
+      return created.id
     })
     revalidate()
-    return ok(skillId ? 'Skill disimpan.' : 'Skill ditambahkan.')
+    // id dipakai admin untuk langsung membuka jendela logo skill baru
+    return ok(skillId ? 'Skill disimpan.' : 'Skill ditambahkan.', { id })
   } catch (error) {
     return toActionError(error, { name: 'Nama skill' })
   }
@@ -207,10 +213,12 @@ export async function deleteSkill(skillId: string): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
     if (!idSchema.safeParse(skillId).success) return fail('Skill tidak valid.')
-    await getDb().$transaction(async (tx) => {
+    const removedAssets = await getDb().$transaction(async (tx) => {
       const before = await tx.skill.findUniqueOrThrow({ where: { id: skillId } })
       // Relasi ke project (tabel penghubung) ikut terhapus otomatis.
       await tx.skill.delete({ where: { id: skillId } })
+      // logo unggahan tidak tertinggal sebagai baris yatim
+      const removed = await deleteUnusedAssets(tx, [before.logoId])
       await writeAudit(tx, {
         actorId: admin.userId,
         action: 'delete',
@@ -218,7 +226,9 @@ export async function deleteSkill(skillId: string): Promise<ActionResult> {
         entityId: skillId,
         before,
       })
+      return removed
     })
+    await destroyRemoteAssets(removedAssets)
     revalidate()
     return ok('Skill dihapus.')
   } catch (error) {

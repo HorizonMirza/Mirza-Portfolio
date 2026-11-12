@@ -61,14 +61,14 @@ enum MessageStatus {
 // Tabel autentikasi mengikuti skema Better Auth (lihat Frontend/src/lib/auth.ts).
 // Hanya satu SUPER_ADMIN yang dibuat lewat seed. Pendaftaran publik dimatikan.
 model User {
-  id            String     @id @default(uuid(7)) @db.Uuid
+  id            String       @id @default(uuid(7)) @db.Uuid
   name          String
-  email         String     @unique
-  emailVerified Boolean    @default(false)
+  email         String       @unique
+  emailVerified Boolean      @default(false)
   image         String?
-  role          Role       @default(USER)
-  createdAt     DateTime   @default(now()) @db.Timestamptz(3)
-  updatedAt     DateTime   @updatedAt @db.Timestamptz(3)
+  role          Role         @default(USER)
+  createdAt     DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt     DateTime     @updatedAt @db.Timestamptz(3)
   sessions      Session[]
   accounts      Account[]
   auditLogs     AuditLog[]
@@ -227,6 +227,9 @@ model Skill {
   id         String        @id @default(uuid(7)) @db.Uuid
   name       String        @unique
   icon       String?
+  // logo unggahan Admin → Home → Skill teknis (2026-11-12); kosong = logo bawaan (public/skills) atau ikon
+  logoId     String?       @db.Uuid
+  logo       Asset?        @relation("SkillLogo", fields: [logoId], references: [id], onDelete: SetNull)
   order      Int           @default(0)
   categoryId String        @db.Uuid
   category   SkillCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
@@ -285,6 +288,7 @@ model Asset {
   experiences      Experience[]   @relation("ExperienceLogo")
   experiencePhotos Experience[]   @relation("ExperiencePhoto")
   heroPortraitOf   SiteSetting?   @relation("HeroPortrait")
+  skillLogos       Skill[]        @relation("SkillLogo")
 }
 
 model Message {
@@ -356,15 +360,15 @@ model CvDownload {
 
 // Pengaturan situs (satu baris, id = 1). Diubah dari /admin/settings.
 model SiteSetting {
-  id             Int      @id @default(1)
+  id                 Int      @id @default(1)
   // volume suara tombol di situs publik (tema, bahasa, menu), 0 = tanpa suara, 100 = paling keras
-  soundVolume    Int      @default(80)
+  soundVolume        Int      @default(80)
   // pemberitahuan pembuka: kartu sebelum masuk situs, sekali setiap situs dibuka (per sesi browser)
-  introBody_id   String?  @db.Text
-  introBody_en   String?  @db.Text
+  introBody_id       String?  @db.Text
+  introBody_en       String?  @db.Text
   // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
-  heroPortraitId String?  @unique @db.Uuid
-  heroPortrait   Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
+  heroPortraitId     String?  @unique @db.Uuid
+  heroPortrait       Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
   // Admin → Pengaturan (DESIGN.md bagian 119). Pilihan teks divalidasi Zod (features/settings/options.ts).
   // tema awal pengunjung yang belum memilih: dark | light | system
   defaultTheme       String   @default("dark")

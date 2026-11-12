@@ -172,12 +172,25 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
 
 test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => {
   await page.goto('/admin/skills')
-  // bagian Keahlian Teknis seperti di beranda; nama kategori diketik langsung (DESIGN.md bagian 134)
-  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
-  await expect(
-    page.getByRole('textbox', { name: 'Nama kategori (Indonesia)' }).first(),
-  ).toBeVisible()
+  // tanpa globe, hanya daftar kategori; nama kategori Indonesia dan Inggris berdampingan, diketik
+  // langsung (revisi pemilik 2026-11-12, DESIGN.md bagian 143)
+  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toHaveCount(0)
+  await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toHaveCount(0)
+  for (const lang of ['Indonesia', 'Inggris'])
+    await expect(
+      page.getByRole('textbox', { name: `Nama kategori (${lang})` }).first(),
+    ).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Kategori baru' })).toBeVisible()
+  // logo skill ditekan: jendela logo (unggah, ganti, hapus)
+  await expect(async () => {
+    await page
+      .getByRole('button', { name: /^Logo / })
+      .first()
+      .click({ timeout: 2000 })
+    await expect(page.getByRole('dialog', { name: /^Logo / })).toBeVisible({ timeout: 1000 })
+  }).toPass()
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('dialog')).toHaveCount(0)
   const first = page.getByRole('button', { name: /^Hapus kategori / }).first()
   await first.click()
   await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()

@@ -4,7 +4,7 @@ import { AdminFormSkeleton } from '@/components/admin/page-skeletons'
 export default function Loading() {
   return (
     <AdminFormSkeleton
-      tabs={3}
+      tabs={2}
       cards={[
         { fields: 1, tall: 1 },
         { fields: 2, columns: 2 },

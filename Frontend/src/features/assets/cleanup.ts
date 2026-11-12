@@ -6,7 +6,7 @@ import { destroyRemoteAsset } from '@/lib/cloudinary'
 export type RemovedAsset = { id: string; publicId: string; kind: string }
 
 // Hapus baris Asset dari daftar id yang tidak lagi dipakai siapa pun (profil, project, galeri,
-// pengalaman, hero). Dipanggil di dalam transaksi yang sama dengan penghapusan pemiliknya, setelah
+// pengalaman, hero, logo skill). Dipanggil di dalam transaksi yang sama dengan penghapusan pemiliknya, setelah
 // pemilik dihapus, sehingga sampul/galeri/logo/foto tidak tertinggal sebagai baris yatim (audit
 // 2026-11-02, DB-01). Aset yang masih dipakai pemilik lain dibiarkan.
 export async function deleteUnusedAssets(
@@ -26,6 +26,7 @@ export async function deleteUnusedAssets(
       experiences: { none: {} },
       experiencePhotos: { none: {} },
       heroPortraitOf: { is: null },
+      skillLogos: { none: {} },
     },
     select: { id: true, publicId: true, kind: true },
   })

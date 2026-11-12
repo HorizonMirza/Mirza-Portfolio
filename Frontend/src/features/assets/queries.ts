@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db'
 
 import type { AssetView } from './components/asset-panels'
 
-const assetSelect = {
+export const assetSelect = {
   id: true,
   url: true,
   kind: true,

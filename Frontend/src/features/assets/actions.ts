@@ -3,6 +3,7 @@
 import { z } from 'zod'
 
 import type { Prisma } from '@/generated/prisma/client'
+import type { CacheTag } from '@/lib/cache-tags'
 import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
@@ -51,6 +52,8 @@ const uploadResultSchema = z.object({
 })
 
 function revalidateFor(target: UploadTarget) {
+  // logo skill juga tampil di chip teknologi project
+  if (target === 'skill-logo') return revalidateContent('skills', 'projects')
   revalidateContent(
     target.startsWith('profile')
       ? 'profile'
@@ -70,11 +73,13 @@ function usageOf(asset: {
   experiences: { id: string }[]
   experiencePhotos: { id: string }[]
   heroPortraitOf?: { id: number } | null
-}) {
-  if (asset.heroPortraitOf) return 'settings' as const
-  if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf) return 'profile' as const
-  if (asset.experiences.length || asset.experiencePhotos.length) return 'experience' as const
-  return 'projects' as const
+  skillLogos?: { id: string }[]
+}): CacheTag[] {
+  if (asset.skillLogos?.length) return ['skills', 'projects']
+  if (asset.heroPortraitOf) return ['settings']
+  if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf) return ['profile']
+  if (asset.experiences.length || asset.experiencePhotos.length) return ['experience']
+  return ['projects']
 }
 
 export async function signAssetUpload(target: unknown): Promise<ActionResult<UploadSignature>> {
@@ -167,6 +172,8 @@ export async function attachUploadedAsset(
     const needsExperience = t.data === 'experience-logo' || t.data === 'experience-photo'
     const experienceId = needsExperience ? idSchema.safeParse(targetId) : null
     if (experienceId && !experienceId.success) return reject('Pengalaman tidak valid.')
+    const skillId = t.data === 'skill-logo' ? idSchema.safeParse(targetId) : null
+    if (skillId && !skillId.success) return reject('Skill tidak valid.')
 
     const replaced = await getDb().$transaction(async (tx) => {
       const asset = await tx.asset.create({
@@ -231,6 +238,13 @@ export async function attachUploadedAsset(
           where: { id: experienceId!.data },
           data: isLogo ? { logoId: asset.id } : { photoId: asset.id },
         })
+      } else if (t.data === 'skill-logo') {
+        const skill = await tx.skill.findUniqueOrThrow({
+          where: { id: skillId!.data },
+          select: { logo: { select: { id: true, publicId: true } } },
+        })
+        old = skill.logo
+        await tx.skill.update({ where: { id: skillId!.data }, data: { logoId: asset.id } })
       } else if (t.data === 'project-cover') {
         const project = await tx.project.findUniqueOrThrow({
           where: { id: projectId!.data },
@@ -263,7 +277,7 @@ export async function attachUploadedAsset(
         before: old ? { target: t.data, replaced: old.publicId } : null,
         after: {
           target: t.data,
-          targetId: projectId?.data ?? experienceId?.data ?? null,
+          targetId: projectId?.data ?? experienceId?.data ?? skillId?.data ?? null,
           publicId: asset.publicId,
           bytes: asset.bytes,
         },
@@ -303,6 +317,7 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
+          skillLogos: { select: { id: true } },
         },
       })
       const after = await tx.asset.update({
@@ -320,7 +335,7 @@ export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<Ac
       })
       return usageOf(before)
     })
-    revalidateContent(usage)
+    revalidateContent(...usage)
     return ok('Teks alternatif disimpan.')
   } catch (error) {
     return toActionError(error)
@@ -344,6 +359,7 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
+          skillLogos: { select: { id: true } },
         },
       })
       // Relasi ke profil/project menjadi null, baris galeri ikut terhapus (onDelete di skema).
@@ -358,7 +374,7 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
       return before
     })
     await destroyRemoteAsset(removed.publicId, removed.kind === 'DOCUMENT' ? 'raw' : 'image')
-    revalidateContent(usageOf(removed))
+    revalidateContent(...usageOf(removed))
     return ok('Berkas dihapus.')
   } catch (error) {
     return toActionError(error)

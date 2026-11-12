@@ -10,7 +10,14 @@ export type PublicSkillCategory = {
   id: string
   name_id: string
   name_en: string
-  skills: { id: string; name: string; icon: string | null; projectSlugs: string[] }[]
+  skills: {
+    id: string
+    name: string
+    icon: string | null
+    // logo unggahan (Admin → Home → Skill teknis); kosong = logo bawaan atau ikon
+    logo?: { url: string } | null
+    projectSlugs: string[]
+  }[]
 }
 
 // Kategori kosong tidak ditampilkan. projectSlugs hanya dari project terbit.
@@ -29,6 +36,7 @@ export const getPublicSkills = cache(
               id: true,
               name: true,
               icon: true,
+              logo: { select: { url: true } },
               projects: { where: { status: 'PUBLISHED' }, select: { slug: true } },
             },
           },

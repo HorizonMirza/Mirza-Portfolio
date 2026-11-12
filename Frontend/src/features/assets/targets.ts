@@ -65,6 +65,19 @@ export const UPLOAD_TARGETS = {
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
+  // logo skill di globe Keahlian Teknis dan chip teknologi project (Admin → Home → Skill teknis,
+  // 2026-11-12). Hiasan: nama skill selalu tertulis di sebelahnya, jadi tanpa teks alternatif.
+  // Persegi dengan latar transparan paling rapi.
+  'skill-logo': {
+    label: 'Logo skill',
+    kind: 'IMAGE',
+    resourceType: 'image',
+    folder: 'portfolio/skills',
+    maxBytes: 1024 * 1024,
+    formats: ['png', 'webp', 'avif', 'jpg', 'jpeg'],
+    accept: 'image/png,image/webp,image/avif,image/jpeg',
+    decorative: true,
+  },
   // Potret dan armor hero beranda (Admin → Pengaturan). Pembingkaian halaman (lubang wajah di nama,
   // posisi kepala, intip visor) dihitung dari foto bawaan, jadi pengganti harus berukuran sebanding
   // dan dibingkai sama. Latar transparan, maka tanpa JPG.

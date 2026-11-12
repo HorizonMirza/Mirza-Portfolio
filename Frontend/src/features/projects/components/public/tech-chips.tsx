@@ -12,7 +12,7 @@ export function TechChips({
   label,
   className,
 }: {
-  skills: { id: string; name: string; icon: string | null }[]
+  skills: { id: string; name: string; icon: string | null; logo?: { url: string } | null }[]
   label: string
   className?: string
 }) {
@@ -20,7 +20,7 @@ export function TechChips({
   return (
     <ul aria-label={label} className={cn('flex flex-wrap gap-1.5', className)}>
       {skills.map((s) => {
-        const logo = resolveLogo(s.name, s.icon)
+        const logo = resolveLogo(s.name, s.icon, s.logo)
         const brand = resolveIcon(s.name, s.icon)
         // aturan warna yang sama dengan globe skill (logo hampir hitam memakai warna teks)
         const color = (brand && logoColorFor(brand.hex)) ?? 'var(--text)'

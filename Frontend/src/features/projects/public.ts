@@ -23,7 +23,7 @@ export type PublicProjectSummary = {
   demoUrl: string | null
   repoUrl: string | null
   cover: PublicImage | null
-  skills: { id: string; name: string; icon: string | null }[]
+  skills: { id: string; name: string; icon: string | null; logo: { url: string } | null }[]
 }
 
 export type PublicProject = PublicProjectSummary & {
@@ -59,7 +59,7 @@ const summarySelect = {
   showRepo: true,
   cover: { select: imageSelect },
   skills: {
-    select: { id: true, name: true, icon: true },
+    select: { id: true, name: true, icon: true, logo: { select: { url: true } } },
     orderBy: [{ order: 'asc' }, { name: 'asc' }],
   },
 } satisfies Prisma.ProjectSelect

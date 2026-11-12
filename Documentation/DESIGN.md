@@ -1717,3 +1717,11 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 
 - Permintaan pemilik: tab "Teks halaman" di About dihapus. About kini hanya tab Profil dan Pendidikan; menu About langsung membuka Profil, dan alamat lama `/admin/pages/about` diarahkan ke `/admin/profile`.
 - Teks halaman Tentang (judul, judul Pendidikan, teks kosong, SEO) tetap tampil di situs dengan isi bawaan atau yang tersimpan sebelumnya, hanya tidak diubah dari admin lagi. Kuncinya tetap di katalog teks situs. Modul lain (Experience, Projects, Contact, Navbar, Footer) tetap punya teks halaman.
+
+## 143. Skill teknis tanpa globe, kategori dua bahasa, logo skill bisa diunggah (2026-11-12)
+
+- Permintaan pemilik: globe di Admin → Home → Skill teknis dihapus; yang tersisa hanya daftar kategori (Bahasa Pemrograman, Frontend, Backend, Database, Tools, dan yang ditambahkan). Tombol ID/EN di panggung dihapus.
+- Nama kategori diketik dalam dua bahasa berdampingan (kode kecil ID dan EN di depan tiap kolom), tersimpan saat kolom ditinggalkan. Kategori baru memakai nama yang sama untuk kedua bahasa dulu, lalu nama Inggrisnya diubah di kolom EN.
+- Tiap skill tampil sebagai chip berisi logo dan nama. Logo ditekan untuk membuka jendela logo (`AssetEditDialog`, target unggah baru `skill-logo`: PNG/WebP/AVIF/JPG maksimal 1 MB, hiasan tanpa teks alternatif karena nama skill selalu tertulis). Skill tanpa logo menampilkan kotak bergaris putus dengan ikon gambar. Skill baru langsung membuka jendela logonya setelah dibuat.
+- Data: kolom opsional `Skill.logoId` (migrasi `skill_logo`, hanya menambah kolom). Logo unggahan didahulukan dari logo bawaan `public/skills` di globe beranda dan chip teknologi project (`resolveLogo`); kosong = perilaku lama. Logo ikut dihapus saat skill dihapus, dan cache `skills` + `projects` dibuang setelah logo diubah.
+- Ikon slug Simple Icons dan pindah kategori tetap lewat tombol "…" di alat kecil chip.
