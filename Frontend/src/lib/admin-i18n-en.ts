@@ -18,6 +18,15 @@ export const EN: Record<string, string> = {
   'Tutup menu': 'Close menu',
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
+  'Bahasa yang diubah': 'Language being edited',
+  'Isi kartu pembuka ({lang})': 'Introduction card text ({lang})',
+  'Ubah isi kartu ({lang})': 'Edit card text ({lang})',
+  Indonesia: 'Indonesian',
+  Inggris: 'English',
+  'Tekan untuk menulis isi kartu': 'Tap to write the card text',
+  'Tekan isi kartu untuk mengubahnya dan Esc untuk melihat hasilnya; pilih ID atau EN di kartu untuk bahasa lain. Tulis **teks** untuk huruf tebal. {count}/{max} karakter.':
+    'Tap the card text to edit it and press Esc to see the result; choose ID or EN on the card for the other language. Use **text** for bold. {count}/{max} characters.',
+  'Isi {lang}: {error}': '{lang} text: {error}',
   'Hapus foto unggahan untuk kembali ke foto bawaan.':
     'Delete the uploaded photo to go back to the default photo.',
   'foto unggahan': 'uploaded photo',
@@ -450,11 +459,7 @@ export const EN: Record<string, string> = {
   'Kontak disimpan.': 'Contacts saved.',
   'Peran disimpan.': 'Roles saved.',
   'Isi kartu pembuka': 'Introduction card text',
-  'Kalimat di bawah judul "Informasi Penting", dalam bahasa Indonesia dan Inggris.':
-    'The sentences under the "Informasi Penting" heading, in Indonesian and English.',
   Isi: 'Text',
-  'Dua sampai tiga kalimat, maksimal 600 karakter. Tulis **teks** untuk huruf tebal.':
-    'Two or three sentences, at most 600 characters. Use **text** for bold.',
   'Suara tombol': 'Button sounds',
   'Satu volume untuk suara tombol tema, bahasa, dan menu di situs publik. 0 berarti tanpa suara. Pengunjung tetap bisa mengecilkan suara dari perangkatnya.':
     'One volume for the theme, language, and menu button sounds on the public site. 0 means silent. Visitors can still lower the sound on their device.',

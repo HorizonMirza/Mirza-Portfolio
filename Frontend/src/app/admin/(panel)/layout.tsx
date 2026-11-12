@@ -36,7 +36,7 @@ export default async function PanelLayout({ children }: { children: ReactNode })
               <AdminTopBar />
               <main
                 id="main"
-                className="admin-glass-panel no-scrollbar min-h-0 flex-1 scroll-pt-6 overflow-y-auto overscroll-contain rounded-[20px] px-4 pt-6 pb-10 sm:px-6 md:rounded-[27px] lg:scroll-pt-8 lg:px-8 lg:pt-8"
+                className="admin-glass-panel no-scrollbar @container/main min-h-0 flex-1 scroll-pt-6 overflow-y-auto overscroll-contain rounded-[20px] px-4 pt-6 pb-10 sm:px-6 md:rounded-[27px] lg:scroll-pt-8 lg:px-8 lg:pt-8"
               >
                 <div className="admin-main-in mx-auto w-full max-w-6xl">{children}</div>
               </main>

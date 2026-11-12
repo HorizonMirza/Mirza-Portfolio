@@ -3,8 +3,9 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 // Filter sebagai tautan (?status=...) agar bisa dibagikan dan bekerja tanpa JavaScript.
-// stretch: satu baris selebar panel, tombol terpisah sama lebar, yang aktif terisi penuh
-// (tab Home, revisi pemilik 2026-11-11, DESIGN.md bagian 129). Di layar sempit digeser menyamping.
+// stretch: satu baris selebar panel sampai tepi kiri-kanan, tombol terpisah sama lebar, yang aktif
+// terisi penuh (tab Home, revisi pemilik 2026-11-11 dan 2026-11-12, DESIGN.md bagian 129 dan 131).
+// Di layar sempit digeser menyamping.
 export function FilterTabs({
   label,
   items,
@@ -18,7 +19,9 @@ export function FilterTabs({
     return (
       <nav
         aria-label={label}
-        className="no-scrollbar -mx-1 mb-6 flex gap-2 overflow-x-auto overscroll-x-contain px-1 py-1"
+        // selebar panel isi sampai tepi kiri-kanan (revisi pemilik 2026-11-12), keluar dari batas
+        // max-w-6xl isi halaman: 100cqw = lebar isi <main> (@container di layout panel)
+        className="admin-bleed no-scrollbar mb-6 flex gap-2 overflow-x-auto overscroll-x-contain py-1"
       >
         {items.map((item) => (
           <Link

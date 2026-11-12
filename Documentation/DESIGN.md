@@ -1628,3 +1628,10 @@ Revisi pemilik:
 ## 130. Akun → Foto profil: kembali ke foto bawaan (2026-11-12)
 
 Permintaan pemilik setelah foto yang salah terunggah ("kembalikan foto sebelumnya"). Di halaman Foto profil (Akun) kini ada baris "Hapus foto unggahan untuk kembali ke foto bawaan" dengan tombol Hapus dan konfirmasi, hanya bila ada foto unggahan. Memakai action `removeAsset` yang sama dengan Home → Foto beranda (sesi SUPER_ADMIN, audit, berkas Cloudinary ikut dihapus); setelah itu foto bawaan (`DEFAULT_PROFILE_AVATAR`) tampil lagi di situs, sidebar, dan Akun. Foto unggahan sebelumnya tidak disimpan, jadi yang bisa dikembalikan adalah foto bawaan.
+
+## 131. Home: tab sampai tepi panel, Kartu pembuka diubah langsung di kartu (2026-11-12)
+
+Revisi pemilik:
+
+- **Tab Home selebar panel isi** sampai tepi kiri-kanan, keluar dari batas `max-w-6xl` isi halaman. `<main>` panel admin menjadi `@container/main`; kelas `.admin-bleed` (globals.css) memakai `width: 100cqw; margin-inline: calc(50% - 50cqw)`. Di layar yang lebih sempit dari batas itu hasilnya sama dengan 100%. Tes E2E memastikan lebar tab sama dengan lebar isi `<main>`.
+- **Kartu pembuka tanpa form biasa.** Admin melihat kartu "Informasi Penting" seperti di situs: panggung hitam, kartu kaca dengan garis cahaya, label nama, tombol ID/EN, judul, isi, dan tombol Resume CV/Beranda (hanya pratinjau, tidak bisa ditekan). Tombol ID/EN di kartu memilih bahasa yang diubah (titik kecil menandai bahasa yang sudah diubah tapi belum disimpan). Isi kartu ditekan untuk mengubahnya di tempat (ikon pensil); kotak isian tetap terbuka sampai disimpan atau Esc, agar tombol Simpan tidak bergeser saat ditekan. Pratinjau mendukung paragraf dan `**tebal**` (dibangun sebagai elemen React, tanpa HTML mentah); situs tetap memakai Markdown yang disanitasi di server. Petunjuk dan jumlah karakter (maks. 600) di bawah kartu, lalu Simpan. Galat bahasa lain ditampilkan dan kartu pindah ke bahasa itu saat disimpan. Di HP panggung selebar panel agar kartu selebar di situs.

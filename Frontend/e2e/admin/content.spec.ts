@@ -297,13 +297,46 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
     'aria-current',
     'page',
   )
+  // tab selebar panel isi sampai tepi kiri-kanan (revisi 2026-11-12, DESIGN.md bagian 131)
+  const tabsNav = page.getByRole('navigation', { name: 'Bagian halaman' })
+  const widths = await tabsNav.evaluate((nav) => {
+    const main = document.querySelector('main')!
+    const style = getComputedStyle(main)
+    const inner = main.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)
+    return { nav: nav.getBoundingClientRect().width, inner }
+  })
+  expect(Math.abs(widths.nav - widths.inner)).toBeLessThan(2)
+
+  // kartu tampil seperti di situs; isinya ditekan untuk diubah di tempat, Simpan di bawah kartu
   await expect(page.getByRole('button', { name: 'Simpan' })).toHaveCount(1)
-  await expect(page.getByRole('heading', { name: 'Isi kartu pembuka' })).toBeVisible()
-  await expect(page.getByLabel('Isi', { exact: true })).toBeVisible()
+  await expect(page.getByText('Informasi Penting', { exact: true })).toBeVisible()
+  await expect(async () => {
+    await page
+      .getByRole('button', { name: /Ubah isi kartu \(Indonesia\)/ })
+      .click({ timeout: 2000 })
+    await expect(page.getByLabel('Isi kartu pembuka (Indonesia)')).toBeFocused({ timeout: 1000 })
+  }).toPass()
+  const body = page.getByLabel('Isi kartu pembuka (Indonesia)')
+  const original = await body.inputValue()
+  expect(original.length).toBeGreaterThan(0)
+  // isi kosong ditolak tanpa tersimpan
+  await body.fill('')
+  await page.getByRole('button', { name: 'Simpan' }).click()
+  await expect(page.getByText('Wajib diisi')).toBeVisible()
+  await expect(page.getByLabel('Isi kartu pembuka (Indonesia)')).toBeVisible()
+  // bahasa lain lewat tombol EN di kartu, judul ikut berbahasa Inggris
+  await page
+    .getByRole('group', { name: 'Bahasa yang diubah' })
+    .getByRole('button', { name: 'EN' })
+    .click()
+  await expect(page.getByText('Important Information', { exact: true })).toBeVisible()
+  // tetap dalam mode ubah untuk bahasa yang dipilih; Esc menampilkan hasilnya di kartu
+  await expect(page.getByLabel('Isi kartu pembuka (Inggris)')).toBeVisible()
+  await page.getByLabel('Isi kartu pembuka (Inggris)').press('Escape')
+  await expect(page.getByRole('button', { name: /Ubah isi kartu \(Inggris\)/ })).toBeVisible()
   // judul, saklar tampil, label, dan tombol kartu adalah teks tetap
   await expect(page.getByLabel('Judul', { exact: true })).toHaveCount(0)
   await expect(page.getByLabel('Tampilkan pemberitahuan pembuka')).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: 'Teks di kartu' })).toHaveCount(0)
 })
 
 test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan organisasi', async ({

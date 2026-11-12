@@ -1,13 +1,15 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getHeroPortraitAsset, getProfileAssets } from '@/features/assets/queries'
 import { ContactLinksForm } from '@/features/profile/components/contact-links-form'
+import { getPublicProfile } from '@/features/profile/public'
 import { getContactLinksForEdit } from '@/features/profile/queries'
-import { IntroForm } from '@/features/settings/components/intro-form'
+import { IntroForm, type IntroPreviewTexts } from '@/features/settings/components/intro-form'
 import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
 import { SiteTextForm } from '@/features/site-text/components/site-text-form'
@@ -51,13 +53,42 @@ export default async function SiteModulePage({ params }: Params) {
       <div className="flex flex-col gap-6">
         {/* Bagian Awal dan Home hanya mengelola yang diminta pemilik (2026-11-10): isi kartu
             pembuka; foto profil, foto utama, dan peran. Teks lain di keduanya tetap. */}
-        {moduleId === 'intro' ? <IntroForm defaultValues={await getIntroForEdit()} /> : null}
+        {moduleId === 'intro' ? <IntroEditor /> : null}
         {moduleId === 'home' ? <HomePhotos /> : null}
         {moduleId === 'footer' ? <FooterContacts /> : null}
         {moduleId !== 'intro' && moduleId !== 'home' ? <ModuleTexts moduleId={moduleId} /> : null}
       </div>
     </>
   )
+}
+
+// Home → Kartu pembuka: kartu seperti di situs, isinya diubah di tempat (DESIGN.md bagian 131)
+async function IntroEditor() {
+  const [values, profile, tId, tEn] = await Promise.all([
+    getIntroForEdit(),
+    getPublicProfile(),
+    getTranslations({ locale: 'id', namespace: 'Intro' }),
+    getTranslations({ locale: 'en', namespace: 'Intro' }),
+  ])
+  const name = profile?.name ?? 'Muhammad Mirza'
+  const texts = Object.fromEntries(
+    (
+      [
+        ['id', tId],
+        ['en', tEn],
+      ] as const
+    ).map(([lang, intro]) => [
+      lang,
+      {
+        // teks situs publik (messages/*.json), bukan teks admin
+        eyebrow: intro('eyebrow', { name }),
+        title: intro('title'),
+        downloadCv: intro('downloadCv'),
+        home: intro('home'),
+      },
+    ]),
+  ) as IntroPreviewTexts
+  return <IntroForm defaultValues={values} texts={texts} hasCv={profile?.hasCv ?? false} />
 }
 
 async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
