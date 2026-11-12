@@ -2681,6 +2681,8 @@ html[data-intro='pending'] .intro {
 /* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx, DESIGN.md bagian
    133): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
 .admin-inline {
+  /* lebar mengikuti isi di browser yang mendukung; lainnya memakai atribut size */
+  field-sizing: content;
   min-width: 1ch;
   margin: 0;
   padding: 0;

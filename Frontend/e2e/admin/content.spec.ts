@@ -162,6 +162,12 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
 
 test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => {
   await page.goto('/admin/skills')
+  // bagian Keahlian Teknis seperti di beranda; nama kategori diketik langsung (DESIGN.md bagian 134)
+  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
+  await expect(
+    page.getByRole('textbox', { name: 'Nama kategori (Indonesia)' }).first(),
+  ).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Kategori baru' })).toBeVisible()
   const first = page.getByRole('button', { name: /^Hapus kategori / }).first()
   await first.click()
   await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()

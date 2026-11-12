@@ -1654,3 +1654,11 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - **Foto beranda:** hero dengan foto profil bulat di kiri atas seperti navbar. Foto ditekan → jendela kecil: teks alternatif, Hapus (kembali ke foto bawaan), dan unggah pengganti (atau pesan "Unggah belum aktif"); foto utama juga menampilkan acuan foto bawaan untuk diunduh.
 - Skill teknis menyusul di commit berikutnya.
 - Catatan tes: Next 16 menyimpan salinan halaman tersembunyi untuk navigasi kembali, jadi tes E2E memakai `getByRole` (hanya yang terlihat), bukan `getByLabel`.
+
+## 134. Ubah langsung di pratinjau: Skill teknis (2026-11-12)
+
+- Bagian "Keahlian Teknis" tampil seperti di beranda: judul dan globe asli (`SkillGlobe`, data sama dengan situs, hanya kategori berisi), lalu daftar kategori dan skill di bawahnya pada panggung yang sama.
+- Nama kategori (ID/EN lewat tombol bahasa) dan nama skill diketik langsung dan **tersimpan sendiri** saat kolom ditinggalkan atau Enter (tanpa Simpan, seperti aplikasi catatan: daftar berisi banyak butir kecil). Kosong berarti batal (nama lama kembali).
+- Tambah: chip bergaris putus "+ Skill baru" di tiap kategori dan baris "+ Kategori baru" di bawah; Enter membuat butir. Kategori baru memakai nama yang sama untuk kedua bahasa sampai diubah.
+- Naik/turun, hapus (dengan konfirmasi), serta ikon dan pindah kategori (tombol ⋯, jendela lama) muncul saat butir disorot atau difokus; di skill sebagai toolbar kecil melayang di atas chip agar chip tetap ringkas, di HP saat nama skill diketuk.
+- `skills-manager.tsx` (daftar kartu lama) dihapus. Lebar kolom ketik mengikuti isi (`field-sizing: content`, cadangan atribut `size`).

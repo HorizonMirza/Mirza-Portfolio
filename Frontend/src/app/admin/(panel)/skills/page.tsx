@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
-import { SkillsManager } from '@/features/skills/components/skills-manager'
+import { SkillsLive } from '@/features/skills/components/skills-live'
 import { listSkillCategoriesAdmin } from '@/features/skills/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
+import { toSkillItems } from '@/features/skills/skill-items'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 
 // judul tab browser ikut bahasa admin
@@ -13,15 +15,35 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('Skill teknis')} · Home` }
 }
 
+// Home → Skill teknis: bagian Keahlian Teknis seperti di beranda (globe asli), daftar kategori dan
+// skill diketik langsung di bawahnya (DESIGN.md bagian 134)
 export default async function SkillsPage() {
   await requireSuperAdminPage()
-  const categories = await listSkillCategoriesAdmin()
+  const [categories, lang] = await Promise.all([listSkillCategoriesAdmin(), getAdminLang()])
+  const [tHome, tGlobe] = await Promise.all([
+    getTranslations({ locale: lang, namespace: 'Home' }),
+    getTranslations({ locale: lang, namespace: 'SkillGlobe' }),
+  ])
+  // globe hanya kategori yang berisi skill, sama seperti beranda
+  const filled = categories
+    .filter((c) => c.skills.length > 0)
+    .map((c) => ({ ...c, skills: c.skills.map((s) => ({ ...s, projectSlugs: [] })) }))
   return (
     <>
-      {/* tanpa deskripsi: tab Home langsung di atas (revisi pemilik 2026-11-11) */}
       <PageHeader title="Home" />
       <ModuleTabs moduleId="home" current="/admin/skills" />
-      <SkillsManager categories={categories} />
+      <SkillsLive
+        categories={categories}
+        items={toSkillItems(filled, lang)}
+        heading={tHome('stackHeading')}
+        globeLabels={{
+          globe: tGlobe('label'),
+          list: tGlobe('list'),
+          categories: tGlobe('categories'),
+          category: tGlobe('category'),
+          all: tGlobe('all'),
+        }}
+      />
     </>
   )
 }
