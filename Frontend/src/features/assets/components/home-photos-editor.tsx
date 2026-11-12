@@ -5,17 +5,13 @@ import { useRouter } from 'next/navigation'
 import { type ReactNode, useState } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
-import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { HeroPreview } from '@/components/admin/hero-preview'
 import { LiveStage } from '@/components/admin/live-edit'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
-import { removeAsset } from '../actions'
 import type { UploadTarget } from '../targets'
-import { AssetAltForm } from './asset-alt-form'
+import { AssetEditDialog } from './asset-edit-dialog'
 import type { AssetView } from './asset-panels'
-import { AssetUploader } from './asset-uploader'
 
 type Slot = 'profile' | 'hero'
 
@@ -82,7 +78,6 @@ export function HomePhotosEditor({
   }
 
   const current = open ? SLOTS[open] : null
-  const asset = open ? assets[open] : null
 
   return (
     <>
@@ -108,15 +103,16 @@ export function HomePhotosEditor({
           )}
         </HeroPreview>
       </LiveStage>
-      <Dialog open={open !== null} onOpenChange={(value) => (value ? null : setOpen(null))}>
-        {current && open ? (
-          <DialogContent className="max-h-[90dvh] overflow-y-auto">
-            <DialogTitle>{t(current.title)}</DialogTitle>
-            <DialogDescription className="mt-1 text-sm text-muted">
-              {t(current.description)}
-            </DialogDescription>
-            {open === 'hero' ? (
-              <p className="mt-2 text-sm text-muted">
+      {current && open ? (
+        <AssetEditDialog
+          open
+          onClose={() => setOpen(null)}
+          onDone={done}
+          title={current.title}
+          description={current.description}
+          note={
+            open === 'hero' ? (
+              <>
                 {t(
                   'Pembingkaian halaman dan gambar armor dihitung dari foto bawaan, jadi pengganti harus dibingkai sama: kepala, wajah, dan tangan di posisi yang sama, rata bawah, latar transparan.',
                 )}{' '}
@@ -128,49 +124,14 @@ export function HomePhotosEditor({
                   {t('Unduh foto bawaan sebagai acuan')}
                 </a>
                 . {t('Hapus berkas untuk kembali ke foto bawaan.')}
-              </p>
-            ) : null}
-            <div className="mt-5 flex flex-col gap-5">
-              {asset ? (
-                <div className="flex flex-col gap-3">
-                  <AssetAltForm
-                    key={asset.id}
-                    assetId={asset.id}
-                    alt_id={asset.alt_id ?? ''}
-                    alt_en={asset.alt_en ?? ''}
-                  />
-                  <div>
-                    <ConfirmDelete
-                      itemLabel={t(current.title).toLowerCase()}
-                      onConfirm={removeAsset.bind(null, asset.id)}
-                      onDone={done}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-muted">{t('Belum ada berkas.')}</p>
-              )}
-              {configured ? (
-                <div className="border-t border-border pt-4">
-                  <AssetUploader
-                    target={current.target}
-                    buttonLabel={asset ? t('Ganti berkas') : t('Unggah')}
-                    onDone={done}
-                  />
-                </div>
-              ) : (
-                <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted">
-                  {t('Unggah belum aktif. Isi')}{' '}
-                  <code className="font-mono">CLOUDINARY_CLOUD_NAME</code>,{' '}
-                  <code className="font-mono">CLOUDINARY_API_KEY</code>, {t('dan')}{' '}
-                  <code className="font-mono">CLOUDINARY_API_SECRET</code>{' '}
-                  {t('di environment, lalu deploy ulang.')}
-                </p>
-              )}
-            </div>
-          </DialogContent>
-        ) : null}
-      </Dialog>
+              </>
+            ) : undefined
+          }
+          target={current.target}
+          asset={assets[open]}
+          configured={configured}
+        />
+      ) : null}
     </>
   )
 }

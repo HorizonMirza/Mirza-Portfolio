@@ -1671,3 +1671,11 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Semua modul: tanpa deskripsi di atas, tab selebar panel (gaya bagian 129/131 kini untuk semua modul).
 - `.admin-inline` dipindah ke `@layer components` agar kelas Tailwind di kolom yang sama (ukuran judul, tebal, rata tengah) menang.
 - Footer: form "Kontak dan Resume CV" (data profil) masih form lama di bawah pratinjau; ikut diubah di tahap data.
+
+## 136. Ubah langsung di pratinjau: About → Profil (2026-11-12)
+
+- Pita halaman Tentang memakai kelas situs (`ab-band`, `AboutPhotoCard`, `ab-label`): kartu foto dengan chip kampus dan bendera, nama besar (beberapa baris), peran di bawahnya, lalu bio. Semua diketik langsung; peran kosong menampilkan peran beranda samar (yang dipakai situs).
+- Foto kartu ditekan → `AssetEditDialog` (jendela bersama baru di features/assets, juga dipakai Foto beranda): teks alternatif, hapus, unggah.
+- Chip kampus dan chip bendera: tombol di bawah pita, ditekan untuk menampilkan atau menyembunyikan (langsung terlihat di kartu, tersimpan dengan Simpan).
+- Headline, posisi sekarang, dan kota tampil sebagai pratinjau tautan saat dibagikan dan untuk mesin pencari.
+- `Note` dan `StateBox` dipindah ke live-edit (dipakai bersama). `profile-form.tsx` lama dihapus.

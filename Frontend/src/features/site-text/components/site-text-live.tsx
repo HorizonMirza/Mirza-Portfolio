@@ -13,9 +13,9 @@ import {
   LiveErrors,
   LiveStage,
   SaveBar,
+  StateBox,
   useEditLang,
 } from '@/components/admin/live-edit'
-import { cn } from '@/lib/utils'
 
 import { saveSiteTexts } from '../actions'
 import { checkTextValue, entriesOf, findTextEntry, type ModuleId } from '../catalog'
@@ -85,31 +85,6 @@ export function EditText({
       className={className}
       onChange={(event) => set(k, event.target.value)}
     />
-  )
-}
-
-// keterangan kecil untuk bagian yang di situs hanya muncul pada keadaan tertentu
-export function Note({ children, className }: { children: ReactNode; className?: string }) {
-  const t = useAdminT()
-  return (
-    <p
-      className={cn(
-        'mb-2 font-mono text-[0.6875rem] tracking-widest text-muted uppercase',
-        className,
-      )}
-    >
-      {typeof children === 'string' ? t(children) : children}
-    </p>
-  )
-}
-
-// kotak bergaris putus untuk keadaan kosong atau tersembunyi
-export function StateBox({ note, children }: { note: string; children: ReactNode }) {
-  return (
-    <div className="rounded-md border border-dashed border-border p-4">
-      <Note>{note}</Note>
-      {children}
-    </div>
   )
 }
 

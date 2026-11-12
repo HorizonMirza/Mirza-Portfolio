@@ -301,6 +301,14 @@ test('modul Home: empat tab selebar panel, foto dan peran di tab masing-masing',
   await page.goto('/admin/profile')
   await expect(page.getByRole('heading', { name: 'Foto profil' })).toHaveCount(0)
   await expect(page.getByLabel('Peran', { exact: true })).toHaveCount(0)
+  // Profil: pita halaman Tentang diketik langsung (DESIGN.md bagian 136)
+  await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).not.toHaveValue('')
+  await expect(page.getByRole('textbox', { name: 'Bio (Indonesia)' })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Ganti foto kartu About$/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Chip bendera' })).toHaveAttribute(
+    'aria-pressed',
+    /true|false/,
+  )
 })
 
 test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', async ({ page }) => {

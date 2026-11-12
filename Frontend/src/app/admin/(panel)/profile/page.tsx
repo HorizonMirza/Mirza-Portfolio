@@ -1,13 +1,17 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
-import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { getProfileAssets } from '@/features/assets/queries'
-import { ProfileForm } from '@/features/profile/components/profile-form'
+import { getPublicExperiences } from '@/features/experience/public'
+import { initials, organizationName } from '@/features/experience/schema'
+import { ProfileLive } from '@/features/profile/components/profile-live'
+import { getPublicProfile } from '@/features/profile/public'
 import { getProfileForEdit } from '@/features/profile/queries'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { isUploadConfigured } from '@/lib/uploads'
 
 // judul tab browser ikut bahasa admin
@@ -16,28 +20,48 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Profil') }
 }
 
+// About → Profil: pita halaman Tentang dan bio diketik langsung (DESIGN.md bagian 136)
 export default async function ProfilePage() {
   await requireSuperAdminPage()
-  const [profile, assets] = await Promise.all([getProfileForEdit(), getProfileAssets()])
+  const [values, assets, profile, experiences, tId, tEn] = await Promise.all([
+    getProfileForEdit(),
+    getProfileAssets(),
+    getPublicProfile(),
+    getPublicExperiences(),
+    getTranslations({ locale: 'id', namespace: 'About' }),
+    getTranslations({ locale: 'en', namespace: 'About' }),
+  ])
+  // chip kampus: pendidikan terbaru, sama seperti halaman Tentang
+  const education = experiences
+    .filter((e) => e.type === 'EDUCATION')
+    .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0))
+  const current = education.find((e) => !e.end) ?? education.at(-1) ?? null
+  const chipFor = (locale: 'id' | 'en') =>
+    current
+      ? {
+          name: organizationName(current, locale),
+          initials: initials(current.organization),
+          logo: current.logo,
+        }
+      : null
+  const chipId = chipFor('id')
+  const chipEn = chipFor('en')
   return (
     <>
-      <PageHeader
-        title="About"
-        description="Kartu dan teks halaman Tentang: foto kartu, nama, peran, bio, chip kampus dan bendera, dan headline untuk gambar pratinjau tautan. Kontak dan Resume CV diatur di Footer; foto profil, foto utama, dan peran beranda di Home."
-      />
+      <PageHeader title="About" />
       <ModuleTabs moduleId="about" current="/admin/profile" />
-      <div className="flex flex-col gap-6">
-        <AssetSlot
-          title="Foto kartu About"
-          description="Foto di kartu halaman Tentang. Rasio potret sekitar 4:5. Kosong: memakai foto profil (Home)."
-          target="about-photo"
-          asset={assets.aboutPhoto}
-          configured={isUploadConfigured()}
-        />
-        {/* form teks terakhir: tombol Simpan di bawahnya hanya untuk form ini (foto tersimpan sendiri
-            saat diunggah) */}
-        <ProfileForm defaultValues={profile} />
-      </div>
+      <ProfileLive
+        defaultValues={values}
+        photo={assets.aboutPhoto?.url ?? assets.photo?.url ?? DEFAULT_PROFILE_PHOTO}
+        aboutPhoto={assets.aboutPhoto}
+        chip={chipId && chipEn ? { id: chipId, en: chipEn } : null}
+        bioHeading={{ id: tId('title'), en: tEn('title') }}
+        rolesFallback={{
+          id: profile?.aboutRoles_id || tId('roles'),
+          en: profile?.aboutRoles_en || tEn('roles'),
+        }}
+        configured={isUploadConfigured()}
+      />
     </>
   )
 }

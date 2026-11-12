@@ -18,6 +18,10 @@ export const EN: Record<string, string> = {
   'Tutup menu': 'Close menu',
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
+  'Pratinjau tautan saat dibagikan dan mesin pencari': 'Shared link preview and search engines',
+  'Chip bendera': 'Flag chip',
+  'Ganti foto kartu About': 'Change About card photo',
+  Headline: 'Headline',
   'Riwayat pendidikan dari tab Pendidikan tampil di sini.':
     'Education history from the Education tab appears here.',
   'Tampil bila belum ada pendidikan': 'Shown when there is no education yet',
@@ -121,8 +125,6 @@ export const EN: Record<string, string> = {
   'Isi halaman Kebijakan Privasi. Tulis apa adanya, jangan menjanjikan hal yang tidak dilakukan situs.':
     'Privacy Policy content. Write it as it is; do not promise anything the site does not do.',
   'Halaman 404 dan halaman galat.': '404 and error pages.',
-  'Kartu dan teks halaman Tentang: foto kartu, nama, peran, bio, chip kampus dan bendera, dan headline untuk gambar pratinjau tautan. Kontak dan Resume CV diatur di Footer; foto profil, foto utama, dan peran beranda di Home.':
-    'About page card and text: card photo, name, roles, bio, campus and flag chips, and the headline for link previews. Contacts and the CV are in Footer; the profile photo, main photo, and home roles are in Home.',
   'Kerja dan organisasi (pendidikan ada di About → Pendidikan). Timeline publik diurutkan otomatis: yang masih berjalan di atas, lalu dari tanggal selesai terbaru.':
     'Work and organizations (education is in About → Education). The public timeline is sorted automatically: ongoing items first, then by the latest end date.',
   'Pendidikan di halaman Tentang, diurutkan dari yang paling lama. Hanya yang berstatus Terbit yang tampil.':
@@ -428,18 +430,8 @@ export const EN: Record<string, string> = {
   'Balas lewat email': 'Reply by email',
   Identitas: 'Identity',
   'Kartu foto': 'Photo card',
-  'Tampilkan chip kampus (nama dan logo pendidikan terbaru) di atas foto':
-    'Show the campus chip (latest education name and logo) above the photo',
-  'Tampilkan chip bendera Indonesia di bawah foto': 'Show the Indonesian flag chip below the photo',
   'Teks dua bahasa': 'Bilingual text',
-  'Judul gambar pratinjau saat tautan dibagikan dan deskripsi untuk mesin pencari. Spesifik, tanpa klise.':
-    'Title of the link preview image and description for search engines. Specific, no clichés.',
   'Posisi sekarang (opsional)': 'Current role (optional)',
-  'Subjudul gambar pratinjau tautan, jabatan untuk mesin pencari, dan cadangan baris peran di footer.':
-    'Link preview subtitle, job title for search engines, and fallback for the footer role line.',
-  'Peran di halaman Tentang (opsional)': 'Roles on the About page (optional)',
-  'Di bawah nama pada pita halaman Tentang, dipisah |. Kosong: memakai peran beranda (Home).':
-    'Under the name on the About band, separated by |. Empty: uses the home roles (Home).',
   'Kota (opsional)': 'City (optional)',
   Kota: 'City',
   'Posisi sekarang': 'Current role',

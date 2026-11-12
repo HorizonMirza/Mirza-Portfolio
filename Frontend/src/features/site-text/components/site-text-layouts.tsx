@@ -6,7 +6,9 @@ import type { ReactNode } from 'react'
 import { useAdminT } from '@/components/admin/admin-lang'
 
 import type { ModuleId } from '../catalog'
-import { EditText, Note, SearchSnippet, StateBox } from './site-text-live'
+import { Note, StateBox } from '@/components/admin/live-edit'
+
+import { EditText, SearchSnippet } from './site-text-live'
 
 // Tata letak pratinjau per modul (DESIGN.md bagian 135). Meniru susunan dan huruf halaman situs;
 // isi data (riwayat, project) diganti contoh singkat karena yang diubah di sini hanya teksnya.
