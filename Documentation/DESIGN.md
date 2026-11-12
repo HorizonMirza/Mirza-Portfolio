@@ -1726,7 +1726,7 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Data: kolom opsional `Skill.logoId` (migrasi `skill_logo`, hanya menambah kolom). Logo unggahan didahulukan dari logo bawaan `public/skills` di globe beranda dan chip teknologi project (`resolveLogo`); kosong = perilaku lama. Logo ikut dihapus saat skill dihapus, dan cache `skills` + `projects` dibuang setelah logo diubah.
 - Ikon slug Simple Icons dan pindah kategori tetap lewat tombol "…" di alat kecil chip.
 
-## 144. Penanda bagian yang bisa diubah: garis putus-putus berkedip (2026-11-12)
+## 144. Penanda bagian yang bisa diubah: garis putus-putus (2026-11-12)
 
-- Permintaan pemilik: di pratinjau "ubah langsung" bagian yang bisa diubah harus terlihat. Semua teks yang bisa diketik (`.admin-inline`, isi kartu pembuka `.intro-type`) dan foto/logo yang bisa ditekan untuk diganti (`.admin-editable`: foto utama di Peran, foto kartu About, sampul project, logo dan foto pengalaman, logo skill, ikon PDF Resume CV) diberi garis putus-putus tipis warna teks yang berkedip pelan (1,6 detik).
-- Kedip berhenti saat kolom sedang diketik atau tombol difokus; tombol yang belum aktif (mis. sampul sebelum project disimpan) tidak berkedip. Garis berupa outline sehingga tata letak tidak bergeser dan pratinjau tetap 1:1. Pengguna yang memilih gerak dikurangi melihat garis diam tanpa kedip.
+- Permintaan pemilik: di pratinjau "ubah langsung" bagian yang bisa diubah harus terlihat. Semua teks yang bisa diketik (`.admin-inline`, isi kartu pembuka `.intro-type`) dan foto/logo yang bisa ditekan untuk diganti (`.admin-editable`: foto utama di Peran, foto kartu About, sampul project, logo dan foto pengalaman, logo skill, ikon PDF Resume CV) diberi garis putus-putus tipis warna teks (40%).
+- Awalnya berkedip pelan; revisi pemilik di hari yang sama: tidak perlu berkedip, jadi garisnya diam. Garis hilang saat kolom sedang diketik atau tombol difokus; tombol yang belum aktif (mis. sampul sebelum project disimpan) tanpa garis. Garis berupa outline sehingga tata letak tidak bergeser dan pratinjau tetap 1:1.

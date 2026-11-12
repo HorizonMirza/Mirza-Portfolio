@@ -2719,35 +2719,17 @@ html[data-intro='pending'] .intro {
     box-shadow: inset 0 -2px 0 var(--danger);
   }
   /* Penanda bagian yang bisa diubah (permintaan pemilik 2026-11-12, DESIGN.md bagian 144): garis
-     putus-putus berkedip pelan di sekeliling teks yang bisa diketik dan foto/logo yang bisa ditekan
-     untuk diganti. Berhenti saat sedang diketik atau difokus; tanpa animasi bila pengguna memilih
-     gerak dikurangi (garis diam). Outline tidak menggeser tata letak. */
+     putus-putus tipis diam (tanpa kedip, revisi pemilik) di sekeliling teks yang bisa diketik dan
+     foto/logo yang bisa ditekan untuk diganti. Hilang saat sedang diketik atau difokus. Outline
+     tidak menggeser tata letak. */
   .admin-inline:not(:focus),
   .intro-type:not(:focus),
   .admin-editable:not(:disabled, :focus-visible) {
-    outline: 1.5px dashed transparent;
+    outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
     outline-offset: 3px;
-    animation: admin-editable-blink 1.6s ease-in-out infinite;
   }
   .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: var(--editable-offset, 3px);
-  }
-}
-@keyframes admin-editable-blink {
-  0%,
-  100% {
-    outline-color: transparent;
-  }
-  50% {
-    outline-color: color-mix(in srgb, currentColor 60%, transparent);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .admin-inline:not(:focus),
-  .intro-type:not(:focus),
-  .admin-editable:not(:disabled, :focus-visible) {
-    animation: none;
-    outline-color: color-mix(in srgb, currentColor 40%, transparent);
   }
 }
 
