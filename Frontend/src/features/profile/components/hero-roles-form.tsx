@@ -1,70 +1,136 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useTransition } from 'react'
-import { useForm } from 'react-hook-form'
+import type { StaticImageData } from 'next/image'
+import { useState, useTransition } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
-import { BilingualTabs, countLangErrors } from '@/components/admin/bilingual-tabs'
-import { Field } from '@/components/admin/field'
-import { FormFooter } from '@/components/admin/form-footer'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { HeroPreview } from '@/components/admin/hero-preview'
+import {
+  InlineInput,
+  LANG_NAME,
+  type Lang,
+  LangToggle,
+  LiveErrors,
+  LiveStage,
+  SaveBar,
+} from '@/components/admin/live-edit'
 
 import { saveHeroRoles } from '../actions'
 import { type HeroRolesInput, heroRolesSchema } from '../schema'
 
-// Admin → Home: peran di kiri dan kanan bawah foto beranda (mis. "Fullstack Developer" dan
-// "Community Manager"), dipindah dari form Profil 2026-11-10.
+function splitRoles(value: string) {
+  return value.split('|').map((r) => r.trim())
+}
+
+// Admin → Home, tab Peran beranda (DESIGN.md bagian 133): hero beranda tampil seperti di situs dan
+// peran di kiri dan kanan bawah foto diketik langsung di tempatnya. Disimpan sebagai satu teks
+// dipisah "|" (format lama tetap). Selama kosong, situs memakai teks bawaan (About.roles), yang
+// tampil samar di sini.
 export function HeroRolesForm({
   defaultValues,
   placeholders,
+  name,
+  portrait,
 }: {
   defaultValues: HeroRolesInput
   // teks bawaan (About.roles) yang tampil di situs selama kolom ini kosong
-  placeholders: Record<'id' | 'en', string>
+  placeholders: Record<Lang, string>
+  name: string
+  portrait: string | StaticImageData
 }) {
   const t = useAdminT()
   const [pending, startTransition] = useTransition()
+  const [lang, setLang] = useState<Lang>('id')
   const form = useForm<HeroRolesInput>({ resolver: zodResolver(heroRolesSchema), defaultValues })
   const {
-    register,
-    formState: { errors },
+    control,
+    setValue,
+    formState: { errors, dirtyFields, isSubmitted },
   } = form
+  const field = `aboutRoles_${lang}` as const
+  const value = useWatch({ control, name: field }) ?? ''
+  const hints = splitRoles(placeholders[lang])
+  const parts = splitRoles(value)
+  // minimal dua tempat: kiri dan kanan bawah foto
+  const slots = Array.from({ length: Math.max(2, parts.length) }, (_, i) => parts[i] ?? '')
+  const error = errors[field]?.message
+  const otherLang: Lang = lang === 'id' ? 'en' : 'id'
+  const otherError = errors[`aboutRoles_${otherLang}`]?.message
 
-  const onSubmit = form.handleSubmit((values) => {
-    startTransition(async () => {
-      const result = await saveHeroRoles(values)
-      if (applyResult(result, form.setError)) form.reset(values)
-    })
-  })
-
-  const roles = (lang: 'id' | 'en') => {
-    const name = `aboutRoles_${lang}` as const
-    return (
-      <Field
-        id={name}
-        label={lang === 'id' ? 'Peran' : 'Roles'}
-        hint={
-          lang === 'id'
-            ? 'Dipisah |, mis. "Fullstack Developer | Community Manager". Peran pertama di kiri bawah foto, berikutnya di kanan. Juga tampil di halaman Tentang dan footer.'
-            : 'Separated by |. The first role sits bottom left of the photo, the next bottom right. Also shown on the About page and in the footer.'
-        }
-        error={errors[name]?.message}
-      >
-        {(a) => <Input placeholder={placeholders[lang]} {...a} {...register(name)} />}
-      </Field>
-    )
+  function update(index: number, text: string) {
+    const next = slots.map((s, i) => (i === index ? text : s))
+    // tempat kosong di akhir tidak ikut disimpan
+    while (next.length > 0 && next[next.length - 1]!.trim() === '') next.pop()
+    setValue(field, next.join(' | '), { shouldDirty: true, shouldValidate: isSubmitted })
   }
 
+  const onSubmit = form.handleSubmit(
+    (values) => {
+      // tempat kosong di tengah dibuang, spasi dirapikan
+      const clean = (v: string | undefined) =>
+        splitRoles(v ?? '')
+          .filter(Boolean)
+          .join(' | ')
+      const payload = {
+        aboutRoles_id: clean(values.aboutRoles_id),
+        aboutRoles_en: clean(values.aboutRoles_en),
+      }
+      startTransition(async () => {
+        const result = await saveHeroRoles(payload)
+        if (applyResult(result, form.setError)) form.reset(payload)
+      })
+    },
+    (invalid) => {
+      if (!invalid[field] && invalid[`aboutRoles_${otherLang}`]) setLang(otherLang)
+    },
+  )
+
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-6">
-      <Card className="flex flex-col gap-4">
-        <h2 className="text-h3 font-semibold">{t('Peran di bawah foto')}</h2>
-        <BilingualTabs errors={countLangErrors(errors)} id={roles('id')} en={roles('en')} />
-      </Card>
-      <FormFooter pending={pending} />
+    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+      <LiveStage className="relative">
+        <HeroPreview name={name} portrait={portrait}>
+          <div className="admin-hero-roles" lang={lang}>
+            {slots.map((role, i) => (
+              <InlineInput
+                key={`${lang}-${i}`}
+                label={t('Peran ke-{n} ({lang})', { n: i + 1, lang: t(LANG_NAME[lang]) })}
+                value={role}
+                placeholder={hints[i] ?? ''}
+                size={Math.max(4, (role || hints[i] || '').length + 1)}
+                maxLength={120}
+                invalid={Boolean(error)}
+                describedBy={error ? `${field}-error` : undefined}
+                onChange={(event) => update(i, event.target.value)}
+              />
+            ))}
+          </div>
+        </HeroPreview>
+        <LangToggle
+          lang={lang}
+          onChange={setLang}
+          dirty={{ id: Boolean(dirtyFields.aboutRoles_id), en: Boolean(dirtyFields.aboutRoles_en) }}
+          className="absolute top-3 right-3"
+        />
+      </LiveStage>
+      <LiveErrors
+        messages={[
+          ...(error ? [{ id: `${field}-error`, text: t(error) }] : []),
+          ...(otherError
+            ? [
+                {
+                  text: t('Isi {lang}: {error}', {
+                    lang: t(LANG_NAME[otherLang]),
+                    error: t(otherError),
+                  }),
+                },
+              ]
+            : []),
+        ]}
+      />
+      <SaveBar pending={pending} />
     </form>
   )
 }

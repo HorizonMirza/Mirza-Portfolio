@@ -209,7 +209,9 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
   // sejak 2026-11-10 Home hanya mengelola foto profil, foto utama, dan peran (permintaan pemilik).
   // Yang diubah peran bahasa Inggris dan dicek di /en: tes halaman Tentang (/id/about) berjalan
   // bersamaan dan memeriksa peran bahasa Indonesia, jadi keduanya tidak saling mengganggu.
-  const field = () => page.getByLabel('Roles', { exact: true })
+  // peran diketik langsung di pratinjau hero (DESIGN.md bagian 133), bahasa dipilih di panggung
+  // getByRole: hanya yang terlihat (Next menyimpan salinan halaman tersembunyi untuk navigasi kembali)
+  const roles = page.getByRole('textbox', { name: /^Role \d+ \(English\)$/ })
   // bahasa admin EN disetel lewat cookie sebelum halaman dibuka (sama seperti pilihan tombol bahasa
   // di top bar), agar tidak berpacu dengan hidrasi tombol. Tampilan admin ikut berbahasa Inggris.
   await page
@@ -217,14 +219,20 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
     .addCookies([{ name: 'mmirza-admin-lang', value: 'en', url: testInfo.project.use.baseURL! }])
   const openEnglish = async () => {
     await page.goto('/admin/roles')
-    await expect(field()).toBeVisible()
+    // tombol EN baru berfungsi setelah hidrasi: diulang sampai kolom bahasa Inggris tampil
+    await expect(async () => {
+      await page
+        .getByRole('group', { name: 'Language being edited' })
+        .getByRole('button', { name: 'EN' })
+        .click({ timeout: 2000 })
+      await expect(roles.first()).toBeVisible({ timeout: 1000 })
+    }).toPass()
   }
   await openEnglish()
-  const original = await field().inputValue()
-  await expect(async () => {
-    await field().fill('Test Role One | Test Role Two')
-    await expect(field()).toHaveValue('Test Role One | Test Role Two', { timeout: 1000 })
-  }).toPass()
+  const original = await roles.evaluateAll((els) => els.map((el) => (el as HTMLInputElement).value))
+  await roles.nth(0).fill('Test Role One')
+  await roles.nth(1).fill('Test Role Two')
+  await expect(roles.nth(1)).toHaveValue('Test Role Two')
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByText('Roles saved.')).toBeVisible()
   // dicek langsung ke server agar cache browser tidak menyajikan halaman lama
@@ -234,10 +242,8 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
 
   // kembalikan agar tes lain tidak terpengaruh
   await openEnglish()
-  await expect(async () => {
-    await field().fill(original)
-    await expect(field()).toHaveValue(original, { timeout: 1000 })
-  }).toPass()
+  for (const [i, value] of original.entries()) await roles.nth(i).fill(value)
+  for (let i = original.length; i < (await roles.count()); i++) await roles.nth(i).fill('')
   await page.getByRole('button', { name: 'Save' }).click()
   await expect(page.getByText('Roles saved.')).toBeVisible()
   await expect
@@ -260,12 +266,13 @@ test('modul Home: empat tab selebar panel, foto dan peran di tab masing-masing',
   // satu baris: semua tab sejajar di atas
   const tops = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
   expect(new Set(tops).size).toBe(1)
-  for (const title of ['Foto profil', 'Foto utama']) {
-    await expect(page.getByRole('heading', { name: title })).toBeVisible()
-  }
-  await expect(page.getByRole('heading', { name: 'Peran di bawah foto' })).toHaveCount(0)
+  // Foto beranda: hero seperti di situs, foto ditekan untuk diganti (DESIGN.md bagian 133)
+  for (const label of ['Ganti foto profil', 'Ganti foto utama'])
+    await expect(page.getByRole('button', { name: label })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: /^Peran ke-1/ })).toHaveCount(0)
   await page.goto('/admin/roles')
-  await expect(page.getByRole('heading', { name: 'Peran di bawah foto' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Peran ke-2 (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('link', { name: 'Peran beranda' })).toHaveAttribute(
     'aria-current',
     'page',
@@ -275,8 +282,15 @@ test('modul Home: empat tab selebar panel, foto dan peran di tab masing-masing',
   for (const old of ['Armor hero', 'Judul bagian', 'SEO']) {
     await expect(page.getByRole('heading', { name: old, exact: true })).toHaveCount(0)
   }
-  // belum ada unggahan: foto utama bawaan bisa diunduh sebagai acuan
-  await expect(page.getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' })).toHaveCount(1)
+  // foto utama ditekan: jendela kecil dengan acuan foto bawaan yang bisa diunduh
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Ganti foto utama' }).click({ timeout: 2000 })
+    await expect(page.getByRole('dialog', { name: 'Foto utama' })).toBeVisible({ timeout: 1000 })
+  }).toPass()
+  await expect(
+    page.getByRole('dialog').getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' }),
+  ).toHaveCount(1)
+  await page.keyboard.press('Escape')
   // foto profil pindah ke Home: tidak dobel di About → Profil
   await page.goto('/admin/profile')
   await expect(page.getByRole('heading', { name: 'Foto profil' })).toHaveCount(0)

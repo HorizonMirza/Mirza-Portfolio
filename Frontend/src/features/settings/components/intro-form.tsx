@@ -7,12 +7,11 @@ import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
+import { LANG_NAME, type Lang, SaveBar } from '@/components/admin/live-edit'
 import { cn } from '@/lib/utils'
 
 import { saveIntroNotice } from '../actions'
 import { type IntroInput, introSchema } from '../schema'
-
-type Lang = 'id' | 'en'
 
 // Teks tetap kartu per bahasa (messages/*.json namespace Intro), disiapkan server
 export type IntroPreviewTexts = Record<
@@ -21,7 +20,6 @@ export type IntroPreviewTexts = Record<
 >
 
 const MAX = 600
-const LANG_NAME: Record<Lang, string> = { id: 'Indonesia', en: 'Inggris' }
 
 // Admin → Home, tab Kartu pembuka (revisi pemilik 2026-11-12, DESIGN.md bagian 131-132): kartu
 // "Informasi Penting" tampil seperti yang dilihat pengunjung, di panggung hitam selebar panel. Isi
@@ -163,14 +161,7 @@ export function IntroForm({
           {t('Isi {lang}: {error}', { lang: t(LANG_NAME[otherLang]), error: t(otherError) })}
         </p>
       ) : null}
-      {/* Simpan satu baris penuh, sudut kecil seperti tab Home */}
-      <button
-        type="submit"
-        disabled={pending}
-        className="admin-bleed min-h-11 rounded-md bg-text text-sm font-semibold text-bg transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
-      >
-        {pending ? t('Menyimpan…') : t('Simpan')}
-      </button>
+      <SaveBar pending={pending} />
     </form>
   )
 }

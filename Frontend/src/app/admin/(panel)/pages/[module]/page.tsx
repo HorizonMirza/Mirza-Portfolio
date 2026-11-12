@@ -5,6 +5,7 @@ import { getTranslations } from 'next-intl/server'
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { AssetSlot } from '@/features/assets/components/asset-panels'
+import { HomePhotosEditor } from '@/features/assets/components/home-photos-editor'
 import { getHeroPortraitAsset, getProfileAssets } from '@/features/assets/queries'
 import { ContactLinksForm } from '@/features/profile/components/contact-links-form'
 import { getPublicProfile } from '@/features/profile/public'
@@ -16,7 +17,7 @@ import { SiteTextForm } from '@/features/site-text/components/site-text-form'
 import { getDefaultTexts, getTextsForEdit } from '@/features/site-text/queries'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { HERO_PORTRAIT } from '@/lib/default-photo'
+import { DEFAULT_PROFILE_AVATAR, HERO_PORTRAIT } from '@/lib/default-photo'
 import { isUploadConfigured } from '@/lib/uploads'
 
 type Params = { params: Promise<{ module: string }> }
@@ -99,45 +100,22 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
   return <SiteTextForm moduleId={moduleId} initialValues={texts.values} defaults={defaults} />
 }
 
-// Home → Foto beranda: foto profil dan foto utama (peran pindah ke tab sendiri, /admin/roles)
+// Home → Foto beranda: hero seperti di situs, foto ditekan untuk diganti (DESIGN.md bagian 133)
 async function HomePhotos() {
-  const { t } = await getAdminT()
-  const [profileAssets, portrait] = await Promise.all([getProfileAssets(), getHeroPortraitAsset()])
-  const configured = isUploadConfigured()
+  const [profileAssets, portrait, profile] = await Promise.all([
+    getProfileAssets(),
+    getHeroPortraitAsset(),
+    getPublicProfile(),
+  ])
   return (
-    <>
-      <div className="grid gap-6 lg:grid-cols-2">
-        <AssetSlot
-          title="Foto profil"
-          description="Foto bulat di kiri atas. Juga tampil di footer, kartu halaman Tentang, dan kartu ID halaman Kontak. Rasio persegi atau potret."
-          target="profile-photo"
-          asset={profileAssets.photo}
-          configured={configured}
-        />
-        <AssetSlot
-          title="Foto utama"
-          description="Foto besar di beranda. WebP, PNG, atau AVIF dengan perbandingan sekitar 1120:1100, lebar minimal 700 px."
-          note={
-            <>
-              {t(
-                'Pembingkaian halaman dan gambar armor dihitung dari foto bawaan, jadi pengganti harus dibingkai sama: kepala, wajah, dan tangan di posisi yang sama, rata bawah, latar transparan.',
-              )}{' '}
-              <a
-                href={HERO_PORTRAIT.src}
-                download
-                className="text-primary underline underline-offset-4"
-              >
-                {t('Unduh foto bawaan sebagai acuan')}
-              </a>
-              . {t('Hapus berkas untuk kembali ke foto bawaan.')}
-            </>
-          }
-          target="hero-portrait"
-          asset={portrait}
-          configured={configured}
-        />
-      </div>
-    </>
+    <HomePhotosEditor
+      name={profile?.name ?? 'Muhammad Mirza'}
+      profilePhoto={profileAssets.photo}
+      heroPortrait={portrait}
+      defaultAvatar={DEFAULT_PROFILE_AVATAR}
+      defaultPortrait={HERO_PORTRAIT}
+      configured={isUploadConfigured()}
+    />
   )
 }
 

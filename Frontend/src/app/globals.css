@@ -2678,6 +2678,108 @@ html[data-intro='pending'] .intro {
   text-align: justify;
   hyphens: auto;
 }
+/* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx, DESIGN.md bagian
+   133): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
+.admin-inline {
+  min-width: 1ch;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  outline: none;
+  caret-color: currentColor;
+}
+.admin-inline::placeholder {
+  color: currentColor;
+  opacity: 0.4;
+}
+/* isian yang salah: garis merah di bawah teks */
+.admin-inline-bad {
+  box-shadow: inset 0 -2px 0 var(--danger);
+}
+/* Tiruan hero beranda di admin (components/admin/hero-preview.tsx, DESIGN.md bagian 133). Ukuran
+   mengikuti lebar panggung lewat container query, bukan layar. */
+.admin-hero {
+  --hero-glow: color-mix(in srgb, var(--note) 16%, transparent);
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 16 / 9;
+  min-height: 22rem;
+  max-height: 38rem;
+  width: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+@media (max-width: 640px) {
+  .admin-hero {
+    aspect-ratio: 3 / 4;
+  }
+}
+.dark .admin-hero {
+  --hero-glow: rgb(255 255 255 / 0.18);
+}
+.admin-hero-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 38%, var(--hero-glow), transparent 55%);
+  pointer-events: none;
+}
+.admin-hero-name {
+  position: absolute;
+  /* di bawah tempat navbar (foto profil bulat di kiri atas), seperti di situs */
+  inset: 4.5rem 0 auto;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 13cqi, 9rem);
+  font-weight: 700;
+  line-height: 0.9;
+  text-align: center;
+  text-transform: uppercase;
+  -webkit-mask-image: linear-gradient(#000 30%, transparent 95%);
+  mask-image: linear-gradient(#000 30%, transparent 95%);
+  pointer-events: none;
+}
+.admin-hero-name > span {
+  display: block;
+}
+.admin-hero-portrait {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 90%;
+  aspect-ratio: 1120 / 1100;
+  translate: -50% 0;
+}
+.admin-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom;
+}
+/* peran di kiri dan kanan bawah, huruf seperti .hero-roles situs */
+.admin-hero-roles {
+  position: absolute;
+  inset: auto 4cqi 5% 4cqi;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 6px var(--bg),
+    0 0 14px var(--bg);
+}
+.admin-hero-roles > :last-child:not(:first-child) {
+  text-align: right;
+}
 /* Admin → Home, Kartu pembuka: isi kartu diketik langsung (DESIGN.md bagian 132). Tanpa bingkai
    dan garis fokus; hanya kursor berkedip, huruf sama dengan teks kartu. */
 .intro-type {

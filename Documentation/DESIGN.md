@@ -1643,3 +1643,14 @@ Revisi pemilik atas bagian 131:
 - Petunjuk di bawah kartu (Esc, `**teks**`, jumlah karakter) dihapus. Batas 600 karakter tetap dijaga kolom dan server; galat tetap tampil di bawah kartu.
 - Ikon pensil dan mode lihat/ubah dihapus. Isi kartu adalah kolom ketik tanpa latar, bingkai, atau garis fokus (`.intro-type` di globals.css: huruf sama dengan teks kartu, kursor putih berkedip), tingginya mengikuti isi. Ditekan langsung bisa diketik, "seperti mengetik di Claude". Akibatnya `**tebal**` tampil sebagai teks mentah saat diubah; di situs tetap tebal.
 - Panggung hitam dan tombol Simpan selebar panel isi sampai tepi kiri-kanan (`.admin-bleed`), sudut kecil `rounded-md` seperti tab Home. Simpan satu baris penuh, putih (warna teks tema) dengan tulisan gelap.
+
+## 133. Ubah langsung di pratinjau: Home (2026-11-12)
+
+Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di pratinjau": setiap halaman admin dibuat seperti Kartu pembuka (bagian 131-132), dikerjakan per modul, satu commit per modul. Bagian ini: Home.
+
+- **Alat bersama** `components/admin/live-edit.tsx`: `LiveStage` (panggung selebar panel, `rounded-md`), `SaveBar` (Simpan satu baris penuh), `LangToggle` (ID/EN bahasa yang diubah, titik = belum disimpan), `InlineInput`/`InlineArea` (teks yang diketik langsung; `.admin-inline` di globals.css: tanpa latar/bingkai/garis fokus, huruf ikut sekitarnya, kursor berkedip, garis merah di bawah bila salah, placeholder samar), `LiveErrors`.
+- **Pratinjau hero** `components/admin/hero-preview.tsx` + `.admin-hero*`: nama besar memudar di belakang, foto utama rata bawah, halo; ukuran mengikuti lebar panggung (container query), jadi mendekati, bukan sama persis dengan situs (situs memakai tinggi layar dan efek cairan).
+- **Peran beranda:** peran di kiri dan kanan bawah foto diketik langsung (minimal dua tempat). Tetap disimpan sebagai satu teks dipisah `|`; tempat kosong dibuang saat disimpan. Selama kosong, teks bawaan situs tampil samar sebagai placeholder.
+- **Foto beranda:** hero dengan foto profil bulat di kiri atas seperti navbar. Foto ditekan → jendela kecil: teks alternatif, Hapus (kembali ke foto bawaan), dan unggah pengganti (atau pesan "Unggah belum aktif"); foto utama juga menampilkan acuan foto bawaan untuk diunduh.
+- Skill teknis menyusul di commit berikutnya.
+- Catatan tes: Next 16 menyimpan salinan halaman tersembunyi untuk navigasi kembali, jadi tes E2E memakai `getByRole` (hanya yang terlihat), bukan `getByLabel`.

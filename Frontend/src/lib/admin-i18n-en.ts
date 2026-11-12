@@ -18,6 +18,8 @@ export const EN: Record<string, string> = {
   'Tutup menu': 'Close menu',
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
+  'Peran ke-{n} ({lang})': 'Role {n} ({lang})',
+  'Ganti foto utama': 'Change main photo',
   'Bahasa yang diubah': 'Language being edited',
   'Isi kartu pembuka ({lang})': 'Introduction card text ({lang})',
   Indonesia: 'Indonesian',
@@ -448,8 +450,6 @@ export const EN: Record<string, string> = {
   'Format email tidak valid': 'Invalid email format',
   'Nomor WhatsApp: 8–15 angka, boleh diawali +': 'WhatsApp number: 8–15 digits, may start with +',
   'Peran di bawah foto': 'Roles under the photo',
-  'Dipisah |, mis. "Fullstack Developer | Community Manager". Peran pertama di kiri bawah foto, berikutnya di kanan. Juga tampil di halaman Tentang dan footer.':
-    'Separated by |, e.g. "Fullstack Developer | Community Manager". The first role sits bottom left of the photo, the next bottom right. Also shown on the About page and in the footer.',
   'Profil disimpan.': 'Profile saved.',
   'Isi profil di About → Profil dulu.': 'Fill in the profile in About → Profile first.',
   'Kontak disimpan.': 'Contacts saved.',
