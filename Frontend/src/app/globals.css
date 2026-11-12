@@ -550,6 +550,18 @@ button.xp-frame {
     --xp-text-push: 0;
   }
 }
+/* Admin → satu entri Pengalaman/Pendidikan (DESIGN.md bagian 137): selalu tata letak entri genap
+   (isi di kanan rata kiri, foto atau tahun di kiri) agar kolom ketik tidak rata kanan */
+@media (min-width: 768px) {
+  .xp-tl.admin-xp-edit > li {
+    --xp-main: 3;
+    --xp-side: 1;
+    --xp-align: left;
+    --xp-side-align: right;
+    --xp-push: auto;
+    --xp-text-push: 0;
+  }
+}
 /* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Pilihan efek pemilik
    2026-10-05: E4 entri tidak aktif buram lalu tajam saat aktif; D10 logo aktif hanya membesar;
    B9 cahaya di garis mengikuti entri aktif. Judul tanpa efek (revisi pemilik). Teks redup memakai

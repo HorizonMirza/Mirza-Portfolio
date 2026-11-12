@@ -1679,3 +1679,9 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Chip kampus dan chip bendera: tombol di bawah pita, ditekan untuk menampilkan atau menyembunyikan (langsung terlihat di kartu, tersimpan dengan Simpan).
 - Headline, posisi sekarang, dan kota tampil sebagai pratinjau tautan saat dibagikan dan untuk mesin pencari.
 - `Note` dan `StateBox` dipindah ke live-edit (dipakai bersama). `profile-form.tsx` lama dihapus.
+
+## 137. Ubah langsung di pratinjau: Pengalaman dan Pendidikan (2026-11-12)
+
+- **Daftar** (`ExperienceListLive`): seperti timeline situs (`.xp-tl`: logo atau inisial di garis, peran, instansi, periode), bergantian kiri-kanan di desktop. Entri ditekan untuk dibuka; "+ Tambah pengalaman/pendidikan" bergaris putus di atas; Draf ditandai chip bergaris putus; Hapus muncul saat entri disorot atau difokus. Tabel lama dihapus.
+- **Satu entri** (`ExperienceLive`, untuk baru dan ubah): entri tampil seperti di timeline (selalu tata letak isi di kanan, `.admin-xp-edit`). Peran/jenjang, instansi (versi Inggris saat EN, kosong = sama), jenis pekerjaan (pilihan sebaris), bulan mulai dan selesai (kata "Sekarang" bila masih berlangsung; ditekan untuk mengisi bulan selesai, × untuk kembali ke Sekarang), lokasi, dan uraian/Grade diketik langsung. Kerja/Organisasi, Terbit/Draf, dan Titik cerita berupa tombol kecil di atas entri bersama tautan "← Semua pengalaman". Logo dan foto kegiatan ditekan untuk diganti (`AssetEditDialog`; setelah entri tersimpan). Pendidikan tanpa jenis, jenis pekerjaan, lokasi, titik cerita, dan foto; sisi seberang menampilkan tahun.
+- Simpan satu baris: "Tambah pengalaman/pendidikan" untuk entri baru (lalu pindah ke halaman entri), "Simpan" untuk entri yang ada.

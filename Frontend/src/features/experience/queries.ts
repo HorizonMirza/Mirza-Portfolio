@@ -20,6 +20,7 @@ export async function listExperiencesAdmin(kind: ExperienceKind) {
       startDate: true,
       endDate: true,
       status: true,
+      logo: { select: { url: true } },
     },
   })
 }

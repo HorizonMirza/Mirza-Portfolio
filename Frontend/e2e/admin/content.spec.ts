@@ -368,32 +368,34 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
 
 test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan organisasi', async ({
   page,
-  isMobile,
 }) => {
   await page.goto('/admin/education')
   await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveAttribute(
     'aria-current',
     'page',
   )
-  // di layar sempit tabel tampil sebagai kartu tanpa judul kolom
-  if (!isMobile)
-    await expect(page.getByRole('columnheader', { name: 'Sekolah / kampus' })).toBeVisible()
+  // daftar seperti timeline situs, tambah lewat baris bergaris putus (DESIGN.md bagian 137)
+  await expect(page.getByRole('link', { name: 'Tambah pendidikan' })).toHaveAttribute(
+    'href',
+    '/admin/education/new',
+  )
   await page.goto('/admin/education/new')
-  await expect(page.getByLabel('Sekolah / kampus', { exact: true })).toBeVisible()
-  // satu isian per bahasa; hanya bahasa isian yang aktif yang terlihat
-  await expect(page.getByLabel('Grade / GPA')).toHaveCount(2)
-  await expect(page.getByLabel('Grade / GPA').first()).toBeVisible()
+  // entri baru diketik langsung: sekolah, jenjang, Grade/GPA
+  await expect(page.getByRole('textbox', { name: 'Sekolah / kampus', exact: true })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Grade / GPA (Indonesia)' })).toBeVisible()
   // jenis tetap Pendidikan dan isian khusus kerja disembunyikan
-  for (const label of ['Jenis', 'Lokasi (opsional)'])
-    await expect(page.getByLabel(label, { exact: true })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Batal' })).toHaveAttribute(
+  for (const label of ['Kerja', 'Organisasi', 'Titik cerita'])
+    await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0)
+  await expect(page.getByRole('textbox', { name: 'Lokasi (opsional)' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Semua pendidikan' })).toHaveAttribute(
     'href',
     '/admin/education',
   )
   // pilihan jenis di Experience tanpa Pendidikan
   await page.goto('/admin/experience/new')
-  const type = page.getByLabel('Jenis', { exact: true })
-  await expect(type.locator('option')).toHaveText(['Kerja', 'Organisasi'])
+  await expect(page.getByRole('button', { name: 'Kerja', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Organisasi', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Pendidikan', exact: true })).toHaveCount(0)
 })
 
 test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {
