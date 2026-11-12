@@ -34,6 +34,11 @@ export const EN: Record<string, string> = {
   'Chip bendera': 'Flag chip',
   'Ganti foto kartu About': 'Change About card photo',
   'Ganti sampul': 'Change cover',
+  'Buka berkas': 'Open file',
+  'PDF terunggah · atau tempel link': 'PDF uploaded · or paste a link',
+  'Kartu kontak di footer · kosong = tidak tampil': 'Footer contact cards · empty = hidden',
+  'PDF yang dibuka tombol Resume CV bila Link CV kosong.':
+    'The PDF the Resume CV button opens when the CV link is empty.',
   'Tombol di halaman detail': 'Buttons on the detail page',
   'Belum ada project.': 'No projects yet.',
   'Simpan dulu untuk menambah sampul dan galeri': 'Save first to add a cover and gallery',
@@ -217,7 +222,6 @@ export const EN: Record<string, string> = {
   'Unggah belum aktif. Isi': 'Uploads are not active yet. Set',
   dan: 'and',
   'di environment, lalu deploy ulang.': 'in the environment, then redeploy.',
-  'Lihat {item}': 'View {item}',
   'Belum ada berkas.': 'No file yet.',
   'Ganti berkas': 'Replace file',
   Unggah: 'Upload',
@@ -225,7 +229,6 @@ export const EN: Record<string, string> = {
   'Tangkapan layar untuk halaman detail project, tampil sesuai urutan unggah.':
     'Screenshots for the project detail page, shown in upload order.',
   'Belum ada gambar.': 'No images yet.',
-  'gambar {n}': 'image {n}',
   'gambar galeri {n}': 'gallery image {n}',
   'Tambah ke galeri': 'Add to gallery',
   'Teks alternatif (Indonesia)': 'Alt text (Indonesian)',
@@ -414,14 +417,7 @@ export const EN: Record<string, string> = {
   'Posisi sekarang': 'Current role',
   'Peran di halaman Tentang': 'Roles on the About page',
   'Kontak dan Resume CV': 'Contacts and Resume CV',
-  'Kotak kontak di footer setiap halaman. Email dan WhatsApp hanya disimpan di database, tidak di repo. Kosongkan bila tidak ingin ditampilkan.':
-    'Contact boxes in the footer of every page. Email and WhatsApp are stored only in the database, never in the repo. Leave empty to hide.',
-  'Email publik (opsional)': 'Public email (optional)',
-  'WhatsApp (opsional)': 'WhatsApp (optional)',
-  'Contoh: +6281234567890': 'Example: +6281234567890',
   'Link CV (opsional)': 'CV link (optional)',
-  'Mis. link Google Drive dengan akses "Siapa saja yang memiliki link". Bila diisi, semua tombol CV membuka link ini; bila kosong, memakai PDF yang di-upload.':
-    'E.g. a Google Drive link with "Anyone with the link" access. When filled in, every CV button opens this link; when empty, the uploaded PDF is used.',
   '{name} (opsional)': '{name} (optional)',
   'Situs lain': 'Other site',
   'Link CV': 'CV link',
@@ -462,8 +458,6 @@ export const EN: Record<string, string> = {
   'Unduh foto bawaan sebagai acuan': 'Download the default photo as a reference',
   'Hapus berkas untuk kembali ke foto bawaan.': 'Delete the file to go back to the default photo.',
   'Berkas Resume CV': 'Resume CV file',
-  'PDF yang dibuka tombol Resume CV bila Link CV di atas kosong.':
-    'The PDF opened by the Resume CV button when the CV link above is empty.',
   About: 'About',
   'Alamat situs di tali dan barcode kartu ID': 'Site address on the ID card lanyard and barcode',
   Beranda: 'Home',

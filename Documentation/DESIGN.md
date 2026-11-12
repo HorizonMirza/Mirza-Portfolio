@@ -1693,3 +1693,10 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Yang tidak tampil di detail berada di kotak bergaris putus: "Di daftar project" (ringkasan dan teknologi; semua skill tampil per kategori, yang dipakai terisi), "Belum tampil di situs" (deskripsi dan studi kasus), dan "Impor dari GitHub". Terbit/Draf, Unggulan di beranda, kategori, dan tahun berupa tombol kecil di baris atas bersama pilihan bahasa ID/EN.
 - Galeri tetap panel tersendiri di bawah tombol Simpan: tiap gambar punya form sendiri (teks alternatif, hapus, unggah) dan tersimpan langsung, jadi tidak boleh berada di dalam form project.
 - Simpan satu baris: "Buat project" untuk project baru (lalu pindah ke halaman project), "Simpan" untuk project yang ada.
+
+## 139. Ubah langsung di pratinjau: Footer → kartu kontak dan Resume CV (2026-11-12)
+
+- Form "Kontak dan Resume CV" dan slot "Berkas Resume CV" diganti `ContactLinksLive`: kartu tautan seperti di footer situs (ikon, nama, nilai; urutan WhatsApp, Email, LinkedIn, GitHub, Instagram, Situs lain, Resume CV). Nilai tiap kartu diketik langsung di tempat alamatnya tampil; kartu kosong bergaris putus karena tidak tampil di situs.
+- Kartu Resume CV disorot (warna utama) seperti di situs bila ada link atau PDF. Link (mis. Google Drive) diketik di kartu; ikon kartu ditekan untuk membuka jendela berkas PDF (`AssetEditDialog`: buka berkas, hapus, unggah pengganti). Link didahulukan bila keduanya ada.
+- Panggung kartu kontak berada di bawah teks footer dengan tombol Simpan sendiri (dua form terpisah: teks situs dan data kontak).
+- `AssetSlot` dan `ContactLinksForm` dihapus (tidak dipakai lagi); `AssetEditDialog` kini menampilkan tautan "Buka berkas" untuk dokumen.

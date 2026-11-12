@@ -1,13 +1,10 @@
-import { FileText } from 'lucide-react'
 import Image from 'next/image'
-import type { ReactNode } from 'react'
 
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { Card } from '@/components/ui/card'
 import { getAdminT } from '@/lib/admin-lang-server'
 
 import { removeAsset } from '../actions'
-import { formatBytes, needsAlt, UPLOAD_TARGETS, type UploadTarget } from '../targets'
 import { AssetAltForm } from './asset-alt-form'
 import { AssetUploader } from './asset-uploader'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
@@ -35,30 +32,7 @@ async function NotConfigured() {
   )
 }
 
-function AssetPreview({
-  asset,
-  label,
-  viewLabel,
-}: {
-  asset: AssetView
-  label: string
-  // teks tautan dokumen, mis. "Lihat cv (pdf)"
-  viewLabel?: string
-}) {
-  if (asset.kind === 'DOCUMENT') {
-    return (
-      <a
-        href={asset.url}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border px-3 text-sm hover:bg-surface-2"
-      >
-        <FileText className="size-4" aria-hidden="true" />
-        {viewLabel ?? label}
-        {asset.bytes ? <span className="text-muted">({formatBytes(asset.bytes)})</span> : null}
-      </a>
-    )
-  }
+function AssetPreview({ asset }: { asset: AssetView }) {
   return (
     <Image
       placeholder={SHIMMER_PLACEHOLDER}
@@ -69,76 +43,6 @@ function AssetPreview({
       sizes="(min-width: 768px) 320px, 100vw"
       className="h-auto w-full max-w-xs rounded-md border border-border object-cover"
     />
-  )
-}
-
-// Satu slot berkas (foto profil, CV, sampul project): pratinjau, teks alternatif, ganti, hapus.
-export async function AssetSlot({
-  title,
-  description,
-  target,
-  targetId,
-  asset,
-  configured,
-  note,
-}: {
-  title: string
-  description?: string
-  // keterangan tambahan di bawah deskripsi, mis. tautan unduh contoh
-  note?: ReactNode
-  target: UploadTarget
-  targetId?: string
-  asset: AssetView | null
-  configured: boolean
-}) {
-  const { t } = await getAdminT()
-  const name = t(title)
-  return (
-    <Card className="flex flex-col gap-4">
-      <div>
-        <h2 className="text-h3 font-semibold">{name}</h2>
-        {description ? <p className="mt-1 text-sm text-muted">{t(description)}</p> : null}
-        {note ? <div className="mt-2 text-sm text-muted">{note}</div> : null}
-      </div>
-      {asset ? (
-        <div className="flex flex-col gap-4 md:flex-row md:items-start">
-          <AssetPreview
-            asset={asset}
-            label={name.toLowerCase()}
-            viewLabel={t('Lihat {item}', { item: name.toLowerCase() })}
-          />
-          <div className="flex flex-1 flex-col gap-3">
-            {needsAlt(UPLOAD_TARGETS[target]) ? (
-              <AssetAltForm
-                key={asset.id}
-                assetId={asset.id}
-                alt_id={asset.alt_id ?? ''}
-                alt_en={asset.alt_en ?? ''}
-              />
-            ) : null}
-            <div>
-              <ConfirmDelete
-                itemLabel={name.toLowerCase()}
-                onConfirm={removeAsset.bind(null, asset.id)}
-              />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <p className="text-sm text-muted">{t('Belum ada berkas.')}</p>
-      )}
-      {configured ? (
-        <div className="border-t border-border pt-4">
-          <AssetUploader
-            target={target}
-            targetId={targetId}
-            buttonLabel={asset ? t('Ganti berkas') : t('Unggah')}
-          />
-        </div>
-      ) : (
-        <NotConfigured />
-      )}
-    </Card>
   )
 }
 
@@ -164,7 +68,7 @@ export async function GalleryPanel({
       <ul className="grid gap-4 md:grid-cols-2">
         {images.map((image, i) => (
           <li key={image.id} className="flex flex-col gap-3 rounded-md border border-border p-3">
-            <AssetPreview asset={image} label={t('gambar {n}', { n: i + 1 })} />
+            <AssetPreview asset={image} />
             <AssetAltForm
               assetId={image.id}
               alt_id={image.alt_id ?? ''}

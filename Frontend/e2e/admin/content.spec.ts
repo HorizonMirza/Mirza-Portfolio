@@ -748,3 +748,22 @@ test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
     expect(inner, `${path} panel isi masih punya batang gulir`).toBe(0)
   }
 })
+
+test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async ({ page }) => {
+  // kartu kontak seperti di footer situs (DESIGN.md bagian 139); hanya validasi agar data kontak
+  // yang dipakai tes situs publik tidak berubah
+  await page.goto('/admin/pages/footer')
+  const whatsapp = page.getByRole('textbox', { name: 'WhatsApp (opsional)' })
+  const contacts = page.locator('form').filter({ has: whatsapp })
+  await expect(page.getByRole('textbox', { name: 'Link CV (opsional)' })).toBeVisible()
+  // diulang sampai hidrasi selesai
+  await expect(async () => {
+    await whatsapp.fill('nomor-salah')
+    await contacts.getByRole('button', { name: 'Simpan' }).click()
+    await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })
+  }).toPass()
+  await expect(page.getByText('Kontak disimpan.')).toHaveCount(0)
+  // ikon kartu Resume CV membuka jendela berkas PDF
+  await contacts.getByRole('button', { name: 'Berkas Resume CV' }).click()
+  await expect(page.getByRole('dialog', { name: 'Berkas Resume CV' })).toBeVisible()
+})

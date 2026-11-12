@@ -4,10 +4,9 @@ import { getTranslations } from 'next-intl/server'
 
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
-import { AssetSlot } from '@/features/assets/components/asset-panels'
 import { HomePhotosEditor } from '@/features/assets/components/home-photos-editor'
 import { getHeroPortraitAsset, getProfileAssets } from '@/features/assets/queries'
-import { ContactLinksForm } from '@/features/profile/components/contact-links-form'
+import { ContactLinksLive } from '@/features/profile/components/contact-links-live'
 import { getPublicProfile } from '@/features/profile/public'
 import { getContactLinksForEdit } from '@/features/profile/queries'
 import { IntroForm, type IntroPreviewTexts } from '@/features/settings/components/intro-form'
@@ -123,19 +122,20 @@ async function HomePhotos() {
   )
 }
 
-// Admin → Footer: kontak dan Resume CV (dipindah dari About → Profil 2026-11-10), di atas teks footer
+// Admin → Footer: kartu kontak dan Resume CV seperti di footer situs, diketik langsung (DESIGN.md
+// bagian 139), di bawah teks footer
 async function FooterContacts() {
-  const [links, assets] = await Promise.all([getContactLinksForEdit(), getProfileAssets()])
+  const [links, assets, footer] = await Promise.all([
+    getContactLinksForEdit(),
+    getProfileAssets(),
+    getTranslations({ locale: 'id', namespace: 'Footer' }),
+  ])
   return (
-    <>
-      <ContactLinksForm defaultValues={links} />
-      <AssetSlot
-        title="Berkas Resume CV"
-        description="PDF yang dibuka tombol Resume CV bila Link CV di atas kosong."
-        target="profile-cv"
-        asset={assets.cv}
-        configured={isUploadConfigured()}
-      />
-    </>
+    <ContactLinksLive
+      defaultValues={links}
+      cv={assets.cv}
+      configured={isUploadConfigured()}
+      cvTitle={footer('cv')}
+    />
   )
 }

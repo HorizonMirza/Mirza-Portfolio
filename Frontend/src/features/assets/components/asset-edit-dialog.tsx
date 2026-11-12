@@ -1,5 +1,6 @@
 'use client'
 
+import { FileText } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -54,6 +55,19 @@ export function AssetEditDialog({
           <div className="mt-5 flex flex-col gap-5">
             {asset ? (
               <div className="flex flex-col gap-3">
+                {/* dokumen (mis. PDF CV): tautan untuk membuka berkas yang sedang dipakai */}
+                {asset.kind === 'DOCUMENT' ? (
+                  <a
+                    href={asset.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-11 w-fit items-center gap-2 rounded-md border border-border px-3 text-sm hover:bg-surface-2"
+                  >
+                    <FileText className="size-4" aria-hidden="true" />
+                    {t('Buka berkas')}
+                    <span className="sr-only">{t('(membuka tab baru)')}</span>
+                  </a>
+                ) : null}
                 {needsAlt(UPLOAD_TARGETS[target]) ? (
                   <AssetAltForm
                     key={asset.id}
