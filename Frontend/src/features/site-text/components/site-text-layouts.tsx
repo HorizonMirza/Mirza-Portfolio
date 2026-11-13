@@ -29,30 +29,6 @@ function Sample({ children }: { children: ReactNode }) {
   return <div className="pointer-events-none text-muted select-none">{children}</div>
 }
 
-function ExperienceLayout() {
-  const t = useAdminT()
-  return (
-    <>
-      <PageTitle k="Experience.title" />
-      <section className="flex flex-col gap-3 border-l-2 border-border pl-6">
-        <Note>Contoh riwayat</Note>
-        <p className="text-sm text-muted">
-          <span className="pointer-events-none">Jan 2024 – </span>
-          <EditText k="Experience.present" className="text-text" />
-        </p>
-        <Sample>
-          <p className="font-semibold">{t('Posisi')}</p>
-          <p className="text-sm text-muted">{t('Organisasi')}</p>
-        </Sample>
-      </section>
-      <StateBox note="Tampil bila belum ada pengalaman">
-        <EditText k="Experience.none" className="text-muted" />
-      </StateBox>
-      <SearchSnippet path="experience" prefix="Experience" />
-    </>
-  )
-}
-
 function ProjectsLayout() {
   const t = useAdminT()
   return (
@@ -240,8 +216,6 @@ function FooterLayout() {
 
 export function SiteTextLayout({ moduleId, name }: { moduleId: ModuleId; name: string }) {
   switch (moduleId) {
-    case 'experience':
-      return <ExperienceLayout />
     case 'projects':
       return <ProjectsLayout />
     case 'contact':

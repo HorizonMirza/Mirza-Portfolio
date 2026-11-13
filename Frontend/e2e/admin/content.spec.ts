@@ -15,12 +15,10 @@ const PAGES = [
   '/admin/skills',
   '/admin/experience',
   '/admin/experience/new',
-  '/admin/education',
   '/admin/education/new',
   '/admin/messages',
   '/admin/pages/intro',
   '/admin/roles',
-  '/admin/pages/experience',
   '/admin/pages/projects',
   '/admin/pages/contact',
   '/admin/pages/navbar',
@@ -297,24 +295,31 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
   await expect(page.getByRole('textbox', { name: 'Peran ke-2 (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).not.toHaveValue('')
   await expect(page.locator('.site-frame [inert] .site-bar').first()).toBeAttached()
+  // hanya peran yang bisa diubah: foto tidak bisa ditekan (revisi pemilik 2026-11-13)
   await expect(page.getByRole('button', { name: 'Ganti foto profil' })).toHaveCount(0)
-  // foto utama ditekan: jendela kecil dengan acuan foto bawaan yang bisa diunduh
-  await expect(async () => {
-    await page.getByRole('button', { name: 'Ganti foto utama' }).click({ timeout: 2000 })
-    await expect(page.getByRole('dialog', { name: 'Foto utama' })).toBeVisible({ timeout: 1000 })
-  }).toPass()
-  await expect(
-    page.getByRole('dialog').getByRole('link', { name: 'Unduh foto bawaan sebagai acuan' }),
-  ).toHaveCount(1)
-  await page.keyboard.press('Escape')
-  // foto profil pindah ke Home: tidak dobel di About → Profil
+  await expect(page.getByRole('button', { name: 'Ganti foto utama' })).toHaveCount(0)
+  // About satu halaman (tab Profil dan Pendidikan digabung 2026-11-13, DESIGN.md bagian 146)
   await page.goto('/admin/profile')
+  await expect(page.getByRole('navigation', { name: 'Bagian halaman' })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Foto profil' })).toHaveCount(0)
   await expect(page.getByLabel('Peran', { exact: true })).toHaveCount(0)
-  // Profil: pita halaman Tentang diketik langsung (DESIGN.md bagian 136)
-  await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).not.toHaveValue('')
+  // nama tetap (tidak bisa diketik), bio dan peran diketik langsung (DESIGN.md bagian 136)
+  await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: 'Bio (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Ganti foto kartu About$/ })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Tambah pendidikan' })).toHaveAttribute(
+    'href',
+    '/admin/education/new',
+  )
+  // Chip kampus dan Chip bendera satu baris selebar Simpan, tepat di atasnya
+  const save = page.getByRole('button', { name: 'Simpan', exact: true })
+  const campus = page.getByRole('button', { name: 'Chip kampus' })
+  const flag = page.getByRole('button', { name: 'Chip bendera' })
+  const [sb, cb, fb] = await Promise.all([save, campus, flag].map((l) => l.boundingBox()))
+  expect(Math.abs(cb!.y - fb!.y)).toBeLessThan(1)
+  expect(cb!.y).toBeLessThan(sb!.y)
+  expect(Math.abs(cb!.x - sb!.x)).toBeLessThan(2)
+  expect(Math.abs(fb!.x + fb!.width - (sb!.x + sb!.width))).toBeLessThan(2)
   await expect(page.getByRole('button', { name: 'Chip bendera' })).toHaveAttribute(
     'aria-pressed',
     /true|false/,
@@ -379,12 +384,9 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
 test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan organisasi', async ({
   page,
 }) => {
+  // daftar pendidikan kini bagian halaman About (2026-11-13): alamat lama diarahkan ke sana
   await page.goto('/admin/education')
-  await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveAttribute(
-    'aria-current',
-    'page',
-  )
-  // daftar seperti timeline situs, tambah lewat baris bergaris putus (DESIGN.md bagian 137)
+  await expect(page).toHaveURL(/\/admin\/profile$/)
   await expect(page.getByRole('link', { name: 'Tambah pendidikan' })).toHaveAttribute(
     'href',
     '/admin/education/new',
@@ -399,7 +401,7 @@ test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan o
   await expect(page.getByRole('textbox', { name: 'Lokasi (opsional)' })).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Semua pendidikan' })).toHaveAttribute(
     'href',
-    '/admin/education',
+    '/admin/profile',
   )
   // pilihan jenis di Experience tanpa Pendidikan
   await page.goto('/admin/experience/new')
@@ -435,16 +437,10 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
   isMobile,
 }) => {
   await page.goto('/admin/profile')
-  // tab Teks halaman About dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 142)
+  // About satu halaman tanpa tab (Teks halaman dihapus 2026-11-12, Profil dan Pendidikan digabung
+  // 2026-11-13, DESIGN.md bagian 142 dan 146)
   await expect(page.getByRole('link', { name: 'Teks halaman' })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveAttribute(
-    'href',
-    '/admin/education',
-  )
-  await expect(page.getByRole('link', { name: 'Profil', exact: true })).toHaveAttribute(
-    'aria-current',
-    'page',
-  )
+  await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveCount(0)
   if (!isMobile) {
     const menu = page.getByRole('navigation', { name: 'Menu admin' })
     // nama menu situs berbahasa Indonesia di mode Indonesia (About → Tentang)
@@ -456,13 +452,15 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
     // Dicek lewat alamat: nama menu Projects/Experience di mode Indonesia memang Project/Pengalaman.
     // menu About langsung ke tab Profil sejak tab Teks halaman About dihapus (2026-11-12)
     await expect(menu.locator('a[href="/admin/profile"]')).toHaveCount(1)
-    for (const old of ['/admin/projects', '/admin/skills', '/admin/experience'])
+    // Experience juga langsung ke timeline sejak tab Teks halamannya dihapus (2026-11-13)
+    await expect(menu.locator('a[href="/admin/experience"]')).toHaveCount(1)
+    for (const old of ['/admin/projects', '/admin/skills'])
       await expect(menu.locator(`a[href="${old}"]`)).toHaveCount(0)
   }
 })
 
 test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ page }) => {
-  await page.goto('/admin/pages/experience')
+  await page.goto('/admin/pages/projects')
   const bar = page.getByRole('banner')
   // satu tombol bulat seperti situs publik: kode yang terlihat adalah bahasa tujuan
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
@@ -471,7 +469,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // menu profil: tombol titik tiga di top bar di semua ukuran layar (demo 3, DESIGN.md bagian 128)
   await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
   // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; DESIGN.md bagian 113)
-  const title = bar.getByText('Pengalaman', { exact: true })
+  const title = bar.getByText('Project', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
   // logo dan nama panel pindah ke sidebar; Akun hanya di menu profil, Pengaturan kembali ke sidebar,
@@ -653,10 +651,10 @@ test.describe('animasi ganti bahasa admin', () => {
 
   test('judul dari server dan isi kolom form ikut efek acak huruf', async ({ page }) => {
     // permintaan pemilik 2026-11-11 (DESIGN.md bagian 116): SELURUH teks yang berganti ikut efek,
-    // termasuk judul halaman yang baru tiba setelah router.refresh() dan isi kolom form. Halaman Experience (About tanpa tab Teks halaman sejak 2026-11-12):
+    // termasuk judul halaman yang baru tiba setelah router.refresh() dan isi kolom form. Halaman teks Projects (About dan Experience tanpa tab Teks halaman sejak 2026-11-12/13):
     // judul dan kolom pertama langsung terlihat di layar biasa (layar sangat tinggi membuat WebKit
     // berskala 2-3x di sandbox hanya menggambar sekitar 1 frame per detik).
-    await page.goto('/admin/pages/experience')
+    await page.goto('/admin/pages/projects')
     // teks dari server yang terlihat di panel isi: tab aktif (deskripsi halaman dihapus 2026-11-12)
     const idDesc = 'Teks halaman'
     const enDesc = 'Page text'
@@ -679,7 +677,7 @@ test.describe('animasi ganti bahasa admin', () => {
         prev = now
         seen.title.add(now.title)
         const field = document.querySelector<HTMLInputElement>(
-          '#Experience-title-id, #Experience-title-en',
+          '#Projects-title-id, #Projects-title-en',
         )
         if (field) seen.field.add(field.value || field.placeholder)
         requestAnimationFrame(tick)
@@ -688,7 +686,7 @@ test.describe('animasi ganti bahasa admin', () => {
     })
     const fieldText = async () =>
       page
-        .locator('#Experience-title-id, #Experience-title-en')
+        .locator('#Projects-title-id, #Projects-title-en')
         .evaluate((el: HTMLInputElement) => el.value || el.placeholder)
     const idValue = await fieldText()
     const toEnglish = page.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
@@ -697,7 +695,7 @@ test.describe('animasi ganti bahasa admin', () => {
       await expect(page.locator('html')).toHaveAttribute('lang', 'en', { timeout: 1000 })
     }).toPass()
     await expect(h1).toHaveText(enDesc)
-    await expect(page.locator('#Experience-title-en')).toBeVisible()
+    await expect(page.locator('#Projects-title-en')).toBeVisible()
     // tunggu animasi selesai, lalu ambil teks akhir kolom
     await expect.poll(fieldText).not.toMatch(/^$/)
     await page.waitForTimeout(1200)
@@ -716,7 +714,7 @@ test.describe('animasi ganti bahasa admin', () => {
     await expect.poll(() => between('field', [idValue, enValue])).toBeGreaterThan(0)
     await expect(h1).toHaveText(enDesc)
     // teks dari server dan dari browser selesai mengetik bersamaan (DESIGN.md bagian 117)
-    await expect(page.getByRole('banner').getByText('Experience', { exact: true })).toBeVisible()
+    await expect(page.getByRole('banner').getByText('Projects', { exact: true })).toBeVisible()
     const last = await page.evaluate(
       () => (window as unknown as { __last: Record<string, number> }).__last,
     )

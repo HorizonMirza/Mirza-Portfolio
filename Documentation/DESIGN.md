@@ -1730,3 +1730,16 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 
 - Permintaan pemilik: di pratinjau "ubah langsung" bagian yang bisa diubah harus terlihat. Semua teks yang bisa diketik (`.admin-inline`, isi kartu pembuka `.intro-type`) dan foto/logo yang bisa ditekan untuk diganti (`.admin-editable`: foto utama di Peran, foto kartu About, sampul project, logo dan foto pengalaman, logo skill, ikon PDF Resume CV) diberi garis putus-putus tipis warna teks (40%).
 - Awalnya berkedip pelan; revisi pemilik di hari yang sama: tidak perlu berkedip, jadi garisnya diam. Garis hilang saat kolom sedang diketik atau tombol difokus; tombol yang belum aktif (mis. sampul sebelum project disimpan) tanpa garis. Garis berupa outline sehingga tata letak tidak bergeser dan pratinjau tetap 1:1.
+
+## 145. Experience tanpa Teks halaman, daftar pengalaman 1:1 dengan situs (2026-11-13)
+
+- Revisi pemilik: tab "Teks halaman" Experience dihapus. Menu Experience langsung membuka `/admin/experience`; alamat lama `/admin/pages/experience` diarahkan ke sana. Teks halaman Pengalaman di situs tetap tampil (bawaan atau yang tersimpan).
+- Daftar pengalaman (`ExperienceTimelineAdmin`, komponen server) memakai markup halaman Pengalaman situs: judul halaman, timeline `.xp-tl`, peran, instansi · jenis pekerjaan, periode · durasi, uraian (Markdown), dan foto atau tahun di sisi seberang, dengan huruf situs (`.site-ui`). Bedanya hanya: semua entri tampil terang (tanpa efek fokus saat digulir), entri draf ikut tampil dengan tanda Draf, seluruh entri bisa ditekan untuk diubah, Hapus muncul saat disorot, dan "+ Tambah pengalaman" di atas daftar. Hitungan durasi dipindah ke `features/experience/display.ts` dan dipakai situs dan admin.
+
+## 146. About satu halaman: profil dan pendidikan digabung (2026-11-13)
+
+- Revisi pemilik: tab Profil dan Pendidikan dijadikan satu halaman About (`/admin/profile`, tanpa tab); `/admin/education` diarahkan ke sana, entri tetap dibuka di `/admin/education/[id]` (tautan "← Semua pendidikan" kembali ke About).
+- Susunan sama dengan halaman Tentang situs: pita (kartu foto, nama, peran), lalu `.ab-body` berisi bio dan kartu pendidikan berdampingan (`EducationSectionAdmin`, dirender server per bahasa isi; kartu ditekan untuk membuka entri, draf ditandai, Hapus saat disorot, "+ Tambah pendidikan" di akhir daftar).
+- Nama di pita tidak bisa diubah lagi dari admin (teks tetap). Garis penanda foto kartu mengikuti bingkai foto saja (`.admin-photo-edit .ab-pc-frame`) sehingga pas di tengah, tidak ikut chip yang menggantung.
+- Tombol Chip kampus dan Chip bendera pindah ke luar panggung: satu baris berisi dua tombol sama lebar, selebar tombol Simpan, tepat di atasnya.
+- Lain-lain hari yang sama: isi kartu pembuka diberi garis penanda (aturan `.intro-type` tanpa layer agar menang atas gaya kartu); di tab Peran hanya dua peran yang bisa diubah, foto utama tidak bisa ditekan lagi (jendela foto utama dihapus, sehingga foto beranda kini tidak diganti dari admin).

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image, { type StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { type ReactNode, useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -31,10 +31,12 @@ import { AboutPhotoCard, type PhotoCardChip } from './about-photo-card'
 
 type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles'
 
-// Admin → About, tab Profil (DESIGN.md bagian 136): pita halaman Tentang seperti di situs (kartu
-// foto, nama, peran) lalu bio, semuanya diketik langsung. Foto kartu ditekan untuk diganti; chip
-// kampus dan bendera dinyalakan atau dimatikan dengan menekan tombolnya di bawah kartu. Headline,
-// posisi sekarang, dan kota tampil sebagai pratinjau tautan yang dibagikan.
+// Admin → About (DESIGN.md bagian 136 dan 146): halaman Tentang seperti di situs dalam satu halaman
+// (tab Profil dan Pendidikan digabung 2026-11-13): pita (kartu foto, nama, peran), lalu bio dan kartu
+// pendidikan berdampingan. Peran dan bio diketik langsung; nama tetap. Foto kartu ditekan untuk
+// diganti; kartu pendidikan ditekan untuk membuka entrinya. Chip kampus dan bendera dinyalakan atau
+// dimatikan lewat dua tombol selebar Simpan tepat di atasnya. Headline, posisi sekarang, dan kota
+// tampil sebagai pratinjau tautan yang dibagikan.
 export function ProfileLive({
   defaultValues,
   photo,
@@ -43,6 +45,7 @@ export function ProfileLive({
   bioHeading,
   rolesFallback,
   configured,
+  education,
 }: {
   defaultValues: ProfileInput
   // foto yang tampil di kartu (foto kartu About, foto profil, atau bawaan)
@@ -54,6 +57,8 @@ export function ProfileLive({
   // peran yang tampil di situs selama "Peran di halaman Tentang" kosong
   rolesFallback: Record<Lang, string>
   configured: boolean
+  // bagian Pendidikan halaman Tentang per bahasa isi (EducationSectionAdmin, dirender server)
+  education: Record<Lang, ReactNode>
 }) {
   const t = useAdminT()
   const router = useRouter()
@@ -100,7 +105,7 @@ export function ProfileLive({
       aria-pressed={on}
       onClick={() => setValue(field, !on, { shouldDirty: true })}
       className={cn(
-        'inline-flex min-h-9 items-center rounded-md border px-3 text-xs font-semibold',
+        'inline-flex min-h-11 items-center justify-center rounded-md border px-3 text-sm font-semibold',
         on ? 'border-text bg-text text-bg' : 'border-dashed border-border text-muted',
       )}
     >
@@ -125,14 +130,15 @@ export function ProfileLive({
             dirty={{ id: dirtyLang('id'), en: dirtyLang('en') }}
             className="absolute top-3 right-3 z-10"
           />
-          <div lang={lang} className="mx-auto flex max-w-[1100px] flex-col gap-10">
+          <div lang={lang} className="site-ui mx-auto flex max-w-[1100px] flex-col gap-10">
             {/* pita halaman Tentang: kartu foto dan nama + peran, seperti di situs */}
             <div className="ab-band">
               <div className="flex flex-col items-center gap-3">
+                {/* garis penanda di bingkai foto saja (pas di tengah foto), bukan di chip */}
                 <button
                   type="button"
                   onClick={() => setPhotoOpen(true)}
-                  className="admin-editable cursor-pointer rounded-2xl outline-offset-4 hover:outline-2 hover:outline-current/30 focus-visible:outline-2 focus-visible:outline-current"
+                  className="admin-photo-edit cursor-pointer rounded-2xl outline-offset-4 focus-visible:outline-2 focus-visible:outline-current"
                 >
                   <AboutPhotoCard
                     photo={
@@ -155,14 +161,10 @@ export function ProfileLive({
                 </button>
               </div>
               <div className="ab-band-text">
-                {/* beberapa baris: nama panjang turun baris seperti di situs */}
-                <InlineArea
-                  label={t('Nama')}
-                  {...register('name')}
-                  measure={values.name ?? ''}
-                  invalid={Boolean(err('name'))}
-                  className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase"
-                />
+                {/* nama tidak diubah dari sini (revisi pemilik 2026-11-13) */}
+                <p className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
+                  {values.name}
+                </p>
                 <InlineInput
                   key={name('aboutBandRoles')}
                   label={label('Peran di halaman Tentang')}
@@ -174,26 +176,24 @@ export function ProfileLive({
               </div>
             </div>
 
-            {/* chip di kartu foto: ditekan untuk menampilkan atau menyembunyikan */}
-            <div className="-mt-6 flex flex-wrap gap-2">
-              {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip kampus')}
-              {toggle('showFlag', values.showFlag ?? true, 'Chip bendera')}
+            {/* bio dan pendidikan berdampingan seperti di situs (.ab-body) */}
+            <div className="ab-body">
+              <section className="flex flex-col gap-3">
+                <p className="ab-label">{bioHeading[lang]}</p>
+                <InlineArea
+                  key={name('bio')}
+                  label={label('Bio')}
+                  {...register(name('bio'))}
+                  measure={values[name('bio')] ?? ''}
+                  invalid={Boolean(err(name('bio')))}
+                  className="ab-bio leading-relaxed"
+                />
+              </section>
+              {education[lang]}
             </div>
 
-            <section className="flex flex-col gap-3">
-              <p className="ab-label">{bioHeading[lang]}</p>
-              <InlineArea
-                key={name('bio')}
-                label={label('Bio')}
-                {...register(name('bio'))}
-                measure={values[name('bio')] ?? ''}
-                invalid={Boolean(err(name('bio')))}
-                className="leading-relaxed"
-              />
-            </section>
-
             <StateBox note="Pratinjau tautan saat dibagikan dan mesin pencari">
-              <div className="flex flex-col gap-1 rounded-md border border-border bg-surface p-4">
+              <div className="flex flex-col gap-1 rounded-md border border-border bg-surface p-4 font-sans">
                 <InlineArea
                   key={name('headline')}
                   label={label('Headline')}
@@ -222,6 +222,11 @@ export function ProfileLive({
           </div>
         </LiveStage>
         <LiveErrors messages={messages} />
+        {/* chip di kartu foto: satu baris selebar Simpan, tepat di atasnya (revisi 2026-11-13) */}
+        <div className="admin-bleed grid grid-cols-2 gap-2">
+          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip kampus')}
+          {toggle('showFlag', values.showFlag ?? true, 'Chip bendera')}
+        </div>
         <SaveBar pending={pending} />
       </form>
       <AssetEditDialog

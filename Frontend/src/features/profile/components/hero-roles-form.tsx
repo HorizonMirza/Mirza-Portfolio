@@ -2,8 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image, { type StaticImageData } from 'next/image'
-import { useRouter } from 'next/navigation'
-import { type ReactNode, useState, useTransition } from 'react'
+import { type ReactNode, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
@@ -17,7 +16,6 @@ import {
 } from '@/components/admin/live-edit'
 import { SiteFrame } from '@/components/admin/site-frame'
 import { HeroContent } from '@/components/site/hero-content'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 
 import { saveHeroRoles } from '../actions'
@@ -36,8 +34,8 @@ function clean(value: string | undefined) {
 
 // Admin → Home, tab Peran (revisi pemilik 2026-11-12, DESIGN.md bagian 141): beranda tampil 1:1
 // seperti di situs (navbar dan hero asli di bingkai layar, SiteFrame). Peran di kiri dan kanan bawah
-// diketik langsung di tempatnya; bahasanya mengikuti tombol bahasa admin di top bar. Foto utama
-// ditekan untuk diganti (tab Foto beranda dihapus). Peran disimpan sebagai satu teks dipisah "|";
+// diketik langsung di tempatnya; bahasanya mengikuti tombol bahasa admin di top bar. Hanya peran
+// yang bisa diubah (revisi pemilik 2026-11-13): foto utama tidak bisa ditekan. Peran disimpan sebagai satu teks dipisah "|";
 // selama kosong situs memakai teks bawaan (About.roles), yang juga tampil di sini; teks yang sama
 // dengan bawaan disimpan kosong.
 export function HeroRolesForm({
@@ -47,7 +45,6 @@ export function HeroRolesForm({
   portrait,
   defaultPortrait,
   header,
-  configured,
 }: {
   defaultValues: HeroRolesInput
   // teks bawaan (About.roles) yang tampil di situs selama kolom ini kosong
@@ -57,13 +54,10 @@ export function HeroRolesForm({
   defaultPortrait: StaticImageData
   // navbar situs asli (SitePreviewHeader), dirender server dalam bahasa admin
   header: ReactNode
-  configured: boolean
 }) {
   const t = useAdminT()
-  const router = useRouter()
   const { lang } = useAdminLang()
   const [pending, startTransition] = useTransition()
-  const [photoOpen, setPhotoOpen] = useState(false)
   const form = useForm<HeroRolesInput>({ resolver: zodResolver(heroRolesSchema), defaultValues })
   const {
     control,
@@ -113,24 +107,18 @@ export function HeroRolesForm({
                 name={name}
                 titleTag="p"
                 portrait={
-                  <button
-                    type="button"
-                    onClick={() => setPhotoOpen(true)}
-                    className="admin-editable absolute inset-0 cursor-pointer outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current"
-                  >
-                    <Image
-                      src={portrait?.url ?? defaultPortrait}
-                      {...(portrait
-                        ? { width: portrait.width ?? 1120, height: portrait.height ?? 1100 }
-                        : {})}
-                      alt=""
-                      unoptimized
-                      loading="eager"
-                      draggable={false}
-                      className="hero-portrait-img"
-                    />
-                    <span className="sr-only">{t('Ganti foto utama')}</span>
-                  </button>
+                  // foto utama tidak diubah dari sini (revisi pemilik 2026-11-13): hanya peran
+                  <Image
+                    src={portrait?.url ?? defaultPortrait}
+                    {...(portrait
+                      ? { width: portrait.width ?? 1120, height: portrait.height ?? 1100 }
+                      : {})}
+                    alt=""
+                    unoptimized
+                    loading="eager"
+                    draggable={false}
+                    className="hero-portrait-img"
+                  />
                 }
                 roles={
                   <ul className="hero-roles">
@@ -176,36 +164,6 @@ export function HeroRolesForm({
         />
         <SaveBar pending={pending} />
       </form>
-      {photoOpen ? (
-        <AssetEditDialog
-          open
-          onClose={() => setPhotoOpen(false)}
-          onDone={() => {
-            setPhotoOpen(false)
-            router.refresh()
-          }}
-          title="Foto utama"
-          description="Foto besar di beranda. WebP, PNG, atau AVIF dengan perbandingan sekitar 1120:1100, lebar minimal 700 px."
-          note={
-            <>
-              {t(
-                'Pembingkaian halaman dan gambar armor dihitung dari foto bawaan, jadi pengganti harus dibingkai sama: kepala, wajah, dan tangan di posisi yang sama, rata bawah, latar transparan.',
-              )}{' '}
-              <a
-                href={defaultPortrait.src}
-                download
-                className="text-text underline underline-offset-4"
-              >
-                {t('Unduh foto bawaan sebagai acuan')}
-              </a>
-              . {t('Hapus berkas untuk kembali ke foto bawaan.')}
-            </>
-          }
-          target="hero-portrait"
-          asset={portrait}
-          configured={configured}
-        />
-      ) : null}
     </>
   )
 }

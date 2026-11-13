@@ -20,7 +20,11 @@ export async function listExperiencesAdmin(kind: ExperienceKind) {
       startDate: true,
       endDate: true,
       status: true,
+      employmentType: true,
+      description_id: true,
+      description_en: true,
       logo: { select: { url: true } },
+      photo: { select: { url: true, width: true, height: true } },
     },
   })
 }

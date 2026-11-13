@@ -6,6 +6,7 @@ import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
 import { PhotoLightbox } from '@/features/experience/components/public/photo-lightbox'
+import { durationText } from '@/features/experience/display'
 import { getPublicExperiences, type PublicExperience } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -31,13 +32,6 @@ export async function generateMetadata({
 // pemilik 2026-10-03). Data pendidikan tetap dipakai halaman Tentang.
 const SHOWN = ['WORK', 'ORGANIZATION'] as const
 
-function monthsBetween(start: string, end: string | null) {
-  const [sy, sm] = start.split('-').map(Number)
-  const now = new Date()
-  const [ey, em] = end ? end.split('-').map(Number) : [now.getUTCFullYear(), now.getUTCMonth() + 1]
-  return Math.max(1, (ey - sy) * 12 + (em - sm) + 1)
-}
-
 // Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03, DESIGN.md bagian 38): hitam-putih,
 // tanpa kalimat pengantar dan tanpa filter (revisi pemilik).
 export default async function ExperiencePage({ params }: PageProps<'/[locale]/experience'>) {
@@ -48,17 +42,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
   ])
   const items = sortByLatest(all.filter((e) => (SHOWN as readonly string[]).includes(e.type)))
 
-  const duration = (e: PublicExperience) => {
-    const n = monthsBetween(e.start, e.end)
-    const years = Math.floor(n / 12)
-    const months = n % 12
-    return [
-      years ? t('durationYears', { count: years }) : '',
-      months ? t('durationMonths', { count: months }) : '',
-    ]
-      .filter(Boolean)
-      .join(' ')
-  }
+  const duration = (e: PublicExperience) => durationText(e.start, e.end, t)
 
   return (
     <Container className="pb-20">

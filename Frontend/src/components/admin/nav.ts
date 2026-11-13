@@ -41,10 +41,11 @@ export const adminNav: readonly NavItem[] = [
     match: ['/admin/pages/about', '/admin/education'],
   },
   {
-    href: '/admin/pages/experience',
+    // tanpa tab Teks halaman sejak 2026-11-13: menu langsung ke timeline pengalaman
+    href: '/admin/experience',
     label: 'Experience',
     icon: Route,
-    match: ['/admin/experience'],
+    match: ['/admin/pages/experience'],
   },
   {
     href: '/admin/pages/projects',

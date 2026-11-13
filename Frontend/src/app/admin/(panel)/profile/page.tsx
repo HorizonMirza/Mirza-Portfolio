@@ -1,15 +1,16 @@
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { getProfileAssets } from '@/features/assets/queries'
+import { EducationSectionAdmin } from '@/features/experience/components/education-section-admin'
 import { getPublicExperiences } from '@/features/experience/public'
+import { listExperiencesAdmin } from '@/features/experience/queries'
 import { initials, organizationName } from '@/features/experience/schema'
 import { ProfileLive } from '@/features/profile/components/profile-live'
 import { getPublicProfile } from '@/features/profile/public'
 import { getProfileForEdit } from '@/features/profile/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { isUploadConfigured } from '@/lib/uploads'
@@ -17,19 +18,21 @@ import { isUploadConfigured } from '@/lib/uploads'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: t('Profil') }
+  return { title: t('About') }
 }
 
-// About → Profil: pita halaman Tentang dan bio diketik langsung (DESIGN.md bagian 136)
+// About: halaman Tentang dalam satu halaman, profil dan pendidikan (DESIGN.md bagian 136 dan 146)
 export default async function ProfilePage() {
   await requireSuperAdminPage()
-  const [values, assets, profile, experiences, tId, tEn] = await Promise.all([
+  const [values, assets, profile, experiences, tId, tEn, educationRows, ui] = await Promise.all([
     getProfileForEdit(),
     getProfileAssets(),
     getPublicProfile(),
     getPublicExperiences(),
     getTranslations({ locale: 'id', namespace: 'About' }),
     getTranslations({ locale: 'en', namespace: 'About' }),
+    listExperiencesAdmin('education'),
+    getAdminLang(),
   ])
   // chip kampus: pendidikan terbaru, sama seperti halaman Tentang
   const education = experiences
@@ -49,7 +52,6 @@ export default async function ProfilePage() {
   return (
     <>
       <PageHeader title="About" />
-      <ModuleTabs moduleId="about" current="/admin/profile" />
       <ProfileLive
         defaultValues={values}
         photo={assets.aboutPhoto?.url ?? assets.photo?.url ?? DEFAULT_PROFILE_PHOTO}
@@ -61,6 +63,10 @@ export default async function ProfilePage() {
           en: profile?.aboutRoles_en || tEn('roles'),
         }}
         configured={isUploadConfigured()}
+        education={{
+          id: <EducationSectionAdmin rows={educationRows} lang="id" ui={ui} />,
+          en: <EducationSectionAdmin rows={educationRows} lang="en" ui={ui} />,
+        }}
       />
     </>
   )

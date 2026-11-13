@@ -2723,13 +2723,18 @@ html[data-intro='pending'] .intro {
      foto/logo yang bisa ditekan untuk diganti. Hilang saat sedang diketik atau difokus. Outline
      tidak menggeser tata letak. */
   .admin-inline:not(:focus),
-  .intro-type:not(:focus),
   .admin-editable:not(:disabled, :focus-visible) {
     outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
     outline-offset: 3px;
   }
   .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: var(--editable-offset, 3px);
+  }
+  /* kartu foto About: garis mengikuti bingkai foto saja, pas di tengah (chip kampus dan bendera yang
+     menggantung tidak ikut) (revisi pemilik 2026-11-13) */
+  .admin-photo-edit:not(:focus-visible) .ab-pc-frame {
+    outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
+    outline-offset: 4px;
   }
 }
 
@@ -2745,8 +2750,16 @@ html[data-intro='pending'] .intro {
 .intro-type {
   font: inherit;
   letter-spacing: inherit;
-  outline: none;
   caret-color: #fff;
+}
+/* garis penanda bagian yang bisa diubah (DESIGN.md bagian 144); hilang saat sedang diketik. Tidak
+   di dalam layer agar menang atas aturan kartu situs yang tidak ber-layer */
+.intro-type:not(:focus) {
+  outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
+  outline-offset: 3px;
+}
+.intro-type:focus {
+  outline: none;
 }
 .intro-body strong {
   color: #fff;

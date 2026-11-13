@@ -156,7 +156,8 @@ export function ExperienceLive({
         <LiveStage className="relative bg-bg px-4 pt-6 pb-10 text-text sm:px-10">
           <div className="mb-8 flex flex-wrap items-center gap-2 pr-28">
             <Link
-              href={basePath}
+              // pendidikan kini bagian halaman About (2026-11-13)
+              href={education ? '/admin/profile' : basePath}
               className="mr-2 inline-flex min-h-9 items-center gap-2 text-sm text-muted hover:text-text"
             >
               <ArrowLeft className="size-4" aria-hidden="true" />

@@ -74,7 +74,9 @@ describe('modul situs', () => {
     // tab Home (bagian 129): menu Home membuka tab pertama, kartu pembuka
     for (const tab of ['/admin/pages/home', '/admin/roles', '/admin/skills'])
       expect(active(tab), tab).toEqual(['/admin/pages/intro'])
-    expect(active('/admin/experience/abc')).toEqual(['/admin/pages/experience'])
+    // Experience tanpa tab Teks halaman sejak 2026-11-13: menu langsung ke timeline
+    expect(active('/admin/experience/abc')).toEqual(['/admin/experience'])
+    expect(active('/admin/pages/experience')).toEqual(['/admin/experience'])
     expect(active('/admin/projects/new')).toEqual(['/admin/pages/projects'])
     expect(active('/admin')).toEqual(['/admin'])
   })

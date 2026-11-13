@@ -40,6 +40,8 @@ export default async function SiteModulePage({ params }: Params) {
   // About tanpa tab Teks halaman (revisi pemilik 2026-11-12, DESIGN.md bagian 142): teksnya tetap
   // tampil di situs (bawaan atau yang tersimpan sebelumnya), hanya tidak diubah dari admin lagi
   if (moduleId === 'about') redirect('/admin/profile')
+  // Experience juga tanpa tab Teks halaman (revisi pemilik 2026-11-13, DESIGN.md bagian 145)
+  if (moduleId === 'experience') redirect('/admin/experience')
   // Bagian Awal satu kelompok tab dengan Home, tanpa deskripsi (revisi pemilik 2026-11-11)
   const inHome = moduleId === 'intro'
   const tabsOf = inHome ? 'home' : moduleId

@@ -11,7 +11,6 @@ import { getHeroRolesForEdit } from '@/features/profile/queries'
 import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { HERO_PORTRAIT } from '@/lib/default-photo'
-import { isUploadConfigured } from '@/lib/uploads'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('Peran beranda')} · Home` }
 }
 
-// Home → Peran: beranda 1:1 seperti di situs, peran diketik dan foto utama ditekan langsung di
+// Home → Peran: beranda 1:1 seperti di situs, hanya peran yang diketik langsung di
 // pratinjau (DESIGN.md bagian 129, 133, dan 141); action dan validasinya tetap saveHeroRoles.
 export default async function HeroRolesPage() {
   await requireSuperAdminPage()
@@ -42,7 +41,6 @@ export default async function HeroRolesPage() {
         portrait={portrait}
         defaultPortrait={HERO_PORTRAIT}
         header={<SitePreviewHeader locale={lang} currentPath="/" />}
-        configured={isUploadConfigured()}
       />
     </>
   )

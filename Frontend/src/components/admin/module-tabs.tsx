@@ -5,20 +5,12 @@ import { getAdminT } from '@/lib/admin-lang-server'
 // project) dipisah sebagai tab di dalam modul itu, bukan menu kedua di sidebar.
 const TABS = {
   // Home: tab selebar panel, urutan pilihan pemilik (2026-11-11, DESIGN.md bagian 129); tab Foto
-  // beranda dihapus 2026-11-12 (foto utama diganti dari tab Peran, foto profil dari Akun)
+  // beranda dihapus 2026-11-12 (foto profil diganti dari Akun). About dan Experience tanpa tab sejak
+  // 2026-11-13 (DESIGN.md bagian 145-146)
   home: [
     { label: 'Kartu pembuka', href: '/admin/pages/intro' },
     { label: 'Peran beranda', href: '/admin/roles' },
     { label: 'Skill teknis', href: '/admin/skills' },
-  ],
-  // tab Teks halaman About dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 142)
-  about: [
-    { label: 'Profil', href: '/admin/profile' },
-    { label: 'Pendidikan', href: '/admin/education' },
-  ],
-  experience: [
-    { label: 'Teks halaman', href: '/admin/pages/experience' },
-    { label: 'Pengalaman', href: '/admin/experience' },
   ],
   projects: [
     { label: 'Teks halaman', href: '/admin/pages/projects' },
