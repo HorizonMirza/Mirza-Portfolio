@@ -200,7 +200,12 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
     await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByRole('dialog')).toHaveCount(0)
+  // notifikasi galat dari klik logo menutupi bagian atas layar (HP): tunggu hilang sebelum menekan
+  // tombol hapus di bawahnya
+  await expect(page.getByText(/Unggah belum aktif/)).toHaveCount(0, { timeout: 15_000 })
   const first = page.getByRole('button', { name: /^Hapus kategori / }).first()
+  // alat kategori baru tampil saat disorot atau difokus (di HP selalu tampil)
+  await first.focus()
   await first.click()
   // judul dialog umum, tanpa nama butir; hanya satu tombol Hapus (tanpa Batal, ada x di pojok)
   const ask = page.getByRole('dialog')
@@ -975,7 +980,10 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   await page.goto('/admin/pages/footer')
   const whatsapp = page.getByRole('textbox', { name: 'WhatsApp (opsional)' })
   const contacts = page.locator('form').filter({ has: whatsapp })
-  await expect(page.getByRole('textbox', { name: 'Link CV (opsional)' })).toBeVisible()
+  // halaman admin bisa lambat dimuat di CI yang sibuk (WebKit): tunggu lebih lama dari 5 detik
+  await expect(page.getByRole('textbox', { name: 'Link CV (opsional)' })).toBeVisible({
+    timeout: 20_000,
+  })
   // diulang sampai hidrasi selesai
   await expect(async () => {
     await whatsapp.fill('nomor-salah')
