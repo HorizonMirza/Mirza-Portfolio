@@ -283,3 +283,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-15 | Unggah gambar langsung dengan pemotong (ukuran bingkai, geser, zoom, putar), alt otomatis, tombol Draf dan Hapus dirapikan, chip kartu About umum dan bisa diedit (DESIGN.md bagian 148) |
 | 2026-11-15 | Revisi sore: ID/EN kartu pembuka di atas Simpan, tab GitHub di Home (warna grafik terang/gelap), label Logo Chip/Flag Chip, jarak garis penanda, pendidikan satu hapus + tahun selesai teks, Projects tanpa Teks halaman (DESIGN.md bagian 149) |
 | 2026-11-15 | Revisi malam: tab GitHub lima warna (merah, kuning, hijau, biru, ungu) tanpa terpotong, ID/EN kembali di kartu pembuka, garis putus-putus logo terlihat di tema gelap (DESIGN.md bagian 150) |
+| 2026-11-15 | Revisi malam (2): Navbar, Contact, dan Footer 1:1 seperti situs (satu Simpan untuk teks dan kartu kontak Footer), garis kartu pendidikan rapat dan bersudut tajam (DESIGN.md bagian 151) |

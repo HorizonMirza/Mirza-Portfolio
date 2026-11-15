@@ -21,10 +21,14 @@ const pill = `flex items-center gap-1 rounded-full p-1 ${floating}`
 export async function SiteHeader({
   locale,
   currentPath,
+  editable = false,
 }: {
   locale: AppLocale
   // pratinjau admin (DESIGN.md bagian 141): halaman situs yang ditiru, untuk menu yang menyala
   currentPath?: string
+  // pratinjau Admin → Navbar: nama menu bisa diketik (NavEditProvider), kapsul menu selalu tampil
+  // (di layar kecil di baris sendiri), foto dan tombol bahasa/tema hanya tampilan
+  editable?: boolean
 }) {
   const [t, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Nav' }),
@@ -37,7 +41,7 @@ export async function SiteHeader({
       {/* Lebar penuh (tanpa batas kontainer): foto di pojok kiri, tombol bahasa dan tema di pojok kanan */}
       <header className="site-bar sticky top-[env(safe-area-inset-top,0px)] z-40 px-3 pt-3 sm:px-4 lg:px-5 lg:pt-4">
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <div className="justify-self-start">
+          <div className="justify-self-start" inert={editable || undefined}>
             {/* foto bulat berbingkai seperti tombol bahasa dan tema; ditekan = kembali ke beranda */}
             <HomeAvatarLink
               name={name}
@@ -45,27 +49,39 @@ export async function SiteHeader({
               className={floating}
             />
           </div>
-          <nav aria-label={t('label')} className="hidden lg:block">
+          <nav
+            aria-label={t('label')}
+            className={
+              editable
+                ? 'order-last col-span-3 flex justify-center lg:order-none lg:col-span-1 lg:block'
+                : 'hidden lg:block'
+            }
+          >
             <div className={pill}>
               <NavLinks variant="top" currentPath={currentPath} />
             </div>
           </nav>
-          <div className="col-start-3 flex items-center gap-2 justify-self-end">
+          <div
+            className="col-start-3 flex items-center gap-2 justify-self-end"
+            inert={editable || undefined}
+          >
             <LocaleSwitcher className={`size-11 ${floating}`} />
             <ThemeToggle className={`size-11 ${floating}`} />
           </div>
         </div>
       </header>
-      <nav
-        aria-label={t('label')}
-        className="site-bar fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
-      >
-        {/* tanpa backdrop-blur: latar sudah 95% pekat, sedangkan blur di elemen fixed dihitung ulang
+      {editable ? null : (
+        <nav
+          aria-label={t('label')}
+          className="site-bar fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+        >
+          {/* tanpa backdrop-blur: latar sudah 95% pekat, sedangkan blur di elemen fixed dihitung ulang
             setiap frame saat halaman bergerak di belakangnya (berat di HP) */}
-        <div className="flex w-full max-w-md items-center rounded-full border border-border bg-surface/95 p-1.5 shadow-lg">
-          <NavLinks variant="bottom" currentPath={currentPath} />
-        </div>
-      </nav>
+          <div className="flex w-full max-w-md items-center rounded-full border border-border bg-surface/95 p-1.5 shadow-lg">
+            <NavLinks variant="bottom" currentPath={currentPath} />
+          </div>
+        </nav>
+      )}
     </>
   )
 }

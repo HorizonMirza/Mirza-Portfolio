@@ -7,6 +7,9 @@ import { ADMIN_STATE, hasAdminEnv } from './helpers'
 test.skip(!hasAdminEnv, 'butuh ADMIN_EMAIL dan ADMIN_PASSWORD')
 test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' } })
 
+// halaman admin yang isinya pratinjau situs diperkecil (SiteFrame)
+const SCALED_PREVIEWS = ['/admin/github', '/admin/pages/footer']
+
 const PAGES = [
   '/admin',
   '/admin/profile',
@@ -47,9 +50,9 @@ for (const theme of ['light', 'dark'] as const) {
         'wcag21aa',
         'wcag22aa',
       ])
-      // pratinjau GitHub adalah bagian situs yang diperkecil (SiteFrame): tombol tampilan datar/3D di
-      // dalamnya berukuran penuh di situs tetapi terukur lebih kecil dari 24 px di sini
-      if (path === '/admin/github') axe.disableRules(['target-size'])
+      // pratinjau GitHub dan Footer adalah bagian situs yang diperkecil (SiteFrame): tombol dan isian
+      // di dalamnya berukuran penuh di situs tetapi terukur lebih kecil dari 24 px di sini
+      if (SCALED_PREVIEWS.includes(path)) axe.disableRules(['target-size'])
       const results = await axe.analyze()
       failures.push(...results.violations.map((v) => `${path} ${v.id}: ${v.help}`))
     }
@@ -517,6 +520,8 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await page.goto('/admin/experience')
   const role = `Peran E2E ${testInfo.project.name}-${Date.now()}`
   const roles = page.getByRole('textbox', { name: 'Peran (Indonesia)' })
+  // entri yang ada sudah tampil sebelum dihitung (render lambat di HP membuat hitungan awal 0)
+  await expect(roles.first()).toBeVisible()
   const count = await roles.count()
   await expect(async () => {
     if ((await roles.count()) === count)
@@ -927,9 +932,35 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
     await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByText('Kontak disimpan.')).toHaveCount(0)
+  // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak (DESIGN.md bagian 151)
+  await expect(page.locator('.site-frame footer')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toHaveCount(1)
   // ikon kartu Resume CV langsung membuka pemilih berkas PDF (tanpa jendela, DESIGN.md bagian 148);
   // Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif
   await contacts.getByRole('button', { name: 'Berkas Resume CV' }).click()
   await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
   await expect(page.getByRole('dialog')).toHaveCount(0)
+})
+
+test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketik', async ({
+  page,
+}) => {
+  // revisi pemilik 2026-11-15 malam (DESIGN.md bagian 151): bingkai layar dengan markup situs
+  await page.goto('/admin/pages/navbar')
+  const bar = page.locator('.site-frame header.site-bar')
+  await expect(bar).toBeVisible()
+  // lima nama menu bisa diketik langsung di kapsul menu situs; foto dan tombol bahasa/tema hanya tampilan
+  await expect(bar.getByRole('textbox', { name: /\(Indonesia\)$/ })).toHaveCount(5)
+  await expect(bar.locator('[inert]')).not.toHaveCount(0)
+  await expect(page.getByRole('textbox', { name: /Nama menu untuk pembaca layar/ })).toBeVisible()
+
+  await page.goto('/admin/pages/contact')
+  const frame = page.locator('.site-frame')
+  await expect(frame.locator('.send-btn')).toBeVisible()
+  // label formulir, judul, dan pengantar bisa diketik; kolomnya hanya tampilan
+  for (const label of ['Label nama', 'Label email', 'Label subjek', 'Label pesan'])
+    await expect(frame.getByRole('textbox', { name: new RegExp(`^${label}`) })).toBeVisible()
+  await expect(frame.locator('input[readonly]').first()).toBeAttached()
+  // tulisan kartu ID juga bisa diketik (di bawah pratinjau)
+  await expect(page.getByRole('textbox', { name: /Jabatan di kartu ID/ })).toBeVisible()
 })

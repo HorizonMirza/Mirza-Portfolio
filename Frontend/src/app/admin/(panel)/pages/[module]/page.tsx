@@ -4,6 +4,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
+import { SitePreviewHeader } from '@/components/admin/site-preview-header'
 import { getProfileAssets } from '@/features/assets/queries'
 import { ContactLinksLive } from '@/features/profile/components/contact-links-live'
 import { getPublicProfile } from '@/features/profile/public'
@@ -11,10 +12,16 @@ import { getContactLinksForEdit } from '@/features/profile/queries'
 import { IntroForm, type IntroPreviewTexts } from '@/features/settings/components/intro-form'
 import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
-import { SiteTextLayout } from '@/features/site-text/components/site-text-layouts'
-import { SiteTextLive } from '@/features/site-text/components/site-text-live'
+import {
+  type LayoutExtras,
+  SiteTextBelow,
+  SiteTextLayout,
+} from '@/features/site-text/components/site-text-layouts'
+import { EditText, SiteTextLive } from '@/features/site-text/components/site-text-live'
 import { getDefaultTexts, getTextsForEdit } from '@/features/site-text/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
+import { getSiteSettings } from '@/features/settings/public'
+import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
+import { HERO_CARD_CROP, HERO_PORTRAIT } from '@/lib/default-photo'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { isUploadConfigured } from '@/lib/uploads'
 
@@ -58,7 +65,6 @@ export default async function SiteModulePage({ params }: Params) {
       <div className="flex flex-col gap-6">
         {/* Bagian Awal hanya mengelola isi kartu pembuka (permintaan pemilik 2026-11-10) */}
         {moduleId === 'intro' ? <IntroEditor /> : <ModuleTexts moduleId={moduleId} />}
-        {moduleId === 'footer' ? <FooterContacts /> : null}
       </div>
     </>
   )
@@ -94,32 +100,48 @@ async function IntroEditor() {
 }
 
 async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
-  const [texts, defaults] = await Promise.all([
+  const lang = await getAdminLang()
+  const [texts, defaults, profile, settings] = await Promise.all([
     getTextsForEdit(moduleId),
     getDefaultTexts(moduleId),
+    getPublicProfile(),
+    getSiteSettings(),
   ])
-  const profile = moduleId === 'contact' ? await getPublicProfile() : null
+  const name = profile?.name ?? 'Muhammad Mirza'
+  // Navbar, Contact, dan Footer tampil 1:1 seperti situs di bingkai layar (DESIGN.md bagian 151)
+  const extras: LayoutExtras = {
+    name,
+    photo: settings.heroPortrait?.url ?? HERO_PORTRAIT,
+    photoCrop: HERO_CARD_CROP,
+    header:
+      moduleId === 'navbar' ? (
+        <SitePreviewHeader locale={lang} currentPath="/" editable />
+      ) : undefined,
+    contact: moduleId === 'footer' ? await footerContacts() : undefined,
+  }
   return (
-    <SiteTextLive moduleId={moduleId} initialValues={texts.values} defaults={defaults}>
-      <SiteTextLayout moduleId={moduleId} name={profile?.name ?? 'Muhammad Mirza'} />
+    <SiteTextLive
+      moduleId={moduleId}
+      initialValues={texts.values}
+      defaults={defaults}
+      frame
+      below={<SiteTextBelow moduleId={moduleId} />}
+    >
+      <SiteTextLayout moduleId={moduleId} extras={extras} />
     </SiteTextLive>
   )
 }
 
-// Admin → Footer: kartu kontak dan Resume CV seperti di footer situs, diketik langsung (DESIGN.md
-// bagian 139), di bawah teks footer
-async function FooterContacts() {
-  const [links, assets, footer] = await Promise.all([
-    getContactLinksForEdit(),
-    getProfileAssets(),
-    getTranslations({ locale: 'id', namespace: 'Footer' }),
-  ])
+// Footer: kartu kontak dan Resume CV seperti di footer situs, diketik langsung di pratinjau dan
+// disimpan bersama teks footer (DESIGN.md bagian 139 dan 151)
+async function footerContacts() {
+  const [links, assets] = await Promise.all([getContactLinksForEdit(), getProfileAssets()])
   return (
     <ContactLinksLive
       defaultValues={links}
       cv={assets.cv}
       configured={isUploadConfigured()}
-      cvTitle={footer('cv')}
+      cvTitle={<EditText k="Footer.cv" />}
     />
   )
 }

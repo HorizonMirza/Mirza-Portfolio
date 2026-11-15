@@ -1,80 +1,81 @@
 'use client'
 
-import { ArrowLeft, ExternalLink, FileText, GitBranch, Mail, MessageCircle } from 'lucide-react'
+import { Send } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-import { useAdminT } from '@/components/admin/admin-lang'
+import { StateBox } from '@/components/admin/live-edit'
+import { NavEditProvider } from '@/components/site/nav-edit'
+import { Container } from '@/components/site/section-heading'
+import { IdLanyard } from '@/components/site/id-lanyard'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import type { StaticImageData } from 'next/image'
 
 import type { ModuleId } from '../catalog'
-import { Note, StateBox } from '@/components/admin/live-edit'
 
-import { EditText, SearchSnippet } from './site-text-live'
+import { EditText, SearchSnippet, useShownText } from './site-text-live'
 
-// Tata letak pratinjau per modul (DESIGN.md bagian 135). Meniru susunan dan huruf halaman situs;
-// isi data (riwayat, project) diganti contoh singkat karena yang diubah di sini hanya teksnya.
+// Tata letak pratinjau per modul (DESIGN.md bagian 151): halaman Navbar, Contact, dan Footer tampil
+// 1:1 seperti situs di bingkai layar (SiteFrame), memakai kelas dan susunan yang sama; yang bisa
+// diketik diberi garis putus-putus. Keadaan yang tidak tampil di halaman (pesan galat, kartu setelah
+// terkirim, keterangan saat kartu disorot) ada di bawah pratinjau.
 
-function PageTitle({ k, intro }: { k: string; intro?: string }) {
-  return (
-    <header className="text-center">
-      <EditText k={k} block className="text-center text-h1 font-bold" />
-      {intro ? (
-        <EditText k={intro} className="mx-auto mt-4 max-w-prose text-center text-muted" />
-      ) : null}
-    </header>
-  )
+export type LayoutExtras = {
+  name: string
+  // Contact: potret kartu ID
+  photo: string | StaticImageData
+  photoCrop?: { x: number; y: number; w: number; h: number }
+  // Navbar: navbar situs yang asli (server), Footer: kartu kontak yang bisa diketik
+  header?: ReactNode
+  contact?: ReactNode
 }
 
-function Sample({ children }: { children: ReactNode }) {
-  // contoh isi yang bukan bagian dari teks halaman: redup dan tidak bisa diketik
-  return <div className="pointer-events-none text-muted select-none">{children}</div>
-}
-
-function ProjectsLayout() {
-  const t = useAdminT()
+// Kolom form kontak seperti di situs (label + kolom berkilau); kolomnya hanya tampilan
+function MockField({
+  k,
+  shine,
+  tall = false,
+  className,
+}: {
+  k: string
+  shine: number
+  tall?: boolean
+  className?: string
+}) {
   return (
-    <>
-      <PageTitle k="Projects.title" />
-      <StateBox note="Tampil bila belum ada project">
-        <EditText k="Projects.empty" className="text-muted" />
-      </StateBox>
-      <section className="flex flex-col gap-4 rounded-md border border-border p-5">
-        <Note>Halaman detail project</Note>
-        <p className="inline-flex items-center gap-2 text-sm text-muted">
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          <EditText k="Projects.back" />
-        </p>
-        <Sample>
-          <p className="text-h2 font-bold">{t('Nama project')}</p>
-        </Sample>
-        <div className="flex flex-wrap gap-2">
-          <span className="inline-flex min-h-11 items-center gap-2 rounded-full bg-text px-5 text-sm font-semibold text-bg">
-            <ExternalLink className="size-4" aria-hidden="true" />
-            <EditText k="Projects.demo" />
-          </span>
-          <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border px-5 text-sm font-semibold">
-            <GitBranch className="size-4" aria-hidden="true" />
-            <EditText k="Projects.repo" />
-          </span>
-        </div>
-        <EditText k="Projects.stack" block className="text-h3 font-semibold" />
-        <Sample>
-          <div className="flex gap-2 text-sm">
-            <span className="rounded-full border border-border px-3 py-1">TypeScript</span>
-            <span className="rounded-full border border-border px-3 py-1">Next.js</span>
-          </div>
-        </Sample>
-      </section>
-      <SearchSnippet path="projects" prefix="Projects" />
-    </>
-  )
-}
-
-function FieldMock({ k, tall = false }: { k: string; tall?: boolean }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <EditText k={k} className="text-sm font-semibold" />
-      <div className={`rounded-md border border-border ${tall ? 'h-24' : 'h-11'}`} />
+    <div className={`flex flex-col gap-2 ${className ?? ''}`}>
+      <Label>
+        <EditText k={k} />
+      </Label>
+      <div
+        inert
+        className="field-shine rounded-md"
+        style={{ '--shine-delay': `${-shine * 1.1}s` } as React.CSSProperties}
+      >
+        {tall ? <Textarea rows={7} readOnly /> : <Input readOnly />}
+      </div>
     </div>
+  )
+}
+
+// Kartu ID bertali yang asli; tulisan di kanvasnya mengikuti teks yang sedang diketik
+function LiveLanyard({
+  name,
+  photo,
+  photoCrop,
+}: Pick<LayoutExtras, 'name' | 'photo' | 'photoCrop'>) {
+  const role = useShownText('Contact.cardRole')
+  const site = useShownText('Contact.cardSite')
+  return (
+    <IdLanyard
+      className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
+      name={name}
+      role={role}
+      photo={photo}
+      photoCrop={photoCrop}
+      site={site}
+    />
   )
 }
 
@@ -90,37 +91,53 @@ const CONTACT_ERRORS = [
   'Contact.messageLong',
 ]
 
-function ContactLayout({ name }: { name: string }) {
+function ContactLayout({ name, photo, photoCrop }: LayoutExtras) {
   return (
-    <>
-      <PageTitle k="Contact.title" intro="Contact.intro" />
-      <div className="grid gap-8 md:grid-cols-[18rem_1fr]">
-        {/* kartu ID */}
-        <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-surface p-6 text-center">
-          <Note>Kartu ID</Note>
-          <div className="pointer-events-none size-20 rounded-full bg-surface-2" />
-          <p className="font-semibold">{name}</p>
-          <EditText k="Contact.cardRole" block className="text-center text-sm text-muted" />
-          <div className="mt-2 w-full border-t border-dashed border-border pt-2 font-mono text-xs">
-            <EditText k="Contact.cardSite" block className="text-center" />
-          </div>
-        </div>
-        {/* formulir */}
-        <div className="flex flex-col gap-4">
-          <FieldMock k="Contact.name" />
-          <FieldMock k="Contact.email" />
-          <FieldMock k="Contact.subject" />
-          <FieldMock k="Contact.message" tall />
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex min-h-11 items-center rounded-full bg-text px-6 text-sm font-semibold text-bg">
-              <EditText k="Contact.send" />
-            </span>
-            <span className="inline-flex min-h-11 items-center rounded-full border border-border px-6 text-sm font-semibold">
-              <EditText k="Contact.sending" />
-            </span>
+    <Container className="pb-12">
+      <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
+        <LiveLanyard name={name} photo={photo} photoCrop={photoCrop} />
+        <div className="contact-col">
+          <header className="pt-12 pb-10 md:pt-20">
+            <h1 className="mt-3 max-w-3xl text-h1 font-bold">
+              <EditText k="Contact.title" block className="text-h1 font-bold" />
+            </h1>
+            <p className="mt-4 max-w-prose text-muted">
+              <EditText k="Contact.intro" block />
+            </p>
+          </header>
+          <div className="relative flex flex-col gap-5">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <MockField k="Contact.name" shine={0} />
+              <MockField k="Contact.email" shine={1} />
+            </div>
+            <MockField k="Contact.subject" shine={2} />
+            <MockField k="Contact.message" shine={3} tall />
+            <div className="flex">
+              <span className="send-btn" data-state="idle">
+                <Send className="size-[18px]" aria-hidden="true" />
+                <EditText k="Contact.send" />
+              </span>
+            </div>
           </div>
         </div>
       </div>
+    </Container>
+  )
+}
+
+function ContactBelow() {
+  return (
+    <>
+      {/* kartu ID bertali ada di kanvas (tampil di layar lebar); jabatan dan alamat situsnya diketik di sini */}
+      <StateBox note="Tulisan di kartu ID">
+        <div className="flex flex-col gap-2">
+          <EditText k="Contact.cardRole" block className="min-h-6 text-sm" />
+          <EditText k="Contact.cardSite" block className="min-h-6 font-mono text-xs" />
+        </div>
+      </StateBox>
+      <StateBox note="Tombol saat mengirim">
+        <EditText k="Contact.sending" />
+      </StateBox>
       <StateBox note="Pesan galat formulir">
         <ul className="flex flex-col gap-1.5 text-sm text-danger">
           {CONTACT_ERRORS.map((k) => (
@@ -133,8 +150,11 @@ function ContactLayout({ name }: { name: string }) {
       <StateBox note="Kartu setelah pesan terkirim">
         <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <EditText k="Contact.sentTitle" className="text-h3 font-semibold" />
-            <span className="rounded-full border border-border px-3 py-1 text-xs font-semibold">
+            <EditText
+              k="Contact.sentTitle"
+              className="font-display text-h3 font-semibold uppercase"
+            />
+            <span className="rounded-full border border-success/45 px-2.5 py-0.5 text-[0.8125rem] font-semibold text-success">
               <EditText k="Contact.sentBadge" />
             </span>
           </div>
@@ -150,7 +170,7 @@ function ContactLayout({ name }: { name: string }) {
               ),
             )}
           </dl>
-          <span className="inline-flex min-h-11 w-fit items-center rounded-full border border-border px-5 text-sm font-semibold">
+          <span className="inline-flex min-h-11 w-fit items-center text-[0.9375rem] underline underline-offset-4">
             <EditText k="Contact.another" />
           </span>
         </div>
@@ -160,70 +180,82 @@ function ContactLayout({ name }: { name: string }) {
   )
 }
 
-function NavbarLayout() {
+// Navbar situs yang asli (server) dengan nama menu yang bisa diketik
+function NavbarLayout({ header }: LayoutExtras) {
   return (
-    <>
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-full border border-border bg-surface px-4 py-2">
-        <div className="pointer-events-none size-9 rounded-full bg-surface-2" />
-        <nav className="flex flex-wrap items-center gap-5 text-sm font-semibold">
-          {['home', 'about', 'experience', 'projects', 'contact'].map((k) => (
-            <EditText key={k} k={`Nav.${k}`} />
-          ))}
-        </nav>
-        <div className="pointer-events-none size-9 rounded-full border border-border" />
-      </div>
-      <StateBox note="Nama menu untuk pembaca layar (tidak terlihat)">
-        <EditText k="Nav.label" />
-      </StateBox>
-    </>
+    <NavEditProvider render={(key) => <EditText k={`Nav.${key}`} />}>
+      <div className="pb-6">{header}</div>
+    </NavEditProvider>
   )
 }
 
-function FooterLayout() {
-  const hints: [string, ReactNode][] = [
-    ['Footer.whatsappHint', <MessageCircle key="w" className="size-5" aria-hidden="true" />],
-    ['Footer.emailHint', <Mail key="e" className="size-5" aria-hidden="true" />],
-    ['Footer.cvHint', <FileText key="c" className="size-5" aria-hidden="true" />],
-    ['Footer.githubHint', <GitBranch key="g" className="size-5" aria-hidden="true" />],
-  ]
+function NavbarBelow() {
   return (
-    <footer className="flex flex-col items-center gap-6 border-t border-border pt-8 text-center">
-      <EditText k="Footer.contactHeading" block className="text-center text-h3 font-semibold" />
-      <div className="flex flex-wrap justify-center gap-6">
-        {hints.map(([k, icon]) => (
-          <div key={k} className="flex flex-col items-center gap-2">
-            <span className="inline-flex size-12 items-center justify-center rounded-full border border-border">
-              {icon}
-            </span>
-            {/* petunjuk yang muncul saat ikon disorot */}
-            <span className="rounded-md bg-text px-2 py-1 text-xs text-bg">
-              <EditText k={k} />
-            </span>
-          </div>
-        ))}
+    <StateBox note="Nama menu untuk pembaca layar (tidak terlihat)">
+      <EditText k="Nav.label" />
+    </StateBox>
+  )
+}
+
+// Footer situs yang asli: judul, kartu kontak (nilainya diketik di kartu), dan hak cipta
+function FooterLayout({ contact }: LayoutExtras) {
+  return (
+    <footer className="border-t border-border">
+      <div className="mx-auto max-w-[1200px] px-4 pt-8 pb-6 sm:px-6 lg:px-8">
+        <nav className="mb-4">
+          <h2 className="mb-4 font-display text-h3 font-semibold uppercase">
+            <EditText
+              k="Footer.contactHeading"
+              block
+              className="font-display text-h3 font-semibold uppercase"
+            />
+          </h2>
+          {contact}
+        </nav>
+        <p className="text-sm text-muted">
+          <EditText k="Footer.copyright" block />
+        </p>
       </div>
-      <span className="inline-flex min-h-11 items-center gap-2 rounded-full bg-text px-5 text-sm font-semibold text-bg">
-        <FileText className="size-4" aria-hidden="true" />
-        <EditText k="Footer.cv" />
-        <span className="font-normal">
-          <EditText k="Footer.cvFile" />
-        </span>
-      </span>
-      <EditText k="Footer.copyright" block className="text-center text-sm text-muted" />
     </footer>
   )
 }
 
-export function SiteTextLayout({ moduleId, name }: { moduleId: ModuleId; name: string }) {
+function FooterBelow() {
+  return (
+    <StateBox note="Keterangan saat kartu disorot (hanya di layar dengan kursor)">
+      <ul className="flex flex-col gap-2 text-sm">
+        {['whatsappHint', 'emailHint', 'githubHint', 'cvHint', 'cvFile'].map((f) => (
+          <li key={f}>
+            <EditText k={`Footer.${f}`} block />
+          </li>
+        ))}
+      </ul>
+    </StateBox>
+  )
+}
+
+export function SiteTextLayout({ moduleId, extras }: { moduleId: ModuleId; extras: LayoutExtras }) {
   switch (moduleId) {
-    case 'projects':
-      return <ProjectsLayout />
     case 'contact':
-      return <ContactLayout name={name} />
+      return <ContactLayout {...extras} />
     case 'navbar':
-      return <NavbarLayout />
+      return <NavbarLayout {...extras} />
     case 'footer':
-      return <FooterLayout />
+      return <FooterLayout {...extras} />
+    default:
+      return null
+  }
+}
+
+// keadaan di bawah pratinjau per modul
+export function SiteTextBelow({ moduleId }: { moduleId: ModuleId }) {
+  switch (moduleId) {
+    case 'contact':
+      return <ContactBelow />
+    case 'navbar':
+      return <NavbarBelow />
+    case 'footer':
+      return <FooterBelow />
     default:
       return null
   }

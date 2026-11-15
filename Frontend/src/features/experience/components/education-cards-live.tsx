@@ -93,7 +93,7 @@ export function EducationCardsLive({
                   {initials(v.organization || '?')}
                 </span>
               )}
-              <div className="ab-edu-text flex min-w-0 flex-1 flex-col gap-3 pr-8">
+              <div className="ab-edu-text flex min-w-0 flex-1 flex-col items-start gap-2.5 pr-8">
                 <h3 className="font-display text-2xl leading-[1.1] font-bold uppercase">
                   <InlineInput
                     key={`org-${lang}`}
@@ -105,7 +105,8 @@ export function EducationCardsLive({
                     value={org}
                     placeholder={t('Sekolah / kampus')}
                     invalid={Boolean(err.organization)}
-                    className="w-full"
+                    size={Math.max(4, org.length + 1)}
+                    className="max-w-full"
                     onChange={(event) => {
                       const next = event.target.value
                       if (lang === 'en')
@@ -121,11 +122,12 @@ export function EducationCardsLive({
                     value={v[`title_${lang}`] ?? ''}
                     placeholder={t('Jenjang / jurusan')}
                     invalid={Boolean(err[`title_${lang}`])}
-                    className="w-full"
+                    size={Math.max(4, (v[`title_${lang}`] ?? '').length + 1)}
+                    className="max-w-full"
                     onChange={(event) => set({ [`title_${lang}`]: event.target.value })}
                   />
                 </p>
-                <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted tabular-nums">
+                <p className="flex flex-wrap items-center gap-x-2.5 gap-y-2 text-sm text-muted tabular-nums">
                   <InlineInput
                     label={t('Tahun mulai')}
                     inputMode="numeric"
@@ -163,7 +165,7 @@ export function EducationCardsLive({
                   placeholder={t('Grade / GPA')}
                   invalid={Boolean(err[`description_${lang}`])}
                   size="sm"
-                  className="text-muted"
+                  className="w-fit rounded-none text-muted"
                   onChange={(text) => set({ [`description_${lang}`]: text })}
                 />
                 {/* alat kartu di pojok kanan atas, tampil saat kartu disorot: hapus logo dan hapus kartu

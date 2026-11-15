@@ -2739,6 +2739,13 @@ html[data-intro='pending'] .intro {
   .xp-node {
     --editable-color: var(--text);
   }
+  /* kartu pendidikan: garis putus-putus rapat di sekeliling teks (jarak 1px) dan bersudut tajam
+     (revisi 2026-11-15 malam) */
+  .ab-edu-text .admin-inline:not(:focus),
+  .ab-edu-text .admin-editable:not(:disabled, :focus-visible) {
+    outline-offset: 1px;
+    border-radius: 0;
+  }
   .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: var(--editable-offset, 3px);
   }

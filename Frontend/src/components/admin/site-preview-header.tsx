@@ -10,15 +10,18 @@ import type { AppLocale } from '@/i18n/routing'
 export async function SitePreviewHeader({
   locale,
   currentPath,
+  editable = false,
 }: {
   locale: AppLocale
   currentPath: string
+  // Admin → Navbar: nama menu diketik langsung; hanya foto dan tombol bahasa/tema yang inert
+  editable?: boolean
 }) {
   const messages = await getMessages({ locale })
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div inert>
-        <SiteHeader locale={locale} currentPath={currentPath} />
+      <div inert={editable ? undefined : true}>
+        <SiteHeader locale={locale} currentPath={currentPath} editable={editable} />
       </div>
     </NextIntlClientProvider>
   )

@@ -9,6 +9,7 @@ import { scrollToTop } from '@/lib/scroll'
 import { playNavSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
+import { useNavEdit } from './nav-edit'
 import { isSiteNavActive, siteNav } from './nav-items'
 
 // ikon menu bawah HP (pilihan pemilik 2026-10-01)
@@ -75,6 +76,7 @@ export function NavLinks({
   currentPath?: string
 }) {
   const t = useTranslations('Nav')
+  const editLabel = useNavEdit()
   const routePath = usePathname()
   const pathname = currentPath ?? routePath
   // arah geser halaman mengikuti urutan menu: ke kanan = maju, ke kiri = mundur (globals.css .nav-*)
@@ -93,6 +95,21 @@ export function NavLinks({
         // halaman menu itu sendiri (bukan halaman turunan seperti detail project)
         const here = pathname === item.href
         const Icon = icons[item.key]
+        // pratinjau admin: nama menu diketik langsung, bukan tautan
+        if (editLabel)
+          return (
+            <li key={item.href}>
+              <span
+                className={cn(
+                  'relative inline-flex min-h-10 items-center justify-center rounded-full px-4 text-sm font-semibold text-muted',
+                  active && 'bg-surface-2 text-text',
+                )}
+              >
+                {editLabel(item.key)}
+                {active ? <LampGlow className="top-[-5px]" /> : null}
+              </span>
+            </li>
+          )
         return (
           <li key={item.href} className={variant === 'bottom' ? 'min-w-0' : undefined}>
             <Link

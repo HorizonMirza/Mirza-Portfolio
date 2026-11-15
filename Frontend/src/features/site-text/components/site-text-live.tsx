@@ -1,6 +1,15 @@
 'use client'
 
-import { createContext, type ReactNode, useContext, useState, useTransition } from 'react'
+import {
+  createContext,
+  useCallback,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 
 import { applyResult } from '@/components/admin/apply-result'
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -9,6 +18,7 @@ import {
   InlineInput,
   LANG_NAME,
   type Lang,
+  LangRow,
   LangToggle,
   LiveErrors,
   LiveStage,
@@ -16,6 +26,8 @@ import {
   StateBox,
   useEditLang,
 } from '@/components/admin/live-edit'
+
+import { SiteFrame } from '@/components/admin/site-frame'
 
 import { saveSiteTexts } from '../actions'
 import { checkTextValue, entriesOf, findTextEntry, type ModuleId } from '../catalog'
@@ -33,6 +45,32 @@ type Ctx = {
 }
 
 const TextCtx = createContext<Ctx | null>(null)
+
+// Bagian halaman yang ikut disimpan bersama teks (mis. kartu kontak Footer): mendaftarkan fungsi
+// yang memeriksa dan menyimpan datanya, mengembalikan true bila berhasil atau tidak ada ubahan.
+type ExtraSave = () => Promise<boolean>
+const ExtraSaveCtx = createContext<((save: ExtraSave | null) => void) | null>(null)
+
+export function useRegisterExtraSave(save: ExtraSave) {
+  const register = useContext(ExtraSaveCtx)
+  const latest = useRef(save)
+  useEffect(() => {
+    latest.current = save
+  })
+  useEffect(() => {
+    if (!register) return
+    register(() => latest.current())
+    return () => register(null)
+  }, [register])
+}
+
+// Teks situs yang sedang tampil (ubahan admin atau bawaan), untuk bagian pratinjau yang tidak bisa
+// diketik langsung di tempat (mis. tulisan di kartu ID berbasis kanvas).
+export function useShownText(k: string): string {
+  const ctx = useContext(TextCtx)
+  if (!ctx) return ''
+  return ctx.values[k]?.[ctx.lang] || ctx.defaults[k]?.[ctx.lang] || ''
+}
 
 // Teks situs yang diketik langsung di pratinjau halaman. Yang tampil selalu teks yang dilihat
 // pengunjung: ubahan admin bila ada, selain itu teks bawaan. Teks yang dikembalikan sama persis
@@ -106,11 +144,19 @@ export function SiteTextLive({
   moduleId,
   initialValues,
   defaults,
+  frame = false,
+  below,
   children,
 }: {
   moduleId: ModuleId
   initialValues: Values
   defaults: Defaults
+  // pratinjau 1:1 di bingkai layar (SiteFrame) dengan pilihan ID/EN di atas Simpan; selain itu
+  // panggung hitam dengan tombol bahasa di sudut
+  frame?: boolean
+  // keadaan yang tidak tampil di halaman (pesan galat, kartu terkirim, hasil mesin pencari): di
+  // bawah pratinjau, masih bisa diketik
+  below?: ReactNode
   children: ReactNode
 }) {
   const t = useAdminT()
@@ -120,6 +166,10 @@ export function SiteTextLive({
   const [saved, setSaved] = useState<Values>(initialValues)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [pending, startTransition] = useTransition()
+  const extra = useRef<ExtraSave | null>(null)
+  const registerExtra = useCallback((save: ExtraSave | null) => {
+    extra.current = save
+  }, [])
 
   const set = (key: string, value: string) => {
     const fallback = defaults[key]?.[lang] ?? ''
@@ -153,6 +203,8 @@ export function SiteTextLive({
       return
     }
     startTransition(async () => {
+      // bagian lain di halaman ini (mis. kartu kontak Footer) disimpan lebih dulu; gagal = berhenti
+      if (extra.current && !(await extra.current())) return
       const result = await saveSiteTexts(moduleId, { values })
       if (applyResult(result)) setSaved(values)
       else if (!result.ok && result.fieldErrors) {
@@ -176,21 +228,33 @@ export function SiteTextLive({
 
   return (
     <TextCtx.Provider value={{ lang, values, defaults, errors, set }}>
-      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
-        <LiveStage className="relative bg-bg px-4 pt-14 pb-10 text-text sm:px-10">
-          <LangToggle
-            lang={lang}
-            onChange={setLang}
-            dirty={{ id: dirty('id'), en: dirty('en') }}
-            className="absolute top-3 right-3"
-          />
-          <div lang={lang} className="mx-auto flex max-w-[1000px] flex-col gap-10">
-            {children}
-          </div>
-        </LiveStage>
-        <LiveErrors messages={messages} />
-        <SaveBar pending={pending} />
-      </form>
+      <ExtraSaveCtx.Provider value={registerExtra}>
+        <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+          {frame ? (
+            <SiteFrame autoHeight>
+              <div lang={lang}>{children}</div>
+            </SiteFrame>
+          ) : (
+            <LiveStage className="relative bg-bg px-4 pt-14 pb-10 text-text sm:px-10">
+              <LangToggle
+                lang={lang}
+                onChange={setLang}
+                dirty={{ id: dirty('id'), en: dirty('en') }}
+                className="absolute top-3 right-3"
+              />
+              <div lang={lang} className="mx-auto flex max-w-[1000px] flex-col gap-10">
+                {children}
+              </div>
+            </LiveStage>
+          )}
+          {below}
+          <LiveErrors messages={messages} />
+          {frame ? (
+            <LangRow lang={lang} onChange={setLang} dirty={{ id: dirty('id'), en: dirty('en') }} />
+          ) : null}
+          <SaveBar pending={pending} />
+        </form>
+      </ExtraSaveCtx.Provider>
     </TextCtx.Provider>
   )
 }
