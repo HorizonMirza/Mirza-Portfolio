@@ -56,6 +56,7 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
         </Button>
       ) : null}
       <ConfirmDelete
+        title="Hapus Pesan"
         itemLabel={t('pesan ini')}
         onConfirm={() => deleteMessage(id)}
         onDone={() => router.replace('/admin/messages')}

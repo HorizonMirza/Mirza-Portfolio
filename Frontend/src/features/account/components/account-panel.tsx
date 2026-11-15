@@ -711,6 +711,7 @@ function PhotoView({
             {t('Hapus foto unggahan untuk kembali ke foto bawaan.')}
           </p>
           <ConfirmDelete
+            title="Hapus Foto"
             itemLabel={t('foto unggahan')}
             onConfirm={removeAsset.bind(null, photoAssetId)}
             onDone={onDone}

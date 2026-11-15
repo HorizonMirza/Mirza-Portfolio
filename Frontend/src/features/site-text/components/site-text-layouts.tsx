@@ -1,18 +1,22 @@
 'use client'
 
 import { Send } from 'lucide-react'
-import type { CSSProperties, ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
+import { type CSSProperties, type ReactNode, useRef } from 'react'
 
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import { useAdminT } from '@/components/admin/admin-lang'
+import { IdLanyard } from '@/components/site/id-lanyard'
 import { NavEditProvider } from '@/components/site/nav-edit'
 import { Container } from '@/components/site/section-heading'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import type { AssetView } from '@/features/assets/components/asset-panels'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
 import type { ModuleId } from '../catalog'
 
-import { ContactCard } from './contact-card'
 import { EditText, ShownText, useShownText } from './site-text-live'
 
 // Tata letak pratinjau per modul (DESIGN.md bagian 152): halaman Navbar, Contact, dan Footer tampil
@@ -60,18 +64,52 @@ function MockField({
   )
 }
 
+// Kartu ID kanvas yang asli (bisa ditarik); foto dan jabatan di kartu ditekan untuk diubah
 function ContactLayout({ name, photo, photoCrop, photoAsset, uploadConfigured }: LayoutExtras) {
+  const t = useAdminT()
+  const router = useRouter()
+  const picker = useAssetPicker({ configured: uploadConfigured, onDone: () => router.refresh() })
+  const role = useShownText('Contact.cardRole')
+  const site = useShownText('Contact.cardSite')
+  const roleBox = useRef<HTMLDivElement>(null)
   return (
     <Container className="pb-12">
       <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
-        <ContactCard
+        <IdLanyard
+          className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
           name={name}
+          role={role}
           photo={photo}
           photoCrop={photoCrop}
-          asset={photoAsset}
-          configured={uploadConfigured}
-          role={<EditText k="Contact.cardRole" className="w-full" />}
-        />
+          site={site}
+          editable={{
+            onPhoto: () => picker.pick('contact-photo'),
+            onRole: () => roleBox.current?.querySelector('input')?.focus(),
+          }}
+        >
+          {/* di bawah kartu saat diam: jabatan diketik di sini, foto bisa diganti atau dihapus */}
+          <div
+            ref={roleBox}
+            className="flex items-center gap-2 text-sm font-semibold"
+            style={{ ['--editable-color' as string]: 'currentColor' }}
+          >
+            <button
+              type="button"
+              onClick={() => picker.pick('contact-photo')}
+              className="sr-only focus-visible:not-sr-only focus-visible:rounded-md focus-visible:border focus-visible:border-border focus-visible:px-2 focus-visible:py-1"
+            >
+              {t('Ganti foto kartu ID')}
+            </button>
+            <EditText k="Contact.cardRole" className="min-w-24 text-center uppercase" />
+            {photoAsset ? (
+              <RemoveAssetButton
+                assetId={photoAsset.id}
+                label={t('Foto kartu ID')}
+                onDone={() => router.refresh()}
+              />
+            ) : null}
+          </div>
+        </IdLanyard>
         <div className="contact-col">
           <header className="pt-12 pb-10 md:pt-20">
             <h1 className="mt-3 max-w-3xl text-h1 font-bold">
@@ -97,6 +135,7 @@ function ContactLayout({ name, photo, photoCrop, photoAsset, uploadConfigured }:
           </div>
         </div>
       </div>
+      {picker.element}
     </Container>
   )
 }

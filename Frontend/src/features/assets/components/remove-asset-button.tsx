@@ -17,6 +17,7 @@ export function RemoveAssetButton({
 }) {
   return (
     <ConfirmDelete
+      title="Hapus Gambar"
       iconOnly
       itemLabel={label}
       onConfirm={() => removeAsset(assetId)}

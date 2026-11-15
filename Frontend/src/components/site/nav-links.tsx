@@ -106,7 +106,6 @@ export function NavLinks({
                 )}
               >
                 {editLabel(item.key)}
-                {active ? <LampGlow className="top-[-5px]" /> : null}
               </span>
             </li>
           )

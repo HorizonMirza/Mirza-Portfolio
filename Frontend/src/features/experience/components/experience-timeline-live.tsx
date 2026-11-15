@@ -323,6 +323,7 @@ export function ExperienceTimelineLive({
                               ) : null}
                               {row.id ? (
                                 <ConfirmDelete
+                                  title="Hapus Pengalaman"
                                   iconOnly
                                   itemLabel={
                                     v[`title_${lang}`] || v.organization || t('Pengalaman')

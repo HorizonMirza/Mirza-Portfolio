@@ -182,6 +182,8 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   // bagian "Keahlian Teknis" tampil seperti di beranda; di bawahnya bagian untuk mengubah dan
   // menambah, lalu ID/EN dan Simpan di paling bawah (revisi pemilik 2026-11-15, DESIGN.md bagian 153)
   await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
+  // globe asli di pratinjau: logo di sisi depan bisa ditekan (tidak inert)
+  await expect(page.locator('.site-frame .globe-stage button:not([inert])').first()).toBeAttached()
   await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toBeVisible()
   await expect(
@@ -200,8 +202,14 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   await expect(page.getByRole('dialog')).toHaveCount(0)
   const first = page.getByRole('button', { name: /^Hapus kategori / }).first()
   await first.click()
-  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
+  // judul dialog umum, tanpa nama butir; hanya satu tombol Hapus (tanpa Batal, ada x di pojok)
+  const ask = page.getByRole('dialog')
+  await expect(ask.getByRole('heading', { name: 'Hapus Kategori', exact: true })).toBeVisible()
+  await expect(ask.getByRole('button', { name: 'Batal' })).toHaveCount(0)
+  await ask.getByRole('button', { name: 'Hapus', exact: true }).click()
   await expect(page.getByText(/Kategori masih berisi \d+ skill/)).toBeVisible()
+  // dialog "Edit skill" (ikon dan kategori) sudah dihapus
+  await expect(page.getByRole('button', { name: /^Ikon dan kategori / })).toHaveCount(0)
 })
 
 // Dua tes di bawah mengubah data global bersama (pengaturan situs dan teks Home), lalu
@@ -1028,7 +1036,9 @@ test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketi
     await expect(page.getByText(gone, { exact: true })).toHaveCount(0)
   // kartu ID bertali hanya tampil di layar lebar (sama dengan situs); foto ditekan untuk diganti
   if (wide) {
-    await expect(page.getByRole('button', { name: 'Ganti foto kartu ID' })).toBeVisible()
+    // kartu kanvas yang asli (bisa ditarik), bukan tiruan diam
+    await expect(frame.locator('canvas')).toHaveCount(1)
+    await expect(page.getByRole('button', { name: 'Ganti foto kartu ID' })).toBeAttached()
     await expect(frame.getByRole('textbox', { name: /^Jabatan di kartu ID/ })).toBeVisible()
   }
 })

@@ -186,6 +186,7 @@ export function EducationCardsLive({
                     {/* satu tombol hapus: menghapus kartu beserta logonya */}
                     {row.id ? (
                       <ConfirmDelete
+                        title="Hapus Pendidikan"
                         iconOnly
                         itemLabel={v.organization || t('Pendidikan')}
                         onConfirm={() => deleteExperience(row.id!)}

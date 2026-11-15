@@ -1,7 +1,7 @@
 'use client'
 
 import type { StaticImageData } from 'next/image'
-import { useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 
 import { playLanyardSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
@@ -87,6 +87,8 @@ export function IdLanyard({
   photoCrop,
   site,
   className,
+  editable,
+  children,
 }: {
   name: string
   role: string
@@ -96,9 +98,30 @@ export function IdLanyard({
   photoCrop?: { x: number; y: number; w: number; h: number }
   site: string
   className?: string
+  // pratinjau admin (Admin → Contact): foto dan jabatan di kartu bisa ditekan; garis putus-putus
+  // menandai bagian itu. Kartu tetap bisa ditarik. Situs publik tidak memakainya.
+  editable?: { onPhoto: () => void; onRole: () => void }
+  // isi di bawah kartu saat diam (admin: kolom jabatan)
+  children?: ReactNode
 }) {
   const box = useRef<HTMLDivElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
+  // jabatan, foto, dan mode ubah dibaca lewat ref agar kartu tidak dibangun ulang (kembali ke posisi
+  // awal) setiap jabatan diketik atau foto diganti
+  const roleRef = useRef(role)
+  const photoSrc = typeof photo === 'string' ? photo : photo.src
+  const photoRef = useRef(photoSrc)
+  const editRef = useRef(editable)
+  const api = useRef<{ redraw: () => void; setPhoto: (src: string) => void } | null>(null)
+  useEffect(() => {
+    roleRef.current = role
+    photoRef.current = photoSrc
+    editRef.current = editable
+    api.current?.redraw()
+  })
+  useEffect(() => {
+    api.current?.setPhoto(photoSrc)
+  }, [photoSrc])
 
   useEffect(() => {
     const el = canvas.current
@@ -115,7 +138,7 @@ export function IdLanyard({
       sans: style.getPropertyValue('--font-inter').trim() || 'system-ui, sans-serif',
     }
     const img = new Image()
-    img.src = typeof photo === 'string' ? photo : photo.src
+    img.src = photoRef.current
     const bars = barcode(name + site)
     const ribbonText = ` ${site.toUpperCase()} ·`
     let width = 0
@@ -136,6 +159,9 @@ export function IdLanyard({
     let angPrev = Math.PI / 2
     let yaw = 0
     let grab: { p: Point; tx: number; ty: number } | null = null
+    // awal tekan di foto atau jabatan (pratinjau admin): lepas tanpa bergeser = tekan, bukan tarik
+    let press: { x: number; y: number; zone: 'photo' | 'role' | null } | null = null
+    let moved = false
 
     function build() {
       anchor = { x: anchorX, y: -2 }
@@ -151,25 +177,39 @@ export function IdLanyard({
       }
     }
 
+    // Pratinjau admin memperkecil halaman lewat transform (SiteFrame, kelas .site-ui): semua ukuran
+    // dihitung dalam satuan tata letak (dibagi skala) dan "layar" adalah bingkainya. Di situs publik
+    // tidak ada bingkai dan skalanya 1.
+    const frameEl = wrapEl.closest<HTMLElement>('.site-ui')
+    function scaleOf() {
+      if (!frameEl || !frameEl.offsetWidth) return 1
+      const k = frameEl.getBoundingClientRect().width / frameEl.offsetWidth
+      return Math.abs(k - 1) < 0.02 ? 1 : k
+    }
     function resize() {
       // lebar area tarik dihitung dari posisi kolom di layar
+      const k = scaleOf()
       const box = wrapEl!.getBoundingClientRect()
-      const center = box.left + box.width / 2
-      const screenW = document.documentElement.clientWidth
+      const frameLeft = frameEl ? frameEl.getBoundingClientRect().left : 0
+      const boxW = box.width / k
+      const center = (box.left - frameLeft) / k + boxW / 2
+      const screenW = frameEl ? frameEl.offsetWidth : document.documentElement.clientWidth
       const least = CARD_EDGE + SCREEN_GAP
       const left = Math.max(least, Math.min(SIDE_MAX, center - SCREEN_GAP))
       const right = Math.max(least, Math.min(SIDE_MAX, screenW - center - SCREEN_GAP))
       anchorX = left
-      el!.style.left = `${box.width / 2 - left}px`
+      el!.style.left = `${boxW / 2 - left}px`
       el!.style.width = `${left + right}px`
       // batas bawah: garis atas footer situs (border-top), minimal setinggi kotak kartu
-      const footer = document.querySelector('body footer')
-      const floor = footer ? footer.getBoundingClientRect().top - box.top : BOX_H + EXTRA_BOTTOM
+      const footer = (frameEl ?? document).querySelector('body footer, footer')
+      const floor = footer
+        ? (footer.getBoundingClientRect().top - box.top) / k
+        : BOX_H + EXTRA_BOTTOM
       el!.style.height = `${Math.max(BOX_H, Math.round(floor))}px`
       const rect = el!.getBoundingClientRect()
       dpr = Math.min(2, window.devicePixelRatio || 1)
-      width = rect.width
-      height = rect.height
+      width = rect.width / k
+      height = rect.height / k
       el!.width = Math.round(width * dpr)
       el!.height = Math.round(height * dpr)
     }
@@ -414,7 +454,17 @@ export function IdLanyard({
       c.fillText(label, x + 12, PHOTO_H + 42)
       c.fillStyle = sub
       c.font = `600 10.5px ${fonts.sans}`
-      c.fillText(role.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
+      c.fillText(roleRef.current.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
+      // pratinjau admin: garis putus-putus menandai foto dan jabatan yang bisa ditekan
+      if (editRef.current) {
+        c.save()
+        c.setLineDash([4, 3])
+        c.lineWidth = 1.2
+        c.strokeStyle = 'rgb(255 255 255 / 0.7)'
+        c.strokeRect(x + 9, 27, CARD_W - 18, PHOTO_H + 6)
+        c.strokeRect(x + 9, PHOTO_H + 62, CARD_W - 18, 18)
+        c.restore()
+      }
       // barcode dan host di bagian bawah
       c.fillStyle = ink
       for (const b of bars) c.fillRect(x + 12 + b.x, CARD_H - 40, b.w, 18)
@@ -495,15 +545,31 @@ export function IdLanyard({
     // ===== interaksi (kanvas tidak menangkap klik agar form di sebelahnya tetap bisa diklik) =====
     function local(e: PointerEvent) {
       const r = el!.getBoundingClientRect()
-      return { x: e.clientX - r.left, y: e.clientY - r.top }
+      const k = scaleOf()
+      return { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k }
     }
-    function hit(m: { x: number; y: number }) {
+    // titik pada bidang kartu (bukan kanvas): lx dari tengah kartu, ly dari tepi atas kartu
+    function onCard(m: { x: number; y: number }) {
       const ang = Math.atan2(bot.y - top.y, bot.x - top.x) - Math.PI / 2
       const dx = m.x - top.x
       const dy = m.y - top.y
-      const lx = dx * Math.cos(-ang) - dy * Math.sin(-ang)
-      const ly = dx * Math.sin(-ang) + dy * Math.cos(-ang)
+      return {
+        lx: dx * Math.cos(-ang) - dy * Math.sin(-ang),
+        ly: dx * Math.sin(-ang) + dy * Math.cos(-ang),
+      }
+    }
+    function hit(m: { x: number; y: number }) {
+      const { lx, ly } = onCard(m)
       return Math.abs(lx) <= CARD_W / 2 + 4 && ly >= -4 && ly <= CARD_H + 4 ? ly / CARD_H : null
+    }
+    // bagian kartu yang bisa ditekan di pratinjau admin
+    function zone(m: { x: number; y: number }): 'photo' | 'role' | null {
+      if (!editRef.current) return null
+      const { lx, ly } = onCard(m)
+      if (Math.abs(lx) > CARD_W / 2 - 9) return null
+      if (ly >= 27 && ly <= 27 + PHOTO_H + 6) return 'photo'
+      if (ly >= PHOTO_H + 62 && ly <= PHOTO_H + 80) return 'role'
+      return null
     }
     // Kotak lanyard disembunyikan di layar kecil (`hidden lg:block`), tetapi pendengar pointer ada
     // di window: tanpa pemeriksaan ini sentuhan di pojok kiri atas HP "mengenai" kartu tak terlihat
@@ -518,6 +584,7 @@ export function IdLanyard({
       if (t === null) return
       e.preventDefault()
       grab = { p: t < 0.5 ? top : bot, tx: m.x, ty: m.y }
+      press = { x: e.clientX, y: e.clientY, zone: zone(m) }
       root.style.cursor = 'grabbing'
       playLanyardSound('grab')
       wake()
@@ -528,14 +595,20 @@ export function IdLanyard({
       if (grab) {
         grab.tx = m.x
         grab.ty = m.y
+        if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 6) moved = true
         return
       }
-      if (!reduce) root.style.cursor = hit(m) !== null ? 'grab' : ''
+      if (!reduce) root.style.cursor = zone(m) ? 'pointer' : hit(m) !== null ? 'grab' : ''
     }
     function onUp() {
       if (!grab) return
       grab = null
+      const tapped = press && !moved ? press.zone : null
+      press = null
+      moved = false
       root.style.cursor = ''
+      if (tapped === 'photo') editRef.current?.onPhoto()
+      if (tapped === 'role') editRef.current?.onRole()
       playLanyardSound('release')
       wake()
     }
@@ -544,6 +617,12 @@ export function IdLanyard({
     build()
     draw()
     img.onload = () => draw()
+    api.current = {
+      redraw: () => draw(),
+      setPhoto: (src) => {
+        if (img.src !== new URL(src, window.location.href).href) img.src = src
+      },
+    }
     visible = shown()
     if (!reduce && visible) frame = requestAnimationFrame(loop)
 
@@ -576,6 +655,7 @@ export function IdLanyard({
     window.addEventListener('pointerup', onUp)
     window.addEventListener('pointercancel', onUp)
     return () => {
+      api.current = null
       cancelAnimationFrame(frame)
       io.disconnect()
       ro.disconnect()
@@ -587,12 +667,12 @@ export function IdLanyard({
       window.removeEventListener('resize', onResize)
       root.style.cursor = ''
     }
-  }, [name, role, photo, photoCrop, site])
+  }, [name, photoCrop, site])
 
   return (
     <div
       ref={box}
-      aria-hidden="true"
+      aria-hidden={children ? undefined : 'true'}
       className={cn('relative z-10 select-none', className)}
       style={{ height: BOX_H }}
     >
@@ -606,6 +686,9 @@ export function IdLanyard({
           height: BOX_H + EXTRA_BOTTOM,
         }}
       />
+      {children ? (
+        <div className="absolute inset-x-0 bottom-3 flex justify-center">{children}</div>
+      ) : null}
     </div>
   )
 }

@@ -276,8 +276,12 @@ export function SkillGlobe({
 
     const resize = () => {
       const rect = stage.getBoundingClientRect()
-      width = rect.width
-      height = rect.height
+      // pratinjau admin diperkecil lewat transform (SiteFrame): ukuran tata letak dipakai agar
+      // kanvas dan tombol logo tetap sejajar; di situs publik skalanya 1
+      const k = stage.offsetWidth > 0 ? rect.width / stage.offsetWidth : 1
+      const scale = Math.abs(k - 1) < 0.02 ? 1 : k
+      width = rect.width / scale
+      height = rect.height / scale
       const dpr = Math.min(1.5, window.devicePixelRatio || 1)
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)

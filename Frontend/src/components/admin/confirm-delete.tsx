@@ -17,11 +17,15 @@ import type { ActionResult } from '@/lib/action-result'
 
 export function ConfirmDelete({
   itemLabel,
+  title = 'Hapus data',
   onConfirm,
   onDone,
   iconOnly = false,
 }: {
+  // nama butir untuk tombol (pembaca layar); judul dialog sengaja umum, tanpa nama butir
   itemLabel: string
+  // judul dialog, mis. "Hapus Kategori" (revisi pemilik 2026-11-16: tidak perlu detail)
+  title?: string
   onConfirm: () => Promise<ActionResult<unknown>>
   onDone?: () => void
   // hanya ikon tong sampah kecil (kartu dan gambar di pratinjau), tanpa tulisan "Hapus"
@@ -58,7 +62,7 @@ export function ConfirmDelete({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>{t('Hapus {item}?', { item: itemLabel })}</DialogTitle>
+        <DialogTitle>{t(title)}</DialogTitle>
         <DialogDescription>
           {t(
             'Setelah dihapus, data ini beserta berkas yang terkait tidak bisa dikembalikan lagi. Penghapusan ini tercatat di log audit.',

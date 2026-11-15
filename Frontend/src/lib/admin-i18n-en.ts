@@ -43,7 +43,6 @@ export const EN: Record<string, string> = {
   Headline: 'Headline',
   Posisi: 'Position',
   'Nama kategori ({lang})': 'Category name ({lang})',
-  'Ikon dan kategori {item}': 'Icon and category of {item}',
   '+ Skill baru': '+ New skill',
   '+ Kategori baru': '+ New category',
   'Peran ke-{n} ({lang})': 'Role {n} ({lang})',
@@ -139,7 +138,16 @@ export const EN: Record<string, string> = {
   // seluruh panel admin (DESIGN.md bagian 115)
   'Hapus {item}': 'Delete {item}',
   Hapus: 'Delete',
-  'Hapus {item}?': 'Delete {item}?',
+  // judul dialog hapus umum, tanpa nama butir (revisi 2026-11-16)
+  'Hapus data': 'Delete Data',
+  'Hapus Kategori': 'Delete Category',
+  'Hapus Skill': 'Delete Skill',
+  'Hapus Project': 'Delete Project',
+  'Hapus Gambar': 'Delete Image',
+  'Hapus Foto': 'Delete Photo',
+  'Hapus Pesan': 'Delete Message',
+  'Hapus Pendidikan': 'Delete Education',
+  'Hapus Pengalaman': 'Delete Experience',
   'Setelah dihapus, data ini beserta berkas yang terkait tidak bisa dikembalikan lagi. Penghapusan ini tercatat di log audit.':
     'Once deleted, this data and its related files cannot be restored. The deletion is recorded in the audit log.',
   'Menghapus…': 'Deleting…',
@@ -304,18 +312,8 @@ export const EN: Record<string, string> = {
   'Kategori baru': 'New category',
   'kategori {name}': 'category {name}',
   'Tambah skill ke {name}': 'Add a skill to {name}',
-  'Ubah kategori': 'Edit category',
-  'Ubah skill': 'Edit skill',
   'Skill baru': 'New skill',
-  'Nama kategori tampil di pilihan Kategori pada globe Keahlian Teknis di beranda.':
-    'The category name appears in the Category picker on the Technical Skills globe on the home page.',
-  'Nama skill ditulis dengan kapitalisasi resminya, misalnya Next.js atau PostgreSQL.':
-    'Write the skill name with its official capitalization, e.g. Next.js or PostgreSQL.',
-  'Nama (Indonesia)': 'Name (Indonesian)',
   'Nama skill': 'Skill name',
-  'Ikon (opsional)': 'Icon (optional)',
-  'Slug Simple Icons, misalnya nextdotjs atau postgresql.':
-    'A Simple Icons slug, e.g. nextdotjs or postgresql.',
   'Nama kategori': 'Category name',
   'Ikon hanya huruf kecil, angka, dan tanda hubung':
     'The icon may only contain lowercase letters, numbers, and hyphens',

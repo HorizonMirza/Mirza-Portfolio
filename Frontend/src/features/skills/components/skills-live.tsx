@@ -1,6 +1,6 @@
 'use client'
 
-import { Ellipsis, ImagePlus, X } from 'lucide-react'
+import { ImagePlus, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -37,7 +37,6 @@ import {
 } from '../actions'
 import type { SkillItem } from '../skill-items'
 import { SkillGlobe } from './skill-globe'
-import { SkillDialog } from './skill-dialogs'
 
 type SkillRow = {
   id: string
@@ -149,7 +148,6 @@ export function SkillsLive({
 
   const serverName = (c: SkillCategoryRow, l: Lang) => (l === 'en' ? c.name_en : c.name_id)
   const shownName = (c: SkillCategoryRow, l: Lang) => catEdits[c.id]?.[l] ?? serverName(c, l)
-  const options = categories.map((c) => ({ id: c.id, name: shownName(c, lang) }))
   const tools =
     'flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100'
   const nextKey = () => {
@@ -325,14 +323,14 @@ export function SkillsLive({
     return (
       <li
         key={opts.key}
-        className="group/skill relative inline-flex min-h-10 items-center gap-2 rounded-md border border-border bg-surface pr-3 pl-1 text-sm font-medium"
+        className="group/skill relative inline-flex min-h-9 items-center gap-2 rounded-md border border-border bg-surface pr-3 pl-1 text-sm font-medium"
       >
         {/* logo ditekan untuk diunggah atau diganti */}
         <button
           type="button"
           onClick={() => (skill ? picker.pick('skill-logo', skill.id) : pickNewLogo(draft!.key))}
           className={cn(
-            'admin-editable grid size-8 shrink-0 place-items-center rounded-md hover:bg-surface-2',
+            'admin-editable grid size-7 shrink-0 place-items-center rounded-md hover:bg-surface-2',
             !shown && !logoPreview && 'text-muted',
           )}
         >
@@ -358,7 +356,7 @@ export function SkillsLive({
           maxLength={60}
           size={Math.max(3, name.length + 1)}
           // nama pendek (mis. "C") tetap mudah ditekan (axe target-size)
-          className="min-h-8 min-w-6"
+          className="min-h-6 min-w-6"
           onChange={(event) => {
             const value = event.target.value
             if (draft)
@@ -381,24 +379,6 @@ export function SkillsLive({
                   isLast={opts.index === opts.total - 1}
                   onMove={(dir) => moveSkill(skill.id, dir)}
                 />
-                <SkillDialog
-                  skillId={skill.id}
-                  categories={options}
-                  defaultValues={{
-                    name: skill.name,
-                    icon: skill.icon ?? '',
-                    categoryId: category.id,
-                  }}
-                  trigger={
-                    <button
-                      type="button"
-                      aria-label={t('Ikon dan kategori {item}', { item: skill.name })}
-                      className="inline-flex size-8 items-center justify-center rounded-md text-muted hover:bg-surface-2 hover:text-text"
-                    >
-                      <Ellipsis className="size-4" aria-hidden="true" />
-                    </button>
-                  }
-                />
                 {skill.logo ? (
                   <RemoveAssetButton
                     assetId={skill.logo.id}
@@ -406,7 +386,11 @@ export function SkillsLive({
                     onDone={() => router.refresh()}
                   />
                 ) : null}
-                <ConfirmDelete itemLabel={skill.name} onConfirm={() => deleteSkill(skill.id)} />
+                <ConfirmDelete
+                  title="Hapus Skill"
+                  itemLabel={skill.name}
+                  onConfirm={() => deleteSkill(skill.id)}
+                />
               </>
             ) : (
               <button
@@ -441,15 +425,13 @@ export function SkillsLive({
                   <h2 className="mb-4 text-center text-h2 font-bold">
                     <span>{view.heading}</span>
                   </h2>
-                  {/* hanya tampilan: globe tidak bisa ditekan dari sini */}
-                  <div inert>
-                    <SkillGlobe
-                      key={lang}
-                      items={view.items}
-                      categories={view.categories}
-                      labels={view.labels}
-                    />
-                  </div>
+                  {/* globe asli: bisa diputar dan ditekan seperti di situs */}
+                  <SkillGlobe
+                    key={lang}
+                    items={view.items}
+                    categories={view.categories}
+                    labels={view.labels}
+                  />
                 </Container>
               </section>
             </div>
@@ -462,7 +444,7 @@ export function SkillsLive({
 
         {/* bagian yang bisa diubah dan ditambah */}
         <LiveStage className="bg-bg px-4 py-6 text-text sm:px-8">
-          <div className="mx-auto flex max-w-4xl flex-col">
+          <div className="admin-tight mx-auto flex max-w-4xl flex-col">
             {categories.map((category, ci) => (
               <section key={category.id} className="group border-b border-border py-5 first:pt-0">
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -486,6 +468,7 @@ export function SkillsLive({
                         onMove={(dir) => moveSkillCategory(category.id, dir)}
                       />
                       <ConfirmDelete
+                        title="Hapus Kategori"
                         itemLabel={t('kategori {name}', { name: shownName(category, lang) })}
                         onConfirm={() => deleteSkillCategory(category.id)}
                       />
@@ -505,7 +488,7 @@ export function SkillsLive({
                   {newSkills
                     .filter((s) => s.catKey === category.id)
                     .map((draft, i) => skillChip({ key: draft.key, draft, index: i, total: 0 }))}
-                  <li className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-muted">
+                  <li className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm text-muted">
                     <AddInline
                       label={t('Tambah skill ke {name}', { name: shownName(category, lang) })}
                       placeholder={t('+ Skill baru')}
@@ -559,7 +542,7 @@ export function SkillsLive({
                   {newSkills
                     .filter((s) => s.catKey === category.key)
                     .map((draft, i) => skillChip({ key: draft.key, draft, index: i, total: 0 }))}
-                  <li className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-muted">
+                  <li className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm text-muted">
                     <AddInline
                       label={t('Tambah skill ke {name}', {
                         name: lang === 'en' ? category.name_en : category.name_id,

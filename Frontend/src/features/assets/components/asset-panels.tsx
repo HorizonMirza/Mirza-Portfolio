@@ -70,6 +70,7 @@ export async function GalleryPanel({
             <AssetPreview asset={image} />
             <div>
               <ConfirmDelete
+                title="Hapus Gambar"
                 itemLabel={t('gambar galeri {n}', { n: i + 1 })}
                 onConfirm={removeAsset.bind(null, image.id)}
               />

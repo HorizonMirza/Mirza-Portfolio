@@ -115,6 +115,7 @@ export function ProjectListLive({ rows }: { rows: ProjectListRow[] }) {
                           onMove={(dir) => moveProject(row.id, dir)}
                         />
                         <ConfirmDelete
+                          title="Hapus Project"
                           itemLabel={row.title}
                           onConfirm={() => deleteProject(row.id)}
                         />
