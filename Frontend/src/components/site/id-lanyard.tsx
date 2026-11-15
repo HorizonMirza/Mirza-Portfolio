@@ -88,7 +88,6 @@ export function IdLanyard({
   site,
   className,
   editable,
-  children,
 }: {
   name: string
   role: string
@@ -98,11 +97,11 @@ export function IdLanyard({
   photoCrop?: { x: number; y: number; w: number; h: number }
   site: string
   className?: string
-  // pratinjau admin (Admin → Contact): foto dan jabatan di kartu bisa ditekan; garis putus-putus
-  // menandai bagian itu. Kartu tetap bisa ditarik. Situs publik tidak memakainya.
-  editable?: { onPhoto: () => void; onRole: () => void }
-  // isi di bawah kartu saat diam (admin: kolom jabatan)
-  children?: ReactNode
+  // Pratinjau admin (Admin → Contact): kartu diam (tidak bisa ditarik) dengan foto dan jabatan yang
+  // bisa diubah. Foto bergaris putus-putus di kanvas dan ditekan untuk diganti; jabatan diketik di
+  // `roleSlot`, yang menimpa tulisan jabatan di kartu; `photoTools` di sudut foto. Situs publik tidak
+  // memakainya.
+  editable?: { onPhoto: () => void; roleSlot: ReactNode; photoTools?: ReactNode }
 }) {
   const box = useRef<HTMLDivElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
@@ -129,7 +128,9 @@ export function IdLanyard({
     if (!el || !wrapEl) return
     const ctx = el.getContext('2d')
     if (!ctx) return
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // kartu diam bila gerakan dikurangi atau di pratinjau admin
+    const reduce =
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches || Boolean(editRef.current)
     const root = document.documentElement
     const style = getComputedStyle(root)
     const fonts = {
@@ -159,9 +160,6 @@ export function IdLanyard({
     let angPrev = Math.PI / 2
     let yaw = 0
     let grab: { p: Point; tx: number; ty: number } | null = null
-    // awal tekan di foto atau jabatan (pratinjau admin): lepas tanpa bergeser = tekan, bukan tarik
-    let press: { x: number; y: number; zone: 'photo' | 'role' | null } | null = null
-    let moved = false
 
     function build() {
       anchor = { x: anchorX, y: -2 }
@@ -454,15 +452,16 @@ export function IdLanyard({
       c.fillText(label, x + 12, PHOTO_H + 42)
       c.fillStyle = sub
       c.font = `600 10.5px ${fonts.sans}`
-      c.fillText(roleRef.current.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
-      // pratinjau admin: garis putus-putus menandai foto dan jabatan yang bisa ditekan
+      // di pratinjau admin jabatan diketik lewat kolom HTML di atas kartu
+      if (!editRef.current)
+        c.fillText(roleRef.current.toUpperCase(), x + 12, PHOTO_H + 66, CARD_W - 24)
+      // pratinjau admin: garis putus-putus menandai foto yang bisa ditekan
       if (editRef.current) {
         c.save()
         c.setLineDash([4, 3])
         c.lineWidth = 1.2
         c.strokeStyle = 'rgb(255 255 255 / 0.7)'
         c.strokeRect(x + 9, 27, CARD_W - 18, PHOTO_H + 6)
-        c.strokeRect(x + 9, PHOTO_H + 62, CARD_W - 18, 18)
         c.restore()
       }
       // barcode dan host di bagian bawah
@@ -562,14 +561,11 @@ export function IdLanyard({
       const { lx, ly } = onCard(m)
       return Math.abs(lx) <= CARD_W / 2 + 4 && ly >= -4 && ly <= CARD_H + 4 ? ly / CARD_H : null
     }
-    // bagian kartu yang bisa ditekan di pratinjau admin
-    function zone(m: { x: number; y: number }): 'photo' | 'role' | null {
-      if (!editRef.current) return null
+    // foto kartu ditekan di pratinjau admin (kartu diam, jadi cukup bidang kartu)
+    function onPhotoArea(m: { x: number; y: number }) {
+      if (!editRef.current) return false
       const { lx, ly } = onCard(m)
-      if (Math.abs(lx) > CARD_W / 2 - 9) return null
-      if (ly >= 27 && ly <= 27 + PHOTO_H + 6) return 'photo'
-      if (ly >= PHOTO_H + 62 && ly <= PHOTO_H + 80) return 'role'
-      return null
+      return Math.abs(lx) <= CARD_W / 2 - 9 && ly >= 27 && ly <= 27 + PHOTO_H + 6
     }
     // Kotak lanyard disembunyikan di layar kecil (`hidden lg:block`), tetapi pendengar pointer ada
     // di window: tanpa pemeriksaan ini sentuhan di pojok kiri atas HP "mengenai" kartu tak terlihat
@@ -584,7 +580,6 @@ export function IdLanyard({
       if (t === null) return
       e.preventDefault()
       grab = { p: t < 0.5 ? top : bot, tx: m.x, ty: m.y }
-      press = { x: e.clientX, y: e.clientY, zone: zone(m) }
       root.style.cursor = 'grabbing'
       playLanyardSound('grab')
       wake()
@@ -595,20 +590,22 @@ export function IdLanyard({
       if (grab) {
         grab.tx = m.x
         grab.ty = m.y
-        if (press && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 6) moved = true
         return
       }
-      if (!reduce) root.style.cursor = zone(m) ? 'pointer' : hit(m) !== null ? 'grab' : ''
+      if (editRef.current) {
+        root.style.cursor = onPhotoArea(m) ? 'pointer' : ''
+        return
+      }
+      if (!reduce) root.style.cursor = hit(m) !== null ? 'grab' : ''
+    }
+    function onClick(e: MouseEvent) {
+      if (!editRef.current || !visible || !shown()) return
+      if (onPhotoArea(local(e as unknown as PointerEvent))) editRef.current.onPhoto()
     }
     function onUp() {
       if (!grab) return
       grab = null
-      const tapped = press && !moved ? press.zone : null
-      press = null
-      moved = false
       root.style.cursor = ''
-      if (tapped === 'photo') editRef.current?.onPhoto()
-      if (tapped === 'role') editRef.current?.onRole()
       playLanyardSound('release')
       wake()
     }
@@ -651,6 +648,7 @@ export function IdLanyard({
     const mo = new MutationObserver(() => draw())
     mo.observe(root, { attributes: true, attributeFilter: ['class'] })
     window.addEventListener('pointerdown', onDown)
+    window.addEventListener('click', onClick)
     window.addEventListener('pointermove', onMove)
     window.addEventListener('pointerup', onUp)
     window.addEventListener('pointercancel', onUp)
@@ -661,6 +659,7 @@ export function IdLanyard({
       ro.disconnect()
       mo.disconnect()
       window.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('click', onClick)
       window.removeEventListener('pointermove', onMove)
       window.removeEventListener('pointerup', onUp)
       window.removeEventListener('pointercancel', onUp)
@@ -672,7 +671,7 @@ export function IdLanyard({
   return (
     <div
       ref={box}
-      aria-hidden={children ? undefined : 'true'}
+      aria-hidden={editable ? undefined : 'true'}
       className={cn('relative z-10 select-none', className)}
       style={{ height: BOX_H }}
     >
@@ -686,8 +685,28 @@ export function IdLanyard({
           height: BOX_H + EXTRA_BOTTOM,
         }}
       />
-      {children ? (
-        <div className="absolute inset-x-0 bottom-3 flex justify-center">{children}</div>
+      {editable ? (
+        <>
+          {/* jabatan diketik tepat di tempat tulisannya di kartu (kartu diam di pratinjau admin) */}
+          <div
+            className="absolute"
+            style={{
+              left: `calc(50% - ${CARD_W / 2 - 12}px)`,
+              top: ROPE_LEN + PHOTO_H + 62,
+              width: CARD_W - 24,
+            }}
+          >
+            {editable.roleSlot}
+          </div>
+          {editable.photoTools ? (
+            <div
+              className="absolute"
+              style={{ left: `calc(50% + ${CARD_W / 2 - 12 - 36}px)`, top: ROPE_LEN + 32 }}
+            >
+              {editable.photoTools}
+            </div>
+          ) : null}
+        </>
       ) : null}
     </div>
   )

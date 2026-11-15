@@ -2718,6 +2718,13 @@ html[data-intro='pending'] .intro {
   .admin-inline::placeholder {
     color: currentColor;
     opacity: 0.4;
+    /* isian kosong sama tinggi dengan yang terisi (placeholder memakai line-height normal) */
+    line-height: inherit;
+  }
+  /* satu baris setinggi garis teksnya, kosong atau terisi (Oswald: line-height normal 1,48 kali ukuran
+     membuat isian kosong lebih tinggi dari yang terisi) */
+  input.admin-inline {
+    height: 1lh;
   }
   /* isian yang salah: garis merah di bawah teks */
   .admin-inline-bad {

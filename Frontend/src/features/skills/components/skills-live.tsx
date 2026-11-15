@@ -17,7 +17,6 @@ import {
   SaveBar,
   useEditLang,
 } from '@/components/admin/live-edit'
-import { ReorderButtons } from '@/components/admin/reorder-buttons'
 import { SiteFrame } from '@/components/admin/site-frame'
 import { Container } from '@/components/site/section-heading'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
@@ -27,14 +26,7 @@ import { uploadAsset } from '@/features/assets/upload-client'
 import type { PendingImage } from '@/features/experience/components/use-entries'
 import { cn } from '@/lib/utils'
 
-import {
-  deleteSkill,
-  deleteSkillCategory,
-  moveSkill,
-  moveSkillCategory,
-  saveSkill,
-  saveSkillCategory,
-} from '../actions'
+import { deleteSkill, deleteSkillCategory, saveSkill, saveSkillCategory } from '../actions'
 import type { SkillItem } from '../skill-items'
 import { SkillGlobe } from './skill-globe'
 
@@ -313,8 +305,6 @@ export function SkillsLive({
     skill?: SkillRow
     category?: SkillCategoryRow
     draft?: NewSkill
-    index: number
-    total: number
   }) => {
     const { skill, category, draft } = opts
     const name = draft ? draft.name : (skillEdits[skill!.id] ?? skill!.name)
@@ -373,12 +363,6 @@ export function SkillsLive({
           <span className="flex items-center rounded-md border border-border bg-surface p-0.5 shadow-lg">
             {skill && category ? (
               <>
-                <ReorderButtons
-                  itemLabel={skill.name}
-                  isFirst={opts.index === 0}
-                  isLast={opts.index === opts.total - 1}
-                  onMove={(dir) => moveSkill(skill.id, dir)}
-                />
                 {skill.logo ? (
                   <RemoveAssetButton
                     assetId={skill.logo.id}
@@ -388,6 +372,7 @@ export function SkillsLive({
                 ) : null}
                 <ConfirmDelete
                   title="Hapus Skill"
+                  iconOnly
                   itemLabel={skill.name}
                   onConfirm={() => deleteSkill(skill.id)}
                 />
@@ -420,7 +405,8 @@ export function SkillsLive({
         {view.items.length > 0 ? (
           <SiteFrame autoHeight>
             <div lang={lang}>
-              <section className="pt-16 pb-10 md:pt-24 md:pb-14">
+              {/* ruang di bawah supaya daftar kategori yang terbuka tidak terpotong bingkai */}
+              <section className="pt-16 pb-56 md:pt-24 md:pb-60">
                 <Container>
                   <h2 className="mb-4 text-center text-h2 font-bold">
                     <span>{view.heading}</span>
@@ -445,7 +431,7 @@ export function SkillsLive({
         {/* bagian yang bisa diubah dan ditambah */}
         <LiveStage className="bg-bg px-4 py-6 text-text sm:px-8">
           <div className="admin-tight mx-auto flex max-w-4xl flex-col">
-            {categories.map((category, ci) => (
+            {categories.map((category) => (
               <section key={category.id} className="group border-b border-border py-5 first:pt-0">
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <InlineInput
@@ -461,14 +447,9 @@ export function SkillsLive({
                   />
                   {tool(
                     <>
-                      <ReorderButtons
-                        itemLabel={t('kategori {name}', { name: shownName(category, lang) })}
-                        isFirst={ci === 0}
-                        isLast={ci === categories.length - 1}
-                        onMove={(dir) => moveSkillCategory(category.id, dir)}
-                      />
                       <ConfirmDelete
                         title="Hapus Kategori"
+                        iconOnly
                         itemLabel={t('kategori {name}', { name: shownName(category, lang) })}
                         onConfirm={() => deleteSkillCategory(category.id)}
                       />
@@ -476,18 +457,16 @@ export function SkillsLive({
                   )}
                 </div>
                 <ul className="mt-3 flex flex-wrap gap-2">
-                  {category.skills.map((skill, si) =>
+                  {category.skills.map((skill) =>
                     skillChip({
                       key: skill.id,
                       skill,
                       category,
-                      index: si,
-                      total: category.skills.length,
                     }),
                   )}
                   {newSkills
                     .filter((s) => s.catKey === category.id)
-                    .map((draft, i) => skillChip({ key: draft.key, draft, index: i, total: 0 }))}
+                    .map((draft) => skillChip({ key: draft.key, draft }))}
                   <li className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm text-muted">
                     <AddInline
                       label={t('Tambah skill ke {name}', { name: shownName(category, lang) })}
@@ -541,7 +520,7 @@ export function SkillsLive({
                 <ul className="mt-3 flex flex-wrap gap-2">
                   {newSkills
                     .filter((s) => s.catKey === category.key)
-                    .map((draft, i) => skillChip({ key: draft.key, draft, index: i, total: 0 }))}
+                    .map((draft) => skillChip({ key: draft.key, draft }))}
                   <li className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm text-muted">
                     <AddInline
                       label={t('Tambah skill ke {name}', {

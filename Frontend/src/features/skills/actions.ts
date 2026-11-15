@@ -9,33 +9,16 @@ import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
 import { lockOrderScope } from '@/lib/order-lock'
-import { type MoveDirection, moveItem } from '@/lib/reorder'
 import { revalidateContent } from '@/lib/revalidate'
 import { emptyToNull } from '@/lib/validation'
 
 import { skillCategorySchema, skillSchema } from './schema'
 
 const idSchema = z.uuid()
-const directionSchema = z.enum(['up', 'down'])
 
 // Skill tampil di halaman skill dan di kartu project, jadi keduanya diperbarui.
 function revalidate() {
   revalidateContent('skills', 'projects')
-}
-
-async function rewriteOrder(
-  rows: { id: string; order: number }[],
-  id: string,
-  direction: MoveDirection,
-  update: (id: string, order: number) => Promise<unknown>,
-) {
-  const ids = rows.map((r) => r.id)
-  const next = moveItem(ids, id, direction)
-  if (!next) return null
-  for (const [order, rowId] of next.entries()) {
-    if (rows.find((r) => r.id === rowId)?.order !== order) await update(rowId, order)
-  }
-  return { before: ids, after: next }
 }
 
 // ---------- Kategori ----------
@@ -120,42 +103,6 @@ export async function deleteSkillCategory(categoryId: string): Promise<ActionRes
   }
 }
 
-export async function moveSkillCategory(
-  categoryId: string,
-  direction: unknown,
-): Promise<ActionResult> {
-  try {
-    const admin = await requireSuperAdmin()
-    const dir = directionSchema.safeParse(direction)
-    if (!idSchema.safeParse(categoryId).success || !dir.success)
-      return fail('Permintaan tidak valid.')
-    const moved = await getDb().$transaction(async (tx) => {
-      const rows = await tx.skillCategory.findMany({
-        orderBy: [{ order: 'asc' }, { name_id: 'asc' }],
-        select: { id: true, order: true },
-      })
-      const change = await rewriteOrder(rows, categoryId, dir.data, (id, order) =>
-        tx.skillCategory.update({ where: { id }, data: { order } }),
-      )
-      if (!change) return false
-      await writeAudit(tx, {
-        actorId: admin.userId,
-        action: 'reorder',
-        entity: 'SkillCategory',
-        entityId: categoryId,
-        before: { order: change.before },
-        after: { order: change.after },
-      })
-      return true
-    })
-    if (!moved) return fail('Kategori sudah di ujung daftar.')
-    revalidate()
-    return ok('Urutan diperbarui.')
-  } catch (error) {
-    return toActionError(error)
-  }
-}
-
 // ---------- Skill ----------
 
 export async function saveSkill(
@@ -232,43 +179,6 @@ export async function deleteSkill(skillId: string): Promise<ActionResult> {
     await destroyRemoteAssets(removedAssets)
     revalidate()
     return ok('Skill dihapus.')
-  } catch (error) {
-    return toActionError(error)
-  }
-}
-
-export async function moveSkill(skillId: string, direction: unknown): Promise<ActionResult> {
-  try {
-    const admin = await requireSuperAdmin()
-    const dir = directionSchema.safeParse(direction)
-    if (!idSchema.safeParse(skillId).success || !dir.success) return fail('Permintaan tidak valid.')
-    const moved = await getDb().$transaction(async (tx) => {
-      const skill = await tx.skill.findUniqueOrThrow({
-        where: { id: skillId },
-        select: { categoryId: true },
-      })
-      const rows = await tx.skill.findMany({
-        where: { categoryId: skill.categoryId },
-        orderBy: [{ order: 'asc' }, { name: 'asc' }],
-        select: { id: true, order: true },
-      })
-      const change = await rewriteOrder(rows, skillId, dir.data, (id, order) =>
-        tx.skill.update({ where: { id }, data: { order } }),
-      )
-      if (!change) return false
-      await writeAudit(tx, {
-        actorId: admin.userId,
-        action: 'reorder',
-        entity: 'Skill',
-        entityId: skillId,
-        before: { order: change.before },
-        after: { order: change.after },
-      })
-      return true
-    })
-    if (!moved) return fail('Skill sudah di ujung daftar.')
-    revalidate()
-    return ok('Urutan diperbarui.')
   } catch (error) {
     return toActionError(error)
   }

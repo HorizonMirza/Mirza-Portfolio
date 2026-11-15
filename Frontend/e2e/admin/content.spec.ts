@@ -213,6 +213,8 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   await expect(ask.getByRole('button', { name: 'Batal' })).toHaveCount(0)
   await ask.getByRole('button', { name: 'Hapus', exact: true }).click()
   await expect(page.getByText(/Kategori masih berisi \d+ skill/)).toBeVisible()
+  // globe tidak punya urutan: tanpa tombol panah; hapus berupa ikon saja
+  await expect(page.getByRole('button', { name: /^(Naikkan|Turunkan) / })).toHaveCount(0)
   // dialog "Edit skill" (ikon dan kategori) sudah dihapus
   await expect(page.getByRole('button', { name: /^Ikon dan kategori / })).toHaveCount(0)
 })
@@ -931,8 +933,13 @@ test.describe('animasi ganti bahasa admin', () => {
     // membuat WebKit berskala 2-3x di sandbox hanya menggambar sekitar 1 frame per detik)
     await page.goto('/admin/pages/contact')
     const selector = '#Contact-title-id, #Contact-title-en'
+    // halaman sebelumnya bisa tertinggal tersembunyi dengan id yang sama: hanya yang terlihat
     const fieldText = async () =>
-      page.locator(selector).evaluate((el: HTMLInputElement) => el.value || el.placeholder)
+      page
+        .locator(selector)
+        .filter({ visible: true })
+        .first()
+        .evaluate((el: HTMLInputElement) => el.value || el.placeholder)
     await record(page, selector)
     const idValue = await fieldText()
     await switchToEnglish(page)

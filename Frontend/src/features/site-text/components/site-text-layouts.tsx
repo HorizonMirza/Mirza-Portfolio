@@ -2,7 +2,7 @@
 
 import { Send } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { type CSSProperties, type ReactNode, useRef } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { IdLanyard } from '@/components/site/id-lanyard'
@@ -71,7 +71,6 @@ function ContactLayout({ name, photo, photoCrop, photoAsset, uploadConfigured }:
   const picker = useAssetPicker({ configured: uploadConfigured, onDone: () => router.refresh() })
   const role = useShownText('Contact.cardRole')
   const site = useShownText('Contact.cardSite')
-  const roleBox = useRef<HTMLDivElement>(null)
   return (
     <Container className="pb-12">
       <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
@@ -84,32 +83,35 @@ function ContactLayout({ name, photo, photoCrop, photoAsset, uploadConfigured }:
           site={site}
           editable={{
             onPhoto: () => picker.pick('contact-photo'),
-            onRole: () => roleBox.current?.querySelector('input')?.focus(),
+            // jabatan diketik di tempat tulisannya di kartu (kartu diam di pratinjau admin)
+            roleSlot: (
+              <div style={{ ['--editable-color' as string]: '#fff' }}>
+                <EditText
+                  k="Contact.cardRole"
+                  className="block h-[18px] max-w-full font-sans text-[10.5px] leading-[18px] font-semibold text-white/70 uppercase"
+                />
+              </div>
+            ),
+            photoTools: (
+              <span className="flex items-center rounded-md bg-black/50">
+                <button
+                  type="button"
+                  onClick={() => picker.pick('contact-photo')}
+                  className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-xs focus-visible:text-white"
+                >
+                  {t('Ganti foto kartu ID')}
+                </button>
+                {photoAsset ? (
+                  <RemoveAssetButton
+                    assetId={photoAsset.id}
+                    label={t('Foto kartu ID')}
+                    onDone={() => router.refresh()}
+                  />
+                ) : null}
+              </span>
+            ),
           }}
-        >
-          {/* di bawah kartu saat diam: jabatan diketik di sini, foto bisa diganti atau dihapus */}
-          <div
-            ref={roleBox}
-            className="flex items-center gap-2 text-sm font-semibold"
-            style={{ ['--editable-color' as string]: 'currentColor' }}
-          >
-            <button
-              type="button"
-              onClick={() => picker.pick('contact-photo')}
-              className="sr-only focus-visible:not-sr-only focus-visible:rounded-md focus-visible:border focus-visible:border-border focus-visible:px-2 focus-visible:py-1"
-            >
-              {t('Ganti foto kartu ID')}
-            </button>
-            <EditText k="Contact.cardRole" className="min-w-24 text-center uppercase" />
-            {photoAsset ? (
-              <RemoveAssetButton
-                assetId={photoAsset.id}
-                label={t('Foto kartu ID')}
-                onDone={() => router.refresh()}
-              />
-            ) : null}
-          </div>
-        </IdLanyard>
+        />
         <div className="contact-col">
           <header className="pt-12 pb-10 md:pt-20">
             <h1 className="mt-3 max-w-3xl text-h1 font-bold">

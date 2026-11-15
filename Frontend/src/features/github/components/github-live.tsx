@@ -31,12 +31,15 @@ const PRESET_NAME: Record<GithubPresetKey, string> = {
 export function GithubLive({
   defaultPreset,
   data,
+  sample,
   labels,
   heading,
   locale,
 }: {
   defaultPreset: GithubPresetKey
   data: ContributionDay[]
+  // true: data contoh karena data GitHub asli belum tersedia (tanpa GITHUB_TOKEN, atau GitHub tidak terhubung)
+  sample: boolean
   labels: SkylineLabels
   heading: string
   locale: string
@@ -75,6 +78,13 @@ export function GithubLive({
           </Container>
         </section>
       </SiteFrame>
+      {sample ? (
+        <p role="note" className="text-sm text-muted">
+          {t(
+            'Ini data contoh. Data GitHub asli belum tersedia: isi GITHUB_TOKEN di environment (Vercel), lalu bagian ini tampil dengan data asli di sini dan di beranda.',
+          )}
+        </p>
+      ) : null}
       {/* lima warna grafik, satu baris selebar Simpan */}
       <div
         role="group"

@@ -322,12 +322,10 @@ export const EN: Record<string, string> = {
   'Kategori disimpan.': 'Category saved.',
   'Kategori dibuat.': 'Category created.',
   'Kategori dihapus.': 'Category deleted.',
-  'Kategori sudah di ujung daftar.': 'The category is already at the end of the list.',
   'Skill tidak valid.': 'Invalid skill.',
   'Skill disimpan.': 'Skill saved.',
   'Skill ditambahkan.': 'Skill added.',
   'Skill dihapus.': 'Skill deleted.',
-  'Skill sudah di ujung daftar.': 'The skill is already at the end of the list.',
   'Keluarkan dari arsip': 'Move out of archive',
   Arsipkan: 'Archive',
   'Tandai belum dibaca': 'Mark as unread',
@@ -669,6 +667,8 @@ export const EN: Record<string, string> = {
   'Chip logo': 'Logo Chip',
   // Home → GitHub, warna grafik kontribusi (revisi 2026-11-15)
   'Warna grafik': 'Chart colors',
+  'Ini data contoh. Data GitHub asli belum tersedia: isi GITHUB_TOKEN di environment (Vercel), lalu bagian ini tampil dengan data asli di sini dan di beranda.':
+    'This is sample data. Real GitHub data is not available yet: set GITHUB_TOKEN in the environment (Vercel) and this section shows real data here and on the home page.',
   'Warna GitHub disimpan.': 'GitHub colors saved.',
   Merah: 'Red',
   Kuning: 'Yellow',

@@ -41,6 +41,7 @@ export default async function GithubPage() {
       <GithubLive
         defaultPreset={preset}
         data={data}
+        sample={!contributions}
         labels={skylineLabelsFrom(tSkyline)}
         heading={tHome('githubHeading')}
         locale={lang === 'id' ? 'id-ID' : 'en-US'}
