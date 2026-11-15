@@ -52,23 +52,6 @@ export function lastDayKeys(days: number, now: Date = new Date()): string[] {
   })
 }
 
-// Kolom @db.Date disimpan tengah malam UTC, jadi ditampilkan dengan zona UTC agar bulannya tidak bergeser.
-const monthFormatters = {
-  id: new Intl.DateTimeFormat(LOCALE.id, { month: 'short', year: 'numeric', timeZone: 'UTC' }),
-  en: new Intl.DateTimeFormat(LOCALE.en, { month: 'short', year: 'numeric', timeZone: 'UTC' }),
-}
-
-// Hanya dipakai formatPeriod (admin). Nama berbeda dari formatMonth di lib/localized.ts yang menerima
-// "YYYY-MM" dan locale, agar impor otomatis tidak tertukar (audit 2026-10-31, EFF-06).
-function formatDateMonth(date: Date, lang: DisplayLang): string {
-  return monthFormatters[lang].format(date)
-}
-
-export function formatPeriod(start: Date, end: Date | null, lang: DisplayLang = 'id'): string {
-  const now = lang === 'en' ? 'present' : 'sekarang'
-  return `${formatDateMonth(start, lang)} – ${end ? formatDateMonth(end, lang) : now}`
-}
-
 // Angka sesuai bahasa tampilan (1.200 atau 1,200)
 export function formatNumber(value: number, lang: DisplayLang = 'id'): string {
   return value.toLocaleString(LOCALE[lang])

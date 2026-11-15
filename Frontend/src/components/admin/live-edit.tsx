@@ -10,6 +10,7 @@ import {
 } from 'react'
 
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
+import { MarkdownView } from '@/components/shared/markdown-view'
 import { cn } from '@/lib/utils'
 
 // Alat bersama "ubah langsung di pratinjau" (DESIGN.md bagian 133): halaman admin tampil seperti di
@@ -211,6 +212,98 @@ export function StateBox({ note, children }: { note: string; children: ReactNode
     <div className="rounded-md border border-dashed border-border p-4">
       <Note>{note}</Note>
       {children}
+    </div>
+  )
+}
+
+// Pilihan bahasa isi dalam satu baris selebar Simpan, tepat di atasnya; bentuknya sama dengan tombol
+// Chip kampus/Chip bendera (revisi pemilik 2026-11-13, DESIGN.md bagian 147)
+export function LangRow({ lang, onChange }: { lang: Lang; onChange: (lang: Lang) => void }) {
+  const t = useAdminT()
+  return (
+    <div
+      role="group"
+      aria-label={t('Bahasa yang diubah')}
+      className="admin-bleed grid grid-cols-2 gap-2"
+    >
+      {(['id', 'en'] as const).map((l) => (
+        <button
+          key={l}
+          type="button"
+          aria-pressed={l === lang}
+          onClick={() => onChange(l)}
+          className={cn(
+            'inline-flex min-h-11 items-center justify-center rounded-md border px-3 text-sm font-semibold',
+            l === lang
+              ? 'border-text bg-text text-bg'
+              : 'border-dashed border-border text-muted hover:text-text',
+          )}
+        >
+          {l.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// Teks Markdown (uraian, grade): tampil seperti di situs, ditekan untuk diketik; saat kolom
+// ditinggalkan tampil lagi seperti di situs (DESIGN.md bagian 147)
+export function MarkdownInline({
+  value,
+  onChange,
+  label,
+  placeholder,
+  invalid,
+  className,
+  size = 'base',
+}: {
+  value: string
+  onChange: (value: string) => void
+  label: string
+  placeholder?: string
+  invalid?: boolean
+  className?: string
+  size?: 'sm' | 'base'
+}) {
+  const [editing, setEditing] = useState(false)
+  if (editing)
+    return (
+      <InlineArea
+        label={label}
+        value={value}
+        measure={value}
+        autoFocus
+        placeholder={placeholder}
+        invalid={invalid}
+        onChange={(event) => onChange(event.target.value)}
+        onBlur={() => setEditing(false)}
+        className={cn(size === 'sm' ? 'text-sm leading-relaxed' : 'max-w-prose', className)}
+      />
+    )
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setEditing(true)}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          setEditing(true)
+        }
+      }}
+      className={cn(
+        'admin-editable cursor-text rounded-sm text-left',
+        invalid && 'admin-inline-bad',
+        className,
+      )}
+    >
+      {/* nama tombol = label isian + teks yang terlihat (axe label-content-name-mismatch) */}
+      <span className="sr-only">{label}: </span>
+      {value.trim() ? (
+        <MarkdownView source={value} size={size} />
+      ) : (
+        <span className="opacity-40">{placeholder}</span>
+      )}
     </div>
   )
 }

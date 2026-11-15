@@ -4,20 +4,8 @@ import { optionalText, requiredText } from '@/lib/validation'
 
 export const EXPERIENCE_TYPES = ['WORK', 'EDUCATION', 'ORGANIZATION'] as const
 
-export const experienceTypeLabel: Record<(typeof EXPERIENCE_TYPES)[number], string> = {
-  WORK: 'Kerja',
-  EDUCATION: 'Pendidikan',
-  ORGANIZATION: 'Organisasi',
-}
-
-// Menu admin: kerja dan organisasi di Experience, pendidikan di About → Pendidikan (2026-11-10)
+// Admin: kerja dan organisasi di Experience, pendidikan di About (2026-11-10)
 export type ExperienceKind = 'experience' | 'education'
-export const kindBasePath: Record<ExperienceKind, string> = {
-  experience: '/admin/experience',
-  education: '/admin/education',
-}
-export const kindOf = (type: (typeof EXPERIENCE_TYPES)[number]): ExperienceKind =>
-  type === 'EDUCATION' ? 'education' : 'experience'
 
 // Jenis pekerjaan seperti di LinkedIn ("PT PGAS Solution · Internship"); opsional.
 export const EMPLOYMENT_TYPES = [
@@ -31,18 +19,6 @@ export const EMPLOYMENT_TYPES = [
   'SEASONAL',
   'VOLUNTEER',
 ] as const
-
-export const employmentTypeLabel: Record<(typeof EMPLOYMENT_TYPES)[number], string> = {
-  FULL_TIME: 'Full-time (penuh waktu)',
-  PART_TIME: 'Part-time (paruh waktu)',
-  SELF_EMPLOYED: 'Self-employed (usaha sendiri)',
-  FREELANCE: 'Freelance',
-  CONTRACT: 'Contract (kontrak)',
-  INTERNSHIP: 'Internship (magang)',
-  APPRENTICESHIP: 'Apprenticeship (pemagangan)',
-  SEASONAL: 'Seasonal (musiman)',
-  VOLUNTEER: 'Volunteer (relawan)',
-}
 
 // Periode disimpan per bulan (seperti di CV): "2025-07" → 2025-07-01.
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/

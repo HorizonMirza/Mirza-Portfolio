@@ -14,8 +14,6 @@ const PAGES = [
   '/admin/projects/new',
   '/admin/skills',
   '/admin/experience',
-  '/admin/experience/new',
-  '/admin/education/new',
   '/admin/messages',
   '/admin/pages/intro',
   '/admin/roles',
@@ -307,19 +305,34 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
   await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: 'Bio (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Ganti foto kartu About$/ })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Tambah pendidikan' })).toHaveAttribute(
-    'href',
-    '/admin/education/new',
-  )
-  // Chip kampus dan Chip bendera satu baris selebar Simpan, tepat di atasnya
+  // peran tampil sebagai teks biasa seperti di situs (bukan samar), pratinjau tautan dihapus
+  // (revisi pemilik 2026-11-13 malam, DESIGN.md bagian 147)
+  await expect(
+    page.getByRole('textbox', { name: 'Peran di halaman Tentang (Indonesia)' }),
+  ).not.toHaveValue('')
+  await expect(page.getByRole('textbox', { name: /^Headline/ })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Tambah pendidikan' })).toBeVisible()
+  // Chip kampus/Chip bendera, lalu ID/EN, lalu Simpan: tiap baris selebar Simpan
   const save = page.getByRole('button', { name: 'Simpan', exact: true })
   const campus = page.getByRole('button', { name: 'Chip kampus' })
   const flag = page.getByRole('button', { name: 'Chip bendera' })
-  const [sb, cb, fb] = await Promise.all([save, campus, flag].map((l) => l.boundingBox()))
+  const langs = page.getByRole('group', { name: 'Bahasa yang diubah' })
+  const idButton = langs.getByRole('button', { name: 'ID', exact: true })
+  const enButton = langs.getByRole('button', { name: 'EN', exact: true })
+  const [sb, cb, fb, ib, eb] = await Promise.all(
+    [save, campus, flag, idButton, enButton].map((l) => l.boundingBox()),
+  )
   expect(Math.abs(cb!.y - fb!.y)).toBeLessThan(1)
-  expect(cb!.y).toBeLessThan(sb!.y)
-  expect(Math.abs(cb!.x - sb!.x)).toBeLessThan(2)
-  expect(Math.abs(fb!.x + fb!.width - (sb!.x + sb!.width))).toBeLessThan(2)
+  expect(Math.abs(ib!.y - eb!.y)).toBeLessThan(1)
+  expect(cb!.y).toBeLessThan(ib!.y)
+  expect(ib!.y).toBeLessThan(sb!.y)
+  for (const [left, right] of [
+    [cb!, fb!],
+    [ib!, eb!],
+  ]) {
+    expect(Math.abs(left.x - sb!.x)).toBeLessThan(2)
+    expect(Math.abs(right.x + right.width - (sb!.x + sb!.width))).toBeLessThan(2)
+  }
   await expect(page.getByRole('button', { name: 'Chip bendera' })).toHaveAttribute(
     'aria-pressed',
     /true|false/,
@@ -381,33 +394,68 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
   await expect(page.getByLabel('Tampilkan pemberitahuan pembuka')).toHaveCount(0)
 })
 
-test('About → Pendidikan: form khusus pendidikan, Experience hanya kerja dan organisasi', async ({
+test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu juga', async ({
   page,
-}) => {
-  // daftar pendidikan kini bagian halaman About (2026-11-13): alamat lama diarahkan ke sana
+}, testInfo) => {
+  // revisi pemilik 2026-11-13 malam (DESIGN.md bagian 147): tanpa pindah halaman
+  // daftar pendidikan bagian halaman About: alamat lama diarahkan ke sana
   await page.goto('/admin/education')
   await expect(page).toHaveURL(/\/admin\/profile$/)
-  await expect(page.getByRole('link', { name: 'Tambah pendidikan' })).toHaveAttribute(
-    'href',
-    '/admin/education/new',
-  )
-  await page.goto('/admin/education/new')
-  // entri baru diketik langsung: sekolah, jenjang, Grade/GPA
-  await expect(page.getByRole('textbox', { name: 'Sekolah / kampus', exact: true })).toBeVisible()
-  await expect(page.getByRole('textbox', { name: 'Grade / GPA (Indonesia)' })).toBeVisible()
-  // jenis tetap Pendidikan dan isian khusus kerja disembunyikan
-  for (const label of ['Kerja', 'Organisasi', 'Titik cerita'])
+  // kartu pendidikan yang ada bisa diketik langsung
+  await expect(page.getByRole('textbox', { name: 'Sekolah / kampus' }).first()).not.toHaveValue('')
+  const schools = page.getByRole('textbox', { name: 'Sekolah / kampus' })
+  const before = await schools.count()
+  // tambah kartu baru di tempat (diulang sampai hidrasi selesai), lalu batal
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Tambah pendidikan' }).click({ timeout: 2000 })
+    await expect(schools).toHaveCount(before + 1, { timeout: 1000 })
+  }).toPass()
+  await expect(page).toHaveURL(/\/admin\/profile$/)
+  await expect(
+    page.getByRole('textbox', { name: 'Jenjang / jurusan (Indonesia)' }).last(),
+  ).toHaveValue('')
+  // kartu pendidikan tanpa pilihan jenis kerja
+  for (const label of ['Kerja', 'Organisasi'])
     await expect(page.getByRole('button', { name: label, exact: true })).toHaveCount(0)
-  await expect(page.getByRole('textbox', { name: 'Lokasi (opsional)' })).toHaveCount(0)
-  await expect(page.getByRole('link', { name: 'Semua pendidikan' })).toHaveAttribute(
-    'href',
-    '/admin/profile',
-  )
-  // pilihan jenis di Experience tanpa Pendidikan
-  await page.goto('/admin/experience/new')
-  await expect(page.getByRole('button', { name: 'Kerja', exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Organisasi', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Batal', exact: true }).click()
+  await expect(schools).toHaveCount(before)
+
+  // Experience: tambah entri di tempat, simpan sebagai draf (tidak tampil di situs), lalu hapus
+  await page.goto('/admin/experience')
+  const role = `Peran E2E ${testInfo.project.name}-${Date.now()}`
+  const roles = page.getByRole('textbox', { name: 'Peran (Indonesia)' })
+  const count = await roles.count()
+  await expect(async () => {
+    await page.getByRole('button', { name: 'Tambah pengalaman' }).click({ timeout: 2000 })
+    await expect(roles).toHaveCount(count + 1, { timeout: 1000 })
+  }).toPass()
+  await expect(page).toHaveURL(/\/admin\/experience$/)
+  // entri baru di paling atas; jenis hanya Kerja dan Organisasi
+  const entry = page.getByRole('listitem').filter({ has: roles.first() }).first()
+  await expect(entry.getByRole('button', { name: 'Kerja', exact: true })).toBeAttached()
+  await expect(entry.getByRole('button', { name: 'Organisasi', exact: true })).toBeAttached()
   await expect(page.getByRole('button', { name: 'Pendidikan', exact: true })).toHaveCount(0)
+  await roles.first().fill(role)
+  await entry.getByRole('textbox', { name: 'Instansi', exact: true }).fill('Instansi E2E')
+  // uraian tampil seperti di situs; ditekan baru bisa diketik
+  await entry.getByRole('button', { name: /^Uraian \(Indonesia\)/ }).click()
+  await entry.getByRole('textbox', { name: 'Uraian (Indonesia)' }).fill('Uraian **E2E**.')
+  await entry.getByRole('button', { name: 'Draf', exact: true }).click()
+  await page.getByRole('button', { name: 'Simpan', exact: true }).click()
+  await expect(page.getByText('Pengalaman disimpan.')).toBeVisible()
+  await expect(page).toHaveURL(/\/admin\/experience$/)
+  // tersimpan: masih ada setelah dimuat ulang, uraian tampil sebagai teks tebal
+  await page.reload()
+  const savedRole = page.locator(`textarea[aria-label="Peran (Indonesia)"]`, { hasText: role })
+  await expect(savedRole).toHaveCount(1)
+  await expect(page.locator('strong', { hasText: 'E2E' }).first()).toBeVisible()
+  // hapus dengan konfirmasi (diulang sampai hidrasi selesai)
+  await expect(async () => {
+    await page.getByRole('button', { name: `Hapus ${role}` }).click({ timeout: 2000 })
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 1000 })
+  }).toPass()
+  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
+  await expect(savedRole).toHaveCount(0)
 })
 
 test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {

@@ -1,9 +1,16 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
+import {
+  type ExperienceTexts,
+  ExperienceTimelineLive,
+} from '@/features/experience/components/experience-timeline-live'
 import { PageHeader } from '@/components/admin/page-header'
-import { ExperienceTimelineAdmin } from '@/features/experience/components/experience-timeline-admin'
-import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
+import { listExperienceEntriesAdmin } from '@/features/experience/queries'
+import { EMPLOYMENT_TYPES } from '@/features/experience/schema'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { isUploadConfigured } from '@/lib/uploads'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,14 +18,44 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Pengalaman') }
 }
 
-// Experience: halaman Pengalaman situs tampil sama persis, entri ditekan untuk diubah. Tanpa tab
-// Teks halaman (dihapus atas permintaan pemilik 2026-11-13, DESIGN.md bagian 145).
+// teks halaman Pengalaman situs (messages/*.json) untuk satu bahasa
+async function siteTexts(locale: 'id' | 'en'): Promise<ExperienceTexts['id']> {
+  const msg = await getTranslations({ locale, namespace: 'Experience' })
+  // bentuk "# Tahun": angka contoh diganti "#" lagi agar bisa dipakai untuk angka berapa pun
+  const forms = (key: 'durationYears' | 'durationMonths') => ({
+    one: msg(key, { count: 1 }).replace('1', '#'),
+    other: msg(key, { count: 2 }).replace('2', '#'),
+  })
+  return {
+    title: msg('title'),
+    none: msg('none'),
+    listLabel: msg('listLabel'),
+    present: msg('present'),
+    employment: Object.fromEntries(
+      EMPLOYMENT_TYPES.map((type) => [type, msg(`employment.${type}`)]),
+    ) as ExperienceTexts['id']['employment'],
+    years: forms('durationYears'),
+    months: forms('durationMonths'),
+  }
+}
+
+// Experience: halaman Pengalaman situs tampil sama persis dan diubah langsung di halaman ini, tanpa
+// tab Teks halaman dan tanpa pindah halaman (revisi pemilik 2026-11-13, DESIGN.md bagian 145 dan 147).
 export default async function ExperiencePage() {
   await requireSuperAdminPage()
+  const [entries, id, en] = await Promise.all([
+    listExperienceEntriesAdmin('experience'),
+    siteTexts('id'),
+    siteTexts('en'),
+  ])
   return (
     <>
       <PageHeader title="Experience" />
-      <ExperienceTimelineAdmin lang={await getAdminLang()} />
+      <ExperienceTimelineLive
+        initial={entries.map((e) => ({ key: e.id, ...e }))}
+        texts={{ id, en }}
+        configured={isUploadConfigured()}
+      />
     </>
   )
 }

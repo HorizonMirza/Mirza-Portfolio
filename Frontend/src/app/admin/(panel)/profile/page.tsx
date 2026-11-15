@@ -3,14 +3,13 @@ import { getTranslations } from 'next-intl/server'
 
 import { PageHeader } from '@/components/admin/page-header'
 import { getProfileAssets } from '@/features/assets/queries'
-import { EducationSectionAdmin } from '@/features/experience/components/education-section-admin'
 import { getPublicExperiences } from '@/features/experience/public'
-import { listExperiencesAdmin } from '@/features/experience/queries'
+import { listExperienceEntriesAdmin } from '@/features/experience/queries'
 import { initials, organizationName } from '@/features/experience/schema'
 import { ProfileLive } from '@/features/profile/components/profile-live'
 import { getPublicProfile } from '@/features/profile/public'
 import { getProfileForEdit } from '@/features/profile/queries'
-import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { isUploadConfigured } from '@/lib/uploads'
@@ -24,16 +23,19 @@ export async function generateMetadata(): Promise<Metadata> {
 // About: halaman Tentang dalam satu halaman, profil dan pendidikan (DESIGN.md bagian 136 dan 146)
 export default async function ProfilePage() {
   await requireSuperAdminPage()
-  const [values, assets, profile, experiences, tId, tEn, educationRows, ui] = await Promise.all([
-    getProfileForEdit(),
-    getProfileAssets(),
-    getPublicProfile(),
-    getPublicExperiences(),
-    getTranslations({ locale: 'id', namespace: 'About' }),
-    getTranslations({ locale: 'en', namespace: 'About' }),
-    listExperiencesAdmin('education'),
-    getAdminLang(),
-  ])
+  const [values, assets, profile, experiences, tId, tEn, educationRows, tIdExp] = await Promise.all(
+    [
+      getProfileForEdit(),
+      getProfileAssets(),
+      getPublicProfile(),
+      getPublicExperiences(),
+      getTranslations({ locale: 'id', namespace: 'About' }),
+      getTranslations({ locale: 'en', namespace: 'About' }),
+      listExperienceEntriesAdmin('education'),
+      getTranslations({ locale: 'id', namespace: 'Experience' }),
+    ],
+  )
+  const tEnExp = await getTranslations({ locale: 'en', namespace: 'Experience' })
   // chip kampus: pendidikan terbaru, sama seperti halaman Tentang
   const education = experiences
     .filter((e) => e.type === 'EDUCATION')
@@ -63,10 +65,9 @@ export default async function ProfilePage() {
           en: profile?.aboutRoles_en || tEn('roles'),
         }}
         configured={isUploadConfigured()}
-        education={{
-          id: <EducationSectionAdmin rows={educationRows} lang="id" ui={ui} />,
-          en: <EducationSectionAdmin rows={educationRows} lang="en" ui={ui} />,
-        }}
+        education={educationRows.map((e) => ({ key: e.id, ...e }))}
+        educationHeading={{ id: tId('educationHeading'), en: tEn('educationHeading') }}
+        presentLabel={{ id: tIdExp('present'), en: tEnExp('present') }}
       />
     </>
   )
