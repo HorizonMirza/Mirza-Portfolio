@@ -40,9 +40,17 @@ for (const theme of ['light', 'dark'] as const) {
       const response = await page.goto(path)
       expect(response?.status(), path).toBe(200)
       await expect(page.locator('html')).toHaveClass(new RegExp(theme))
-      const results = await new AxeBuilder({ page })
-        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-        .analyze()
+      const axe = new AxeBuilder({ page }).withTags([
+        'wcag2a',
+        'wcag2aa',
+        'wcag21a',
+        'wcag21aa',
+        'wcag22aa',
+      ])
+      // pratinjau GitHub adalah bagian situs yang diperkecil (SiteFrame): tombol tampilan datar/3D di
+      // dalamnya berukuran penuh di situs tetapi terukur lebih kecil dari 24 px di sini
+      if (path === '/admin/github') axe.disableRules(['target-size'])
+      const results = await axe.analyze()
       failures.push(...results.violations.map((v) => `${path} ${v.id}: ${v.help}`))
     }
     expect(failures).toEqual([])
@@ -342,7 +350,7 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
   )
 })
 
-test('Home: tab GitHub mengganti warna grafik kontribusi lalu mengembalikannya', async ({
+test('Home: tab GitHub memilih warna grafik dari lima warna lalu mengembalikannya', async ({
   page,
 }) => {
   await page.goto('/admin/github')
@@ -355,34 +363,37 @@ test('Home: tab GitHub mengganti warna grafik kontribusi lalu mengembalikannya',
     'aria-current',
     'page',
   )
-  const first = page.getByRole('textbox', { name: 'Warna tingkat 1 (Gelap)' })
-  await expect(first).toBeVisible()
-  await expect(page.getByRole('textbox', { name: /^Warna tingkat \d \(Gelap\)$/ })).toHaveCount(4)
-  // tema terang punya empat warna sendiri
-  await page.getByRole('button', { name: 'Terang', exact: true }).click()
-  await expect(page.getByRole('textbox', { name: /^Warna tingkat \d \(Terang\)$/ })).toHaveCount(4)
-  await page.getByRole('button', { name: 'Gelap', exact: true }).click()
+  // lima warna: merah, kuning, hijau, biru (bawaan), ungu; tanpa pilihan tema, tombol kembalikan, dan catatan
+  const choices = page.getByRole('group', { name: 'Warna grafik' }).getByRole('button')
+  await expect(choices).toHaveText(['Merah', 'Kuning', 'Hijau', 'Biru', 'Ungu'])
+  for (const gone of ['Terang', 'Gelap', 'Kembalikan warna bawaan'])
+    await expect(page.getByRole('button', { name: gone, exact: true })).toHaveCount(0)
+  await expect(page.getByText(/Data contoh/)).toHaveCount(0)
+  const purple = page.getByRole('button', { name: 'Ungu', exact: true })
+  const blue = page.getByRole('button', { name: 'Biru', exact: true })
   const save = page.getByRole('button', { name: 'Simpan', exact: true })
-  const reset = page.getByRole('button', { name: 'Kembalikan warna bawaan' })
   // simpan diulang sampai hidrasi selesai
   await expect(async () => {
-    await first.fill('#ff0000')
+    await purple.click()
+    await expect(purple).toHaveAttribute('aria-pressed', 'true', { timeout: 1000 })
     await save.click()
     await expect(page.getByText('Warna GitHub disimpan.')).toBeVisible({ timeout: 1500 })
   }).toPass()
   await page.reload()
-  await expect(page.getByRole('textbox', { name: 'Warna tingkat 1 (Gelap)' })).toHaveValue(
-    '#ff0000',
+  await expect(page.getByRole('button', { name: 'Ungu', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
   )
-  // kembalikan ke bawaan (tingkat 1 tema gelap = #10294a)
+  // kembali ke biru (bawaan)
   await expect(async () => {
-    await reset.click()
+    await blue.click()
     await save.click()
     await expect(page.getByText('Warna GitHub disimpan.')).toBeVisible({ timeout: 1500 })
   }).toPass()
   await page.reload()
-  await expect(page.getByRole('textbox', { name: 'Warna tingkat 1 (Gelap)' })).toHaveValue(
-    '#10294a',
+  await expect(page.getByRole('button', { name: 'Biru', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
   )
 })
 

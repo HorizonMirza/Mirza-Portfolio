@@ -105,8 +105,31 @@ export function IntroForm({
             <div className="intro-panel">
               <div aria-hidden="true" className="intro-grain" />
               <div className="intro-box">
-                {/* pilihan ID/EN pindah ke baris di atas Simpan, sama seperti About (revisi 2026-11-15) */}
-                <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
+                {/* ID/EN tetap di kartu seperti di situs (revisi 2026-11-15); pilihan yang sama juga ada di
+                    baris atas Simpan */}
+                <div className="flex items-center justify-between gap-4">
+                  <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
+                  <div role="group" aria-label={t('Bahasa kartu')} className="intro-lang">
+                    {(['id', 'en'] as const).map((l) => (
+                      <button
+                        key={l}
+                        type="button"
+                        aria-pressed={l === lang}
+                        onClick={() => setLang(l)}
+                        className="relative"
+                      >
+                        {l.toUpperCase()}
+                        {/* titik: bahasa ini sudah diubah dan belum disimpan */}
+                        {dirtyFields[`introBody_${l}`] ? (
+                          <span
+                            aria-hidden="true"
+                            className="absolute top-1 right-1 size-1.5 rounded-full bg-current"
+                          />
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <p className="intro-title" aria-hidden="true">
                   {card.title}
                 </p>

@@ -7,9 +7,7 @@
  * Token desain. Sumber: Documentation/DESIGN.md bagian 2.
  * Rasio kontras sudah dihitung di DESIGN.md. Ubah di sini saja, jangan menaruh warna acak di komponen.
  */
-/* .theme-light: pratinjau tema terang di dalam halaman gelap (admin → Home → GitHub) */
-:root,
-.theme-light {
+:root {
   /* Hitam-putih (pilihan pemilik 2026-10-01). Biru Azure (--note) hanya untuk catatan kecil:
      label, nomor bagian, tanggal, titik status, lampu menu, cincin fokus, grafik. */
   --bg: #ffffff;
@@ -2731,8 +2729,15 @@ html[data-intro='pending'] .intro {
      tidak menggeser tata letak. */
   .admin-inline:not(:focus),
   .admin-editable:not(:disabled, :focus-visible) {
-    outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
+    outline: 1.5px dashed color-mix(in srgb, var(--editable-color, currentColor) 40%, transparent);
     outline-offset: 3px;
+  }
+  /* logo berlatar penuh (huruf gelap di latar terang): garis memakai warna teks halaman, bukan warna
+     hurufnya, supaya tetap terlihat di tema gelap (revisi 2026-11-15) */
+  .ab-pc-logo,
+  .ab-edu-logo,
+  .xp-node {
+    --editable-color: var(--text);
   }
   .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: var(--editable-offset, 3px);

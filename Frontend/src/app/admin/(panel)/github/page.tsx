@@ -5,7 +5,7 @@ import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { GithubLive } from '@/features/github/components/github-live'
 import { skylineLabelsFrom } from '@/features/github/labels'
-import { getGithubPaletteForEdit } from '@/features/github/queries'
+import { getGithubPresetForEdit } from '@/features/github/queries'
 import { sampleContributions } from '@/features/github/sample'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
@@ -18,13 +18,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('GitHub')} · Home` }
 }
 
-// Home → GitHub: bagian GitHub beranda seperti di situs; warna grafik kontribusinya bisa diganti
+// Home → GitHub: bagian GitHub beranda seperti di situs; warna grafik kontribusinya dipilih dari lima warna
 // (DESIGN.md bagian 149). Teks grafik mengikuti bahasa tampilan admin.
 export default async function GithubPage() {
   await requireSuperAdminPage()
   const lang = await getAdminLang()
-  const [palette, profile, tHome, tSkyline] = await Promise.all([
-    getGithubPaletteForEdit(),
+  const [preset, profile, tHome, tSkyline] = await Promise.all([
+    getGithubPresetForEdit(),
     getPublicProfile(),
     getTranslations({ locale: lang, namespace: 'Home' }),
     getTranslations({ locale: lang, namespace: 'Skyline' }),
@@ -39,9 +39,8 @@ export default async function GithubPage() {
       <PageHeader title="Home" />
       <ModuleTabs moduleId="home" current="/admin/github" />
       <GithubLive
-        defaultValues={palette}
+        defaultPreset={preset}
         data={data}
-        sample={!contributions}
         labels={skylineLabelsFrom(tSkyline)}
         heading={tHome('githubHeading')}
         locale={lang === 'id' ? 'id-ID' : 'en-US'}

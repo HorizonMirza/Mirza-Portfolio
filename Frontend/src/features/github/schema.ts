@@ -1,13 +1,11 @@
 import { z } from 'zod'
 
-import { HEX_COLOR, PALETTE_LEVELS } from '@/lib/github-palette'
+import { GITHUB_PRESET_KEYS } from '@/lib/github-palette'
 
-const colors = z
-  .array(z.string().regex(HEX_COLOR, 'Warna harus berformat #rrggbb'))
-  .length(PALETTE_LEVELS, 'Setiap tema butuh empat warna')
-
-// Warna grafik kontribusi GitHub di beranda (Admin → Home → GitHub): empat tingkat aktivitas, dari
-// paling ringan ke paling berat, untuk tema terang dan gelap.
-export const githubPaletteSchema = z.object({ light: colors, dark: colors })
+// Warna grafik kontribusi GitHub di beranda (Admin → Home → GitHub): satu dari lima pilihan
+// (merah, kuning, hijau, biru, ungu); empat tingkat warnanya ditentukan server.
+export const githubPaletteSchema = z.object({
+  preset: z.enum(GITHUB_PRESET_KEYS, { error: 'Pilihan warna tidak dikenal.' }),
+})
 
 export type GithubPaletteInput = z.input<typeof githubPaletteSchema>

@@ -4,7 +4,7 @@ import { Prisma } from '@/generated/prisma/client'
 import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
-import { isDefaultPalette } from '@/lib/github-palette'
+import { GITHUB_PRESETS, isDefaultPalette } from '@/lib/github-palette'
 import { revalidateContent } from '@/lib/revalidate'
 
 import { githubPaletteSchema } from '@/features/github/schema'
@@ -53,17 +53,15 @@ export async function saveIntroNotice(input: unknown): Promise<ActionResult> {
   }
 }
 
-// Warna grafik kontribusi GitHub di beranda (Admin → Home → GitHub). Sama dengan warna bawaan =
-// disimpan kosong, supaya perubahan bawaan situs ke depan ikut tampil.
+// Warna grafik kontribusi GitHub di beranda (Admin → Home → GitHub): satu dari lima pilihan. Biru
+// (bawaan) disimpan kosong, supaya perubahan bawaan situs ke depan ikut tampil.
 export async function saveGithubPalette(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
     const parsed = githubPaletteSchema.safeParse(input)
-    if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? 'Periksa kembali warna.')
-    const palette = {
-      light: parsed.data.light.map((c) => c.toLowerCase()),
-      dark: parsed.data.dark.map((c) => c.toLowerCase()),
-    }
+    if (!parsed.success)
+      return fail(parsed.error.issues[0]?.message ?? 'Pilihan warna tidak dikenal.')
+    const palette = GITHUB_PRESETS[parsed.data.preset]
     await saveSetting(admin.userId, {
       githubPalette: isDefaultPalette(palette) ? Prisma.DbNull : palette,
     })

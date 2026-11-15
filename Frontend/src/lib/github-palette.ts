@@ -12,6 +12,31 @@ export const GITHUB_PALETTE: Palette = {
   dark: ['#10294a', '#184a8a', '#2f78d6', '#4da3ff'],
 }
 
+// Lima pilihan warna di Admin → Home → GitHub (revisi pemilik 2026-11-15): merah, kuning, hijau, biru
+// (bawaan), dan ungu. Tiap pilihan punya empat tingkat untuk tema terang dan gelap.
+export const GITHUB_PRESET_KEYS = ['red', 'yellow', 'green', 'blue', 'purple'] as const
+export type GithubPresetKey = (typeof GITHUB_PRESET_KEYS)[number]
+
+export const GITHUB_PRESETS: Record<GithubPresetKey, Palette> = {
+  red: {
+    light: ['#f7c6c6', '#ec8b8b', '#d94a4a', '#a52828'],
+    dark: ['#3a1212', '#7a2222', '#d13a3a', '#ff6b6b'],
+  },
+  yellow: {
+    light: ['#fbe9a6', '#f4cf55', '#d9a514', '#9a6f00'],
+    dark: ['#33290a', '#6e5710', '#c29a1c', '#ffd23f'],
+  },
+  green: {
+    light: ['#bfe8c5', '#7bcf8b', '#2fa84f', '#1a6e33'],
+    dark: ['#0e2e1a', '#17592e', '#2fa853', '#4ade80'],
+  },
+  blue: GITHUB_PALETTE,
+  purple: {
+    light: ['#dcc9f5', '#b18ae6', '#8a52d4', '#5b2a9c'],
+    dark: ['#25123f', '#4b2482', '#8a52d4', '#b78cff'],
+  },
+}
+
 export const PALETTE_LEVELS = 4
 export const HEX_COLOR = /^#[0-9a-f]{6}$/i
 
@@ -29,7 +54,17 @@ export function toPalette(value: unknown): Palette | null {
   return { light: light.map((c) => c.toLowerCase()), dark: dark.map((c) => c.toLowerCase()) }
 }
 
+const samePalette = (a: Palette, b: Palette) =>
+  a.light.every((c, i) => c.toLowerCase() === b.light[i]) &&
+  a.dark.every((c, i) => c.toLowerCase() === b.dark[i])
+
 export function isDefaultPalette(palette: Palette): boolean {
-  const same = (a: string[], b: string[]) => a.every((c, i) => c.toLowerCase() === b[i])
-  return same(palette.light, GITHUB_PALETTE.light) && same(palette.dark, GITHUB_PALETTE.dark)
+  return samePalette(palette, GITHUB_PALETTE)
+}
+
+// Pilihan yang sedang dipakai; palet yang tidak cocok dengan pilihan mana pun (mis. diubah manual di
+// database) dianggap biru bawaan.
+export function presetOf(palette: Palette | null): GithubPresetKey {
+  if (!palette) return 'blue'
+  return GITHUB_PRESET_KEYS.find((key) => samePalette(palette, GITHUB_PRESETS[key])) ?? 'blue'
 }

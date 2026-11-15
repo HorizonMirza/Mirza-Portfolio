@@ -682,14 +682,12 @@ export const EN: Record<string, string> = {
   'Chip logo': 'Logo Chip',
   // Home → GitHub, warna grafik kontribusi (revisi 2026-11-15)
   'Warna grafik': 'Chart colors',
-  'Warna tingkat {n} ({mode})': 'Level {n} color ({mode})',
-  'Tingkat {n}': 'Level {n}',
-  'Kembalikan warna bawaan': 'Restore default colors',
-  'Tema pratinjau': 'Preview theme',
   'Warna GitHub disimpan.': 'GitHub colors saved.',
-  'Warna harus berformat #rrggbb': 'Color must be in #rrggbb format',
-  'Setiap tema butuh empat warna': 'Each theme needs four colors',
-  'Periksa kembali warna.': 'Check the colors again.',
-  'Data contoh · GitHub asli tampil bila token dan URL profil terisi':
-    'Sample data · real GitHub shows once the token and profile URL are set',
+  Merah: 'Red',
+  Kuning: 'Yellow',
+  Hijau: 'Green',
+  Biru: 'Blue',
+  Ungu: 'Purple',
+  'Pilihan warna tidak dikenal.': 'Unknown color choice.',
+  'Bahasa kartu': 'Card language',
 }

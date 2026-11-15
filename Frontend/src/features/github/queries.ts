@@ -1,13 +1,13 @@
 import 'server-only'
 
 import { getDb } from '@/lib/db'
-import { GITHUB_PALETTE, type Palette, toPalette } from '@/lib/github-palette'
+import { type GithubPresetKey, presetOf, toPalette } from '@/lib/github-palette'
 
-// Warna yang sedang dipakai beranda untuk grafik GitHub: yang disimpan admin, atau biru bawaan.
-export async function getGithubPaletteForEdit(): Promise<Palette> {
+// Pilihan warna yang sedang dipakai beranda untuk grafik GitHub (biru bila belum pernah diubah).
+export async function getGithubPresetForEdit(): Promise<GithubPresetKey> {
   const row = await getDb().siteSetting.findUnique({
     where: { id: 1 },
     select: { githubPalette: true },
   })
-  return toPalette(row?.githubPalette) ?? GITHUB_PALETTE
+  return presetOf(toPalette(row?.githubPalette))
 }
