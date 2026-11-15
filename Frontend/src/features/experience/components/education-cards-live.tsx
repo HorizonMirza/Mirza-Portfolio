@@ -1,13 +1,12 @@
 'use client'
 
-import { Plus, X } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { InlineInput, LANG_NAME, type Lang, MarkdownInline } from '@/components/admin/live-edit'
-import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
@@ -94,7 +93,7 @@ export function EducationCardsLive({
                   {initials(v.organization || '?')}
                 </span>
               )}
-              <div className="ab-edu-text min-w-0 flex-1">
+              <div className="ab-edu-text flex min-w-0 flex-1 flex-col gap-3 pr-8">
                 <h3 className="font-display text-2xl leading-[1.1] font-bold uppercase">
                   <InlineInput
                     key={`org-${lang}`}
@@ -115,7 +114,7 @@ export function EducationCardsLive({
                     }}
                   />
                 </h3>
-                <p className="mt-1 text-muted">
+                <p className="text-muted">
                   <InlineInput
                     key={`title-${lang}`}
                     label={label('Jenjang / jurusan')}
@@ -126,13 +125,13 @@ export function EducationCardsLive({
                     onChange={(event) => set({ [`title_${lang}`]: event.target.value })}
                   />
                 </p>
-                <p className="flex flex-wrap items-center gap-x-1 text-sm text-muted tabular-nums">
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted tabular-nums">
                   <InlineInput
                     label={t('Tahun mulai')}
                     inputMode="numeric"
                     maxLength={4}
                     size={4}
-                    value={v.startMonth.slice(0, 4)}
+                    value={v.startMonth.split('-')[0]}
                     invalid={Boolean(err.startMonth)}
                     className="min-h-6"
                     onChange={(event) =>
@@ -142,46 +141,20 @@ export function EducationCardsLive({
                     }
                   />
                   <span aria-hidden="true">–</span>
-                  {v.endMonth ? (
-                    <>
-                      <InlineInput
-                        label={t('Tahun selesai')}
-                        inputMode="numeric"
-                        maxLength={4}
-                        size={4}
-                        value={v.endMonth.slice(0, 4)}
-                        invalid={Boolean(err.endMonth)}
-                        className="min-h-6"
-                        onChange={(event) =>
-                          set({
-                            endMonth: withYear(
-                              v.endMonth,
-                              event.target.value.replace(/\D/g, ''),
-                              '06',
-                            ),
-                          })
-                        }
-                      />
-                      <button
-                        type="button"
-                        aria-label={t('Masih berlangsung')}
-                        title={t('Masih berlangsung')}
-                        onClick={() => set({ endMonth: '' })}
-                        className="inline-flex size-6 items-center justify-center rounded-md hover:bg-surface-2"
-                      >
-                        <X className="size-3.5" aria-hidden="true" />
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      type="button"
-                      title={t('Tekan untuk mengisi tahun selesai')}
-                      onClick={() => set({ endMonth: thisMonth() })}
-                      className="admin-editable inline-flex min-h-6 items-center rounded-sm px-0.5"
-                    >
-                      {presentLabel}
-                    </button>
-                  )}
+                  {/* tahun selesai: ketik angka, atau teks apa pun tanpa angka (mis. Present) berarti masih
+                      berlangsung; tidak ada tombol terpisah */}
+                  <InlineInput
+                    label={t('Tahun selesai')}
+                    maxLength={12}
+                    size={Math.max(4, (v.endMonth ? 4 : presentLabel.length) + 1)}
+                    value={v.endMonth ? v.endMonth.split('-')[0] : presentLabel}
+                    invalid={Boolean(err.endMonth)}
+                    className="min-h-6"
+                    onChange={(event) => {
+                      const digits = event.target.value.replace(/\D/g, '').slice(0, 4)
+                      set({ endMonth: digits ? withYear(v.endMonth, digits, '06') : '' })
+                    }}
+                  />
                 </p>
                 <MarkdownInline
                   key={`desc-${lang}`}
@@ -190,7 +163,7 @@ export function EducationCardsLive({
                   placeholder={t('Grade / GPA')}
                   invalid={Boolean(err[`description_${lang}`])}
                   size="sm"
-                  className="mt-3 text-muted"
+                  className="text-muted"
                   onChange={(text) => set({ [`description_${lang}`]: text })}
                 />
                 {/* alat kartu di pojok kanan atas, tampil saat kartu disorot: hapus logo dan hapus kartu
@@ -208,13 +181,7 @@ export function EducationCardsLive({
                     </button>
                   ) : null}
                   <span className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100">
-                    {row.logo ? (
-                      <RemoveAssetButton
-                        assetId={row.logo.id}
-                        label={t('Logo {item}', { item: v.organization })}
-                        onDone={() => router.refresh()}
-                      />
-                    ) : null}
+                    {/* satu tombol hapus: menghapus kartu beserta logonya */}
                     {row.id ? (
                       <ConfirmDelete
                         iconOnly

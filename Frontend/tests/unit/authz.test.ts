@@ -81,6 +81,7 @@ async function load() {
     // action yang dulu belum tercakup (audit 2026-10-31, GAP-04)
     ['saveSiteTexts', () => siteText.saveSiteTexts('about', {})],
     ['saveIntroNotice', () => settings.saveIntroNotice({})],
+    ['saveGithubPalette', () => settings.saveGithubPalette({})],
     ['saveHeroRoles', () => profile.saveHeroRoles({})],
     ['saveContactLinks', () => profile.saveContactLinks({})],
     ['saveSiteOption', () => settings.saveSiteOption({ key: 'heroAnimation', value: false })],

@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 
+import { GITHUB_PALETTE, type Palette } from '@/lib/github-palette'
+
 /**
  * Contribution Skyline: setahun aktivitas sebagai peta panas gaya GitHub yang terlipat menjadi
  * skyline isometrik, lalu kembali datar (diadaptasi dari komponen 21st.dev "contribution-skyline").
@@ -222,17 +224,6 @@ export const mixRGB = (a: RGB, b: RGB, t: number): RGB => [
   a[2] + (b[2] - a[2]) * t,
 ]
 export const luminance = (c: RGB): number => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255
-
-/** Empat warna per tema, dari aktivitas paling ringan ke paling berat. */
-export type Palette = { light: string[]; dark: string[] }
-
-// Sama dengan token --gh-1 sampai --gh-4 di globals.css (canvas tidak bisa membaca var()).
-// Biru situs, menggantikan hijau khas GitHub (pilihan pemilik 2026-10-16, demo W1); tingkat
-// terkuat sama dengan --note sehingga angka statistik memakai warna aksen situs.
-export const GITHUB_PALETTE: Palette = {
-  light: ['#b9d2f8', '#6e9de8', '#2f6fd6', '#1b4c9c'],
-  dark: ['#10294a', '#184a8a', '#2f78d6', '#4da3ff'],
-}
 
 export const resolvePalette = (p: Palette | undefined, dark: boolean): string[] => {
   const base = GITHUB_PALETTE[dark ? 'dark' : 'light']

@@ -356,8 +356,9 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Modul | Halaman | Action |
 |---|---|---|
 | Profil (tab modul About) | `/admin/profile` | `saveProfile` |
-| Project (tab modul Projects) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
+| Project (modul Projects, tanpa tab sejak 2026-11-15) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
 | Peran beranda (tab modul Home, sejak 2026-11-11) | `/admin/roles` | `saveHeroRoles` |
+| GitHub (tab modul Home, sejak 2026-11-15) | `/admin/github` | `saveGithubPalette` (warna grafik kontribusi di `SiteSetting.githubPalette`) |
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill`; logo skill lewat `signAssetUpload`/`attachUploadedAsset` (target `skill-logo`, 2026-11-12) |
 | Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
 | Halaman situs (8 modul: Bagian Awal sebagai tab "Kartu pembuka" di Home sejak 2026-11-11, Home, About, Experience, Projects, Contact, Navbar, Footer; Privasi dan Halaman lain dihapus 2026-11-11) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto utama beranda tidak diganti dari admin sejak 2026-11-13 (target `hero-portrait` tetap ada di server; tab Foto beranda dihapus 2026-11-12, foto profil di Akun) |

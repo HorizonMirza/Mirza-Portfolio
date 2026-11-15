@@ -376,6 +376,8 @@ model SiteSetting {
   // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
   heroPortraitId     String?  @unique @db.Uuid
   heroPortrait       Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
+  // warna grafik kontribusi GitHub di beranda: { light: [4 hex], dark: [4 hex] }; kosong = biru bawaan
+  githubPalette      Json?
   // Admin → Pengaturan (DESIGN.md bagian 119). Pilihan teks divalidasi Zod (features/settings/options.ts).
   // tema awal pengunjung yang belum memilih: dark | light | system
   defaultTheme       String   @default("dark")

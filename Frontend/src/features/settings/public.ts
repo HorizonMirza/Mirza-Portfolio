@@ -6,6 +6,7 @@ import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import type { PublicImage } from '@/lib/public-image'
 import { getDb } from '@/lib/db'
 import { safeImage } from '@/lib/public-image'
+import { type Palette, toPalette } from '@/lib/github-palette'
 
 import {
   DEFAULT_SITE_OPTIONS,
@@ -28,6 +29,8 @@ export type SiteSettings = SiteOptions & {
   heroPortrait: PublicImage | null
   // null: pemberitahuan pembuka dimatikan atau belum lengkap
   intro: IntroNoticeContent | null
+  // warna grafik kontribusi GitHub dari admin; null = biru bawaan
+  githubPalette: Palette | null
 }
 
 // Foto hero hanya dipakai bila ukurannya diketahui dan asalnya akun Cloudinary situs ini.
@@ -68,6 +71,7 @@ const loadSiteSettings = unstable_cache(
     return {
       ...options,
       heroPortrait: heroImage(row?.heroPortrait),
+      githubPalette: toPalette(row?.githubPalette),
       intro: complete
         ? {
             body_id: row.introBody_id!,
@@ -87,6 +91,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   try {
     return await loadSiteSettings()
   } catch {
-    return { ...DEFAULT_SITE_OPTIONS, heroPortrait: null, intro: null }
+    return { ...DEFAULT_SITE_OPTIONS, heroPortrait: null, intro: null, githubPalette: null }
   }
 }

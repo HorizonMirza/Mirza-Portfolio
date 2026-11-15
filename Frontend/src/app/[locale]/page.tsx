@@ -10,10 +10,11 @@ import { HeroContent } from '@/components/site/hero-content'
 import { HeroCursor } from '@/components/site/hero-cursor'
 import { LiquidMaskPortrait } from '@/components/site/liquid-mask-portrait'
 import { Container } from '@/components/site/section-heading'
-import ContributionSkyline, { type SkylineLabels } from '@/components/ui/contribution-skyline'
+import ContributionSkyline from '@/components/ui/contribution-skyline'
 import { ExperienceAccordion } from '@/features/experience/components/public/experience-accordion'
 import { getPublicExperiences } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
+import { skylineLabelsFrom } from '@/features/github/labels'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
 import { getPublicProfile } from '@/features/profile/public'
 import { getPublishedProjects } from '@/features/projects/public'
@@ -77,27 +78,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const contributions = login ? await getGithubContributions(login) : null
   const numberLocale = locale === 'id' ? 'id-ID' : 'en-US'
   // Teks grafik kontribusi dua bahasa (komponen klien hanya menerima string, bukan fungsi).
-  const skylineKeys = [
-    'unit',
-    'unitPlural',
-    'none',
-    'inLastYear',
-    'on',
-    'busiest',
-    'longest',
-    'current',
-    'day',
-    'days',
-    'less',
-    'more',
-    'view',
-    'flat',
-    'skyline',
-    'keys',
-  ] as const satisfies readonly (keyof SkylineLabels)[]
-  const skylineLabels = Object.fromEntries(
-    skylineKeys.map((key) => [key, tSkyline(key)]),
-  ) as SkylineLabels
+  const skylineLabels = skylineLabelsFrom(tSkyline)
   const contributionDays = contributions
     ? contributions.weeks.flat().map((day) => ({ date: day.date, count: day.count }))
     : []
@@ -373,6 +354,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               data={contributionDays}
               locale={numberLocale}
               labels={skylineLabels}
+              palette={settings.githubPalette ?? undefined}
             />
           </Container>
         </section>

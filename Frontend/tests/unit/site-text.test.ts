@@ -72,12 +72,14 @@ describe('modul situs', () => {
     expect(active('/admin/profile')).toEqual(['/admin/profile'])
     expect(active('/admin/education')).toEqual(['/admin/profile'])
     // tab Home (bagian 129): menu Home membuka tab pertama, kartu pembuka
-    for (const tab of ['/admin/pages/home', '/admin/roles', '/admin/skills'])
+    for (const tab of ['/admin/pages/home', '/admin/roles', '/admin/skills', '/admin/github'])
       expect(active(tab), tab).toEqual(['/admin/pages/intro'])
     // Experience tanpa tab Teks halaman sejak 2026-11-13: menu langsung ke timeline
     expect(active('/admin/experience/abc')).toEqual(['/admin/experience'])
     expect(active('/admin/pages/experience')).toEqual(['/admin/experience'])
-    expect(active('/admin/projects/new')).toEqual(['/admin/pages/projects'])
+    expect(active('/admin/projects/new')).toEqual(['/admin/projects'])
+    expect(active('/admin/pages/projects')).toEqual(['/admin/projects'])
+    expect(active('/admin/github')).toEqual(['/admin/pages/intro'])
     expect(active('/admin')).toEqual(['/admin'])
   })
 

@@ -11,10 +11,7 @@ const TABS = {
     { label: 'Kartu pembuka', href: '/admin/pages/intro' },
     { label: 'Peran beranda', href: '/admin/roles' },
     { label: 'Skill teknis', href: '/admin/skills' },
-  ],
-  projects: [
-    { label: 'Teks halaman', href: '/admin/pages/projects' },
-    { label: 'Project', href: '/admin/projects' },
+    { label: 'GitHub', href: '/admin/github' },
   ],
 } as const
 

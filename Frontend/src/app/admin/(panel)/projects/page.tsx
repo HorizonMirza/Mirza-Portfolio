@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 
-import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { browserAddress } from '@/features/projects/browser-address'
 import { ProjectListLive } from '@/features/projects/components/project-list-live'
@@ -24,7 +23,6 @@ export default async function ProjectsPage() {
   return (
     <>
       <PageHeader title="Projects" />
-      <ModuleTabs moduleId="projects" current="/admin/projects" />
       <ProjectListLive
         rows={projects.map((p) => ({
           id: p.id,

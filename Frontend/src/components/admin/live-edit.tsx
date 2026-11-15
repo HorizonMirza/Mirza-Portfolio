@@ -218,7 +218,16 @@ export function StateBox({ note, children }: { note: string; children: ReactNode
 
 // Pilihan bahasa isi dalam satu baris selebar Simpan, tepat di atasnya; bentuknya sama dengan tombol
 // Chip kampus/Chip bendera (revisi pemilik 2026-11-13, DESIGN.md bagian 147)
-export function LangRow({ lang, onChange }: { lang: Lang; onChange: (lang: Lang) => void }) {
+export function LangRow({
+  lang,
+  onChange,
+  dirty,
+}: {
+  lang: Lang
+  onChange: (lang: Lang) => void
+  // titik: bahasa ini sudah diubah dan belum disimpan
+  dirty?: Partial<Record<Lang, boolean>>
+}) {
   const t = useAdminT()
   return (
     <div
@@ -233,13 +242,19 @@ export function LangRow({ lang, onChange }: { lang: Lang; onChange: (lang: Lang)
           aria-pressed={l === lang}
           onClick={() => onChange(l)}
           className={cn(
-            'inline-flex min-h-11 items-center justify-center rounded-md border px-3 text-sm font-semibold',
+            'relative inline-flex min-h-11 items-center justify-center rounded-md border px-3 text-sm font-semibold',
             l === lang
               ? 'border-text bg-text text-bg'
               : 'border-dashed border-border text-muted hover:text-text',
           )}
         >
           {l.toUpperCase()}
+          {dirty?.[l] ? (
+            <span
+              aria-hidden="true"
+              className="absolute top-2 right-2 size-1.5 rounded-full bg-current"
+            />
+          ) : null}
         </button>
       ))}
     </div>

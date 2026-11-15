@@ -7,7 +7,7 @@ import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
-import { LANG_NAME, type Lang, SaveBar, useEditLang } from '@/components/admin/live-edit'
+import { LANG_NAME, type Lang, LangRow, SaveBar, useEditLang } from '@/components/admin/live-edit'
 import { SiteFrame } from '@/components/admin/site-frame'
 import { CommitGrid } from '@/components/shared/commit-grid'
 import { cn } from '@/lib/utils'
@@ -76,6 +76,11 @@ export function IntroForm({
     return () => observer.disconnect()
   }, [value, lang])
 
+  const dirtyLangs = {
+    id: Boolean(dirtyFields.introBody_id),
+    en: Boolean(dirtyFields.introBody_en),
+  }
+
   const onSubmit = form.handleSubmit(
     (values) => {
       startTransition(async () => {
@@ -100,29 +105,8 @@ export function IntroForm({
             <div className="intro-panel">
               <div aria-hidden="true" className="intro-grain" />
               <div className="intro-box">
-                <div className="flex items-center justify-between gap-4">
-                  <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
-                  <div role="group" aria-label={t('Bahasa yang diubah')} className="intro-lang">
-                    {(['id', 'en'] as const).map((l) => (
-                      <button
-                        key={l}
-                        type="button"
-                        aria-pressed={l === lang}
-                        onClick={() => setLang(l)}
-                        className="relative"
-                      >
-                        {l.toUpperCase()}
-                        {/* titik: bahasa ini sudah diubah dan belum disimpan */}
-                        {dirtyFields[`introBody_${l}`] ? (
-                          <span
-                            aria-hidden="true"
-                            className="absolute top-1 right-1 size-1.5 rounded-full bg-current"
-                          />
-                        ) : null}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {/* pilihan ID/EN pindah ke baris di atas Simpan, sama seperti About (revisi 2026-11-15) */}
+                <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
                 <p className="intro-title" aria-hidden="true">
                   {card.title}
                 </p>
@@ -179,6 +163,7 @@ export function IntroForm({
           {t('Isi {lang}: {error}', { lang: t(LANG_NAME[otherLang]), error: t(otherError) })}
         </p>
       ) : null}
+      <LangRow lang={lang} onChange={setLang} dirty={dirtyLangs} />
       <SaveBar pending={pending} />
     </form>
   )

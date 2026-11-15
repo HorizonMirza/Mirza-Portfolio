@@ -40,7 +40,7 @@ type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles' | 'aboutC
 // berdampingan), semuanya diubah di halaman ini. Peran tampil seperti di situs (peran bawaan sebagai
 // teks biasa, sama seperti Home → Peran) dan diketik langsung; nama tetap. Foto kartu ditekan untuk
 // diganti. Pendidikan diubah, ditambah, dan dihapus langsung di kartunya. Di bawah panggung: Chip
-// kampus/Chip bendera, lalu pilihan bahasa ID/EN, lalu Simpan (menyimpan profil dan pendidikan).
+// logo/Chip bendera, lalu pilihan bahasa ID/EN, lalu Simpan (menyimpan profil dan pendidikan).
 export function ProfileLive({
   defaultValues,
   photo,
@@ -293,7 +293,7 @@ export function ProfileLive({
         <LiveErrors messages={messages} />
         {/* chip di kartu foto: satu baris selebar Simpan (revisi 2026-11-13) */}
         <div className="admin-bleed grid grid-cols-2 gap-2">
-          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip logo & nama')}
+          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip logo')}
           {toggle('showFlag', values.showFlag ?? true, 'Chip bendera')}
         </div>
         {/* bahasa isi tepat di atas Simpan, bentuknya sama dengan tombol chip */}

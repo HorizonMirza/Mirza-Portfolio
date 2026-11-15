@@ -7,7 +7,9 @@
  * Token desain. Sumber: Documentation/DESIGN.md bagian 2.
  * Rasio kontras sudah dihitung di DESIGN.md. Ubah di sini saja, jangan menaruh warna acak di komponen.
  */
-:root {
+/* .theme-light: pratinjau tema terang di dalam halaman gelap (admin → Home → GitHub) */
+:root,
+.theme-light {
   /* Hitam-putih (pilihan pemilik 2026-10-01). Biru Azure (--note) hanya untuk catatan kecil:
      label, nomor bagian, tanggal, titik status, lampu menu, cincin fokus, grafik. */
   --bg: #ffffff;
@@ -772,6 +774,11 @@ button.xp-frame {
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 700;
+}
+/* admin: logo dan teks chip masing-masing bergaris putus-putus, jadi diberi jarak (revisi 2026-11-15) */
+.admin-photo-edit .ab-pc-chip {
+  gap: 16px;
+  padding: 10px 18px 10px 10px;
 }
 /* kartu foto bisa dimiringkan (PhotoTilt, revisi pemilik 2026-10-07 malam): .ab-tilt memberi
    perspektif dan menerima kursor, .ab-pc yang miring. Hanya transform (GPU). */

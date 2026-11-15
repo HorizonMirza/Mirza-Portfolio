@@ -1,10 +1,13 @@
 'use server'
 
-import type { Prisma } from '@/generated/prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
+import { isDefaultPalette } from '@/lib/github-palette'
 import { revalidateContent } from '@/lib/revalidate'
+
+import { githubPaletteSchema } from '@/features/github/schema'
 
 import { siteOptionSchema } from './options'
 import { introSchema } from './schema'
@@ -45,6 +48,26 @@ export async function saveIntroNotice(input: unknown): Promise<ActionResult> {
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
     await saveSetting(admin.userId, introSettingData(parsed.data))
     return ok('Kartu pembuka disimpan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+// Warna grafik kontribusi GitHub di beranda (Admin → Home → GitHub). Sama dengan warna bawaan =
+// disimpan kosong, supaya perubahan bawaan situs ke depan ikut tampil.
+export async function saveGithubPalette(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = githubPaletteSchema.safeParse(input)
+    if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? 'Periksa kembali warna.')
+    const palette = {
+      light: parsed.data.light.map((c) => c.toLowerCase()),
+      dark: parsed.data.dark.map((c) => c.toLowerCase()),
+    }
+    await saveSetting(admin.userId, {
+      githubPalette: isDefaultPalette(palette) ? Prisma.DbNull : palette,
+    })
+    return ok('Warna GitHub disimpan.')
   } catch (error) {
     return toActionError(error)
   }

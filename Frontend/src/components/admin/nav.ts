@@ -31,7 +31,7 @@ export const adminNav: readonly NavItem[] = [
     href: '/admin/pages/intro',
     label: 'Home',
     icon: House,
-    match: ['/admin/pages/home', '/admin/roles', '/admin/skills'],
+    match: ['/admin/pages/home', '/admin/roles', '/admin/skills', '/admin/github'],
   },
   {
     // tab pertama About adalah Profil sejak tab Teks halaman dihapus (2026-11-12)
@@ -48,10 +48,11 @@ export const adminNav: readonly NavItem[] = [
     match: ['/admin/pages/experience'],
   },
   {
-    href: '/admin/pages/projects',
+    // tanpa tab Teks halaman sejak 2026-11-15: menu langsung ke daftar project
+    href: '/admin/projects',
     label: 'Projects',
     icon: Code,
-    match: ['/admin/projects'],
+    match: ['/admin/pages/projects'],
   },
   { href: '/admin/pages/contact', label: 'Contact', icon: MessageSquare },
   { href: '/admin/pages/navbar', label: 'Navbar', icon: PanelTop },
