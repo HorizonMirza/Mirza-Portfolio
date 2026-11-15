@@ -38,28 +38,3 @@ export function exportSize(frameW: number, frameH: number, scale: number, maxSid
   const k = Math.min(1, maxSide / Math.max(natW, natH))
   return { width: Math.max(1, Math.round(natW * k)), height: Math.max(1, Math.round(natH * k)) }
 }
-
-// pilihan perbandingan bingkai
-export type AspectChoice = { key: string; label: string; ratio: number | 'original' }
-
-export const ASPECT_PRESETS: AspectChoice[] = [
-  { key: '1:1', label: '1:1', ratio: 1 },
-  { key: '4:5', label: '4:5', ratio: 4 / 5 },
-  { key: '4:3', label: '4:3', ratio: 4 / 3 },
-  { key: '16:9', label: '16:9', ratio: 16 / 9 },
-  { key: 'original', label: 'Asli', ratio: 'original' },
-]
-
-// Tujuan dengan perbandingan tetap (mis. potret hero) hanya punya satu pilihan
-export function aspectChoices(defaultRatio: number | undefined, fixed: boolean): AspectChoice[] {
-  if (!defaultRatio) return ASPECT_PRESETS
-  const base: AspectChoice = { key: 'default', label: 'Sesuai tempat', ratio: defaultRatio }
-  if (fixed) return [base]
-  // pilihan yang sama dengan bawaan tidak ditampilkan dua kali
-  return [
-    base,
-    ...ASPECT_PRESETS.filter(
-      (p) => p.ratio === 'original' || Math.abs(p.ratio - defaultRatio) > 0.01,
-    ),
-  ]
-}

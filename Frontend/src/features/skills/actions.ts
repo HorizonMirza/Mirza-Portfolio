@@ -43,14 +43,14 @@ async function rewriteOrder(
 export async function saveSkillCategory(
   categoryId: string | null,
   input: unknown,
-): Promise<ActionResult> {
+): Promise<ActionResult<{ id: string }>> {
   try {
     const admin = await requireSuperAdmin()
     if (categoryId !== null && !idSchema.safeParse(categoryId).success)
       return fail('Kategori tidak valid.')
     const parsed = skillCategorySchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
-    await getDb().$transaction(async (tx) => {
+    const id = await getDb().$transaction(async (tx) => {
       if (categoryId) {
         const before = await tx.skillCategory.findUniqueOrThrow({ where: { id: categoryId } })
         const after = await tx.skillCategory.update({
@@ -65,7 +65,7 @@ export async function saveSkillCategory(
           before,
           after,
         })
-        return
+        return categoryId
       }
       await lockOrderScope(tx, 'skill-category')
       const last = await tx.skillCategory.aggregate({ _max: { order: true } })
@@ -79,9 +79,10 @@ export async function saveSkillCategory(
         entityId: created.id,
         after: created,
       })
+      return created.id
     })
     revalidate()
-    return ok(categoryId ? 'Kategori disimpan.' : 'Kategori dibuat.')
+    return ok(categoryId ? 'Kategori disimpan.' : 'Kategori dibuat.', { id })
   } catch (error) {
     return toActionError(error)
   }

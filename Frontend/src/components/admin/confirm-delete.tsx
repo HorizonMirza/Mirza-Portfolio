@@ -8,7 +8,6 @@ import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
@@ -61,20 +60,19 @@ export function ConfirmDelete({
       <DialogContent>
         <DialogTitle>{t('Hapus {item}?', { item: itemLabel })}</DialogTitle>
         <DialogDescription>
-          {t('Data yang dihapus tidak bisa dikembalikan. Tindakan ini tercatat di log audit.')}
+          {t(
+            'Setelah dihapus, data ini beserta berkas yang terkait tidak bisa dikembalikan lagi. Penghapusan ini tercatat di log audit.',
+          )}
         </DialogDescription>
-        <div className="mt-6 flex justify-end gap-2">
-          <DialogClose asChild>
-            <Button variant="secondary">{t('Batal')}</Button>
-          </DialogClose>
-          <Button
-            onClick={confirm}
-            disabled={pending}
-            className="bg-danger text-white hover:bg-danger/90 dark:text-bg"
-          >
-            {pending ? t('Menghapus…') : t('Hapus')}
-          </Button>
-        </div>
+        {/* satu baris penuh seperti Simpan; menutup lewat tombol x di pojok */}
+        <button
+          type="button"
+          onClick={confirm}
+          disabled={pending}
+          className="mt-6 min-h-11 w-full rounded-md bg-danger text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60 dark:text-bg"
+        >
+          {pending ? t('Menghapus…') : t('Hapus')}
+        </button>
       </DialogContent>
     </Dialog>
   )

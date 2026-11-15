@@ -243,9 +243,7 @@ export function LangRow({
           onClick={() => onChange(l)}
           className={cn(
             'relative inline-flex min-h-11 items-center justify-center rounded-md border px-3 text-sm font-semibold',
-            l === lang
-              ? 'border-text bg-text text-bg'
-              : 'border-dashed border-border text-muted hover:text-text',
+            l === lang ? 'border-text bg-text text-bg' : 'border-border text-muted hover:text-text',
           )}
         >
           {l.toUpperCase()}
@@ -317,7 +315,7 @@ export function MarkdownInline({
       {value.trim() ? (
         <MarkdownView source={value} size={size} />
       ) : (
-        <span className="opacity-40">{placeholder}</span>
+        <span className={cn('opacity-40', size === 'sm' && 'text-sm')}>{placeholder}</span>
       )}
     </div>
   )

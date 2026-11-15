@@ -1,14 +1,12 @@
 'use client'
 
 import { Plus } from 'lucide-react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { InlineInput, LANG_NAME, type Lang, MarkdownInline } from '@/components/admin/live-edit'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 import { deleteExperience } from '../actions'
 import { emptyEducation, initials } from '../schema'
@@ -67,32 +65,34 @@ export function EducationCardsLive({
           const org = lang === 'en' ? v.organization_en || v.organization : v.organization
           return (
             <li key={row.key} className="ab-edu-card group relative">
-              {row.id ? (
-                <button
-                  type="button"
-                  onClick={() => picker.pick('experience-logo', row.id!)}
-                  className="ab-edu-logo admin-editable cursor-pointer"
-                >
-                  {row.logo ? (
-                    <Image
-                      placeholder={SHIMMER_PLACEHOLDER}
-                      src={row.logo.url}
-                      alt=""
-                      width={128}
-                      height={128}
-                      sizes="64px"
-                      className="size-full object-cover"
-                    />
-                  ) : (
-                    <span aria-hidden="true">{initials(v.organization || '?')}</span>
-                  )}
-                  <span className="sr-only">{t('Logo {item}', { item: v.organization })}</span>
-                </button>
-              ) : (
-                <span className="ab-edu-logo" aria-hidden="true">
-                  {initials(v.organization || '?')}
-                </span>
-              )}
+              {/* logo ditekan untuk diunggah; kartu baru menyimpan pilihannya di browser dan
+                  mengunggahnya saat Simpan */}
+              <button
+                type="button"
+                onClick={() =>
+                  row.id
+                    ? picker.pick('experience-logo', row.id)
+                    : picker.pick('experience-logo', undefined, (blob, name) =>
+                        entries.setPendingImage(row.key, 'logo', blob, name),
+                      )
+                }
+                className="ab-edu-logo admin-editable cursor-pointer"
+              >
+                {row.pending?.logo || row.logo ? (
+                  // pratinjau sementara (blob) tidak lewat optimasi next/image
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={row.pending?.logo?.preview ?? row.logo!.url}
+                    alt=""
+                    width={128}
+                    height={128}
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  <span aria-hidden="true">{initials(v.organization || '?')}</span>
+                )}
+                <span className="sr-only">{t('Logo {item}', { item: v.organization })}</span>
+              </button>
               <div className="ab-edu-text flex min-w-0 flex-1 flex-col items-start gap-2.5 pr-8">
                 <h3 className="font-display text-2xl leading-[1.1] font-bold uppercase">
                   <InlineInput

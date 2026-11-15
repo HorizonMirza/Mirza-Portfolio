@@ -140,8 +140,8 @@ export const EN: Record<string, string> = {
   'Hapus {item}': 'Delete {item}',
   Hapus: 'Delete',
   'Hapus {item}?': 'Delete {item}?',
-  'Data yang dihapus tidak bisa dikembalikan. Tindakan ini tercatat di log audit.':
-    'Deleted data cannot be restored. This action is recorded in the audit log.',
+  'Setelah dihapus, data ini beserta berkas yang terkait tidak bisa dikembalikan lagi. Penghapusan ini tercatat di log audit.':
+    'Once deleted, this data and its related files cannot be restored. The deletion is recorded in the audit log.',
   'Menghapus…': 'Deleting…',
   'Halaman {page} dari {pages}': 'Page {page} of {pages}',
   Sebelumnya: 'Previous',
@@ -655,12 +655,9 @@ export const EN: Record<string, string> = {
   'Nama maksimal 80 karakter': 'Name must be at most 80 characters',
   // pemilih berkas + pemotong gambar, chip kartu About (revisi 2026-11-15)
   'Atur gambar': 'Adjust image',
-  'Geser gambar untuk memilih bagian yang tampil. Perbesar atau perkecil dengan penggeser atau roda tetikus.':
-    'Drag the image to choose the visible part. Zoom with the slider or the mouse wheel.',
   'Gambar tidak bisa dibaca. Coba berkas lain.': 'The image could not be read. Try another file.',
   'Bingkai potong. Panah menggeser, plus dan minus mengubah ukuran.':
     'Crop frame. Arrow keys move it, plus and minus resize it.',
-  'Ukuran bingkai': 'Frame size',
   Perkecil: 'Zoom out',
   'Ukuran gambar': 'Image size',
   Perbesar: 'Zoom in',
@@ -684,4 +681,8 @@ export const EN: Record<string, string> = {
   'Bahasa kartu': 'Card language',
   'Ganti foto kartu ID': 'Change ID card photo',
   'Foto kartu ID': 'ID card photo',
+  // Home → Skill teknis: pratinjau, butir baru, Simpan (revisi 2026-11-15)
+  'Belum ada skill, bagian ini belum tampil di situs.':
+    'No skills yet, so this section is not shown on the site.',
+  'Buang {item}': 'Discard {item}',
 }

@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
 
 import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { SkillsLive } from '@/features/skills/components/skills-live'
+import { getPublicSkills } from '@/features/skills/public'
 import { listSkillCategoriesAdmin } from '@/features/skills/queries'
-import { resolveLogo } from '@/features/skills/skill-items'
+import { resolveLogo, toSkillItems } from '@/features/skills/skill-items'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { loc } from '@/lib/localized'
 import { isUploadConfigured } from '@/lib/uploads'
 
 // judul tab browser ikut bahasa admin
@@ -15,17 +18,41 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('Skill teknis')} · Home` }
 }
 
-// Home → Skill teknis (revisi pemilik 2026-11-12, DESIGN.md bagian 143): tanpa globe, hanya daftar
-// kategori (nama Indonesia dan Inggris) dan skill-nya; logo tiap skill ditekan untuk diunggah.
+// Home → Skill teknis (revisi pemilik 2026-11-15, DESIGN.md bagian 153): bagian "Keahlian Teknis"
+// tampil seperti di beranda situs (globe, tiap bahasa dari data tersimpan), di bawahnya bagian untuk
+// mengubah dan menambah kategori dan skill; ID/EN dan Simpan di paling bawah seperti halaman lain.
 export default async function SkillsPage() {
   await requireSuperAdminPage()
-  const categories = await listSkillCategoriesAdmin()
+  const [categories, publicSkills, tId, tEn, gId, gEn] = await Promise.all([
+    listSkillCategoriesAdmin(),
+    getPublicSkills(),
+    getTranslations({ locale: 'id', namespace: 'Home' }),
+    getTranslations({ locale: 'en', namespace: 'Home' }),
+    getTranslations({ locale: 'id', namespace: 'SkillGlobe' }),
+    getTranslations({ locale: 'en', namespace: 'SkillGlobe' }),
+  ])
+  const preview = (locale: 'id' | 'en', heading: string, g: typeof gId) => ({
+    heading,
+    items: toSkillItems(publicSkills, locale),
+    categories: publicSkills.map((c) => loc(c, 'name', locale)),
+    labels: {
+      globe: g('label'),
+      list: g('list'),
+      categories: g('categories'),
+      category: g('category'),
+      all: g('all'),
+    },
+  })
   return (
     <>
       <PageHeader title="Home" />
       <ModuleTabs moduleId="home" current="/admin/skills" />
       <SkillsLive
         configured={isUploadConfigured()}
+        preview={{
+          id: preview('id', tId('stackHeading'), gId),
+          en: preview('en', tEn('stackHeading'), gEn),
+        }}
         categories={categories.map((c) => ({
           id: c.id,
           name_id: c.name_id,

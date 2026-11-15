@@ -1,11 +1,19 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 import type { AssetView } from '@/features/assets/components/asset-panels'
 
+import { uploadAsset } from '@/features/assets/upload-client'
+
 import { saveExperience } from '../actions'
 import { experienceSchema, type ExperienceInput } from '../schema'
+
+// Gambar yang sudah dipilih dan dipotong untuk entri baru yang belum tersimpan: diunggah setelah
+// entrinya tersimpan (butuh id entri). `preview` = alamat sementara untuk ditampilkan.
+export type PendingImage = { blob: Blob; name: string; preview: string }
+export type PendingSlot = 'logo' | 'photo'
 
 export type EntryRow = {
   // id untuk entri tersimpan, "new-n" untuk entri baru yang belum disimpan
@@ -14,6 +22,7 @@ export type EntryRow = {
   values: ExperienceInput
   logo: AssetView | null
   photo: AssetView | null
+  pending?: Partial<Record<PendingSlot, PendingImage>>
 }
 
 export type EntryErrors = Record<string, string>
@@ -83,7 +92,22 @@ export function useEntries(initial: EntryRow[]) {
     return key
   }
 
+  // gambar entri baru: disimpan di browser sampai Simpan ditekan
+  function setPendingImage(key: string, slot: PendingSlot, blob: Blob, name: string) {
+    const preview = URL.createObjectURL(blob)
+    setRows((list) =>
+      list.map((r) => {
+        if (r.key !== key) return r
+        const old = r.pending?.[slot]
+        if (old) URL.revokeObjectURL(old.preview)
+        return { ...r, pending: { ...r.pending, [slot]: { blob, name, preview } } }
+      }),
+    )
+  }
+
   function discard(key: string) {
+    const gone = rows.find((r) => r.key === key)
+    for (const img of Object.values(gone?.pending ?? {})) URL.revokeObjectURL(img.preview)
     setRows((list) => list.filter((r) => r.key !== key))
     setErrors((e) => {
       const { [key]: _drop, ...rest } = e
@@ -118,8 +142,27 @@ export function useEntries(initial: EntryRow[]) {
       }
       ok++
       const id = result.data.id
+      // gambar yang dipilih sebelum entri tersimpan diunggah sekarang; yang gagal tidak
+      // membatalkan entrinya (bisa diunggah ulang dari kartu)
+      for (const [slot, img] of Object.entries(row.pending ?? {}) as [
+        PendingSlot,
+        PendingImage,
+      ][]) {
+        const sent = await uploadAsset(
+          slot === 'logo' ? 'experience-logo' : 'experience-photo',
+          id,
+          img.blob,
+          img.name,
+        )
+        if (!sent.ok) toast.error(sent.message)
+        URL.revokeObjectURL(img.preview)
+      }
       // entri baru mendapat id: kuncinya ikut id agar cocok dengan data server berikutnya
-      setRows((list) => list.map((r) => (r.key === row.key ? { ...r, key: id, id, values } : r)))
+      setRows((list) =>
+        list.map((r) =>
+          r.key === row.key ? { ...r, key: id, id, values, pending: undefined } : r,
+        ),
+      )
       setSaved((s) => ({ ...s, [id]: snap(values) }))
     }
     setErrors(nextErrors)
@@ -132,6 +175,7 @@ export function useEntries(initial: EntryRow[]) {
     update,
     add,
     discard,
+    setPendingImage,
     saveAll,
     dirty: rows.some(isDirty),
   }

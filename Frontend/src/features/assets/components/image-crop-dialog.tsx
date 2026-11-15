@@ -4,18 +4,9 @@ import { Minus, Plus, RotateCw } from 'lucide-react'
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 
-import {
-  aspectChoices,
-  clampOffset,
-  coverScale,
-  effectiveSize,
-  exportSize,
-  type Rotation,
-} from '../crop-math'
+import { clampOffset, coverScale, effectiveSize, exportSize, type Rotation } from '../crop-math'
 import { maxSideOf, UPLOAD_TARGETS, type UploadTarget } from '../targets'
 
 const FRAME_MAX_W = 440
@@ -64,12 +55,11 @@ export function ImageCropDialog({
 }) {
   const t = useAdminT()
   const spec = UPLOAD_TARGETS[target]
-  const defaultRatio = 'aspect' in spec ? spec.aspect : undefined
-  const choices = aspectChoices(defaultRatio, 'ratio' in spec)
+  // satu ukuran saja: perbandingan yang dipakai di situs untuk gambar ini (revisi 2026-11-15 malam)
+  const targetRatio = 'aspect' in spec ? spec.aspect : undefined
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [bitmap, setBitmap] = useState<ImageBitmap | null>(null)
   const [failed, setFailed] = useState(false)
-  const [choice, setChoice] = useState(choices[0]!.key)
   const [zoom, setZoom] = useState(1)
   const [rotation, setRotation] = useState<Rotation>(0)
   const [offset, setOffset] = useState({ x: 0, y: 0 })
@@ -93,8 +83,7 @@ export function ImageCropDialog({
   }, [file])
 
   const eff = bitmap ? effectiveSize(bitmap.width, bitmap.height, rotation) : { w: 1, h: 1 }
-  const picked = choices.find((c) => c.key === choice) ?? choices[0]!
-  const ratio = picked.ratio === 'original' ? eff.w / eff.h : picked.ratio
+  const ratio = targetRatio ?? eff.w / eff.h
   const frameW = Math.round(Math.min(FRAME_MAX_W, FRAME_MAX_H * ratio))
   const frameH = Math.round(frameW / ratio)
   const base = coverScale(eff.w, eff.h, frameW, frameH)
@@ -157,12 +146,6 @@ export function ImageCropDialog({
     else if (event.key === '-') changeZoom(zoom / 1.15)
   }
 
-  function pickChoice(key: string) {
-    setChoice(key)
-    setOffset({ x: 0, y: 0 })
-    setZoom(1)
-  }
-
   async function confirm() {
     if (!bitmap) return
     setBusy(true)
@@ -196,13 +179,11 @@ export function ImageCropDialog({
 
   return (
     <Dialog open onOpenChange={(open) => (open || working ? null : onCancel())}>
-      <DialogContent className="max-h-[92dvh] max-w-[34rem] overflow-y-auto">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-h-[92dvh] max-w-[34rem] overflow-y-auto"
+      >
         <DialogTitle>{t('Atur gambar')}</DialogTitle>
-        <DialogDescription>
-          {t(
-            'Geser gambar untuk memilih bagian yang tampil. Perbesar atau perkecil dengan penggeser atau roda tetikus.',
-          )}
-        </DialogDescription>
         {failed ? (
           <p className="mt-4 rounded-md border border-dashed border-border p-4 text-sm text-danger">
             {t('Gambar tidak bisa dibaca. Coba berkas lain.')}
@@ -253,30 +234,6 @@ export function ImageCropDialog({
               />
             </div>
 
-            {/* ukuran bingkai */}
-            <div
-              role="group"
-              aria-label={t('Ukuran bingkai')}
-              className="flex flex-wrap justify-center gap-2"
-            >
-              {choices.map((c) => (
-                <button
-                  key={c.key}
-                  type="button"
-                  aria-pressed={c.key === choice}
-                  onClick={() => pickChoice(c.key)}
-                  className={cn(
-                    'inline-flex min-h-9 items-center rounded-md border px-3 text-xs font-semibold',
-                    c.key === choice
-                      ? 'border-text bg-text text-bg'
-                      : 'border-border text-muted hover:text-text',
-                  )}
-                >
-                  {t(c.label)}
-                </button>
-              ))}
-            </div>
-
             {/* perbesar/perkecil dan putar */}
             <div className="flex items-center gap-2">
               <button
@@ -319,17 +276,20 @@ export function ImageCropDialog({
             </div>
           </div>
         )}
-        <p role="status" className="mt-3 min-h-5 text-sm text-muted">
-          {stage}
-        </p>
-        <div className="mt-2 flex justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={onCancel} disabled={working}>
-            {t('Batal')}
-          </Button>
-          <Button type="button" onClick={confirm} disabled={working || failed || !bitmap}>
-            {working ? t('Memproses…') : t('Simpan')}
-          </Button>
-        </div>
+        {stage ? (
+          <p role="status" className="mt-3 text-sm text-muted">
+            {stage}
+          </p>
+        ) : null}
+        {/* satu baris penuh, bentuk sama dengan Simpan di halaman admin lain */}
+        <button
+          type="button"
+          onClick={confirm}
+          disabled={working || failed || !bitmap}
+          className="mt-4 min-h-11 w-full rounded-md bg-text text-sm font-semibold text-bg transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+        >
+          {working ? t('Memproses…') : t('Simpan')}
+        </button>
       </DialogContent>
     </Dialog>
   )

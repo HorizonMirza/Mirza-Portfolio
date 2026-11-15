@@ -179,14 +179,14 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
 
 test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => {
   await page.goto('/admin/skills')
-  // tanpa globe, hanya daftar kategori; nama kategori Indonesia dan Inggris berdampingan, diketik
-  // langsung (revisi pemilik 2026-11-12, DESIGN.md bagian 143)
-  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toHaveCount(0)
-  await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toHaveCount(0)
-  for (const lang of ['Indonesia', 'Inggris'])
-    await expect(
-      page.getByRole('textbox', { name: `Nama kategori (${lang})` }).first(),
-    ).toBeVisible()
+  // bagian "Keahlian Teknis" tampil seperti di beranda; di bawahnya bagian untuk mengubah dan
+  // menambah, lalu ID/EN dan Simpan di paling bawah (revisi pemilik 2026-11-15, DESIGN.md bagian 153)
+  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toBeVisible()
+  await expect(
+    page.getByRole('textbox', { name: 'Nama kategori (Indonesia)' }).first(),
+  ).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Kategori baru' })).toBeVisible()
   // logo skill ditekan: langsung membuka pemilih berkas, tanpa jendela dan tanpa teks alt (revisi
   // 2026-11-15, DESIGN.md bagian 148). Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif.
@@ -210,6 +210,49 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
 // keduanya hanya berjalan di proyek chromium; alur admin ini tidak bergantung pada mesin browser.
 const GLOBAL_MUTATION_PROJECT = 'chromium'
 const globalMutationReason = 'mengubah data global bersama; satu proyek saja agar tidak balapan'
+
+test('skill: kategori dan skill baru tersimpan lewat Simpan, lalu dihapus', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
+  const name = `Uji ${Date.now()}`
+  const categoryNames = page.getByRole('textbox', { name: 'Nama kategori (Indonesia)' })
+  const skillNames = page.getByRole('textbox', { name: 'Nama skill' })
+  await page.goto('/admin/skills')
+  // kategori baru: Enter menambah butir ke daftar (belum tersimpan), lalu skill baru di dalamnya
+  const newCategory = page.getByRole('textbox', { name: 'Kategori baru' })
+  await expect(async () => {
+    if (
+      !(
+        await categoryNames
+          .last()
+          .inputValue()
+          .catch(() => '')
+      ).includes(name)
+    ) {
+      await newCategory.fill(name)
+      await newCategory.press('Enter')
+    }
+    await expect(categoryNames.last()).toHaveValue(name, { timeout: 1000 })
+  }).toPass()
+  const addSkill = page.getByRole('textbox', { name: `Tambah skill ke ${name}` })
+  await addSkill.fill('Skill Uji')
+  await addSkill.press('Enter')
+  await expect(skillNames.last()).toHaveValue('Skill Uji')
+  await page.getByRole('button', { name: 'Simpan', exact: true }).click()
+  await expect(page.getByText('Skill disimpan.').first()).toBeVisible({ timeout: 20_000 })
+  // tersimpan: kategorinya bisa dihapus (butir yang belum tersimpan hanya bisa dibuang)
+  await expect(page.getByRole('button', { name: `Hapus kategori ${name}` })).toHaveCount(1)
+  // bersihkan: skill dihapus dulu, lalu kategorinya; alat butir muncul saat fokus di dalamnya
+  await skillNames.last().focus()
+  await page.getByRole('button', { name: 'Hapus Skill Uji' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
+  await expect(page.getByRole('button', { name: 'Hapus Skill Uji' })).toHaveCount(0)
+  await categoryNames.last().focus()
+  await page.getByRole('button', { name: `Hapus kategori ${name}` }).click()
+  await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
+  await expect(page.getByRole('button', { name: `Hapus kategori ${name}` })).toHaveCount(0)
+})
 
 test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)

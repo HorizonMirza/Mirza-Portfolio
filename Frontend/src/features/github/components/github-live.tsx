@@ -91,7 +91,7 @@ export function GithubLive({
               'grid min-h-11 content-center justify-items-center gap-1.5 rounded-md border px-2 py-2 text-sm font-semibold',
               key === preset
                 ? 'border-text bg-text text-bg'
-                : 'border-dashed border-border text-muted hover:text-text',
+                : 'border-border text-muted hover:text-text',
             )}
           >
             <span aria-hidden="true" className="flex gap-0.5">

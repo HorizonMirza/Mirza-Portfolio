@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  aspectChoices,
-  clampOffset,
-  coverScale,
-  effectiveSize,
-  exportSize,
-} from '@/features/assets/crop-math'
+import { clampOffset, coverScale, effectiveSize, exportSize } from '@/features/assets/crop-math'
 
 describe('pemotong gambar', () => {
   it('putaran 90/270 menukar lebar dan tinggi', () => {
@@ -40,14 +34,5 @@ describe('pemotong gambar', () => {
     // dibatasi 512 untuk logo
     expect(exportSize(200, 200, 0.4, 512)).toEqual({ width: 500, height: 500 })
     expect(exportSize(200, 100, 0.05, 512)).toEqual({ width: 512, height: 256 })
-  })
-
-  it('pilihan perbandingan: tempat dulu, tanpa ganda, tetap bila terkunci', () => {
-    const square = aspectChoices(1, false).map((c) => c.key)
-    expect(square[0]).toBe('default')
-    expect(square).not.toContain('1:1')
-    expect(square).toContain('original')
-    expect(aspectChoices(1120 / 1100, true)).toHaveLength(1)
-    expect(aspectChoices(undefined, false).length).toBeGreaterThan(3)
   })
 })

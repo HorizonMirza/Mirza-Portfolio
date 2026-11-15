@@ -1,7 +1,6 @@
 'use client'
 
 import { Plus, X } from 'lucide-react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { toast } from 'sonner'
@@ -22,7 +21,6 @@ import {
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
 import { deleteExperience } from '../actions'
@@ -132,14 +130,15 @@ export function ExperienceTimelineLive({
                     const set = (patch: Partial<typeof v>) => entries.update(row.key, patch)
                     const org = lang === 'en' ? v.organization_en || v.organization : v.organization
                     const year = (v.startMonth || '').slice(0, 4) || '----'
-                    const sideButton = (slot: 'logo' | 'photo') =>
-                      row.id
-                        ? () =>
-                            picker.pick(
-                              slot === 'logo' ? 'experience-logo' : 'experience-photo',
-                              row.id!,
-                            )
-                        : undefined
+                    // entri baru: pilihan gambar disimpan di browser dan diunggah saat Simpan
+                    const sideButton = (slot: 'logo' | 'photo') => () => {
+                      const target = slot === 'logo' ? 'experience-logo' : 'experience-photo'
+                      if (row.id) picker.pick(target, row.id)
+                      else
+                        picker.pick(target, undefined, (blob, name) =>
+                          entries.setPendingImage(row.key, slot, blob, name),
+                        )
+                    }
                     return (
                       <li
                         key={row.key}
@@ -147,34 +146,28 @@ export function ExperienceTimelineLive({
                         data-current={v.endMonth ? undefined : ''}
                         className="group"
                       >
-                        {row.id ? (
-                          <button
-                            type="button"
-                            onClick={sideButton('logo')}
-                            className="xp-node admin-editable cursor-pointer"
-                          >
-                            {row.logo ? (
-                              <Image
-                                placeholder={SHIMMER_PLACEHOLDER}
-                                src={row.logo.url}
-                                alt=""
-                                width={112}
-                                height={112}
-                                sizes="56px"
-                                className="size-full object-cover"
-                              />
-                            ) : (
-                              <span aria-hidden="true">{initials(v.organization || '?')}</span>
-                            )}
-                            <span className="sr-only">
-                              {t('Logo {item}', { item: v.organization })}
-                            </span>
-                          </button>
-                        ) : (
-                          <div className="xp-node" aria-hidden="true">
-                            <span>{initials(v.organization || '?')}</span>
-                          </div>
-                        )}
+                        <button
+                          type="button"
+                          onClick={sideButton('logo')}
+                          className="xp-node admin-editable cursor-pointer"
+                        >
+                          {row.pending?.logo || row.logo ? (
+                            // pratinjau sementara (blob) tidak lewat optimasi next/image
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={row.pending?.logo?.preview ?? row.logo!.url}
+                              alt=""
+                              width={112}
+                              height={112}
+                              className="size-full object-cover"
+                            />
+                          ) : (
+                            <span aria-hidden="true">{initials(v.organization || '?')}</span>
+                          )}
+                          <span className="sr-only">
+                            {t('Logo {item}', { item: v.organization })}
+                          </span>
+                        </button>
                         <div className="xp-main relative">
                           <h2 className="text-h3 font-semibold">
                             <InlineArea
@@ -351,46 +344,37 @@ export function ExperienceTimelineLive({
                           {err._ ? <p className="mt-1 text-sm text-danger">{t(err._)}</p> : null}
                         </div>
                         <div className="xp-side">
-                          {row.id ? (
-                            <button
-                              type="button"
-                              onClick={sideButton('photo')}
-                              className="admin-editable block cursor-pointer rounded-[12px] text-left [--editable-offset:4px]"
-                            >
-                              {row.photo ? (
-                                <span className="pj-tilt xp-tilt block">
-                                  <span className="pj-tilt-in block">
-                                    <span className="xp-frame block">
-                                      <Image
-                                        placeholder={SHIMMER_PLACEHOLDER}
-                                        src={row.photo.url}
-                                        alt=""
-                                        width={row.photo.width ?? 800}
-                                        height={row.photo.height ?? 600}
-                                        sizes="(min-width: 1024px) 320px, (min-width: 768px) 40vw, 100vw"
-                                        className="xp-photo"
-                                      />
-                                    </span>
+                          <button
+                            type="button"
+                            onClick={sideButton('photo')}
+                            className="admin-editable block cursor-pointer rounded-[12px] text-left [--editable-offset:4px]"
+                          >
+                            {row.pending?.photo || row.photo ? (
+                              <span className="pj-tilt xp-tilt block">
+                                <span className="pj-tilt-in block">
+                                  <span className="xp-frame block">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={row.pending?.photo?.preview ?? row.photo!.url}
+                                      alt=""
+                                      width={row.photo?.width ?? 800}
+                                      height={row.photo?.height ?? 600}
+                                      className="xp-photo"
+                                    />
                                   </span>
                                 </span>
-                              ) : (
-                                <span className="xp-year block">
-                                  <span className="font-display text-[2.75rem] leading-none font-bold">
-                                    {year}
-                                  </span>
+                              </span>
+                            ) : (
+                              <span className="xp-year block">
+                                <span className="font-display text-[2.75rem] leading-none font-bold">
+                                  {year}
                                 </span>
-                              )}
-                              <span className="sr-only">
-                                {t('Foto kegiatan {item}', { item: v.organization })}
                               </span>
-                            </button>
-                          ) : (
-                            <p className="xp-year">
-                              <span className="font-display text-[2.75rem] leading-none font-bold">
-                                {year}
-                              </span>
-                            </p>
-                          )}
+                            )}
+                            <span className="sr-only">
+                              {t('Foto kegiatan {item}', { item: v.organization })}
+                            </span>
+                          </button>
                         </div>
                       </li>
                     )

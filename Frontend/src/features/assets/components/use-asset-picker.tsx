@@ -11,7 +11,13 @@ import { ImageCropDialog } from './image-crop-dialog'
 
 const MAX_SOURCE_BYTES = 25 * 1024 * 1024
 
-type Pending = { file: File; target: UploadTarget; targetId?: string }
+// onCrop: hasil potongan diserahkan ke pemanggil, tidak diunggah (entri baru yang belum tersimpan)
+type Pending = {
+  file: File
+  target: UploadTarget
+  targetId?: string
+  onCrop?: (blob: Blob, fileName: string) => void
+}
 
 // Pemilih berkas untuk semua gambar dan PDF yang bisa diganti di pratinjau admin (permintaan pemilik
 // 2026-11-15, DESIGN.md bagian 148): menekan gambar langsung membuka pemilih berkas (folder) tanpa
@@ -24,10 +30,18 @@ export function useAssetPicker({
 }: {
   configured: boolean
   onDone: () => void
-}): { pick: (target: UploadTarget, targetId?: string) => void; element: ReactNode; busy: boolean } {
+}): {
+  pick: (
+    target: UploadTarget,
+    targetId?: string,
+    onCrop?: (blob: Blob, fileName: string) => void,
+  ) => void
+  element: ReactNode
+  busy: boolean
+} {
   const t = useAdminT()
   const input = useRef<HTMLInputElement>(null)
-  const next = useRef<{ target: UploadTarget; targetId?: string } | null>(null)
+  const next = useRef<Omit<Pending, 'file'> | null>(null)
   const [pending, setPending] = useState<Pending | null>(null)
   const [stage, setStage] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -38,7 +52,11 @@ export function useAssetPicker({
     menyimpan: t('Menyimpan…'),
   }
 
-  function pick(target: UploadTarget, targetId?: string) {
+  function pick(
+    target: UploadTarget,
+    targetId?: string,
+    onCrop?: (blob: Blob, fileName: string) => void,
+  ) {
     if (!configured) {
       toast.error(
         t(
@@ -49,12 +67,17 @@ export function useAssetPicker({
     }
     const el = input.current
     if (!el) return
-    next.current = { target, targetId }
+    next.current = { target, targetId, onCrop }
     el.accept = UPLOAD_TARGETS[target].accept
     el.click()
   }
 
   async function send(job: Pending, blob: Blob, name: string) {
+    if (job.onCrop) {
+      job.onCrop(blob, name)
+      setPending(null)
+      return
+    }
     setBusy(true)
     const result = await uploadAsset(job.target, job.targetId, blob, name, (s) =>
       setStage(stageText[s]),

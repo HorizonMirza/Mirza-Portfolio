@@ -129,7 +129,7 @@ export function ProfileLive({
       onClick={() => setValue(field, !on, { shouldDirty: true })}
       className={cn(
         'inline-flex min-h-11 items-center justify-center rounded-md border px-3 text-sm font-semibold',
-        on ? 'border-text bg-text text-bg' : 'border-dashed border-border text-muted',
+        on ? 'border-text bg-text text-bg' : 'border-border text-muted',
       )}
     >
       {t(text)}
