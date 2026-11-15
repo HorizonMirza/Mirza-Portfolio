@@ -8,7 +8,7 @@ test.skip(!hasAdminEnv, 'butuh ADMIN_EMAIL dan ADMIN_PASSWORD')
 test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' } })
 
 // halaman admin yang isinya pratinjau situs diperkecil (SiteFrame)
-const SCALED_PREVIEWS = ['/admin/github', '/admin/pages/footer']
+const SCALED_PREVIEWS = ['/admin/github', '/admin/pages/footer', '/admin/skills']
 
 const PAGES = [
   '/admin',
@@ -181,7 +181,10 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   await page.goto('/admin/skills')
   // bagian "Keahlian Teknis" tampil seperti di beranda; di bawahnya bagian untuk mengubah dan
   // menambah, lalu ID/EN dan Simpan di paling bawah (revisi pemilik 2026-11-15, DESIGN.md bagian 153)
-  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
+  // globe berat digambar di WebKit CI (kanvas tanpa GPU): beri waktu lebih dari 5 detik
+  await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible({
+    timeout: 30_000,
+  })
   // globe asli di pratinjau: logo di sisi depan bisa ditekan (tidak inert)
   await expect(page.locator('.site-frame .globe-stage button:not([inert])').first()).toBeAttached()
   await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toBeVisible()
