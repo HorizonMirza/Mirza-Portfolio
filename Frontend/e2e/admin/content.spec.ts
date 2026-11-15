@@ -486,8 +486,10 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   const schools = page.getByRole('textbox', { name: 'Sekolah / kampus' })
   const before = await schools.count()
   // tambah kartu baru di tempat (diulang sampai hidrasi selesai), lalu batal
+  // klik hanya bila kartu baru belum muncul: render yang lambat (CI, HP) tidak membuat kartu ganda
   await expect(async () => {
-    await page.getByRole('button', { name: 'Tambah pendidikan' }).click({ timeout: 2000 })
+    if ((await schools.count()) === before)
+      await page.getByRole('button', { name: 'Tambah pendidikan' }).click({ timeout: 2000 })
     await expect(schools).toHaveCount(before + 1, { timeout: 1000 })
   }).toPass()
   await expect(page).toHaveURL(/\/admin\/profile$/)
@@ -506,7 +508,8 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   const roles = page.getByRole('textbox', { name: 'Peran (Indonesia)' })
   const count = await roles.count()
   await expect(async () => {
-    await page.getByRole('button', { name: 'Tambah pengalaman' }).click({ timeout: 2000 })
+    if ((await roles.count()) === count)
+      await page.getByRole('button', { name: 'Tambah pengalaman' }).click({ timeout: 2000 })
     await expect(roles).toHaveCount(count + 1, { timeout: 1000 })
   }).toPass()
   await expect(page).toHaveURL(/\/admin\/experience$/)
