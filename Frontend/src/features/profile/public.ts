@@ -23,6 +23,9 @@ export type PublicProfile = {
   aboutBandRoles_id: string | null
   aboutBandRoles_en: string | null
   aboutPhoto: PublicImage | null
+  aboutChipLabel_id: string | null
+  aboutChipLabel_en: string | null
+  aboutChipLogo: PublicImage | null
   showCampusChip: boolean
   showFlag: boolean
   city: string | null
@@ -62,6 +65,9 @@ const load = unstable_cache(
           aboutPhoto: {
             select: { url: true, width: true, height: true, alt_id: true, alt_en: true },
           },
+          aboutChipLogo: {
+            select: { url: true, width: true, height: true, alt_id: true, alt_en: true },
+          },
           cv: { select: { id: true } },
         },
       }),
@@ -89,6 +95,9 @@ const load = unstable_cache(
       aboutBandRoles_id: p.aboutBandRoles_id,
       aboutBandRoles_en: p.aboutBandRoles_en,
       aboutPhoto: safeImage(p.aboutPhoto),
+      aboutChipLabel_id: p.aboutChipLabel_id,
+      aboutChipLabel_en: p.aboutChipLabel_en,
+      aboutChipLogo: safeImage(p.aboutChipLogo),
       showCampusChip: p.showCampusChip,
       showFlag: p.showFlag,
       city: p.city,

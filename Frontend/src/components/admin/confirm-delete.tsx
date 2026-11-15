@@ -20,10 +20,13 @@ export function ConfirmDelete({
   itemLabel,
   onConfirm,
   onDone,
+  iconOnly = false,
 }: {
   itemLabel: string
   onConfirm: () => Promise<ActionResult<unknown>>
   onDone?: () => void
+  // hanya ikon tong sampah kecil (kartu dan gambar di pratinjau), tanpa tulisan "Hapus"
+  iconOnly?: boolean
 }) {
   const t = useAdminT()
   const [open, setOpen] = useState(false)
@@ -45,9 +48,14 @@ export function ConfirmDelete({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label={t('Hapus {item}', { item: itemLabel })}>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={t('Hapus {item}', { item: itemLabel })}
+          className={iconOnly ? 'size-8 min-h-8 px-0 text-muted hover:text-danger' : undefined}
+        >
           <Trash2 aria-hidden="true" />
-          <span className="sr-only md:not-sr-only">{t('Hapus')}</span>
+          <span className={iconOnly ? 'sr-only' : 'sr-only md:not-sr-only'}>{t('Hapus')}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

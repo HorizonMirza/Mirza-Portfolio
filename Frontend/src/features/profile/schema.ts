@@ -22,6 +22,9 @@ export const profileSchema = z.object({
   // kartu foto halaman Tentang (2026-11-10)
   aboutBandRoles_id: optionalText('Peran di halaman Tentang', 120).default(''),
   aboutBandRoles_en: optionalText('Roles on the About page', 120).default(''),
+  // chip di kartu foto: teks dan logo bisa diganti (mis. logo perusahaan); kosong = ikut pendidikan terbaru
+  aboutChipLabel_id: optionalText('Teks chip', 60).default(''),
+  aboutChipLabel_en: optionalText('Chip text', 60).default(''),
   showCampusChip: z.boolean().default(true),
   showFlag: z.boolean().default(true),
   city: optionalText('Kota', 80),
@@ -65,6 +68,8 @@ export const emptyProfile: ProfileInput = {
   currentRole_en: '',
   aboutBandRoles_id: '',
   aboutBandRoles_en: '',
+  aboutChipLabel_id: '',
+  aboutChipLabel_en: '',
   showCampusChip: true,
   showFlag: true,
   city: '',

@@ -21,6 +21,7 @@ export async function deleteUnusedAssets(
       profilePhoto: { is: null },
       profileCv: { is: null },
       profileAboutOf: { is: null },
+      profileChipOf: { is: null },
       projectCovers: { none: {} },
       projectImages: { none: {} },
       experiences: { none: {} },

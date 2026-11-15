@@ -177,15 +177,15 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
       page.getByRole('textbox', { name: `Nama kategori (${lang})` }).first(),
     ).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Kategori baru' })).toBeVisible()
-  // logo skill ditekan: jendela logo (unggah, ganti, hapus)
+  // logo skill ditekan: langsung membuka pemilih berkas, tanpa jendela dan tanpa teks alt (revisi
+  // 2026-11-15, DESIGN.md bagian 148). Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif.
   await expect(async () => {
     await page
       .getByRole('button', { name: /^Logo / })
       .first()
       .click({ timeout: 2000 })
-    await expect(page.getByRole('dialog', { name: /^Logo / })).toBeVisible({ timeout: 1000 })
+    await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible({ timeout: 1000 })
   }).toPass()
-  await page.keyboard.press('Escape')
   await expect(page.getByRole('dialog')).toHaveCount(0)
   const first = page.getByRole('button', { name: /^Hapus kategori / }).first()
   await first.click()
@@ -305,6 +305,9 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
   await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: 'Bio (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Ganti foto kartu About$/ })).toBeVisible()
+  // chip kartu bersifat umum (revisi 2026-11-15): teks dan logo bisa diganti, bukan lagi chip kampus
+  await expect(page.getByRole('textbox', { name: 'Teks chip (Indonesia)' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Ganti logo chip' })).toBeVisible()
   // peran tampil sebagai teks biasa seperti di situs (bukan samar), pratinjau tautan dihapus
   // (revisi pemilik 2026-11-13 malam, DESIGN.md bagian 147)
   await expect(
@@ -312,9 +315,9 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
   ).not.toHaveValue('')
   await expect(page.getByRole('textbox', { name: /^Headline/ })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Tambah pendidikan' })).toBeVisible()
-  // Chip kampus/Chip bendera, lalu ID/EN, lalu Simpan: tiap baris selebar Simpan
+  // Chip logo & nama/Chip bendera, lalu ID/EN, lalu Simpan: tiap baris selebar Simpan
   const save = page.getByRole('button', { name: 'Simpan', exact: true })
-  const campus = page.getByRole('button', { name: 'Chip kampus' })
+  const campus = page.getByRole('button', { name: 'Chip logo & nama' })
   const flag = page.getByRole('button', { name: 'Chip bendera' })
   const langs = page.getByRole('group', { name: 'Bahasa yang diubah' })
   const idButton = langs.getByRole('button', { name: 'ID', exact: true })
@@ -440,7 +443,8 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   // uraian tampil seperti di situs; ditekan baru bisa diketik
   await entry.getByRole('button', { name: /^Uraian \(Indonesia\)/ }).click()
   await entry.getByRole('textbox', { name: 'Uraian (Indonesia)' }).fill('Uraian **E2E**.')
-  await entry.getByRole('button', { name: 'Draf', exact: true }).click()
+  // tombol Draf dihapus (revisi 2026-11-15): hanya entri yang masih draf menampilkannya
+  await expect(entry.getByRole('button', { name: 'Draf', exact: true })).toHaveCount(0)
   await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Pengalaman disimpan.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/experience$/)
@@ -813,7 +817,9 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
     await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByText('Kontak disimpan.')).toHaveCount(0)
-  // ikon kartu Resume CV membuka jendela berkas PDF
+  // ikon kartu Resume CV langsung membuka pemilih berkas PDF (tanpa jendela, DESIGN.md bagian 148);
+  // Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif
   await contacts.getByRole('button', { name: 'Berkas Resume CV' }).click()
-  await expect(page.getByRole('dialog', { name: 'Berkas Resume CV' })).toBeVisible()
+  await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
 })

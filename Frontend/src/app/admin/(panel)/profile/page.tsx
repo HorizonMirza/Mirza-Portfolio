@@ -36,7 +36,7 @@ export default async function ProfilePage() {
     ],
   )
   const tEnExp = await getTranslations({ locale: 'en', namespace: 'Experience' })
-  // chip kampus: pendidikan terbaru, sama seperti halaman Tentang
+  // isi chip bila teks chip kosong: pendidikan terbaru, sama seperti halaman Tentang
   const education = experiences
     .filter((e) => e.type === 'EDUCATION')
     .sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0))
@@ -49,8 +49,6 @@ export default async function ProfilePage() {
           logo: current.logo,
         }
       : null
-  const chipId = chipFor('id')
-  const chipEn = chipFor('en')
   return (
     <>
       <PageHeader title="About" />
@@ -58,7 +56,8 @@ export default async function ProfilePage() {
         defaultValues={values}
         photo={assets.aboutPhoto?.url ?? assets.photo?.url ?? DEFAULT_PROFILE_PHOTO}
         aboutPhoto={assets.aboutPhoto}
-        chip={chipId && chipEn ? { id: chipId, en: chipEn } : null}
+        chipLogo={assets.aboutChipLogo}
+        chip={{ id: chipFor('id'), en: chipFor('en') }}
         bioHeading={{ id: tId('title'), en: tEn('title') }}
         rolesFallback={{
           id: profile?.aboutRoles_id || tId('roles'),

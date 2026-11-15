@@ -9,7 +9,8 @@ import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { InlineInput, LANG_NAME, LiveStage } from '@/components/admin/live-edit'
 import { ReorderButtons } from '@/components/admin/reorder-buttons'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 import type { ActionResult } from '@/lib/action-result'
 import { cn } from '@/lib/utils'
@@ -175,15 +176,12 @@ export function SkillsLive({
   const t = useAdminT()
   const router = useRouter()
   const { lang } = useAdminLang()
-  // skill yang jendela logonya terbuka (id dan nama); skill baru dibuka otomatis setelah dibuat
-  const [logoFor, setLogoFor] = useState<{ id: string; name: string } | null>(null)
+  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const nameOf = (c: SkillCategoryRow) => (lang === 'en' ? c.name_en : c.name_id)
   const options = categories.map((c) => ({ id: c.id, name: nameOf(c) }))
   const tools =
     'flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100'
-  const logoSkill = logoFor
-    ? categories.flatMap((c) => c.skills).find((s) => s.id === logoFor.id)
-    : undefined
 
   return (
     <>
@@ -238,7 +236,7 @@ export function SkillsLive({
                     {/* logo ditekan untuk diunggah atau diganti */}
                     <button
                       type="button"
-                      onClick={() => setLogoFor({ id: skill.id, name: skill.name })}
+                      onClick={() => picker.pick('skill-logo', skill.id)}
                       className={cn(
                         'admin-editable grid size-8 shrink-0 place-items-center rounded-md hover:bg-surface-2',
                         !skill.shown && 'border border-dashed border-border text-muted',
@@ -300,6 +298,13 @@ export function SkillsLive({
                             </button>
                           }
                         />
+                        {skill.logo ? (
+                          <RemoveAssetButton
+                            assetId={skill.logo.id}
+                            label={t('Logo {item}', { item: skill.name })}
+                            onDone={() => router.refresh()}
+                          />
+                        ) : null}
                         <ConfirmDelete
                           itemLabel={skill.name}
                           onConfirm={() => deleteSkill(skill.id)}
@@ -312,16 +317,7 @@ export function SkillsLive({
                   <AddText
                     label={t('Tambah skill ke {name}', { name: nameOf(category) })}
                     placeholder={t('+ Skill baru')}
-                    onAdd={async (name) => {
-                      const result = await saveSkill(null, {
-                        name,
-                        icon: '',
-                        categoryId: category.id,
-                      })
-                      // skill baru: langsung buka jendela logo untuk mengunggah gambarnya
-                      if (result.ok && result.data) setLogoFor({ id: result.data.id, name })
-                      return result
-                    }}
+                    onAdd={(name) => saveSkill(null, { name, icon: '', categoryId: category.id })}
                   />
                 </li>
               </ul>
@@ -338,22 +334,7 @@ export function SkillsLive({
           </div>
         </div>
       </LiveStage>
-      {logoFor ? (
-        <AssetEditDialog
-          open
-          onClose={() => setLogoFor(null)}
-          onDone={() => {
-            setLogoFor(null)
-            router.refresh()
-          }}
-          title={t('Logo {item}', { item: logoFor.name })}
-          description="Logo di globe Keahlian Teknis beranda dan chip teknologi project. Persegi dengan latar transparan (PNG, WebP, atau AVIF), maksimal 1 MB. Kosong: logo bawaan bila ada."
-          target="skill-logo"
-          targetId={logoFor.id}
-          asset={logoSkill?.logo ?? null}
-          configured={configured}
-        />
-      ) : null}
+      {picker.element}
     </>
   )
 }

@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card'
 import { getAdminT } from '@/lib/admin-lang-server'
 
 import { removeAsset } from '../actions'
-import { AssetAltForm } from './asset-alt-form'
 import { AssetUploader } from './asset-uploader'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
@@ -69,11 +68,6 @@ export async function GalleryPanel({
         {images.map((image, i) => (
           <li key={image.id} className="flex flex-col gap-3 rounded-md border border-border p-3">
             <AssetPreview asset={image} />
-            <AssetAltForm
-              assetId={image.id}
-              alt_id={image.alt_id ?? ''}
-              alt_en={image.alt_en ?? ''}
-            />
             <div>
               <ConfirmDelete
                 itemLabel={t('gambar galeri {n}', { n: i + 1 })}

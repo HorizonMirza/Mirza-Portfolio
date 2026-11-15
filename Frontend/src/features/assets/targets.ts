@@ -2,6 +2,7 @@
 export const UPLOAD_TARGETS = {
   'profile-photo': {
     label: 'Foto profil',
+    aspect: 1,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/profile',
@@ -12,6 +13,7 @@ export const UPLOAD_TARGETS = {
   // kartu foto halaman Tentang (2026-11-10); kosong = foto profil
   'about-photo': {
     label: 'Foto kartu About',
+    aspect: 4 / 5,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/profile',
@@ -30,6 +32,7 @@ export const UPLOAD_TARGETS = {
   },
   'project-cover': {
     label: 'Sampul project',
+    aspect: 16 / 9,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/projects',
@@ -39,6 +42,7 @@ export const UPLOAD_TARGETS = {
   },
   'project-gallery': {
     label: 'Galeri project',
+    aspect: 16 / 9,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/projects',
@@ -49,6 +53,7 @@ export const UPLOAD_TARGETS = {
   // logo instansi di simpul timeline pengalaman (DESIGN.md bagian 38); PNG transparan paling rapi
   'experience-logo': {
     label: 'Logo instansi',
+    aspect: 1,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/experience',
@@ -58,6 +63,7 @@ export const UPLOAD_TARGETS = {
   },
   'experience-photo': {
     label: 'Foto kegiatan',
+    aspect: 4 / 3,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/experience',
@@ -70,6 +76,7 @@ export const UPLOAD_TARGETS = {
   // Persegi dengan latar transparan paling rapi.
   'skill-logo': {
     label: 'Logo skill',
+    aspect: 1,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/skills',
@@ -78,11 +85,25 @@ export const UPLOAD_TARGETS = {
     accept: 'image/png,image/webp,image/avif,image/jpeg',
     decorative: true,
   },
+  // logo chip di kartu foto halaman Tentang (2026-11-15): logo kampus, perusahaan, atau lainnya;
+  // hiasan karena nama chip selalu tertulis di sebelahnya
+  'about-chip-logo': {
+    label: 'Logo chip kartu',
+    kind: 'IMAGE',
+    resourceType: 'image',
+    folder: 'portfolio/profile',
+    maxBytes: 1024 * 1024,
+    formats: ['png', 'webp', 'avif', 'jpg', 'jpeg'],
+    accept: 'image/png,image/webp,image/avif,image/jpeg',
+    aspect: 1,
+    decorative: true,
+  },
   // Potret dan armor hero beranda (Admin → Pengaturan). Pembingkaian halaman (lubang wajah di nama,
   // posisi kepala, intip visor) dihitung dari foto bawaan, jadi pengganti harus berukuran sebanding
   // dan dibingkai sama. Latar transparan, maka tanpa JPG.
   'hero-portrait': {
     label: 'Potret hero',
+    aspect: 1120 / 1100,
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/hero',
@@ -94,6 +115,11 @@ export const UPLOAD_TARGETS = {
 } as const
 
 export type UploadTarget = keyof typeof UPLOAD_TARGETS
+
+// Sisi terpanjang gambar hasil potong (piksel): logo kecil cukup 512, foto 2000
+export function maxSideOf(target: UploadTarget): number {
+  return UPLOAD_TARGETS[target].maxBytes <= 2 * 1024 * 1024 ? 512 : 2000
+}
 export const UPLOAD_TARGET_KEYS = Object.keys(UPLOAD_TARGETS) as UploadTarget[]
 
 export type UploadSignature = {

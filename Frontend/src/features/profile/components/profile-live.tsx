@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image, { type StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -21,8 +21,9 @@ import {
   useEditLang,
 } from '@/components/admin/live-edit'
 import { Container, PageIntro } from '@/components/site/section-heading'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
 import type { AssetView } from '@/features/assets/components/asset-panels'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { EducationCardsLive } from '@/features/experience/components/education-cards-live'
 import { type EntryRow, useEntries } from '@/features/experience/components/use-entries'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
@@ -32,7 +33,7 @@ import { saveProfile } from '../actions'
 import { type ProfileInput, profileSchema } from '../schema'
 import { AboutPhotoCard, type PhotoCardChip } from './about-photo-card'
 
-type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles'
+type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles' | 'aboutChipLabel'
 
 // Admin → About (DESIGN.md bagian 136, 146, dan 147): halaman Tentang sama persis seperti di situs
 // (judul, pita berisi kartu foto yang menggantung, nama, peran, lalu bio dan kartu pendidikan
@@ -44,6 +45,7 @@ export function ProfileLive({
   defaultValues,
   photo,
   aboutPhoto,
+  chipLogo,
   chip,
   bioHeading,
   rolesFallback,
@@ -56,7 +58,10 @@ export function ProfileLive({
   // foto yang tampil di kartu (foto kartu About, foto profil, atau bawaan)
   photo: string | StaticImageData
   aboutPhoto: AssetView | null
-  chip: Record<Lang, PhotoCardChip> | null
+  // logo chip yang diunggah (kosong: ikut logo pendidikan terbaru selama teks chip juga kosong)
+  chipLogo: AssetView | null
+  // isi chip bila teks chip kosong: pendidikan terbaru, sama seperti di situs
+  chip: Record<Lang, PhotoCardChip | null>
   // judul halaman dan bagian bio di situs (teks halaman About.title)
   bioHeading: Record<Lang, string>
   // peran yang tampil di situs selama "Peran di halaman Tentang" kosong
@@ -71,7 +76,8 @@ export function ProfileLive({
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [lang, setLang] = useEditLang()
-  const [photoOpen, setPhotoOpen] = useState(false)
+  // foto dan logo chip ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md 148)
+  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const entries = useEntries(education)
   const form = useForm<ProfileInput>({ resolver: zodResolver(profileSchema), defaultValues })
   const {
@@ -87,6 +93,13 @@ export function ProfileLive({
     (errors as Record<string, { message?: string } | undefined>)[key]?.message
   const label = (text: string) => `${t(text)} (${t(LANG_NAME[lang])})`
   const roles = values[name('aboutBandRoles')] || rolesFallback[lang]
+  // chip: teks dan logo sendiri lebih dulu; teks kosong = ikut pendidikan terbaru
+  const showChip = values.showCampusChip ?? true
+  const chipFallback = chip[lang]
+  const customChip = values[name('aboutChipLabel')] ?? ''
+  const chipText = customChip || chipFallback?.name || ''
+  const chipLogoUrl = chipLogo?.url ?? (customChip ? null : (chipFallback?.logo?.url ?? null))
+  const chipInitials = (chipText.trim()[0] ?? '?').toUpperCase()
 
   const onSubmit = form.handleSubmit(
     (submitted) => {
@@ -141,31 +154,95 @@ export function ProfileLive({
               <div className="ab-band">
                 {/* .ab-tilt: kartu foto menggantung ke bawah pita seperti di situs (tanpa efek miring) */}
                 <div className="ab-tilt">
-                  {/* garis penanda di bingkai foto saja (pas di tengah foto), bukan di chip */}
-                  <button
-                    type="button"
-                    onClick={() => setPhotoOpen(true)}
-                    className="admin-photo-edit block cursor-pointer rounded-2xl text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
-                  >
-                    <AboutPhotoCard
-                      photo={
-                        <Image
-                          placeholder={typeof photo === 'string' ? SHIMMER_PLACEHOLDER : 'empty'}
-                          src={photo}
-                          alt=""
-                          width={480}
-                          height={600}
-                          sizes="300px"
-                          className="ab-pc-photo"
-                        />
-                      }
-                      chip={values.showCampusChip && chip ? chip[lang] : null}
-                      flag={values.showFlag ?? true}
-                    />
-                    {/* nama tombol = teks yang terlihat (chip kampus) + keterangan ini (axe
-                        label-content-name-mismatch) */}
-                    <span className="sr-only">{t('Ganti foto kartu About')}</span>
-                  </button>
+                  {/* garis penanda di bingkai foto saja; foto dan chip masing-masing tombol sendiri */}
+                  <AboutPhotoCard
+                    className="admin-photo-edit"
+                    photo={
+                      <div className="group/photo relative">
+                        <button
+                          type="button"
+                          onClick={() => picker.pick('about-photo')}
+                          className="block w-full cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-current"
+                        >
+                          <Image
+                            placeholder={typeof photo === 'string' ? SHIMMER_PLACEHOLDER : 'empty'}
+                            src={photo}
+                            alt=""
+                            width={480}
+                            height={600}
+                            sizes="300px"
+                            className="ab-pc-photo"
+                          />
+                          <span className="sr-only">{t('Ganti foto kartu About')}</span>
+                        </button>
+                        {/* hapus foto kartu: kartu kembali memakai foto profil */}
+                        {aboutPhoto ? (
+                          <span className="absolute top-2 left-2 z-10 rounded-md bg-bg/80 opacity-0 backdrop-blur transition-opacity group-focus-within/photo:opacity-100 group-hover/photo:opacity-100 max-md:opacity-100">
+                            <RemoveAssetButton
+                              assetId={aboutPhoto.id}
+                              label={t('Foto kartu About')}
+                              onDone={() => router.refresh()}
+                            />
+                          </span>
+                        ) : null}
+                      </div>
+                    }
+                    chip={
+                      showChip ? (chipFallback ?? { name: '', initials: '?', logo: null }) : null
+                    }
+                    chipSlot={
+                      showChip ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => picker.pick('about-chip-logo')}
+                            className="ab-pc-logo admin-editable cursor-pointer"
+                          >
+                            {chipLogoUrl ? (
+                              <Image
+                                placeholder={SHIMMER_PLACEHOLDER}
+                                src={chipLogoUrl}
+                                alt=""
+                                width={72}
+                                height={72}
+                                sizes="36px"
+                                className="size-full object-cover"
+                              />
+                            ) : (
+                              <span aria-hidden="true">{chipInitials}</span>
+                            )}
+                            <span className="sr-only">{t('Ganti logo chip')}</span>
+                          </button>
+                          <InlineInput
+                            key={name('aboutChipLabel')}
+                            label={label('Teks chip')}
+                            value={chipText}
+                            placeholder={t('Kampus atau perusahaan')}
+                            invalid={Boolean(err(name('aboutChipLabel')))}
+                            size={Math.max(10, chipText.length + 1)}
+                            maxLength={60}
+                            className="min-h-6 min-w-0"
+                            onChange={(event) => {
+                              const next = event.target.value
+                              setValue(
+                                name('aboutChipLabel'),
+                                next === chipFallback?.name ? '' : next,
+                                { shouldDirty: true },
+                              )
+                            }}
+                          />
+                          {chipLogo ? (
+                            <RemoveAssetButton
+                              assetId={chipLogo.id}
+                              label={t('Logo chip')}
+                              onDone={() => router.refresh()}
+                            />
+                          ) : null}
+                        </>
+                      ) : null
+                    }
+                    flag={values.showFlag ?? true}
+                  />
                 </div>
                 <div className="ab-band-text">
                   {/* nama tidak diubah dari sini (revisi pemilik 2026-11-13) */}
@@ -216,26 +293,14 @@ export function ProfileLive({
         <LiveErrors messages={messages} />
         {/* chip di kartu foto: satu baris selebar Simpan (revisi 2026-11-13) */}
         <div className="admin-bleed grid grid-cols-2 gap-2">
-          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip kampus')}
+          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip logo & nama')}
           {toggle('showFlag', values.showFlag ?? true, 'Chip bendera')}
         </div>
         {/* bahasa isi tepat di atas Simpan, bentuknya sama dengan tombol chip */}
         <LangRow lang={lang} onChange={setLang} />
         <SaveBar pending={pending} />
       </form>
-      <AssetEditDialog
-        open={photoOpen}
-        onClose={() => setPhotoOpen(false)}
-        onDone={() => {
-          setPhotoOpen(false)
-          router.refresh()
-        }}
-        title="Foto kartu About"
-        description="Foto di kartu halaman Tentang. Rasio potret sekitar 4:5. Kosong: memakai foto profil (Home)."
-        target="about-photo"
-        asset={aboutPhoto}
-        configured={configured}
-      />
+      {picker.element}
     </>
   )
 }

@@ -25,6 +25,8 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
       currentRole_en: emptyToNull(v.currentRole_en),
       aboutBandRoles_id: emptyToNull(v.aboutBandRoles_id),
       aboutBandRoles_en: emptyToNull(v.aboutBandRoles_en),
+      aboutChipLabel_id: emptyToNull(v.aboutChipLabel_id),
+      aboutChipLabel_en: emptyToNull(v.aboutChipLabel_en),
       showCampusChip: v.showCampusChip,
       showFlag: v.showFlag,
       city: emptyToNull(v.city),

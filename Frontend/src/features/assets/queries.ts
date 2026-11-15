@@ -19,6 +19,7 @@ export async function getProfileAssets(): Promise<{
   photo: AssetView | null
   cv: AssetView | null
   aboutPhoto: AssetView | null
+  aboutChipLogo: AssetView | null
 }> {
   const p = await getDb().profile.findUnique({
     where: { id: 1 },
@@ -26,9 +27,15 @@ export async function getProfileAssets(): Promise<{
       photo: { select: assetSelect },
       cv: { select: assetSelect },
       aboutPhoto: { select: assetSelect },
+      aboutChipLogo: { select: assetSelect },
     },
   })
-  return { photo: p?.photo ?? null, cv: p?.cv ?? null, aboutPhoto: p?.aboutPhoto ?? null }
+  return {
+    photo: p?.photo ?? null,
+    cv: p?.cv ?? null,
+    aboutPhoto: p?.aboutPhoto ?? null,
+    aboutChipLogo: p?.aboutChipLogo ?? null,
+  }
 }
 
 export async function getHeroPortraitAsset(): Promise<AssetView | null> {

@@ -3,13 +3,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FileText, Globe, Mail, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { type ReactNode, useState, useTransition } from 'react'
+import { type ReactNode, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { InlineInput, LiveErrors, LiveStage, Note, SaveBar } from '@/components/admin/live-edit'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import { cn } from '@/lib/utils'
@@ -105,7 +106,8 @@ export function ContactLinksLive({
   const t = useAdminT()
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  const [cvOpen, setCvOpen] = useState(false)
+  // ikon PDF ditekan: langsung membuka pemilih berkas (DESIGN.md bagian 148)
+  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const form = useForm<ContactLinksInput>({
     resolver: zodResolver(contactLinksSchema),
     defaultValues,
@@ -185,7 +187,7 @@ export function ContactLinksLive({
                 {/* ikon = tombol berkas PDF */}
                 <button
                   type="button"
-                  onClick={() => setCvOpen(true)}
+                  onClick={() => picker.pick('profile-cv')}
                   className="admin-editable grid size-9 place-items-center rounded-lg outline-offset-2 hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-current"
                 >
                   {cv ? (
@@ -212,6 +214,24 @@ export function ContactLinksLive({
                     )}
                   />
                 </span>
+                {cv ? (
+                  <span className="col-start-2 flex items-center gap-1 text-xs">
+                    <a
+                      href={cv.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline underline-offset-4"
+                    >
+                      {t('Buka berkas')}
+                      <span className="sr-only">{t('(membuka tab baru)')}</span>
+                    </a>
+                    <RemoveAssetButton
+                      assetId={cv.id}
+                      label={t('Berkas Resume CV')}
+                      onDone={() => router.refresh()}
+                    />
+                  </span>
+                ) : null}
               </li>
             </ul>
           </div>
@@ -219,19 +239,7 @@ export function ContactLinksLive({
         <LiveErrors messages={messages} />
         <SaveBar pending={pending} />
       </form>
-      <AssetEditDialog
-        open={cvOpen}
-        onClose={() => setCvOpen(false)}
-        onDone={() => {
-          setCvOpen(false)
-          router.refresh()
-        }}
-        title="Berkas Resume CV"
-        description="PDF yang dibuka tombol Resume CV bila Link CV kosong."
-        target="profile-cv"
-        asset={cv}
-        configured={configured}
-      />
+      {picker.element}
     </>
   )
 }

@@ -32,20 +32,10 @@ export const EN: Record<string, string> = {
   'Periksa kembali isian pengalaman.': 'Check the experience fields again.',
   'Periksa kembali isian pendidikan.': 'Check the education fields again.',
   'Foto kegiatan {item}': '{item} activity photo',
-  'Logo kampus atau sekolah di kartu Pendidikan. Persegi, latar polos.':
-    'School or campus logo on the Education card. Square, plain background.',
-  'Logo instansi di simpul timeline. Persegi, latar polos.':
-    'Organization logo on the timeline node. Square, plain background.',
-  'Foto di sisi seberang timeline; ditekan pengunjung untuk dilihat besar. Kosong: tahun mulai.':
-    'Photo on the opposite side of the timeline; visitors press it to view it large. Empty: the start year.',
   'Logo {item}': '{item} logo',
-  'Logo di globe Keahlian Teknis beranda dan chip teknologi project. Persegi dengan latar transparan (PNG, WebP, atau AVIF), maksimal 1 MB. Kosong: logo bawaan bila ada.':
-    'Logo in the Technical Skills globe on the home page and the project tech chips. Square with a transparent background (PNG, WebP, or AVIF), up to 1 MB. Empty: the built-in logo if there is one.',
   'Buka berkas': 'Open file',
   'PDF terunggah · atau tempel link': 'PDF uploaded · or paste a link',
   'Kartu kontak di footer · kosong = tidak tampil': 'Footer contact cards · empty = hidden',
-  'PDF yang dibuka tombol Resume CV bila Link CV kosong.':
-    'The PDF the Resume CV button opens when the CV link is empty.',
   'Tombol di halaman detail': 'Buttons on the detail page',
   'Belum ada project.': 'No projects yet.',
   'Simpan dulu untuk menambah sampul dan galeri': 'Save first to add a cover and gallery',
@@ -216,8 +206,6 @@ export const EN: Record<string, string> = {
   'Unggah belum aktif. Isi': 'Uploads are not active yet. Set',
   dan: 'and',
   'di environment, lalu deploy ulang.': 'in the environment, then redeploy.',
-  'Belum ada berkas.': 'No file yet.',
-  'Ganti berkas': 'Replace file',
   Unggah: 'Upload',
   Galeri: 'Gallery',
   'Tangkapan layar untuk halaman detail project, tampil sesuai urutan unggah.':
@@ -225,21 +213,14 @@ export const EN: Record<string, string> = {
   'Belum ada gambar.': 'No images yet.',
   'gambar galeri {n}': 'gallery image {n}',
   'Tambah ke galeri': 'Add to gallery',
-  'Teks alternatif (Indonesia)': 'Alt text (Indonesian)',
-  'Simpan teks alternatif': 'Save alt text',
   'Teks alternatif': 'Alt text',
-  'Pilih berkas dulu': 'Choose a file first',
-  'Teks alternatif wajib diisi': 'Alt text is required',
-  'Alt text wajib diisi': 'Alt text is required',
   'Menyiapkan…': 'Preparing…',
   'Mengunggah…': 'Uploading…',
   'Unggah ke Cloudinary gagal. Periksa koneksi lalu coba lagi.':
     'Upload to Cloudinary failed. Check your connection and try again.',
   'Berkas terunggah tetapi gagal disimpan. Periksa koneksi lalu unggah lagi.':
     'The file was uploaded but could not be saved. Check your connection and upload again.',
-  '{formats}, maksimal {size}.': '{formats}, at most {size}.',
   'Memproses…': 'Processing…',
-  'Jelaskan isi gambar untuk pembaca layar.': 'Describe the image for screen readers.',
   'Foto profil': 'Profile photo',
   'Foto kartu About': 'About card photo',
   'CV (PDF)': 'CV (PDF)',
@@ -256,12 +237,10 @@ export const EN: Record<string, string> = {
   'Data unggahan tidak valid.': 'Invalid upload data.',
   'Tanda tangan unggahan tidak cocok.': 'The upload signature does not match.',
   'Berkas ditolak: tipe atau ukuran tidak sesuai.': 'File rejected: wrong type or size.',
-  'Teks alternatif wajib diisi dalam dua bahasa.': 'Alt text is required in both languages.',
   'Project tidak valid.': 'Invalid project.',
   'Pengalaman tidak valid.': 'Invalid experience.',
   'Simpan profil dulu sebelum mengunggah.': 'Save the profile before uploading.',
   'Berkas tidak valid.': 'Invalid file.',
-  'Teks alternatif disimpan.': 'Alt text saved.',
   'Berkas dihapus.': 'File deleted.',
   Tambah: 'Add',
   Ubah: 'Edit',
@@ -290,10 +269,6 @@ export const EN: Record<string, string> = {
   'Pengalaman ditambahkan.': 'Experience added.',
   'Pengalaman dihapus.': 'Experience deleted.',
   'Ubah project': 'Edit project',
-  'Gambar utama di daftar project, pita project beranda, dan foto pertama galeri halaman detail. Rasio 16:9 disarankan.':
-    'Main image in the project list, the home project strip, and the first gallery photo on the detail page. A 16:9 ratio is recommended.',
-  'Foto di kartu halaman Tentang. Rasio potret sekitar 4:5. Kosong: memakai foto profil (Home).':
-    'Photo on the About page card. Portrait ratio around 4:5. Empty: uses the profile photo (Home).',
   'Terisi: URL repo, tahun, {demo}{count} skill cocok.':
     'Filled in: repo URL, year, {demo}{count} matching skill(s).',
   'URL demo, ': 'demo URL, ',
@@ -657,7 +632,6 @@ export const EN: Record<string, string> = {
   Foto: 'Photo',
   Ikon: 'Icon',
   Bio: 'Bio',
-  'Chip kampus': 'Campus chip',
   Ukuran: 'Size',
   // Akun desain 1 (DESIGN.md bagian 124)
   'Admin sejak': 'Admin since',
@@ -688,4 +662,23 @@ export const EN: Record<string, string> = {
   'Nama disimpan.': 'Name saved.',
   'Nama minimal 2 karakter': 'Name must be at least 2 characters',
   'Nama maksimal 80 karakter': 'Name must be at most 80 characters',
+  // pemilih berkas + pemotong gambar, chip kartu About (revisi 2026-11-15)
+  'Atur gambar': 'Adjust image',
+  'Geser gambar untuk memilih bagian yang tampil. Perbesar atau perkecil dengan penggeser atau roda tetikus.':
+    'Drag the image to choose the visible part. Zoom with the slider or the mouse wheel.',
+  'Gambar tidak bisa dibaca. Coba berkas lain.': 'The image could not be read. Try another file.',
+  'Bingkai potong. Panah menggeser, plus dan minus mengubah ukuran.':
+    'Crop frame. Arrow keys move it, plus and minus resize it.',
+  'Ukuran bingkai': 'Frame size',
+  Perkecil: 'Zoom out',
+  'Ukuran gambar': 'Image size',
+  Perbesar: 'Zoom in',
+  'Putar 90°': 'Rotate 90°',
+  'Draf: tidak tampil di situs. Tekan untuk menerbitkan.':
+    'Draft: not shown on the site. Press to publish.',
+  'Ganti logo chip': 'Change chip logo',
+  'Kampus atau perusahaan': 'Campus or company',
+  'Logo chip': 'Chip logo',
+  'Teks chip': 'Chip text',
+  'Chip logo & nama': 'Logo & name chip',
 }

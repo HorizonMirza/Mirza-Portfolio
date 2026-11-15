@@ -361,7 +361,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill`; logo skill lewat `signAssetUpload`/`attachUploadedAsset` (target `skill-logo`, 2026-11-12) |
 | Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
 | Halaman situs (8 modul: Bagian Awal sebagai tab "Kartu pembuka" di Home sejak 2026-11-11, Home, About, Experience, Projects, Contact, Navbar, Footer; Privasi dan Halaman lain dihapus 2026-11-11) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto utama beranda tidak diganti dari admin sejak 2026-11-13 (target `hero-portrait` tetap ada di server; tab Foto beranda dihapus 2026-11-12, foto profil di Akun) |
-| Berkas | di Profil, Project, Pengalaman (logo + foto kegiatan), dan Skill (logo) | `signAssetUpload`, `attachUploadedAsset`, `updateAssetAlt`, `removeAsset` |
+| Berkas | di Profil, Project, Pengalaman (logo + foto kegiatan), dan Skill (logo) | `signAssetUpload`, `attachUploadedAsset`, `removeAsset` (alt dua bahasa diturunkan otomatis dari konteks, sejak 2026-11-15 tanpa isian alt; target `about-chip-logo` untuk logo chip kartu About) |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
 | Pengaturan | `/admin/settings` | `saveSoundVolume` (volume suara tombol situs publik) |
 | Akun | `/admin/account` | `changePassword` |

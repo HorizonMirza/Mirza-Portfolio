@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 import type { Prisma } from '@/generated/prisma/client'
 import type { CacheTag } from '@/lib/cache-tags'
-import { type ActionResult, fail, ok, toActionError, zodFieldErrors } from '@/lib/action-result'
+import { type ActionResult, fail, ok, toActionError } from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import {
@@ -70,6 +70,7 @@ function usageOf(asset: {
   profilePhoto: { id: number } | null
   profileCv?: { id: number } | null
   profileAboutOf?: { id: number } | null
+  profileChipOf?: { id: number } | null
   experiences: { id: string }[]
   experiencePhotos: { id: string }[]
   heroPortraitOf?: { id: number } | null
@@ -77,7 +78,8 @@ function usageOf(asset: {
 }): CacheTag[] {
   if (asset.skillLogos?.length) return ['skills', 'projects']
   if (asset.heroPortraitOf) return ['settings']
-  if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf) return ['profile']
+  if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf || asset.profileChipOf)
+    return ['profile']
   if (asset.experiences.length || asset.experiencePhotos.length) return ['experience']
   return ['projects']
 }
@@ -155,17 +157,6 @@ export async function attachUploadedAsset(
     const shapeError = checkImageShape(spec, result.width, result.height)
     if (shapeError) return reject(shapeError, { file: shapeError })
 
-    let altValues: { alt_id: string; alt_en: string } | null = null
-    if (needsAlt(spec)) {
-      const a = altSchema.safeParse(alt)
-      if (!a.success)
-        return reject(
-          'Teks alternatif wajib diisi dalam dua bahasa.',
-          zodFieldErrors(a.error.issues),
-        )
-      altValues = a.data
-    }
-
     const needsProject = t.data === 'project-cover' || t.data === 'project-gallery'
     const projectId = needsProject ? idSchema.safeParse(targetId) : null
     if (projectId && !projectId.success) return reject('Project tidak valid.')
@@ -174,6 +165,20 @@ export async function attachUploadedAsset(
     if (experienceId && !experienceId.success) return reject('Pengalaman tidak valid.')
     const skillId = t.data === 'skill-logo' ? idSchema.safeParse(targetId) : null
     if (skillId && !skillId.success) return reject('Skill tidak valid.')
+
+    // Teks alternatif tidak diisi admin lagi (revisi pemilik 2026-11-15): diturunkan dari data
+    // pemiliknya (nama, instansi, judul project) dalam dua bahasa. Isian alt yang dikirim (bila ada
+    // dan valid) tetap dipakai.
+    let altValues: { alt_id: string; alt_en: string } | null = null
+    if (needsAlt(spec)) {
+      const given = altSchema.safeParse(alt)
+      altValues = given.success
+        ? given.data
+        : await defaultAlt(t.data, {
+            projectId: projectId?.success ? projectId.data : null,
+            experienceId: experienceId?.success ? experienceId.data : null,
+          })
+    }
 
     const replaced = await getDb().$transaction(async (tx) => {
       const asset = await tx.asset.create({
@@ -211,6 +216,14 @@ export async function attachUploadedAsset(
               ? { aboutPhotoId: asset.id }
               : { cvId: asset.id }
         await tx.profile.update({ where: { id: 1 }, data })
+      } else if (t.data === 'about-chip-logo') {
+        const profile = await tx.profile.findUnique({
+          where: { id: 1 },
+          select: { aboutChipLogo: { select: { id: true, publicId: true } } },
+        })
+        if (!profile) throw new ProfileMissingError()
+        old = profile.aboutChipLogo
+        await tx.profile.update({ where: { id: 1 }, data: { aboutChipLogoId: asset.id } })
       } else if (t.data === 'hero-portrait') {
         // armor hero tidak bisa diganti lagi sejak 2026-11-10 (selalu gambar bawaan repo)
         const current = await tx.siteSetting.findUnique({
@@ -299,47 +312,36 @@ export async function attachUploadedAsset(
 
 class ProfileMissingError extends Error {}
 
-export async function updateAssetAlt(assetId: unknown, alt: unknown): Promise<ActionResult> {
-  try {
-    const admin = await requireSuperAdmin()
-    const id = idSchema.safeParse(assetId)
-    const a = altSchema.safeParse(alt)
-    if (!id.success) return fail('Berkas tidak valid.')
-    if (!a.success) return fail('Periksa kembali isian.', zodFieldErrors(a.error.issues))
-    const usage = await getDb().$transaction(async (tx) => {
-      const before = await tx.asset.findUniqueOrThrow({
-        where: { id: id.data },
-        select: {
-          alt_id: true,
-          alt_en: true,
-          profilePhoto: { select: { id: true } },
-          profileAboutOf: { select: { id: true } },
-          experiences: { select: { id: true } },
-          experiencePhotos: { select: { id: true } },
-          heroPortraitOf: { select: { id: true } },
-          skillLogos: { select: { id: true } },
-        },
-      })
-      const after = await tx.asset.update({
-        where: { id: id.data },
-        data: a.data,
-        select: { alt_id: true, alt_en: true },
-      })
-      await writeAudit(tx, {
-        actorId: admin.userId,
-        action: 'update',
-        entity: 'Asset',
-        entityId: id.data,
-        before: { alt_id: before.alt_id, alt_en: before.alt_en },
-        after,
-      })
-      return usageOf(before)
+// Teks alternatif bawaan dari data pemilik berkas, dalam dua bahasa
+async function defaultAlt(
+  target: UploadTarget,
+  ids: { projectId: string | null; experienceId: string | null },
+): Promise<{ alt_id: string; alt_en: string }> {
+  const db = getDb()
+  if (ids.projectId) {
+    const p = await db.project.findUnique({
+      where: { id: ids.projectId },
+      select: { title_id: true, title_en: true },
     })
-    revalidateContent(...usage)
-    return ok('Teks alternatif disimpan.')
-  } catch (error) {
-    return toActionError(error)
+    return {
+      alt_id: `Tampilan ${p?.title_id ?? 'project'}`,
+      alt_en: `Screenshot of ${p?.title_en ?? 'the project'}`,
+    }
   }
+  if (ids.experienceId) {
+    const e = await db.experience.findUnique({
+      where: { id: ids.experienceId },
+      select: { organization: true, organization_en: true },
+    })
+    const org = e?.organization ?? 'instansi'
+    const orgEn = e?.organization_en || org
+    return target === 'experience-logo'
+      ? { alt_id: `Logo ${org}`, alt_en: `${orgEn} logo` }
+      : { alt_id: `Foto kegiatan di ${org}`, alt_en: `Photo from ${orgEn}` }
+  }
+  const profile = await db.profile.findUnique({ where: { id: 1 }, select: { name: true } })
+  const name = profile?.name ?? 'Muhammad Mirza'
+  return { alt_id: `Foto ${name}`, alt_en: `Photo of ${name}` }
 }
 
 export async function removeAsset(assetId: unknown): Promise<ActionResult> {
@@ -356,6 +358,7 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           profilePhoto: { select: { id: true } },
           profileCv: { select: { id: true } },
           profileAboutOf: { select: { id: true } },
+          profileChipOf: { select: { id: true } },
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },

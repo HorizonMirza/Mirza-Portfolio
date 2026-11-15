@@ -156,9 +156,15 @@ model Profile {
   // peran di pita halaman Tentang; kosong = peran beranda (aboutRoles)
   aboutBandRoles_id String?
   aboutBandRoles_en String?
-  // chip kampus dan chip bendera di kartu foto halaman Tentang
+  // chip (kampus/perusahaan) dan chip bendera di kartu foto halaman Tentang; showCampusChip nama lama
+  // kolom chip umum (2026-11-15)
   showCampusChip    Boolean  @default(true)
   showFlag          Boolean  @default(true)
+  // isi chip umum yang diubah admin: teks dan logo; kosong = pendidikan terbaru (nama dan logonya)
+  aboutChipLabel_id String?
+  aboutChipLabel_en String?
+  aboutChipLogoId   String?  @unique @db.Uuid
+  aboutChipLogo     Asset?   @relation("ProfileAboutChip", fields: [aboutChipLogoId], references: [id], onDelete: SetNull)
   cvId              String?  @unique @db.Uuid
   cv                Asset?   @relation("ProfileCv", fields: [cvId], references: [id], onDelete: SetNull)
   // link CV di luar (mis. Google Drive); bila diisi, /api/cv mengarah ke sini, bukan ke berkas upload
@@ -283,6 +289,7 @@ model Asset {
   profilePhoto     Profile?       @relation("ProfilePhoto")
   profileCv        Profile?       @relation("ProfileCv")
   profileAboutOf   Profile?       @relation("ProfileAboutPhoto")
+  profileChipOf    Profile?       @relation("ProfileAboutChip")
   projectCovers    Project[]      @relation("ProjectCover")
   projectImages    ProjectImage[]
   experiences      Experience[]   @relation("ExperienceLogo")

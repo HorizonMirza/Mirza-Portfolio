@@ -22,7 +22,8 @@ import {
   StateBox,
   useEditLang,
 } from '@/components/admin/live-edit'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 import type { SkillOptionGroup } from '@/features/skills/queries'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
@@ -74,7 +75,8 @@ export function ProjectLive({
   const [pending, startTransition] = useTransition()
   const [importing, startImport] = useTransition()
   const [importNote, setImportNote] = useState<string | null>(null)
-  const [coverOpen, setCoverOpen] = useState(false)
+  // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const [lang, setLang] = useEditLang()
   const form = useForm<ProjectInput, unknown, ProjectValues>({
     resolver: zodResolver(projectSchema),
@@ -324,29 +326,40 @@ export function ProjectLive({
                   {browserAddress({ slug: v.slug || '…', demoUrl: v.demoUrl || null }, host)}
                 </span>
               </div>
-              <button
-                type="button"
-                disabled={!projectId}
-                onClick={() => setCoverOpen(true)}
-                className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
-              >
+              <div className="group/cover relative">
+                <button
+                  type="button"
+                  disabled={!projectId}
+                  onClick={() => projectId && picker.pick('project-cover', projectId)}
+                  className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
+                >
+                  {cover ? (
+                    <Image
+                      placeholder={SHIMMER_PLACEHOLDER}
+                      src={cover.url}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 1100px, 90vw"
+                      className="object-contain"
+                    />
+                  ) : (
+                    <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
+                      <ImagePlus className="size-6" aria-hidden="true" />
+                      {projectId ? t('Sampul') : t('Simpan dulu untuk menambah sampul dan galeri')}
+                    </span>
+                  )}
+                  {cover ? <span className="sr-only">{t('Ganti sampul')}</span> : null}
+                </button>
                 {cover ? (
-                  <Image
-                    placeholder={SHIMMER_PLACEHOLDER}
-                    src={cover.url}
-                    alt=""
-                    fill
-                    sizes="(min-width: 1024px) 1100px, 90vw"
-                    className="object-contain"
-                  />
-                ) : (
-                  <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
-                    <ImagePlus className="size-6" aria-hidden="true" />
-                    {projectId ? t('Sampul') : t('Simpan dulu untuk menambah sampul dan galeri')}
+                  <span className="absolute top-2 right-2 rounded-md bg-bg/80 opacity-0 transition-opacity group-focus-within/cover:opacity-100 group-hover/cover:opacity-100 max-md:opacity-100">
+                    <RemoveAssetButton
+                      assetId={cover.id}
+                      label={t('Sampul')}
+                      onDone={() => router.refresh()}
+                    />
                   </span>
-                )}
-                {cover ? <span className="sr-only">{t('Ganti sampul')}</span> : null}
-              </button>
+                ) : null}
+              </div>
             </div>
 
             {/* ringkasan dan teknologi tampil di daftar project, bukan di detail */}
@@ -456,22 +469,7 @@ export function ProjectLive({
       </form>
       {/* galeri di luar form project: tiap gambar punya form sendiri dan tersimpan langsung */}
       {gallery}
-      {coverOpen && projectId ? (
-        <AssetEditDialog
-          open
-          onClose={() => setCoverOpen(false)}
-          onDone={() => {
-            setCoverOpen(false)
-            router.refresh()
-          }}
-          title="Sampul"
-          description="Gambar utama di daftar project, pita project beranda, dan foto pertama galeri halaman detail. Rasio 16:9 disarankan."
-          target="project-cover"
-          targetId={projectId}
-          asset={cover}
-          configured={configured}
-        />
-      ) : null}
+      {picker.element}
     </>
   )
 }

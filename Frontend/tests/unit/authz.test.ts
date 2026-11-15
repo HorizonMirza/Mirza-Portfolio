@@ -73,7 +73,6 @@ async function load() {
     ['deleteMessage', () => messages.deleteMessage(id)],
     ['signAssetUpload', () => assets.signAssetUpload('profile-photo')],
     ['attachUploadedAsset', () => assets.attachUploadedAsset('profile-photo', null, {}, {})],
-    ['updateAssetAlt', () => assets.updateAssetAlt(id, {})],
     ['removeAsset', () => assets.removeAsset(id)],
     ['changePassword', () => account.changePassword({})],
     ['renameAccount', () => account.renameAccount({ name: 'Nama Baru' })],

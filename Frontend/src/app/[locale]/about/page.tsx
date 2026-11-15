@@ -7,7 +7,7 @@ import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { getPublicExperiences } from '@/features/experience/public'
 import { initials, organizationName } from '@/features/experience/schema'
-import { AboutPhotoCard } from '@/features/profile/components/about-photo-card'
+import { AboutPhotoCard, chipFrom } from '@/features/profile/components/about-photo-card'
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
 import { getPublicProfile } from '@/features/profile/public'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -92,13 +92,14 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
             photo={photo}
             flag={profile?.showFlag ?? true}
             chip={
-              current && (profile?.showCampusChip ?? true)
-                ? {
-                    name: organizationName(current, locale),
-                    initials: initials(current.organization),
-                    logo: current.logo,
-                  }
-                : null
+              profile?.showCampusChip === false
+                ? null
+                : chipFrom({
+                    label: profile ? loc(profile, 'aboutChipLabel', locale) : '',
+                    logo: profile?.aboutChipLogo ?? null,
+                    fallbackName: current ? organizationName(current, locale) : '',
+                    fallbackLogo: current?.logo ?? null,
+                  })
             }
           />
         </PhotoTilt>

@@ -3,7 +3,7 @@
 import { Plus, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -20,7 +20,8 @@ import {
   useEditLang,
 } from '@/components/admin/live-edit'
 import { Container, PageIntro } from '@/components/site/section-heading'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
@@ -77,7 +78,8 @@ export function ExperienceTimelineLive({
   const router = useRouter()
   const [lang, setLang] = useEditLang()
   const [pending, startTransition] = useTransition()
-  const [asset, setAsset] = useState<{ key: string; slot: 'logo' | 'photo' } | null>(null)
+  // logo dan foto ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const entries = useEntries(initial)
   const tx = texts[lang]
   const label = (text: string) => `${t(text)} (${t(LANG_NAME[lang])})`
@@ -89,7 +91,6 @@ export function ExperienceTimelineLive({
       .map((r) => ({ row: r, start: r.values.startMonth, end: r.values.endMonth || null })),
   ).map((x) => x.row)
   const rows = [...fresh, ...saved]
-  const assetRow = asset ? entries.rows.find((r) => r.key === asset.key) : undefined
 
   function save(event: React.FormEvent) {
     event.preventDefault()
@@ -132,7 +133,13 @@ export function ExperienceTimelineLive({
                     const org = lang === 'en' ? v.organization_en || v.organization : v.organization
                     const year = (v.startMonth || '').slice(0, 4) || '----'
                     const sideButton = (slot: 'logo' | 'photo') =>
-                      row.id ? () => setAsset({ key: row.key, slot }) : undefined
+                      row.id
+                        ? () =>
+                            picker.pick(
+                              slot === 'logo' ? 'experience-logo' : 'experience-photo',
+                              row.id!,
+                            )
+                        : undefined
                     return (
                       <li
                         key={row.key}
@@ -294,24 +301,36 @@ export function ExperienceTimelineLive({
                                 {t(type === 'WORK' ? 'Kerja' : 'Organisasi')}
                               </button>
                             ))}
-                            <button
-                              type="button"
-                              aria-pressed={v.status === 'DRAFT'}
-                              onClick={() =>
-                                set({ status: v.status === 'DRAFT' ? 'PUBLISHED' : 'DRAFT' })
-                              }
-                              className={cn(
-                                'inline-flex min-h-7 items-center rounded-md border px-2 text-xs font-semibold',
-                                v.status === 'DRAFT'
-                                  ? 'border-dashed border-border text-muted'
-                                  : cn('border-transparent text-muted', hover),
-                              )}
-                            >
-                              {t('Draf')}
-                            </button>
-                            <span className={hover}>
+                            {/* "Draf" hanya untuk entri yang masih draf (tekan untuk menerbitkan);
+                                hapus logo/foto dan hapus entri berupa ikon kecil */}
+                            {v.status === 'DRAFT' ? (
+                              <button
+                                type="button"
+                                title={t('Draf: tidak tampil di situs. Tekan untuk menerbitkan.')}
+                                onClick={() => set({ status: 'PUBLISHED' })}
+                                className="inline-flex min-h-7 items-center rounded-md border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text"
+                              >
+                                {t('Draf')}
+                              </button>
+                            ) : null}
+                            <span className={cn('inline-flex items-center gap-1', hover)}>
+                              {row.logo ? (
+                                <RemoveAssetButton
+                                  assetId={row.logo.id}
+                                  label={t('Logo {item}', { item: v.organization })}
+                                  onDone={() => router.refresh()}
+                                />
+                              ) : null}
+                              {row.photo ? (
+                                <RemoveAssetButton
+                                  assetId={row.photo.id}
+                                  label={t('Foto kegiatan {item}', { item: v.organization })}
+                                  onDone={() => router.refresh()}
+                                />
+                              ) : null}
                               {row.id ? (
                                 <ConfirmDelete
+                                  iconOnly
                                   itemLabel={
                                     v[`title_${lang}`] || v.organization || t('Pengalaman')
                                   }
@@ -385,30 +404,7 @@ export function ExperienceTimelineLive({
         <LangRow lang={lang} onChange={setLang} />
         <SaveBar pending={pending} />
       </form>
-      {assetRow?.id && asset ? (
-        <AssetEditDialog
-          open
-          onClose={() => setAsset(null)}
-          onDone={() => {
-            setAsset(null)
-            router.refresh()
-          }}
-          title={
-            asset.slot === 'logo'
-              ? t('Logo {item}', { item: assetRow.values.organization })
-              : t('Foto kegiatan {item}', { item: assetRow.values.organization })
-          }
-          description={
-            asset.slot === 'logo'
-              ? 'Logo instansi di simpul timeline. Persegi, latar polos.'
-              : 'Foto di sisi seberang timeline; ditekan pengunjung untuk dilihat besar. Kosong: tahun mulai.'
-          }
-          target={asset.slot === 'logo' ? 'experience-logo' : 'experience-photo'}
-          targetId={assetRow.id}
-          asset={asset.slot === 'logo' ? assetRow.logo : assetRow.photo}
-          configured={configured}
-        />
-      ) : null}
+      {picker.element}
     </>
   )
 }

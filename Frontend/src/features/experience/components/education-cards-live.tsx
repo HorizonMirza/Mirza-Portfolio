@@ -3,14 +3,13 @@
 import { Plus, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { InlineInput, LANG_NAME, type Lang, MarkdownInline } from '@/components/admin/live-edit'
-import { AssetEditDialog } from '@/features/assets/components/asset-edit-dialog'
+import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
-import { cn } from '@/lib/utils'
 
 import { deleteExperience } from '../actions'
 import { emptyEducation, initials } from '../schema'
@@ -48,13 +47,13 @@ export function EducationCardsLive({
 }) {
   const t = useAdminT()
   const router = useRouter()
-  const [logoFor, setLogoFor] = useState<string | null>(null)
+  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const label = (text: string) => `${t(text)} (${t(LANG_NAME[lang])})`
   // dari yang paling lama ke terbaru, seperti halaman Tentang; kartu baru di akhir
   const rows = [...entries.rows].sort((a, b) =>
     a.id === null ? 1 : b.id === null ? -1 : a.values.startMonth < b.values.startMonth ? -1 : 1,
   )
-  const logoRow = rows.find((r) => r.key === logoFor)
 
   return (
     <section aria-labelledby="admin-about-edu">
@@ -72,7 +71,7 @@ export function EducationCardsLive({
               {row.id ? (
                 <button
                   type="button"
-                  onClick={() => setLogoFor(row.key)}
+                  onClick={() => picker.pick('experience-logo', row.id!)}
                   className="ab-edu-logo admin-editable cursor-pointer"
                 >
                   {row.logo ? (
@@ -194,24 +193,31 @@ export function EducationCardsLive({
                   className="mt-3 text-muted"
                   onChange={(text) => set({ [`description_${lang}`]: text })}
                 />
-                {/* alat kartu melayang di pojok kanan bawah agar tinggi kartu sama dengan situs */}
-                <div className="absolute right-4 bottom-1.5 z-10 flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    aria-pressed={v.status === 'DRAFT'}
-                    onClick={() => set({ status: v.status === 'DRAFT' ? 'PUBLISHED' : 'DRAFT' })}
-                    className={cn(
-                      'inline-flex min-h-7 items-center rounded-md border px-2 text-xs font-semibold',
-                      v.status === 'DRAFT'
-                        ? 'border-dashed border-border text-muted'
-                        : 'border-transparent text-muted opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100',
-                    )}
-                  >
-                    {t('Draf')}
-                  </button>
-                  <span className="opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100">
+                {/* alat kartu di pojok kanan atas, tampil saat kartu disorot: hapus logo dan hapus kartu
+                    berupa ikon kecil; "Draf" hanya tampil untuk entri yang masih draf (tekan untuk
+                    menerbitkan) */}
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1">
+                  {v.status === 'DRAFT' ? (
+                    <button
+                      type="button"
+                      title={t('Draf: tidak tampil di situs. Tekan untuk menerbitkan.')}
+                      onClick={() => set({ status: 'PUBLISHED' })}
+                      className="inline-flex min-h-7 items-center rounded-md border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text"
+                    >
+                      {t('Draf')}
+                    </button>
+                  ) : null}
+                  <span className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100">
+                    {row.logo ? (
+                      <RemoveAssetButton
+                        assetId={row.logo.id}
+                        label={t('Logo {item}', { item: v.organization })}
+                        onDone={() => router.refresh()}
+                      />
+                    ) : null}
                     {row.id ? (
                       <ConfirmDelete
+                        iconOnly
                         itemLabel={v.organization || t('Pendidikan')}
                         onConfirm={() => deleteExperience(row.id!)}
                         onDone={() => router.refresh()}
@@ -243,22 +249,7 @@ export function EducationCardsLive({
           </button>
         </li>
       </ul>
-      {logoRow?.id ? (
-        <AssetEditDialog
-          open
-          onClose={() => setLogoFor(null)}
-          onDone={() => {
-            setLogoFor(null)
-            router.refresh()
-          }}
-          title={t('Logo {item}', { item: logoRow.values.organization })}
-          description="Logo kampus atau sekolah di kartu Pendidikan. Persegi, latar polos."
-          target="experience-logo"
-          targetId={logoRow.id}
-          asset={logoRow.logo}
-          configured={configured}
-        />
-      ) : null}
+      {picker.element}
     </section>
   )
 }
