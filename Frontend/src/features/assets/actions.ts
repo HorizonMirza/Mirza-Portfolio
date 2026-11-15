@@ -59,7 +59,7 @@ function revalidateFor(target: UploadTarget) {
       ? 'profile'
       : target.startsWith('experience')
         ? 'experience'
-        : target.startsWith('hero')
+        : target.startsWith('hero') || target.startsWith('contact')
           ? 'settings'
           : 'projects',
   )
@@ -74,10 +74,11 @@ function usageOf(asset: {
   experiences: { id: string }[]
   experiencePhotos: { id: string }[]
   heroPortraitOf?: { id: number } | null
+  contactCardOf?: { id: number } | null
   skillLogos?: { id: string }[]
 }): CacheTag[] {
   if (asset.skillLogos?.length) return ['skills', 'projects']
-  if (asset.heroPortraitOf) return ['settings']
+  if (asset.heroPortraitOf || asset.contactCardOf) return ['settings']
   if (asset.profilePhoto || asset.profileCv || asset.profileAboutOf || asset.profileChipOf)
     return ['profile']
   if (asset.experiences.length || asset.experiencePhotos.length) return ['experience']
@@ -237,6 +238,18 @@ export async function attachUploadedAsset(
           create: { id: 1, ...data } as Prisma.SiteSettingUncheckedCreateInput,
           update: data,
         })
+      } else if (t.data === 'contact-photo') {
+        const current = await tx.siteSetting.findUnique({
+          where: { id: 1 },
+          select: { contactPhoto: { select: { id: true, publicId: true } } },
+        })
+        old = current?.contactPhoto ?? null
+        const data: Prisma.SiteSettingUncheckedUpdateInput = { contactPhotoId: asset.id }
+        await tx.siteSetting.upsert({
+          where: { id: 1 },
+          create: { id: 1, ...data } as Prisma.SiteSettingUncheckedCreateInput,
+          update: data,
+        })
       } else if (t.data === 'experience-logo' || t.data === 'experience-photo') {
         const isLogo = t.data === 'experience-logo'
         const experience = await tx.experience.findUniqueOrThrow({
@@ -362,6 +375,7 @@ export async function removeAsset(assetId: unknown): Promise<ActionResult> {
           experiences: { select: { id: true } },
           experiencePhotos: { select: { id: true } },
           heroPortraitOf: { select: { id: true } },
+          contactCardOf: { select: { id: true } },
           skillLogos: { select: { id: true } },
         },
       })

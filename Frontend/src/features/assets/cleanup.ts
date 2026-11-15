@@ -27,6 +27,7 @@ export async function deleteUnusedAssets(
       experiences: { none: {} },
       experiencePhotos: { none: {} },
       heroPortraitOf: { is: null },
+      contactCardOf: { is: null },
       skillLogos: { none: {} },
     },
     select: { id: true, publicId: true, kind: true },

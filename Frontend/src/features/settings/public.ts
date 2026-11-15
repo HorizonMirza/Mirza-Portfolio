@@ -27,6 +27,8 @@ export type IntroNoticeContent = {
 export type SiteSettings = SiteOptions & {
   // foto hero dari admin; null = foto bawaan di repo
   heroPortrait: PublicImage | null
+  // foto kartu ID halaman Kontak; null = potret hero
+  contactPhoto: PublicImage | null
   // null: pemberitahuan pembuka dimatikan atau belum lengkap
   intro: IntroNoticeContent | null
   // warna grafik kontribusi GitHub dari admin; null = biru bawaan
@@ -63,7 +65,7 @@ const loadSiteSettings = unstable_cache(
   async (): Promise<SiteSettings> => {
     const row = await getDb().siteSetting.findUnique({
       where: { id: 1 },
-      include: { heroPortrait: true },
+      include: { heroPortrait: true, contactPhoto: true },
     })
     const options = toSiteOptions(row)
     // kartu tampil bila dinyalakan di Pengaturan dan isinya lengkap di kedua bahasa
@@ -71,6 +73,7 @@ const loadSiteSettings = unstable_cache(
     return {
       ...options,
       heroPortrait: heroImage(row?.heroPortrait),
+      contactPhoto: heroImage(row?.contactPhoto),
       githubPalette: toPalette(row?.githubPalette),
       intro: complete
         ? {
@@ -91,6 +94,12 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   try {
     return await loadSiteSettings()
   } catch {
-    return { ...DEFAULT_SITE_OPTIONS, heroPortrait: null, intro: null, githubPalette: null }
+    return {
+      ...DEFAULT_SITE_OPTIONS,
+      heroPortrait: null,
+      contactPhoto: null,
+      intro: null,
+      githubPalette: null,
+    }
   }
 }

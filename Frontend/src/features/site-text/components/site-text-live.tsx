@@ -23,7 +23,6 @@ import {
   LiveErrors,
   LiveStage,
   SaveBar,
-  StateBox,
   useEditLang,
 } from '@/components/admin/live-edit'
 
@@ -62,6 +61,11 @@ export function useRegisterExtraSave(save: ExtraSave) {
     register(() => latest.current())
     return () => register(null)
   }, [register])
+}
+
+// Teks situs yang tampil apa adanya (tidak bisa diketik di halaman ini), dalam bahasa yang dipilih
+export function ShownText({ k }: { k: string }) {
+  return <>{useShownText(k)}</>
 }
 
 // Teks situs yang sedang tampil (ubahan admin atau bawaan), untuk bagian pratinjau yang tidak bisa
@@ -126,17 +130,6 @@ export function EditText({
   )
 }
 
-// cuplikan hasil mesin pencari untuk judul dan deskripsi halaman (SEO)
-export function SearchSnippet({ path, prefix }: { path: string; prefix: string }) {
-  return (
-    <StateBox note="Hasil mesin pencari">
-      <p className="text-xs text-muted">mmirza.site › {path}</p>
-      <EditText k={`${prefix}.metaTitle`} block className="mt-1 text-lg font-medium" />
-      <EditText k={`${prefix}.metaDescription`} className="mt-1 text-sm text-muted" />
-    </StateBox>
-  )
-}
-
 // Admin → modul situs (About, Experience, Projects, Contact, Navbar, Footer), DESIGN.md bagian 135:
 // halaman tampil seperti di situs dan teksnya diketik langsung. Tombol ID/EN memilih bahasa yang
 // diubah; Simpan satu baris di bawah.
@@ -145,7 +138,8 @@ export function SiteTextLive({
   initialValues,
   defaults,
   frame = false,
-  below,
+  languages = true,
+  saveTexts = true,
   children,
 }: {
   moduleId: ModuleId
@@ -154,9 +148,10 @@ export function SiteTextLive({
   // pratinjau 1:1 di bingkai layar (SiteFrame) dengan pilihan ID/EN di atas Simpan; selain itu
   // panggung hitam dengan tombol bahasa di sudut
   frame?: boolean
-  // keadaan yang tidak tampil di halaman (pesan galat, kartu terkirim, hasil mesin pencari): di
-  // bawah pratinjau, masih bisa diketik
-  below?: ReactNode
+  // pilihan ID/EN di atas Simpan; dimatikan bila halaman tidak punya teks yang diubah per bahasa
+  languages?: boolean
+  // false: halaman hanya menyimpan bagian lain (mis. kartu kontak Footer), teksnya tidak diubah
+  saveTexts?: boolean
   children: ReactNode
 }) {
   const t = useAdminT()
@@ -205,6 +200,7 @@ export function SiteTextLive({
     startTransition(async () => {
       // bagian lain di halaman ini (mis. kartu kontak Footer) disimpan lebih dulu; gagal = berhenti
       if (extra.current && !(await extra.current())) return
+      if (!saveTexts) return
       const result = await saveSiteTexts(moduleId, { values })
       if (applyResult(result)) setSaved(values)
       else if (!result.ok && result.fieldErrors) {
@@ -247,9 +243,8 @@ export function SiteTextLive({
               </div>
             </LiveStage>
           )}
-          {below}
           <LiveErrors messages={messages} />
-          {frame ? (
+          {frame && languages ? (
             <LangRow lang={lang} onChange={setLang} dirty={{ id: dirty('id'), en: dirty('en') }} />
           ) : null}
           <SaveBar pending={pending} />

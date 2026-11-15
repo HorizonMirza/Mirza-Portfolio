@@ -5,7 +5,7 @@ import { getTranslations } from 'next-intl/server'
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { SitePreviewHeader } from '@/components/admin/site-preview-header'
-import { getProfileAssets } from '@/features/assets/queries'
+import { getContactPhotoAsset, getProfileAssets } from '@/features/assets/queries'
 import { ContactLinksLive } from '@/features/profile/components/contact-links-live'
 import { getPublicProfile } from '@/features/profile/public'
 import { getContactLinksForEdit } from '@/features/profile/queries'
@@ -14,10 +14,9 @@ import { getIntroForEdit } from '@/features/settings/queries'
 import { findModule, type ModuleId } from '@/features/site-text/catalog'
 import {
   type LayoutExtras,
-  SiteTextBelow,
   SiteTextLayout,
 } from '@/features/site-text/components/site-text-layouts'
-import { EditText, SiteTextLive } from '@/features/site-text/components/site-text-live'
+import { ShownText, SiteTextLive } from '@/features/site-text/components/site-text-live'
 import { getDefaultTexts, getTextsForEdit } from '@/features/site-text/queries'
 import { getSiteSettings } from '@/features/settings/public'
 import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
@@ -101,18 +100,22 @@ async function IntroEditor() {
 
 async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
   const lang = await getAdminLang()
-  const [texts, defaults, profile, settings] = await Promise.all([
+  const [texts, defaults, profile, settings, contactPhoto] = await Promise.all([
     getTextsForEdit(moduleId),
     getDefaultTexts(moduleId),
     getPublicProfile(),
     getSiteSettings(),
+    moduleId === 'contact' ? getContactPhotoAsset() : null,
   ])
   const name = profile?.name ?? 'Muhammad Mirza'
   // Navbar, Contact, dan Footer tampil 1:1 seperti situs di bingkai layar (DESIGN.md bagian 151)
   const extras: LayoutExtras = {
     name,
-    photo: settings.heroPortrait?.url ?? HERO_PORTRAIT,
-    photoCrop: HERO_CARD_CROP,
+    photo: contactPhoto?.url ?? settings.heroPortrait?.url ?? HERO_PORTRAIT.src,
+    // foto dari admin dipakai utuh; potret hero dipotong kepala dan bahu (sama dengan situs)
+    photoCrop: contactPhoto ? undefined : HERO_CARD_CROP,
+    photoAsset: contactPhoto,
+    uploadConfigured: isUploadConfigured(),
     header:
       moduleId === 'navbar' ? (
         <SitePreviewHeader locale={lang} currentPath="/" editable />
@@ -125,7 +128,9 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
       initialValues={texts.values}
       defaults={defaults}
       frame
-      below={<SiteTextBelow moduleId={moduleId} />}
+      // Footer: tanpa teks yang diubah per bahasa, hanya kartu kontak
+      languages={moduleId !== 'footer'}
+      saveTexts={moduleId !== 'footer'}
     >
       <SiteTextLayout moduleId={moduleId} extras={extras} />
     </SiteTextLive>
@@ -141,7 +146,7 @@ async function footerContacts() {
       defaultValues={links}
       cv={assets.cv}
       configured={isUploadConfigured()}
-      cvTitle={<EditText k="Footer.cv" />}
+      cvTitle={<ShownText k="Footer.cv" />}
     />
   )
 }

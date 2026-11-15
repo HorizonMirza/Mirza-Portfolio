@@ -98,6 +98,17 @@ export const UPLOAD_TARGETS = {
     aspect: 1,
     decorative: true,
   },
+  // foto di kartu ID bertali halaman Kontak (Admin → Contact, 2026-11-15); kosong = potret hero
+  'contact-photo': {
+    label: 'Foto kartu ID',
+    aspect: 176 / 160,
+    kind: 'IMAGE',
+    resourceType: 'image',
+    folder: 'portfolio/contact',
+    maxBytes: 2 * 1024 * 1024,
+    formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
+    accept: 'image/jpeg,image/png,image/webp,image/avif',
+  },
   // Potret dan armor hero beranda (Admin → Pengaturan). Pembingkaian halaman (lubang wajah di nama,
   // posisi kepala, intip visor) dihitung dari foto bawaan, jadi pengganti harus berukuran sebanding
   // dan dibingkai sama. Latar transparan, maka tanpa JPG.

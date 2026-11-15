@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowUpRight, FileText, Globe, Mail, Upload } from 'lucide-react'
+import { ArrowUpRight, FileText, Mail, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
@@ -19,15 +19,9 @@ import { cn } from '@/lib/utils'
 import { saveContactLinks } from '../actions'
 import { type ContactLinksInput, contactLinksSchema } from '../schema'
 
-type Key = 'whatsapp' | 'email' | 'linkedin' | 'github' | 'instagram' | 'website' | 'cv'
+type Key = 'whatsapp' | 'email' | 'linkedin' | 'github' | 'instagram' | 'cv'
 type FieldName =
-  | 'whatsapp'
-  | 'email'
-  | 'cvUrl'
-  | 'socials.linkedin'
-  | 'socials.github'
-  | 'socials.instagram'
-  | 'socials.website'
+  'whatsapp' | 'email' | 'cvUrl' | 'socials.linkedin' | 'socials.github' | 'socials.instagram'
 
 function Brand({ slug }: { slug: string }) {
   return (
@@ -78,13 +72,6 @@ const CARDS: { key: Key; field: FieldName; title: string; icon: ReactNode; place
       title: 'Instagram',
       icon: <Brand slug="instagram" />,
       placeholder: 'https://instagram.com/…',
-    },
-    {
-      key: 'website',
-      field: 'socials.website',
-      title: 'Situs lain',
-      icon: <Globe className="size-5" aria-hidden="true" />,
-      placeholder: 'https://…',
     },
   ]
 

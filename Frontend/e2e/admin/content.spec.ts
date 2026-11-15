@@ -935,6 +935,15 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak (DESIGN.md bagian 151)
   await expect(page.locator('.site-frame footer')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toHaveCount(1)
+  // enam kartu (2 baris x 3), tanpa Situs lain, tanpa pilihan bahasa dan tanpa keterangan kartu;
+  // judul dan hak cipta tampil apa adanya
+  await expect(page.locator('.site-frame footer ul > li')).toHaveCount(6)
+  await expect(page.getByText('Situs lain', { exact: true })).toHaveCount(0)
+  await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toHaveCount(0)
+  await expect(page.getByText(/Keterangan saat kartu disorot/)).toHaveCount(0)
+  await expect(
+    page.locator('.site-frame footer h2 input, .site-frame footer h2 textarea'),
+  ).toHaveCount(0)
   // ikon kartu Resume CV langsung membuka pemilih berkas PDF (tanpa jendela, DESIGN.md bagian 148);
   // Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif
   await contacts.getByRole('button', { name: 'Berkas Resume CV' }).click()
@@ -947,20 +956,36 @@ test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketi
 }) => {
   // revisi pemilik 2026-11-15 malam (DESIGN.md bagian 151): bingkai layar dengan markup situs
   await page.goto('/admin/pages/navbar')
-  const bar = page.locator('.site-frame header.site-bar')
+  const bar = page.locator('.site-frame:visible header.site-bar')
   await expect(bar).toBeVisible()
   // lima nama menu bisa diketik langsung di kapsul menu situs; foto dan tombol bahasa/tema hanya tampilan
   await expect(bar.getByRole('textbox', { name: /\(Indonesia\)$/ })).toHaveCount(5)
   await expect(bar.locator('[inert]')).not.toHaveCount(0)
-  await expect(page.getByRole('textbox', { name: /Nama menu untuk pembaca layar/ })).toBeVisible()
+  // nama menu untuk pembaca layar tidak diubah dari admin lagi (revisi 2026-11-15 malam)
+  await expect(page.getByText(/Nama menu untuk pembaca layar/)).toHaveCount(0)
 
   await page.goto('/admin/pages/contact')
-  const frame = page.locator('.site-frame')
+  const frame = page.locator('.site-frame:visible')
   await expect(frame.locator('.send-btn')).toBeVisible()
-  // label formulir, judul, dan pengantar bisa diketik; kolomnya hanya tampilan
-  for (const label of ['Label nama', 'Label email', 'Label subjek', 'Label pesan'])
-    await expect(frame.getByRole('textbox', { name: new RegExp(`^${label}`) })).toBeVisible()
-  await expect(frame.locator('input[readonly]').first()).toBeAttached()
-  // tulisan kartu ID juga bisa diketik (di bawah pratinjau)
-  await expect(page.getByRole('textbox', { name: /Jabatan di kartu ID/ })).toBeVisible()
+  // hanya judul, pengantar, jabatan di kartu, dan foto kartu yang bisa diubah; label formulir dan
+  // tombol kirim tampil apa adanya, tanpa kotak keadaan di bawah pratinjau
+  const wide = (page.viewportSize()?.width ?? 0) >= 1024
+  // kolom formulir (readonly) dan pemilih berkas tersembunyi bukan isian yang diubah
+  await expect(
+    frame.locator('input:not([readonly]):not([type=file]), textarea:not([readonly])'),
+  ).toHaveCount(3)
+  await expect(frame.getByRole('textbox', { name: /^Judul \(Indonesia\)/ })).toBeVisible()
+  await expect(frame.getByRole('textbox', { name: /^Kalimat pembuka/ })).toBeVisible()
+  for (const gone of [
+    'Tombol saat mengirim',
+    'Pesan galat formulir',
+    'Kartu setelah pesan terkirim',
+    'Hasil mesin pencari',
+  ])
+    await expect(page.getByText(gone, { exact: true })).toHaveCount(0)
+  // kartu ID bertali hanya tampil di layar lebar (sama dengan situs); foto ditekan untuk diganti
+  if (wide) {
+    await expect(page.getByRole('button', { name: 'Ganti foto kartu ID' })).toBeVisible()
+    await expect(frame.getByRole('textbox', { name: /^Jabatan di kartu ID/ })).toBeVisible()
+  }
 })

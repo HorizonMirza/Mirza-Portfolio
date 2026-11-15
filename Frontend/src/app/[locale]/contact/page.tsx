@@ -46,8 +46,9 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
           role={t('cardRole')}
           // wajah sama dengan beranda (revisi pemilik 2026-11-06): potret hero, termasuk unggahan
           // dari Admin → Pengaturan bila ada, dipotong kepala dan bahu
-          photo={settings.heroPortrait?.url ?? HERO_PORTRAIT}
-          photoCrop={HERO_CARD_CROP}
+          photo={settings.contactPhoto?.url ?? settings.heroPortrait?.url ?? HERO_PORTRAIT}
+          // foto kartu dari admin dipakai utuh; potret hero dipotong kepala dan bahu
+          photoCrop={settings.contactPhoto ? undefined : HERO_CARD_CROP}
           site={t('cardSite')}
         />
         {/* contact-col: setelah terkirim, kotak tiket selebar kalimat pengantar (globals.css) */}

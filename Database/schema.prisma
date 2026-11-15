@@ -295,6 +295,7 @@ model Asset {
   experiences      Experience[]   @relation("ExperienceLogo")
   experiencePhotos Experience[]   @relation("ExperiencePhoto")
   heroPortraitOf   SiteSetting?   @relation("HeroPortrait")
+  contactCardOf    SiteSetting?   @relation("ContactCardPhoto")
   skillLogos       Skill[]        @relation("SkillLogo")
 }
 
@@ -376,6 +377,9 @@ model SiteSetting {
   // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
   heroPortraitId     String?  @unique @db.Uuid
   heroPortrait       Asset?   @relation("HeroPortrait", fields: [heroPortraitId], references: [id], onDelete: SetNull)
+  // foto di kartu ID halaman Kontak (Admin → Contact); kosong = potret hero
+  contactPhotoId     String?  @unique @db.Uuid
+  contactPhoto       Asset?   @relation("ContactCardPhoto", fields: [contactPhotoId], references: [id], onDelete: SetNull)
   // warna grafik kontribusi GitHub di beranda: { light: [4 hex], dark: [4 hex] }; kosong = biru bawaan
   githubPalette      Json?
   // Admin → Pengaturan (DESIGN.md bagian 119). Pilihan teks divalidasi Zod (features/settings/options.ts).

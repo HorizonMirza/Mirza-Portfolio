@@ -38,6 +38,14 @@ export async function getProfileAssets(): Promise<{
   }
 }
 
+export async function getContactPhotoAsset(): Promise<AssetView | null> {
+  const row = await getDb().siteSetting.findUnique({
+    where: { id: 1 },
+    select: { contactPhoto: { select: assetSelect } },
+  })
+  return row?.contactPhoto ?? null
+}
+
 export async function getHeroPortraitAsset(): Promise<AssetView | null> {
   const row = await getDb().siteSetting.findUnique({
     where: { id: 1 },

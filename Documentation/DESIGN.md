@@ -1786,3 +1786,11 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - **Kartu pendidikan**: garis putus-putus rapat (jarak 1px) dan bersudut tajam, selebar teksnya (bukan selebar kartu), termasuk kotak Nilai/IPK.
 - Tes aksesibilitas admin melewatkan aturan `target-size` untuk pratinjau GitHub dan Footer karena isinya diperkecil oleh bingkai (ukuran penuh di situs).
 
+## 152. Navbar, Contact, dan Footer: hanya yang diubah admin yang berupa isian (2026-11-15 malam)
+
+- Revisi pemilik atas bagian 151: kotak keadaan di bawah pratinjau dihapus dan tulisan yang tidak diubah admin tampil apa adanya.
+- **Footer**: hanya nilai kartu kontak yang bisa diketik. Judul ("Hubungi saya"), hak cipta (tahun dan nama terisi seperti di situs), dan judul kartu CV tampil apa adanya; keterangan saat kartu disorot dan kartu "Situs lain" dihapus dari admin (nilai situs lain yang sudah tersimpan tidak berubah), sehingga kartu tinggal enam, 2 baris x 3 seperti di situs. Tanpa pilihan ID/EN karena tidak ada teks per bahasa yang diubah; Simpan hanya menyimpan kartu kontak.
+- **Navbar**: kotak "Nama menu untuk pembaca layar" dihapus; nama lima menu tetap diketik di kapsul menu, dengan ID/EN di atas Simpan.
+- **Contact**: yang bisa diubah hanya **foto kartu ID**, **jabatan di kartu**, **judul**, dan **kalimat pembuka**. Label formulir, tombol kirim, dan alamat situs tampil apa adanya; kotak tombol saat mengirim, pesan galat, kartu setelah terkirim, dan hasil mesin pencari dihapus dari admin (teksnya tetap tampil di situs, bawaan atau yang tersimpan sebelumnya). Kartu ID di admin berupa tiruan diam kartu bertali situs (`ContactCard`, ukuran sama dengan kanvas: kartu 200x300, foto 176x160) karena kanvas situs tidak bisa diketik; foto ditekan untuk diganti, jabatan diketik di kartunya.
+- **Foto kartu ID** punya kolom sendiri, `SiteSetting.contactPhotoId` (migrasi `contact_photo`, target unggah `contact-photo`, rasio 176:160), terpisah dari potret hero beranda; kosong = potret hero seperti sebelumnya. Foto dari admin dipakai utuh, potret hero tetap dipotong kepala dan bahu.
+
