@@ -3,6 +3,8 @@ import 'server-only'
 import { assetSelect } from '@/features/assets/queries'
 import { getDb } from '@/lib/db'
 
+import { resolveLogo } from './skill-items'
+
 // Kategori beserta skill, untuk halaman admin skill dan pilihan skill di form project.
 export async function listSkillCategoriesAdmin() {
   return getDb().skillCategory.findMany({
@@ -35,7 +37,12 @@ export async function listSkillOptions() {
     id: c.id,
     name: c.name_id,
     name_en: c.name_en,
-    skills: c.skills.map((s) => ({ id: s.id, name: s.name })),
+    skills: c.skills.map((s) => ({
+      id: s.id,
+      name: s.name,
+      // logo kecil untuk pilihan teknologi project (unggahan, lalu logo asli public/skills)
+      logo: resolveLogo(s.name, s.icon, s.logo),
+    })),
   }))
 }
 

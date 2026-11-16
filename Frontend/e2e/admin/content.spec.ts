@@ -504,6 +504,9 @@ test('About: kartu pendidikan hanya punya satu tombol hapus dan tahun selesai bi
   await page.goto('/admin/profile')
   const cards = page.locator('.ab-edu-card')
   await expect(cards.first()).toBeVisible()
+  // tes lain membuat dan menghapus kartu pendidikan di database yang sama: tunggu halaman tenang
+  // supaya daftar kartu yang dihitung sudah stabil
+  await page.waitForLoadState('networkidle')
   // satu tombol hapus per kartu (menghapus kartu beserta logonya); tanpa tombol × "Masih berlangsung"
   for (const card of await cards.all())
     await expect(card.getByRole('button', { name: /^Hapus/ })).toHaveCount(1)

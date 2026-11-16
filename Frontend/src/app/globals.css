@@ -2216,7 +2216,8 @@ html:has(.contact-sent) {
     scale 400ms var(--ease-out-soft);
 }
 /* logo asli yang hitam memakai versi terangnya di tema gelap (sama dengan globe skill) */
-.dark .pj-tech img[data-invert-dark] {
+.dark .pj-tech img[data-invert-dark],
+.dark .pj-pick img[data-invert-dark] {
   filter: invert(1);
 }
 @media (hover: hover) {

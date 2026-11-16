@@ -1,7 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ExternalLink, GitBranch, ImagePlus, Plus } from 'lucide-react'
+import { ArrowLeft, ExternalLink, ImagePlus, Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -24,12 +24,13 @@ import {
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import type { AssetView } from '@/features/assets/components/asset-panels'
+import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import type { SkillOptionGroup } from '@/features/skills/queries'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 import { slugify } from '@/lib/validation'
 
-import { browserAddress, imageRatio } from '../browser-address'
+import { imageRatio } from '../browser-address'
 
 import { saveProject } from '../actions'
 import { type ProjectInput, projectSchema, type ProjectValues } from '../schema'
@@ -187,7 +188,7 @@ export function ProjectLive({
                   invalid={Boolean(err(`title_${lang}`))}
                   className="text-center text-h2 leading-[1.15] font-bold"
                 />
-                <p className="admin-tight flex flex-wrap items-center justify-center font-mono text-xs leading-6 text-muted">
+                <p className="admin-tight mt-3 flex flex-wrap items-center justify-center font-mono text-xs leading-6 text-muted">
                   {host}/projects/
                   <InlineInput
                     label={t('Slug')}
@@ -227,7 +228,14 @@ export function ProjectLive({
                         {key === 'demo' ? (
                           <ExternalLink className="size-4" aria-hidden="true" />
                         ) : (
-                          <GitBranch className="size-4" aria-hidden="true" />
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="size-4"
+                            fill="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path d={BRAND_ICONS.github.path} />
+                          </svg>
                         )}
                         {tx[key]}
                       </button>
@@ -255,9 +263,6 @@ export function ProjectLive({
                     <i />
                     <i />
                   </span>
-                  <span className="pj-browser-url">
-                    {browserAddress({ slug: v.slug || '…', demoUrl: v.demoUrl || null }, host)}
-                  </span>
                 </div>
                 <div className="group/cover relative">
                   {shown ? (
@@ -271,23 +276,29 @@ export function ProjectLive({
                         sizes="(min-width: 1024px) 1100px, 90vw"
                         className="object-contain"
                       />
-                      {/* sampul ditekan: langsung membuka pemilih berkas */}
+                      {/* garis putus-putus 6 px di dalam tepi foto, sama untuk sampul dan gambar galeri;
+                          sampul ditekan untuk diganti (membuka pemilih berkas) */}
                       {shownIsCover ? (
                         <button
                           type="button"
                           onClick={() => projectId && picker.pick('project-cover', projectId)}
-                          className="admin-editable absolute inset-0 cursor-pointer outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current"
+                          className="admin-editable absolute inset-1.5 cursor-pointer rounded-none [--editable-offset:0px] focus-visible:outline-2 focus-visible:outline-current"
                         >
                           <span className="sr-only">{t('Ganti sampul')}</span>
                         </button>
-                      ) : null}
+                      ) : (
+                        <div
+                          aria-hidden="true"
+                          className="admin-editable pointer-events-none absolute inset-1.5 rounded-none [--editable-offset:0px]"
+                        />
+                      )}
                     </div>
                   ) : (
                     <button
                       type="button"
                       disabled={!projectId}
                       onClick={() => projectId && picker.pick('project-cover', projectId)}
-                      className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
+                      className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-6px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
                     >
                       <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
                         <ImagePlus className="size-6" aria-hidden="true" />
@@ -298,7 +309,7 @@ export function ProjectLive({
                     </button>
                   )}
                   {shown ? (
-                    <span className="absolute top-2 right-2 rounded-md bg-bg/80 opacity-0 transition-opacity group-focus-within/cover:opacity-100 group-hover/cover:opacity-100 max-md:opacity-100">
+                    <span className="absolute top-3 right-3 rounded-md bg-bg/80">
                       <RemoveAssetButton
                         assetId={shown.id}
                         label={
@@ -356,8 +367,9 @@ export function ProjectLive({
               ) : null}
             </div>
 
-            {/* ringkasan dan teknologi tampil di daftar project */}
-            <div className="flex flex-col gap-4">
+            {/* Ringkasan tampil di daftar project dan diketik di sana; di sini hanya untuk project
+                baru karena wajib diisi sebelum bisa dibuat. */}
+            {projectId ? null : (
               <InlineArea
                 key={`summary_${lang}`}
                 label={label('Ringkasan')}
@@ -367,42 +379,60 @@ export function ProjectLive({
                 invalid={Boolean(err(`summary_${lang}`))}
                 className="text-sm text-muted"
               />
-              <div className="flex flex-col gap-3" role="group" aria-label={tx.stack}>
-                {skillGroups.length === 0 ? (
-                  <p className="text-sm text-muted">
-                    {t('Belum ada skill. Tambahkan di menu Skill.')}
-                  </p>
-                ) : (
-                  skillGroups.map((group) => (
-                    <div key={group.id} className="flex flex-col gap-1.5">
-                      <p className="text-xs text-muted">
-                        {lang === 'en' ? group.name_en : group.name}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {group.skills.map((skill) => {
-                          const on = skills.includes(skill.id)
-                          return (
+            )}
+
+            {/* teknologi project: dipilih dari skill yang dimiliki, tampil seperti daftar Skill teknis */}
+            <div className="pj-pick admin-tight flex flex-col" role="group" aria-label={tx.stack}>
+              {skillGroups.length === 0 ? (
+                <p className="text-sm text-muted">
+                  {t('Belum ada skill. Tambahkan di menu Skill.')}
+                </p>
+              ) : (
+                skillGroups.map((group) => (
+                  <section
+                    key={group.id}
+                    className="border-b border-border py-5 first:pt-0 last:border-b-0 last:pb-0"
+                  >
+                    <p className="text-lg font-semibold">
+                      {lang === 'en' ? group.name_en : group.name}
+                    </p>
+                    <ul className="mt-3 flex flex-wrap gap-2">
+                      {group.skills.map((skill) => {
+                        const on = skills.includes(skill.id)
+                        return (
+                          <li key={skill.id}>
                             <button
-                              key={skill.id}
                               type="button"
                               aria-pressed={on}
                               onClick={() => toggleSkill(skill.id)}
                               className={cn(
-                                'inline-flex min-h-7 items-center rounded-full border px-2.5 font-mono text-xs',
+                                'inline-flex min-h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium',
                                 on
-                                  ? 'border-text bg-text font-semibold text-bg'
+                                  ? 'border-text bg-surface ring-1 ring-text'
                                   : 'border-dashed border-border text-muted hover:text-text',
                               )}
                             >
+                              {skill.logo ? (
+                                // logo kecil statis (unggahan atau public/skills), tanpa optimasi next/image
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={skill.logo.src}
+                                  alt=""
+                                  width={20}
+                                  height={20}
+                                  className="size-5 object-contain"
+                                  data-invert-dark={skill.logo.invertDark ? '' : undefined}
+                                />
+                              ) : null}
                               {skill.name}
                             </button>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </section>
+                ))
+              )}
             </div>
           </article>
         </LiveStage>

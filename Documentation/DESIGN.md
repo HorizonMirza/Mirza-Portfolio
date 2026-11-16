@@ -1837,3 +1837,11 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - **Projects (ubah)**: baris pilihan Terbit/Draf, Unggulan di beranda, kategori, dan Tahun dihapus, begitu juga ID/EN di pojok kanan atas panggung. **Pengecualian:** tombol kecil "Draf" muncul hanya bila project masih draf (tekan untuk menerbitkan), sama seperti Experience, agar project baru tetap bisa diterbitkan. Kategori, tahun, dan unggulan tidak lagi bisa diubah dari admin (nilai yang ada tidak berubah). ID/EN ada di atas Simpan seperti halaman lain.
 - Alamat `host/projects/slug` dan dua kolom URL (demo, GitHub) dirapikan: baris alamat setinggi 1,5 rem dengan garis rapat, dua kolom URL sama lebar dengan tombolnya. Ringkasan satu baris selebar halaman.
 - **Galeri**: sampul dan galeri jadi satu seperti halaman detail situs: foto besar di bingkai browser, deretan gambar kecil di bawahnya, penghitung "n / total". Foto pertama = sampul (ditekan untuk diganti), tombol **+** di ujung deretan menambah gambar (tanpa sampul, gambar pertama menjadi sampul), tong sampah di pojok foto menghapus foto yang sedang tampil. Panel "Galeri" terpisah (`GalleryPanel`) dihapus.
+
+## 159. Halaman ubah Project: logo GitHub asli, garis foto rapi, pilihan teknologi seperti Skill teknis (2026-11-16 sore, kedua)
+
+- Tombol GitHub memakai logo GitHub asli (`BRAND_ICONS.github`, sama dengan situs), bukan ikon cabang.
+- Baris `host/projects/slug` diberi jarak dari judul agar garis putus-putusnya tidak bertabrakan. Teks alamat di bilah jendela browser galeri dihapus (bilah tinggal tiga titik).
+- Garis putus-putus foto berjarak 6 px merata di dalam tepi foto, sama untuk sampul dan gambar galeri; gambar kedua dan seterusnya juga bergaris (tidak bisa diganti, hanya dihapus) dan tong sampah hapus selalu tampil di pojok foto, tidak lagi menunggu sorotan.
+- Ringkasan tidak lagi tampil di halaman ubah project yang sudah ada (diketik di daftar project); hanya muncul di "Project baru" karena wajib diisi sebelum project bisa dibuat.
+- Pilihan teknologi: per kategori skill dengan judul seperti di halaman Skill teknis dan kotak skill berlogo (`listSkillOptions` kini mengembalikan logo lewat `resolveLogo`). Yang dipilih berbingkai tegas, yang belum berbingkai putus-putus.
