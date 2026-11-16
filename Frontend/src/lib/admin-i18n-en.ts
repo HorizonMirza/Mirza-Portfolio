@@ -612,7 +612,7 @@ export const EN: Record<string, string> = {
   Bio: 'Bio',
   Ukuran: 'Size',
   // Akun desain 1 (DESIGN.md bagian 124)
-  'Admin sejak': 'Admin since',
+  'Admin sejak': 'Admin Since',
   'Aktif sekarang': 'Active now',
   'Belum pernah diganti dari panel': 'Not changed from the panel yet',
   'Ganti foto profil': 'Change profile photo',
