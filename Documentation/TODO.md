@@ -310,3 +310,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Pengaturan: volume utama "Semua suara" dihapus (tiap suara punya geseran sendiri), urutan Tampilan: Tema awal, Bahasa pertama, Kartu pembuka muncul, Kartu pembuka, Animasi hero, WhatsApp melayang; kolom soundVolume tidak dipakai lagi |
 | 2026-11-16 | Semua dialog (hapus, form akun, potong gambar, dan lainnya) memakai latar buram tipis; opsi blur per dialog dihapus |
 | 2026-11-16 | Pengaturan: baris "Email saat ada pesan baru" (saklar, lencana "Butuh Resend", penjelasan) dihapus; email pesan baru kini selalu dikirim bila Resend diatur. Kolom SiteSetting.emailOnMessage dibiarkan tanpa migrasi |
+| 2026-11-16 | Pengaturan: baris "Izinkan mesin pencari" dihapus; situs selalu boleh diindeks (hanya mode perawatan yang menutupnya). Kolom SiteSetting.allowIndexing dibiarkan tanpa migrasi |

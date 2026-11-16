@@ -506,8 +506,6 @@ export const EN: Record<string, string> = {
   'Berbeda dari password saat ini': 'Different from the current password',
   'Bila mati, form di halaman Kontak diganti tulisan bahwa form sedang ditutup.':
     'When off, the form on the Contact page is replaced by a note that it is closed.',
-  'Bila mati, robots.txt dan setiap halaman melarang pengindeksan.':
-    'When off, robots.txt and every page tell search engines not to index the site.',
   'Browser tidak dikenal': 'Unknown browser',
   Buka: 'Open',
   'Dari satu jaringan, {min} sampai {max} pesan.': 'From one network, {min} to {max} messages.',
@@ -526,7 +524,6 @@ export const EN: Record<string, string> = {
   'Ikuti browser': 'Follow browser',
   'Ikuti perangkat': 'Follow device',
   'Isi angka {min} sampai {max}': 'Enter a number from {min} to {max}',
-  'Izinkan mesin pencari': 'Allow search engines',
   'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.':
     'The Important Information card when the site opens. Edit its text in Home, Introduction card tab.',
   'Kartu pembuka': 'Introduction card',

@@ -66,7 +66,6 @@ export const siteOptionSchema = z.discriminatedUnion('key', [
     key: z.literal('visitRetentionDays'),
     value: z.union(RETENTION_CHOICES.map((d) => z.literal(d))),
   }),
-  z.object({ key: z.literal('allowIndexing'), value: z.boolean() }),
   z.object({ key: z.literal('maintenanceMode'), value: z.boolean() }),
 ])
 
@@ -92,7 +91,6 @@ export const DEFAULT_SITE_OPTIONS: SiteOptions = {
   loginNotify: true,
   trackVisits: true,
   visitRetentionDays: 90,
-  allowIndexing: true,
   maintenanceMode: false,
 }
 
@@ -133,7 +131,6 @@ export function toSiteOptions(row: Partial<Record<SiteOptionKey, unknown>> | nul
     loginNotify: bool(row.loginNotify, d.loginNotify),
     trackVisits: bool(row.trackVisits, d.trackVisits),
     visitRetentionDays: pick(row.visitRetentionDays, RETENTION_CHOICES, d.visitRetentionDays),
-    allowIndexing: bool(row.allowIndexing, d.allowIndexing),
     maintenanceMode: bool(row.maintenanceMode, d.maintenanceMode),
   }
 }

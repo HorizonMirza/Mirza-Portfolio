@@ -414,6 +414,7 @@ model SiteSetting {
   trackVisits        Boolean  @default(true)
   visitRetentionDays Int      @default(90)
   // mesin pencari boleh mengindeks situs (robots.txt dan meta robots)
+  // tidak dipakai lagi sejak 2026-11-16 (saklar dihapus; situs selalu boleh diindeks kecuali mode perawatan); kolom dibiarkan tanpa migrasi yang menghapus data
   allowIndexing      Boolean  @default(true)
   // pengunjung melihat halaman "Sedang diperbarui"; panel admin tetap bisa dipakai
   maintenanceMode    Boolean  @default(false)

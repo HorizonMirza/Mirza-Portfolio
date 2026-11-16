@@ -268,17 +268,6 @@ export function SiteSettingsList({
             />
           )}
         />
-        <Row
-          title={t('Izinkan mesin pencari')}
-          description={t('Bila mati, robots.txt dan setiap halaman melarang pengindeksan.')}
-          control={(ids) => (
-            <Switch
-              ids={ids}
-              on={values.allowIndexing}
-              onChange={(v) => save('allowIndexing', v)}
-            />
-          )}
-        />
       </Group>
 
       <Group title={t('Lanjutan')}>

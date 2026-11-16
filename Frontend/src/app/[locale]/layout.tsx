@@ -43,11 +43,9 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
   ])
 
   return {
-    // Admin → Pengaturan: "Izinkan mesin pencari" mati atau mode perawatan menyala → noindex di semua
-    // halaman publik (halaman yang memasang robots sendiri tetap memakai miliknya)
-    ...(!settings.allowIndexing || settings.maintenanceMode
-      ? { robots: { index: false, follow: false } }
-      : {}),
+    // Mode perawatan menyala → noindex di semua halaman publik (halaman yang memasang robots sendiri
+    // tetap memakai miliknya). Selain itu situs selalu boleh diindeks (saklar dihapus 2026-11-16).
+    ...(settings.maintenanceMode ? { robots: { index: false, follow: false } } : {}),
     metadataBase: new URL(siteUrl()),
     title: { default: t('title'), template: '%s · Muhammad Mirza' },
     description: t('description'),
