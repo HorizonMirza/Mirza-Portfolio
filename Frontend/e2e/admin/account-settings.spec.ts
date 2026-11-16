@@ -193,8 +193,8 @@ test.describe('Admin → Akun', () => {
 test.describe('Admin → Pengaturan', () => {
   test('saklar disimpan otomatis dan bertahan setelah dimuat ulang', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== SESSION_PROJECT, 'mengubah pengaturan bersama')
-    // "Email saat ada pesan baru" tidak mengubah tampilan situs, jadi aman diubah saat tes lain jalan
-    const toggle = () => page.getByRole('switch', { name: 'Email saat ada pesan baru' })
+    // "Hitung kunjungan" tidak mengubah tampilan situs, jadi aman diubah saat tes lain jalan
+    const toggle = () => page.getByRole('switch', { name: 'Hitung kunjungan' })
     await page.goto('/admin/settings')
     // klik lalu tunggu jawaban Server Action: memuat ulang sebelum simpan selesai membatalkannya
     const flip = async () => {

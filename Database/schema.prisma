@@ -403,9 +403,10 @@ model SiteSetting {
   introFrequency     String   @default("visit")
   // tombol WhatsApp melayang di pojok kanan bawah situs publik
   whatsappButton     Boolean  @default(false)
-  // form kontak menerima pesan, batas pesan per jam per IP, dan email ke pemilik saat ada pesan baru
+  // form kontak menerima pesan dan batas pesan per jam per IP
   contactOpen        Boolean  @default(true)
   contactPerHour     Int      @default(5)
+  // tidak dipakai lagi sejak 2026-11-16 (saklar email pesan baru dihapus; email selalu terkirim bila Resend diatur); kolom dibiarkan agar tanpa migrasi yang menghapus data
   emailOnMessage     Boolean  @default(true)
   // email ke pemilik setiap ada login baru ke panel admin (butuh Resend)
   loginNotify        Boolean  @default(true)

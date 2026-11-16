@@ -510,20 +510,16 @@ export const EN: Record<string, string> = {
     'When off, robots.txt and every page tell search engines not to index the site.',
   'Browser tidak dikenal': 'Unknown browser',
   Buka: 'Open',
-  'Butuh Resend': 'Needs Resend',
   'Dari satu jaringan, {min} sampai {max} pesan.': 'From one network, {min} to {max} messages.',
   'Data mentah yang lebih lama dihapus otomatis setiap hari; ringkasan harian tetap ada. Halaman Privasi ikut menyebut masa simpan ini.':
     'Older raw records are deleted automatically every day; daily totals stay. The Privacy page states this period too.',
   'Dikirim ke email akun ini setiap ada yang berhasil masuk.':
     'Sent to this account’s email every time someone signs in.',
-  'Dikirim ke email kontak pemilik. Pesan tetap tersimpan di Kotak masuk walau email mati.':
-    'Sent to the owner’s contact email. Messages still land in the Inbox when this is off.',
   'Dipakai sampai pengunjung memilih tema sendiri lewat tombol bulan.':
     'Used until a visitor picks a theme with the moon button.',
   'Efek cairan dan kursor di foto beranda. Bila mati, foto dan nama tetap tampil tanpa efek.':
     'The liquid effect and cursor on the home photo. When off, the photo and name still show, without the effect.',
   'Email saat ada login baru': 'Email on new sign-in',
-  'Email saat ada pesan baru': 'Email on new message',
   Gelap: 'Dark',
   'Hanya perangkat ini yang sedang masuk.': 'Only this device is signed in.',
   'Hitung kunjungan': 'Count visits',

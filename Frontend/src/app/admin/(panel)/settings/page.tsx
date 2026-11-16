@@ -6,7 +6,6 @@ import { SiteSettingsList } from '@/features/settings/components/site-settings-l
 import { getSiteOptionsForEdit } from '@/features/settings/queries'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { getEmailConfig } from '@/lib/email'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,11 +21,7 @@ export default async function SettingsPage() {
   return (
     <>
       <PageHeader title="Pengaturan" />
-      <SiteSettingsList
-        initial={options}
-        emailReady={getEmailConfig() !== null}
-        hasWhatsapp={Boolean(profile?.whatsapp)}
-      />
+      <SiteSettingsList initial={options} hasWhatsapp={Boolean(profile?.whatsapp)} />
     </>
   )
 }

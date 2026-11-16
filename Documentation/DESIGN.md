@@ -1534,7 +1534,7 @@ Pemilik memilih desain 1 dari 10 demo Pengaturan ("buat paling lengkap"). Nama m
   - *Tombol WhatsApp melayang* (bawaan mati): tombol bulat 48 px di pojok kanan bawah, di HP di atas menu bawah, membuka chat ke nomor WhatsApp di menu Footer. Tanpa nomor, tombol tidak dipasang dan barisnya bertanda "Nomor belum diisi".
   - *Terima pesan dari form kontak*: mati = form di halaman Kontak diganti kotak "Form pesan sedang ditutup" (ID/EN) dan server action juga menolak.
   - *Batas pesan per jam* 1–50 (bawaan 5) dipakai rate limit form kontak per jaringan.
-  - *Email saat ada pesan baru*: saklar untuk notifikasi Resend; bertanda "Butuh Resend" selama Resend belum diatur (ditunda pemilik), pesan tetap tersimpan.
+  - Saklar *Email saat ada pesan baru* dihapus (2026-11-16): notifikasi email ke pemilik selalu dikirim bila Resend sudah diatur, pesan tetap tersimpan di Kotak masuk apa pun hasil emailnya.
   - *Hitung kunjungan*: mati = pelacak tidak dipasang dan `/api/track` tidak mencatat.
   - *Simpan data kunjungan* 30 hari / 90 hari (bawaan) / 1 tahun: cron harian menghapus kunjungan mentah sesuai pilihan; halaman Privasi menyebut angkanya (`{days}` di teks `Privacy.visitsBody`, tanggal kebijakan diperbarui ke 11 Nov 2026).
   - *Izinkan mesin pencari*: mati = `robots.txt` `Disallow: /` dan meta `noindex, nofollow` di semua halaman publik.

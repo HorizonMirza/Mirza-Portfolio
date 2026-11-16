@@ -44,7 +44,7 @@ export async function submitContact(
   }
 
   try {
-    // Admin → Pengaturan: form ditutup, batas pesan per jam, dan email pesan baru
+    // Admin → Pengaturan: form ditutup dan batas pesan per jam
     const settings = await getSiteSettings()
     if (!settings.contactOpen) return { status: 'error', message: 'closed', values }
     const ip = clientIp(await headers())
@@ -70,7 +70,7 @@ export async function submitContact(
     // Pesan sudah tersimpan; notifikasi dikirim setelah jawaban sampai ke pengunjung (after), jadi
     // pengunjung tidak ikut menunggu Resend (sampai 10 detik, audit 2026-11-02 PERF-05). Gagal kirim
     // tidak menggagalkan pengunjung.
-    const config = settings.emailOnMessage ? getEmailConfig() : null
+    const config = getEmailConfig()
     const to = config?.CONTACT_TO_EMAIL
     if (to) {
       const email = ContactNotificationEmail({

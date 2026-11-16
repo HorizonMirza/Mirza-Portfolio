@@ -306,7 +306,7 @@ erDiagram
       string defaultLocale "browser | id | en, dibaca proxy.ts"
       string introFrequency "once | visit | weekly"
       bool introEnabled_heroAnimation_whatsappButton "saklar tampilan"
-      bool contactOpen_emailOnMessage_loginNotify "pesan dan email"
+      bool contactOpen_loginNotify "pesan dan email; emailOnMessage tidak dipakai lagi"
       int contactPerHour "1-50"
       bool trackVisits_allowIndexing_maintenanceMode "privasi dan lanjutan"
       int visitRetentionDays "30 | 90 | 365"

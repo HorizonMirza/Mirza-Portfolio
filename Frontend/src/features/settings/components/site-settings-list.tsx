@@ -33,12 +33,9 @@ type Save = <K extends SiteOptionKey>(key: K, value: SiteOptions[K]) => void
 // Gagal disimpan: kontrol kembali ke nilai terakhir yang tersimpan.
 export function SiteSettingsList({
   initial,
-  emailReady,
   hasWhatsapp,
 }: {
   initial: SiteOptions
-  // Resend sudah diatur (email pesan baru benar-benar terkirim)
-  emailReady: boolean
   // nomor WhatsApp sudah diisi di Footer (tombol melayang butuh nomor)
   hasWhatsapp: boolean
 }) {
@@ -242,20 +239,6 @@ export function SiteSettingsList({
             max: CONTACT_PER_HOUR_MAX,
           })}
           control={(ids) => <NumberControl ids={ids} value={values.contactPerHour} onSave={save} />}
-        />
-        <Row
-          title={t('Email saat ada pesan baru')}
-          badge={emailReady ? null : needs(t('Butuh Resend'))}
-          description={t(
-            'Dikirim ke email kontak pemilik. Pesan tetap tersimpan di Kotak masuk walau email mati.',
-          )}
-          control={(ids) => (
-            <Switch
-              ids={ids}
-              on={values.emailOnMessage}
-              onChange={(v) => save('emailOnMessage', v)}
-            />
-          )}
         />
       </Group>
 
