@@ -34,7 +34,7 @@ export default async function MessagePage({ params }: PageProps<'/admin/messages
     <>
       <Link
         href="/admin/messages"
-        className="mb-4 inline-flex min-h-10 items-center gap-2 text-sm text-muted hover:text-text"
+        className="mb-4 inline-flex min-h-11 items-center gap-2 font-display text-base font-medium tracking-wide text-muted uppercase hover:text-text"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
         {t('Kembali ke kotak masuk')}

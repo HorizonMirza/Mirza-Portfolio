@@ -5,6 +5,7 @@ import { FilterTabs } from '@/components/admin/filter-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { Pager, parsePage } from '@/components/admin/pager'
 import { Badge } from '@/components/ui/badge'
+import { DeleteMessageButton } from '@/features/messages/components/message-actions'
 import {
   countMessagesByStatus,
   listMessages,
@@ -18,6 +19,9 @@ import {
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatDateTime } from '@/lib/format'
+
+// panjang isi pesan di daftar sebelum dipotong dengan "…"
+const PREVIEW = 48
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -42,8 +46,10 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
 
   return (
     <>
-      <PageHeader title="Pesan" description="Pesan dari formulir kontak. Waktu dalam WIB." />
+      <PageHeader title="Pesan" />
       <FilterTabs
+        stretch
+        soft
         label={t('Filter status pesan')}
         items={MESSAGE_STATUSES.map((s) => ({
           href: s === 'NEW' ? '/admin/messages' : `/admin/messages?status=${s}`,
@@ -53,7 +59,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
         }))}
       />
       {messages.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
+        <p className="admin-bleed rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted">
           {status === 'NEW'
             ? t('Tidak ada pesan baru.')
             : t('Tidak ada pesan berstatus {status}.', {
@@ -61,25 +67,31 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
               })}
         </p>
       ) : (
-        <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
+        <ul className="admin-bleed divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
           {messages.map((m) => (
-            <li key={m.id}>
+            <li key={m.id} className="flex items-center hover:bg-surface-2">
               <Link
                 href={`/admin/messages/${m.id}`}
-                className="flex flex-col gap-1 px-4 py-3 hover:bg-surface-2 sm:flex-row sm:items-baseline sm:gap-4"
+                className="flex min-w-0 flex-1 flex-col gap-1 py-3 ps-4 sm:flex-row sm:items-baseline sm:gap-4"
               >
-                <span className="flex min-w-0 items-center gap-2 sm:w-56 sm:shrink-0">
+                <span className="flex min-w-0 items-center gap-2 sm:w-52 sm:shrink-0">
                   {m.status === 'NEW' ? <Badge tone="primary">{t('Baru')}</Badge> : null}
                   <span className="truncate font-medium">{m.name}</span>
                 </span>
+                {/* isi dipotong pendek dengan "…" agar tidak mendekati tanggal */}
                 <span className="min-w-0 flex-1 truncate text-sm">
                   {m.subject ? <span className="font-medium">{m.subject} · </span> : null}
-                  <span className="text-muted">{m.body.slice(0, 140)}</span>
+                  <span className="text-muted">
+                    {m.body.length > PREVIEW ? `${m.body.slice(0, PREVIEW).trimEnd()}…` : m.body}
+                  </span>
                 </span>
                 <span className="shrink-0 text-xs text-muted tabular-nums">
                   {formatDateTime(m.createdAt, lang)}
                 </span>
               </Link>
+              <span className="shrink-0 px-2">
+                <DeleteMessageButton id={m.id} name={m.name} />
+              </span>
             </li>
           ))}
         </ul>

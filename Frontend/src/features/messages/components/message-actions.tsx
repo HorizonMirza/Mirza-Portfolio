@@ -64,3 +64,17 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
     </div>
   )
 }
+
+// Tombol hapus di ujung baris daftar pesan (di samping tanggal dan jam), dengan dialog konfirmasi.
+export function DeleteMessageButton({ id, name }: { id: string; name: string }) {
+  const router = useRouter()
+  return (
+    <ConfirmDelete
+      title="Hapus Pesan"
+      iconOnly
+      itemLabel={name}
+      onConfirm={() => deleteMessage(id)}
+      onDone={() => router.refresh()}
+    />
+  )
+}

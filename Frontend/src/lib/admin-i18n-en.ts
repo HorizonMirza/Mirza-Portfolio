@@ -136,7 +136,6 @@ export const EN: Record<string, string> = {
   'Halaman 404 dan halaman galat.': '404 and error pages.',
   'Pengaturan teknis yang berlaku untuk seluruh situs publik. Teks, foto, dan kartu pembuka ada di menu Halaman situs.':
     'Technical settings for the whole public site. Text, photos, and the intro card are in the Site pages menu.',
-  'Pesan dari formulir kontak. Waktu dalam WIB.': 'Messages from the contact form. Times in WIB.',
   'Setiap perubahan dari panel admin tercatat di sini. Data pribadi pengunjung tidak ikut dicatat.':
     "Every change made in the admin panel is recorded here. Visitors' personal data is not recorded.",
   // seluruh panel admin (DESIGN.md bagian 115)

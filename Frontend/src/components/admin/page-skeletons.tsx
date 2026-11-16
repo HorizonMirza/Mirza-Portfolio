@@ -28,13 +28,24 @@ function HeaderSkeleton({ action = false }: { action?: boolean }) {
 
 // tab modul (ModuleTabs) dan tab filter (FilterTabs) memakai kapsul yang sama; stretch: satu baris
 // tombol sama lebar seperti tab Home (bagian 129)
-function TabsSkeleton({ count, stretch = false }: { count: number; stretch?: boolean }) {
+function TabsSkeleton({
+  count,
+  stretch = false,
+  soft = false,
+}: {
+  count: number
+  stretch?: boolean
+  soft?: boolean
+}) {
   if (count === 0) return null
   if (stretch)
     return (
       <div className="mb-6 flex gap-2 py-1">
         {Array.from({ length: count }, (_, i) => (
-          <Skeleton key={i} className="h-11 min-w-20 flex-1 rounded-md" />
+          <Skeleton
+            key={i}
+            className={cn('h-11 min-w-20 flex-1', soft ? 'rounded-2xl' : 'rounded-md')}
+          />
         ))}
       </div>
     )
@@ -149,8 +160,7 @@ export function AdminTableSkeleton({ tabs = 0, columns = 5 }: { tabs?: number; c
 export function AdminListSkeleton() {
   return (
     <Loading>
-      <HeaderSkeleton />
-      <TabsSkeleton count={3} />
+      <TabsSkeleton count={3} stretch soft />
       <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
         {Array.from({ length: 8 }, (_, i) => (
           <li key={i} className="flex items-center justify-between gap-4 p-4">
