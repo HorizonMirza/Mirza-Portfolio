@@ -305,3 +305,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Akun: baris Nama dan Email memakai panah seperti Ganti password (bukan ikon pensil) |
 | 2026-11-16 | Akun: dialog ganti nama dan email memakai desain 3 "Kartu profil" (lingkaran inisial atau ikon, nilai lama, label kecil, gembok); dialog password tidak diubah |
 | 2026-11-16 | Notifikasi di kanan bawah untuk semua halaman; Pesan: deskripsi dihapus, tab Baru/Dibaca/Arsip satu baris penuh dengan jeda dan sudut lebih tumpul, isi dipotong pendek, tombol hapus di samping tanggal, tautan "Kembali ke kotak masuk" huruf kapital besar seperti di Project |
+| 2026-11-16 | Pesan: tab Baru/Dibaca/Arsip seperti tab Home (sudut sama), jumlah dalam kurung dengan huruf yang sama, mis. "Baru (13)" |

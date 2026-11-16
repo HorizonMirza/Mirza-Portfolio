@@ -10,13 +10,10 @@ export function FilterTabs({
   label,
   items,
   stretch = false,
-  soft = false,
 }: {
   label: string
   items: { href: string; label: string; count?: number; active: boolean }[]
   stretch?: boolean
-  // sudut lebih tumpul (daftar Pesan, revisi pemilik 2026-11-16)
-  soft?: boolean
 }) {
   if (stretch)
     return (
@@ -32,17 +29,14 @@ export function FilterTabs({
             href={item.href}
             aria-current={item.active ? 'page' : undefined}
             className={cn(
-              'inline-flex min-h-11 min-w-fit flex-1 basis-0 items-center justify-center gap-2 px-4 text-sm font-semibold whitespace-nowrap transition-colors',
-              soft ? 'rounded-2xl' : 'rounded-md',
+              'inline-flex min-h-11 min-w-fit flex-1 basis-0 items-center justify-center rounded-md px-4 text-sm font-semibold whitespace-nowrap transition-colors',
               item.active
                 ? 'bg-text text-bg'
                 : 'border border-border bg-surface text-muted hover:bg-surface-2 hover:text-text',
             )}
           >
-            {item.label}
-            {item.count !== undefined ? (
-              <span className="text-xs font-medium tabular-nums opacity-70">{item.count}</span>
-            ) : null}
+            {/* jumlah dalam kurung, huruf sama dengan namanya (revisi pemilik 2026-11-16) */}
+            {item.count !== undefined ? `${item.label} (${item.count})` : item.label}
           </Link>
         ))}
       </nav>

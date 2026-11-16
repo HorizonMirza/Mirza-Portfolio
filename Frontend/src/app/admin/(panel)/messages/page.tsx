@@ -49,7 +49,6 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
       <PageHeader title="Pesan" />
       <FilterTabs
         stretch
-        soft
         label={t('Filter status pesan')}
         items={MESSAGE_STATUSES.map((s) => ({
           href: s === 'NEW' ? '/admin/messages' : `/admin/messages?status=${s}`,
