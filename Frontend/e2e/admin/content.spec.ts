@@ -87,7 +87,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   await box('Judul (Indonesia)').fill(titleId)
   await box('Ringkasan (Indonesia)').fill('Ringkasan untuk tes E2E.')
   await box('Peran saya (opsional) (Indonesia)').fill(roleText)
-  // bahasa Inggris lewat tombol EN di panggung; tampilan admin tetap berbahasa Indonesia
+  // bahasa Inggris lewat tombol EN di atas Simpan; tampilan admin tetap berbahasa Indonesia
   await page
     .getByRole('group', { name: 'Bahasa yang diubah' })
     .getByRole('button', { name: 'EN' })
@@ -113,14 +113,17 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   await expect(page.getByText('Project dibuat.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
 
-  // Ubah status menjadi terbit (diulang sampai halaman edit terhidrasi)
+  // Project baru berstatus draf: tombol Draf (hanya ada untuk draf) menerbitkannya (diulang sampai
+  // halaman edit terhidrasi). Tanpa pilihan status, kategori, unggulan, dan tahun di halaman ini.
+  await expect(main.getByRole('button', { name: 'Terbit', exact: true })).toHaveCount(0)
+  await expect(main.getByRole('button', { name: 'Unggulan di beranda' })).toHaveCount(0)
+  // galeri seperti di situs: deretan gambar kecil dengan tombol + untuk menambah gambar
+  await expect(main.locator('.pd-thumbs .pd-add')).toHaveCount(1)
   await expect(async () => {
-    await main.getByRole('button', { name: 'Terbit', exact: true }).click({ timeout: 2000 })
-    await expect(main.getByRole('button', { name: 'Terbit', exact: true })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-      { timeout: 1000 },
-    )
+    await main.getByRole('button', { name: 'Draf', exact: true }).click({ timeout: 2000 })
+    await expect(main.getByRole('button', { name: 'Draf', exact: true })).toHaveCount(0, {
+      timeout: 1000,
+    })
   }).toPass()
   await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Project disimpan.')).toBeVisible()
@@ -1029,18 +1032,16 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   // yang dipakai tes situs publik tidak berubah
   await page.goto('/admin/pages/footer')
   const whatsapp = page.getByRole('textbox', { name: 'WhatsApp (opsional)' })
-  // teks kecil kartu tampil seperti di situs; ditekan untuk mengganti tautannya
-  const whatsappShown = page.getByRole('button', { name: /^WhatsApp \(opsional\)/ })
+  // dua baris per kartu: nama dan tautan tujuannya, tautan selalu bisa diketik (revisi 2026-11-16)
   const contacts = page
     .locator('form')
     .filter({ has: page.getByRole('button', { name: /^Simpan$/ }) })
   // halaman admin bisa lambat dimuat di CI yang sibuk (WebKit): tunggu lebih lama dari 5 detik
-  await expect(page.getByRole('button', { name: /^Link CV \(opsional\)/ })).toBeVisible({
+  await expect(page.getByRole('textbox', { name: /^Link CV \(opsional\)/ })).toBeVisible({
     timeout: 20_000,
   })
   // diulang sampai hidrasi selesai
   await expect(async () => {
-    if (!(await whatsapp.isVisible())) await whatsappShown.click({ timeout: 1000 })
     await whatsapp.fill('nomor-salah')
     await contacts.getByRole('button', { name: 'Simpan' }).click()
     await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })

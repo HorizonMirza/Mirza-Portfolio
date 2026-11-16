@@ -1,11 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ExternalLink, GitBranch, ImagePlus } from 'lucide-react'
+import { ArrowLeft, ExternalLink, GitBranch, ImagePlus, Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { type ReactNode, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -15,7 +15,7 @@ import {
   InlineInput,
   LANG_NAME,
   type Lang,
-  LangToggle,
+  LangRow,
   LiveErrors,
   LiveStage,
   SaveBar,
@@ -29,45 +29,40 @@ import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 import { slugify } from '@/lib/validation'
 
-import { browserAddress } from '../browser-address'
+import { browserAddress, imageRatio } from '../browser-address'
 
 import { saveProject } from '../actions'
-import {
-  PROJECT_CATEGORIES,
-  type ProjectInput,
-  projectCategoryLabel,
-  projectSchema,
-  type ProjectValues,
-} from '../schema'
+import { type ProjectInput, projectSchema, type ProjectValues } from '../schema'
 
 type ButtonTexts = Record<Lang, { demo: string; repo: string; back: string; stack: string }>
 
 // Admin → Projects, satu project (DESIGN.md bagian 138): halaman detail project seperti di situs
-// (tautan kembali, peran, judul, tombol aplikasi dan GitHub, sampul di bingkai browser), diketik
+// (tautan kembali, peran, judul, tombol aplikasi dan GitHub, galeri di bingkai browser), diketik
 // langsung. Tombol ditekan untuk ditampilkan atau disembunyikan, URL-nya diketik di bawah tombol.
-// Sampul ditekan untuk diganti. Ringkasan dan teknologi (tampil di daftar project), deskripsi dan
-// studi kasus (belum tampil), galeri, dan impor GitHub di kotak bergaris putus di bawah. Status,
-// unggulan, kategori, dan tahun di baris atas.
+// Galeri seperti di situs (foto besar + deretan gambar kecil, foto pertama = sampul): foto sampul
+// ditekan untuk diganti, tombol + menambah gambar, tong sampah menghapus foto yang sedang tampil.
+// Ringkasan dan teknologi (tampil di daftar project) di bawahnya. Status, kategori, dan tahun tidak
+// diubah di sini (revisi pemilik 2026-11-16); bahasa ikut pilihan bahasa di bilah atas admin.
 export function ProjectLive({
   projectId,
   defaultValues,
   skillGroups,
   cover,
+  images,
   configured,
   texts,
   host,
-  gallery,
 }: {
   projectId: string | null
   defaultValues: ProjectInput
   skillGroups: SkillOptionGroup[]
   cover: AssetView | null
+  // gambar galeri (di luar sampul), sesuai urutan unggah
+  images: AssetView[]
   configured: boolean
   texts: ButtonTexts
   // host situs untuk alamat di bingkai browser (siteHost() dari server)
   host: string
-  // galeri (komponen server) untuk project yang sudah tersimpan; di bawah tombol Simpan
-  gallery?: ReactNode
 }) {
   const t = useAdminT()
   const router = useRouter()
@@ -75,6 +70,8 @@ export function ProjectLive({
   // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const [lang, setLang] = useEditLang()
+  // foto yang sedang tampil di galeri (0 = sampul bila ada)
+  const [active, setActive] = useState(0)
   const form = useForm<ProjectInput, unknown, ProjectValues>({
     resolver: zodResolver(projectSchema),
     defaultValues,
@@ -119,21 +116,6 @@ export function ProjectLive({
     if (source) setValue('slug', slugify(source), { shouldValidate: true })
   }
 
-  const pill = (on: boolean, text: string, onClick: () => void, key?: string) => (
-    <button
-      key={key ?? text}
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={cn(
-        'inline-flex min-h-9 items-center rounded-md border px-3 text-xs font-semibold',
-        on ? 'border-text bg-text text-bg' : 'border-border text-muted hover:text-text',
-      )}
-    >
-      {t(text)}
-    </button>
-  )
-
   const skills = v.skillIds ?? []
   const toggleSkill = (id: string) =>
     setValue(
@@ -150,46 +132,27 @@ export function ProjectLive({
   const dirtyLang = (l: Lang) =>
     Object.keys(dirtyFields).some((k) => k.endsWith(`_${l}`) || !/_(id|en)$/.test(k))
   const tx = texts[lang]
+  // foto pertama = sampul (seperti di situs), disusul gambar galeri
+  const items: AssetView[] = [...(cover ? [cover] : []), ...images]
+  const current = Math.min(active, Math.max(0, items.length - 1))
+  const shown = items[current] ?? null
+  const shownIsCover = Boolean(cover) && current === 0
 
   return (
     <>
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
         <LiveStage className="relative bg-bg px-4 pt-6 pb-10 text-text sm:px-10">
-          {/* pengaturan project */}
-          <div className="mb-8 flex flex-wrap items-center gap-2 pr-28">
-            {pill(v.status === 'PUBLISHED', 'Terbit', () => setValue('status', 'PUBLISHED', opts))}
-            {pill(v.status === 'DRAFT', 'Draf', () => setValue('status', 'DRAFT', opts))}
-            {pill(Boolean(v.featured), 'Unggulan di beranda', () =>
-              setValue('featured', !v.featured, opts),
-            )}
-            {PROJECT_CATEGORIES.map((c) =>
-              pill(
-                v.category === c,
-                projectCategoryLabel[c],
-                () => setValue('category', c, opts),
-                c,
-              ),
-            )}
-            <span className="inline-flex min-h-9 items-center gap-1 rounded-md border border-border px-3 text-xs text-muted">
-              {t('Tahun')}
-              <input
-                type="number"
-                inputMode="numeric"
-                aria-label={t('Tahun')}
-                {...register('year', { valueAsNumber: true })}
-                className={cn(
-                  'admin-inline w-14 font-semibold text-text',
-                  err('year') && 'admin-inline-bad',
-                )}
-              />
-            </span>
-          </div>
-          <LangToggle
-            lang={lang}
-            onChange={setLang}
-            dirty={{ id: dirtyLang('id'), en: dirtyLang('en') }}
-            className="absolute top-3 right-3"
-          />
+          {/* "Draf" hanya untuk project yang masih draf (tekan untuk menerbitkan), seperti di Experience */}
+          {v.status === 'DRAFT' ? (
+            <button
+              type="button"
+              title={t('Draf: tidak tampil di situs. Tekan untuk menerbitkan.')}
+              onClick={() => setValue('status', 'PUBLISHED', opts)}
+              className="mb-6 inline-flex min-h-7 items-center border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text"
+            >
+              {t('Draf')}
+            </button>
+          ) : null}
 
           <article className="mx-auto flex max-w-6xl flex-col gap-8" lang={lang}>
             <div className="flex flex-col">
@@ -224,7 +187,7 @@ export function ProjectLive({
                   invalid={Boolean(err(`title_${lang}`))}
                   className="text-center text-h2 leading-[1.15] font-bold"
                 />
-                <p className="flex flex-wrap items-center justify-center font-mono text-xs text-muted">
+                <p className="admin-tight flex flex-wrap items-center justify-center font-mono text-xs leading-6 text-muted">
                   {host}/projects/
                   <InlineInput
                     label={t('Slug')}
@@ -232,15 +195,16 @@ export function ProjectLive({
                     placeholder="nama-project"
                     size={Math.max(12, (v.slug || '').length + 1)}
                     invalid={Boolean(err('slug'))}
-                    className="min-h-6 text-text"
+                    className="text-text"
                   />
                 </p>
 
-                {/* tombol detail: ditekan untuk tampil/sembunyi, URL diketik di bawahnya */}
+                {/* tombol detail: ditekan untuk tampil/sembunyi, URL diketik di bawahnya; dua kolom sama
+                    lebar agar tombol dan kolom URL lurus */}
                 <div
                   role="group"
                   aria-label={t('Tombol di halaman detail')}
-                  className="mt-4 flex flex-wrap justify-center gap-3 md:mt-6"
+                  className="admin-tight mx-auto mt-4 grid w-full max-w-136 gap-x-4 gap-y-4 sm:grid-cols-2 md:mt-6"
                 >
                   {(
                     [
@@ -248,13 +212,13 @@ export function ProjectLive({
                       ['repo', 'showRepo', 'repoUrl', 'URL repo (opsional)'],
                     ] as const
                   ).map(([key, show, url, urlLabel]) => (
-                    <div key={key} className="flex flex-col items-center gap-1.5">
+                    <div key={key} className="flex min-w-0 flex-col gap-2">
                       <button
                         type="button"
                         aria-pressed={Boolean(v[show])}
                         onClick={() => setValue(show, !v[show], opts)}
                         className={cn(
-                          'inline-flex min-h-11 items-center gap-2 rounded-full border px-5 text-sm font-semibold',
+                          'inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold',
                           v[show]
                             ? 'border-border-strong bg-surface text-text'
                             : 'border-dashed border-border text-muted line-through',
@@ -274,7 +238,7 @@ export function ProjectLive({
                         {...register(url)}
                         placeholder="https://…"
                         invalid={Boolean(err(url))}
-                        className="min-h-6 w-56 text-center font-mono text-xs text-ellipsis text-muted"
+                        className="w-full text-center font-mono text-xs leading-6 text-ellipsis text-muted"
                       />
                     </div>
                   ))}
@@ -282,52 +246,114 @@ export function ProjectLive({
               </header>
             </div>
 
-            {/* sampul di bingkai jendela browser, seperti foto pertama galeri detail */}
-            <div className="pj-browser">
-              <div className="pj-browser-bar" aria-hidden="true">
-                <span className="pj-browser-dots">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <span className="pj-browser-url">
-                  {browserAddress({ slug: v.slug || '…', demoUrl: v.demoUrl || null }, host)}
-                </span>
-              </div>
-              <div className="group/cover relative">
-                <button
-                  type="button"
-                  disabled={!projectId}
-                  onClick={() => projectId && picker.pick('project-cover', projectId)}
-                  className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
-                >
-                  {cover ? (
-                    <Image
-                      placeholder={SHIMMER_PLACEHOLDER}
-                      src={cover.url}
-                      alt=""
-                      fill
-                      sizes="(min-width: 1024px) 1100px, 90vw"
-                      className="object-contain"
-                    />
-                  ) : (
-                    <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
-                      <ImagePlus className="size-6" aria-hidden="true" />
-                      {projectId ? t('Sampul') : t('Simpan dulu untuk menambah sampul dan galeri')}
-                    </span>
-                  )}
-                  {cover ? <span className="sr-only">{t('Ganti sampul')}</span> : null}
-                </button>
-                {cover ? (
-                  <span className="absolute top-2 right-2 rounded-md bg-bg/80 opacity-0 transition-opacity group-focus-within/cover:opacity-100 group-hover/cover:opacity-100 max-md:opacity-100">
-                    <RemoveAssetButton
-                      assetId={cover.id}
-                      label={t('Sampul')}
-                      onDone={() => router.refresh()}
-                    />
+            {/* galeri seperti di situs: bingkai jendela browser, foto besar, deretan gambar kecil */}
+            <div>
+              <div className="pj-browser">
+                <div className="pj-browser-bar" aria-hidden="true">
+                  <span className="pj-browser-dots">
+                    <i />
+                    <i />
+                    <i />
                   </span>
-                ) : null}
+                  <span className="pj-browser-url">
+                    {browserAddress({ slug: v.slug || '…', demoUrl: v.demoUrl || null }, host)}
+                  </span>
+                </div>
+                <div className="group/cover relative">
+                  {shown ? (
+                    <div className="pd-stage" style={{ aspectRatio: imageRatio(items[0]) }}>
+                      <Image
+                        key={shown.id}
+                        placeholder={SHIMMER_PLACEHOLDER}
+                        src={shown.url}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 1100px, 90vw"
+                        className="object-contain"
+                      />
+                      {/* sampul ditekan: langsung membuka pemilih berkas */}
+                      {shownIsCover ? (
+                        <button
+                          type="button"
+                          onClick={() => projectId && picker.pick('project-cover', projectId)}
+                          className="admin-editable absolute inset-0 cursor-pointer outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current"
+                        >
+                          <span className="sr-only">{t('Ganti sampul')}</span>
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={!projectId}
+                      onClick={() => projectId && picker.pick('project-cover', projectId)}
+                      className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-4px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
+                    >
+                      <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
+                        <ImagePlus className="size-6" aria-hidden="true" />
+                        {projectId
+                          ? t('Sampul')
+                          : t('Simpan dulu untuk menambah sampul dan galeri')}
+                      </span>
+                    </button>
+                  )}
+                  {shown ? (
+                    <span className="absolute top-2 right-2 rounded-md bg-bg/80 opacity-0 transition-opacity group-focus-within/cover:opacity-100 group-hover/cover:opacity-100 max-md:opacity-100">
+                      <RemoveAssetButton
+                        assetId={shown.id}
+                        label={
+                          shownIsCover
+                            ? t('Sampul')
+                            : t('gambar galeri {n}', { n: current - (cover ? 1 : 0) + 1 })
+                        }
+                        onDone={() => router.refresh()}
+                      />
+                    </span>
+                  ) : null}
+                </div>
               </div>
+              {projectId ? (
+                <div className="pd-thumbs">
+                  {items.map((img, i) => (
+                    <button
+                      key={img.id}
+                      type="button"
+                      aria-label={
+                        cover && i === 0
+                          ? t('Sampul')
+                          : t('gambar galeri {n}', { n: i - (cover ? 1 : 0) + 1 })
+                      }
+                      aria-pressed={i === current}
+                      onClick={() => setActive(i)}
+                    >
+                      <Image
+                        placeholder={SHIMMER_PLACEHOLDER}
+                        src={img.url}
+                        alt=""
+                        fill
+                        sizes="76px"
+                        className="object-cover object-top"
+                      />
+                    </button>
+                  ))}
+                  {/* + menambah gambar; tanpa sampul, gambar pertama menjadi sampul seperti di situs */}
+                  <button
+                    type="button"
+                    className="pd-add admin-editable"
+                    onClick={() =>
+                      picker.pick(cover ? 'project-gallery' : 'project-cover', projectId)
+                    }
+                  >
+                    <Plus className="size-5" aria-hidden="true" />
+                    <span className="sr-only">{cover ? t('Tambah ke galeri') : t('Sampul')}</span>
+                  </button>
+                </div>
+              ) : null}
+              {items.length > 1 ? (
+                <p className="mt-3 text-center font-display text-base font-medium tracking-wide text-muted">
+                  {current + 1} / {items.length}
+                </p>
+              ) : null}
             </div>
 
             {/* ringkasan dan teknologi tampil di daftar project */}
@@ -339,7 +365,7 @@ export function ProjectLive({
                 measure={v[`summary_${lang}`] ?? ''}
                 placeholder={t('Ringkasan')}
                 invalid={Boolean(err(`summary_${lang}`))}
-                className="max-w-[40ch] text-muted"
+                className="text-sm text-muted"
               />
               <div className="flex flex-col gap-3" role="group" aria-label={tx.stack}>
                 {skillGroups.length === 0 ? (
@@ -381,10 +407,14 @@ export function ProjectLive({
           </article>
         </LiveStage>
         <LiveErrors messages={messages} />
+        {/* bahasa isi tepat di atas Simpan, seperti halaman lain */}
+        <LangRow
+          lang={lang}
+          onChange={setLang}
+          dirty={{ id: dirtyLang('id'), en: dirtyLang('en') }}
+        />
         <SaveBar pending={pending} label={projectId ? 'Simpan' : 'Buat project'} />
       </form>
-      {/* galeri di luar form project: tiap gambar punya form sendiri dan tersimpan langsung */}
-      {gallery}
       {picker.element}
     </>
   )

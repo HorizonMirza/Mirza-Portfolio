@@ -1925,6 +1925,16 @@ html:has(.contact-sent) {
 .pd-thumbs button[aria-pressed='true'] {
   border-color: var(--note);
 }
+.pd-thumbs button.pd-add {
+  /* tombol + di admin: kotak putus-putus seukuran gambar kecil */
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  border-style: dashed;
+  border-color: var(--border-strong);
+  color: var(--text-muted);
+  background: transparent;
+}
 .pd-thumbs button:focus-visible {
   outline: 2px solid var(--note);
   outline-offset: 2px;

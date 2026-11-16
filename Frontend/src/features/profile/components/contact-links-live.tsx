@@ -4,11 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowUpRight, FileText, Mail, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
-import { cvLabel, footerValue } from '@/components/site/footer-links'
 import { applyResult } from '@/components/admin/apply-result'
 import { InlineInput, LiveErrors } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
@@ -30,40 +28,6 @@ function Brand({ slug }: { slug: string }) {
     <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
       <path d={BRAND_ICONS[slug].path} />
     </svg>
-  )
-}
-
-// Teks kecil kartu: tampil persis seperti di footer situs (nomor, nama akun, "Google Drive"); ditekan
-// untuk mengganti tautannya, lalu kembali ke tampilan situs saat kolom ditinggalkan (revisi pemilik
-// 2026-11-16).
-function ShownOrEdit({
-  label,
-  shown,
-  placeholder,
-  className,
-  edit,
-}: {
-  // nama untuk pembaca layar (ikut nama kolom saat diketik)
-  label: string
-  shown: string
-  placeholder: string
-  className?: string
-  edit: (props: { autoFocus: boolean; onBlur: () => void }) => ReactNode
-}) {
-  const [editing, setEditing] = useState(false)
-  if (editing) return edit({ autoFocus: true, onBlur: () => setEditing(false) })
-  return (
-    <button
-      type="button"
-      onClick={() => setEditing(true)}
-      className={cn(
-        'admin-editable min-h-6 w-full cursor-text truncate rounded-sm text-left',
-        className,
-      )}
-    >
-      <span className="sr-only">{label}: </span>
-      {shown || placeholder}
-    </button>
   )
 }
 
@@ -185,15 +149,6 @@ export function ContactLinksLive({
     messages.push({ text: `${t('Berkas Resume CV')}: ${t(errors.cvUrl.message)}` })
 
   const hasCv = Boolean(v.cvUrl) || Boolean(cv)
-  // teks kartu CV seperti di situs: "Google Drive", host link lain, atau "PDF" untuk berkas unggahan
-  const cvHost = (() => {
-    try {
-      return v.cvUrl ? new URL(v.cvUrl).hostname.replace(/^www\./, '') : null
-    } catch {
-      return null
-    }
-  })()
-  const cvShown = v.cvUrl ? cvLabel(cvHost, 'PDF') : cv ? 'PDF' : ''
 
   return (
     <>
@@ -203,35 +158,24 @@ export function ContactLinksLive({
           return (
             <li key={c.key} className={card(Boolean(value))}>
               {c.icon}
-              <span className="grid min-w-0">
+              <span className="grid min-w-0 gap-1">
                 <span className="text-sm font-semibold">{t(c.title)}</span>
-                <ShownOrEdit
-                  label={t('{name} (opsional)', { name: t(c.title) })}
-                  shown={footerValue(c.key as Exclude<Key, 'cv'>, value)}
-                  placeholder={c.placeholder}
-                  className="text-[0.8125rem] text-muted"
-                  edit={(extra) => {
-                    const reg = register(c.field)
-                    return (
-                      <InlineInput
-                        label={t('{name} (opsional)', { name: t(c.title) })}
-                        type={c.key === 'email' ? 'email' : c.key === 'whatsapp' ? 'tel' : 'url'}
-                        inputMode={
-                          c.key === 'email' ? 'email' : c.key === 'whatsapp' ? 'tel' : 'url'
-                        }
-                        {...reg}
-                        autoFocus={extra.autoFocus}
-                        onBlur={(event) => {
-                          void reg.onBlur(event)
-                          extra.onBlur()
-                        }}
-                        placeholder={c.placeholder}
-                        invalid={Boolean(errorOf(c.field))}
-                        className="min-h-6 w-full text-[0.8125rem] text-muted"
-                      />
-                    )
-                  }}
-                />
+                {/* baris kedua: tautan tujuan kartu, selalu tampil dan bisa diketik */}
+                {(() => {
+                  const reg = register(c.field)
+                  const kind = c.key === 'email' ? 'email' : c.key === 'whatsapp' ? 'tel' : 'url'
+                  return (
+                    <InlineInput
+                      label={t('{name} (opsional)', { name: t(c.title) })}
+                      type={kind}
+                      inputMode={kind}
+                      {...reg}
+                      placeholder={c.placeholder}
+                      invalid={Boolean(errorOf(c.field))}
+                      className="min-h-6 w-full text-[0.8125rem] text-ellipsis text-muted"
+                    />
+                  )
+                })()}
               </span>
               <ArrowUpRight className="size-4 text-muted" aria-hidden="true" />
             </li>
@@ -252,42 +196,27 @@ export function ContactLinksLive({
             )}
             <span className="sr-only">{t('Berkas Resume CV')}</span>
           </button>
-          <span className="grid min-w-0">
+          <span className="grid min-w-0 gap-1">
             <span className="text-sm font-semibold">{cvTitle}</span>
-            <ShownOrEdit
-              label={t('Link CV (opsional)')}
-              shown={cvShown}
-              placeholder={
-                cv ? t('PDF terunggah · atau tempel link') : 'https://drive.google.com/…'
-              }
-              className={
-                hasCv ? 'text-[0.8125rem] text-primary-fg/75' : 'text-[0.8125rem] text-muted'
-              }
-              edit={(extra) => {
-                const reg = register('cvUrl')
-                return (
-                  <InlineInput
-                    label={t('Link CV (opsional)')}
-                    type="url"
-                    inputMode="url"
-                    {...reg}
-                    autoFocus={extra.autoFocus}
-                    onBlur={(event) => {
-                      void reg.onBlur(event)
-                      extra.onBlur()
-                    }}
-                    placeholder={
-                      cv ? t('PDF terunggah · atau tempel link') : 'https://drive.google.com/…'
-                    }
-                    invalid={Boolean(errors.cvUrl)}
-                    className={cn(
-                      'min-h-6 w-full text-[0.8125rem]',
-                      hasCv ? 'text-primary-fg/75 placeholder:text-primary-fg/75' : 'text-muted',
-                    )}
-                  />
-                )
-              }}
-            />
+            {(() => {
+              const reg = register('cvUrl')
+              return (
+                <InlineInput
+                  label={t('Link CV (opsional)')}
+                  type="url"
+                  inputMode="url"
+                  {...reg}
+                  placeholder={
+                    cv ? t('PDF terunggah · atau tempel link') : 'https://drive.google.com/…'
+                  }
+                  invalid={Boolean(errors.cvUrl)}
+                  className={cn(
+                    'min-h-6 w-full text-[0.8125rem] text-ellipsis',
+                    hasCv ? 'text-primary-fg/75 placeholder:text-primary-fg/75' : 'text-muted',
+                  )}
+                />
+              )
+            })()}
           </span>
           <ArrowUpRight
             className={cn('size-4', hasCv ? 'text-primary-fg/75' : 'text-muted')}

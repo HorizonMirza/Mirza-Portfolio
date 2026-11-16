@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { z } from 'zod'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { GalleryPanel } from '@/features/assets/components/asset-panels'
 import { getProjectAssets } from '@/features/assets/queries'
 import { projectPreviewTexts } from '@/features/projects/admin-texts'
 import { ProjectLive } from '@/features/projects/components/project-live'
@@ -42,10 +41,10 @@ export default async function EditProjectPage({ params }: PageProps<'/admin/proj
         defaultValues={project}
         skillGroups={skillGroups}
         cover={assets.cover}
+        images={assets.images}
         configured={configured}
         texts={texts}
         host={siteHost()}
-        gallery={<GalleryPanel projectId={id} images={assets.images} configured={configured} />}
       />
     </>
   )

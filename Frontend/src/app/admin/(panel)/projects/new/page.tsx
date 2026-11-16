@@ -28,6 +28,7 @@ export default async function NewProjectPage() {
         defaultValues={{ ...emptyProject, year: new Date().getFullYear() }}
         skillGroups={skillGroups}
         cover={null}
+        images={[]}
         configured={isUploadConfigured()}
         texts={texts}
         host={siteHost()}
