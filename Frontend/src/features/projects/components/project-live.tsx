@@ -1,11 +1,12 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ExternalLink, ImagePlus, Plus } from 'lucide-react'
+import { ArrowLeft, ExternalLink, ImagePlus, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
+import { toast } from 'sonner'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -23,6 +24,7 @@ import {
 } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
+import { uploadAsset } from '@/features/assets/upload-client'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import type { SkillOptionGroup } from '@/features/skills/queries'
@@ -34,6 +36,17 @@ import { imageRatio } from '../browser-address'
 
 import { saveProject } from '../actions'
 import { type ProjectInput, projectSchema, type ProjectValues } from '../schema'
+
+// gambar yang dipilih untuk project baru dan baru diunggah setelah project tersimpan
+type PendingImage = { blob: Blob; name: string; preview: string }
+// satu foto di galeri: gambar tersimpan (assetId) atau gambar baru yang belum diunggah
+type StageItem = {
+  key: string
+  url: string
+  width: number | null
+  height: number | null
+  assetId?: string
+}
 
 type ButtonTexts = Record<Lang, { demo: string; repo: string; back: string; stack: string }>
 
@@ -73,6 +86,13 @@ export function ProjectLive({
   const [lang, setLang] = useEditLang()
   // foto yang sedang tampil di galeri (0 = sampul bila ada)
   const [active, setActive] = useState(0)
+  // project baru: gambar yang sudah dipilih dan dipotong, diunggah setelah project tersimpan (butuh id)
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([])
+  const pendingRef = useRef(pendingImages)
+  useEffect(() => {
+    pendingRef.current = pendingImages
+  }, [pendingImages])
+  useEffect(() => () => pendingRef.current.forEach((p) => URL.revokeObjectURL(p.preview)), [])
   const form = useForm<ProjectInput, unknown, ProjectValues>({
     resolver: zodResolver(projectSchema),
     defaultValues,
@@ -98,7 +118,22 @@ export function ProjectLive({
         const result = await saveProject(projectId, values)
         if (!applyResult(result, setError) || !result.ok) return
         if (projectId) form.reset(values)
-        else if (result.data) router.replace(`/admin/projects/${result.data.id}`)
+        else if (result.data) {
+          // gambar yang dipilih sebelum project tersimpan: pertama = sampul, sisanya galeri
+          for (const [i, img] of pendingImages.entries()) {
+            const sent = await uploadAsset(
+              i === 0 ? 'project-cover' : 'project-gallery',
+              result.data.id,
+              img.blob,
+              img.name,
+            )
+            if (!sent.ok) {
+              toast.error(t(sent.message))
+              break
+            }
+          }
+          router.replace(`/admin/projects/${result.data.id}`)
+        }
       })
     },
     (invalid) => {
@@ -133,28 +168,53 @@ export function ProjectLive({
   const dirtyLang = (l: Lang) =>
     Object.keys(dirtyFields).some((k) => k.endsWith(`_${l}`) || !/_(id|en)$/.test(k))
   const tx = texts[lang]
-  // foto pertama = sampul (seperti di situs), disusul gambar galeri
-  const items: AssetView[] = [...(cover ? [cover] : []), ...images]
+  // foto pertama = sampul (seperti di situs), disusul gambar galeri; project baru memakai gambar
+  // yang baru dipilih (belum diunggah)
+  const items: StageItem[] = projectId
+    ? [...(cover ? [cover] : []), ...images].map((a) => ({
+        key: a.id,
+        url: a.url,
+        width: a.width,
+        height: a.height,
+        assetId: a.id,
+      }))
+    : pendingImages.map((p) => ({ key: p.preview, url: p.preview, width: null, height: null }))
+  const hasCover = items.length > 0 && (projectId ? Boolean(cover) : true)
   const current = Math.min(active, Math.max(0, items.length - 1))
   const shown = items[current] ?? null
-  const shownIsCover = Boolean(cover) && current === 0
+  const shownIsCover = hasCover && current === 0
+  const galleryNumber = (i: number) => i - (hasCover ? 1 : 0) + 1
+  const slotLabel = (i: number) =>
+    hasCover && i === 0 ? t('Sampul') : t('gambar galeri {n}', { n: galleryNumber(i) })
+
+  // memilih gambar: project tersimpan langsung diunggah, project baru ditahan sampai tersimpan
+  function pickImage(target: 'project-cover' | 'project-gallery', replaceCover = false) {
+    if (projectId) {
+      picker.pick(target, projectId)
+      return
+    }
+    picker.pick(target, undefined, (blob, name) => {
+      const preview = URL.createObjectURL(blob)
+      setPendingImages((list) => {
+        if (replaceCover && list.length > 0) {
+          URL.revokeObjectURL(list[0]!.preview)
+          return [{ blob, name, preview }, ...list.slice(1)]
+        }
+        return [...list, { blob, name, preview }]
+      })
+    })
+  }
+  function removePending(index: number) {
+    setPendingImages((list) => {
+      URL.revokeObjectURL(list[index]!.preview)
+      return list.filter((_, i) => i !== index)
+    })
+  }
 
   return (
     <>
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
         <LiveStage className="relative bg-bg px-4 pt-6 pb-10 text-text sm:px-10">
-          {/* "Draf" hanya untuk project yang masih draf (tekan untuk menerbitkan), seperti di Experience */}
-          {v.status === 'DRAFT' ? (
-            <button
-              type="button"
-              title={t('Draf: tidak tampil di situs. Tekan untuk menerbitkan.')}
-              onClick={() => setValue('status', 'PUBLISHED', opts)}
-              className="mb-6 inline-flex min-h-7 items-center border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text"
-            >
-              {t('Draf')}
-            </button>
-          ) : null}
-
           <article className="mx-auto flex max-w-6xl flex-col gap-8" lang={lang}>
             <div className="flex flex-col">
               {/* tautan kembali seperti di detail project */}
@@ -188,18 +248,6 @@ export function ProjectLive({
                   invalid={Boolean(err(`title_${lang}`))}
                   className="text-center text-h2 leading-[1.15] font-bold"
                 />
-                <p className="admin-tight mt-3 flex flex-wrap items-center justify-center font-mono text-xs leading-6 text-muted">
-                  {host}/projects/
-                  <InlineInput
-                    label={t('Slug')}
-                    {...register('slug')}
-                    placeholder="nama-project"
-                    size={Math.max(12, (v.slug || '').length + 1)}
-                    invalid={Boolean(err('slug'))}
-                    className="text-text"
-                  />
-                </p>
-
                 {/* tombol detail: ditekan untuk tampil/sembunyi, URL diketik di bawahnya; dua kolom sama
                     lebar agar tombol dan kolom URL lurus */}
                 <div
@@ -257,31 +305,54 @@ export function ProjectLive({
             {/* galeri seperti di situs: bingkai jendela browser, foto besar, deretan gambar kecil */}
             <div>
               <div className="pj-browser">
-                <div className="pj-browser-bar" aria-hidden="true">
-                  <span className="pj-browser-dots">
+                <div className="pj-browser-bar">
+                  <span className="pj-browser-dots" aria-hidden="true">
                     <i />
                     <i />
                     <i />
                   </span>
+                  {/* alamat halaman project: bagian akhirnya (slug) diketik di sini seperti kolom alamat */}
+                  <span className="pj-browser-url admin-tight flex items-center">
+                    <span aria-hidden="true">{host}/projects/</span>
+                    <InlineInput
+                      label={t('Slug')}
+                      {...register('slug')}
+                      placeholder="nama-project"
+                      size={Math.max(12, (v.slug || '').length + 1)}
+                      invalid={Boolean(err('slug'))}
+                      className="text-text"
+                    />
+                  </span>
                 </div>
                 <div className="group/cover relative">
                   {shown ? (
-                    <div className="pd-stage" style={{ aspectRatio: imageRatio(items[0]) }}>
-                      <Image
-                        key={shown.id}
-                        placeholder={SHIMMER_PLACEHOLDER}
-                        src={shown.url}
-                        alt=""
-                        fill
-                        sizes="(min-width: 1024px) 1100px, 90vw"
-                        className="object-contain"
-                      />
+                    <div className="pd-stage" style={{ aspectRatio: imageRatio(items[0] ?? null) }}>
+                      {shown.assetId ? (
+                        <Image
+                          key={shown.key}
+                          placeholder={SHIMMER_PLACEHOLDER}
+                          src={shown.url}
+                          alt=""
+                          fill
+                          sizes="(min-width: 1024px) 1100px, 90vw"
+                          className="object-contain"
+                        />
+                      ) : (
+                        // gambar yang baru dipilih (project baru): alamat sementara dari berkas
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          key={shown.key}
+                          src={shown.url}
+                          alt=""
+                          className="absolute inset-0 size-full object-contain"
+                        />
+                      )}
                       {/* garis putus-putus 6 px di dalam tepi foto, sama untuk sampul dan gambar galeri;
                           sampul ditekan untuk diganti (membuka pemilih berkas) */}
                       {shownIsCover ? (
                         <button
                           type="button"
-                          onClick={() => projectId && picker.pick('project-cover', projectId)}
+                          onClick={() => pickImage('project-cover', true)}
                           className="admin-editable absolute inset-1.5 cursor-pointer rounded-none [--editable-offset:0px] focus-visible:outline-2 focus-visible:outline-current"
                         >
                           <span className="sr-only">{t('Ganti sampul')}</span>
@@ -301,47 +372,47 @@ export function ProjectLive({
                   ) : (
                     <button
                       type="button"
-                      disabled={!projectId}
-                      onClick={() => projectId && picker.pick('project-cover', projectId)}
-                      className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-6px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current disabled:cursor-not-allowed"
+                      onClick={() => pickImage('project-cover')}
+                      className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-6px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current"
                     >
                       <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
                         <ImagePlus className="size-6" aria-hidden="true" />
-                        {projectId
-                          ? t('Sampul')
-                          : t('Simpan dulu untuk menambah sampul dan galeri')}
+                        {t('Sampul')}
                       </span>
                     </button>
                   )}
                   {shown ? (
                     <span className="absolute top-3 right-3 rounded-md bg-bg/80">
-                      <RemoveAssetButton
-                        assetId={shown.id}
-                        label={
-                          shownIsCover
-                            ? t('Sampul')
-                            : t('gambar galeri {n}', { n: current - (cover ? 1 : 0) + 1 })
-                        }
-                        onDone={() => router.refresh()}
-                      />
+                      {shown.assetId ? (
+                        <RemoveAssetButton
+                          assetId={shown.assetId}
+                          label={slotLabel(current)}
+                          onDone={() => router.refresh()}
+                        />
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => removePending(current)}
+                          aria-label={t('Hapus {item}', { item: slotLabel(current) })}
+                          className="inline-flex size-8 items-center justify-center rounded-md text-muted hover:text-danger"
+                        >
+                          <Trash2 className="size-4" aria-hidden="true" />
+                        </button>
+                      )}
                     </span>
                   ) : null}
                 </div>
               </div>
-              {projectId ? (
-                <div className="pd-thumbs">
-                  {items.map((img, i) => (
-                    <button
-                      key={img.id}
-                      type="button"
-                      aria-label={
-                        cover && i === 0
-                          ? t('Sampul')
-                          : t('gambar galeri {n}', { n: i - (cover ? 1 : 0) + 1 })
-                      }
-                      aria-pressed={i === current}
-                      onClick={() => setActive(i)}
-                    >
+              <div className="pd-thumbs">
+                {items.map((img, i) => (
+                  <button
+                    key={img.key}
+                    type="button"
+                    aria-label={slotLabel(i)}
+                    aria-pressed={i === current}
+                    onClick={() => setActive(i)}
+                  >
+                    {img.assetId ? (
                       <Image
                         placeholder={SHIMMER_PLACEHOLDER}
                         src={img.url}
@@ -350,29 +421,34 @@ export function ProjectLive({
                         sizes="76px"
                         className="object-cover object-top"
                       />
-                    </button>
-                  ))}
-                  {/* gambar yang sedang diunggah */}
-                  {picker.busy ? (
-                    <span
-                      aria-hidden="true"
-                      className="skeleton shrink-0 rounded-lg"
-                      style={{ flex: '0 1 4.75rem', minWidth: '2.75rem', aspectRatio: '16 / 10' }}
-                    />
-                  ) : null}
-                  {/* + menambah gambar; tanpa sampul, gambar pertama menjadi sampul seperti di situs */}
-                  <button
-                    type="button"
-                    className="pd-add admin-editable"
-                    onClick={() =>
-                      picker.pick(cover ? 'project-gallery' : 'project-cover', projectId)
-                    }
-                  >
-                    <Plus className="size-5" aria-hidden="true" />
-                    <span className="sr-only">{cover ? t('Tambah ke galeri') : t('Sampul')}</span>
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={img.url}
+                        alt=""
+                        className="absolute inset-0 size-full object-cover object-top"
+                      />
+                    )}
                   </button>
-                </div>
-              ) : null}
+                ))}
+                {/* gambar yang sedang diunggah */}
+                {picker.busy ? (
+                  <span
+                    aria-hidden="true"
+                    className="skeleton shrink-0 rounded-lg"
+                    style={{ flex: '0 1 4.75rem', minWidth: '2.75rem', aspectRatio: '16 / 10' }}
+                  />
+                ) : null}
+                {/* + menambah gambar; tanpa sampul, gambar pertama menjadi sampul seperti di situs */}
+                <button
+                  type="button"
+                  className="pd-add admin-editable"
+                  onClick={() => pickImage(hasCover ? 'project-gallery' : 'project-cover')}
+                >
+                  <Plus className="size-5" aria-hidden="true" />
+                  <span className="sr-only">{hasCover ? t('Tambah ke galeri') : t('Sampul')}</span>
+                </button>
+              </div>
               {items.length > 1 ? (
                 <p className="mt-3 text-center font-display text-base font-medium tracking-wide text-muted">
                   {current + 1} / {items.length}

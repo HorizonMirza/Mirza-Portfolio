@@ -9,36 +9,17 @@ export type FooterLinkKey =
 export type FooterLink = {
   key: FooterLinkKey
   href: string
-  // judul kartu bila diganti admin; kosong = nama bawaan (WhatsApp, Email, ...)
-  title?: string
-  // teks kecil di bawah nama: nomor, alamat, atau nama akun (bisa diganti admin)
+  // teks kecil di bawah nama: nomor, alamat, atau nama akun (nama akun sosial bisa diganti admin)
   value: string
   // teks kecil bawaan yang diturunkan dari data (tanpa penggantian admin)
   derived: string
   external: boolean
 }
 
-// Nama yang tampil di kartu, diganti admin (Admin → Footer): judul dan teks kecil
-export type ContactLabels = Partial<Record<FooterLinkKey, { title?: string; value?: string }>>
-
-// Judul bawaan kartu (merek, sama di kedua bahasa); judul kartu CV datang dari teks situs Footer.cv
-export const CARD_TITLES = {
-  whatsapp: 'WhatsApp',
-  email: 'Email',
-  linkedin: 'LinkedIn',
-  github: 'GitHub',
-  instagram: 'Instagram',
-} as const
-
-// Kartu yang bisa diganti namanya (kartu situs lain tidak ada di admin)
-export const CONTACT_LABEL_KEYS = [
-  'whatsapp',
-  'email',
-  'linkedin',
-  'github',
-  'instagram',
-  'cv',
-] as const
+// Nama akun yang tampil di kartu LinkedIn, GitHub, dan Instagram, bila diganti admin (Admin → Footer)
+export const CONTACT_LABEL_KEYS = ['linkedin', 'github', 'instagram'] as const
+export type ContactLabelKey = (typeof CONTACT_LABEL_KEYS)[number]
+export type ContactLabels = Partial<Record<ContactLabelKey, { value?: string }>>
 
 type ProfileLinks = {
   email: string | null
@@ -64,14 +45,6 @@ export function handleFromUrl(url: string) {
 // yang bergantung pada aplikasi email di perangkat pengunjung).
 export function gmailComposeUrl(email: string) {
   return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`
-}
-
-function hostOrNull(url: string) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '')
-  } catch {
-    return null
-  }
 }
 
 function hostOf(url: string) {
@@ -104,20 +77,11 @@ export function footerValue(key: Exclude<FooterLinkKey, 'cv'>, raw: string | nul
   return handle ?? hostOf(value)
 }
 
-// Teks kecil bawaan satu kartu dari isian kontak admin (tautan, nomor, atau email). Kartu CV dengan
-// link luar: "Google Drive" atau host; tanpa link, kosong (situs memakai "PDF"/"File" sesuai bahasa).
+// Nama akun bawaan satu kartu sosial dari tautannya (segmen terakhir URL profil atau host).
 export function derivedCardValue(
-  key: (typeof CONTACT_LABEL_KEYS)[number],
-  links: {
-    whatsapp: string
-    email: string
-    cvUrl: string
-    socials: Partial<Record<'linkedin' | 'github' | 'instagram' | 'website', string>>
-  },
+  key: ContactLabelKey,
+  links: { socials: Partial<Record<'linkedin' | 'github' | 'instagram' | 'website', string>> },
 ) {
-  if (key === 'whatsapp') return footerValue('whatsapp', links.whatsapp)
-  if (key === 'email') return footerValue('email', links.email)
-  if (key === 'cv') return links.cvUrl ? cvLabel(hostOrNull(links.cvUrl), '') : ''
   return footerValue(key, links.socials[key])
 }
 
@@ -128,15 +92,11 @@ export function footerLinks(
   const links: FooterLink[] = []
   const { socials, contactLabels } = profile
   const add = (key: FooterLinkKey, href: string, derived: string) => {
-    const label = contactLabels?.[key]
-    links.push({
-      key,
-      href,
-      title: label?.title?.trim() || undefined,
-      value: label?.value?.trim() || derived,
-      derived,
-      external: true,
-    })
+    const override =
+      key === 'linkedin' || key === 'github' || key === 'instagram'
+        ? contactLabels?.[key]?.value?.trim()
+        : undefined
+    links.push({ key, href, value: override || derived, derived, external: true })
   }
   if (profile.whatsapp) add('whatsapp', whatsappUrl(profile.whatsapp), profile.whatsapp)
   if (profile.email) add('email', gmailComposeUrl(profile.email), profile.email)

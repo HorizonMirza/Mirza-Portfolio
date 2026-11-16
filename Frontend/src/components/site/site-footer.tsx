@@ -123,22 +123,10 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
     switch (link.key) {
       case 'whatsapp':
         return (
-          <SimpleCard
-            icon={icon}
-            title={link.title ?? 'WhatsApp'}
-            value={link.value}
-            hint={t('whatsappHint')}
-          />
+          <SimpleCard icon={icon} title="WhatsApp" value={link.value} hint={t('whatsappHint')} />
         )
       case 'email':
-        return (
-          <SimpleCard
-            icon={icon}
-            title={link.title ?? 'Email'}
-            value={link.value}
-            hint={t('emailHint')}
-          />
-        )
+        return <SimpleCard icon={icon} title="Email" value={link.value} hint={t('emailHint')} />
       case 'linkedin':
         return (
           <div className="w-72">
@@ -179,7 +167,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
       case 'cv':
         return <SimpleCard icon={icon} title={t('cv')} value={link.value} hint={t('cvHint')} />
       default:
-        return <SimpleCard icon={icon} title={link.title ?? tSocial(link.key)} value={link.value} />
+        return <SimpleCard icon={icon} title={tSocial(link.key)} value={link.value} />
     }
   }
 
@@ -200,7 +188,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
           <LinkIcon name={link.key} drive={drive} />
           <span className="grid min-w-0">
             <span className="text-sm font-semibold">
-              {link.key === 'cv' ? t('cv') : (link.title ?? tSocial(link.key))}
+              {link.key === 'cv' ? t('cv') : tSocial(link.key)}
             </span>
             <span
               className={cn('truncate text-[0.8125rem]', cv ? 'text-primary-fg/75' : 'text-muted')}

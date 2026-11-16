@@ -32,15 +32,13 @@ export const profileSchema = z.object({
 })
 
 const contactLabelSchema = z
-  .object({
-    title: z.string().trim().max(40, 'Judul kartu maksimal 40 karakter').default(''),
-    value: z.string().trim().max(80, 'Teks kartu maksimal 80 karakter').default(''),
-  })
-  .default({ title: '', value: '' })
+  .object({ value: z.string().trim().max(80, 'Nama maksimal 80 karakter').default('') })
+  .default({ value: '' })
 
-const emptyLabels = Object.fromEntries(
-  CONTACT_LABEL_KEYS.map((k) => [k, { title: '', value: '' }]),
-) as Record<(typeof CONTACT_LABEL_KEYS)[number], { title: string; value: string }>
+const emptyLabels = Object.fromEntries(CONTACT_LABEL_KEYS.map((k) => [k, { value: '' }])) as Record<
+  (typeof CONTACT_LABEL_KEYS)[number],
+  { value: string }
+>
 
 // Kontak dan Resume CV di footer (Admin → Footer, dipindah dari form Profil 2026-11-10). Email dan
 // WhatsApp hanya disimpan di database, tidak di repo.
@@ -64,7 +62,7 @@ export const contactLinksSchema = z.object({
     instagram: optionalUrl('Instagram'),
     website: optionalUrl('Situs'),
   }),
-  // nama yang tampil di kartu footer: judul dan teks kecil, per kartu (2026-11-16)
+  // nama akun yang tampil di kartu LinkedIn, GitHub, dan Instagram (2026-11-16)
   labels: z
     .object(
       Object.fromEntries(CONTACT_LABEL_KEYS.map((k) => [k, contactLabelSchema])) as Record<

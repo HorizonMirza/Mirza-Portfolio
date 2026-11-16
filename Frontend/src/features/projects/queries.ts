@@ -20,7 +20,12 @@ export async function listProjectsAdmin() {
       featured: true,
       demoUrl: true,
       // sampul untuk daftar admin yang tampil seperti daftar project situs
-      cover: { select: { url: true } },
+      cover: { select: { url: true, width: true, height: true } },
+      // teknologi untuk chip di daftar admin (sama dengan daftar project situs)
+      skills: {
+        select: { id: true, name: true, icon: true, logo: { select: { url: true } } },
+        orderBy: [{ order: 'asc' }, { name: 'asc' }],
+      },
     },
   })
 }

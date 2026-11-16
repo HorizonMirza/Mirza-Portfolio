@@ -142,11 +142,6 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
 async function footerContacts() {
   const [links, assets] = await Promise.all([getContactLinksForEdit(), getProfileAssets()])
   return (
-    <ContactLinksLive
-      defaultValues={links}
-      cv={assets.cv}
-      configured={isUploadConfigured()}
-      cvTitle={<ShownText k="Footer.cv" />}
-    />
+    <ContactLinksLive defaultValues={links} cv={assets.cv} cvTitle={<ShownText k="Footer.cv" />} />
   )
 }

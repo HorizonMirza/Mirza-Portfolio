@@ -7,7 +7,7 @@ import { getDb } from '@/lib/db'
 import { revalidateContent } from '@/lib/revalidate'
 import { emptyToNull } from '@/lib/validation'
 
-import { CARD_TITLES, CONTACT_LABEL_KEYS, derivedCardValue } from '@/components/site/footer-links'
+import { CONTACT_LABEL_KEYS, derivedCardValue } from '@/components/site/footer-links'
 
 import { contactLinksSchema, heroRolesSchema, profileSchema } from './schema'
 
@@ -79,15 +79,12 @@ export async function saveContactLinks(input: unknown): Promise<ActionResult> {
     const v = parsed.data
     // Link sosial yang kosong tidak disimpan.
     const socials = Object.fromEntries(Object.entries(v.socials).filter(([, url]) => url !== ''))
-    // Judul dan teks kecil kartu disimpan hanya bila berbeda dari bawaan (nama merek dan teks yang
-    // diturunkan dari tautan), supaya kartu tetap mengikuti tautan yang diganti kemudian.
-    const contactLabels: Record<string, { title?: string; value?: string }> = {}
+    // Nama akun yang tampil di kartu sosial disimpan hanya bila berbeda dari bawaan (nama dari tautan),
+    // supaya kartu tetap mengikuti tautan yang diganti kemudian.
+    const contactLabels: Record<string, { value: string }> = {}
     for (const key of CONTACT_LABEL_KEYS) {
-      const label = v.labels[key]
-      const title = key === 'cv' || label.title === CARD_TITLES[key] ? '' : label.title
-      const value = label.value === derivedCardValue(key, v) ? '' : label.value
-      if (title || value)
-        contactLabels[key] = { ...(title ? { title } : {}), ...(value ? { value } : {}) }
+      const value = v.labels[key].value
+      if (value && value !== derivedCardValue(key, v)) contactLabels[key] = { value }
     }
     const data = {
       email: emptyToNull(v.email),

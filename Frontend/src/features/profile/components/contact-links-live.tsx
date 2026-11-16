@@ -1,17 +1,16 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowUpRight, FileText, Mail, Upload } from 'lucide-react'
+import { ArrowUpRight, FileText, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
-import { derivedCardValue } from '@/components/site/footer-links'
+import { cvLabel, derivedCardValue } from '@/components/site/footer-links'
 import { InlineInput, LiveErrors } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
-import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 import { useRegisterExtraSave } from '@/features/site-text/components/site-text-live'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
@@ -20,7 +19,8 @@ import { cn } from '@/lib/utils'
 import { saveContactLinks } from '../actions'
 import { type ContactLinksInput, contactLinksSchema } from '../schema'
 
-type Key = 'whatsapp' | 'email' | 'linkedin' | 'github' | 'instagram' | 'cv'
+type Key = 'whatsapp' | 'email' | 'linkedin' | 'github' | 'instagram'
+type SocialKey = 'linkedin' | 'github' | 'instagram'
 type FieldName =
   'whatsapp' | 'email' | 'cvUrl' | 'socials.linkedin' | 'socials.github' | 'socials.instagram'
 
@@ -32,72 +32,78 @@ function Brand({ slug }: { slug: string }) {
   )
 }
 
-// urutan kartu sama dengan footer situs (components/site/footer-links.ts)
-const CARDS: { key: Key; field: FieldName; title: string; icon: ReactNode; placeholder: string }[] =
-  [
-    {
-      key: 'whatsapp',
-      field: 'whatsapp',
-      title: 'WhatsApp',
-      icon: <Brand slug="whatsapp" />,
-      placeholder: '+62…',
-    },
-    {
-      key: 'email',
-      field: 'email',
-      title: 'Email',
-      icon: <Mail className="size-5" aria-hidden="true" />,
-      placeholder: 'nama@contoh.com',
-    },
-    {
-      key: 'linkedin',
-      field: 'socials.linkedin',
-      title: 'LinkedIn',
-      icon: (
-        <span className="w-5 text-center text-[17px] leading-none font-bold" aria-hidden="true">
-          in
-        </span>
-      ),
-      placeholder: 'https://linkedin.com/in/…',
-    },
-    {
-      key: 'github',
-      field: 'socials.github',
-      title: 'GitHub',
-      icon: <Brand slug="github" />,
-      placeholder: 'https://github.com/…',
-    },
-    {
-      key: 'instagram',
-      field: 'socials.instagram',
-      title: 'Instagram',
-      icon: <Brand slug="instagram" />,
-      placeholder: 'https://instagram.com/…',
-    },
-  ]
+// urutan kartu sama dengan footer situs (components/site/footer-links.ts). Judul kartu tetap
+// (tidak bisa diubah); WhatsApp dan Email satu isian (nomor/alamat sekaligus yang tampil), akun sosial
+// dua isian (nama yang tampil dan tautan).
+const CARDS: {
+  key: Key
+  field: FieldName
+  title: string
+  icon: ReactNode
+  placeholder: string
+}[] = [
+  {
+    key: 'whatsapp',
+    field: 'whatsapp',
+    title: 'WhatsApp',
+    icon: <Brand slug="whatsapp" />,
+    placeholder: '+62…',
+  },
+  {
+    key: 'email',
+    field: 'email',
+    title: 'Email',
+    icon: <Mail className="size-5" aria-hidden="true" />,
+    placeholder: 'nama@contoh.com',
+  },
+  {
+    key: 'linkedin',
+    field: 'socials.linkedin',
+    title: 'LinkedIn',
+    icon: (
+      <span className="w-5 text-center text-[17px] leading-none font-bold" aria-hidden="true">
+        in
+      </span>
+    ),
+    placeholder: 'https://linkedin.com/in/…',
+  },
+  {
+    key: 'github',
+    field: 'socials.github',
+    title: 'GitHub',
+    icon: <Brand slug="github" />,
+    placeholder: 'https://github.com/…',
+  },
+  {
+    key: 'instagram',
+    field: 'socials.instagram',
+    title: 'Instagram',
+    icon: <Brand slug="instagram" />,
+    placeholder: 'https://instagram.com/…',
+  },
+]
 
-// Admin → Footer, kartu kontak (DESIGN.md bagian 139 dan 151): kartu tautan seperti di footer situs,
-// nilai tiap kartu diketik langsung di tempat alamatnya tampil. Dipasang di dalam pratinjau Footer
-// (SiteTextLive) tanpa form dan tombol Simpan sendiri: disimpan bersama teks footer lewat satu
-// tombol Simpan. Kartu kosong tidak tampil di situs, jadi ditandai bergaris putus. Kartu Resume CV:
-// link (mis. Google Drive) diketik di kartu, berkas PDF ditekan untuk diunggah atau diganti; link
-// didahulukan bila keduanya ada.
+const isSocial = (key: Key): key is SocialKey =>
+  key === 'linkedin' || key === 'github' || key === 'instagram'
+
+// Admin → Footer, kartu kontak (DESIGN.md bagian 139, 151, dan 161): kartu tautan seperti di footer
+// situs, diketik langsung di tempatnya. Dipasang di dalam pratinjau Footer (SiteTextLive) tanpa form
+// dan tombol Simpan sendiri: disimpan bersama teks footer lewat satu tombol Simpan. Kartu kosong tidak
+// tampil di situs, jadi ditandai bergaris putus. Judul kartu (WhatsApp, Email, ...) tetap. WhatsApp
+// dan Email hanya satu isian. LinkedIn, GitHub, dan Instagram punya nama yang tampil dan tautan.
+// Kartu Resume CV: ikon dan keterangan ("Google Drive") tetap, hanya link yang diketik.
 export function ContactLinksLive({
   defaultValues,
   cv,
-  configured,
   cvTitle,
 }: {
   defaultValues: ContactLinksInput
   cv: AssetView | null
-  configured: boolean
   // judul kartu CV di situs (teks Footer.cv), bisa berupa isian yang diketik langsung
   cvTitle: ReactNode
 }) {
   const t = useAdminT()
   const router = useRouter()
-  // ikon PDF ditekan: langsung membuka pemilih berkas (DESIGN.md bagian 148)
-  const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const form = useForm<ContactLinksInput>({
     resolver: zodResolver(contactLinksSchema),
     defaultValues,
@@ -111,7 +117,7 @@ export function ContactLinksLive({
   } = form
   const v = useWatch({ control })
 
-  // isian kontak dari nilai form (dengan satu kolom diganti), untuk teks kecil bawaan kartu
+  // isian kontak dari nilai form (dengan satu kolom diganti), untuk nama bawaan akun sosial
   const linksOf = (field?: FieldName, next?: string) => {
     const get = (name: FieldName) =>
       (name === field ? next : undefined) ??
@@ -119,9 +125,6 @@ export function ContactLinksLive({
         ? (v.socials?.[name.slice(8) as 'linkedin'] ?? '')
         : (v[name as 'whatsapp' | 'email' | 'cvUrl'] ?? ''))
     return {
-      whatsapp: get('whatsapp'),
-      email: get('email'),
-      cvUrl: get('cvUrl'),
       socials: {
         linkedin: get('socials.linkedin'),
         github: get('socials.github'),
@@ -129,17 +132,17 @@ export function ContactLinksLive({
       },
     }
   }
-  // tautan diganti: teks kecil yang masih bawaan (atau kosong) ikut berganti, yang sudah diubah
-  // admin dibiarkan
-  const followLink = (key: Key, field: FieldName) => (event: { target: { value: string } }) => {
-    const path = `labels.${key}.value` as const
-    const before = derivedCardValue(key, linksOf())
-    const current = getValues(path) ?? ''
-    if (current === '' || current === before)
-      setValue(path, derivedCardValue(key, linksOf(field, event.target.value)), {
-        shouldDirty: true,
-      })
-  }
+  // tautan diganti: nama yang masih bawaan (atau kosong) ikut berganti, yang sudah diubah admin dibiarkan
+  const followLink =
+    (key: SocialKey, field: FieldName) => (event: { target: { value: string } }) => {
+      const path = `labels.${key}.value` as const
+      const before = derivedCardValue(key, linksOf())
+      const current = getValues(path) ?? ''
+      if (current === '' || current === before)
+        setValue(path, derivedCardValue(key, linksOf(field, event.target.value)), {
+          shouldDirty: true,
+        })
+    }
 
   // disimpan bersama teks footer oleh tombol Simpan halaman; tanpa ubahan dilewati
   useRegisterExtraSave(async () => {
@@ -178,43 +181,49 @@ export function ContactLinksLive({
     const e = errorOf(c.field)
     return e ? [{ text: `${t(c.title)}: ${t(e)}` }] : []
   })
-  for (const c of [...CARDS, { key: 'cv' as Key, title: 'Resume CV' }]) {
-    const e = errors.labels?.[c.key]
-    const text = e?.title?.message ?? e?.value?.message
-    if (text) messages.push({ text: `${t(c.title)}: ${t(text)}` })
+  for (const c of CARDS.filter((c) => isSocial(c.key))) {
+    const e = errors.labels?.[c.key as SocialKey]?.value?.message
+    if (e) messages.push({ text: `${t(c.title)}: ${t(e)}` })
   }
   if (errors.cvUrl?.message)
     messages.push({ text: `${t('Berkas Resume CV')}: ${t(errors.cvUrl.message)}` })
 
   const hasCv = Boolean(v.cvUrl) || Boolean(cv)
+  // keterangan kartu CV seperti di situs; tidak bisa diubah
+  const cvHost = (() => {
+    try {
+      return v.cvUrl ? new URL(v.cvUrl).hostname.replace(/^www\./, '') : null
+    } catch {
+      return null
+    }
+  })()
+  const cvShown = v.cvUrl ? cvLabel(cvHost, 'PDF') : cv ? 'PDF' : ''
+  const cvDrive = cvShown === 'Google Drive'
 
   return (
     <>
       <ul className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
         {CARDS.map((c) => {
           const value = valueOf(c.field)
+          const kind = c.key === 'email' ? 'email' : c.key === 'whatsapp' ? 'tel' : 'url'
           return (
             <li key={c.key} className={card(Boolean(value))}>
               {c.icon}
-              <span className="grid min-w-0 gap-1">
-                {/* dua nama yang tampil di kartu (judul dan teks kecil) lalu tautan tujuannya */}
-                <InlineInput
-                  label={t('Judul kartu {name}', { name: t(c.title) })}
-                  {...register(`labels.${c.key}.title`)}
-                  maxLength={40}
-                  invalid={Boolean(errors.labels?.[c.key]?.title)}
-                  className="min-h-6 w-full text-sm font-semibold"
-                />
-                <InlineInput
-                  label={t('Teks kartu {name}', { name: t(c.title) })}
-                  {...register(`labels.${c.key}.value`)}
-                  maxLength={80}
-                  invalid={Boolean(errors.labels?.[c.key]?.value)}
-                  className="min-h-6 w-full text-[0.8125rem] text-ellipsis text-muted"
-                />
+              <span className="grid min-w-0 gap-2">
+                <span className="text-sm font-semibold">{t(c.title)}</span>
+                {isSocial(c.key) ? (
+                  <InlineInput
+                    label={t('Teks kartu {name}', { name: t(c.title) })}
+                    {...register(`labels.${c.key}.value`)}
+                    maxLength={80}
+                    invalid={Boolean(errors.labels?.[c.key]?.value)}
+                    className="min-h-6 w-full text-[0.8125rem] text-ellipsis text-muted"
+                  />
+                ) : null}
                 {(() => {
-                  const reg = register(c.field, { onChange: followLink(c.key, c.field) })
-                  const kind = c.key === 'email' ? 'email' : c.key === 'whatsapp' ? 'tel' : 'url'
+                  const reg = register(c.field, {
+                    onChange: isSocial(c.key) ? followLink(c.key, c.field) : undefined,
+                  })
                   return (
                     <InlineInput
                       label={t('{name} (opsional)', { name: t(c.title) })}
@@ -223,7 +232,10 @@ export function ContactLinksLive({
                       {...reg}
                       placeholder={c.placeholder}
                       invalid={Boolean(errorOf(c.field))}
-                      className="min-h-6 w-full font-mono text-xs text-ellipsis text-muted"
+                      className={cn(
+                        'min-h-6 w-full text-ellipsis text-muted',
+                        isSocial(c.key) ? 'font-mono text-xs' : 'text-[0.8125rem]',
+                      )}
                     />
                   )
                 })()}
@@ -232,35 +244,22 @@ export function ContactLinksLive({
             </li>
           )
         })}
-        {/* Resume CV: kartu disorot seperti di situs */}
+        {/* Resume CV: kartu disorot seperti di situs; ikon dan keterangan tetap, hanya link diketik */}
         <li className={card(hasCv, true)}>
-          {/* ikon = tombol berkas PDF */}
-          <button
-            type="button"
-            onClick={() => picker.pick('profile-cv')}
-            className="admin-editable grid size-9 place-items-center rounded-lg outline-offset-2 hover:bg-current/10 focus-visible:outline-2 focus-visible:outline-current"
-          >
-            {cv ? (
-              <FileText className="size-5" aria-hidden="true" />
-            ) : (
-              <Upload className="size-5" aria-hidden="true" />
-            )}
-            <span className="sr-only">{t('Berkas Resume CV')}</span>
-          </button>
-          <span className="grid min-w-0 gap-1">
+          {cvDrive ? (
+            <Brand slug="googledrive" />
+          ) : (
+            <FileText className="size-5" aria-hidden="true" />
+          )}
+          <span className="grid min-w-0 gap-2">
             <span className="text-sm font-semibold">{cvTitle}</span>
-            <InlineInput
-              label={t('Teks kartu {name}', { name: t('Resume CV') })}
-              {...register('labels.cv.value')}
-              maxLength={80}
-              invalid={Boolean(errors.labels?.cv?.value)}
-              className={cn(
-                'min-h-6 w-full text-[0.8125rem] text-ellipsis',
-                hasCv ? 'text-primary-fg/75' : 'text-muted',
-              )}
-            />
+            {cvShown ? (
+              <span className={cn('text-[0.8125rem]', hasCv ? 'text-primary-fg/75' : 'text-muted')}>
+                {cvShown}
+              </span>
+            ) : null}
             {(() => {
-              const reg = register('cvUrl', { onChange: followLink('cv', 'cvUrl') })
+              const reg = register('cvUrl')
               return (
                 <InlineInput
                   label={t('Link CV (opsional)')}
@@ -304,7 +303,6 @@ export function ContactLinksLive({
         </li>
       </ul>
       <LiveErrors messages={messages} />
-      {picker.element}
     </>
   )
 }

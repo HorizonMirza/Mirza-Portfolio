@@ -80,6 +80,7 @@ export const emptyProject: ProjectInput = {
   showRepo: true,
   githubRepo: '',
   featured: false,
-  status: 'DRAFT',
+  // project baru langsung terbit: tanpa pilihan Draf di admin (revisi pemilik 2026-11-16)
+  status: 'PUBLISHED',
   skillIds: [],
 }

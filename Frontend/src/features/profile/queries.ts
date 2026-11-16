@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { CARD_TITLES, CONTACT_LABEL_KEYS, derivedCardValue } from '@/components/site/footer-links'
+import { CONTACT_LABEL_KEYS, derivedCardValue } from '@/components/site/footer-links'
 import { getDb } from '@/lib/db'
 
 import {
@@ -46,26 +46,25 @@ export async function getContactLinksForEdit(): Promise<ContactLinksInput> {
     select: { email: true, whatsapp: true, cvUrl: true, socials: true, contactLabels: true },
   })
   const socials = (p?.socials ?? {}) as Record<string, unknown>
-  const stored = (p?.contactLabels ?? {}) as Record<string, { title?: unknown; value?: unknown }>
+  const socialsForm = Object.fromEntries(
+    SOCIAL_KEYS.map((k) => [k, typeof socials[k] === 'string' ? socials[k] : '']),
+  ) as ContactLinksInput['socials']
+  const stored = (p?.contactLabels ?? {}) as Record<string, { value?: unknown }>
   const text = (v: unknown) => (typeof v === 'string' ? v : '')
-  const links = {
-    whatsapp: p?.whatsapp ?? '',
-    email: p?.email ?? '',
-    cvUrl: p?.cvUrl ?? '',
-    socials: Object.fromEntries(
-      SOCIAL_KEYS.map((k) => [k, typeof socials[k] === 'string' ? socials[k] : '']),
-    ) as ContactLinksInput['socials'],
-  }
-  // isian judul dan teks kecil memuat nilai yang tampil di situs (penggantian admin, kalau tidak
-  // nama bawaan dan teks dari tautan), supaya yang diketik sama dengan yang tampil
+  const links = { socials: socialsForm }
+  // isian nama akun memuat nilai yang tampil di situs (penggantian admin, kalau tidak nama dari
+  // tautan), supaya yang diketik sama dengan yang tampil
   const labels = Object.fromEntries(
     CONTACT_LABEL_KEYS.map((k) => [
       k,
-      {
-        title: text(stored[k]?.title) || (k === 'cv' ? '' : CARD_TITLES[k]),
-        value: text(stored[k]?.value) || derivedCardValue(k, links),
-      },
+      { value: text(stored[k]?.value) || derivedCardValue(k, links) },
     ]),
   ) as ContactLinksInput['labels']
-  return { ...links, labels }
+  return {
+    whatsapp: p?.whatsapp ?? '',
+    email: p?.email ?? '',
+    cvUrl: p?.cvUrl ?? '',
+    socials: socialsForm,
+    labels,
+  }
 }

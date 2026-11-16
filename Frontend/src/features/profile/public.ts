@@ -33,7 +33,7 @@ export type PublicProfile = {
   email: string | null
   whatsapp: string | null
   socials: Partial<Record<(typeof SOCIAL_KEYS)[number], string>>
-  // judul dan teks kecil kartu footer yang diganti admin
+  // nama akun kartu footer (LinkedIn, GitHub, Instagram) yang diganti admin
   contactLabels: ContactLabels
   photo: PublicImage | null
   hasCv: boolean
@@ -85,19 +85,11 @@ const load = unstable_cache(
     const socials: PublicProfile['socials'] = {}
     for (const key of SOCIAL_KEYS)
       if (typeof raw[key] === 'string' && raw[key]) socials[key] = raw[key] as string
-    const rawLabels = (p.contactLabels ?? {}) as Record<
-      string,
-      { title?: unknown; value?: unknown }
-    >
+    const rawLabels = (p.contactLabels ?? {}) as Record<string, { value?: unknown }>
     const contactLabels: ContactLabels = {}
     for (const key of CONTACT_LABEL_KEYS) {
-      const title = rawLabels[key]?.title
       const value = rawLabels[key]?.value
-      if (typeof title === 'string' || typeof value === 'string')
-        contactLabels[key] = {
-          ...(typeof title === 'string' && title ? { title } : {}),
-          ...(typeof value === 'string' && value ? { value } : {}),
-        }
+      if (typeof value === 'string' && value) contactLabels[key] = { value }
     }
     return {
       name: p.name,

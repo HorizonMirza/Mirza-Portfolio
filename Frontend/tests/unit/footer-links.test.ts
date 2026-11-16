@@ -76,46 +76,34 @@ describe('footer-links', () => {
     )
     expect(link).toMatchObject({ key: 'website', value: 'contoh.dev' })
   })
-  it('judul dan teks kecil kartu bisa diganti admin, teks bawaan tetap tersedia', () => {
+  it('nama akun kartu sosial bisa diganti admin, nama bawaan tetap tersedia', () => {
     const links = footerLinks(
       {
         ...base,
         whatsapp: '+6281200000000',
         socials: { linkedin: 'https://www.linkedin.com/in/muhammad-mirza-wirya' },
-        contactLabels: {
-          linkedin: { title: 'Profil LinkedIn', value: 'Mirza' },
-          whatsapp: { value: '  ' },
-        },
+        // WhatsApp tidak punya penggantian: nomornya langsung yang tampil
+        contactLabels: { linkedin: { value: 'Mirza' } },
       },
       { locale: 'id', fileLabel: 'PDF' },
     )
     expect(links[0]).toMatchObject({ key: 'whatsapp', value: '+6281200000000' })
-    expect(links[0].title).toBeUndefined()
     expect(links[1]).toMatchObject({
       key: 'linkedin',
-      title: 'Profil LinkedIn',
       value: 'Mirza',
       derived: 'muhammad-mirza-wirya',
     })
   })
 
-  it('teks kecil bawaan dihitung dari isian kontak admin', () => {
-    const links = {
-      whatsapp: '+6281200000000',
-      email: 'saya@contoh.com',
-      cvUrl: 'https://drive.google.com/file/d/abc/view',
-      socials: {
-        linkedin: 'https://www.linkedin.com/in/akun',
-        github: 'https://github.com/HorizonMirza',
-        instagram: 'https://www.instagram.com/akun.saya/',
-      },
+  it('nama akun bawaan dihitung dari tautan', () => {
+    const socials = {
+      linkedin: 'https://www.linkedin.com/in/akun',
+      github: 'https://github.com/HorizonMirza',
+      instagram: 'https://www.instagram.com/akun.saya/',
     }
-    expect(derivedCardValue('whatsapp', links)).toBe('+6281200000000')
-    expect(derivedCardValue('email', links)).toBe('saya@contoh.com')
-    expect(derivedCardValue('linkedin', links)).toBe('akun')
-    expect(derivedCardValue('instagram', links)).toBe('@akun.saya')
-    expect(derivedCardValue('cv', links)).toBe('Google Drive')
-    expect(derivedCardValue('cv', { ...links, cvUrl: '' })).toBe('')
+    expect(derivedCardValue('linkedin', { socials })).toBe('akun')
+    expect(derivedCardValue('github', { socials })).toBe('HorizonMirza')
+    expect(derivedCardValue('instagram', { socials })).toBe('@akun.saya')
     expect(footerValue('github', '')).toBe('')
   })
 })
