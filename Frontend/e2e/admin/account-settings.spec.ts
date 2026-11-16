@@ -57,11 +57,11 @@ test.describe('Admin → Akun', () => {
       await expect(dialog.getByRole('listitem').filter({ hasText: rule })).toContainText(
         '(terpenuhi)',
       )
-    await dialog.getByLabel('Ulangi password baru').fill('Kopi-Pagi-8-Teras-Rumah!')
-    // hanya lima syarat yang tampil, dan kolom password memberi contoh panjang minimal
+    // tanpa kolom ulangi; hanya lima syarat yang tampil, dan kolom password memberi contoh panjang minimal
+    await expect(dialog.getByLabel('Ulangi password baru')).toHaveCount(0)
     await expect(dialog.getByRole('listitem')).toHaveCount(5)
     await expect(next).toHaveAttribute('placeholder', 'Min. 8 Karakter')
-    // tombol mata menampilkan dan menyembunyikan isian; tombol Simpan di kanan bawah (tata letak acuan)
+    // tombol mata menampilkan dan menyembunyikan isian; tombol Simpan satu baris penuh
     await expect(next).toHaveAttribute('type', 'password')
     await dialog.getByRole('button', { name: 'Tampilkan password' }).nth(1).click()
     await expect(next).toHaveAttribute('type', 'text')
@@ -71,8 +71,7 @@ test.describe('Admin → Akun', () => {
     const save = dialog.getByRole('button', { name: 'Simpan', exact: true })
     const box = await dialog.boundingBox()
     const saveBox = await save.boundingBox()
-    expect(saveBox!.width).toBeLessThan(box!.width / 2)
-    expect(saveBox!.x + saveBox!.width).toBeGreaterThan(box!.x + box!.width - 40)
+    expect(saveBox!.width).toBeGreaterThan(box!.width - 80)
     // judul syarat dan garis kekuatan tunggal tampil
     await expect(dialog.getByText('Syarat password:')).toBeVisible()
     // tidak dikirim: mengganti password akan mengeluarkan sesi tes lain

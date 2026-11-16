@@ -63,6 +63,7 @@ const IDENTITY: Record<
     title: string
     oldLabel: string
     newLabel: string
+    placeholder?: string
     type: 'text' | 'email'
     maxLength: number
   }
@@ -78,6 +79,7 @@ const IDENTITY: Record<
     title: 'Ganti email',
     oldLabel: 'Email lama',
     newLabel: 'Email baru',
+    placeholder: 'nama@gmail.com',
     type: 'email',
     maxLength: 254,
   },
@@ -169,6 +171,7 @@ export function ChangeIdentityDialog({
             type={copy.type}
             value={value}
             maxLength={copy.maxLength}
+            placeholder={copy.placeholder ? t(copy.placeholder) : undefined}
             autoComplete="off"
             aria-invalid={errors.value ? true : undefined}
             aria-describedby={errors.value ? `${id}-new-error` : undefined}
@@ -188,6 +191,7 @@ export function ChangeIdentityDialog({
           <PasswordInput
             id={`${id}-password`}
             value={password}
+            placeholder={t('Masukkan Password')}
             autoComplete="current-password"
             aria-invalid={errors.password ? true : undefined}
             aria-describedby={errors.password ? `${id}-password-error` : undefined}
@@ -210,7 +214,7 @@ export function ChangeIdentityDialog({
         <Button
           type="submit"
           disabled={pending || value.trim() === '' || password === ''}
-          className="self-end"
+          className="w-full"
         >
           {pending ? t('Menyimpan…') : t('Simpan')}
         </Button>

@@ -19,7 +19,6 @@ const { changePassword } = await import('@/features/account/actions')
 const input = {
   currentPassword: 'password-lama-panjang',
   newPassword: 'Password-Baru-Yang-Panjang-1!',
-  confirmPassword: 'Password-Baru-Yang-Panjang-1!',
 }
 
 // audit 2026-11-03, ERR-05: galat Better Auth dibedakan, tidak semuanya "password salah"

@@ -161,24 +161,19 @@ describe('changePasswordSchema', () => {
   const base = {
     currentPassword: 'lama-sekali-123',
     newPassword: 'Baru-Yang-Panjang-1!',
-    confirmPassword: 'Baru-Yang-Panjang-1!',
   }
   it('menerima password baru yang cukup panjang', () => {
     expect(changePasswordSchema.safeParse(base).success).toBe(true)
   })
-  it('minimal 8 karakter dan konfirmasi harus sama', () => {
+  it('minimal 8 karakter', () => {
     expect(
       fieldsOf(
         changePasswordSchema.safeParse({
           ...base,
           newPassword: 'pendek',
-          confirmPassword: 'pendek',
         }),
       ),
     ).toContain('newPassword')
-    expect(fieldsOf(changePasswordSchema.safeParse({ ...base, confirmPassword: 'lain' }))).toEqual([
-      'confirmPassword',
-    ])
   })
   it('wajib memuat huruf besar, huruf kecil, angka, dan simbol', () => {
     for (const weak of [
@@ -191,7 +186,6 @@ describe('changePasswordSchema', () => {
       const r = changePasswordSchema.safeParse({
         ...base,
         newPassword: weak,
-        confirmPassword: weak,
       })
       expect(fieldsOf(r), weak).toContain('newPassword')
     }
@@ -201,7 +195,6 @@ describe('changePasswordSchema', () => {
     const r = changePasswordSchema.safeParse({
       currentPassword: same,
       newPassword: same,
-      confirmPassword: same,
     })
     expect(fieldsOf(r)).toEqual(['newPassword'])
   })

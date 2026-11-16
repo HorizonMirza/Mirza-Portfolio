@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 import { meetsPasswordRules, MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
 
+// Ganti password tanpa kolom ulangi (revisi pemilik 2026-11-16): password baru diperiksa panjang, isi,
+// dan harus berbeda dari yang sekarang; tombol mata dipakai untuk memastikan ketikan.
 export const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, 'Password saat ini wajib diisi').max(128),
@@ -13,11 +15,6 @@ export const changePasswordSchema = z
         meetsPasswordRules,
         'Password baru harus memuat huruf besar, huruf kecil, angka, dan simbol',
       ),
-    confirmPassword: z.string(),
-  })
-  .refine((v) => v.newPassword === v.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'Konfirmasi tidak sama dengan password baru',
   })
   .refine((v) => v.newPassword !== v.currentPassword, {
     path: ['newPassword'],

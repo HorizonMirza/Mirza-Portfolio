@@ -166,7 +166,6 @@ export const EN: Record<string, string> = {
   'Ganti password': 'Change password',
   'Password saat ini': 'Current password',
   'Password baru': 'New password',
-  'Ulangi password baru': 'Repeat new password',
   Nama: 'Name',
   Peran: 'Role',
   Email: 'Email',
@@ -183,7 +182,6 @@ export const EN: Record<string, string> = {
   'Password diganti. Sesi di perangkat lain sudah dikeluarkan.':
     'Password changed. Sessions on other devices have been signed out.',
   'Password baru maksimal 128 karakter': 'The new password must be at most 128 characters',
-  'Konfirmasi tidak sama dengan password baru': 'The confirmation does not match the new password',
   'Password baru harus berbeda dari yang sekarang':
     'The new password must differ from the current one',
   'Sesi berakhir. Silakan masuk lagi.': 'Your session has ended. Please log in again.',
@@ -538,6 +536,8 @@ export const EN: Record<string, string> = {
   'Minimal 1 huruf besar': 'At least 1 uppercase letter',
   'Minimal 1 karakter spesial': 'At least 1 special character',
   'Min. {min} Karakter': 'Min. {min} characters',
+  'Masukkan Password': 'Enter password',
+  'nama@gmail.com': 'name@gmail.com',
   'Mode perawatan': 'Maintenance mode',
   'Nomor belum diisi': 'No number yet',
   Nyalakan: 'Turn on',

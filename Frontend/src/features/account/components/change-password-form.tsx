@@ -18,7 +18,7 @@ import { changePassword } from '../actions'
 import { passwordStrength } from '../password-strength'
 import { type ChangePasswordInput, changePasswordSchema } from '../schema'
 
-const empty: ChangePasswordInput = { currentPassword: '', newPassword: '', confirmPassword: '' }
+const empty: ChangePasswordInput = { currentPassword: '', newPassword: '' }
 
 const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat kuat'] as const
 
@@ -42,7 +42,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
   const strength = passwordStrength(next ?? '')
   const placeholder = t('Min. {min} Karakter', { min: MIN_PASSWORD_LENGTH })
   // lima syarat yang ditampilkan, urutan dan tulisan sesuai permintaan pemilik 2026-11-16; "berbeda dari
-  // password saat ini" dan "ulangan sama" tetap diperiksa saat Simpan lewat changePasswordSchema
+  // password saat ini" tetap diperiksa saat Simpan lewat changePasswordSchema
   const rules = [
     { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Minimal 1 angka') },
     {
@@ -88,20 +88,6 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
           />
         )}
       </Field>
-      <Field
-        id="confirmPassword"
-        label="Ulangi password baru"
-        error={errors.confirmPassword?.message}
-      >
-        {(a) => (
-          <PasswordInput
-            autoComplete="new-password"
-            placeholder={placeholder}
-            {...a}
-            {...register('confirmPassword')}
-          />
-        )}
-      </Field>
       <div className="flex flex-col gap-2">
         {/* satu garis kekuatan, lalu daftar syarat kecil (tata letak form Ganti Password acuan pemilik
             2026-11-16); label kekuatan tetap dibacakan pembaca layar */}
@@ -140,7 +126,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
           ))}
         </ul>
       </div>
-      <Button type="submit" disabled={pending} className="self-end">
+      <Button type="submit" disabled={pending} className="w-full">
         {pending ? t('Menyimpan…') : t('Simpan')}
       </Button>
     </form>
