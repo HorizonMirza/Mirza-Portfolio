@@ -75,6 +75,9 @@ test('halaman admin yang tidak ada mengembalikan 404', async ({ page }) => {
 })
 
 test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, testInfo) => {
+  // alurnya panjang (buat, tiga halaman diperiksa axe, ubah, hapus): 17-25 detik di mesin tenang
+  // dan hampir 30 detik di WebKit saat mesin CI sibuk, jadi batas bawaan terlalu sempit
+  test.setTimeout(90_000)
   const suffix = `${testInfo.project.name}-${Date.now()}`
   const titleId = `Project E2E ${suffix}`
   const roleText = `Peran E2E ${suffix}`
