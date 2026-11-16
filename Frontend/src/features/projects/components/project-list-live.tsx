@@ -143,7 +143,14 @@ export function ProjectListLive({
                         )}
                       >
                         {/* sampul membuka halaman ubah project */}
-                        <Link href={`/admin/projects/${row.id}`} className="block">
+                        <Link
+                          href={`/admin/projects/${row.id}`}
+                          // sampul hanya jalan pintas untuk tetikus/sentuh; pembaca layar dan keyboard
+                          // memakai ikon pensil bernama "Ubah ..." di bawahnya (tautan yang sama)
+                          aria-hidden="true"
+                          tabIndex={-1}
+                          className="block"
+                        >
                           <PhotoTilt className="pj-tilt" maxTilt={8} sound={false}>
                             <div className="pj-tilt-in" data-tilt-target="">
                               <div className="pj-browser">
@@ -180,7 +187,6 @@ export function ProjectListLive({
                               </div>
                             </div>
                           </PhotoTilt>
-                          <span className="sr-only">{t('Ubah {item}', { item: title })}</span>
                         </Link>
                       </div>
                       <div className="pj-zz-text relative grid grid-cols-[minmax(0,1fr)_auto] items-center">
