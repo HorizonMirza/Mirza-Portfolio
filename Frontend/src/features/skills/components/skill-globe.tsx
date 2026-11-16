@@ -783,6 +783,9 @@ export function SkillGlobe({
             data-hl={category !== null && item.categoryIndex === category ? '' : undefined}
             aria-pressed={i === activeIndex}
             aria-controls={panelId}
+            // nama lewat aria-label, bukan teks sr-only: logo yang sedang berputar ke tepi bola dianggap
+            // di luar layar oleh pemeriksa aksesibilitas sehingga teks sr-only di dalamnya tidak terhitung
+            aria-label={`${item.name}, ${item.category}`}
             // sebelum JavaScript menghitung tumpang-tindih, logo belum bisa dipakai: semua inert
             inert
             style={
@@ -801,9 +804,6 @@ export function SkillGlobe({
             </span>
             <span className="globe-name" aria-hidden="true">
               {item.name}
-            </span>
-            <span className="sr-only">
-              {item.name}, {item.category}
             </span>
           </button>
         ))}
