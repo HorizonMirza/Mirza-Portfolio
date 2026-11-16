@@ -43,7 +43,6 @@ function FormDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        blur
         onCloseAutoFocus={restoreFocus(returnFocus)}
         className="max-h-[92dvh] max-w-md overflow-y-auto"
       >
