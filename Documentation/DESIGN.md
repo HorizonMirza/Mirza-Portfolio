@@ -1885,7 +1885,7 @@ Garis atas panel isi (`<main>`) dulu berupa bayangan inset (`.admin-glass-panel`
 ## 165. Dashboard desain 01 "Ringkas" (2026-11-16 malam)
 
 Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
-- **Empat kotak angka** (tautan): Pengunjung (`#kunjungan`), Tayangan halaman (`#kunjungan`), Unduhan CV (Kaki Halaman), Pesan masuk (Pesan). Tiap kotak: jumlah periode, naik/turun dibanding periode sebelumnya yang sama panjang (hijau ▲ / merah ▼, "—" bila belum ada pembanding; keterangan untuk pembaca layar), dan grafik kecil per hari.
+- **Empat kotak angka** (tautan): Pengunjung (`#kunjungan`), Tayangan Halaman (`#kunjungan`), Unduhan CV (Kaki Halaman), Pesan Masuk (Pesan). Tiap kotak: jumlah periode, naik/turun dibanding periode sebelumnya yang sama panjang (hijau ▲ / merah ▼, "—" bila belum ada pembanding; keterangan untuk pembaca layar), dan grafik kecil per hari.
 - **Periode 7 / 30 / 90 hari** lewat tautan `?range=` (tetap server component, tanpa JavaScript tambahan; nilai lain kembali ke 30). Periode mengubah kotak angka, grafik, dan tabel.
 - **Kunjungan harian** (recharts): tayangan garis tebal dengan arsiran, pengunjung unik garis putus, warna teks tema (hitam-putih); tooltip tanggal + dua angka; "Lihat sebagai tabel" berisi Tanggal, Tayangan, Pengunjung.
 - **Sumber data** (`features/dashboard/queries.ts` `getDailyStats`): kunjungan mentah (`PageView`) untuk hari di dalam masa simpan (Pengaturan: 30/90/365 hari), ringkasan harian `PageViewDaily` untuk tayangan yang lebih lama; pengunjung unik hanya dari data mentah, jadi hari di luar masa simpan ditandai "—" dan naik/turun pengunjung tidak dihitung. Unduhan CV dari `CvDownload`, pesan dari `Message`, semua per hari WIB.

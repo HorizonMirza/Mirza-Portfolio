@@ -99,9 +99,9 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
 
   const tiles: { key: Metric; label: string; href: string }[] = [
     { key: 'visitors', label: t('Pengunjung'), href: '#kunjungan' },
-    { key: 'views', label: t('Tayangan halaman'), href: '#kunjungan' },
+    { key: 'views', label: t('Tayangan Halaman'), href: '#kunjungan' },
     { key: 'cv', label: t('Unduhan CV'), href: '/admin/pages/footer' },
-    { key: 'messages', label: t('Pesan masuk'), href: '/admin/messages' },
+    { key: 'messages', label: t('Pesan Masuk'), href: '/admin/messages' },
   ]
 
   return (

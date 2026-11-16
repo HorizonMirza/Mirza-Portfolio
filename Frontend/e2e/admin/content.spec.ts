@@ -680,7 +680,7 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
 }) => {
   await page.goto('/admin')
   const summary = page.getByRole('region', { name: 'Ringkasan' })
-  for (const label of ['Pengunjung', 'Tayangan halaman', 'Unduhan CV', 'Pesan masuk'])
+  for (const label of ['Pengunjung', 'Tayangan Halaman', 'Unduhan CV', 'Pesan Masuk'])
     await expect(summary.getByRole('link', { name: new RegExp(`^${label} \\d`) })).toBeVisible()
   const period = page.getByRole('navigation', { name: 'Periode' })
   await expect(period.getByRole('link', { name: '30 hari' })).toHaveAttribute(
@@ -732,7 +732,7 @@ test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({
     await route.continue().catch(() => {})
   })
   const loading = page.getByRole('status').filter({ hasText: 'Memuat halaman…' })
-  const tile = page.getByRole('link', { name: /^Pesan masuk/ })
+  const tile = page.getByRole('link', { name: /^Pesan Masuk/ })
   await tile.hover()
   await page.waitForLoadState('networkidle')
   await tile.click()
