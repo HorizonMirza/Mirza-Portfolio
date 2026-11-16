@@ -674,7 +674,7 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await expect(savedRole).toHaveCount(0)
 })
 
-test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel, pesan, dan konten', async ({
+test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsung tampil, dan pesan', async ({
   page,
 }) => {
   await page.goto('/admin')
@@ -693,7 +693,8 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel, pesan,
   await expect(page).toHaveURL(/\/admin\?range=7$/)
   await expect(period.getByRole('link', { name: '7 hari' })).toHaveAttribute('aria-current', 'page')
   await expect(summary.getByRole('link', { name: /^Pengunjung, 7 hari/ })).toBeVisible()
-  await page.getByText('Lihat sebagai tabel').click()
+  // tabel langsung tampil, tanpa tombol "Lihat sebagai tabel"
+  await expect(page.getByText('Lihat sebagai tabel')).toHaveCount(0)
   const table = page.getByRole('table', { name: 'Kunjungan harian, 7 hari' })
   await expect(table.locator('tbody tr')).toHaveCount(7)
   await expect(table.getByRole('columnheader', { name: 'Pengunjung' })).toBeVisible()
@@ -704,12 +705,10 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel, pesan,
     'page',
   )
   await expect(page.getByRole('heading', { name: 'Pesan terbaru' })).toBeVisible()
-  const content = page
-    .locator('section, div')
-    .filter({ has: page.getByRole('heading', { name: 'Konten di situs' }) })
-    .last()
-  for (const label of ['Project terbit', 'Pengalaman', 'Pendidikan', 'Skill'])
-    await expect(content.getByRole('link', { name: new RegExp(`^${label}`) })).toBeVisible()
+  // tanpa persen naik/turun, tanpa "Hari menurut WIB", tanpa kartu Konten di situs
+  await expect(page.getByText('Hari menurut WIB')).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Konten di situs' })).toHaveCount(0)
+  await expect(summary.getByText('%')).toHaveCount(0)
 })
 
 test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {

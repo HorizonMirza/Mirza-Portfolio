@@ -312,10 +312,10 @@ h1 Hubungi saya
 
 ```
 ┌ Sidebar ┐ ┌ Konten ──────────────────────────────────────────┐
-│Dashboard│ │ 4 angka + naik/turun + grafik kecil (7/30/90 hari)│
-│Projects │ │ Kunjungan harian: tayangan + pengunjung, tabel    │
-│Skills   │ │ Pesan terbaru (4) · Konten di situs               │
-│Experience│ │ (desain 01 "Ringkas", bagian 165)                 │
+│Dashboard│ │ 4 angka + grafik kecil (7/30/90 hari)             │
+│Projects │ │ Kunjungan harian: tayangan + pengunjung + tabel   │
+│Skills   │ │ Pesan terbaru (4), satu baris penuh               │
+│Experience│ │ (desain 01 "Ringkas", bagian 165 dan 166)         │
 │Profile  │ └───────────────────────────────────────────────────┘
 │Messages │
 │Newsletter│  Halaman daftar: tabel + cari + [Tambah]
@@ -1890,3 +1890,12 @@ Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
 - **Kunjungan harian** (recharts): tayangan garis tebal dengan arsiran, pengunjung unik garis putus, warna teks tema (hitam-putih); tooltip tanggal + dua angka; "Lihat sebagai tabel" berisi Tanggal, Tayangan, Pengunjung.
 - **Sumber data** (`features/dashboard/queries.ts` `getDailyStats`): kunjungan mentah (`PageView`) untuk hari di dalam masa simpan (Pengaturan: 30/90/365 hari), ringkasan harian `PageViewDaily` untuk tayangan yang lebih lama; pengunjung unik hanya dari data mentah, jadi hari di luar masa simpan ditandai "—" dan naik/turun pengunjung tidak dihitung. Unduhan CV dari `CvDownload`, pesan dari `Message`, semua per hari WIB.
 - **Pesan terbaru** (4): nama, subjek, status Baru/Dibaca/Arsip, waktu WIB; tiap baris membuka pesannya. **Konten di situs**: Project terbit (+ draf), Pengalaman (kerja dan organisasi), Pendidikan, Skill (+ jumlah kategori), tiap baris tautan ke halaman pengelolanya.
+
+## 166. Revisi Dashboard "Ringkas" (2026-11-16 malam)
+
+- Isi Dashboard **selebar panel isi sampai tepi kiri-kanan** (`admin-bleed`, juga skeleton-nya).
+- **Tanpa persen naik/turun** di kotak angka; kotak berisi label, jumlah, dan grafik kecil. Data hanya diambil untuk periode yang dipilih.
+- Keterangan "Hari menurut WIB" dihapus. Judul Inggris "Daily Visits" dan legenda "Visitors (Dashed Lines)".
+- **Kotak periode 7/30/90 hari** bersudut kecil (`rounded-md`) dengan garis antar-pilihan; yang aktif terisi penuh seperti tab lain di admin.
+- **Tabel kunjungan langsung tampil** di bawah grafik (tanpa "Lihat sebagai tabel"), hari terbaru di atas, digulir di dalam kotaknya (maks. 20 rem, kepala tabel menempel) dan bisa difokus keyboard.
+- Kartu **Konten di situs dihapus**; **Pesan terbaru** satu baris penuh di bawah kartu kunjungan.

@@ -45,7 +45,7 @@ function TooltipBody({ point }: { point?: Point }) {
 
 // Desain 01 "Ringkas" (pilihan pemilik 2026-11-16): tayangan sebagai garis tebal dengan arsiran,
 // pengunjung unik sebagai garis putus, warna mengikuti teks tema (hitam-putih seperti panel admin).
-// Grafik hanya visual (aria-hidden); datanya ada di tabel "Lihat sebagai tabel" di bawahnya.
+// Grafik hanya visual (aria-hidden); datanya ada di tabel yang langsung tampil di bawahnya.
 export function VisitsChart({ data }: { data: Point[] }) {
   const { lang } = useAdminLang()
   return (

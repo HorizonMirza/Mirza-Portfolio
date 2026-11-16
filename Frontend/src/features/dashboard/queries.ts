@@ -68,20 +68,6 @@ export async function getDailyStats(days: number): Promise<DayStat[]> {
   })
 }
 
-// Jumlah konten untuk kartu "Konten di situs"
-export async function getContentCounts() {
-  const db = getDb()
-  const [published, drafts, experiences, education, skills, skillCategories] = await Promise.all([
-    db.project.count({ where: { status: 'PUBLISHED' } }),
-    db.project.count({ where: { status: 'DRAFT' } }),
-    db.experience.count({ where: { type: { not: 'EDUCATION' } } }),
-    db.experience.count({ where: { type: 'EDUCATION' } }),
-    db.skill.count(),
-    db.skillCategory.count(),
-  ])
-  return { published, drafts, experiences, education, skills, skillCategories }
-}
-
 export async function getRecentMessages(take = 4) {
   return getDb().message.findMany({
     orderBy: { createdAt: 'desc' },

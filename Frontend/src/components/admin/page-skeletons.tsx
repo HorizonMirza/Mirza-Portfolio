@@ -59,46 +59,42 @@ function FieldSkeleton({ tall = false }: { tall?: boolean }) {
 export function AdminDashboardSkeleton() {
   return (
     <Loading>
-      {/* meniru desain 01 "Ringkas" (DESIGN.md bagian 165) */}
-      <div className="flex flex-col gap-3">
+      {/* meniru desain 01 "Ringkas" (DESIGN.md bagian 165 dan 166), selebar panel isi */}
+      <div className="admin-bleed flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
             <div key={i} className="rounded-2xl border border-border bg-surface p-4">
               <Skeleton className="h-3.5 w-28 max-w-full" />
               <Skeleton className="mt-3 h-8 w-20" />
-              <Skeleton className="mt-2 h-3 w-12" />
               <Skeleton className="mt-3 h-8 w-full" />
             </div>
           ))}
         </div>
         <Card>
-          <span className="flex flex-wrap items-start justify-between gap-3">
-            <span className="flex flex-col gap-2">
-              <Skeleton className="h-6 w-44" />
-              <Skeleton className="h-3.5 w-32" />
-            </span>
-            <Skeleton className="h-7 w-48 rounded-md" />
+          <span className="flex flex-wrap items-center justify-between gap-3">
+            <Skeleton className="h-6 w-44" />
+            <Skeleton className="h-9 w-52 rounded-md" />
           </span>
           <Skeleton className="mt-4 h-64 w-full rounded-xl" />
+          <Skeleton className="mt-4 h-48 w-full rounded-md" />
         </Card>
-        <div className="grid gap-3 lg:grid-cols-2">
-          {Array.from({ length: 2 }, (_, c) => (
-            <Card key={c}>
-              <Skeleton className="h-6 w-40" />
-              <ul className="mt-2 divide-y divide-border">
-                {Array.from({ length: 4 }, (_, i) => (
-                  <li key={i} className="flex items-center gap-3 py-3">
-                    <span className="flex flex-1 flex-col gap-2">
-                      <Skeleton className="h-4 w-[min(60%,16rem)]" />
-                      <Skeleton className="h-3 w-32" />
-                    </span>
-                    <Skeleton className="h-5 w-10" />
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <span className="flex items-center justify-between">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-8 w-28 rounded-md" />
+          </span>
+          <ul className="mt-2 divide-y divide-border">
+            {Array.from({ length: 4 }, (_, i) => (
+              <li key={i} className="flex items-center gap-3 py-3">
+                <span className="flex flex-1 flex-col gap-2">
+                  <Skeleton className="h-4 w-[min(60%,16rem)]" />
+                  <Skeleton className="h-3 w-32" />
+                </span>
+                <Skeleton className="h-5 w-12" />
+              </li>
+            ))}
+          </ul>
+        </Card>
       </div>
     </Loading>
   )
