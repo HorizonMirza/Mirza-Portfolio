@@ -73,7 +73,8 @@ async function load() {
     ['attachUploadedAsset', () => assets.attachUploadedAsset('profile-photo', null, {}, {})],
     ['removeAsset', () => assets.removeAsset(id)],
     ['changePassword', () => account.changePassword({})],
-    ['renameAccount', () => account.renameAccount({ name: 'Nama Baru' })],
+    ['renameAccount', () => account.renameAccount({ name: 'Nama Baru', password: 'x' })],
+    ['changeAccountEmail', () => account.changeAccountEmail({ email: 'a@b.co', password: 'x' })],
     ['revokeSession', () => sessions.revokeSession(id)],
     ['revokeOtherSessions', () => sessions.revokeOtherSessions()],
     // action yang dulu belum tercakup (audit 2026-10-31, GAP-04)

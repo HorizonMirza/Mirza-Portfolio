@@ -10,9 +10,12 @@ import { requireSuperAdmin } from '@/lib/auth-guard'
 import { getDb } from '@/lib/db'
 import { consumeRateLimit, hashIdentifier } from '@/lib/rate-limit'
 
-import { accountNameSchema, changePasswordSchema } from './schema'
+import { maskEmail } from './mask-email'
+import { accountEmailSchema, accountNameSchema, changePasswordSchema } from './schema'
 
 const RULE = { window: 900, max: 5 }
+// Password diminta lagi untuk ganti nama atau email: sedikit lebih longgar karena salah ketik wajar
+const CONFIRM_RULE = { window: 900, max: 10 }
 
 // Galat Better Auth dibedakan menurut kodenya; dulu semuanya dianggap "password saat ini salah",
 // termasuk sesi yang berakhir atau galat server (audit 2026-11-03, ERR-05).
@@ -82,12 +85,36 @@ export async function changePassword(input: unknown): Promise<ActionResult> {
   }
 }
 
-// Ganti nama akun panel (Admin → Akun, desain 1). Dicatat di log audit.
+// Password akun diminta lagi sebelum nama atau email diganti. Dibatasi seperti ganti password, karena
+// ini juga bisa dipakai menebak password saat sesi sudah masuk.
+async function confirmAccountPassword(
+  userId: string,
+  password: string,
+): Promise<ActionResult | null> {
+  const limit = await consumeRateLimit(hashIdentifier(`account:confirm:${userId}`), CONFIRM_RULE)
+  if (!limit.allowed) return fail('Terlalu banyak percobaan. Coba lagi dalam 15 menit.')
+  try {
+    await getAuth().api.verifyPassword({ body: { password }, headers: await headers() })
+  } catch (error) {
+    if (error instanceof APIError) {
+      const code = (error.body as { code?: unknown } | undefined)?.code
+      if (code === 'INVALID_PASSWORD')
+        return fail('Password salah.', { password: 'Password salah' })
+      if (error.statusCode === 401) return fail('Sesi berakhir. Masuk lagi lalu ulangi.')
+    }
+    throw error
+  }
+  return null
+}
+
+// Ganti nama akun panel (Admin → Akun). Meminta password. Dicatat di log audit.
 export async function renameAccount(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
     const parsed = accountNameSchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    const denied = await confirmAccountPassword(admin.userId, parsed.data.password)
+    if (denied) return denied
     const name = parsed.data.name
     if (name === admin.name) return ok('Nama disimpan.')
     await getDb().$transaction(async (tx) => {
@@ -102,6 +129,38 @@ export async function renameAccount(input: unknown): Promise<ActionResult> {
       })
     })
     return ok('Nama disimpan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
+// Ganti email login akun panel (Admin → Akun). Meminta password; email baru tidak boleh dipakai akun
+// lain. Email di log audit disamarkan. Seed tidak membuat akun baru walau ADMIN_EMAIL berbeda (hanya
+// satu Super Admin); skrip admin:reset-password memakai ADMIN_EMAIL, jadi isi dengan email baru.
+export async function changeAccountEmail(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = accountEmailSchema.safeParse(input)
+    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    const denied = await confirmAccountPassword(admin.userId, parsed.data.password)
+    if (denied) return denied
+    const email = parsed.data.email
+    if (email === admin.email.toLowerCase()) return ok('Email disimpan.')
+    const db = getDb()
+    const taken = await db.user.findUnique({ where: { email }, select: { id: true } })
+    if (taken) return fail('Email sudah dipakai akun lain.', { email: 'Email sudah dipakai' })
+    await db.$transaction(async (tx) => {
+      await tx.user.update({ where: { id: admin.userId }, data: { email } })
+      await writeAudit(tx, {
+        actorId: admin.userId,
+        action: 'update',
+        entity: 'User',
+        entityId: admin.userId,
+        before: { email: maskEmail(admin.email) },
+        after: { email: maskEmail(email) },
+      })
+    })
+    return ok('Email disimpan.')
   } catch (error) {
     return toActionError(error)
   }

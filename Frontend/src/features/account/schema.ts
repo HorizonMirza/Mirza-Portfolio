@@ -24,8 +24,24 @@ export type ChangePasswordInput = z.input<typeof changePasswordSchema>
 
 // Nama akun panel admin (Admin → Akun): tampil di menu profil, sidebar, dan log audit. Nama di situs
 // publik tetap dari Profil.
+// Ganti nama dan email meminta password akun (revisi pemilik 2026-11-16).
+const confirmPassword = z.string().min(1, 'Password wajib diisi').max(128)
+
 export const accountNameSchema = z.object({
   name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(80, 'Nama maksimal 80 karakter'),
+  password: confirmPassword,
 })
 
 export type AccountNameInput = z.input<typeof accountNameSchema>
+
+export const accountEmailSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(254, 'Email terlalu panjang')
+    .pipe(z.email('Format email tidak valid')),
+  password: confirmPassword,
+})
+
+export type AccountEmailInput = z.input<typeof accountEmailSchema>

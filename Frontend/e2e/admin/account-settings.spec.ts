@@ -10,15 +10,15 @@ test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' 
 const SESSION_PROJECT = 'chromium'
 
 test.describe('Admin → Akun', () => {
-  // Desain 1 "Profil ala WhatsApp" (DESIGN.md bagian 124): semua kelompok langsung terlihat; foto, nama,
-  // password, dan riwayat lengkap dibuka sebagai halaman kedua dengan tombol kembali.
-  test('identitas, email disamarkan, perangkat langsung terlihat', async ({ page }) => {
+  // Desain 1 "Profil ala WhatsApp" (DESIGN.md bagian 124): semua kelompok langsung terlihat. Revisi
+  // 2026-11-16: foto penuh, kamera ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog.
+  test('identitas, email tampil apa adanya, perangkat langsung terlihat', async ({ page }) => {
     await page.goto('/admin/account')
     const email = process.env.ADMIN_EMAIL!
     const main = page.locator('main')
-    await expect(main).not.toContainText(email)
-    await main.getByRole('button', { name: 'Tampilkan' }).click()
+    // email tidak disamarkan dan tanpa tombol Tampilkan
     await expect(main).toContainText(email)
+    await expect(main.getByRole('button', { name: 'Tampilkan' })).toHaveCount(0)
     await expect(main.getByText('Super Admin', { exact: true })).toBeVisible()
     for (const group of ['Info', 'Keamanan', 'Aktivitas terbaru'])
       await expect(main.getByRole('heading', { name: group, exact: true })).toBeVisible()
@@ -26,55 +26,94 @@ test.describe('Admin → Akun', () => {
     await expect(main.getByText('Perangkat ini', { exact: true })).toBeVisible()
   })
 
-  test('ganti password di halaman kedua: aturan dan meter kekuatan, lalu kembali', async ({
-    page,
-  }) => {
+  test('ganti password di dialog: aturan dan meter kekuatan, lalu tutup', async ({ page }) => {
     await page.goto('/admin/account')
     const opener = page.locator('main').getByRole('button', { name: /^Ganti password/ })
     await opener.click()
-    await expect(page.getByRole('heading', { name: 'Ganti password' })).toBeFocused()
-    await page.getByLabel('Password saat ini').fill('password-lama-sekali')
-    const next = page.getByLabel('Password baru', { exact: true })
+    const dialog = page.getByRole('dialog', { name: 'Ganti password' })
+    await expect(dialog).toBeVisible()
+    await dialog.getByLabel('Password saat ini').fill('password-lama-sekali')
+    const next = dialog.getByLabel('Password baru', { exact: true })
     await next.fill('pendek')
-    await expect(page.getByText('Kekuatan: Terlalu pendek')).toBeVisible()
+    await expect(dialog.getByText('Kekuatan: Terlalu pendek')).toBeVisible()
     await expect(
-      page.getByRole('listitem').filter({ hasText: 'Minimal 12 karakter' }),
+      dialog.getByRole('listitem').filter({ hasText: 'Minimal 12 karakter' }),
     ).toContainText('(belum terpenuhi)')
     await next.fill('kopi pagi di teras rumah')
-    await expect(page.getByText('Kekuatan: Sangat kuat')).toBeVisible()
-    await page.getByLabel('Ulangi password baru').fill('kopi pagi di teras rumah')
-    await expect(page.getByRole('listitem').filter({ hasText: 'Ulangan sama' })).toContainText(
+    await expect(dialog.getByText('Kekuatan: Sangat kuat')).toBeVisible()
+    await dialog.getByLabel('Ulangi password baru').fill('kopi pagi di teras rumah')
+    await expect(dialog.getByRole('listitem').filter({ hasText: 'Ulangan sama' })).toContainText(
       '(terpenuhi)',
     )
     // tidak dikirim: mengganti password akan mengeluarkan sesi tes lain
-    await page.getByRole('button', { name: 'Kembali ke Akun' }).click()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
     await expect(opener).toBeFocused()
   })
 
-  test('foto profil dibuka dari tombol kamera', async ({ page }) => {
+  test('foto ditekan tampil penuh; kamera langsung ke pemilih berkas', async ({ page }) => {
     await page.goto('/admin/account')
+    await page.getByRole('button', { name: 'Lihat foto profil' }).click()
+    const dialog = page.getByRole('dialog', { name: 'Foto profil' })
+    await expect(dialog.getByRole('img', { name: 'Foto profil' })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+    // tanpa halaman kedua: Cloudinary tidak diatur di tes, jadi pemilih berkas menjawab "belum aktif"
     await page.getByRole('button', { name: 'Ganti foto profil' }).click()
-    await expect(page.getByRole('heading', { name: 'Foto profil' })).toBeFocused()
-    await page.getByRole('button', { name: 'Kembali ke Akun' }).click()
-    await expect(page.getByRole('button', { name: 'Ganti foto profil' })).toBeFocused()
+    await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Foto profil' })).toHaveCount(0)
   })
 
-  test('nama akun bisa diubah lalu dikembalikan', async ({ page }, testInfo) => {
+  test('ganti email: email lama tampil, kolom baru dan password diminta', async ({ page }) => {
+    await page.goto('/admin/account')
+    await page
+      .locator('main')
+      .getByRole('button', { name: /^Email/ })
+      .click()
+    const dialog = page.getByRole('dialog', { name: 'Ganti email' })
+    await expect(dialog).toBeVisible()
+    await expect(dialog.getByLabel('Email lama')).toHaveValue(process.env.ADMIN_EMAIL!)
+    await expect(dialog.getByLabel('Email lama')).toHaveAttribute('readonly', '')
+    const save = dialog.getByRole('button', { name: 'Simpan' })
+    await expect(save).toBeDisabled()
+    await dialog.getByLabel('Email baru').fill('baru@contoh.com')
+    await expect(save).toBeDisabled()
+    await dialog.getByLabel('Password', { exact: true }).fill('apa-saja')
+    await expect(save).toBeEnabled()
+    // tidak dikirim: mengganti email akan mengubah akun yang dipakai tes lain
+    await page.keyboard.press('Escape')
+    await expect(dialog).toHaveCount(0)
+  })
+
+  test('nama akun bisa diubah dengan password lalu dikembalikan', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== SESSION_PROJECT, 'mengubah data akun bersama')
     await page.goto('/admin/account')
     const main = page.locator('main')
+    const nameRow = main.getByRole('button', { name: /^Nama / })
     const rename = async (value: string) => {
-      await main.getByRole('button', { name: /^Nama / }).click()
-      const field = page.getByLabel('Nama', { exact: true })
-      await field.fill(value)
-      await page.getByRole('button', { name: 'Simpan' }).click()
+      await nameRow.click()
+      const dialog = page.getByRole('dialog', { name: 'Ganti nama' })
+      await dialog.getByLabel('Nama baru').fill(value)
+      await dialog.getByLabel('Password', { exact: true }).fill(process.env.ADMIN_PASSWORD!)
+      await dialog.getByRole('button', { name: 'Simpan' }).click()
       await expect(page.getByText('Nama disimpan.')).toBeVisible()
+      await expect(dialog).toHaveCount(0)
       await expect(main.getByText(value, { exact: true }).first()).toBeVisible()
     }
-    const original = (await main.getByRole('button', { name: /^Nama / }).innerText())
+    const original = (await nameRow.innerText())
       .split('\n')
       .map((line) => line.trim())
       .filter(Boolean)[1]!
+    // password salah ditolak di kolomnya dan nama tidak berubah
+    await nameRow.click()
+    const wrong = page.getByRole('dialog', { name: 'Ganti nama' })
+    await expect(wrong.getByLabel('Nama lama')).toHaveValue(original)
+    await wrong.getByLabel('Nama baru').fill(`${original} SALAH`)
+    await wrong.getByLabel('Password', { exact: true }).fill('password-salah-untuk-tes')
+    await wrong.getByRole('button', { name: 'Simpan' }).click()
+    await expect(wrong.getByText('Password salah', { exact: true })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(main.getByText(`${original} SALAH`)).toHaveCount(0)
     await rename(`${original} E2E`)
     await rename(original)
   })

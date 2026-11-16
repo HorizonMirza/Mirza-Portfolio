@@ -22,23 +22,20 @@ import { toast } from 'sonner'
 
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import type { DeviceParts } from '@/lib/device'
 import { formatDateTime } from '@/lib/format'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
-import { ConfirmDelete } from '@/components/admin/confirm-delete'
-import { removeAsset } from '@/features/assets/actions'
-import { AssetUploader } from '@/features/assets/components/asset-uploader'
+import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { saveSiteOption } from '@/features/settings/actions'
 
-import { renameAccount } from '../actions'
-import { maskEmail } from '../mask-email'
 import type { AccountEvent, AccountSession } from '../queries'
 import { revokeOtherSessions, revokeSession } from '../session-actions'
-import { ChangePasswordForm } from './change-password-form'
+import { ChangeIdentityDialog, ChangePasswordDialog, PhotoLightbox } from './account-dialogs'
 
-type View = 'main' | 'password' | 'name' | 'photo' | 'activity'
+type View = 'main' | 'activity'
+// form dan foto penuh tampil sebagai dialog di atas halaman utama
+type Dialog = 'name' | 'email' | 'password' | 'photo'
 type T = ReturnType<typeof useAdminT>
 
 // aktivitas yang langsung tampil di halaman utama; sisanya lewat "Lihat semua aktivitas"
@@ -67,9 +64,11 @@ function shortDate(iso: string, lang: 'id' | 'en') {
 }
 
 // Admin → Akun, desain 1 "Profil ala WhatsApp" (pilihan pemilik 2026-11-11, DESIGN.md bagian 124):
-// foto besar di tengah dengan tombol kamera, nama dan peran, lalu daftar berkelompok Info, Keamanan,
-// Perangkat tertaut, dan Aktivitas terbaru. Semua langsung terlihat; foto, nama, password, dan riwayat
-// lengkap dibuka sebagai halaman sendiri dengan tombol kembali, seperti di aplikasi.
+// foto besar di tengah, nama dan peran, lalu daftar berkelompok Info, Keamanan, Perangkat tertaut, dan
+// Aktivitas terbaru. Revisi pemilik 2026-11-16: foto ditekan tampil penuh; tombol kamera langsung
+// membuka pemilih berkas lalu pengaturan ukuran; email tampil apa adanya; ganti nama, email, dan
+// password berupa dialog dengan latar buram (nama atau email lama, yang baru, dan password); hanya
+// riwayat lengkap yang masih halaman sendiri dengan tombol kembali.
 export function AccountPanel({
   name,
   email,
@@ -101,7 +100,16 @@ export function AccountPanel({
   const { lang } = useAdminLang()
   const router = useRouter()
   const [view, setView] = useState<View>('main')
-  const [showEmail, setShowEmail] = useState(false)
+  const [dialog, setDialog] = useState<Dialog | null>(null)
+  // kamera: langsung ke pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  const picker = useAssetPicker({ configured: uploadReady, onDone: () => router.refresh() })
+  const setDialogOpen = (name: Dialog) => (open: boolean) => setDialog(open ? name : null)
+  // pembuka dialog, tempat fokus kembali saat dialog ditutup
+  const opener = useRef<HTMLElement | null>(null)
+  const show = (name: Dialog) => {
+    opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    setDialog(name)
+  }
   // halaman kedua yang terakhir ditutup, untuk mengembalikan fokus ke tombol pembukanya
   const [returnTo, setReturnTo] = useState<View | null>(null)
   const heading = useRef<HTMLHeadingElement>(null)
@@ -121,18 +129,8 @@ export function AccountPanel({
       top.current?.querySelector<HTMLElement>(`[data-opens="${returnTo}"]`)?.focus()
   }, [view, returnTo])
 
-  const done = () => {
-    router.refresh()
-    back()
-  }
-
   if (view !== 'main') {
-    const titles: Record<Exclude<View, 'main'>, string> = {
-      password: t('Ganti password'),
-      name: t('Nama akun'),
-      photo: t('Foto profil'),
-      activity: t('Aktivitas'),
-    }
+    const titles: Record<Exclude<View, 'main'>, string> = { activity: t('Aktivitas') }
     return (
       <div ref={top} className="mx-auto flex w-full max-w-xl scroll-mt-6 flex-col gap-6">
         <div className="flex items-center gap-3">
@@ -148,23 +146,6 @@ export function AccountPanel({
             {titles[view]}
           </h2>
         </div>
-        {view === 'password' ? (
-          <>
-            <p className="text-sm text-muted">
-              {t('Perangkat lain otomatis keluar setelah password diganti.')}
-            </p>
-            <ChangePasswordForm onDone={done} />
-          </>
-        ) : null}
-        {view === 'name' ? <NameForm current={name} onDone={done} /> : null}
-        {view === 'photo' ? (
-          <PhotoView
-            photo={photo}
-            photoAssetId={photoAssetId}
-            uploadReady={uploadReady}
-            onDone={done}
-          />
-        ) : null}
         {view === 'activity' ? <ActivityList events={events} filterable /> : null}
       </div>
     )
@@ -174,19 +155,30 @@ export function AccountPanel({
     <div ref={top} className="mx-auto flex w-full max-w-xl scroll-mt-6 flex-col gap-7">
       <div className="flex flex-col items-center gap-3 pt-2 text-center">
         <div className="relative">
-          <Image
-            placeholder={SHIMMER_PLACEHOLDER}
-            src={photo}
-            alt=""
-            width={128}
-            height={128}
-            sizes="128px"
-            className="size-32 rounded-full bg-text object-cover"
-          />
+          {/* foto ditekan: tampil penuh */}
           <button
             type="button"
-            onClick={open('photo')}
-            data-opens="photo"
+            onClick={() => show('photo')}
+            aria-label={t('Lihat foto profil')}
+            className="block rounded-full"
+          >
+            <Image
+              placeholder={SHIMMER_PLACEHOLDER}
+              src={photo}
+              alt=""
+              width={128}
+              height={128}
+              sizes="128px"
+              className={cn(
+                'size-32 rounded-full bg-text object-cover',
+                picker.busy && 'opacity-60',
+              )}
+            />
+          </button>
+          <button
+            type="button"
+            onClick={() => picker.pick('profile-photo')}
+            disabled={picker.busy}
             aria-label={t('Ganti foto profil')}
             className="absolute right-0 bottom-0 grid size-10 place-items-center rounded-full border border-border-strong bg-surface hover:bg-surface-2"
           >
@@ -204,25 +196,15 @@ export function AccountPanel({
           icon={<User />}
           title={t('Nama')}
           detail={name}
-          onClick={open('name')}
-          opens="name"
+          onClick={() => show('name')}
           trailing={<Pencil className="size-4 shrink-0 text-muted" aria-hidden="true" />}
         />
         <Row
           icon={<Mail />}
           title="Email"
-          detail={
-            <span className="flex flex-wrap items-center gap-x-2">
-              <span className="break-all">{showEmail ? email : maskEmail(email)}</span>
-              <button
-                type="button"
-                onClick={() => setShowEmail((v) => !v)}
-                className="rounded-sm text-xs text-text underline underline-offset-4"
-              >
-                {showEmail ? t('Sembunyikan') : t('Tampilkan')}
-              </button>
-            </span>
-          }
+          detail={<span className="break-all">{email}</span>}
+          onClick={() => show('email')}
+          trailing={<Pencil className="size-4 shrink-0 text-muted" aria-hidden="true" />}
         />
         {adminSince ? (
           <Row
@@ -242,8 +224,7 @@ export function AccountPanel({
               ? t('Terakhir diganti {date}', { date: shortDate(passwordChangedAt, lang) })
               : t('Belum pernah diganti dari panel')
           }
-          onClick={open('password')}
-          opens="password"
+          onClick={() => show('password')}
         />
         <LoginNotifyRow initial={loginNotify} emailReady={emailReady} />
       </Group>
@@ -269,6 +250,34 @@ export function AccountPanel({
           )}
         </p>
       </div>
+
+      <PhotoLightbox
+        returnFocus={opener}
+        open={dialog === 'photo'}
+        onOpenChange={setDialogOpen('photo')}
+        photo={photo}
+        photoAssetId={photoAssetId}
+      />
+      <ChangeIdentityDialog
+        kind="name"
+        current={name}
+        returnFocus={opener}
+        open={dialog === 'name'}
+        onOpenChange={setDialogOpen('name')}
+      />
+      <ChangeIdentityDialog
+        kind="email"
+        current={email}
+        returnFocus={opener}
+        open={dialog === 'email'}
+        onOpenChange={setDialogOpen('email')}
+      />
+      <ChangePasswordDialog
+        returnFocus={opener}
+        open={dialog === 'password'}
+        onOpenChange={setDialogOpen('password')}
+      />
+      {picker.element}
     </div>
   )
 }
@@ -608,126 +617,6 @@ function ActivityList({
           'Riwayat masuk disimpan 90 hari. Tanpa alamat IP; tempat diperkirakan dari kota jaringan.',
         )}
       </p>
-    </div>
-  )
-}
-
-function NameForm({ current, onDone }: { current: string; onDone: () => void }) {
-  const t = useAdminT()
-  const [value, setValue] = useState(current)
-  const [error, setError] = useState<string | null>(null)
-  const [pending, startTransition] = useTransition()
-  const id = useId()
-  return (
-    <form
-      noValidate
-      className="flex flex-col gap-4"
-      onSubmit={(e) => {
-        e.preventDefault()
-        startTransition(async () => {
-          const result = await renameAccount({ name: value })
-          if (result.ok) {
-            // satu notifikasi yang diperbarui bila nama disimpan beberapa kali berturut-turut
-            toast.success(t(result.message), { id: 'account-name' })
-            onDone()
-          } else {
-            setError(result.fieldErrors?.name ?? result.message)
-            toast.error(t(result.message), { id: 'account-name' })
-          }
-        })
-      }}
-    >
-      <div className="flex flex-col gap-2">
-        <label htmlFor={id} className="text-sm font-medium">
-          {t('Nama')}
-        </label>
-        <Input
-          id={id}
-          value={value}
-          maxLength={80}
-          autoComplete="name"
-          aria-invalid={error ? true : undefined}
-          aria-describedby={`${id}-hint${error ? ` ${id}-error` : ''}`}
-          onChange={(e) => {
-            setValue(e.target.value)
-            setError(null)
-          }}
-        />
-        <p id={`${id}-hint`} className="text-sm text-muted">
-          {t(
-            'Tampil di menu profil, sidebar, dan log audit. Nama di situs publik diubah di menu Tentang, Profil.',
-          )}
-        </p>
-        {error ? (
-          <p id={`${id}-error`} className="text-sm text-danger">
-            {t(error)}
-          </p>
-        ) : null}
-      </div>
-      <div>
-        <Button type="submit" disabled={pending || value.trim() === ''}>
-          {pending ? t('Menyimpan…') : t('Simpan')}
-        </Button>
-      </div>
-    </form>
-  )
-}
-
-function PhotoView({
-  photo,
-  photoAssetId,
-  uploadReady,
-  onDone,
-}: {
-  photo: string | StaticImageData
-  photoAssetId: string | null
-  uploadReady: boolean
-  onDone: () => void
-}) {
-  const t = useAdminT()
-  return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-center">
-        <Image
-          placeholder={SHIMMER_PLACEHOLDER}
-          src={photo}
-          alt=""
-          width={160}
-          height={160}
-          sizes="160px"
-          className="size-40 rounded-full bg-text object-cover"
-        />
-      </div>
-      <p className="text-sm text-muted">
-        {t(
-          'Foto bulat yang sama dengan kiri atas situs, footer, kartu halaman Tentang, kartu ID Kontak, sidebar, dan menu profil. Rasio persegi atau potret.',
-        )}
-      </p>
-      {/* foto unggahan bisa dihapus untuk kembali ke foto bawaan (permintaan pemilik 2026-11-12,
-          setelah foto salah terunggah) */}
-      {photoAssetId ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-border p-4">
-          <p className="text-sm text-muted">
-            {t('Hapus foto unggahan untuk kembali ke foto bawaan.')}
-          </p>
-          <ConfirmDelete
-            title="Hapus Foto"
-            itemLabel={t('foto unggahan')}
-            onConfirm={removeAsset.bind(null, photoAssetId)}
-            onDone={onDone}
-          />
-        </div>
-      ) : null}
-      {uploadReady ? (
-        <AssetUploader target="profile-photo" onDone={onDone} />
-      ) : (
-        <p className="rounded-md border border-dashed border-border p-4 text-sm text-muted">
-          {t('Unggah belum aktif. Isi')} <code className="font-mono">CLOUDINARY_CLOUD_NAME</code>,{' '}
-          <code className="font-mono">CLOUDINARY_API_KEY</code>, {t('dan')}{' '}
-          <code className="font-mono">CLOUDINARY_API_SECRET</code>{' '}
-          {t('di environment, lalu deploy ulang.')}
-        </p>
-      )}
     </div>
   )
 }

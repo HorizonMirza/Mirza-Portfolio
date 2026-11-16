@@ -13,11 +13,17 @@ export const DialogClose = DialogPrimitive.Close
 export function DialogContent({
   className,
   children,
+  blur = false,
   ...props
-}: ComponentProps<typeof DialogPrimitive.Content>) {
+}: ComponentProps<typeof DialogPrimitive.Content> & {
+  // latar belakang dikaburkan (form di Admin → Akun)
+  blur?: boolean
+}) {
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50" />
+      <DialogPrimitive.Overlay
+        className={cn('fixed inset-0 z-50 bg-black/50', blur && 'backdrop-blur-md')}
+      />
       <DialogPrimitive.Content
         className={cn(
           'fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-surface p-6 shadow-lg',
