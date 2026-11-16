@@ -5,7 +5,7 @@ import { type ReactNode, useEffect, useId, useRef, useState, useTransition } fro
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
-import { NativeSelect } from '@/components/admin/select'
+import { ChoiceSelect } from '@/components/admin/choice-select'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -19,6 +19,7 @@ import {
   type SiteOptionInput,
   type SiteOptionKey,
   type SiteOptions,
+  type SoundKind,
 } from '../options'
 
 // jeda sebelum isian angka dan geseran volume disimpan, agar tidak menyimpan setiap langkah
@@ -27,8 +28,8 @@ const TYPING_DELAY_MS = 600
 type Save = <K extends SiteOptionKey>(key: K, value: SiteOptions[K]) => void
 
 // Admin → Pengaturan, desain 1 "Daftar berkelompok" (pilihan pemilik 2026-11-11, DESIGN.md bagian 119):
-// kelompok Tampilan, Konten, Pesan, Privasi, Lanjutan; tiap baris satu pengaturan dengan kontrol di
-// kanan. Setiap perubahan langsung disimpan (tanpa tombol Simpan) lalu muncul notifikasi "Tersimpan".
+// kelompok Suara, Tampilan, Pesan, Privasi, Lanjutan (revisi pemilik 2026-11-16: semua suara satu
+// kelompok, Tampilan dan Konten digabung); tiap baris satu pengaturan dengan kontrol di kanan. Setiap perubahan langsung disimpan (tanpa tombol Simpan) lalu muncul notifikasi "Tersimpan".
 // Gagal disimpan: kontrol kembali ke nilai terakhir yang tersimpan.
 export function SiteSettingsList({
   initial,
@@ -64,16 +65,89 @@ export function SiteSettingsList({
 
   const needs = (text: string) => <Pill tone="warn">{text}</Pill>
 
+  // campuran suara terbaru (termasuk yang belum selesai disimpan), agar dua geseran berbeda yang
+  // diubah beruntun tidak saling menimpa
+  const latestMix = useRef(values.soundMix)
+  useEffect(() => {
+    latestMix.current = values.soundMix
+  }, [values.soundMix])
+
+  // setiap suara situs: judul dan tempat suara itu terdengar
+  const soundRows: [SoundKind, string, string][] = [
+    ['nav', t('Menu'), t('Tik kaca saat menu situs dan foto profil di navbar ditekan.')],
+    ['theme', t('Tombol tema'), t('Desir angin saat tema terang atau gelap diganti.')],
+    [
+      'language',
+      t('Tombol bahasa'),
+      t('Rentetan bip saat bahasa ID/EN diganti, di situs, kartu pembuka, dan panel admin.'),
+    ],
+    [
+      'experienceToggle',
+      t('Pengalaman di beranda'),
+      t('Blip saat daftar pengalaman di beranda dibuka atau ditutup.'),
+    ],
+    [
+      'timeline',
+      t('Timeline Pengalaman'),
+      t('Bip pendek setiap entri yang menyala berganti saat halaman Pengalaman digulir.'),
+    ],
+    [
+      'spotlight',
+      t('Daftar Project'),
+      t('Blup kecil setiap project yang menyala berganti saat halaman Project digulir.'),
+    ],
+    [
+      'slide',
+      t('Galeri Project'),
+      t('Desir lembut saat gambar di halaman detail project berganti.'),
+    ],
+    [
+      'shimmer',
+      t('Kartu foto Tentang'),
+      t('Kilau nada saat kursor bergeser di kartu foto halaman Tentang.'),
+    ],
+    [
+      'lanyard',
+      t('Kartu ID Kontak'),
+      t('Bunyi pegas saat kartu ID di halaman Kontak ditarik dan dilepas.'),
+    ],
+  ]
+
   return (
     <div className="flex flex-col gap-8">
-      <Group title={t('Tampilan')}>
+      {/* Semua suara dalam satu kelompok (revisi pemilik 2026-11-16): volume utama lalu volume tiap
+          suara situs; tiap baris punya tombol coba */}
+      <Group title={t('Suara')}>
         <Row
-          title={t('Suara tombol')}
-          description={t(
-            'Satu volume untuk tombol tema, bahasa, dan menu di situs. 0 berarti tanpa suara.',
+          title={t('Semua suara')}
+          description={t('Volume utama untuk seluruh suara di situs. 0 berarti tanpa suara.')}
+          control={(ids) => (
+            <VolumeControl
+              ids={ids}
+              value={values.soundVolume}
+              onCommit={(next) => save('soundVolume', next)}
+              onPreview={(level) => previewSound(level)}
+            />
           )}
-          control={(ids) => <VolumeControl ids={ids} value={values.soundVolume} onSave={save} />}
         />
+        {soundRows.map(([kind, title, description]) => (
+          <Row
+            key={kind}
+            title={title}
+            description={description}
+            control={(ids) => (
+              <VolumeControl
+                ids={ids}
+                value={values.soundMix[kind]}
+                onCommit={(next) => save('soundMix', { ...latestMix.current, [kind]: next })}
+                onPreview={(level) => previewSound(values.soundVolume, kind, level)}
+              />
+            )}
+          />
+        ))}
+      </Group>
+
+      <Group title={t('Tampilan')}>
         <Row
           title={t('Tema awal pengunjung')}
           description={t('Dipakai sampai pengunjung memilih tema sendiri lewat tombol bulan.')}
@@ -103,9 +177,6 @@ export function SiteSettingsList({
             />
           )}
         />
-      </Group>
-
-      <Group title={t('Konten')}>
         <Row
           title={t('Bahasa saat pertama dibuka')}
           description={t(
@@ -360,21 +431,16 @@ function Choice<V extends string>({
   onChange: (next: V) => void
   disabled?: boolean
 }) {
+  // daftar pilihan bergaya aplikasi, bukan dropdown bawaan browser (revisi pemilik 2026-11-16)
   return (
-    <NativeSelect
-      aria-labelledby={ids.title}
-      aria-describedby={ids.description}
+    <ChoiceSelect
+      labelledBy={ids.title}
+      describedBy={ids.description}
       value={value}
+      options={options}
       disabled={disabled}
-      onChange={(e) => onChange(e.target.value as V)}
-      className="w-auto min-w-44 disabled:opacity-50"
-    >
-      {options.map(([v, label]) => (
-        <option key={v} value={v}>
-          {label}
-        </option>
-      ))}
-    </NativeSelect>
+      onChange={onChange}
+    />
   )
 }
 
@@ -388,7 +454,17 @@ function useDelayedSave() {
   }
 }
 
-function VolumeControl({ ids, value, onSave }: { ids: Ids; value: number; onSave: Save }) {
+function VolumeControl({
+  ids,
+  value,
+  onCommit,
+  onPreview,
+}: {
+  ids: Ids
+  value: number
+  onCommit: (next: number) => void
+  onPreview: (level: number) => void
+}) {
   const t = useAdminT()
   const [draft, setDraft] = useState(value)
   const [seen, setSeen] = useState(value)
@@ -411,7 +487,7 @@ function VolumeControl({ ids, value, onSave }: { ids: Ids; value: number; onSave
         onChange={(e) => {
           const next = Number(e.target.value)
           setDraft(next)
-          later(() => onSave('soundVolume', next))
+          later(() => onCommit(next))
         }}
         className="h-11 min-w-0 flex-1 cursor-pointer accent-text sm:w-44 sm:flex-none"
       />
@@ -424,7 +500,7 @@ function VolumeControl({ ids, value, onSave }: { ids: Ids; value: number; onSave
         size="icon"
         aria-label={t('Coba suara')}
         title={t('Coba suara')}
-        onClick={() => previewSound(draft)}
+        onClick={() => onPreview(draft)}
       >
         <Volume2 aria-hidden="true" />
       </Button>

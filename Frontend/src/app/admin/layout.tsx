@@ -32,6 +32,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
       className={`${fontVariables} no-scrollbar`}
       // volume suara tombol tema dan bahasa sama dengan situs publik (diatur di Pengaturan)
       data-sound-volume={settings.soundVolume}
+      data-sound-mix={JSON.stringify(settings.soundMix)}
       suppressHydrationWarning
     >
       {/* admin-ui: seluruh panel admin memakai Inter biasa tanpa huruf kapital (globals.css, DESIGN.md bagian 113) */}

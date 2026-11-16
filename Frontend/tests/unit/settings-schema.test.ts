@@ -18,6 +18,17 @@ describe('siteOptionSchema', () => {
       expect(ok({ key: 'soundVolume', value })).toBe(false)
   })
 
+  it('volume tiap suara: lengkap, 0 sampai 100, tanpa suara yang tidak dikenal', () => {
+    const mix = { ...DEFAULT_SITE_OPTIONS.soundMix, theme: 0, nav: 55 }
+    expect(ok({ key: 'soundMix', value: mix })).toBe(true)
+    expect(ok({ key: 'soundMix', value: { ...mix, theme: 101 } })).toBe(false)
+    expect(ok({ key: 'soundMix', value: { ...mix, nav: 2.5 } })).toBe(false)
+    expect(ok({ key: 'soundMix', value: { ...mix, alarm: 50 } })).toBe(false)
+    const partial: Record<string, number> = { ...mix }
+    delete partial.lanyard
+    expect(ok({ key: 'soundMix', value: partial })).toBe(false)
+  })
+
   it('pilihan teks hanya dari daftar', () => {
     expect(ok({ key: 'defaultTheme', value: 'system' })).toBe(true)
     expect(ok({ key: 'defaultTheme', value: 'blue' })).toBe(false)
@@ -53,6 +64,15 @@ describe('toSiteOptions', () => {
     expect(v.defaultTheme).toBe('dark')
     expect(v.contactPerHour).toBe(5)
     expect(v.visitRetentionDays).toBe(90)
+  })
+
+  it('volume suara yang belum diatur atau rusak memakai volume penuh', () => {
+    const v = toSiteOptions({ soundMix: { theme: 40, nav: 'keras', slide: 250 } })
+    expect(v.soundMix.theme).toBe(40)
+    expect(v.soundMix.nav).toBe(100)
+    expect(v.soundMix.slide).toBe(100)
+    expect(v.soundMix.lanyard).toBe(100)
+    expect(toSiteOptions({ soundMix: [1, 2] }).soundMix).toEqual(DEFAULT_SITE_OPTIONS.soundMix)
   })
 })
 

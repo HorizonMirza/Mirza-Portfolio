@@ -218,6 +218,31 @@ test.describe('Admin → Pengaturan', () => {
     await expect(toggle()).toHaveAttribute('aria-checked', before!)
   })
 
+  test('kelompok Suara berisi semua suara dan pilihan memakai daftar bergaya aplikasi', async ({
+    page,
+  }) => {
+    await page.goto('/admin/settings')
+    // satu geseran volume utama dan satu per suara situs (revisi 2026-11-16)
+    await expect(page.getByRole('heading', { name: 'Suara', exact: true })).toBeVisible()
+    await expect(page.getByRole('slider')).toHaveCount(10)
+    for (const name of ['Semua suara', 'Menu', 'Tombol tema', 'Kartu ID Kontak'])
+      await expect(page.getByRole('slider', { name, exact: true })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Konten', exact: true })).toHaveCount(0)
+    // tanpa dropdown bawaan browser: combobox membuka daftar pilihan, Escape menutup tanpa mengubah
+    await expect(page.locator('main select')).toHaveCount(0)
+    const theme = page.getByRole('combobox', { name: 'Tema awal pengunjung' })
+    const before = await theme.innerText()
+    await expect(async () => {
+      await theme.click({ timeout: 2000 })
+      await expect(page.getByRole('listbox')).toBeVisible({ timeout: 1000 })
+    }).toPass()
+    await expect(page.getByRole('option')).toHaveCount(3)
+    await expect(page.getByRole('option', { selected: true })).toHaveText(before)
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('listbox')).toBeHidden()
+    await expect(theme).toHaveText(before)
+  })
+
   test('mode perawatan minta konfirmasi dulu', async ({ page }) => {
     await page.goto('/admin/settings')
     const maintenance = page.getByRole('switch', { name: 'Mode perawatan' })

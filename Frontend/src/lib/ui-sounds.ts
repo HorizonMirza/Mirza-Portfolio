@@ -1,30 +1,66 @@
-// Suara tombol tema, bahasa, dan menu, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa
-// library). Hanya diputar dari klik pengguna (DESIGN.md bagian 22 dan 31).
-// Volume diatur Super Admin di /admin/settings (0–100) dan dikirim lewat atribut
-// data-sound-volume di <html>; 0 berarti tanpa suara sama sekali.
+// Semua suara situs, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa library). Hanya
+// diputar dari tindakan pengguna (DESIGN.md bagian 22 dan 31).
+// Volume utama (0–100) dan volume tiap suara (0–100, dikalikan volume utama) diatur Super Admin di
+// /admin/settings, dikirim lewat atribut data-sound-volume dan data-sound-mix di <html>.
+// 0 berarti tanpa suara sama sekali.
 
 export const DEFAULT_SOUND_VOLUME = 80
+
+// sama dengan SOUND_KINDS di features/settings/options.ts (lib tidak boleh mengimpor features)
+export type SoundKind =
+  | 'nav'
+  | 'theme'
+  | 'language'
+  | 'experienceToggle'
+  | 'timeline'
+  | 'spotlight'
+  | 'slide'
+  | 'shimmer'
+  | 'lanyard'
 
 let context: AudioContext | null = null
 let master: GainNode | null = null
 let noiseBuffer: AudioBuffer | null = null
+// satu penguat per jenis suara, tersambung ke penguat utama
+const kindGains = new Map<SoundKind, GainNode>()
 // dipakai tombol "Coba suara" di admin sebelum pengaturan disimpan
-let volumeOverride: number | null = null
+let override: { master: number; kind?: SoundKind; level?: number } | null = null
+let mixCache: { raw: string; mix: Partial<Record<SoundKind, number>> } | null = null
+
+const clamp = (n: number) => Math.min(100, Math.max(0, n))
 
 function volume() {
-  if (volumeOverride !== null) return volumeOverride
+  if (override) return override.master
   const raw = Number(document.documentElement.dataset.soundVolume)
-  return Number.isFinite(raw) ? Math.min(100, Math.max(0, raw)) : DEFAULT_SOUND_VOLUME
+  return Number.isFinite(raw) ? clamp(raw) : DEFAULT_SOUND_VOLUME
 }
 
-function audio() {
+function kindVolume(kind: SoundKind) {
+  if (override?.kind === kind && override.level !== undefined) return override.level
+  const raw = document.documentElement.dataset.soundMix ?? ''
+  if (mixCache?.raw !== raw) {
+    let mix: Partial<Record<SoundKind, number>> = {}
+    try {
+      const parsed: unknown = raw ? JSON.parse(raw) : {}
+      if (parsed && typeof parsed === 'object') mix = parsed as Partial<Record<SoundKind, number>>
+    } catch {
+      // atribut rusak: semua suara memakai volume penuh
+    }
+    mixCache = { raw, mix }
+  }
+  const level = Number(mixCache.mix[kind])
+  return Number.isFinite(level) ? clamp(level) : 100
+}
+
+function audio(kind: SoundKind) {
   if (typeof window === 'undefined') return null
   const Ctor =
     window.AudioContext ??
     (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!Ctor) return null
   const level = volume()
-  if (level <= 0) return null
+  const own = kindVolume(kind)
+  if (level <= 0 || own <= 0) return null
   try {
     if (!context) {
       context = new Ctor()
@@ -40,10 +76,17 @@ function audio() {
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
     }
     master!.gain.value = level / 100
+    let out = kindGains.get(kind)
+    if (!out) {
+      out = context.createGain()
+      out.connect(master!)
+      kindGains.set(kind, out)
+    }
+    out.gain.value = own / 100
     // resume() ditolak (InvalidStateError) bila halaman berpindah sebelum audio siap, mis. tombol
     // tema ditekan lalu langsung pindah halaman; itu bukan galat, cukup diabaikan
     if (context.state === 'suspended') context.resume().catch(() => {})
-    return { ctx: context, out: master!, noise: noiseBuffer! }
+    return { ctx: context, out, noise: noiseBuffer! }
   } catch {
     // browser menolak audio: tombol tetap bekerja tanpa suara
     return null
@@ -53,7 +96,7 @@ function audio() {
 // Membuat AudioContext lebih awal (sentuhan/klik pertama di halaman, lewat PageTransitions) agar
 // tombol pertama yang berbunyi tidak tersendat menunggu perangkat audio disiapkan.
 export function warmUpAudio() {
-  audio()
+  audio('nav')
 }
 
 function envelope(gain: GainNode, t: number, peak: number, attack: number, dur: number) {
@@ -64,7 +107,7 @@ function envelope(gain: GainNode, t: number, peak: number, attack: number, dur: 
 
 // Tema: desir angin, derau tersaring yang menyapu turun saat ke gelap dan naik saat ke terang.
 export function playThemeSound(toDark: boolean) {
-  const a = audio()
+  const a = audio('theme')
   if (!a) return
   const { ctx, out, noise } = a
   const t = ctx.currentTime
@@ -123,7 +166,7 @@ function blip(
 // Bahasa: acak digital, rentetan bip acak selama huruf diacak (selaras dengan animasi 650 ms),
 // ditutup satu nada saat teks selesai terurai. Ke English sedikit lebih tinggi.
 export function playLanguageSound(toEnglish: boolean) {
-  const a = audio()
+  const a = audio('language')
   if (!a) return
   const { ctx, out } = a
   const spread = toEnglish ? 1500 : 900
@@ -154,7 +197,7 @@ function ping(ctx: AudioContext, out: GainNode, freq: number, dur: number, vol: 
 // Menu utama: tik kaca, denting tipis dan pendek karena menu paling sering ditekan.
 // Dibuat lebih keras (permintaan pemilik 2026-10-03).
 export function playNavSound() {
-  const a = audio()
+  const a = audio('nav')
   if (!a) return
   ping(a.ctx, a.out, 2600, 0.14, 0.32)
   ping(a.ctx, a.out, 3950, 0.1, 0.16)
@@ -164,7 +207,7 @@ export function playNavSound() {
 // setiap kali entri aktif berganti saat digulir. Bisa berbunyi beberapa kali dalam satu
 // gulir, jadi sengaja singkat (60 ms).
 export function playTimelineStepSound() {
-  const a = audio()
+  const a = audio('timeline')
   if (!a) return
   // dibuat lebih keras (revisi pemilik 2026-10-08): 0,07 -> 0,2, sedikit lebih panjang
   blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.06, vol: 0.2, type: 'square' })
@@ -173,7 +216,7 @@ export function playTimelineStepSound() {
 // Akordion Pengalaman di beranda (pilihan pemilik 2026-10-16, demo S9 "Blip digital", berbunyi saat
 // dibuka dan ditutup): dua blip kotak naik saat dibuka, satu blip lebih rendah saat ditutup.
 export function playExperienceToggleSound(open: boolean) {
-  const a = audio()
+  const a = audio('experienceToggle')
   if (!a) return
   if (open) {
     blip(a.ctx, a.out, { at: 0, freq: 1500, dur: 0.035, vol: 0.08, type: 'square', cutoff: 4000 })
@@ -193,7 +236,7 @@ export function playExperienceToggleSound(open: boolean) {
 // Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo suara A7 "Gelembung"): "blup"
 // kecil yang naik cepat setiap kali project yang menyala berganti saat digulir.
 export function playProjectSpotlightSound() {
-  const a = audio()
+  const a = audio('spotlight')
   if (!a) return
   const { ctx, out } = a
   const t = ctx.currentTime
@@ -217,7 +260,7 @@ const SHIMMER_NOTES = [1318.51, 1567.98, 1760, 1975.53, 2349.32, 1975.53, 1760, 
 let shimmerStep = 0
 
 export function playPhotoShimmerSound() {
-  const a = audio()
+  const a = audio('shimmer')
   if (!a) return
   const freq = SHIMMER_NOTES[shimmerStep % SHIMMER_NOTES.length]
   shimmerStep += 1
@@ -236,20 +279,35 @@ export function playPhotoShimmerSound() {
   }
 }
 
-// Tombol "Coba suara" di admin: memutar suara menu dengan volume yang sedang digeser.
-export function previewSound(level: number) {
-  volumeOverride = Math.min(100, Math.max(0, level))
+// Tombol "Coba suara" di admin: memutar satu suara dengan volume yang sedang digeser (belum tentu
+// tersimpan). Tanpa jenis: suara menu dengan volume utama yang digeser.
+const SAMPLES: Record<SoundKind, () => void> = {
+  nav: () => playNavSound(),
+  theme: () => playThemeSound(true),
+  language: () => playLanguageSound(true),
+  experienceToggle: () => playExperienceToggleSound(true),
+  timeline: () => playTimelineStepSound(),
+  spotlight: () => playProjectSpotlightSound(),
+  slide: () => playSlideSound(true),
+  shimmer: () => {
+    for (let i = 0; i < 3; i++) playPhotoShimmerSound()
+  },
+  lanyard: () => playLanyardSound('release'),
+}
+
+export function previewSound(masterLevel: number, kind: SoundKind = 'nav', kindLevel?: number) {
+  override = { master: clamp(masterLevel), kind, level: kindLevel ?? kindVolume(kind) }
   try {
-    playNavSound()
+    SAMPLES[kind]()
   } finally {
-    volumeOverride = null
+    override = null
   }
 }
 
 // Kartu ID di halaman kontak (pilihan pemilik 2026-10-03, demo suara nomor 6 "Pegas"): saat
 // diambil, nada segitiga naik singkat; saat dilepas, pegas bergetar yang makin pelan.
 export function playLanyardSound(kind: 'grab' | 'release') {
-  const a = audio()
+  const a = audio('lanyard')
   if (!a) return
   const { ctx, out } = a
   const t = ctx.currentTime
@@ -288,7 +346,7 @@ export function playLanyardSound(kind: 'grab' | 'release') {
 // berganti, naik ke gambar berikutnya dan turun ke gambar sebelumnya. Lebih pendek dan lebih pelan
 // dari desir tombol tema karena bisa ditekan beruntun.
 export function playSlideSound(forward: boolean) {
-  const a = audio()
+  const a = audio('slide')
   if (!a) return
   const { ctx, out, noise } = a
   const t = ctx.currentTime

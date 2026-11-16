@@ -357,9 +357,37 @@ export const EN: Record<string, string> = {
   'Peran disimpan.': 'Roles saved.',
   'Isi kartu pembuka': 'Introduction card text',
   Isi: 'Text',
-  'Suara tombol': 'Button sounds',
-  'Satu volume untuk suara tombol tema, bahasa, dan menu di situs publik. 0 berarti tanpa suara. Pengunjung tetap bisa mengecilkan suara dari perangkatnya.':
-    'One volume for the theme, language, and menu button sounds on the public site. 0 means silent. Visitors can still lower the sound on their device.',
+  // Admin → Pengaturan, kelompok Suara (revisi pemilik 2026-11-16)
+  Suara: 'Sounds',
+  'Semua suara': 'All sounds',
+  'Volume utama untuk seluruh suara di situs. 0 berarti tanpa suara.':
+    'Main volume for every sound on the site. 0 means no sound.',
+  'Tik kaca saat menu situs dan foto profil di navbar ditekan.':
+    'A glass tick when the site menu or the navbar profile photo is pressed.',
+  'Tombol tema': 'Theme button',
+  'Desir angin saat tema terang atau gelap diganti.':
+    'A wind swoosh when switching between light and dark themes.',
+  'Tombol bahasa': 'Language button',
+  'Rentetan bip saat bahasa ID/EN diganti, di situs, kartu pembuka, dan panel admin.':
+    'A run of beeps when switching ID/EN, on the site, the introduction card, and the admin panel.',
+  'Pengalaman di beranda': 'Experience on the home page',
+  'Blip saat daftar pengalaman di beranda dibuka atau ditutup.':
+    'A blip when the experience list on the home page opens or closes.',
+  'Timeline Pengalaman': 'Experience timeline',
+  'Bip pendek setiap entri yang menyala berganti saat halaman Pengalaman digulir.':
+    'A short beep each time the highlighted entry changes while scrolling the Experience page.',
+  'Daftar Project': 'Project list',
+  'Blup kecil setiap project yang menyala berganti saat halaman Project digulir.':
+    'A small blup each time the highlighted project changes while scrolling the Projects page.',
+  'Galeri Project': 'Project gallery',
+  'Desir lembut saat gambar di halaman detail project berganti.':
+    'A soft swoosh when the image changes on a project detail page.',
+  'Kartu foto Tentang': 'About photo card',
+  'Kilau nada saat kursor bergeser di kartu foto halaman Tentang.':
+    'A shimmer of notes as the cursor moves over the About page photo card.',
+  'Kartu ID Kontak': 'Contact ID card',
+  'Bunyi pegas saat kartu ID di halaman Kontak ditarik dan dilepas.':
+    'A spring sound when the ID card on the Contact page is pulled and released.',
   Volume: 'Volume',
   'Coba suara': 'Test sound',
   'Isi paling panjang 600 karakter': 'The text can be at most 600 characters',
@@ -533,8 +561,6 @@ export const EN: Record<string, string> = {
     'Visitors only see a Being updated page and the site is not indexed. The admin panel keeps working.',
   Perangkat: 'Devices',
   'Perangkat ini': 'This device',
-  'Satu volume untuk tombol tema, bahasa, dan menu di situs. 0 berarti tanpa suara.':
-    'One volume for the theme, language, and menu buttons on the site. 0 means no sound.',
   Sebelum: 'Before',
   'Seberapa sering pengunjung yang sama melihat kartu pembuka.':
     'How often the same visitor sees the intro card.',

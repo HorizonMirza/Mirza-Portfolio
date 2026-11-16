@@ -302,7 +302,7 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
   // Pengaturan disimpan otomatis setiap kontrol diubah (desain 1, DESIGN.md bagian 119)
   const setVolume = async (value: string, other: string) => {
     await page.goto('/admin/settings')
-    const slider = page.getByRole('slider', { name: 'Suara tombol' })
+    const slider = page.getByRole('slider', { name: 'Semua suara' })
     // Isian bisa masuk sebelum React selesai hidrasi. Tiap percobaan mengisi nilai lain dulu: mengisi
     // nilai yang sudah ada tidak memicu event input.
     await expect(async () => {
@@ -315,7 +315,7 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
     // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
     await page.waitForLoadState('networkidle')
     await page.reload()
-    await expect(page.getByRole('slider', { name: 'Suara tombol' })).toHaveValue(value)
+    await expect(page.getByRole('slider', { name: 'Semua suara' })).toHaveValue(value)
   }
   await setVolume('35', '30')
   // dicek langsung ke server agar cache browser WebKit/Firefox tidak menyajikan halaman lama
