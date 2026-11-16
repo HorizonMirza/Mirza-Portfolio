@@ -20,6 +20,14 @@ export const EN: Record<string, string> = {
   'Menu profil': 'Profile menu',
   'Ubah {item}': 'Edit {item}',
   '{label} (bulan dan tahun)': '{label} (month and year)',
+  'Ada huruf besar': 'Has an uppercase letter',
+  'Ada huruf kecil': 'Has a lowercase letter',
+  'Ada angka': 'Has a number',
+  'Ada simbol, mis. ! ? #': 'Has a symbol, e.g. ! ? #',
+  'Tampilkan password': 'Show password',
+  'Sembunyikan password': 'Hide password',
+  'Password baru harus memuat huruf besar, huruf kecil, angka, dan simbol':
+    'The new password must include an uppercase letter, a lowercase letter, a number, and a symbol',
   'Tahun sebelumnya': 'Previous year',
   'Tahun berikutnya': 'Next year',
   'Judul dan ringkasan wajib diisi.': 'Title and summary are required.',
@@ -163,8 +171,6 @@ export const EN: Record<string, string> = {
   'Ganti password': 'Change password',
   'Password saat ini': 'Current password',
   'Password baru': 'New password',
-  'Minimal {min} karakter. Frasa panjang lebih kuat daripada simbol acak.':
-    'At least {min} characters. A long phrase is stronger than random symbols.',
   'Ulangi password baru': 'Repeat new password',
   Nama: 'Name',
   Peran: 'Role',
@@ -494,8 +500,6 @@ export const EN: Record<string, string> = {
     'The liquid effect and cursor on the home photo. When off, the photo and name still show, without the effect.',
   'Email saat ada login baru': 'Email on new sign-in',
   'Email saat ada pesan baru': 'Email on new message',
-  'Frasa panjang lebih kuat daripada simbol acak.':
-    'A long phrase is stronger than random symbols.',
   Gelap: 'Dark',
   'Hanya perangkat ini yang sedang masuk.': 'Only this device is signed in.',
   'Hitung kunjungan': 'Count visits',

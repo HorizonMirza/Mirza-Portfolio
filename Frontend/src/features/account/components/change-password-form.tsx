@@ -10,8 +10,8 @@ import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
+import { PasswordInput } from '@/components/admin/password-input'
+import { MIN_PASSWORD_LENGTH, PASSWORD_RULES } from '@/lib/password-policy'
 import { cn } from '@/lib/utils'
 
 import { changePassword } from '../actions'
@@ -48,6 +48,10 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
       ok: (next ?? '').length >= MIN_PASSWORD_LENGTH,
       label: t('Minimal {min} karakter', { min: MIN_PASSWORD_LENGTH }),
     },
+    { ok: PASSWORD_RULES.upper(next ?? ''), label: t('Ada huruf besar') },
+    { ok: PASSWORD_RULES.lower(next ?? ''), label: t('Ada huruf kecil') },
+    { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Ada angka') },
+    { ok: PASSWORD_RULES.symbol(next ?? ''), label: t('Ada simbol, mis. ! ? #') },
     { ok: Boolean(next) && next !== current, label: t('Berbeda dari password saat ini') },
     { ok: Boolean(next) && next === repeat, label: t('Ulangan sama') },
   ]
@@ -68,23 +72,11 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
       <input type="text" name="username" autoComplete="username" hidden readOnly />
       <Field id="currentPassword" label="Password saat ini" error={errors.currentPassword?.message}>
         {(a) => (
-          <Input
-            type="password"
-            autoComplete="current-password"
-            {...a}
-            {...register('currentPassword')}
-          />
+          <PasswordInput autoComplete="current-password" {...a} {...register('currentPassword')} />
         )}
       </Field>
-      <Field
-        id="newPassword"
-        label="Password baru"
-        hint={t('Frasa panjang lebih kuat daripada simbol acak.')}
-        error={errors.newPassword?.message}
-      >
-        {(a) => (
-          <Input type="password" autoComplete="new-password" {...a} {...register('newPassword')} />
-        )}
+      <Field id="newPassword" label="Password baru" error={errors.newPassword?.message}>
+        {(a) => <PasswordInput autoComplete="new-password" {...a} {...register('newPassword')} />}
       </Field>
       <Field
         id="confirmPassword"
@@ -92,12 +84,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
         error={errors.confirmPassword?.message}
       >
         {(a) => (
-          <Input
-            type="password"
-            autoComplete="new-password"
-            {...a}
-            {...register('confirmPassword')}
-          />
+          <PasswordInput autoComplete="new-password" {...a} {...register('confirmPassword')} />
         )}
       </Field>
       <div className="flex flex-col gap-2">
@@ -145,11 +132,9 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
           ))}
         </ul>
       </div>
-      <div>
-        <Button type="submit" disabled={pending}>
-          {pending ? t('Menyimpan…') : t('Ganti password')}
-        </Button>
-      </div>
+      <Button type="submit" disabled={pending} className="w-full">
+        {pending ? t('Menyimpan…') : t('Simpan')}
+      </Button>
     </form>
   )
 }

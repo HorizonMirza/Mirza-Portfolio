@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
+import { PasswordInput } from '@/components/admin/password-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { ActionResult } from '@/lib/action-result'
@@ -145,9 +146,10 @@ export function ChangeIdentityDialog({
           })
         }}
       >
-        <div className="flex flex-col gap-2">
-          <Label htmlFor={`${id}-old`}>{t(copy.oldLabel)}</Label>
-          <Input id={`${id}-old`} value={current} readOnly aria-readonly="true" tabIndex={-1} />
+        {/* nama atau email sekarang: kotak besar yang hanya ditampilkan, tidak bisa ditekan atau diubah */}
+        <div className="rounded-xl border border-border bg-surface-2 px-4 py-3.5 select-none">
+          <p className="text-sm font-semibold">{t(copy.oldLabel)}</p>
+          <p className="mt-1 text-lg break-all">{current}</p>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor={`${id}-new`}>{t(copy.newLabel)}</Label>
@@ -172,9 +174,8 @@ export function ChangeIdentityDialog({
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor={`${id}-password`}>{t('Password')}</Label>
-          <Input
+          <PasswordInput
             id={`${id}-password`}
-            type="password"
             value={password}
             autoComplete="current-password"
             aria-invalid={errors.password ? true : undefined}
@@ -195,11 +196,13 @@ export function ChangeIdentityDialog({
             {t(errors.general)}
           </p>
         ) : null}
-        <div>
-          <Button type="submit" disabled={pending || value.trim() === '' || password === ''}>
-            {pending ? t('Menyimpan…') : t('Simpan')}
-          </Button>
-        </div>
+        <Button
+          type="submit"
+          disabled={pending || value.trim() === '' || password === ''}
+          className="w-full"
+        >
+          {pending ? t('Menyimpan…') : t('Simpan')}
+        </Button>
       </form>
     </FormDialog>
   )

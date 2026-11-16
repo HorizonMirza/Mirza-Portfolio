@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
+import { meetsPasswordRules, MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
 
 export const changePasswordSchema = z
   .object({
@@ -8,7 +8,11 @@ export const changePasswordSchema = z
     newPassword: z
       .string()
       .min(MIN_PASSWORD_LENGTH, `Password baru minimal ${MIN_PASSWORD_LENGTH} karakter`)
-      .max(128, 'Password baru maksimal 128 karakter'),
+      .max(128, 'Password baru maksimal 128 karakter')
+      .refine(
+        meetsPasswordRules,
+        'Password baru harus memuat huruf besar, huruf kecil, angka, dan simbol',
+      ),
     confirmPassword: z.string(),
   })
   .refine((v) => v.newPassword === v.confirmPassword, {

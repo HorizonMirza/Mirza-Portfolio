@@ -42,12 +42,31 @@ test.describe('Admin → Akun', () => {
     await expect(
       dialog.getByRole('listitem').filter({ hasText: 'Minimal 12 karakter' }),
     ).toContainText('(belum terpenuhi)')
-    await next.fill('kopi pagi di teras rumah')
+    for (const rule of ['Ada huruf besar', 'Ada angka', 'Ada simbol'])
+      await expect(dialog.getByRole('listitem').filter({ hasText: rule })).toContainText(
+        '(belum terpenuhi)',
+      )
+    await next.fill('Kopi-Pagi-8-Teras-Rumah!')
     await expect(dialog.getByText('Kekuatan: Sangat kuat')).toBeVisible()
-    await dialog.getByLabel('Ulangi password baru').fill('kopi pagi di teras rumah')
+    for (const rule of ['Ada huruf besar', 'Ada huruf kecil', 'Ada angka', 'Ada simbol'])
+      await expect(dialog.getByRole('listitem').filter({ hasText: rule })).toContainText(
+        '(terpenuhi)',
+      )
+    await dialog.getByLabel('Ulangi password baru').fill('Kopi-Pagi-8-Teras-Rumah!')
     await expect(dialog.getByRole('listitem').filter({ hasText: 'Ulangan sama' })).toContainText(
       '(terpenuhi)',
     )
+    // tombol mata menampilkan dan menyembunyikan isian; tombol simpan satu baris penuh
+    await expect(next).toHaveAttribute('type', 'password')
+    await dialog.getByRole('button', { name: 'Tampilkan password' }).nth(1).click()
+    await expect(next).toHaveAttribute('type', 'text')
+    await dialog.getByRole('button', { name: 'Sembunyikan password' }).click()
+    await expect(next).toHaveAttribute('type', 'password')
+    await expect(dialog.getByText('Frasa panjang')).toHaveCount(0)
+    const save = dialog.getByRole('button', { name: 'Simpan', exact: true })
+    const box = await dialog.boundingBox()
+    const saveBox = await save.boundingBox()
+    expect(saveBox!.width).toBeGreaterThan(box!.width - 80)
     // tidak dikirim: mengganti password akan mengeluarkan sesi tes lain
     await page.keyboard.press('Escape')
     await expect(dialog).toHaveCount(0)
@@ -73,8 +92,10 @@ test.describe('Admin → Akun', () => {
       .click()
     const dialog = page.getByRole('dialog', { name: 'Ganti email' })
     await expect(dialog).toBeVisible()
-    await expect(dialog.getByLabel('Email lama')).toHaveValue(process.env.ADMIN_EMAIL!)
-    await expect(dialog.getByLabel('Email lama')).toHaveAttribute('readonly', '')
+    // email sekarang: kotak besar bertuliskan "Email lama" yang hanya ditampilkan (bukan isian)
+    await expect(dialog.getByText('Email lama', { exact: true })).toBeVisible()
+    await expect(dialog.getByText(process.env.ADMIN_EMAIL!, { exact: true })).toBeVisible()
+    await expect(dialog.getByLabel('Email lama')).toHaveCount(0)
     const save = dialog.getByRole('button', { name: 'Simpan' })
     await expect(save).toBeDisabled()
     await dialog.getByLabel('Email baru').fill('baru@contoh.com')
@@ -108,7 +129,9 @@ test.describe('Admin → Akun', () => {
     // password salah ditolak di kolomnya dan nama tidak berubah
     await nameRow.click()
     const wrong = page.getByRole('dialog', { name: 'Ganti nama' })
-    await expect(wrong.getByLabel('Nama lama')).toHaveValue(original)
+    await expect(wrong.getByText('Nama lama', { exact: true })).toBeVisible()
+    await expect(wrong.getByText(original, { exact: true })).toBeVisible()
+    await expect(wrong.getByLabel('Nama lama')).toHaveCount(0)
     await wrong.getByLabel('Nama baru').fill(`${original} SALAH`)
     await wrong.getByLabel('Password', { exact: true }).fill('password-salah-untuk-tes')
     await wrong.getByRole('button', { name: 'Simpan' }).click()

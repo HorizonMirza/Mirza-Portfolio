@@ -160,8 +160,8 @@ describe('skill schemas', () => {
 describe('changePasswordSchema', () => {
   const base = {
     currentPassword: 'lama-sekali-123',
-    newPassword: 'baru-yang-panjang-1',
-    confirmPassword: 'baru-yang-panjang-1',
+    newPassword: 'Baru-Yang-Panjang-1!',
+    confirmPassword: 'Baru-Yang-Panjang-1!',
   }
   it('menerima password baru yang cukup panjang', () => {
     expect(changePasswordSchema.safeParse(base).success).toBe(true)
@@ -180,8 +180,24 @@ describe('changePasswordSchema', () => {
       'confirmPassword',
     ])
   })
+  it('wajib memuat huruf besar, huruf kecil, angka, dan simbol', () => {
+    for (const weak of [
+      'barusemuahurufkecil',
+      'BARUSEMUAHURUFBESAR1!',
+      'BaruTanpaAngkaSimbol',
+      'BaruTanpaSimbol12345',
+      'baru-tanpa-besar-12345',
+    ]) {
+      const r = changePasswordSchema.safeParse({
+        ...base,
+        newPassword: weak,
+        confirmPassword: weak,
+      })
+      expect(fieldsOf(r), weak).toContain('newPassword')
+    }
+  })
   it('password baru tidak boleh sama dengan yang lama', () => {
-    const same = 'sama-persis-12345'
+    const same = 'Sama-Persis-12345!'
     const r = changePasswordSchema.safeParse({
       currentPassword: same,
       newPassword: same,
