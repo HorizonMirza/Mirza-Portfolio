@@ -511,13 +511,10 @@ export const EN: Record<string, string> = {
   'Dari satu jaringan, {min} sampai {max} pesan.': 'From one network, {min} to {max} messages.',
   'Data mentah yang lebih lama dihapus otomatis setiap hari; ringkasan harian tetap ada. Halaman Privasi ikut menyebut masa simpan ini.':
     'Older raw records are deleted automatically every day; daily totals stay. The Privacy page states this period too.',
-  'Dikirim ke email akun ini setiap ada yang berhasil masuk.':
-    'Sent to this account’s email every time someone signs in.',
   'Dipakai sampai pengunjung memilih tema sendiri lewat tombol bulan.':
     'Used until a visitor picks a theme with the moon button.',
   'Efek cairan dan kursor di foto beranda. Bila mati, foto dan nama tetap tampil tanpa efek.':
     'The liquid effect and cursor on the home photo. When off, the photo and name still show, without the effect.',
-  'Email saat ada login baru': 'Email on new sign-in',
   Gelap: 'Dark',
   'Hanya perangkat ini yang sedang masuk.': 'Only this device is signed in.',
   'Hitung kunjungan': 'Count visits',
@@ -619,7 +616,6 @@ export const EN: Record<string, string> = {
   'Admin sejak': 'Admin since',
   'Aktif sekarang': 'Active now',
   'Belum pernah diganti dari panel': 'Not changed from the panel yet',
-  'Butuh Resend. Pilihan tetap disimpan.': 'Needs Resend. Your choice is still saved.',
   'Ganti foto profil': 'Change profile photo',
   Info: 'Info',
   Keamanan: 'Security',

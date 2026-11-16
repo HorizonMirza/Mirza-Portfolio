@@ -23,12 +23,6 @@ export async function notifyLogin(session: {
 }) {
   if (!getEmailConfig()) return
   try {
-    // saklar "Email saat ada login baru" di Admin → Akun (bawaan menyala)
-    const setting = await getDb().siteSetting.findUnique({
-      where: { id: 1 },
-      select: { loginNotify: true },
-    })
-    if (setting && !setting.loginNotify) return
     const user = await getDb().user.findUnique({
       where: { id: session.userId },
       select: { email: true, role: true },

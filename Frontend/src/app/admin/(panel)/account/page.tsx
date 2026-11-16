@@ -4,12 +4,10 @@ import { PageHeader } from '@/components/admin/page-header'
 import { AccountPanel } from '@/features/account/components/account-panel'
 import { getAccountOverview } from '@/features/account/queries'
 import { getPublicProfile } from '@/features/profile/public'
-import { getSiteOptionsForEdit } from '@/features/settings/queries'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import { isUploadConfigured } from '@/lib/uploads'
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { getEmailConfig } from '@/lib/email'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,9 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AccountPage() {
   const admin = await requireSuperAdminPage()
-  const [overview, options, profile] = await Promise.all([
+  const [overview, profile] = await Promise.all([
     getAccountOverview(admin.userId, admin.sessionId),
-    getSiteOptionsForEdit(),
     getPublicProfile(),
   ])
   return (
@@ -35,8 +32,6 @@ export default async function AccountPage() {
         adminSince={overview.adminSince}
         passwordChangedAt={overview.passwordChangedAt}
         sessions={overview.sessions}
-        loginNotify={options.loginNotify}
-        emailReady={getEmailConfig() !== null}
         uploadReady={isUploadConfigured()}
       />
     </>

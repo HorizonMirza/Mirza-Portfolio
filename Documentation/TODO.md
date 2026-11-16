@@ -311,3 +311,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Semua dialog (hapus, form akun, potong gambar, dan lainnya) memakai latar buram tipis; opsi blur per dialog dihapus |
 | 2026-11-16 | Pengaturan: baris "Email saat ada pesan baru" (saklar, lencana "Butuh Resend", penjelasan) dihapus; email pesan baru kini selalu dikirim bila Resend diatur. Kolom SiteSetting.emailOnMessage dibiarkan tanpa migrasi |
 | 2026-11-16 | Pengaturan: baris "Izinkan mesin pencari" dihapus; situs selalu boleh diindeks (hanya mode perawatan yang menutupnya). Kolom SiteSetting.allowIndexing dibiarkan tanpa migrasi |
+| 2026-11-16 | Akun: baris "Email saat ada login baru" dihapus; email login baru kini selalu dikirim ke email akun bila Resend diatur (belum aktif karena Resend ditunda). Kolom SiteSetting.loginNotify dibiarkan tanpa migrasi |

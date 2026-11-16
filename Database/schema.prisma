@@ -408,7 +408,7 @@ model SiteSetting {
   contactPerHour     Int      @default(5)
   // tidak dipakai lagi sejak 2026-11-16 (saklar email pesan baru dihapus; email selalu terkirim bila Resend diatur); kolom dibiarkan agar tanpa migrasi yang menghapus data
   emailOnMessage     Boolean  @default(true)
-  // email ke pemilik setiap ada login baru ke panel admin (butuh Resend)
+  // tidak dipakai lagi sejak 2026-11-16 (saklar dihapus; email login baru selalu dikirim bila Resend diatur); kolom dibiarkan tanpa migrasi yang menghapus data
   loginNotify        Boolean  @default(true)
   // statistik kunjungan dan lama kunjungan mentah disimpan (hari)
   trackVisits        Boolean  @default(true)

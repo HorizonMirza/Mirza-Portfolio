@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Bell,
   CalendarDays,
   Camera,
   ChevronRight,
@@ -24,7 +23,6 @@ import { formatDateTime } from '@/lib/format'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
-import { saveSiteOption } from '@/features/settings/actions'
 
 import type { AccountSession } from '../queries'
 import { revokeOtherSessions, revokeSession } from '../session-actions'
@@ -62,8 +60,6 @@ export function AccountPanel({
   adminSince,
   passwordChangedAt,
   sessions,
-  loginNotify,
-  emailReady,
   uploadReady,
 }: {
   name: string
@@ -72,8 +68,6 @@ export function AccountPanel({
   adminSince: string | null
   passwordChangedAt: string | null
   sessions: AccountSession[]
-  loginNotify: boolean
-  emailReady: boolean
   // Cloudinary diatur (unggah foto profil bisa dipakai)
   uploadReady: boolean
 }) {
@@ -147,7 +141,6 @@ export function AccountPanel({
           }
           onClick={() => show('password')}
         />
-        <LoginNotifyRow initial={loginNotify} emailReady={emailReady} />
       </Group>
 
       <DevicesGroup sessions={sessions} />
@@ -239,75 +232,6 @@ function Row({
     </button>
   ) : (
     <div className={base}>{body}</div>
-  )
-}
-
-function Switch({
-  on,
-  onChange,
-  labelledBy,
-  describedBy,
-}: {
-  on: boolean
-  onChange: (next: boolean) => void
-  labelledBy: string
-  describedBy: string
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      aria-labelledby={labelledBy}
-      aria-describedby={describedBy}
-      onClick={() => onChange(!on)}
-      className={cn(
-        'relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-full border transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2',
-        on ? 'border-text bg-text' : 'border-border-strong bg-surface-2',
-      )}
-    >
-      <span
-        aria-hidden="true"
-        className={cn(
-          'absolute top-1/2 left-0.5 size-5.5 -translate-y-1/2 rounded-full shadow transition-transform duration-200 ease-out-soft',
-          on ? 'translate-x-5 bg-bg' : 'translate-x-0 bg-muted',
-        )}
-      />
-    </button>
-  )
-}
-
-function LoginNotifyRow({ initial, emailReady }: { initial: boolean; emailReady: boolean }) {
-  const t = useAdminT()
-  const [on, setOn] = useState(initial)
-  const [, startTransition] = useTransition()
-  const base = useId()
-  const change = (next: boolean) => {
-    setOn(next)
-    startTransition(async () => {
-      const result = await saveSiteOption({ key: 'loginNotify', value: next })
-      if (result.ok) toast.success(t('Tersimpan'), { id: 'login-notify' })
-      else {
-        setOn(!next)
-        toast.error(t(result.message), { id: 'login-notify' })
-      }
-    })
-  }
-  return (
-    <Row
-      icon={<Bell />}
-      title={<span id={`${base}-t`}>{t('Email saat ada login baru')}</span>}
-      detail={
-        <span id={`${base}-d`}>
-          {emailReady
-            ? t('Dikirim ke email akun ini setiap ada yang berhasil masuk.')
-            : t('Butuh Resend. Pilihan tetap disimpan.')}
-        </span>
-      }
-      trailing={
-        <Switch on={on} onChange={change} labelledBy={`${base}-t`} describedBy={`${base}-d`} />
-      }
-    />
   )
 }
 

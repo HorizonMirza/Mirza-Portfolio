@@ -60,7 +60,6 @@ export const siteOptionSchema = z.discriminatedUnion('key', [
       .min(CONTACT_PER_HOUR_MIN, `Batas paling kecil ${CONTACT_PER_HOUR_MIN}`)
       .max(CONTACT_PER_HOUR_MAX, `Batas paling besar ${CONTACT_PER_HOUR_MAX}`),
   }),
-  z.object({ key: z.literal('loginNotify'), value: z.boolean() }),
   z.object({ key: z.literal('trackVisits'), value: z.boolean() }),
   z.object({
     key: z.literal('visitRetentionDays'),
@@ -88,7 +87,6 @@ export const DEFAULT_SITE_OPTIONS: SiteOptions = {
   whatsappButton: false,
   contactOpen: true,
   contactPerHour: 5,
-  loginNotify: true,
   trackVisits: true,
   visitRetentionDays: 90,
   maintenanceMode: false,
@@ -128,7 +126,6 @@ export function toSiteOptions(row: Partial<Record<SiteOptionKey, unknown>> | nul
       CONTACT_PER_HOUR_MIN,
       CONTACT_PER_HOUR_MAX,
     ),
-    loginNotify: bool(row.loginNotify, d.loginNotify),
     trackVisits: bool(row.trackVisits, d.trackVisits),
     visitRetentionDays: pick(row.visitRetentionDays, RETENTION_CHOICES, d.visitRetentionDays),
     maintenanceMode: bool(row.maintenanceMode, d.maintenanceMode),
