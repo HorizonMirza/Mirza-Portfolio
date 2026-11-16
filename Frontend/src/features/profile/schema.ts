@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { CONTACT_LABEL_KEYS } from '@/components/site/footer-links'
 import { optionalText, optionalUrl, requiredText } from '@/lib/validation'
 
 // Kunci link sosial yang didukung. Kolom socials (JSON) hanya menyimpan kunci ini.
@@ -30,6 +31,17 @@ export const profileSchema = z.object({
   city: optionalText('Kota', 80),
 })
 
+const contactLabelSchema = z
+  .object({
+    title: z.string().trim().max(40, 'Judul kartu maksimal 40 karakter').default(''),
+    value: z.string().trim().max(80, 'Teks kartu maksimal 80 karakter').default(''),
+  })
+  .default({ title: '', value: '' })
+
+const emptyLabels = Object.fromEntries(
+  CONTACT_LABEL_KEYS.map((k) => [k, { title: '', value: '' }]),
+) as Record<(typeof CONTACT_LABEL_KEYS)[number], { title: string; value: string }>
+
 // Kontak dan Resume CV di footer (Admin → Footer, dipindah dari form Profil 2026-11-10). Email dan
 // WhatsApp hanya disimpan di database, tidak di repo.
 export const contactLinksSchema = z.object({
@@ -52,6 +64,15 @@ export const contactLinksSchema = z.object({
     instagram: optionalUrl('Instagram'),
     website: optionalUrl('Situs'),
   }),
+  // nama yang tampil di kartu footer: judul dan teks kecil, per kartu (2026-11-16)
+  labels: z
+    .object(
+      Object.fromEntries(CONTACT_LABEL_KEYS.map((k) => [k, contactLabelSchema])) as Record<
+        (typeof CONTACT_LABEL_KEYS)[number],
+        typeof contactLabelSchema
+      >,
+    )
+    .default(emptyLabels),
 })
 
 export type ContactLinksInput = z.input<typeof contactLinksSchema>

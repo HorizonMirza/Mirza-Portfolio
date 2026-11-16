@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { cvLabel, footerLinks, handleFromUrl } from '@/components/site/footer-links'
+import {
+  cvLabel,
+  derivedCardValue,
+  footerLinks,
+  footerValue,
+  handleFromUrl,
+} from '@/components/site/footer-links'
 
 const base = {
   email: null,
@@ -69,5 +75,47 @@ describe('footer-links', () => {
       { locale: 'id', fileLabel: 'PDF' },
     )
     expect(link).toMatchObject({ key: 'website', value: 'contoh.dev' })
+  })
+  it('judul dan teks kecil kartu bisa diganti admin, teks bawaan tetap tersedia', () => {
+    const links = footerLinks(
+      {
+        ...base,
+        whatsapp: '+6281200000000',
+        socials: { linkedin: 'https://www.linkedin.com/in/muhammad-mirza-wirya' },
+        contactLabels: {
+          linkedin: { title: 'Profil LinkedIn', value: 'Mirza' },
+          whatsapp: { value: '  ' },
+        },
+      },
+      { locale: 'id', fileLabel: 'PDF' },
+    )
+    expect(links[0]).toMatchObject({ key: 'whatsapp', value: '+6281200000000' })
+    expect(links[0].title).toBeUndefined()
+    expect(links[1]).toMatchObject({
+      key: 'linkedin',
+      title: 'Profil LinkedIn',
+      value: 'Mirza',
+      derived: 'muhammad-mirza-wirya',
+    })
+  })
+
+  it('teks kecil bawaan dihitung dari isian kontak admin', () => {
+    const links = {
+      whatsapp: '+6281200000000',
+      email: 'saya@contoh.com',
+      cvUrl: 'https://drive.google.com/file/d/abc/view',
+      socials: {
+        linkedin: 'https://www.linkedin.com/in/akun',
+        github: 'https://github.com/HorizonMirza',
+        instagram: 'https://www.instagram.com/akun.saya/',
+      },
+    }
+    expect(derivedCardValue('whatsapp', links)).toBe('+6281200000000')
+    expect(derivedCardValue('email', links)).toBe('saya@contoh.com')
+    expect(derivedCardValue('linkedin', links)).toBe('akun')
+    expect(derivedCardValue('instagram', links)).toBe('@akun.saya')
+    expect(derivedCardValue('cv', links)).toBe('Google Drive')
+    expect(derivedCardValue('cv', { ...links, cvUrl: '' })).toBe('')
+    expect(footerValue('github', '')).toBe('')
   })
 })

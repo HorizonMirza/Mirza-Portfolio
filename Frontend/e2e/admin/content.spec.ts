@@ -60,7 +60,7 @@ for (const theme of ['light', 'dark'] as const) {
           (v) =>
             `${path} ${v.id}: ${v.help} -> ${v.nodes
               .slice(0, 3)
-              .map((n) => n.html.slice(0, 200))
+              .map((n) => `${n.html.slice(-260)} :: ${n.failureSummary?.replace(/\s+/g, ' ')}`)
               .join(' | ')}`,
         ),
       )
@@ -1059,6 +1059,11 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
     await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByText('Kontak disimpan.')).toHaveCount(0)
+  // tiap kartu: judul dan teks kecil yang tampil, lalu tautan tujuannya (revisi 2026-11-16)
+  for (const name of ['WhatsApp', 'Email', 'LinkedIn', 'GitHub', 'Instagram'])
+    for (const field of ['Judul kartu', 'Teks kartu'])
+      await expect(page.getByRole('textbox', { name: `${field} ${name}` })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Teks kartu Resume CV' })).toBeVisible()
   // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak (DESIGN.md bagian 151)
   await expect(page.locator('.site-frame footer')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toHaveCount(1)

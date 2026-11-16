@@ -8,6 +8,7 @@ import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
+import { derivedCardValue } from '@/components/site/footer-links'
 import { InlineInput, LiveErrors } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
@@ -104,9 +105,41 @@ export function ContactLinksLive({
   const {
     register,
     control,
+    getValues,
+    setValue,
     formState: { errors, isDirty },
   } = form
   const v = useWatch({ control })
+
+  // isian kontak dari nilai form (dengan satu kolom diganti), untuk teks kecil bawaan kartu
+  const linksOf = (field?: FieldName, next?: string) => {
+    const get = (name: FieldName) =>
+      (name === field ? next : undefined) ??
+      (name.startsWith('socials.')
+        ? (v.socials?.[name.slice(8) as 'linkedin'] ?? '')
+        : (v[name as 'whatsapp' | 'email' | 'cvUrl'] ?? ''))
+    return {
+      whatsapp: get('whatsapp'),
+      email: get('email'),
+      cvUrl: get('cvUrl'),
+      socials: {
+        linkedin: get('socials.linkedin'),
+        github: get('socials.github'),
+        instagram: get('socials.instagram'),
+      },
+    }
+  }
+  // tautan diganti: teks kecil yang masih bawaan (atau kosong) ikut berganti, yang sudah diubah
+  // admin dibiarkan
+  const followLink = (key: Key, field: FieldName) => (event: { target: { value: string } }) => {
+    const path = `labels.${key}.value` as const
+    const before = derivedCardValue(key, linksOf())
+    const current = getValues(path) ?? ''
+    if (current === '' || current === before)
+      setValue(path, derivedCardValue(key, linksOf(field, event.target.value)), {
+        shouldDirty: true,
+      })
+  }
 
   // disimpan bersama teks footer oleh tombol Simpan halaman; tanpa ubahan dilewati
   useRegisterExtraSave(async () => {
@@ -145,6 +178,11 @@ export function ContactLinksLive({
     const e = errorOf(c.field)
     return e ? [{ text: `${t(c.title)}: ${t(e)}` }] : []
   })
+  for (const c of [...CARDS, { key: 'cv' as Key, title: 'Resume CV' }]) {
+    const e = errors.labels?.[c.key]
+    const text = e?.title?.message ?? e?.value?.message
+    if (text) messages.push({ text: `${t(c.title)}: ${t(text)}` })
+  }
   if (errors.cvUrl?.message)
     messages.push({ text: `${t('Berkas Resume CV')}: ${t(errors.cvUrl.message)}` })
 
@@ -159,10 +197,23 @@ export function ContactLinksLive({
             <li key={c.key} className={card(Boolean(value))}>
               {c.icon}
               <span className="grid min-w-0 gap-1">
-                <span className="text-sm font-semibold">{t(c.title)}</span>
-                {/* baris kedua: tautan tujuan kartu, selalu tampil dan bisa diketik */}
+                {/* dua nama yang tampil di kartu (judul dan teks kecil) lalu tautan tujuannya */}
+                <InlineInput
+                  label={t('Judul kartu {name}', { name: t(c.title) })}
+                  {...register(`labels.${c.key}.title`)}
+                  maxLength={40}
+                  invalid={Boolean(errors.labels?.[c.key]?.title)}
+                  className="min-h-6 w-full text-sm font-semibold"
+                />
+                <InlineInput
+                  label={t('Teks kartu {name}', { name: t(c.title) })}
+                  {...register(`labels.${c.key}.value`)}
+                  maxLength={80}
+                  invalid={Boolean(errors.labels?.[c.key]?.value)}
+                  className="min-h-6 w-full text-[0.8125rem] text-ellipsis text-muted"
+                />
                 {(() => {
-                  const reg = register(c.field)
+                  const reg = register(c.field, { onChange: followLink(c.key, c.field) })
                   const kind = c.key === 'email' ? 'email' : c.key === 'whatsapp' ? 'tel' : 'url'
                   return (
                     <InlineInput
@@ -172,7 +223,7 @@ export function ContactLinksLive({
                       {...reg}
                       placeholder={c.placeholder}
                       invalid={Boolean(errorOf(c.field))}
-                      className="min-h-6 w-full text-[0.8125rem] text-ellipsis text-muted"
+                      className="min-h-6 w-full font-mono text-xs text-ellipsis text-muted"
                     />
                   )
                 })()}
@@ -198,8 +249,18 @@ export function ContactLinksLive({
           </button>
           <span className="grid min-w-0 gap-1">
             <span className="text-sm font-semibold">{cvTitle}</span>
+            <InlineInput
+              label={t('Teks kartu {name}', { name: t('Resume CV') })}
+              {...register('labels.cv.value')}
+              maxLength={80}
+              invalid={Boolean(errors.labels?.cv?.value)}
+              className={cn(
+                'min-h-6 w-full text-[0.8125rem] text-ellipsis',
+                hasCv ? 'text-primary-fg/75' : 'text-muted',
+              )}
+            />
             {(() => {
-              const reg = register('cvUrl')
+              const reg = register('cvUrl', { onChange: followLink('cv', 'cvUrl') })
               return (
                 <InlineInput
                   label={t('Link CV (opsional)')}
@@ -211,7 +272,7 @@ export function ContactLinksLive({
                   }
                   invalid={Boolean(errors.cvUrl)}
                   className={cn(
-                    'min-h-6 w-full text-[0.8125rem] text-ellipsis',
+                    'min-h-6 w-full font-mono text-xs text-ellipsis',
                     hasCv ? 'text-primary-fg/75 placeholder:text-primary-fg/75' : 'text-muted',
                   )}
                 />

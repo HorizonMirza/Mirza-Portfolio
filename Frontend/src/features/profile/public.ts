@@ -3,6 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
+import { CONTACT_LABEL_KEYS, type ContactLabels } from '@/components/site/footer-links'
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@/lib/cache-tags'
 import { getDb } from '@/lib/db'
 import { type PublicImage, safeImage } from '@/lib/public-image'
@@ -32,6 +33,8 @@ export type PublicProfile = {
   email: string | null
   whatsapp: string | null
   socials: Partial<Record<(typeof SOCIAL_KEYS)[number], string>>
+  // judul dan teks kecil kartu footer yang diganti admin
+  contactLabels: ContactLabels
   photo: PublicImage | null
   hasCv: boolean
   // host link CV di luar (mis. drive.google.com) bila diisi di admin; null bila memakai PDF upload
@@ -82,6 +85,20 @@ const load = unstable_cache(
     const socials: PublicProfile['socials'] = {}
     for (const key of SOCIAL_KEYS)
       if (typeof raw[key] === 'string' && raw[key]) socials[key] = raw[key] as string
+    const rawLabels = (p.contactLabels ?? {}) as Record<
+      string,
+      { title?: unknown; value?: unknown }
+    >
+    const contactLabels: ContactLabels = {}
+    for (const key of CONTACT_LABEL_KEYS) {
+      const title = rawLabels[key]?.title
+      const value = rawLabels[key]?.value
+      if (typeof title === 'string' || typeof value === 'string')
+        contactLabels[key] = {
+          ...(typeof title === 'string' && title ? { title } : {}),
+          ...(typeof value === 'string' && value ? { value } : {}),
+        }
+    }
     return {
       name: p.name,
       headline_id: p.headline_id,
@@ -104,6 +121,7 @@ const load = unstable_cache(
       email: p.email,
       whatsapp: p.whatsapp,
       socials,
+      contactLabels,
       photo: safeImage(p.photo),
       hasCv: Boolean(p.cvUrl || p.cv),
       cvHost: p.cvUrl ? urlHost(p.cvUrl) : null,

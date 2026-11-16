@@ -142,6 +142,9 @@ model Profile {
   email             String?
   whatsapp          String?
   socials           Json     @default("{}")
+  // nama yang tampil di kartu footer (judul dan teks kecil) bila diganti admin, per kunci kartu:
+  // { "linkedin": { "title": "…", "value": "…" } }; kosong = nama bawaan dan teks dari tautan
+  contactLabels     Json     @default("{}")
   currentRole_id    String?
   currentRole_en    String?
   // baris peran di pita halaman Tentang, mis. "Fullstack Developer | Community Manager"
