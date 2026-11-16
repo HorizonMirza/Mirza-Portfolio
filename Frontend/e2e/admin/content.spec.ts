@@ -712,7 +712,8 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
   if (!isMobile) {
     const [a, b] = [await breakdown.boundingBox(), await latest.boundingBox()]
     expect(Math.abs(a!.y - b!.y)).toBeLessThan(4)
-    expect(b!.x).toBeGreaterThan(a!.x)
+    // Pesan terbaru di kiri, Rincian per hari di kanan
+    expect(a!.x).toBeGreaterThan(b!.x)
   }
   // tanpa persen naik/turun, tanpa "Hari menurut WIB", tanpa kartu Konten di situs
   await expect(page.getByText('Hari menurut WIB')).toHaveCount(0)

@@ -314,7 +314,7 @@ h1 Hubungi saya
 ┌ Sidebar ┐ ┌ Konten ──────────────────────────────────────────┐
 │Dashboard│ │ 4 angka + grafik kecil (7/30/90 hari)             │
 │Projects │ │ Kunjungan harian: tayangan + pengunjung           │
-│Skills   │ │ Rincian per hari │ Pesan terbaru (5)              │
+│Skills   │ │ Pesan terbaru (5) │ Rincian per hari              │
 │Experience│ │ (desain 01 "Ringkas", bagian 165–167)             │
 │Profile  │ └───────────────────────────────────────────────────┘
 │Messages │
@@ -1907,3 +1907,4 @@ Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
 - **Rincian per hari** ("Daily Breakdown") jadi kotak sendiri, bisa digulir, berdampingan dengan **Pesan terbaru** ("Latest Messages") dalam satu baris dua kolom (satu kolom di HP). Tombol "Semua pesan" dihapus; Pesan terbaru menampilkan 5 pesan.
 - **Perbaikan:** kepala tabel yang menempel kini berlatar pekat (`bg-bg`, `border-separate`) sehingga baris yang digulir tidak tembus di belakang judul kolom (latar kaca admin tembus pandang).
 - **Lanjutan (malam):** tabel Rincian per hari langsung menempel di kartunya tanpa bingkai sendiri. Pesan terbaru disusun seperti tabel tak bergaris (CSS subgrid): kolom nama/subjek, status, dan waktu sejajar di semua baris, garis tipis hanya di antara baris.
+- **Lanjutan kedua:** bingkai tabel Rincian per hari dikembalikan (kotak bergaris di dalam kartu, seperti sebelumnya). Urutan ditukar: **Pesan terbaru di kiri, Rincian per hari di kanan**.

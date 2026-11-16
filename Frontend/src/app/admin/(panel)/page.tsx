@@ -170,60 +170,8 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
         </div>
       </Card>
 
-      {/* tabel dan pesan terbaru berdampingan: satu baris dua kolom (revisi pemilik 2026-11-16) */}
+      {/* pesan terbaru (kiri) dan rincian per hari (kanan): satu baris dua kolom (revisi pemilik 2026-11-16) */}
       <div className="grid items-stretch gap-3 lg:grid-cols-2">
-        <Card className="flex min-w-0 flex-col">
-          <h2 className="text-h3 font-semibold">{t('Rincian per hari')}</h2>
-          {/* kotak sendiri yang bisa digulir; kepala tabel menempel dengan latar pekat agar baris yang
-            lewat di bawahnya tidak tembus (latar kaca admin tembus pandang) */}
-          <div
-            role="region"
-            aria-label={`${t('Rincian per hari')}, ${days}`}
-            tabIndex={0}
-            className="mt-3 max-h-80 min-h-0 flex-1 overflow-y-auto lg:max-h-none lg:min-h-64 lg:flex-[1_1_0px]"
-          >
-            <table className="w-full border-separate border-spacing-0 text-left text-sm">
-              <caption className="sr-only">
-                {t('Kunjungan harian')}, {days}
-              </caption>
-              <thead>
-                <tr>
-                  {[
-                    [t('Tanggal'), ''],
-                    [t('Tayangan'), 'text-right'],
-                    [t('Pengunjung'), 'text-right'],
-                  ].map(([label, align]) => (
-                    <th
-                      key={label}
-                      scope="col"
-                      className={cn(
-                        'sticky top-0 z-10 border-b border-border bg-bg px-3 py-2 font-medium text-muted',
-                        align,
-                      )}
-                    >
-                      {label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {[...current].reverse().map((v) => (
-                  <tr key={v.day}>
-                    <td className="border-b border-border px-3 py-2">
-                      {formatDayKey(v.day, lang)}
-                    </td>
-                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
-                      {formatNumber(v.views, lang)}
-                    </td>
-                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
-                      {v.visitors === null ? '—' : formatNumber(v.visitors, lang)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
         <Card className="min-w-0">
           <h2 className="text-h3 font-semibold">{t('Pesan terbaru')}</h2>
           {messages.length === 0 ? (
@@ -267,6 +215,58 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
               ))}
             </ul>
           )}
+        </Card>
+        <Card className="flex min-w-0 flex-col">
+          <h2 className="text-h3 font-semibold">{t('Rincian per hari')}</h2>
+          {/* kotak sendiri yang bisa digulir; kepala tabel menempel dengan latar pekat agar baris yang
+            lewat di bawahnya tidak tembus (latar kaca admin tembus pandang) */}
+          <div
+            role="region"
+            aria-label={`${t('Rincian per hari')}, ${days}`}
+            tabIndex={0}
+            className="mt-3 max-h-80 min-h-0 flex-1 overflow-y-auto rounded-md border border-border lg:max-h-none lg:min-h-64 lg:flex-[1_1_0px]"
+          >
+            <table className="w-full border-separate border-spacing-0 text-left text-sm">
+              <caption className="sr-only">
+                {t('Kunjungan harian')}, {days}
+              </caption>
+              <thead>
+                <tr>
+                  {[
+                    [t('Tanggal'), ''],
+                    [t('Tayangan'), 'text-right'],
+                    [t('Pengunjung'), 'text-right'],
+                  ].map(([label, align]) => (
+                    <th
+                      key={label}
+                      scope="col"
+                      className={cn(
+                        'sticky top-0 z-10 border-b border-border bg-bg px-3 py-2 font-medium text-muted',
+                        align,
+                      )}
+                    >
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[...current].reverse().map((v) => (
+                  <tr key={v.day}>
+                    <td className="border-b border-border px-3 py-2">
+                      {formatDayKey(v.day, lang)}
+                    </td>
+                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
+                      {formatNumber(v.views, lang)}
+                    </td>
+                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
+                      {v.visitors === null ? '—' : formatNumber(v.visitors, lang)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Card>
       </div>
     </div>

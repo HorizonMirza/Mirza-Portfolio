@@ -80,10 +80,6 @@ export function AdminDashboardSkeleton() {
         <div className="grid gap-3 lg:grid-cols-2">
           <Card>
             <Skeleton className="h-6 w-40" />
-            <Skeleton className="mt-3 h-72 w-full rounded-md" />
-          </Card>
-          <Card>
-            <Skeleton className="h-6 w-40" />
             <ul className="mt-2 divide-y divide-border">
               {Array.from({ length: 5 }, (_, i) => (
                 <li key={i} className="flex items-center gap-3 py-3">
@@ -95,6 +91,10 @@ export function AdminDashboardSkeleton() {
                 </li>
               ))}
             </ul>
+          </Card>
+          <Card>
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="mt-3 h-72 w-full rounded-md" />
           </Card>
         </div>
       </div>
