@@ -72,7 +72,7 @@ function About() {
             <Skeleton className="h-3 w-[min(80%,24rem)] md:h-4" />
           </span>
         </span>
-        <span className="grid gap-8 px-4 py-6 md:grid-cols-[2fr_3fr] md:gap-10 md:px-11 md:py-8">
+        <span className="grid grid-cols-1 gap-8 px-4 py-6 md:grid-cols-[2fr_3fr] md:gap-10 md:px-11 md:py-8">
           <span className="flex flex-col gap-3">
             <Skeleton className="h-6 w-36" />
             <Skeleton className="h-px w-full rounded-none" />
@@ -87,9 +87,9 @@ function About() {
                 className="flex items-center gap-5 rounded-2xl border border-border p-5 md:p-6"
               >
                 <Skeleton className="size-14 shrink-0 rounded-xl" />
-                <span className="flex flex-1 flex-col gap-2">
-                  <Skeleton className="h-5 w-48" />
-                  <Skeleton className="h-3.5 w-36" />
+                <span className="flex min-w-0 flex-1 flex-col gap-2">
+                  <Skeleton className="h-5 w-[min(100%,12rem)]" />
+                  <Skeleton className="h-3.5 w-[min(100%,9rem)]" />
                   <Skeleton className="h-3 w-24" />
                 </span>
               </span>
@@ -267,14 +267,14 @@ function Navbar() {
   // bilah navigasi situs: foto bulat, menu di tengah, bahasa dan tema di kanan
   return (
     <span className="flex w-full items-center gap-3 rounded-full border border-border px-3 py-2">
-      <Skeleton className="size-7 rounded-full" />
-      <span className="mx-auto flex gap-3">
+      <Skeleton className="size-7 shrink-0 rounded-full" />
+      <span className="mx-auto flex min-w-0 gap-2 md:gap-3">
         {[0, 1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-3.5 w-14" />
+          <Skeleton key={i} className="h-3.5 w-14 min-w-0" />
         ))}
       </span>
-      <Skeleton className="size-7 rounded-full" />
-      <Skeleton className="size-7 rounded-full" />
+      <Skeleton className="size-7 shrink-0 rounded-full" />
+      <Skeleton className="size-7 shrink-0 rounded-full" />
     </span>
   )
 }
