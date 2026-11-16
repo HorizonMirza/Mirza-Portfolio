@@ -248,7 +248,7 @@ test.describe('globe skill', () => {
     // Klik pada logo yang masih bergerak meleset saat mesin CI sibuk: pointerdown di logo, pointerup
     // sudah di kanvas (WebKit, CI #273). Klik baru dikirim setelah globe menandai dirinya diam.
     const clickSettled = async (item: Locator) => {
-      await expect(globe).toHaveAttribute('data-idle', '')
+      await expect(globe).toHaveAttribute('data-idle', '', { timeout: 20_000 })
       await item.click()
     }
     const firstName = (await first.locator('.globe-name').textContent()) ?? ''

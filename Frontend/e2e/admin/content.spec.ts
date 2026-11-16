@@ -287,6 +287,8 @@ test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testI
     }).toPass()
     await expect(page.getByText('Tersimpan', { exact: true })).toBeVisible()
     // nilai tersimpan di server, bukan hanya di layar
+    // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
+    await page.waitForLoadState('networkidle')
     await page.reload()
     await expect(page.getByRole('slider', { name: 'Suara tombol' })).toHaveValue(value)
   }
@@ -443,6 +445,8 @@ test('Home: tab GitHub memilih warna grafik dari lima warna lalu mengembalikanny
     await save.click()
     await expect(page.getByText('Warna GitHub disimpan.')).toBeVisible({ timeout: 1500 })
   }).toPass()
+  // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
+  await page.waitForLoadState('networkidle')
   await page.reload()
   await expect(page.getByRole('button', { name: 'Ungu', exact: true })).toHaveAttribute(
     'aria-pressed',
@@ -454,6 +458,8 @@ test('Home: tab GitHub memilih warna grafik dari lima warna lalu mengembalikanny
     await save.click()
     await expect(page.getByText('Warna GitHub disimpan.')).toBeVisible({ timeout: 1500 })
   }).toPass()
+  // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
+  await page.waitForLoadState('networkidle')
   await page.reload()
   await expect(page.getByRole('button', { name: 'Biru', exact: true })).toHaveAttribute(
     'aria-pressed',
@@ -610,6 +616,8 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await expect(page.getByText('Pengalaman disimpan.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/experience$/)
   // tersimpan: masih ada setelah dimuat ulang, uraian tampil sebagai teks tebal
+  // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
+  await page.waitForLoadState('networkidle')
   await page.reload()
   const savedRole = page.locator(`textarea[aria-label="Peran (Indonesia)"]`, { hasText: role })
   await expect(savedRole).toHaveCount(1)
@@ -697,7 +705,10 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.locator('aside a[href="/admin/settings"]')).toHaveCount(1)
 
   // bahasa admin menentukan bahasa isi yang diubah di pratinjau (DESIGN.md bagian 135)
-  await expect(page.getByRole('textbox', { name: 'Judul (Indonesia)', exact: true })).toBeVisible()
+  // halaman Contact memuat kartu kanvas: WebKit CI butuh lebih dari 5 detik
+  await expect(page.getByRole('textbox', { name: 'Judul (Indonesia)', exact: true })).toBeVisible({
+    timeout: 30_000,
+  })
   await expect(page.getByRole('textbox', { name: 'Title (English)', exact: true })).toHaveCount(0)
   // klik sebelum hydration selesai belum berpengaruh; tombol ini bergantian (EN lalu ID), jadi hanya
   // diklik ulang selama masih bertuliskan EN
@@ -719,6 +730,8 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.getByText(/^About page\. Bio/)).toHaveCount(0)
   await expect(page.getByText('Teks halaman', { exact: true })).toHaveCount(0)
   // dimuat ulang tetap berbahasa Inggris (cookie dibaca server)
+  // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
+  await page.waitForLoadState('networkidle')
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.locator('aside a[href="/admin/messages"]')).toHaveText(/Messages/)
@@ -814,6 +827,8 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   // label tetap untuk pembaca layar, nama muncul saat kursor di atas ikon
   await expect(menu.getByRole('link', { name: 'Pesan' })).toHaveAttribute('title', 'Pesan')
   // pilihan diingat setelah dimuat ulang (cookie dibaca server)
+  // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
+  await page.waitForLoadState('networkidle')
   await page.reload()
   await expect(aside).toHaveAttribute('data-collapsed', 'true')
   await hamburger.click()
