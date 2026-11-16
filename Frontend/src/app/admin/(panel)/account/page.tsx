@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { PageHeader } from '@/components/admin/page-header'
 import { AccountPanel } from '@/features/account/components/account-panel'
 import { getAccountOverview } from '@/features/account/queries'
-import { getProfileAssets } from '@/features/assets/queries'
 import { getPublicProfile } from '@/features/profile/public'
 import { getSiteOptionsForEdit } from '@/features/settings/queries'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
@@ -20,11 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AccountPage() {
   const admin = await requireSuperAdminPage()
-  const [overview, options, profile, assets] = await Promise.all([
+  const [overview, options, profile] = await Promise.all([
     getAccountOverview(admin.userId, admin.sessionId),
     getSiteOptionsForEdit(),
     getPublicProfile(),
-    getProfileAssets(),
   ])
   return (
     <>
@@ -34,12 +32,9 @@ export default async function AccountPage() {
         email={admin.email}
         // foto bulat yang sama dengan top bar dan sidebar
         photo={profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR}
-        // foto unggahan (bila ada) bisa dihapus agar kembali ke foto bawaan
-        photoAssetId={assets.photo?.id ?? null}
         adminSince={overview.adminSince}
         passwordChangedAt={overview.passwordChangedAt}
         sessions={overview.sessions}
-        events={overview.events}
         loginNotify={options.loginNotify}
         emailReady={getEmailConfig() !== null}
         uploadReady={isUploadConfigured()}

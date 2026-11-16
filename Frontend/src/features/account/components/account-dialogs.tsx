@@ -1,19 +1,15 @@
 'use client'
 
-import Image, { type StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, type RefObject, useId, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
-import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { ActionResult } from '@/lib/action-result'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
-import { removeAsset } from '@/features/assets/actions'
 
 import { changeAccountEmail, renameAccount } from '../actions'
 import { ChangePasswordForm } from './change-password-form'
@@ -33,14 +29,12 @@ function FormDialog({
   open,
   onOpenChange,
   title,
-  description,
   returnFocus,
   children,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
-  description?: string
   returnFocus?: ReturnFocus
   children: ReactNode
 }) {
@@ -52,11 +46,8 @@ function FormDialog({
         className="max-h-[92dvh] max-w-md overflow-y-auto"
       >
         <DialogTitle>{title}</DialogTitle>
-        {description ? (
-          <DialogDescription>{description}</DialogDescription>
-        ) : (
-          <DialogDescription className="sr-only">{title}</DialogDescription>
-        )}
+        {/* tanpa keterangan di layar (revisi pemilik 2026-11-16); pembaca layar tetap dapat nama dialog */}
+        <DialogDescription className="sr-only">{title}</DialogDescription>
         <div className="mt-5">{children}</div>
       </DialogContent>
     </Dialog>
@@ -69,7 +60,6 @@ const IDENTITY: Record<
   Identity,
   {
     title: string
-    description: string
     oldLabel: string
     newLabel: string
     type: 'text' | 'email'
@@ -78,8 +68,6 @@ const IDENTITY: Record<
 > = {
   name: {
     title: 'Ganti nama',
-    description:
-      'Tampil di menu profil, sidebar, dan log audit. Nama di situs publik diubah di menu Tentang, Profil.',
     oldLabel: 'Nama lama',
     newLabel: 'Nama baru',
     type: 'text',
@@ -87,7 +75,6 @@ const IDENTITY: Record<
   },
   email: {
     title: 'Ganti email',
-    description: 'Email ini dipakai untuk masuk ke panel admin.',
     oldLabel: 'Email lama',
     newLabel: 'Email baru',
     type: 'email',
@@ -133,13 +120,7 @@ export function ChangeIdentityDialog({
   }
 
   return (
-    <FormDialog
-      open={open}
-      onOpenChange={close}
-      title={t(copy.title)}
-      description={t(copy.description)}
-      returnFocus={returnFocus}
-    >
+    <FormDialog open={open} onOpenChange={close} title={t(copy.title)} returnFocus={returnFocus}>
       <form
         noValidate
         className="flex flex-col gap-4"
@@ -240,7 +221,6 @@ export function ChangePasswordDialog({
       open={open}
       onOpenChange={onOpenChange}
       title={t('Ganti password')}
-      description={t('Perangkat lain otomatis keluar setelah password diganti.')}
       returnFocus={returnFocus}
     >
       <ChangePasswordForm
@@ -250,61 +230,5 @@ export function ChangePasswordDialog({
         }}
       />
     </FormDialog>
-  )
-}
-
-// Foto profil ditekan: tampil penuh. Foto unggahan bisa dihapus dari sini untuk kembali ke foto bawaan.
-export function PhotoLightbox({
-  open,
-  onOpenChange,
-  photo,
-  photoAssetId,
-  returnFocus,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  photo: string | StaticImageData
-  photoAssetId: string | null
-  returnFocus?: ReturnFocus
-}) {
-  const t = useAdminT()
-  const router = useRouter()
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        blur
-        onCloseAutoFocus={restoreFocus(returnFocus)}
-        className="w-[min(92vw,34rem)] max-w-none p-3"
-      >
-        <DialogTitle className="sr-only">{t('Foto profil')}</DialogTitle>
-        <DialogDescription className="sr-only">{t('Foto profil')}</DialogDescription>
-        <Image
-          placeholder={SHIMMER_PLACEHOLDER}
-          src={photo}
-          alt={t('Foto profil')}
-          width={1024}
-          height={1024}
-          sizes="(min-width: 640px) 34rem, 92vw"
-          className="mx-auto max-h-[78dvh] w-full rounded-xl bg-text object-contain"
-        />
-        {photoAssetId ? (
-          <div className="mt-2 flex items-center justify-between gap-3 px-1">
-            <p className="text-sm text-muted">
-              {t('Hapus foto unggahan untuk kembali ke foto bawaan.')}
-            </p>
-            <ConfirmDelete
-              title="Hapus Foto"
-              iconOnly
-              itemLabel={t('foto unggahan')}
-              onConfirm={removeAsset.bind(null, photoAssetId)}
-              onDone={() => {
-                onOpenChange(false)
-                router.refresh()
-              }}
-            />
-          </div>
-        ) : null}
-      </DialogContent>
-    </Dialog>
   )
 }

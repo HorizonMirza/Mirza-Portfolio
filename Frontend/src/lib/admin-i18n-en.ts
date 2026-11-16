@@ -51,9 +51,6 @@ export const EN: Record<string, string> = {
   Indonesia: 'Indonesian',
   Inggris: 'English',
   'Isi {lang}: {error}': '{lang} text: {error}',
-  'Hapus foto unggahan untuk kembali ke foto bawaan.':
-    'Delete the uploaded photo to go back to the default photo.',
-  'foto unggahan': 'uploaded photo',
   'Kembali ke Dashboard': 'Back to Dashboard',
   ', kembali ke Dashboard': ', back to Dashboard',
   '(membuka tab baru)': '(opens in a new tab)',
@@ -143,7 +140,6 @@ export const EN: Record<string, string> = {
   'Hapus Skill': 'Delete Skill',
   'Hapus Project': 'Delete Project',
   'Hapus Gambar': 'Delete Image',
-  'Hapus Foto': 'Delete Photo',
   'Hapus Pesan': 'Delete Message',
   'Hapus Pendidikan': 'Delete Education',
   'Hapus Pengalaman': 'Delete Experience',
@@ -205,11 +201,8 @@ export const EN: Record<string, string> = {
   Galeri: 'Gallery',
   'gambar galeri {n}': 'gallery image {n}',
   'Teks kartu {name}': 'Card text {name}',
-  'Lihat foto profil': 'View profile photo',
   'Ganti nama': 'Change name',
   'Ganti email': 'Change email',
-  'Email ini dipakai untuk masuk ke panel admin.':
-    'This email is used to sign in to the admin panel.',
   'Nama lama': 'Current name',
   'Nama baru': 'New name',
   'Email lama': 'Current email',
@@ -480,7 +473,6 @@ export const EN: Record<string, string> = {
   'Animasi hero': 'Hero animation',
   'Bahasa saat pertama dibuka': 'Language on first visit',
   'Batas pesan per jam': 'Messages per hour',
-  'Belum ada aktivitas.': 'No activity yet.',
   'Berbeda dari password saat ini': 'Different from the current password',
   'Bila mati, form di halaman Kontak diganti tulisan bahwa form sedang ditutup.':
     'When off, the form on the Contact page is replaced by a note that it is closed.',
@@ -504,7 +496,6 @@ export const EN: Record<string, string> = {
   'Email saat ada pesan baru': 'Email on new message',
   'Frasa panjang lebih kuat daripada simbol acak.':
     'A long phrase is stronger than random symbols.',
-  'Gagal ({count})': 'Failed ({count})',
   Gelap: 'Dark',
   'Hanya perangkat ini yang sedang masuk.': 'Only this device is signed in.',
   'Hitung kunjungan': 'Count visits',
@@ -539,9 +530,6 @@ export const EN: Record<string, string> = {
     'Visitors only see a Being updated page and the site is not indexed. The admin panel keeps working.',
   Perangkat: 'Devices',
   'Perangkat ini': 'This device',
-  'Riwayat masuk disimpan 90 hari. Tanpa alamat IP; tempat diperkirakan dari kota jaringan.':
-    'Sign-in history is kept for 90 days. No IP addresses; the place is estimated from the network’s city.',
-  'Saring aktivitas': 'Filter activity',
   'Satu volume untuk tombol tema, bahasa, dan menu di situs. 0 berarti tanpa suara.':
     'One volume for the theme, language, and menu buttons on the site. 0 means no sound.',
   Sebelum: 'Before',
@@ -557,7 +545,6 @@ export const EN: Record<string, string> = {
   Terang: 'Light',
   'Terima pesan dari form kontak': 'Accept messages from the contact form',
   Tersimpan: 'Saved',
-  'Tidak ada percobaan masuk yang gagal.': 'No failed sign-in attempts.',
   'Tombol WhatsApp melayang': 'Floating WhatsApp button',
   'Tombol bulat di pojok kanan bawah situs, membuka chat ke nomor WhatsApp di menu Footer.':
     'A round button in the bottom-right corner of the site that opens a chat with the WhatsApp number from the Footer menu.',
@@ -567,7 +554,6 @@ export const EN: Record<string, string> = {
   'Untuk grafik di Dashboard. Tanpa cookie dan tanpa IP mentah.':
     'For the Dashboard chart. No cookies and no raw IP addresses.',
   'aktif {time}': 'active {time}',
-  'email tidak terdaftar': 'unregistered email',
   'sistem tidak dikenal': 'unknown system',
   '{browser} di {os}': '{browser} on {os}',
   'Terlalu pendek': 'Too short',
@@ -575,7 +561,6 @@ export const EN: Record<string, string> = {
   Kuat: 'Strong',
   'Sangat kuat': 'Very strong',
   Masuk: 'Signed in',
-  'Gagal masuk': 'Failed sign-in',
   'Password diganti': 'Password changed',
   'Perangkat dikeluarkan': 'Device signed out',
   'Perangkat dikeluarkan.': 'Device signed out.',
@@ -614,7 +599,6 @@ export const EN: Record<string, string> = {
   // Akun desain 1 (DESIGN.md bagian 124)
   'Admin sejak': 'Admin since',
   'Aktif sekarang': 'Active now',
-  'Aktivitas terbaru': 'Recent activity',
   'Belum pernah diganti dari panel': 'Not changed from the panel yet',
   'Butuh Resend. Pilihan tetap disimpan.': 'Needs Resend. Your choice is still saved.',
   'Ganti foto profil': 'Change profile photo',
@@ -624,17 +608,10 @@ export const EN: Record<string, string> = {
   'Keluar dari semua perangkat lain?': 'Sign out of all other devices?',
   'Keluarkan {count} perangkat lain? Perangkat ini tetap masuk.':
     'Sign out {count} other devices? This device stays signed in.',
-  'Kembali ke Akun': 'Back to Account',
-  'Lihat semua aktivitas': 'See all activity',
   'Nama akun': 'Account name',
-  'Perangkat lain otomatis keluar setelah password diganti.':
-    'Other devices are signed out after the password changes.',
   'Perangkat tertaut · {count}': 'Linked devices · {count}',
-  'Tampil di menu profil, sidebar, dan log audit. Nama di situs publik diubah di menu Tentang, Profil.':
-    'Shown in the profile menu, sidebar, and audit log. The name on the public site is edited in About, Profile.',
   'Terakhir aktif {time}': 'Last active {time}',
   'Terakhir diganti {date}': 'Last changed {date}',
-  '{count} kejadian, bisa disaring yang gagal': '{count} events, filter for failed ones',
   'Nama disimpan.': 'Name saved.',
   'Nama minimal 2 karakter': 'Name must be at least 2 characters',
   'Nama maksimal 80 karakter': 'Name must be at most 80 characters',

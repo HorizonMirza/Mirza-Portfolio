@@ -236,7 +236,7 @@ export function ExperienceTimelineLive({
                                 <button
                                   type="button"
                                   onClick={() => set({ endMonth: '' })}
-                                  className="inline-flex min-h-6 items-center border border-dashed border-border px-1.5 font-sans text-xs font-semibold text-muted hover:text-text"
+                                  className="admin-editable inline-flex min-h-6 items-center rounded-none px-0.5"
                                 >
                                   {t('Masih berlangsung')}
                                 </button>

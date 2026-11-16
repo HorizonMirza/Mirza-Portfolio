@@ -20,10 +20,13 @@ test.describe('Admin → Akun', () => {
     await expect(main).toContainText(email)
     await expect(main.getByRole('button', { name: 'Tampilkan' })).toHaveCount(0)
     await expect(main.getByText('Super Admin', { exact: true })).toBeVisible()
-    for (const group of ['Info', 'Keamanan', 'Aktivitas terbaru'])
+    for (const group of ['Info', 'Keamanan'])
       await expect(main.getByRole('heading', { name: group, exact: true })).toBeVisible()
     await expect(main.getByRole('heading', { name: /^Perangkat tertaut · \d+$/ })).toBeVisible()
     await expect(main.getByText('Perangkat ini', { exact: true })).toBeVisible()
+    // daftar aktivitas terbaru dihapus dari halaman Akun (revisi 2026-11-16)
+    await expect(main.getByRole('heading', { name: 'Aktivitas terbaru' })).toHaveCount(0)
+    await expect(main.getByRole('button', { name: /^Lihat semua aktivitas/ })).toHaveCount(0)
   })
 
   test('ganti password di dialog: aturan dan meter kekuatan, lalu tutup', async ({ page }) => {
@@ -51,13 +54,11 @@ test.describe('Admin → Akun', () => {
     await expect(opener).toBeFocused()
   })
 
-  test('foto ditekan tampil penuh; kamera langsung ke pemilih berkas', async ({ page }) => {
+  test('foto tidak bisa ditekan; kamera langsung ke pemilih berkas', async ({ page }) => {
     await page.goto('/admin/account')
-    await page.getByRole('button', { name: 'Lihat foto profil' }).click()
-    const dialog = page.getByRole('dialog', { name: 'Foto profil' })
-    await expect(dialog.getByRole('img', { name: 'Foto profil' })).toBeVisible()
-    await page.keyboard.press('Escape')
-    await expect(dialog).toHaveCount(0)
+    // foto hanya gambar (tanpa tampilan penuh); satu-satunya tombol foto adalah kamera
+    await expect(page.getByRole('button', { name: 'Lihat foto profil' })).toHaveCount(0)
+    await expect(page.getByRole('dialog')).toHaveCount(0)
     // tanpa halaman kedua: Cloudinary tidak diatur di tes, jadi pemilih berkas menjawab "belum aktif"
     await page.getByRole('button', { name: 'Ganti foto profil' }).click()
     await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
@@ -116,31 +117,6 @@ test.describe('Admin → Akun', () => {
     await expect(main.getByText(`${original} SALAH`)).toHaveCount(0)
     await rename(`${original} E2E`)
     await rename(original)
-  })
-
-  test('login gagal tercatat dan bisa disaring di semua aktivitas', async ({
-    page,
-    request,
-    baseURL,
-  }) => {
-    const res = await request.post('/api/auth/sign-in/email', {
-      headers: { origin: baseURL!, 'x-forwarded-for': uniqueIp() },
-      data: { email: process.env.ADMIN_EMAIL, password: 'password-salah-untuk-tes' },
-    })
-    expect(res.status()).toBe(401)
-    test.setTimeout(60_000)
-    const main = page.locator('main')
-    // Dicatat lewat after(), sesaat setelah respons login terkirim: halaman dibuka ulang sampai
-    // kejadiannya ada. Tiap putaran diberi waktu cukup untuk animasi masuk halaman (WebKit di CI lambat;
-    // dulu 1 detik per klik dan selalu habis, CI #298).
-    await expect(async () => {
-      await page.goto('/admin/account')
-      await main.getByRole('button', { name: /^Lihat semua aktivitas/ }).click()
-      await page.getByRole('button', { name: /^Gagal \(\d+\)$/ }).click()
-      await expect(main.locator('[data-event="failed"]').first()).toBeVisible({ timeout: 3000 })
-    }).toPass({ timeout: 45_000 })
-    await expect(main.locator('[data-event="success"]')).toHaveCount(0)
-    await expect(main.locator('[data-event="failed"]').first()).toContainText('Gagal masuk')
   })
 
   test('perangkat lain bisa dikeluarkan dan sesinya langsung berakhir', async ({

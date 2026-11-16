@@ -22,11 +22,14 @@ export function DialogContent({
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay
-        className={cn('fixed inset-0 z-50 bg-black/50', blur && 'backdrop-blur-md')}
+        className={cn(
+          'dialog-overlay fixed inset-0 z-50 bg-black/30',
+          blur && 'backdrop-blur-[2px]',
+        )}
       />
       <DialogPrimitive.Content
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-surface p-6 shadow-lg',
+          'dialog-content fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-surface p-6 shadow-lg',
           className,
         )}
         {...props}
