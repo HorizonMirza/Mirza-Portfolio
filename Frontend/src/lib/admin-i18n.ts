@@ -113,9 +113,3 @@ export function adminTextWillChange(text: string, next: AdminLang): boolean {
 export function adminDrafts(lang: AdminLang, count: number) {
   return lang === 'en' ? `${count} draft${count === 1 ? '' : 's'}` : `${count} draf`
 }
-
-export function adminVisitsTotal(lang: AdminLang, total: number) {
-  return lang === 'en'
-    ? `Total ${total.toLocaleString('en-US')} visits. Days in WIB.`
-    : `Total ${total.toLocaleString('id-ID')} kunjungan. Hari menurut WIB.`
-}

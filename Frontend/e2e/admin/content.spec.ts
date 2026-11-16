@@ -674,6 +674,44 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await expect(savedRole).toHaveCount(0)
 })
 
+test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel, pesan, dan konten', async ({
+  page,
+}) => {
+  await page.goto('/admin')
+  const summary = page.getByRole('region', { name: 'Ringkasan' })
+  for (const label of ['Pengunjung', 'Tayangan halaman', 'Unduhan CV', 'Pesan masuk'])
+    await expect(
+      summary.getByRole('link', { name: new RegExp(`^${label}, 30 hari`) }),
+    ).toBeVisible()
+  const period = page.getByRole('navigation', { name: 'Periode' })
+  await expect(period.getByRole('link', { name: '30 hari' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  // ganti periode lewat tautan (?range=7): angka dan tabel ikut 7 hari
+  await period.getByRole('link', { name: '7 hari' }).click()
+  await expect(page).toHaveURL(/\/admin\?range=7$/)
+  await expect(period.getByRole('link', { name: '7 hari' })).toHaveAttribute('aria-current', 'page')
+  await expect(summary.getByRole('link', { name: /^Pengunjung, 7 hari/ })).toBeVisible()
+  await page.getByText('Lihat sebagai tabel').click()
+  const table = page.getByRole('table', { name: 'Kunjungan harian, 7 hari' })
+  await expect(table.locator('tbody tr')).toHaveCount(7)
+  await expect(table.getByRole('columnheader', { name: 'Pengunjung' })).toBeVisible()
+  // periode yang tidak dikenal kembali ke 30 hari
+  await page.goto('/admin?range=12')
+  await expect(period.getByRole('link', { name: '30 hari' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  )
+  await expect(page.getByRole('heading', { name: 'Pesan terbaru' })).toBeVisible()
+  const content = page
+    .locator('section, div')
+    .filter({ has: page.getByRole('heading', { name: 'Konten di situs' }) })
+    .last()
+  for (const label of ['Project terbit', 'Pengalaman', 'Pendidikan', 'Skill'])
+    await expect(content.getByRole('link', { name: new RegExp(`^${label}`) })).toBeVisible()
+})
+
 test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {
   // data halaman tujuan ditahan sebentar setelah kerangkanya diambil lewat prefetch
   await page.goto('/admin', { waitUntil: 'networkidle' })
@@ -685,7 +723,7 @@ test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({
     await route.continue().catch(() => {})
   })
   const loading = page.getByRole('status').filter({ hasText: 'Memuat halaman…' })
-  const tile = page.getByRole('link', { name: 'Pesan baru' })
+  const tile = page.getByRole('link', { name: /^Pesan masuk/ })
   await tile.hover()
   await page.waitForLoadState('networkidle')
   await tile.click()

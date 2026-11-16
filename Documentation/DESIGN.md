@@ -312,10 +312,10 @@ h1 Hubungi saya
 
 ```
 ┌ Sidebar ┐ ┌ Konten ──────────────────────────────────────────┐
-│Dashboard│ │ Kartu ringkas: Pesan baru · Kunjungan 7 hari ·    │
-│Projects │ │ Unduhan CV · Pelanggan                            │
-│Skills   │ │ Grafik kunjungan (garis, 30 hari)                 │
-│Experience│ │ Pesan terbaru (5)                                 │
+│Dashboard│ │ 4 angka + naik/turun + grafik kecil (7/30/90 hari)│
+│Projects │ │ Kunjungan harian: tayangan + pengunjung, tabel    │
+│Skills   │ │ Pesan terbaru (4) · Konten di situs               │
+│Experience│ │ (desain 01 "Ringkas", bagian 165)                 │
 │Profile  │ └───────────────────────────────────────────────────┘
 │Messages │
 │Newsletter│  Halaman daftar: tabel + cari + [Tambah]
@@ -1881,3 +1881,12 @@ Garis atas panel isi (`<main>`) dulu berupa bayangan inset (`.admin-glass-panel`
 - **Project baru**: sampul dan gambar galeri bisa dipilih dan dipotong sebelum project tersimpan; ditahan di browser lalu diunggah setelah project dibuat (pertama = sampul). Tombol **Draf** dihapus; project baru langsung terbit (`emptyProject.status = 'PUBLISHED'`), dan project yang sudah ada tidak berubah statusnya.
 - **Slug** project diketik di bilah alamat jendela browser di atas galeri (`host/projects/` + isian), bukan lagi di bawah judul.
 - **Daftar project (admin)** tampil persis seperti halaman Project situs: judul halaman, baris zig-zag dengan sampul miring di bingkai browser, peran, judul huruf besar, ringkasan, chip teknologi berlogo (`TechChipsList` dipisah dari `TechChips` agar bisa dipakai komponen klien), dan nomor besar, di dalam bingkai layar yang diperkecil (`SiteFrame`). Peran, judul, dan ringkasan tetap diketik di tempatnya; ikon pensil, urutan, dan hapus muncul saat baris disorot.
+
+## 165. Dashboard desain 01 "Ringkas" (2026-11-16 malam)
+
+Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
+- **Empat kotak angka** (tautan): Pengunjung (`#kunjungan`), Tayangan halaman (`#kunjungan`), Unduhan CV (Kaki Halaman), Pesan masuk (Pesan). Tiap kotak: jumlah periode, naik/turun dibanding periode sebelumnya yang sama panjang (hijau ▲ / merah ▼, "—" bila belum ada pembanding; keterangan untuk pembaca layar), dan grafik kecil per hari.
+- **Periode 7 / 30 / 90 hari** lewat tautan `?range=` (tetap server component, tanpa JavaScript tambahan; nilai lain kembali ke 30). Periode mengubah kotak angka, grafik, dan tabel.
+- **Kunjungan harian** (recharts): tayangan garis tebal dengan arsiran, pengunjung unik garis putus, warna teks tema (hitam-putih); tooltip tanggal + dua angka; "Lihat sebagai tabel" berisi Tanggal, Tayangan, Pengunjung.
+- **Sumber data** (`features/dashboard/queries.ts` `getDailyStats`): kunjungan mentah (`PageView`) untuk hari di dalam masa simpan (Pengaturan: 30/90/365 hari), ringkasan harian `PageViewDaily` untuk tayangan yang lebih lama; pengunjung unik hanya dari data mentah, jadi hari di luar masa simpan ditandai "—" dan naik/turun pengunjung tidak dihitung. Unduhan CV dari `CvDownload`, pesan dari `Message`, semua per hari WIB.
+- **Pesan terbaru** (4): nama, subjek, status Baru/Dibaca/Arsip, waktu WIB; tiap baris membuka pesannya. **Konten di situs**: Project terbit (+ draf), Pengalaman (kerja dan organisasi), Pendidikan, Skill (+ jumlah kategori), tiap baris tautan ke halaman pengelolanya.

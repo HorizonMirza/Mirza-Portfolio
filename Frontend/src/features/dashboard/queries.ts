@@ -2,43 +2,87 @@ import 'server-only'
 
 import { getDb } from '@/lib/db'
 import { lastDayKeys } from '@/lib/format'
+import { toSiteOptions } from '@/features/settings/options'
 
-export type DailyVisits = { day: string; views: number }
+const DAY_MS = 24 * 60 * 60 * 1000
 
-export async function getDashboardStats() {
+// Periode Dashboard (desain 01 "Ringkas", pilihan pemilik 2026-11-16)
+export const DASHBOARD_RANGES = [7, 30, 90] as const
+export type DashboardRange = (typeof DASHBOARD_RANGES)[number]
+
+export function toDashboardRange(value: unknown): DashboardRange {
+  const n = Number(Array.isArray(value) ? value[0] : value)
+  return (DASHBOARD_RANGES as readonly number[]).includes(n) ? (n as DashboardRange) : 30
+}
+
+// Satu hari kalender Asia/Jakarta. visitors null = data per pengunjung sudah tidak ada (kunjungan
+// mentah lewat masa simpan di Pengaturan); tayangan tetap ada dari ringkasan harian PageViewDaily.
+export type DayStat = {
+  day: string
+  views: number
+  visitors: number | null
+  cv: number
+  messages: number
+}
+
+type DayCount = { day: string; n: bigint }
+
+// Hari ini mundur `days` hari: tayangan, pengunjung unik per hari, unduhan CV, dan pesan masuk.
+export async function getDailyStats(days: number): Promise<DayStat[]> {
   const db = getDb()
-  const since30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-  const since7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-
-  const [published, drafts, experiences, skills, newMessages, cvDownloads, views7] =
-    await Promise.all([
-      db.project.count({ where: { status: 'PUBLISHED' } }),
-      db.project.count({ where: { status: 'DRAFT' } }),
-      db.experience.count(),
-      db.skill.count(),
-      db.message.count({ where: { status: 'NEW' } }),
-      db.cvDownload.count({ where: { createdAt: { gte: since30 } } }),
-      db.pageView.count({ where: { createdAt: { gte: since7 } } }),
-    ])
-
-  return { published, drafts, experiences, skills, newMessages, cvDownloads, views7 }
+  const since = new Date(Date.now() - (days + 1) * DAY_MS)
+  const keys = lastDayKeys(days)
+  const [raw, summary, cv, messages, setting] = await Promise.all([
+    db.$queryRaw<{ day: string; views: bigint; visitors: bigint }[]>`
+      SELECT to_char(("createdAt" AT TIME ZONE 'Asia/Jakarta')::date, 'YYYY-MM-DD') AS day,
+             count(*) AS views, count(DISTINCT "visitorHash") AS visitors
+      FROM "PageView" WHERE "createdAt" >= ${since} GROUP BY 1`,
+    db.$queryRaw<DayCount[]>`
+      SELECT to_char("date", 'YYYY-MM-DD') AS day, sum("views")::bigint AS n
+      FROM "PageViewDaily" WHERE "date" >= ${keys[0]}::date GROUP BY 1`,
+    db.$queryRaw<DayCount[]>`
+      SELECT to_char(("createdAt" AT TIME ZONE 'Asia/Jakarta')::date, 'YYYY-MM-DD') AS day, count(*) AS n
+      FROM "CvDownload" WHERE "createdAt" >= ${since} GROUP BY 1`,
+    db.$queryRaw<DayCount[]>`
+      SELECT to_char(("createdAt" AT TIME ZONE 'Asia/Jakarta')::date, 'YYYY-MM-DD') AS day, count(*) AS n
+      FROM "Message" WHERE "createdAt" >= ${since} GROUP BY 1`,
+    db.siteSetting.findUnique({ where: { id: 1 } }),
+  ])
+  const { visitRetentionDays } = toSiteOptions(setting)
+  const rawByDay = new Map(raw.map((r) => [r.day, r]))
+  const count = (rows: DayCount[]) => new Map(rows.map((r) => [r.day, Number(r.n)]))
+  const summaryByDay = count(summary)
+  const cvByDay = count(cv)
+  const messagesByDay = count(messages)
+  return keys.map((day, i) => {
+    // kunjungan mentah utuh untuk hari-hari di dalam masa simpan (cron menghapus yang lebih lama)
+    const rawKept = i >= days - visitRetentionDays
+    const r = rawByDay.get(day)
+    return {
+      day,
+      views: rawKept ? Number(r?.views ?? 0) : (summaryByDay.get(day) ?? Number(r?.views ?? 0)),
+      visitors: rawKept ? Number(r?.visitors ?? 0) : null,
+      cv: cvByDay.get(day) ?? 0,
+      messages: messagesByDay.get(day) ?? 0,
+    }
+  })
 }
 
-// Kunjungan per hari (hari kalender Asia/Jakarta), 30 hari terakhir, hari kosong = 0.
-export async function getDailyVisits(days = 30): Promise<DailyVisits[]> {
-  const since = new Date(Date.now() - (days + 1) * 24 * 60 * 60 * 1000)
-  const rows = await getDb().$queryRaw<{ day: string; views: bigint }[]>`
-    SELECT to_char(("createdAt" AT TIME ZONE 'Asia/Jakarta')::date, 'YYYY-MM-DD') AS day,
-           count(*) AS views
-    FROM "PageView"
-    WHERE "createdAt" >= ${since}
-    GROUP BY 1
-  `
-  const byDay = new Map(rows.map((r) => [r.day, Number(r.views)]))
-  return lastDayKeys(days).map((day) => ({ day, views: byDay.get(day) ?? 0 }))
+// Jumlah konten untuk kartu "Konten di situs"
+export async function getContentCounts() {
+  const db = getDb()
+  const [published, drafts, experiences, education, skills, skillCategories] = await Promise.all([
+    db.project.count({ where: { status: 'PUBLISHED' } }),
+    db.project.count({ where: { status: 'DRAFT' } }),
+    db.experience.count({ where: { type: { not: 'EDUCATION' } } }),
+    db.experience.count({ where: { type: 'EDUCATION' } }),
+    db.skill.count(),
+    db.skillCategory.count(),
+  ])
+  return { published, drafts, experiences, education, skills, skillCategories }
 }
 
-export async function getRecentMessages(take = 5) {
+export async function getRecentMessages(take = 4) {
   return getDb().message.findMany({
     orderBy: { createdAt: 'desc' },
     take,
