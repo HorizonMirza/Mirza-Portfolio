@@ -293,3 +293,6 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Revisi sore: Footer dua baris (nama + tautan), Projects ubah tanpa pilihan status/kategori/tahun dan tanpa ID/EN di atas, alamat dan tombol URL rapi, ringkasan satu baris, galeri seperti situs dengan tombol + (DESIGN.md bagian 158) |
 | 2026-11-16 | Revisi sore (2): halaman ubah Project dengan logo GitHub asli, garis foto rapi dan hapus untuk semua foto, ringkasan hanya di daftar, pilihan teknologi berlogo seperti Skill teknis (DESIGN.md bagian 159) |
 | 2026-11-16 | Skeleton shimmer dilengkapi: halaman masuk admin, kanvas (globe, grafik GitHub, kartu ID), tombol Simpan, unggahan galeri, pemotong gambar (DESIGN.md bagian 160) |
+| 2026-11-16 | Footer: judul dan teks kecil tiap kartu bisa diganti admin bersama tautan tujuan (kolom contactLabels, DESIGN.md bagian 161) |
+| 2026-11-16 | Akun: foto penuh dan kamera langsung ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog buram dengan password (aksi changeAccountEmail, DESIGN.md bagian 162) |
+| 2026-11-16 | Garis tepi atas panel isi admin tidak lagi terpotong isi yang digulir (border sungguhan, DESIGN.md bagian 163) |

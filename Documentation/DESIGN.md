@@ -1856,3 +1856,20 @@ Sebelumnya skeleton ada di perpindahan halaman publik (`NavigationSkeleton`), se
 - **Galeri project** (admin): kotak kilau di deretan gambar kecil, atau di foto besar bila belum ada gambar, selama unggahan berjalan.
 - **Pemotong gambar**: bingkai berkilau selama gambar dibaca.
 - Tetap tanpa skeleton: gambar kecil `<img>` logo (14-20 px), pratinjau blob di dialog, dan teks yang sudah dirender server.
+
+## 161. Footer: dua nama yang tampil di tiap kartu dan tautan tujuannya (2026-11-16)
+
+- Tiap kartu kontak di Admin → Footer punya tiga isian: **judul** (WhatsApp, Email, LinkedIn, GitHub, Instagram; kartu CV memakai judul teks situs yang sudah ada), **teks kecil** di bawahnya (nomor, email, nama akun, atau "Google Drive"), dan **tautan tujuan** (huruf mono kecil).
+- Judul dan teks kecil diganti di kolom baru `Profile.contactLabels` (JSON `{ kunci: { title, value } }`, migrasi `20261116060000_contact_labels`, hanya menambah kolom). Nilai yang sama dengan bawaan (nama merek, atau teks yang diturunkan dari tautan) **tidak disimpan**, jadi kartu tetap mengikuti tautan yang diganti kemudian. Saat tautan diganti di admin, teks kecil yang masih bawaan ikut berganti; yang sudah diubah admin dibiarkan.
+- Situs memakai penggantian itu di daftar kartu, kartu detail WhatsApp, Email, dan akun sosial (`footerLinks` menerima `contactLabels`). Kartu detail LinkedIn tetap memakai nama akun dari tautan (`derived`) karena menyusun alamat profil. Batas: judul 40 dan teks 80 karakter, sama untuk kedua bahasa.
+
+## 162. Akun: foto penuh, kamera ke pemilih berkas, ganti nama/email/password lewat dialog buram (2026-11-16)
+
+- **Foto** di halaman Akun ditekan membuka dialog dengan foto penuh (`PhotoLightbox`); foto unggahan bisa dihapus dari situ (ikon tong sampah) untuk kembali ke foto bawaan. **Tombol kamera** langsung membuka pemilih berkas, lalu pemotong gambar dan unggah (`useAssetPicker`, target `profile-photo`); halaman kedua "Foto profil" dan `AssetUploader` dihapus. Tanpa Cloudinary, muncul pesan "Unggah belum aktif".
+- **Email** tampil apa adanya (tombol Tampilkan/Sembunyikan dihapus; `maskEmail` tinggal dipakai di log audit).
+- **Ganti nama, ganti email, dan ganti password** berupa dialog dengan latar belakang buram (`DialogContent blur`). Nama dan email menampilkan nilai lama (tidak bisa diubah), kolom nilai baru, dan **password akun** (diverifikasi lewat `auth.api.verifyPassword`, dibatasi 10 percobaan per 15 menit). Ganti password memakai form yang sama dengan aturan dan meter kekuatan. Hanya "Lihat semua aktivitas" yang masih halaman kedua.
+- Aksi baru `changeAccountEmail` (Zod, SUPER_ADMIN, email tidak boleh dipakai akun lain, audit dengan email disamarkan); `renameAccount` kini meminta password. Seed tidak membuat akun baru bila `ADMIN_EMAIL` berbeda dari email di database (hanya satu Super Admin), tetapi skrip `admin:reset-password` memakai `ADMIN_EMAIL`, jadi isi dengan email yang baru.
+
+## 163. Garis tepi panel isi admin tidak terpotong saat digulir (2026-11-16)
+
+Garis atas panel isi (`<main>`) dulu berupa bayangan inset (`.admin-glass-panel`). Bayangan inset berada di bawah isi, jadi isi yang digulir ke atas menimpa dan memotong garisnya. Panel isi kini memakai `.admin-glass-scroll`: garis tepi berupa `border` 1 px (atas lebih terang, sisanya tipis, nilai warna sama dengan sebelumnya), sehingga garis selalu terlihat dan isi berhenti tepat di bawahnya. Top bar dan sidebar tidak digulir di tepinya, jadi tetap memakai `.admin-glass-panel` saja.

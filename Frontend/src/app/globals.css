@@ -3385,47 +3385,46 @@ html[data-intro='pending'] .intro {
   }
 }
 
-/* Skeleton shimmer untuk kanvas (globe skill, grafik kontribusi GitHub, kartu ID): selama kanvas belum
+/* Skeleton shimmer untuk kanvas (grafik kontribusi GitHub dan kartu ID): selama kanvas belum
    menggambar bingkai pertama, blok abu-abu berkilau menutupi area dan tidak menghalangi sentuhan.
    Komponen memasang data-ready begitu gambar pertama selesai (atau setelah 4 detik sebagai pengaman).
-   Diam saat prefers-reduced-motion. */
-.globe-stage:not([data-ready])::before,
+   Kilau berjalan lewat transform (compositor), bukan background-position, supaya tidak memperlambat
+   loop kanvas di mesin yang sibuk. Diam saat prefers-reduced-motion. */
 .contrib-stage:not([data-ready])::before,
-.lanyard-box:not([data-ready])::before {
+.lanyard-box:not([data-ready])::before,
+.contrib-stage:not([data-ready])::after,
+.lanyard-box:not([data-ready])::after {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 5;
   pointer-events: none;
   border-radius: 8px;
-  background:
-    linear-gradient(
-        90deg,
-        transparent,
-        color-mix(in srgb, var(--text) 9%, transparent),
-        transparent
-      )
-      0 0 / 200% 100%,
-    color-mix(in srgb, var(--text) 8%, var(--bg));
-  animation: canvas-shimmer 1.6s linear infinite;
 }
-@keyframes canvas-shimmer {
-  from {
-    background-position:
-      200% 0,
-      0 0;
-  }
-  to {
-    background-position:
-      -200% 0,
-      0 0;
-  }
+.contrib-stage:not([data-ready])::before,
+.lanyard-box:not([data-ready])::before {
+  z-index: 5;
+  background: color-mix(in srgb, var(--text) 8%, var(--bg));
+}
+.contrib-stage:not([data-ready])::after,
+.lanyard-box:not([data-ready])::after {
+  z-index: 6;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--text) 9%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+/* kotak kartu ID tidak memotong isinya; selama belum siap kilau dipotong di tepinya */
+.lanyard-box:not([data-ready]) {
+  clip-path: inset(0);
 }
 @media (prefers-reduced-motion: reduce) {
-  .globe-stage:not([data-ready])::before,
-  .contrib-stage:not([data-ready])::before,
-  .lanyard-box:not([data-ready])::before {
-    animation: none;
+  .contrib-stage:not([data-ready])::after,
+  .lanyard-box:not([data-ready])::after {
+    display: none;
   }
 }
 
@@ -3528,6 +3527,20 @@ html[data-intro='pending'] .intro {
     inset 0 1px 0 rgb(var(--g-hl) / calc(var(--g-edge) * 0.32)),
     inset 0 0 0 1px rgb(var(--g-hl) / calc(var(--g-edge) * 0.12)),
     0 20px 52px -25px rgb(0 0 0 / 0.7);
+}
+/* Panel isi admin yang digulir (<main>): garis tepinya berupa border sungguhan, bukan bayangan inset.
+   Bayangan inset berada di bawah isi, jadi isi yang digulir menimpa dan memotong garis atas (laporan
+   pemilik 2026-11-16). Dengan border, garis tetap terlihat dan isi berhenti tepat di bawah garis. Nilai
+   warnanya sama dengan tepi .admin-glass-panel: garis atas lebih terang, sisanya tipis. */
+.admin-glass-scroll {
+  border: 1px solid rgb(var(--g-hl) / calc(var(--g-edge) * 0.3));
+  border-top-color: rgb(var(--g-hl) / calc(var(--g-edge) * 0.9));
+  box-shadow: 0 20px 52px -25px rgb(0 0 0 / 0.4);
+}
+.dark .admin-glass-scroll {
+  border-color: rgb(var(--g-hl) / calc(var(--g-edge) * 0.12));
+  border-top-color: rgb(var(--g-hl) / calc(var(--g-edge) * 0.32));
+  box-shadow: 0 20px 52px -25px rgb(0 0 0 / 0.7);
 }
 /* panel melayang di dalam admin (menu profil, Tampilan): padat. Panel ini berada di dalam top bar
    kaca, dan backdrop-filter bertingkat tidak bisa mem-blur isi halaman di luar top bar, jadi latar
