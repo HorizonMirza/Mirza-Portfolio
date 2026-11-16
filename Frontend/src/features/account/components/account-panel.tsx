@@ -9,7 +9,6 @@ import {
   LogOut,
   Mail,
   Monitor,
-  Pencil,
   Smartphone,
   User,
 } from 'lucide-react'
@@ -121,19 +120,12 @@ export function AccountPanel({
       </div>
 
       <Group title={t('Info')}>
-        <Row
-          icon={<User />}
-          title={t('Nama')}
-          detail={name}
-          onClick={() => show('name')}
-          trailing={<Pencil className="size-4 shrink-0 text-muted" aria-hidden="true" />}
-        />
+        <Row icon={<User />} title={t('Nama')} detail={name} onClick={() => show('name')} />
         <Row
           icon={<Mail />}
           title="Email"
           detail={<span className="break-all">{email}</span>}
           onClick={() => show('email')}
-          trailing={<Pencil className="size-4 shrink-0 text-muted" aria-hidden="true" />}
         />
         {adminSince ? (
           <Row
