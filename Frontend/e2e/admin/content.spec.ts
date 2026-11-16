@@ -68,6 +68,7 @@ test('halaman admin yang tidak ada mengembalikan 404', async ({ page }) => {
 test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, testInfo) => {
   const suffix = `${testInfo.project.name}-${Date.now()}`
   const titleId = `Project E2E ${suffix}`
+  const roleText = `Peran E2E ${suffix}`
   await page.goto('/admin/projects/new')
 
   // Ubah langsung di pratinjau halaman detail (DESIGN.md bagian 138). Validasi: galat kedua bahasa
@@ -85,8 +86,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const box = (name: string) => page.getByRole('textbox', { name, exact: true })
   await box('Judul (Indonesia)').fill(titleId)
   await box('Ringkasan (Indonesia)').fill('Ringkasan untuk tes E2E.')
-  await box('Peran saya (opsional) (Indonesia)').fill('Peran E2E')
-  await page.locator('#description_id').fill('Deskripsi **E2E**.')
+  await box('Peran saya (opsional) (Indonesia)').fill(roleText)
   // bahasa Inggris lewat tombol EN di panggung; tampilan admin tetap berbahasa Indonesia
   await page
     .getByRole('group', { name: 'Bahasa yang diubah' })
@@ -95,7 +95,6 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const titleEn = `E2E project ${suffix}`
   await box('Judul (Inggris)').fill(titleEn)
   await box('Ringkasan (Inggris)').fill('Summary for the E2E test.')
-  await page.locator('#description_en').fill('Description.')
   await box('Slug').fill(`e2e-${suffix}`.toLowerCase())
   // tombol detail: demo tampil, GitHub dimatikan Super Admin walau URL-nya diisi
   await box('URL demo (opsional)').fill('https://example.com/demo')
@@ -131,7 +130,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const detail = await page.goto(`/id/projects/${slug}`)
   expect(detail?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(titleId)
-  await expect(page.getByText('Peran E2E')).toBeVisible()
+  await expect(page.getByText(roleText)).toBeVisible()
   await expect(main.getByRole('link', { name: /Lihat aplikasi/ })).toHaveAttribute(
     'href',
     'https://example.com/demo',
@@ -151,16 +150,33 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   }
   expect(publicFailures).toEqual([])
 
-  // daftar admin seperti halaman Project situs: judul dalam bahasa admin (Indonesia)
+  // daftar admin seperti halaman Project situs: peran, judul, dan ringkasan diketik langsung di
+  // tempatnya (bahasa admin: Indonesia) dan disimpan lewat Simpan (revisi 2026-11-16)
   await page.goto('/admin/projects')
-  await expect(page.getByRole('link', { name: titleId })).toBeVisible()
-  await expect(page.getByText('Peran E2E').locator('visible=true').first()).toBeVisible()
+  const titleBox = page.locator('textarea[aria-label="Judul (Indonesia)"]', { hasText: titleId })
+  await expect(titleBox).toHaveCount(1)
+  await expect(page.locator(`input[value="${roleText}"]`).filter({ visible: true })).toHaveCount(1)
+  const row = page.getByRole('listitem').filter({ has: titleBox })
+  await expect(row.getByRole('link', { name: /^Ubah / }).first()).toBeAttached()
+  // tanpa penanda "Unggulan"
+  await expect(page.getByText('Unggulan', { exact: true })).toHaveCount(0)
+  await row
+    .getByRole('textbox', { name: 'Ringkasan (Indonesia)' })
+    .fill('Ringkasan diubah di daftar.')
+  await page.getByRole('button', { name: 'Simpan', exact: true }).click()
+  await expect(page.getByText('Project disimpan.')).toBeVisible()
+  await page.reload()
+  await expect(
+    page.locator('textarea[aria-label="Ringkasan (Indonesia)"]', {
+      hasText: 'Ringkasan diubah di daftar.',
+    }),
+  ).toHaveCount(1)
 
   // Hapus dengan konfirmasi
   await page.getByRole('button', { name: `Hapus ${titleId}` }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Hapus' }).click()
   await expect(page.getByText('Project dihapus.')).toBeVisible()
-  await expect(page.getByRole('link', { name: titleId })).toHaveCount(0)
+  await expect(titleBox).toHaveCount(0)
 
   // Status dicek langsung ke server, tanpa cache HTTP browser. Firefox menerapkan
   // stale-while-revalidate juga untuk navigasi, jadi `next start` lokal bisa menyajikan salinan
@@ -596,17 +612,22 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
     await expect(roles).toHaveCount(count + 1, { timeout: 1000 })
   }).toPass()
   await expect(page).toHaveURL(/\/admin\/experience$/)
-  // entri baru di paling atas; jenis hanya Kerja dan Organisasi
+  // entri baru di paling atas; tanpa pilihan Kerja/Organisasi dan "Masih berlangsung" di alat entri
   const entry = page.getByRole('listitem').filter({ has: roles.first() }).first()
-  await expect(entry.getByRole('button', { name: 'Kerja', exact: true })).toBeAttached()
-  await expect(entry.getByRole('button', { name: 'Organisasi', exact: true })).toBeAttached()
+  await expect(entry.getByRole('button', { name: 'Kerja', exact: true })).toHaveCount(0)
+  await expect(entry.getByRole('button', { name: 'Organisasi', exact: true })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Pendidikan', exact: true })).toHaveCount(0)
   await roles.first().fill(role)
   await entry.getByRole('textbox', { name: 'Instansi', exact: true }).fill('Instansi E2E')
   // jenis pekerjaan: teks bebas (bukan daftar pilihan); bulan tampil seperti di situs
   await entry.getByRole('textbox', { name: /^Jenis pekerjaan \(opsional\)/ }).fill('Magang E2E')
   await expect(entry.getByRole('combobox')).toHaveCount(0)
-  await expect(entry.getByRole('button', { name: /^Mulai:/ })).toBeVisible()
+  // bulan tampil seperti di situs; ditekan membuka pilihan bulan dan tahun (dropdown)
+  await entry.getByRole('button', { name: /^Mulai:/ }).click()
+  await expect(entry.getByRole('combobox', { name: /\(bulan\)$/ })).toBeVisible()
+  await expect(entry.getByRole('combobox', { name: /\(tahun\)$/ })).toBeVisible()
+  // tinggalkan dropdown sebelum mengisi kolom lain
+  await entry.getByRole('textbox', { name: 'Instansi', exact: true }).click()
   // uraian tampil seperti di situs; ditekan baru bisa diketik
   await entry.getByRole('button', { name: /^Uraian \(Indonesia\)/ }).click()
   await entry.getByRole('textbox', { name: 'Uraian (Indonesia)' }).fill('Uraian **E2E**.')

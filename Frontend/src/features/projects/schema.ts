@@ -83,15 +83,3 @@ export const emptyProject: ProjectInput = {
   status: 'DRAFT',
   skillIds: [],
 }
-
-// Hasil impor GitHub: hanya mengisi form, admin tetap meninjau sebelum menyimpan.
-export type GithubImport = {
-  githubRepo: string
-  summary_en: string
-  demoUrl: string
-  repoUrl: string
-  year: number
-  skillIds: string[]
-  topics: string[]
-  language: string | null
-}

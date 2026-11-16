@@ -11,10 +11,9 @@ import { getDb } from '@/lib/db'
 import { lockOrderScope } from '@/lib/order-lock'
 import { moveItem } from '@/lib/reorder'
 import { revalidateContent } from '@/lib/revalidate'
-import { emptyToNull, githubRepoSchema } from '@/lib/validation'
+import { emptyToNull } from '@/lib/validation'
 
-import { fetchGithubRepo, GithubError, matchSkills } from './github'
-import { type GithubImport, projectSchema, type ProjectValues } from './schema'
+import { projectSchema, type ProjectValues } from './schema'
 
 const idSchema = z.uuid()
 const directionSchema = z.enum(['up', 'down'])
@@ -120,6 +119,58 @@ export async function saveProject(
   }
 }
 
+// Teks yang diubah langsung di daftar project (Admin → Projects): judul, peran, dan ringkasan per
+// bahasa untuk beberapa project sekaligus; hanya kolom yang dikirim yang diubah.
+const projectTextsSchema = z
+  .array(
+    projectSchema
+      .pick({
+        title_id: true,
+        title_en: true,
+        summary_id: true,
+        summary_en: true,
+        role_id: true,
+        role_en: true,
+      })
+      .partial()
+      .extend({ id: z.uuid() }),
+  )
+  .min(1)
+  .max(100)
+
+export async function saveProjectTexts(input: unknown): Promise<ActionResult> {
+  try {
+    const admin = await requireSuperAdmin()
+    const parsed = projectTextsSchema.safeParse(input)
+    if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
+    await getDb().$transaction(async (tx) => {
+      for (const { id, role_id, role_en, ...rest } of parsed.data) {
+        const before = await tx.project.findUniqueOrThrow({ where: { id } })
+        const after = await tx.project.update({
+          where: { id },
+          data: {
+            ...rest,
+            ...(role_id !== undefined ? { role_id: emptyToNull(role_id) } : {}),
+            ...(role_en !== undefined ? { role_en: emptyToNull(role_en) } : {}),
+          },
+        })
+        await writeAudit(tx, {
+          actorId: admin.userId,
+          action: 'update',
+          entity: 'Project',
+          entityId: id,
+          before,
+          after,
+        })
+      }
+    })
+    revalidateContent('projects')
+    return ok('Project disimpan.')
+  } catch (error) {
+    return toActionError(error)
+  }
+}
+
 export async function deleteProject(projectId: string): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
@@ -195,29 +246,3 @@ export async function moveProject(projectId: string, direction: unknown): Promis
 }
 
 // Ambil metadata repo publik untuk mengisi form. Tidak menulis ke database.
-export async function importFromGithub(repo: unknown): Promise<ActionResult<GithubImport>> {
-  try {
-    await requireSuperAdmin()
-    const parsed = githubRepoSchema.safeParse(repo)
-    if (!parsed.success || parsed.data === '') {
-      return fail('Format repo tidak valid.', { githubRepo: 'Format: pemilik/nama-repo' })
-    }
-    const data = await fetchGithubRepo(parsed.data)
-    if (data.private) return fail('Repo privat tidak bisa diimpor.')
-    const skills = await getDb().skill.findMany({ select: { id: true, name: true } })
-    const homepage = data.homepage?.trim() ?? ''
-    return ok('Data dari GitHub dimuat. Tinjau lalu simpan.', {
-      githubRepo: data.full_name,
-      summary_en: (data.description ?? '').slice(0, 240),
-      demoUrl: /^https?:\/\//i.test(homepage) ? homepage : '',
-      repoUrl: data.html_url,
-      year: new Date(data.created_at).getUTCFullYear(),
-      skillIds: matchSkills(data, skills),
-      topics: data.topics ?? [],
-      language: data.language,
-    })
-  } catch (error) {
-    if (error instanceof GithubError) return fail(error.message)
-    return toActionError(error)
-  }
-}

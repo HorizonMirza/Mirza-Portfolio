@@ -305,7 +305,7 @@ export function MarkdownInline({
         }
       }}
       className={cn(
-        'admin-editable cursor-text rounded-sm text-left',
+        'admin-editable cursor-text rounded-none text-left',
         // sama dengan MarkdownView saat tampil: tinggi garis penanda tidak berubah antara kolom kosong dan terisi
         size === 'sm' && 'text-sm leading-relaxed',
         invalid && 'admin-inline-bad',

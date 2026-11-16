@@ -57,9 +57,9 @@ async function load() {
   }
   cases.push(
     ['saveProject', () => projects.saveProject(null, {})],
+    ['saveProjectTexts', () => projects.saveProjectTexts([])],
     ['deleteProject', () => projects.deleteProject(id)],
     ['moveProject', () => projects.moveProject(id, 'up')],
-    ['importFromGithub', () => projects.importFromGithub('a/b')],
     ['saveSkillCategory', () => skills.saveSkillCategory(null, {})],
     ['deleteSkillCategory', () => skills.deleteSkillCategory(id)],
     ['saveSkill', () => skills.saveSkill(null, {})],

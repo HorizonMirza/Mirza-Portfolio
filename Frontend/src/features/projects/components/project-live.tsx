@@ -1,11 +1,11 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Download, ExternalLink, GitBranch, ImagePlus } from 'lucide-react'
+import { ArrowLeft, ExternalLink, GitBranch, ImagePlus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { type ReactNode, useState, useTransition } from 'react'
+import { type ReactNode, useTransition } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -19,7 +19,6 @@ import {
   LiveErrors,
   LiveStage,
   SaveBar,
-  StateBox,
   useEditLang,
 } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
@@ -32,7 +31,7 @@ import { slugify } from '@/lib/validation'
 
 import { browserAddress } from '../browser-address'
 
-import { importFromGithub, saveProject } from '../actions'
+import { saveProject } from '../actions'
 import {
   PROJECT_CATEGORIES,
   type ProjectInput,
@@ -73,8 +72,6 @@ export function ProjectLive({
   const t = useAdminT()
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  const [importing, startImport] = useTransition()
-  const [importNote, setImportNote] = useState<string | null>(null)
   // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const [lang, setLang] = useEditLang()
@@ -120,35 +117,6 @@ export function ProjectLive({
     if ((getValues('slug') ?? '').trim() !== '') return
     const source = getValues('title_en') || getValues('title_id')
     if (source) setValue('slug', slugify(source), { shouldValidate: true })
-  }
-
-  function runImport() {
-    setImportNote(null)
-    startImport(async () => {
-      const result = await importFromGithub(getValues('githubRepo'))
-      if (!applyResult(result, setError) || !result.ok || !result.data) return
-      const d = result.data
-      const o = { shouldDirty: true, shouldValidate: true }
-      setValue('githubRepo', d.githubRepo, o)
-      setValue('repoUrl', d.repoUrl, o)
-      if (d.demoUrl) setValue('demoUrl', d.demoUrl, o)
-      if (d.summary_en && !getValues('summary_en')) setValue('summary_en', d.summary_en, o)
-      setValue('year', d.year, o)
-      setValue('skillIds', Array.from(new Set([...getValues('skillIds'), ...d.skillIds])), o)
-      const extra = [d.language, ...d.topics].filter(Boolean).join(', ')
-      setImportNote(
-        [
-          t('Terisi: URL repo, tahun, {demo}{count} skill cocok.', {
-            demo: d.demoUrl ? t('URL demo, ') : '',
-            count: d.skillIds.length,
-          }),
-          extra ? t('Topik repo: {topics}.', { topics: extra }) : '',
-          t('Teks bahasa Indonesia tetap ditulis manual.'),
-        ]
-          .filter(Boolean)
-          .join(' '),
-      )
-    })
   }
 
   const pill = (on: boolean, text: string, onClick: () => void, key?: string) => (
@@ -362,106 +330,54 @@ export function ProjectLive({
               </div>
             </div>
 
-            {/* ringkasan dan teknologi tampil di daftar project, bukan di detail */}
-            <StateBox note="Di daftar project">
-              <div className="flex flex-col gap-4">
-                <InlineArea
-                  key={`summary_${lang}`}
-                  label={label('Ringkasan')}
-                  {...register(`summary_${lang}`)}
-                  measure={v[`summary_${lang}`] ?? ''}
-                  placeholder={t('Ringkasan')}
-                  invalid={Boolean(err(`summary_${lang}`))}
-                  className="max-w-[40ch] text-muted"
-                />
-                <div className="flex flex-col gap-3" role="group" aria-label={tx.stack}>
-                  {skillGroups.length === 0 ? (
-                    <p className="text-sm text-muted">
-                      {t('Belum ada skill. Tambahkan di menu Skill.')}
-                    </p>
-                  ) : (
-                    skillGroups.map((group) => (
-                      <div key={group.id} className="flex flex-col gap-1.5">
-                        <p className="text-xs text-muted">
-                          {lang === 'en' ? group.name_en : group.name}
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {group.skills.map((skill) => {
-                            const on = skills.includes(skill.id)
-                            return (
-                              <button
-                                key={skill.id}
-                                type="button"
-                                aria-pressed={on}
-                                onClick={() => toggleSkill(skill.id)}
-                                className={cn(
-                                  'inline-flex min-h-7 items-center rounded-full border px-2.5 font-mono text-xs',
-                                  on
-                                    ? 'border-text bg-text font-semibold text-bg'
-                                    : 'border-dashed border-border text-muted hover:text-text',
-                                )}
-                              >
-                                {skill.name}
-                              </button>
-                            )
-                          })}
-                        </div>
+            {/* ringkasan dan teknologi tampil di daftar project */}
+            <div className="flex flex-col gap-4">
+              <InlineArea
+                key={`summary_${lang}`}
+                label={label('Ringkasan')}
+                {...register(`summary_${lang}`)}
+                measure={v[`summary_${lang}`] ?? ''}
+                placeholder={t('Ringkasan')}
+                invalid={Boolean(err(`summary_${lang}`))}
+                className="max-w-[40ch] text-muted"
+              />
+              <div className="flex flex-col gap-3" role="group" aria-label={tx.stack}>
+                {skillGroups.length === 0 ? (
+                  <p className="text-sm text-muted">
+                    {t('Belum ada skill. Tambahkan di menu Skill.')}
+                  </p>
+                ) : (
+                  skillGroups.map((group) => (
+                    <div key={group.id} className="flex flex-col gap-1.5">
+                      <p className="text-xs text-muted">
+                        {lang === 'en' ? group.name_en : group.name}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {group.skills.map((skill) => {
+                          const on = skills.includes(skill.id)
+                          return (
+                            <button
+                              key={skill.id}
+                              type="button"
+                              aria-pressed={on}
+                              onClick={() => toggleSkill(skill.id)}
+                              className={cn(
+                                'inline-flex min-h-7 items-center rounded-full border px-2.5 font-mono text-xs',
+                                on
+                                  ? 'border-text bg-text font-semibold text-bg'
+                                  : 'border-dashed border-border text-muted hover:text-text',
+                              )}
+                            >
+                              {skill.name}
+                            </button>
+                          )
+                        })}
                       </div>
-                    ))
-                  )}
-                </div>
+                    </div>
+                  ))
+                )}
               </div>
-            </StateBox>
-
-            <StateBox note="Belum tampil di situs (dipakai nanti)">
-              <div className="flex flex-col gap-4">
-                <InlineArea
-                  key={`description_${lang}`}
-                  id={`description_${lang}`}
-                  label={label('Deskripsi (opsional)')}
-                  {...register(`description_${lang}`)}
-                  measure={v[`description_${lang}`] ?? ''}
-                  placeholder={t('Deskripsi (opsional)')}
-                  invalid={Boolean(err(`description_${lang}`))}
-                  className="text-sm leading-relaxed"
-                />
-                <InlineArea
-                  key={`caseStudy_${lang}`}
-                  label={label('Studi kasus (opsional)')}
-                  {...register(`caseStudy_${lang}`)}
-                  measure={v[`caseStudy_${lang}`] ?? ''}
-                  placeholder={t('Studi kasus (opsional)')}
-                  invalid={Boolean(err(`caseStudy_${lang}`))}
-                  className="text-sm leading-relaxed"
-                />
-              </div>
-            </StateBox>
-
-            <StateBox note="Impor dari GitHub">
-              <div className="flex flex-wrap items-center gap-x-1 gap-y-3">
-                <span className="font-mono text-sm text-muted">github.com/</span>
-                <InlineInput
-                  label={t('Repo GitHub')}
-                  {...register('githubRepo')}
-                  placeholder="HorizonMirza/nama-repo"
-                  size={Math.max(22, (v.githubRepo || '').length + 1)}
-                  invalid={Boolean(err('githubRepo'))}
-                  className="font-mono text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={runImport}
-                  disabled={importing}
-                  className="ml-2 inline-flex min-h-9 items-center gap-2 rounded-md border border-border px-3 text-xs font-semibold disabled:opacity-60"
-                >
-                  <Download className="size-4" aria-hidden="true" />
-                  {importing ? t('Memuat…') : t('Impor')}
-                </button>
-              </div>
-              <p role="status" className="mt-2 text-sm text-muted empty:hidden">
-                {importNote}
-              </p>
-            </StateBox>
+            </div>
           </article>
         </LiveStage>
         <LiveErrors messages={messages} />

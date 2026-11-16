@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/admin/page-header'
 import { browserAddress } from '@/features/projects/browser-address'
 import { ProjectListLive } from '@/features/projects/components/project-list-live'
 import { listProjectsAdmin } from '@/features/projects/queries'
-import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
+import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { siteHost } from '@/lib/env'
 
@@ -17,8 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // daftar project seperti di situs; baris ditekan untuk diubah (DESIGN.md bagian 138)
 export default async function ProjectsPage() {
   await requireSuperAdminPage()
-  const [projects, lang] = await Promise.all([listProjectsAdmin(), getAdminLang()])
-  const en = lang === 'en'
+  const projects = await listProjectsAdmin()
   const host = siteHost()
   return (
     <>
@@ -26,11 +25,11 @@ export default async function ProjectsPage() {
       <ProjectListLive
         rows={projects.map((p) => ({
           id: p.id,
-          title: (en && p.title_en) || p.title_id,
-          role: (en && p.role_en) || p.role_id || '',
-          summary: (en && p.summary_en) || p.summary_id,
+          texts: {
+            id: { title: p.title_id, role: p.role_id ?? '', summary: p.summary_id },
+            en: { title: p.title_en, role: p.role_en ?? '', summary: p.summary_en },
+          },
           status: p.status,
-          featured: p.featured,
           address: browserAddress(p, host),
           cover: p.cover?.url ?? null,
         }))}

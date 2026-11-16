@@ -19,7 +19,6 @@ import {
   useEditLang,
 } from '@/components/admin/live-edit'
 import { Container, PageIntro } from '@/components/site/section-heading'
-import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { formatMonth } from '@/lib/localized'
 import { cn } from '@/lib/utils'
@@ -59,7 +58,7 @@ function duration(start: string, end: string, lang: Lang, texts: ExperienceTexts
 }
 
 // Bulan mulai/selesai: tampil seperti di situs ("Jul 2026", bahasa isi yang dipilih); ditekan untuk
-// mengganti lewat isian bulan, lalu kembali ke tampilan situs saat ditinggalkan.
+// mengganti lewat dua pilihan (bulan dan tahun), lalu kembali ke tampilan situs saat ditinggalkan.
 function MonthField({
   label,
   value,
@@ -73,30 +72,66 @@ function MonthField({
   invalid: boolean
   onChange: (value: string) => void
 }) {
+  const t = useAdminT()
   const [editing, setEditing] = useState(false)
-  if (editing)
-    return (
-      <input
-        type="month"
-        aria-label={label}
-        value={value}
-        autoFocus
-        onChange={(event) => onChange(event.target.value)}
-        onBlur={() => setEditing(false)}
-        className={cn('admin-inline min-h-6', invalid && 'admin-inline-bad')}
-      />
+  const valid = /^\d{4}-\d{2}$/.test(value)
+  const [year, month] = valid ? value.split('-') : [String(new Date().getFullYear()), '01']
+  if (editing) {
+    const months = Array.from({ length: 12 }, (_, i) =>
+      new Intl.DateTimeFormat(lang === 'en' ? 'en-US' : 'id-ID', {
+        month: 'short',
+        timeZone: 'UTC',
+      }).format(new Date(Date.UTC(2000, i, 1))),
     )
+    const last = new Date().getFullYear() + 1
+    const years = Array.from({ length: last - 1989 }, (_, i) => String(last - i))
+    if (!years.includes(year)) years.push(year)
+    return (
+      <span
+        className="inline-flex items-center gap-1 align-middle"
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setEditing(false)
+        }}
+      >
+        <select
+          aria-label={t('{label} (bulan)', { label })}
+          value={month}
+          autoFocus
+          onChange={(event) => onChange(`${year}-${event.target.value}`)}
+          className={cn('admin-inline min-h-6 cursor-pointer', invalid && 'admin-inline-bad')}
+        >
+          {months.map((name, i) => (
+            <option key={name} value={String(i + 1).padStart(2, '0')}>
+              {name}
+            </option>
+          ))}
+        </select>
+        <select
+          aria-label={t('{label} (tahun)', { label })}
+          value={year}
+          onChange={(event) => onChange(`${event.target.value}-${month}`)}
+          className={cn('admin-inline min-h-6 cursor-pointer', invalid && 'admin-inline-bad')}
+        >
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+      </span>
+    )
+  }
   return (
     <button
       type="button"
       onClick={() => setEditing(true)}
       className={cn(
-        'admin-editable inline-flex min-h-6 items-center rounded-sm px-0.5',
+        'admin-editable inline-flex min-h-6 items-center rounded-none px-0.5',
         invalid && 'admin-inline-bad',
       )}
     >
       <span className="sr-only">{label}: </span>
-      {/^\d{4}-\d{2}$/.test(value) ? formatMonth(value, lang) : '----'}
+      {valid ? formatMonth(value, lang) : '----'}
     </button>
   )
 }
@@ -225,7 +260,7 @@ export function ExperienceTimelineLive({
                               className="inline-block w-fit max-w-full align-top"
                             />
                           </h2>
-                          <p className="mt-1">
+                          <p className="mt-2.5">
                             <InlineInput
                               key={`org-${lang}`}
                               label={
@@ -259,7 +294,7 @@ export function ExperienceTimelineLive({
                               }
                             />
                           </p>
-                          <p className="mt-1 text-sm text-muted tabular-nums [&>*]:mx-0.5 [&>*]:align-middle">
+                          <p className="mt-2.5 text-sm text-muted tabular-nums [&>*]:mx-0.5 [&>*]:align-middle">
                             <MonthField
                               label={t('Mulai')}
                               value={v.startMonth}
@@ -277,13 +312,20 @@ export function ExperienceTimelineLive({
                                   invalid={Boolean(err.endMonth)}
                                   onChange={(value) => set({ endMonth: value })}
                                 />
+                                <button
+                                  type="button"
+                                  onClick={() => set({ endMonth: '' })}
+                                  className="inline-flex min-h-6 items-center border border-dashed border-border px-1.5 font-sans text-xs font-semibold text-muted hover:text-text"
+                                >
+                                  {t('Masih berlangsung')}
+                                </button>
                               </>
                             ) : (
                               <button
                                 type="button"
                                 title={t('Tekan untuk mengisi bulan selesai')}
                                 onClick={() => set({ endMonth: thisMonth() })}
-                                className="admin-editable inline-flex min-h-6 items-center rounded-sm px-0.5"
+                                className="admin-editable inline-flex min-h-6 items-center rounded-none px-0.5"
                               >
                                 {tx.present}
                               </button>
@@ -303,62 +345,18 @@ export function ExperienceTimelineLive({
                           {/* alat entri melayang di celah bawah entri agar tinggi entri sama dengan situs;
                               di HP (foto di bawah teks) tetap di alur biasa */}
                           <div className="absolute inset-x-0 top-full pt-2 font-sans max-md:static max-md:pt-3 [&>*]:mx-1 [&>*]:align-middle">
-                            {(['WORK', 'ORGANIZATION'] as const).map((type) => (
-                              <button
-                                key={type}
-                                type="button"
-                                aria-pressed={v.type === type}
-                                onClick={() => set({ type })}
-                                className={cn(
-                                  'inline-flex min-h-7 items-center rounded-md border px-2 text-xs font-semibold',
-                                  v.type === type
-                                    ? 'border-text bg-text text-bg'
-                                    : 'border-dashed border-border text-muted',
-                                  hover,
-                                )}
-                              >
-                                {t(type === 'WORK' ? 'Kerja' : 'Organisasi')}
-                              </button>
-                            ))}
-                            {v.endMonth ? (
-                              <button
-                                type="button"
-                                onClick={() => set({ endMonth: '' })}
-                                className={cn(
-                                  'inline-flex min-h-7 items-center rounded-md border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text',
-                                  hover,
-                                )}
-                              >
-                                {t('Masih berlangsung')}
-                              </button>
-                            ) : null}
-                            {/* "Draf" hanya untuk entri yang masih draf (tekan untuk menerbitkan);
-                                hapus logo/foto dan hapus entri berupa ikon kecil */}
+                            {/* "Draf" hanya untuk entri yang masih draf (tekan untuk menerbitkan) */}
                             {v.status === 'DRAFT' ? (
                               <button
                                 type="button"
                                 title={t('Draf: tidak tampil di situs. Tekan untuk menerbitkan.')}
                                 onClick={() => set({ status: 'PUBLISHED' })}
-                                className="inline-flex min-h-7 items-center rounded-md border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text"
+                                className="inline-flex min-h-7 items-center border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text"
                               >
                                 {t('Draf')}
                               </button>
                             ) : null}
                             <span className={cn('inline-flex items-center gap-1', hover)}>
-                              {row.logo ? (
-                                <RemoveAssetButton
-                                  assetId={row.logo.id}
-                                  label={t('Logo {item}', { item: v.organization })}
-                                  onDone={() => router.refresh()}
-                                />
-                              ) : null}
-                              {row.photo ? (
-                                <RemoveAssetButton
-                                  assetId={row.photo.id}
-                                  label={t('Foto kegiatan {item}', { item: v.organization })}
-                                  onDone={() => router.refresh()}
-                                />
-                              ) : null}
                               {row.id ? (
                                 <ConfirmDelete
                                   title="Hapus Pengalaman"
