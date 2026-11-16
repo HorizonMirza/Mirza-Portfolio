@@ -297,33 +297,37 @@ test('skill: kategori dan skill baru tersimpan lewat Simpan, lalu dihapus', asyn
   await expect(page.getByRole('button', { name: `Hapus kategori ${name}` })).toHaveCount(0)
 })
 
-test('volume suara dari pengaturan dipakai situs publik', async ({ page }, testInfo) => {
+test('volume tiap suara dari pengaturan dipakai situs publik', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
   // Pengaturan disimpan otomatis setiap kontrol diubah (desain 1, DESIGN.md bagian 119)
   const setVolume = async (value: string, other: string) => {
     await page.goto('/admin/settings')
-    const slider = page.getByRole('slider', { name: 'Semua suara' })
+    const slider = page.getByRole('slider', { name: 'Menu', exact: true })
     // Isian bisa masuk sebelum React selesai hidrasi. Tiap percobaan mengisi nilai lain dulu: mengisi
     // nilai yang sudah ada tidak memicu event input.
     await expect(async () => {
       await slider.fill(other)
       await slider.fill(value)
-      await expect(page.getByText(`${value}%`, { exact: true })).toBeVisible({ timeout: 1000 })
+      // angka di samping geseran yang sama (9 geseran lain juga menampilkan persen)
+      await expect(slider.locator('xpath=following-sibling::output')).toHaveText(`${value}%`, {
+        timeout: 1000,
+      })
     }).toPass()
     await expect(page.getByText('Tersimpan', { exact: true })).toBeVisible()
     // nilai tersimpan di server, bukan hanya di layar
     // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
     await page.waitForLoadState('networkidle')
     await page.reload()
-    await expect(page.getByRole('slider', { name: 'Semua suara' })).toHaveValue(value)
+    await expect(page.getByRole('slider', { name: 'Menu', exact: true })).toHaveValue(value)
   }
   await setVolume('35', '30')
   // dicek langsung ke server agar cache browser WebKit/Firefox tidak menyajikan halaman lama
   await expect
     .poll(async () => (await page.request.get('/id')).text(), { timeout: ISR_REFRESH_TIMEOUT })
-    .toContain('data-sound-volume="35"')
-  // kembalikan ke bawaan agar tes lain tidak terpengaruh
-  await setVolume('80', '75')
+    // atribut berisi JSON, jadi tanda kutipnya ditulis &quot; di HTML
+    .toMatch(/data-sound-mix="[^"]*&quot;nav&quot;:35/)
+  // kembalikan ke bawaan (penuh) agar tes lain tidak terpengaruh
+  await setVolume('100', '95')
 })
 
 test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan', async ({

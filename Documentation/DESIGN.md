@@ -530,7 +530,7 @@ Pilihan pemilik dari demo: animasi nomor 1 (**geser searah**), ikon Beranda 1, T
 
 ## 31. Volume suara di admin, gulir ke atas, ganti bahasa tanpa melompat (2026-10-03)
 
-- Volume suara tombol tema, bahasa, dan menu diatur Super Admin di `/admin/settings` (penggeser 0–100, langkah 5, tombol "Coba suara"; 0 = tanpa suara). Disimpan di tabel `SiteSetting` (satu baris), dikirim ke halaman publik lewat `<html data-sound-volume>` dan dibaca `lib/ui-sounds.ts` setiap kali berbunyi. Bawaan 80 (dua kali volume lama 0,4). Kompresor di ujung rantai audio menjaga suara tidak pecah di volume tinggi.
+- Volume tiap suara situs (menu, tema, bahasa, pengalaman, timeline, daftar project, galeri, kartu foto, kartu ID) diatur satu per satu Super Admin di `/admin/settings`, kelompok Suara (penggeser 0–100, langkah 5, tombol coba per baris; 0 = suara itu mati; volume utama dihapus 2026-11-16). Disimpan di `SiteSetting.soundMix`, dikirim ke halaman publik dan admin lewat `<html data-sound-mix>` dan dibaca `lib/ui-sounds.ts` setiap kali suara diputar (satu penguat per suara).
 - Suara menu (tik kaca) dibuat lebih keras: puncak 0,32 dan 0,16 (sebelumnya 0,12 dan 0,06), sedikit lebih panjang.
 - Menekan menu yang halamannya sedang dibuka, atau foto profil saat di beranda, menggulir ke bagian paling atas halaman itu (halus; langsung bila gerak dikurangi) dan tetap berbunyi. Hash seperti `#skills` dibuang. Halaman turunan (detail project) tetap pindah ke halaman menu.
 - Ganti bahasa tidak lagi melompat ke atas: tautan bahasa memakai `scroll={false}` sehingga posisi gulir tetap.

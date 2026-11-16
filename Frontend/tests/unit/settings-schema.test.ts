@@ -8,14 +8,8 @@ const intro = { introBody_id: 'Isi singkat.', introBody_en: 'Short text.' }
 const ok = (input: unknown) => siteOptionSchema.safeParse(input).success
 
 describe('siteOptionSchema', () => {
-  it('volume 0 sampai 100 diterima', () => {
-    expect(ok({ key: 'soundVolume', value: 0 })).toBe(true)
-    expect(ok({ key: 'soundVolume', value: 100 })).toBe(true)
-  })
-
-  it('volume di luar rentang, pecahan, atau bukan angka ditolak', () => {
-    for (const value of [-5, 101, 12.5, Number.NaN, '50'])
-      expect(ok({ key: 'soundVolume', value })).toBe(false)
+  it('volume utama sudah dihapus: kolom soundVolume tidak bisa ditulis lagi', () => {
+    expect(ok({ key: 'soundVolume', value: 50 })).toBe(false)
   })
 
   it('volume tiap suara: lengkap, 0 sampai 100, tanpa suara yang tidak dikenal', () => {

@@ -75,8 +75,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
     <html
       lang={locale}
       className={fontVariables}
-      // volume utama dan volume tiap suara dari /admin/settings, dibaca lib/ui-sounds.ts
-      data-sound-volume={settings.soundVolume}
+      // volume tiap suara dari /admin/settings, dibaca lib/ui-sounds.ts
       data-sound-mix={JSON.stringify(settings.soundMix)}
       // tema awal untuk pengunjung yang belum memilih (Admin → Pengaturan), dibaca lib/theme.ts
       {...{ [DEFAULT_THEME_ATTR]: settings.defaultTheme }}

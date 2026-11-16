@@ -31,7 +31,6 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
       lang={lang} // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan (revisi pemilik 2026-10-26)
       className={`${fontVariables} no-scrollbar`}
       // volume suara tombol tema dan bahasa sama dengan situs publik (diatur di Pengaturan)
-      data-sound-volume={settings.soundVolume}
       data-sound-mix={JSON.stringify(settings.soundMix)}
       suppressHydrationWarning
     >

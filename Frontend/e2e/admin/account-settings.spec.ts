@@ -222,12 +222,28 @@ test.describe('Admin → Pengaturan', () => {
     page,
   }) => {
     await page.goto('/admin/settings')
-    // satu geseran volume utama dan satu per suara situs (revisi 2026-11-16)
+    // satu geseran per suara situs, tanpa volume utama (revisi 2026-11-16)
     await expect(page.getByRole('heading', { name: 'Suara', exact: true })).toBeVisible()
-    await expect(page.getByRole('slider')).toHaveCount(10)
-    for (const name of ['Semua suara', 'Menu', 'Tombol tema', 'Kartu ID Kontak'])
+    await expect(page.getByRole('slider')).toHaveCount(9)
+    for (const name of ['Menu', 'Tombol tema', 'Kartu ID Kontak'])
       await expect(page.getByRole('slider', { name, exact: true })).toBeVisible()
+    await expect(page.getByRole('slider', { name: 'Semua suara' })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Konten', exact: true })).toHaveCount(0)
+    // urutan kelompok Tampilan (revisi 2026-11-16)
+    const titles = [
+      'Tema awal pengunjung',
+      'Bahasa saat pertama dibuka',
+      'Kartu pembuka muncul',
+      'Kartu pembuka',
+      'Animasi hero',
+      'Tombol WhatsApp melayang',
+    ]
+    const group = page.getByRole('region', { name: 'Tampilan', exact: true })
+    // judul tiap baris (lencana seperti "Nomor belum diisi" ikut satu paragraf, jadi ambil baris pertama)
+    const shown = (await group.locator('p[id$="-t"]').allInnerTexts()).map((text) =>
+      text.split('\n')[0]!.trim(),
+    )
+    expect(shown).toEqual(titles)
     // tanpa dropdown bawaan browser: combobox membuka daftar pilihan, Escape menutup tanpa mengubah
     await expect(page.locator('main select')).toHaveCount(0)
     const theme = page.getByRole('combobox', { name: 'Tema awal pengunjung' })

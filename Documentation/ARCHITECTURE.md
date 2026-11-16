@@ -299,7 +299,8 @@ erDiagram
     }
     SiteSetting {
       int id PK "singleton"
-      int soundVolume "0-100, atribut data-sound-volume"
+      json soundMix "volume tiap suara 0-100, atribut data-sound-mix"
+      int soundVolume "tidak dipakai lagi (2026-11-16)"
       string heroPortraitId FK "foto hero dari admin, kosong = foto bawaan repo"
       string defaultTheme "dark | light | system"
       string defaultLocale "browser | id | en, dibaca proxy.ts"

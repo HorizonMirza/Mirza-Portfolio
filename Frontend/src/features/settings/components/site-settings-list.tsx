@@ -115,21 +115,9 @@ export function SiteSettingsList({
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Semua suara dalam satu kelompok (revisi pemilik 2026-11-16): volume utama lalu volume tiap
-          suara situs; tiap baris punya tombol coba */}
+      {/* Semua suara situs satu per satu (revisi pemilik 2026-11-16): tiap suara punya geseran volume
+          dan tombol coba sendiri, tanpa volume utama */}
       <Group title={t('Suara')}>
-        <Row
-          title={t('Semua suara')}
-          description={t('Volume utama untuk seluruh suara di situs. 0 berarti tanpa suara.')}
-          control={(ids) => (
-            <VolumeControl
-              ids={ids}
-              value={values.soundVolume}
-              onCommit={(next) => save('soundVolume', next)}
-              onPreview={(level) => previewSound(level)}
-            />
-          )}
-        />
         {soundRows.map(([kind, title, description]) => (
           <Row
             key={kind}
@@ -140,7 +128,7 @@ export function SiteSettingsList({
                 ids={ids}
                 value={values.soundMix[kind]}
                 onCommit={(next) => save('soundMix', { ...latestMix.current, [kind]: next })}
-                onPreview={(level) => previewSound(values.soundVolume, kind, level)}
+                onPreview={(level) => previewSound(kind, level)}
               />
             )}
           />
@@ -165,19 +153,6 @@ export function SiteSettingsList({
           )}
         />
         <Row
-          title={t('Animasi hero')}
-          description={t(
-            'Efek cairan dan kursor di foto beranda. Bila mati, foto dan nama tetap tampil tanpa efek.',
-          )}
-          control={(ids) => (
-            <Switch
-              ids={ids}
-              on={values.heroAnimation}
-              onChange={(v) => save('heroAnimation', v)}
-            />
-          )}
-        />
-        <Row
           title={t('Bahasa saat pertama dibuka')}
           description={t(
             'Untuk alamat tanpa /id atau /en, mis. mmirza.site. Pengunjung yang pernah memilih bahasa tetap memakai pilihannya.',
@@ -196,15 +171,6 @@ export function SiteSettingsList({
           )}
         />
         <Row
-          title={t('Kartu pembuka')}
-          description={t(
-            'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.',
-          )}
-          control={(ids) => (
-            <Switch ids={ids} on={values.introEnabled} onChange={(v) => save('introEnabled', v)} />
-          )}
-        />
-        <Row
           title={t('Kartu pembuka muncul')}
           description={t('Seberapa sering pengunjung yang sama melihat kartu pembuka.')}
           control={(ids) => (
@@ -218,6 +184,28 @@ export function SiteSettingsList({
                 ['weekly', t('Seminggu sekali')],
               ]}
               onChange={(v) => save('introFrequency', v)}
+            />
+          )}
+        />
+        <Row
+          title={t('Kartu pembuka')}
+          description={t(
+            'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.',
+          )}
+          control={(ids) => (
+            <Switch ids={ids} on={values.introEnabled} onChange={(v) => save('introEnabled', v)} />
+          )}
+        />
+        <Row
+          title={t('Animasi hero')}
+          description={t(
+            'Efek cairan dan kursor di foto beranda. Bila mati, foto dan nama tetap tampil tanpa efek.',
+          )}
+          control={(ids) => (
+            <Switch
+              ids={ids}
+              on={values.heroAnimation}
+              onChange={(v) => save('heroAnimation', v)}
             />
           )}
         />

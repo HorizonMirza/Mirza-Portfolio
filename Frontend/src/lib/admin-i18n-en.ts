@@ -359,9 +359,6 @@ export const EN: Record<string, string> = {
   Isi: 'Text',
   // Admin → Pengaturan, kelompok Suara (revisi pemilik 2026-11-16)
   Suara: 'Sounds',
-  'Semua suara': 'All sounds',
-  'Volume utama untuk seluruh suara di situs. 0 berarti tanpa suara.':
-    'Main volume for every sound on the site. 0 means no sound.',
   'Tik kaca saat menu situs dan foto profil di navbar ditekan.':
     'A glass tick when the site menu or the navbar profile photo is pressed.',
   'Tombol tema': 'Theme button',

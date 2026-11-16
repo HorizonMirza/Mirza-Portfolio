@@ -375,9 +375,9 @@ model CvDownload {
 // Pengaturan situs (satu baris, id = 1). Diubah dari /admin/settings.
 model SiteSetting {
   id                 Int      @id @default(1)
-  // volume utama semua suara situs, 0 = tanpa suara, 100 = paling keras
+  // tidak dipakai lagi sejak 2026-11-16 (volume utama dihapus); kolom dibiarkan agar tanpa migrasi yang menghapus data
   soundVolume        Int      @default(80)
-  // volume tiap suara 0–100 dikalikan volume utama, mis. { "nav": 100, "theme": 60 }; suara yang
+  // volume tiap suara situs 0–100, mis. { "nav": 100, "theme": 60 }; suara yang
   // tidak ada di sini memakai volume penuh (features/settings/options.ts, SOUND_KINDS)
   soundMix           Json     @default("{}")
   // pemberitahuan pembuka: kartu sebelum masuk situs, sekali setiap situs dibuka (per sesi browser)

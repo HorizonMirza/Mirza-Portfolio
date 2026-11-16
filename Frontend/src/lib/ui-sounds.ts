@@ -1,10 +1,7 @@
 // Semua suara situs, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa library). Hanya
 // diputar dari tindakan pengguna (DESIGN.md bagian 22 dan 31).
-// Volume utama (0–100) dan volume tiap suara (0–100, dikalikan volume utama) diatur Super Admin di
-// /admin/settings, dikirim lewat atribut data-sound-volume dan data-sound-mix di <html>.
-// 0 berarti tanpa suara sama sekali.
-
-export const DEFAULT_SOUND_VOLUME = 80
+// Volume tiap suara (0–100) diatur Super Admin di /admin/settings, dikirim lewat atribut
+// data-sound-mix di <html>. 0 berarti suara itu mati; suara yang belum diatur berbunyi penuh.
 
 // sama dengan SOUND_KINDS di features/settings/options.ts (lib tidak boleh mengimpor features)
 export type SoundKind =
@@ -24,19 +21,13 @@ let noiseBuffer: AudioBuffer | null = null
 // satu penguat per jenis suara, tersambung ke penguat utama
 const kindGains = new Map<SoundKind, GainNode>()
 // dipakai tombol "Coba suara" di admin sebelum pengaturan disimpan
-let override: { master: number; kind?: SoundKind; level?: number } | null = null
+let override: { kind: SoundKind; level: number } | null = null
 let mixCache: { raw: string; mix: Partial<Record<SoundKind, number>> } | null = null
 
 const clamp = (n: number) => Math.min(100, Math.max(0, n))
 
-function volume() {
-  if (override) return override.master
-  const raw = Number(document.documentElement.dataset.soundVolume)
-  return Number.isFinite(raw) ? clamp(raw) : DEFAULT_SOUND_VOLUME
-}
-
 function kindVolume(kind: SoundKind) {
-  if (override?.kind === kind && override.level !== undefined) return override.level
+  if (override?.kind === kind) return override.level
   const raw = document.documentElement.dataset.soundMix ?? ''
   if (mixCache?.raw !== raw) {
     let mix: Partial<Record<SoundKind, number>> = {}
@@ -58,9 +49,8 @@ function audio(kind: SoundKind) {
     window.AudioContext ??
     (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!Ctor) return null
-  const level = volume()
   const own = kindVolume(kind)
-  if (level <= 0 || own <= 0) return null
+  if (own <= 0) return null
   try {
     if (!context) {
       context = new Ctor()
@@ -75,7 +65,6 @@ function audio(kind: SoundKind) {
       const data = noiseBuffer.getChannelData(0)
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
     }
-    master!.gain.value = level / 100
     let out = kindGains.get(kind)
     if (!out) {
       out = context.createGain()
@@ -280,7 +269,7 @@ export function playPhotoShimmerSound() {
 }
 
 // Tombol "Coba suara" di admin: memutar satu suara dengan volume yang sedang digeser (belum tentu
-// tersimpan). Tanpa jenis: suara menu dengan volume utama yang digeser.
+// tersimpan).
 const SAMPLES: Record<SoundKind, () => void> = {
   nav: () => playNavSound(),
   theme: () => playThemeSound(true),
@@ -295,8 +284,8 @@ const SAMPLES: Record<SoundKind, () => void> = {
   lanyard: () => playLanyardSound('release'),
 }
 
-export function previewSound(masterLevel: number, kind: SoundKind = 'nav', kindLevel?: number) {
-  override = { master: clamp(masterLevel), kind, level: kindLevel ?? kindVolume(kind) }
+export function previewSound(kind: SoundKind, level: number) {
+  override = { kind, level: clamp(level) }
   try {
     SAMPLES[kind]()
   } finally {

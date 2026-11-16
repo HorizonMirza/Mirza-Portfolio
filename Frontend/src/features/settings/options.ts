@@ -15,8 +15,8 @@ export type IntroFrequency = (typeof INTRO_FREQUENCIES)[number]
 export const CONTACT_PER_HOUR_MIN = 1
 export const CONTACT_PER_HOUR_MAX = 50
 
-// Semua suara di situs (lib/ui-sounds.ts), masing-masing punya volume sendiri 0–100 yang dikalikan
-// volume utama (revisi pemilik 2026-11-16). Urutan = urutan baris di Admin → Pengaturan, Suara.
+// Semua suara di situs (lib/ui-sounds.ts), masing-masing punya volume sendiri 0–100 (revisi pemilik
+// 2026-11-16; volume utama "Semua suara" dihapus). Urutan = urutan baris di Admin → Pengaturan, Suara.
 export const SOUND_KINDS = [
   'nav',
   'theme',
@@ -44,7 +44,6 @@ const soundMixSchema = z.strictObject(
 
 // Satu skema per kolom: action menerima { key, value } dan hanya kolom di sini yang bisa diubah.
 export const siteOptionSchema = z.discriminatedUnion('key', [
-  z.object({ key: z.literal('soundVolume'), value: volume }),
   z.object({ key: z.literal('soundMix'), value: soundMixSchema }),
   z.object({ key: z.literal('defaultTheme'), value: z.enum(THEME_CHOICES) }),
   z.object({ key: z.literal('heroAnimation'), value: z.boolean() }),
@@ -82,7 +81,6 @@ export const DEFAULT_SOUND_MIX: SoundMix = Object.fromEntries(
 ) as SoundMix
 
 export const DEFAULT_SITE_OPTIONS: SiteOptions = {
-  soundVolume: 80,
   soundMix: DEFAULT_SOUND_MIX,
   defaultTheme: 'dark',
   heroAnimation: true,
@@ -117,7 +115,6 @@ export function toSiteOptions(row: Partial<Record<SiteOptionKey, unknown>> | nul
       ? (row.soundMix as Record<string, unknown>)
       : {}
   return {
-    soundVolume: int(row.soundVolume, d.soundVolume, 0, 100),
     // suara yang belum pernah diatur (atau isinya rusak) memakai volume penuh
     soundMix: Object.fromEntries(
       SOUND_KINDS.map((k) => [k, int(mix[k], d.soundMix[k], 0, 100)]),
