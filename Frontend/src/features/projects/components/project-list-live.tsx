@@ -208,7 +208,7 @@ export function ProjectListLive({
                               onChange={(event) => edit(row, 'title', event.target.value)}
                             />
                           </h2>
-                          <p className="pj-summary max-w-[40ch] text-muted">
+                          <p className="pj-summary text-muted">
                             <InlineArea
                               label={label('Ringkasan')}
                               value={shown(row, 'summary')}
