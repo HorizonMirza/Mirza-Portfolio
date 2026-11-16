@@ -78,6 +78,8 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const suffix = `${testInfo.project.name}-${Date.now()}`
   const titleId = `Project E2E ${suffix}`
   const roleText = `Peran E2E ${suffix}`
+  // unik per browser: project uji browser lain berbagi database dan berjalan bersamaan
+  const editedSummary = `Ringkasan diubah di daftar ${suffix}`
   await page.goto('/admin/projects/new')
 
   // Ubah langsung di pratinjau halaman detail (DESIGN.md bagian 138). Validasi: galat kedua bahasa
@@ -172,15 +174,13 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   await expect(row.getByRole('link', { name: /^Ubah / }).first()).toBeAttached()
   // tanpa penanda "Unggulan"
   await expect(page.getByText('Unggulan', { exact: true })).toHaveCount(0)
-  await row
-    .getByRole('textbox', { name: 'Ringkasan (Indonesia)' })
-    .fill('Ringkasan diubah di daftar.')
+  await row.getByRole('textbox', { name: 'Ringkasan (Indonesia)' }).fill(editedSummary)
   await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Project disimpan.')).toBeVisible()
   await page.reload()
   await expect(
     page.locator('textarea[aria-label="Ringkasan (Indonesia)"]', {
-      hasText: 'Ringkasan diubah di daftar.',
+      hasText: editedSummary,
     }),
   ).toHaveCount(1)
 
