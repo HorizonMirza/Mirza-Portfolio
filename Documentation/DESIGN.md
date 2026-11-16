@@ -313,9 +313,9 @@ h1 Hubungi saya
 ```
 ┌ Sidebar ┐ ┌ Konten ──────────────────────────────────────────┐
 │Dashboard│ │ 4 angka + grafik kecil (7/30/90 hari)             │
-│Projects │ │ Kunjungan harian: tayangan + pengunjung + tabel   │
-│Skills   │ │ Pesan terbaru (4), satu baris penuh               │
-│Experience│ │ (desain 01 "Ringkas", bagian 165 dan 166)         │
+│Projects │ │ Kunjungan harian: tayangan + pengunjung           │
+│Skills   │ │ Rincian per hari │ Pesan terbaru (5)              │
+│Experience│ │ (desain 01 "Ringkas", bagian 165–167)             │
 │Profile  │ └───────────────────────────────────────────────────┘
 │Messages │
 │Newsletter│  Halaman daftar: tabel + cari + [Tambah]
@@ -1899,3 +1899,10 @@ Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
 - **Kotak periode 7/30/90 hari** bersudut kecil (`rounded-md`) dengan garis antar-pilihan; yang aktif terisi penuh seperti tab lain di admin.
 - **Tabel kunjungan langsung tampil** di bawah grafik (tanpa "Lihat sebagai tabel"), hari terbaru di atas, digulir di dalam kotaknya (maks. 20 rem, kepala tabel menempel) dan bisa difokus keyboard.
 - Kartu **Konten di situs dihapus**; **Pesan terbaru** satu baris penuh di bawah kartu kunjungan.
+
+## 167. Revisi Dashboard kedua (2026-11-16 malam)
+
+- Label kotak angka tanpa periode ("Pengunjung", bukan "Pengunjung, 30 hari"); periode cukup dari kotak 7/30/90 hari.
+- **Grafik dipercantik:** tinggi 18 rem, arsiran bergradasi untuk tayangan dan pengunjung, garis bantu putus-putus, sumbu bawah bergaris, titik bercincin saat disorot, kursor putus-putus, tooltip berisi hari dan tanggal serta dua angka dengan penanda warna.
+- **Rincian per hari** ("Daily Breakdown") jadi kotak sendiri, bisa digulir, berdampingan dengan **Pesan terbaru** ("Latest Messages") dalam satu baris dua kolom (satu kolom di HP). Tombol "Semua pesan" dihapus; Pesan terbaru menampilkan 5 pesan.
+- **Perbaikan:** kepala tabel yang menempel kini berlatar pekat (`bg-bg`, `border-separate`) sehingga baris yang digulir tidak tembus di belakang judul kolom (latar kaca admin tembus pandang).

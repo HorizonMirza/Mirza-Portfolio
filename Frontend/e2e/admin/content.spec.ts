@@ -676,13 +676,12 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
 
 test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsung tampil, dan pesan', async ({
   page,
+  isMobile,
 }) => {
   await page.goto('/admin')
   const summary = page.getByRole('region', { name: 'Ringkasan' })
   for (const label of ['Pengunjung', 'Tayangan halaman', 'Unduhan CV', 'Pesan masuk'])
-    await expect(
-      summary.getByRole('link', { name: new RegExp(`^${label}, 30 hari`) }),
-    ).toBeVisible()
+    await expect(summary.getByRole('link', { name: new RegExp(`^${label} \\d`) })).toBeVisible()
   const period = page.getByRole('navigation', { name: 'Periode' })
   await expect(period.getByRole('link', { name: '30 hari' })).toHaveAttribute(
     'aria-current',
@@ -692,7 +691,8 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
   await period.getByRole('link', { name: '7 hari' }).click()
   await expect(page).toHaveURL(/\/admin\?range=7$/)
   await expect(period.getByRole('link', { name: '7 hari' })).toHaveAttribute('aria-current', 'page')
-  await expect(summary.getByRole('link', { name: /^Pengunjung, 7 hari/ })).toBeVisible()
+  // label kotak tanpa periode (revisi pemilik 2026-11-16)
+  await expect(summary.getByText(/\d+ hari/)).toHaveCount(0)
   // tabel langsung tampil, tanpa tombol "Lihat sebagai tabel"
   await expect(page.getByText('Lihat sebagai tabel')).toHaveCount(0)
   const table = page.getByRole('table', { name: 'Kunjungan harian, 7 hari' })
@@ -704,7 +704,16 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
     'aria-current',
     'page',
   )
-  await expect(page.getByRole('heading', { name: 'Pesan terbaru' })).toBeVisible()
+  // Rincian per hari dan Pesan terbaru berdampingan; tanpa tombol Semua pesan
+  const breakdown = page.getByRole('heading', { name: 'Rincian per hari' })
+  const latest = page.getByRole('heading', { name: 'Pesan terbaru' })
+  await expect(latest).toBeVisible()
+  await expect(page.getByRole('main').getByRole('link', { name: 'Semua pesan' })).toHaveCount(0)
+  if (!isMobile) {
+    const [a, b] = [await breakdown.boundingBox(), await latest.boundingBox()]
+    expect(Math.abs(a!.y - b!.y)).toBeLessThan(4)
+    expect(b!.x).toBeGreaterThan(a!.x)
+  }
   // tanpa persen naik/turun, tanpa "Hari menurut WIB", tanpa kartu Konten di situs
   await expect(page.getByText('Hari menurut WIB')).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Konten di situs' })).toHaveCount(0)

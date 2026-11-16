@@ -75,26 +75,28 @@ export function AdminDashboardSkeleton() {
             <Skeleton className="h-6 w-44" />
             <Skeleton className="h-9 w-52 rounded-md" />
           </span>
-          <Skeleton className="mt-4 h-64 w-full rounded-xl" />
-          <Skeleton className="mt-4 h-48 w-full rounded-md" />
+          <Skeleton className="mt-4 h-72 w-full rounded-xl" />
         </Card>
-        <Card>
-          <span className="flex items-center justify-between">
+        <div className="grid gap-3 lg:grid-cols-2">
+          <Card>
             <Skeleton className="h-6 w-40" />
-            <Skeleton className="h-8 w-28 rounded-md" />
-          </span>
-          <ul className="mt-2 divide-y divide-border">
-            {Array.from({ length: 4 }, (_, i) => (
-              <li key={i} className="flex items-center gap-3 py-3">
-                <span className="flex flex-1 flex-col gap-2">
-                  <Skeleton className="h-4 w-[min(60%,16rem)]" />
-                  <Skeleton className="h-3 w-32" />
-                </span>
-                <Skeleton className="h-5 w-12" />
-              </li>
-            ))}
-          </ul>
-        </Card>
+            <Skeleton className="mt-3 h-72 w-full rounded-md" />
+          </Card>
+          <Card>
+            <Skeleton className="h-6 w-40" />
+            <ul className="mt-2 divide-y divide-border">
+              {Array.from({ length: 5 }, (_, i) => (
+                <li key={i} className="flex items-center gap-3 py-3">
+                  <span className="flex flex-1 flex-col gap-2">
+                    <Skeleton className="h-4 w-[min(60%,16rem)]" />
+                    <Skeleton className="h-3 w-32" />
+                  </span>
+                  <Skeleton className="h-5 w-12" />
+                </li>
+              ))}
+            </ul>
+          </Card>
+        </div>
       </div>
     </Loading>
   )

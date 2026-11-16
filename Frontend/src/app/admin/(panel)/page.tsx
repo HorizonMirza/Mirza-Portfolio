@@ -88,11 +88,11 @@ const STATUS_LABEL = { NEW: 'Baru', READ: 'Dibaca', ARCHIVED: 'Arsip' } as const
 
 // Desain 01 "Ringkas" (pilihan pemilik 2026-11-16, DESIGN.md bagian 165 dan 166): selebar panel isi
 // sampai tepi kiri-kanan, empat angka dengan grafik kecil, kunjungan harian dengan periode 7/30/90
-// hari (lewat ?range=, tanpa JavaScript tambahan) dan tabelnya langsung tampil, lalu pesan terbaru.
+// hari (lewat ?range=, tanpa JavaScript tambahan), lalu Rincian per hari dan Pesan terbaru berdampingan.
 export default async function DashboardPage({ searchParams }: PageProps<'/admin'>) {
   await requireSuperAdminPage()
   const range = toDashboardRange((await searchParams).range)
-  const [current, messages] = await Promise.all([getDailyStats(range), getRecentMessages(4)])
+  const [current, messages] = await Promise.all([getDailyStats(range), getRecentMessages(5)])
   const { lang, t } = await getAdminT()
   const days = t('{days} hari', { days: range })
   const partialVisitors = current.some((d) => d.visitors === null)
@@ -113,7 +113,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
         {tiles.map((tile) => (
           <StatTile
             key={tile.key}
-            label={`${tile.label}, ${days}`}
+            label={tile.label}
             value={total(current, tile.key)}
             href={tile.href}
             lang={lang}
@@ -168,95 +168,102 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
             {t('Pengunjung (garis putus)')}
           </span>
         </div>
-        {/* tabel langsung tampil (tanpa "Lihat sebagai tabel"); digulir di dalam kotaknya agar
-            periode 90 hari tidak memanjangkan halaman */}
-        <div
-          role="region"
-          aria-label={`${t('Kunjungan harian')}, ${days}`}
-          tabIndex={0}
-          className="mt-4 max-h-80 overflow-y-auto rounded-md border border-border"
-        >
-          <table className="w-full text-left text-sm">
-            <caption className="sr-only">
-              {t('Kunjungan harian')}, {days}
-            </caption>
-            <thead className="sticky top-0 bg-surface-2 text-muted">
-              <tr>
-                <th scope="col" className="px-3 py-2 font-medium">
-                  {t('Tanggal')}
-                </th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">
-                  {t('Tayangan')}
-                </th>
-                <th scope="col" className="px-3 py-2 text-right font-medium">
-                  {t('Pengunjung')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...current].reverse().map((v) => (
-                <tr key={v.day} className="border-t border-border">
-                  <td className="px-3 py-1.5">{formatDayKey(v.day, lang)}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {formatNumber(v.views, lang)}
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {v.visitors === null ? '—' : formatNumber(v.visitors, lang)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
       </Card>
 
-      <Card>
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-h3 font-semibold">{t('Pesan terbaru')}</h2>
-          <Link
-            href="/admin/messages"
-            className="rounded-md border border-border-strong px-3 py-1.5 text-sm font-semibold transition-colors hover:border-text"
+      {/* tabel dan pesan terbaru berdampingan: satu baris dua kolom (revisi pemilik 2026-11-16) */}
+      <div className="grid items-stretch gap-3 lg:grid-cols-2">
+        <Card className="flex min-w-0 flex-col">
+          <h2 className="text-h3 font-semibold">{t('Rincian per hari')}</h2>
+          {/* kotak sendiri yang bisa digulir; kepala tabel menempel dengan latar pekat agar baris yang
+            lewat di bawahnya tidak tembus (latar kaca admin tembus pandang) */}
+          <div
+            role="region"
+            aria-label={`${t('Rincian per hari')}, ${days}`}
+            tabIndex={0}
+            className="mt-3 max-h-80 min-h-0 flex-1 overflow-y-auto rounded-md border border-border lg:max-h-none lg:min-h-64 lg:flex-[1_1_0px]"
           >
-            {t('Semua pesan')}
-          </Link>
-        </div>
-        {messages.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">
-            {t('Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.')}
-          </p>
-        ) : (
-          <ul className="mt-2 divide-y divide-border">
-            {messages.map((m) => (
-              <li key={m.id}>
-                <Link
-                  href={`/admin/messages/${m.id}`}
-                  className="flex min-w-0 items-center gap-3 py-2.5 hover:opacity-80"
-                >
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{m.name}</span>
-                    <span className="block truncate text-sm text-muted">
-                      {m.subject || t('(tanpa subjek)')}
-                    </span>
-                  </span>
-                  <span
-                    className={cn(
-                      'shrink-0 rounded-full border px-2 text-xs font-semibold',
-                      m.status === 'NEW'
-                        ? 'border-text bg-text text-bg'
-                        : 'border-border-strong text-muted',
-                    )}
+            <table className="w-full border-separate border-spacing-0 text-left text-sm">
+              <caption className="sr-only">
+                {t('Kunjungan harian')}, {days}
+              </caption>
+              <thead>
+                <tr>
+                  {[
+                    [t('Tanggal'), ''],
+                    [t('Tayangan'), 'text-right'],
+                    [t('Pengunjung'), 'text-right'],
+                  ].map(([label, align]) => (
+                    <th
+                      key={label}
+                      scope="col"
+                      className={cn(
+                        'sticky top-0 z-10 border-b border-border bg-bg px-3 py-2 font-medium text-muted',
+                        align,
+                      )}
+                    >
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[...current].reverse().map((v) => (
+                  <tr key={v.day}>
+                    <td className="border-b border-border px-3 py-2">
+                      {formatDayKey(v.day, lang)}
+                    </td>
+                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
+                      {formatNumber(v.views, lang)}
+                    </td>
+                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
+                      {v.visitors === null ? '—' : formatNumber(v.visitors, lang)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+        <Card className="min-w-0">
+          <h2 className="text-h3 font-semibold">{t('Pesan terbaru')}</h2>
+          {messages.length === 0 ? (
+            <p className="mt-3 text-sm text-muted">
+              {t('Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.')}
+            </p>
+          ) : (
+            <ul className="mt-2 divide-y divide-border">
+              {messages.map((m) => (
+                <li key={m.id}>
+                  <Link
+                    href={`/admin/messages/${m.id}`}
+                    className="flex min-w-0 items-center gap-3 py-2.5 hover:opacity-80"
                   >
-                    {t(STATUS_LABEL[m.status])}
-                  </span>
-                  <span className="hidden shrink-0 font-mono text-xs text-muted sm:inline">
-                    {formatDateTime(m.createdAt, lang)}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-semibold">{m.name}</span>
+                      <span className="block truncate text-sm text-muted">
+                        {m.subject || t('(tanpa subjek)')}
+                      </span>
+                    </span>
+                    <span
+                      className={cn(
+                        'shrink-0 rounded-full border px-2 text-xs font-semibold',
+                        m.status === 'NEW'
+                          ? 'border-text bg-text text-bg'
+                          : 'border-border-strong text-muted',
+                      )}
+                    >
+                      {t(STATUS_LABEL[m.status])}
+                    </span>
+                    <span className="hidden shrink-0 font-mono text-xs text-muted sm:inline">
+                      {formatDateTime(m.createdAt, lang)}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
     </div>
   )
 }
