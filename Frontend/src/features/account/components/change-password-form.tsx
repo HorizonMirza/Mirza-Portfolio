@@ -38,22 +38,20 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
     control,
     formState: { errors },
   } = form
-  const [current, next, repeat] = useWatch({
-    control,
-    name: ['currentPassword', 'newPassword', 'confirmPassword'],
-  })
+  const [next] = useWatch({ control, name: ['newPassword'] })
   const strength = passwordStrength(next ?? '')
+  const placeholder = t('Min. {min} Karakter', { min: MIN_PASSWORD_LENGTH })
+  // lima syarat yang ditampilkan, urutan dan tulisan sesuai permintaan pemilik 2026-11-16; "berbeda dari
+  // password saat ini" dan "ulangan sama" tetap diperiksa saat Simpan lewat changePasswordSchema
   const rules = [
+    { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Minimal 1 angka') },
     {
       ok: (next ?? '').length >= MIN_PASSWORD_LENGTH,
       label: t('Minimal {min} karakter', { min: MIN_PASSWORD_LENGTH }),
     },
-    { ok: PASSWORD_RULES.upper(next ?? ''), label: t('Ada huruf besar') },
-    { ok: PASSWORD_RULES.lower(next ?? ''), label: t('Ada huruf kecil') },
-    { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Ada angka') },
-    { ok: PASSWORD_RULES.symbol(next ?? ''), label: t('Ada simbol, mis. ! ? #') },
-    { ok: Boolean(next) && next !== current, label: t('Berbeda dari password saat ini') },
-    { ok: Boolean(next) && next === repeat, label: t('Ulangan sama') },
+    { ok: PASSWORD_RULES.lower(next ?? ''), label: t('Minimal 1 huruf kecil') },
+    { ok: PASSWORD_RULES.upper(next ?? ''), label: t('Minimal 1 huruf besar') },
+    { ok: PASSWORD_RULES.symbol(next ?? ''), label: t('Minimal 1 karakter spesial') },
   ]
 
   const onSubmit = form.handleSubmit((values) => {
@@ -72,11 +70,23 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
       <input type="text" name="username" autoComplete="username" hidden readOnly />
       <Field id="currentPassword" label="Password saat ini" error={errors.currentPassword?.message}>
         {(a) => (
-          <PasswordInput autoComplete="current-password" {...a} {...register('currentPassword')} />
+          <PasswordInput
+            autoComplete="current-password"
+            placeholder={placeholder}
+            {...a}
+            {...register('currentPassword')}
+          />
         )}
       </Field>
       <Field id="newPassword" label="Password baru" error={errors.newPassword?.message}>
-        {(a) => <PasswordInput autoComplete="new-password" {...a} {...register('newPassword')} />}
+        {(a) => (
+          <PasswordInput
+            autoComplete="new-password"
+            placeholder={placeholder}
+            {...a}
+            {...register('newPassword')}
+          />
+        )}
       </Field>
       <Field
         id="confirmPassword"
@@ -84,7 +94,12 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
         error={errors.confirmPassword?.message}
       >
         {(a) => (
-          <PasswordInput autoComplete="new-password" {...a} {...register('confirmPassword')} />
+          <PasswordInput
+            autoComplete="new-password"
+            placeholder={placeholder}
+            {...a}
+            {...register('confirmPassword')}
+          />
         )}
       </Field>
       <div className="flex flex-col gap-2">

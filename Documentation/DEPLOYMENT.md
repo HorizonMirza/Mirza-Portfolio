@@ -66,7 +66,7 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
    | `BETTER_AUTH_SECRET` | Production | teks acak minimal 32 karakter |
    | `BETTER_AUTH_SECRET` | Preview | teks acak lain (berbeda dari Production) |
    | `ADMIN_EMAIL` | Production | email untuk login admin |
-   | `ADMIN_PASSWORD` | Production | password admin, minimal 12 karakter |
+   | `ADMIN_PASSWORD` | Production | password admin, minimal 8 karakter |
    | `CRON_SECRET` | Production | teks acak minimal 16 karakter |
    | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Production, Preview | dari dashboard Cloudinary (opsional, untuk unggah foto/CV/gambar) |
    | `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL` | Production | opsional, untuk notifikasi email pesan kontak (newsletter dihapus 2026-11-06). `EMAIL_FROM` harus di domain yang terverifikasi di Resend |

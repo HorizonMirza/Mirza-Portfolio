@@ -1,6 +1,7 @@
 // Panjang minimal password Super Admin, satu sumber untuk Better Auth, form ganti password, seed, dan
-// skrip reset password (audit 2026-10-31, EFF-08). Tanpa impor lain agar aman dipakai di klien.
-export const MIN_PASSWORD_LENGTH = 12
+// skrip reset password (audit 2026-10-31, EFF-08). Diturunkan dari 12 ke 8 atas permintaan pemilik
+// (2026-11-16); aturan isi (besar, kecil, angka, simbol) tetap wajib. Tanpa impor lain agar aman dipakai di klien.
+export const MIN_PASSWORD_LENGTH = 8
 
 // Aturan isi password baru (revisi pemilik 2026-11-16): selain panjang, wajib ada huruf besar, huruf
 // kecil, angka, dan simbol. Satu sumber untuk form (daftar syarat) dan schema server.

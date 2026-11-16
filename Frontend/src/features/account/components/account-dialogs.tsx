@@ -149,7 +149,7 @@ export function ChangeIdentityDialog({
         {/* nama atau email sekarang: kartu bergaris dengan ikon bulat, keterangan kecil di atas dan
             nilainya di bawah (tata letak form Ganti Username/Password acuan pemilik 2026-11-16);
             hanya ditampilkan, tidak bisa ditekan atau diubah */}
-        <div className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2.5 select-none">
+        <div className="flex items-center gap-3 rounded-md border border-border bg-surface px-3 py-2 select-none">
           <span
             aria-hidden="true"
             className="grid size-9 shrink-0 place-items-center rounded-full border border-border-strong text-muted [&_svg]:size-4"

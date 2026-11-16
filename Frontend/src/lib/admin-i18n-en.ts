@@ -20,10 +20,6 @@ export const EN: Record<string, string> = {
   'Menu profil': 'Profile menu',
   'Ubah {item}': 'Edit {item}',
   '{label} (bulan dan tahun)': '{label} (month and year)',
-  'Ada huruf besar': 'Has an uppercase letter',
-  'Ada huruf kecil': 'Has a lowercase letter',
-  'Ada angka': 'Has a number',
-  'Ada simbol, mis. ! ? #': 'Has a symbol, e.g. ! ? #',
   'Tampilkan password': 'Show password',
   'Sembunyikan password': 'Hide password',
   'Password baru harus memuat huruf besar, huruf kecil, angka, dan simbol':
@@ -503,7 +499,6 @@ export const EN: Record<string, string> = {
   'Animasi hero': 'Hero animation',
   'Bahasa saat pertama dibuka': 'Language on first visit',
   'Batas pesan per jam': 'Messages per hour',
-  'Berbeda dari password saat ini': 'Different from the current password',
   'Bila mati, form di halaman Kontak diganti tulisan bahwa form sedang ditutup.':
     'When off, the form on the Contact page is replaced by a note that it is closed.',
   'Browser tidak dikenal': 'Unknown browser',
@@ -538,6 +533,11 @@ export const EN: Record<string, string> = {
   Lanjutan: 'Advanced',
   Menyala: 'On',
   'Minimal {min} karakter': 'At least {min} characters',
+  'Minimal 1 angka': 'At least 1 number',
+  'Minimal 1 huruf kecil': 'At least 1 lowercase letter',
+  'Minimal 1 huruf besar': 'At least 1 uppercase letter',
+  'Minimal 1 karakter spesial': 'At least 1 special character',
+  'Min. {min} Karakter': 'Min. {min} characters',
   'Mode perawatan': 'Maintenance mode',
   'Nomor belum diisi': 'No number yet',
   Nyalakan: 'Turn on',
@@ -564,7 +564,6 @@ export const EN: Record<string, string> = {
   'Tombol WhatsApp melayang': 'Floating WhatsApp button',
   'Tombol bulat di pojok kanan bawah situs, membuka chat ke nomor WhatsApp di menu Footer.':
     'A round button in the bottom-right corner of the site that opens a chat with the WhatsApp number from the Footer menu.',
-  'Ulangan sama': 'Repeat matches',
   'Untuk alamat tanpa /id atau /en, mis. mmirza.site. Pengunjung yang pernah memilih bahasa tetap memakai pilihannya.':
     'For addresses without /id or /en, e.g. mmirza.site. Visitors who already picked a language keep their choice.',
   'Untuk grafik di Dashboard. Tanpa cookie dan tanpa IP mentah.':

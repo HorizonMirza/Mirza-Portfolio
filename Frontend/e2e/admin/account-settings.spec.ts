@@ -40,22 +40,27 @@ test.describe('Admin → Akun', () => {
     await next.fill('pendek')
     await expect(dialog.getByText('Kekuatan: Terlalu pendek')).toBeVisible()
     await expect(
-      dialog.getByRole('listitem').filter({ hasText: 'Minimal 12 karakter' }),
+      dialog.getByRole('listitem').filter({ hasText: 'Minimal 8 karakter' }),
     ).toContainText('(belum terpenuhi)')
-    for (const rule of ['Ada huruf besar', 'Ada angka', 'Ada simbol'])
+    for (const rule of ['Minimal 1 huruf besar', 'Minimal 1 angka', 'Minimal 1 karakter spesial'])
       await expect(dialog.getByRole('listitem').filter({ hasText: rule })).toContainText(
         '(belum terpenuhi)',
       )
     await next.fill('Kopi-Pagi-8-Teras-Rumah!')
     await expect(dialog.getByText('Kekuatan: Sangat kuat')).toBeVisible()
-    for (const rule of ['Ada huruf besar', 'Ada huruf kecil', 'Ada angka', 'Ada simbol'])
+    for (const rule of [
+      'Minimal 1 huruf besar',
+      'Minimal 1 huruf kecil',
+      'Minimal 1 angka',
+      'Minimal 1 karakter spesial',
+    ])
       await expect(dialog.getByRole('listitem').filter({ hasText: rule })).toContainText(
         '(terpenuhi)',
       )
     await dialog.getByLabel('Ulangi password baru').fill('Kopi-Pagi-8-Teras-Rumah!')
-    await expect(dialog.getByRole('listitem').filter({ hasText: 'Ulangan sama' })).toContainText(
-      '(terpenuhi)',
-    )
+    // hanya lima syarat yang tampil, dan kolom password memberi contoh panjang minimal
+    await expect(dialog.getByRole('listitem')).toHaveCount(5)
+    await expect(next).toHaveAttribute('placeholder', 'Min. 8 Karakter')
     // tombol mata menampilkan dan menyembunyikan isian; tombol Simpan di kanan bawah (tata letak acuan)
     await expect(next).toHaveAttribute('type', 'password')
     await dialog.getByRole('button', { name: 'Tampilkan password' }).nth(1).click()

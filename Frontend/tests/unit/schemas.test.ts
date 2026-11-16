@@ -166,7 +166,7 @@ describe('changePasswordSchema', () => {
   it('menerima password baru yang cukup panjang', () => {
     expect(changePasswordSchema.safeParse(base).success).toBe(true)
   })
-  it('minimal 12 karakter dan konfirmasi harus sama', () => {
+  it('minimal 8 karakter dan konfirmasi harus sama', () => {
     expect(
       fieldsOf(
         changePasswordSchema.safeParse({
