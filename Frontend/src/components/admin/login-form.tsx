@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 
+import { Spinner } from '@/components/ui/spinner'
 import { authClient } from '@/lib/auth-client'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import { cn } from '@/lib/utils'
@@ -234,10 +235,7 @@ export function LoginForm({
             >
               {status === 'pending' ? (
                 <>
-                  <span
-                    aria-hidden="true"
-                    className="size-4 animate-spin rounded-full border-2 border-black/70 border-t-transparent"
-                  />
+                  <Spinner />
                   Logging in…
                 </>
               ) : status === 'done' ? (

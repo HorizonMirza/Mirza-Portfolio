@@ -48,6 +48,8 @@ export function SiteSettingsList({
 
   const save: Save = (key, value) => {
     setValues((v) => ({ ...v, [key]: value }))
+    // loading biasa: notifikasi berputar "Menyimpan…" lalu diganti "Tersimpan" di tempat yang sama
+    toast.loading(t('Menyimpan…'), { id: 'site-option' })
     startTransition(async () => {
       const result = await saveSiteOption({ key, value } as SiteOptionInput)
       if (result.ok) {

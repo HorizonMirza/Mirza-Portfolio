@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 
+import { Spinner } from '@/components/ui/spinner'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { fadeLabel } from '@/components/admin/sidebar-state'
 import { authClient } from '@/lib/auth-client'
@@ -161,7 +162,7 @@ export function ProfileMenu() {
             disabled={signingOut}
             aria-busy={signingOut || undefined}
           >
-            <LogOut className="size-4" aria-hidden="true" />
+            {signingOut ? <Spinner /> : <LogOut className="size-4" aria-hidden="true" />}
             {signingOut ? t('Keluar…') : t('Keluar')}
           </button>
         </div>

@@ -3,6 +3,7 @@
 import { Minus, Plus, RotateCw } from 'lucide-react'
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
+import { Spinner } from '@/components/ui/spinner'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
@@ -281,7 +282,8 @@ export function ImageCropDialog({
           </div>
         )}
         {stage ? (
-          <p role="status" className="mt-3 text-sm text-muted">
+          <p role="status" className="mt-3 flex items-center gap-2 text-sm text-muted">
+            <Spinner className="size-3.5" />
             {stage}
           </p>
         ) : null}
@@ -292,7 +294,10 @@ export function ImageCropDialog({
           disabled={working || failed || !bitmap}
           className="mt-4 min-h-11 w-full rounded-md bg-text text-sm font-semibold text-bg transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
         >
-          {working ? t('Memproses…') : t('Simpan')}
+          <span className="inline-flex items-center justify-center gap-2">
+            {working ? <Spinner /> : null}
+            {working ? t('Memproses…') : t('Simpan')}
+          </span>
         </button>
       </DialogContent>
     </Dialog>

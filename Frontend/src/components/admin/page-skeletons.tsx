@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { AdminText } from '@/components/admin/admin-lang'
+import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shapes'
 import { Skeleton, SkeletonLines, SkeletonPage } from '@/components/shared/skeleton'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
@@ -32,7 +33,7 @@ function TabsSkeleton({ count, stretch = false }: { count: number; stretch?: boo
   if (count === 0) return null
   if (stretch)
     return (
-      <div className="mb-6 flex gap-2 py-1">
+      <div className="admin-bleed mb-6 flex gap-2 py-1">
         {Array.from({ length: count }, (_, i) => (
           <Skeleton key={i} className="h-11 min-w-20 flex-1 rounded-md" />
         ))}
@@ -155,26 +156,22 @@ export function AdminTableSkeleton({ tabs = 0, columns = 5 }: { tabs?: number; c
   )
 }
 
-// halaman berisi daftar dengan tab filter dan nomor halaman (Pesan, Log audit)
+// Pesan: tab Baru/Dibaca/Arsip selebar panel, lalu baris pesan (status, nama, cuplikan, waktu, hapus)
 export function AdminListSkeleton() {
   return (
     <Loading>
       <TabsSkeleton count={3} stretch />
-      <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
-        {Array.from({ length: 8 }, (_, i) => (
-          <li key={i} className="flex items-center justify-between gap-4 p-4">
-            <span className="flex min-w-0 flex-1 flex-col gap-2">
-              <Skeleton className="h-4 w-[min(70%,24rem)]" />
-              <Skeleton className="h-3 w-[min(50%,16rem)]" />
-            </span>
-            <Skeleton className="h-6 w-16 rounded-full" />
+      <ul className="admin-bleed divide-y divide-border">
+        {Array.from({ length: 10 }, (_, i) => (
+          <li key={i} className="flex items-center gap-4 px-2 py-3">
+            <Skeleton className="h-5 w-11 shrink-0 rounded-full" />
+            <Skeleton className="h-4 w-24 shrink-0 md:w-32" />
+            <Skeleton className="hidden h-3.5 flex-1 md:block" />
+            <Skeleton className="ml-auto h-3 w-28 shrink-0 md:ml-0" />
+            <Skeleton className="size-5 shrink-0 rounded-md" />
           </li>
         ))}
       </ul>
-      <span className="mt-4 flex justify-end gap-2">
-        <Skeleton className="h-9 w-24 rounded-full" />
-        <Skeleton className="h-9 w-24 rounded-full" />
-      </span>
     </Loading>
   )
 }
@@ -218,42 +215,77 @@ export function AdminFormSkeleton({
   )
 }
 
-// isi satu pesan
+// isi satu pesan: tautan kembali, keterangan waktu dan bahasa, kartu pengirim + isi, lalu tombol
 export function AdminMessageSkeleton() {
   return (
     <Loading>
-      <HeaderSkeleton />
-      <Card className="flex flex-col gap-4">
-        {Array.from({ length: 3 }, (_, i) => (
-          <span key={i} className="flex flex-col gap-2">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-4 w-64 max-w-full" />
+      <div className="flex flex-col gap-4">
+        <Skeleton className="h-3.5 w-40" />
+        <Skeleton className="h-3.5 w-[min(100%,20rem)]" />
+        <Card className="flex flex-col gap-4">
+          {[0, 1].map((i) => (
+            <span key={i} className="flex items-center gap-4">
+              <Skeleton className="h-3 w-10" />
+              <Skeleton className="h-3.5 w-48" />
+            </span>
+          ))}
+          <SkeletonLines lines={4} className="mt-2" />
+          <span className="mt-2 flex flex-wrap items-center justify-between gap-3">
+            <Skeleton className="h-9 w-36 rounded-full" />
+            <span className="flex gap-2">
+              {[0, 1, 2].map((i) => (
+                <Skeleton key={i} className="h-9 w-24 rounded-full" />
+              ))}
+            </span>
           </span>
-        ))}
-        <SkeletonLines lines={6} className="mt-2" />
-      </Card>
+        </Card>
+      </div>
     </Loading>
   )
 }
 
-// Pengaturan: kelompok berjudul kecil berisi baris judul + keterangan dengan kontrol di kanan
+// Pengaturan: kelompok Suara (geseran volume, persen, tombol coba per baris), lalu kelompok Tampilan,
+// Pesan, Privasi, dan Lanjutan dengan saklar atau pilihan di kanan
 export function AdminSettingsSkeleton() {
+  const row = (control: ReactNode, i: number) => (
+    <span key={i} className="flex items-center justify-between gap-6 px-5 py-4">
+      <span className="flex min-w-0 flex-1 flex-col gap-2">
+        <Skeleton className="h-4 w-[min(60%,14rem)]" />
+        <Skeleton className="h-3 w-[min(90%,26rem)]" />
+      </span>
+      {control}
+    </span>
+  )
+  const slider = (
+    <span className="flex items-center gap-3">
+      <Skeleton className="hidden h-1.5 w-36 rounded-full sm:block" />
+      <Skeleton className="h-3.5 w-9" />
+      <Skeleton className="size-8 rounded-full" />
+    </span>
+  )
   return (
     <Loading>
       <div className="flex flex-col gap-8">
-        {[3, 4, 3].map((rows, g) => (
+        <div className="flex flex-col gap-2">
+          <Skeleton className="ml-1 h-3.5 w-16" />
+          <Card className="divide-y divide-border p-0">
+            {Array.from({ length: 9 }, (_, i) => row(slider, i))}
+          </Card>
+        </div>
+        {[6, 2, 2, 2].map((rows, g) => (
           <div key={g} className="flex flex-col gap-2">
             <Skeleton className="ml-1 h-3.5 w-20" />
             <Card className="divide-y divide-border p-0">
-              {Array.from({ length: rows }, (_, i) => (
-                <span key={i} className="flex items-center justify-between gap-6 px-5 py-4">
-                  <span className="flex min-w-0 flex-1 flex-col gap-2">
-                    <Skeleton className="h-4 w-[min(60%,14rem)]" />
-                    <Skeleton className="h-3 w-[min(90%,26rem)]" />
-                  </span>
-                  <Skeleton className="h-7 w-12 rounded-full" />
-                </span>
-              ))}
+              {Array.from({ length: rows }, (_, i) =>
+                row(
+                  i % 3 === 0 ? (
+                    <Skeleton className="h-9 w-36 rounded-md" />
+                  ) : (
+                    <Skeleton className="h-7 w-12 rounded-full" />
+                  ),
+                  i,
+                ),
+              )}
             </Card>
           </div>
         ))}
@@ -272,7 +304,8 @@ export function AdminAccountSkeleton() {
           <Skeleton className="h-6 w-56" />
           <Skeleton className="h-5 w-24" />
         </span>
-        {[3, 2, 3, 5].map((rows, g) => (
+        {/* Info (nama, email, admin sejak), Keamanan (ganti password), Perangkat tertaut */}
+        {[3, 1, 3].map((rows, g) => (
           <span key={g} className="flex flex-col gap-2">
             <Skeleton className="ml-1 h-3.5 w-24" />
             <span className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface">
@@ -307,5 +340,61 @@ export function AdminStatusSkeleton() {
         <Skeleton className="admin-bleed h-[28rem] rounded-md" />
       </div>
     </Loading>
+  )
+}
+
+// Halaman pratinjau 1:1 (permintaan pemilik 2026-11-16: skeleton sesuai layout halaman): tab Beranda
+// bila ada, panggung selebar panel berisi bentuk halaman situs yang sama dengan skeleton situs publik,
+// lalu baris ID/EN dan tombol Simpan bila halaman aslinya memilikinya.
+export function AdminStageSkeleton({
+  shape,
+  tabs = 0,
+  lang = false,
+  save = true,
+  footer,
+}: {
+  shape: PageShape
+  // jumlah tab modul Beranda (Kartu pembuka, Peran beranda, Skill teknis, GitHub)
+  tabs?: number
+  // baris pilihan bahasa ID/EN di atas Simpan
+  lang?: boolean
+  save?: boolean
+  // isi tambahan di bawah panggung (mis. pilihan warna GitHub)
+  footer?: ReactNode
+}) {
+  return (
+    <Loading>
+      <TabsSkeleton count={tabs} stretch />
+      <div className="flex flex-col gap-3">
+        <div className="admin-bleed overflow-hidden rounded-md border border-border bg-bg/40 px-4 py-6 md:px-8">
+          <PageShapeSkeleton shape={shape} />
+        </div>
+        {footer}
+        {lang ? (
+          <div className="admin-bleed grid grid-cols-2 gap-2">
+            <Skeleton className="h-11 rounded-md" />
+            <Skeleton className="h-11 rounded-md opacity-60" />
+          </div>
+        ) : null}
+        {save ? <Skeleton className="admin-bleed h-11 rounded-md" /> : null}
+      </div>
+    </Loading>
+  )
+}
+
+// GitHub: panggung grafik kontribusi, lalu lima pilihan warna
+export function AdminGithubSkeleton() {
+  return (
+    <AdminStageSkeleton
+      shape="github"
+      tabs={4}
+      footer={
+        <div className="admin-bleed grid grid-cols-5 gap-2">
+          {Array.from({ length: 5 }, (_, i) => (
+            <Skeleton key={i} className="h-12 rounded-md" />
+          ))}
+        </div>
+      }
+    />
   )
 }

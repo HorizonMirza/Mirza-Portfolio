@@ -2,6 +2,7 @@ import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ComponentProps } from 'react'
 
+import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 
 // Tiga tingkat hierarki tombol (DESIGN.md bagian 3). Tinggi minimal 44 px untuk target sentuh.
@@ -28,9 +29,39 @@ type ButtonProps = ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
     // true: gaya tombol dipasang ke elemen anak (misalnya <a>)
     asChild?: boolean
+    // aksi sedang menunggu server: spinner di depan teks, tombol tidak bisa ditekan lagi
+    loading?: boolean
   }
 
-export function Button({ className, variant, size, asChild = false, ...props }: ButtonProps) {
-  const Comp = asChild ? Slot : 'button'
-  return <Comp className={cn(buttonVariants({ variant, size }), className)} {...props} />
+export function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  loading = false,
+  disabled,
+  children,
+  ...props
+}: ButtonProps) {
+  if (asChild)
+    return (
+      <Slot className={cn(buttonVariants({ variant, size }), className)} {...props}>
+        {children}
+      </Slot>
+    )
+  return (
+    <button
+      className={cn(
+        buttonVariants({ variant, size }),
+        loading && 'disabled:cursor-wait [&>svg~svg]:hidden',
+        className,
+      )}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading ? <Spinner /> : null}
+      {children}
+    </button>
+  )
 }

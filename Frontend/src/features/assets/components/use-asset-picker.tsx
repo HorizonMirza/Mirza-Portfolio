@@ -79,16 +79,21 @@ export function useAssetPicker({
       return
     }
     setBusy(true)
-    const result = await uploadAsset(job.target, job.targetId, blob, name, (s) =>
-      setStage(stageText[s]),
-    )
+    // PDF diunggah tanpa dialog pemotong, jadi tahapnya tampil sebagai toast berpemutar yang lalu
+    // diganti hasilnya (id sama). Gambar menampilkan tahap di dialog pemotong.
+    const toastId = UPLOAD_TARGETS[job.target].kind === 'DOCUMENT' ? 'asset-upload' : undefined
+    if (toastId) toast.loading(stageText.menyiapkan, { id: toastId })
+    const result = await uploadAsset(job.target, job.targetId, blob, name, (s) => {
+      setStage(stageText[s])
+      if (toastId) toast.loading(stageText[s], { id: toastId })
+    })
     setStage(null)
     setBusy(false)
     if (!result.ok) {
-      toast.error(t(result.message))
+      toast.error(t(result.message), { id: toastId })
       return
     }
-    toast.success(t(result.message))
+    toast.success(t(result.message), { id: toastId })
     setPending(null)
     onDone()
   }

@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 
+import { Spinner } from '@/components/ui/spinner'
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { cn } from '@/lib/utils'
@@ -44,10 +45,14 @@ export function SaveBar({ pending, label = 'Simpan' }: { pending: boolean; label
     <button
       type="submit"
       disabled={pending}
+      aria-busy={pending || undefined}
       data-pending={pending ? '' : undefined}
       className="save-bar admin-bleed relative min-h-11 overflow-hidden rounded-md bg-text text-sm font-semibold text-bg transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
     >
-      {pending ? t('Menyimpan…') : t(label)}
+      <span className="inline-flex items-center justify-center gap-2">
+        {pending ? <Spinner /> : null}
+        {pending ? t('Menyimpan…') : t(label)}
+      </span>
     </button>
   )
 }

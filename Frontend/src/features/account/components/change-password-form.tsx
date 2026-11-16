@@ -126,7 +126,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
           ))}
         </ul>
       </div>
-      <Button type="submit" disabled={pending} className="w-full">
+      <Button type="submit" loading={pending} className="w-full">
         {pending ? t('Menyimpan…') : t('Simpan')}
       </Button>
     </form>

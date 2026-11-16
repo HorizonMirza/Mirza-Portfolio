@@ -213,7 +213,8 @@ export function ChangeIdentityDialog({
         ) : null}
         <Button
           type="submit"
-          disabled={pending || value.trim() === '' || password === ''}
+          disabled={value.trim() === '' || password === ''}
+          loading={pending}
           className="w-full"
         >
           {pending ? t('Menyimpan…') : t('Simpan')}

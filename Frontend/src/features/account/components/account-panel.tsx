@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation'
 import { type ReactNode, useId, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
+import { Spinner } from '@/components/ui/spinner'
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import type { DeviceParts } from '@/lib/device'
@@ -97,6 +98,12 @@ export function AccountPanel({
             sizes="128px"
             className={cn('size-32 rounded-full bg-text object-cover', picker.busy && 'opacity-60')}
           />
+          {picker.busy ? (
+            <span className="absolute inset-0 grid place-items-center text-bg" role="status">
+              <Spinner className="size-7" />
+              <span className="sr-only">{t('Mengunggah…')}</span>
+            </span>
+          ) : null}
           <button
             type="button"
             onClick={() => picker.pick('profile-photo')}
@@ -241,6 +248,8 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [confirming, setConfirming] = useState(false)
+  // perangkat yang sedang dikeluarkan (spinner di tombolnya)
+  const [busyId, setBusyId] = useState<string | null>(null)
   const others = sessions.filter((s) => !s.current).length
 
   const run = (action: () => Promise<{ ok: boolean; message: string }>) =>
@@ -286,7 +295,11 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
                 variant="secondary"
                 size="sm"
                 disabled={pending}
-                onClick={() => run(() => revokeSession(s.id))}
+                loading={pending && busyId === s.id}
+                onClick={() => {
+                  setBusyId(s.id)
+                  run(() => revokeSession(s.id))
+                }}
                 aria-label={t('Keluarkan {device}', { device })}
               >
                 {t('Keluarkan')}
@@ -316,7 +329,7 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
                 type="button"
                 size="sm"
                 autoFocus
-                disabled={pending}
+                loading={pending}
                 onClick={() => run(revokeOtherSessions)}
                 className="bg-danger text-white hover:bg-danger/90 dark:text-bg"
               >

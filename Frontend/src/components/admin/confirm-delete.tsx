@@ -4,6 +4,7 @@ import { Trash2 } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
+import { Spinner } from '@/components/ui/spinner'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import {
@@ -73,9 +74,13 @@ export function ConfirmDelete({
           type="button"
           onClick={confirm}
           disabled={pending}
+          aria-busy={pending || undefined}
           className="mt-6 min-h-11 w-full rounded-md bg-danger text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60 dark:text-bg"
         >
-          {pending ? t('Menghapus…') : t('Hapus')}
+          <span className="inline-flex items-center justify-center gap-2">
+            {pending ? <Spinner /> : null}
+            {pending ? t('Menghapus…') : t('Hapus')}
+          </span>
         </button>
       </DialogContent>
     </Dialog>

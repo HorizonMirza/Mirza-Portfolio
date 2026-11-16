@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -23,8 +23,11 @@ export function ReorderButtons({
 }) {
   const t = useAdminT()
   const [pending, startTransition] = useTransition()
+  // arah yang sedang dikirim: panahnya berganti spinner
+  const [moving, setMoving] = useState<MoveDirection | null>(null)
 
   function move(direction: MoveDirection) {
+    setMoving(direction)
     startTransition(async () => {
       const result = await onMove(direction)
       if (!result.ok) toast.error(t(result.message))
@@ -39,6 +42,7 @@ export function ReorderButtons({
         className="px-2"
         aria-label={t('Naikkan {item}', { item: itemLabel })}
         disabled={isFirst || pending}
+        loading={pending && moving === 'up'}
         onClick={() => move('up')}
       >
         <ChevronUp aria-hidden="true" />
@@ -49,6 +53,7 @@ export function ReorderButtons({
         className="px-2"
         aria-label={t('Turunkan {item}', { item: itemLabel })}
         disabled={isLast || pending}
+        loading={pending && moving === 'down'}
         onClick={() => move('down')}
       >
         <ChevronDown aria-hidden="true" />

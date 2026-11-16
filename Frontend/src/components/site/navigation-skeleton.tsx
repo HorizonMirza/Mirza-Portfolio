@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
-import { Skeleton, SkeletonLines } from '@/components/shared/skeleton'
+import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shapes'
 import { usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 
@@ -12,7 +12,10 @@ const SHOW_DELAY_MS = 150
 // pengaman bila navigasi dibatalkan atau gagal tanpa mengganti alamat
 const GIVE_UP_MS = 10_000
 
-type Shape = 'home' | 'about' | 'experience' | 'projects' | 'project' | 'contact' | 'text'
+type Shape = Extract<
+  PageShape,
+  'home' | 'about' | 'experience' | 'projects' | 'project' | 'contact' | 'text'
+>
 
 // path tanpa awalan bahasa: /id/projects/gaas → /projects/gaas
 function stripLocale(path: string) {
@@ -105,114 +108,9 @@ export function NavigationSkeleton() {
     >
       <span className="sr-only">{t('loadingPage')}</span>
       <div className="mx-auto flex w-full max-w-[1200px] flex-col gap-8 px-4 sm:px-6 lg:px-8">
-        <Shape shape={shape} />
+        {/* bentuk sama dengan panggung pratinjau admin (components/shared/page-shapes.tsx) */}
+        <PageShapeSkeleton shape={shape} />
       </div>
     </div>
   )
-}
-
-function Title() {
-  return (
-    <span className="flex flex-col gap-4 pt-6 md:pt-10">
-      <Skeleton className="h-3.5 w-28" />
-      <Skeleton className="h-12 w-[min(100%,28rem)] md:h-16" />
-      <SkeletonLines lines={2} className="max-w-xl" />
-    </span>
-  )
-}
-
-function Shape({ shape }: { shape: Shape }) {
-  switch (shape) {
-    case 'home':
-      return (
-        <>
-          <Skeleton className="mx-auto h-[min(60vh,34rem)] w-full max-w-3xl rounded-3xl" />
-          <Skeleton className="mx-auto h-9 w-56" />
-          <span className="grid gap-4 md:grid-cols-3">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-40 rounded-2xl" />
-            ))}
-          </span>
-        </>
-      )
-    case 'about':
-      return (
-        <>
-          <Title />
-          <span className="grid gap-8 md:grid-cols-[18rem_1fr]">
-            <Skeleton className="aspect-[3/4] w-full max-w-72 rounded-2xl" />
-            <SkeletonLines lines={7} />
-          </span>
-        </>
-      )
-    case 'experience':
-      return (
-        <>
-          <Title />
-          <span className="flex flex-col gap-6 border-l border-border pl-6">
-            {[0, 1, 2, 3].map((i) => (
-              <span key={i} className="flex flex-col gap-2">
-                <Skeleton className="h-5 w-[min(80%,22rem)]" />
-                <Skeleton className="h-3.5 w-40" />
-                <SkeletonLines lines={2} className="max-w-2xl" />
-              </span>
-            ))}
-          </span>
-        </>
-      )
-    case 'projects':
-      return (
-        <>
-          <Title />
-          <span className="flex flex-wrap gap-2">
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-10 w-28 rounded-full" />
-            ))}
-          </span>
-          <span className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <span key={i} className="flex flex-col gap-3">
-                <Skeleton className="aspect-video w-full rounded-2xl" />
-                <Skeleton className="h-5 w-3/4" />
-                <Skeleton className="h-3.5 w-1/2" />
-              </span>
-            ))}
-          </span>
-        </>
-      )
-    case 'project':
-      return (
-        <>
-          <Skeleton className="mt-6 h-4 w-36 md:mt-10" />
-          <Skeleton className="h-12 w-[min(100%,32rem)]" />
-          <Skeleton className="aspect-video w-full rounded-2xl" />
-          <SkeletonLines lines={5} className="max-w-3xl" />
-        </>
-      )
-    case 'contact':
-      return (
-        <span className="grid gap-12 lg:grid-cols-[15rem_1fr]">
-          <Skeleton className="hidden h-80 rounded-2xl lg:mt-24 lg:block" />
-          <span className="flex flex-col gap-6">
-            <Title />
-            {[0, 1, 2].map((i) => (
-              <Skeleton key={i} className="h-12 w-full rounded-md" />
-            ))}
-            <Skeleton className="h-36 w-full rounded-md" />
-          </span>
-        </span>
-      )
-    default:
-      return (
-        <>
-          <Title />
-          {[0, 1, 2].map((i) => (
-            <span key={i} className="flex max-w-prose flex-col gap-3">
-              <Skeleton className="h-6 w-56" />
-              <SkeletonLines lines={3} />
-            </span>
-          ))}
-        </>
-      )
-  }
 }

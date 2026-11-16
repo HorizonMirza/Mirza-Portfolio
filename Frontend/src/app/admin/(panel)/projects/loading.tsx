@@ -1,6 +1,6 @@
-import { AdminTableSkeleton } from '@/components/admin/page-skeletons'
+import { AdminStageSkeleton } from '@/components/admin/page-skeletons'
 
-// Skeleton shimmer selama data halaman diambil dari database (DESIGN.md bagian 111)
+// Skeleton shimmer sesuai layout halaman ini selama datanya diambil (DESIGN.md bagian 111 dan 169)
 export default function Loading() {
-  return <AdminTableSkeleton tabs={2} columns={7} />
+  return <AdminStageSkeleton shape="projects" lang />
 }

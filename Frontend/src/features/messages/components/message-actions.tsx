@@ -2,7 +2,7 @@
 
 import { Archive, Inbox, MailCheck, MailOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
@@ -25,7 +25,10 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
     void setMessageStatus(id, 'READ')
   }, [id, status])
 
+  // tombol yang sedang menunggu server menampilkan spinner
+  const [busy, setBusy] = useState<MessageStatusValue | null>(null)
   function change(next: MessageStatusValue) {
+    setBusy(next)
     startTransition(async () => {
       applyResult(await setMessageStatus(id, next))
     })
@@ -34,23 +37,47 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
   return (
     <div className="flex flex-wrap gap-2">
       {status === 'ARCHIVED' ? (
-        <Button variant="secondary" size="sm" onClick={() => change('READ')} disabled={pending}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => change('READ')}
+          disabled={pending}
+          loading={pending && busy === 'READ'}
+        >
           <Inbox aria-hidden="true" />
           {t('Keluarkan dari arsip')}
         </Button>
       ) : (
-        <Button variant="secondary" size="sm" onClick={() => change('ARCHIVED')} disabled={pending}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => change('ARCHIVED')}
+          disabled={pending}
+          loading={pending && busy === 'ARCHIVED'}
+        >
           <Archive aria-hidden="true" />
           {t('Arsipkan')}
         </Button>
       )}
       {status === 'READ' ? (
-        <Button variant="ghost" size="sm" onClick={() => change('NEW')} disabled={pending}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => change('NEW')}
+          disabled={pending}
+          loading={pending && busy === 'NEW'}
+        >
           <MailOpen aria-hidden="true" />
           {t('Tandai belum dibaca')}
         </Button>
       ) : status === 'NEW' ? (
-        <Button variant="ghost" size="sm" onClick={() => change('READ')} disabled={pending}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => change('READ')}
+          disabled={pending}
+          loading={pending && busy === 'READ'}
+        >
           <MailCheck aria-hidden="true" />
           {t('Tandai dibaca')}
         </Button>
