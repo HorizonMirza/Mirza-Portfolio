@@ -716,6 +716,8 @@ export default function ContributionSkyline({
       canvas.style.height = Hmax + 'px'
       // hanya 2D yang bisa digeser; selama morph dan 3D posisi geser dikunci
       stage.style.overflowX = toScroll && target === 0 ? 'auto' : 'hidden'
+      // wilayah yang bisa digeser harus bisa difokus dengan keyboard (panah menggesernya)
+      stage.tabIndex = toScroll && target === 0 ? 0 : -1
       // dibuka di minggu terbaru (ujung kanan), seperti profil GitHub. Posisi geser diatur sebelum
       // menggambar agar frame pertama sudah memakai jendela yang benar.
       if (toScroll && !scrolling) stage.scrollLeft = stage.scrollWidth
@@ -1141,8 +1143,10 @@ export default function ContributionSkyline({
       if (!entered) return
       if (goal !== target) {
         target = goal
-        if (scrolling) stage.style.overflowX = goal === 0 ? 'auto' : 'hidden'
-        else if (goal === 0 && wantsScroll()) relayout()
+        if (scrolling) {
+          stage.style.overflowX = goal === 0 ? 'auto' : 'hidden'
+          stage.tabIndex = goal === 0 ? 0 : -1
+        } else if (goal === 0 && wantsScroll()) relayout()
         if (goal === 0) {
           yawGoal = 0
           elevGoal = 0
@@ -1356,7 +1360,7 @@ export default function ContributionSkyline({
         <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
             ref={stageRef}
-            className="relative w-full [scrollbar-width:none] overflow-hidden rounded-md outline-offset-4 outline-text has-[:focus-visible]:outline-2 [&::-webkit-scrollbar]:hidden"
+            className="relative w-full [scrollbar-width:none] overflow-hidden rounded-md outline-offset-4 outline-text focus-visible:outline-2 has-[:focus-visible]:outline-2 [&::-webkit-scrollbar]:hidden"
             style={{ height: 150 }}
           >
             <canvas
