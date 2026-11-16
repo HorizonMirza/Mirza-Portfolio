@@ -87,7 +87,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   // Diulang sampai hidrasi selesai. getByRole: hanya yang terlihat (Next menyimpan salinan halaman
   // tersembunyi untuk navigasi kembali).
   await expect(async () => {
-    await page.getByRole('button', { name: 'Buat project' }).click()
+    await page.getByRole('button', { name: 'Simpan', exact: true }).click()
     await expect(page.getByText('title (Indonesia): Judul wajib diisi')).toBeVisible({
       timeout: 1000,
     })
@@ -123,7 +123,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   // foto bisa dipilih sebelum project tersimpan (Cloudinary tidak diatur di tes: muncul pesan belum aktif)
   await main.locator('.pd-thumbs .pd-add').click()
   await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
-  await page.getByRole('button', { name: 'Buat project' }).click()
+  await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Project dibuat.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
 
@@ -634,12 +634,15 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   // jenis pekerjaan: teks bebas (bukan daftar pilihan); bulan tampil seperti di situs
   await entry.getByRole('textbox', { name: /^Jenis pekerjaan \(opsional\)/ }).fill('Magang E2E')
   await expect(entry.getByRole('combobox')).toHaveCount(0)
-  // bulan tampil seperti di situs; ditekan membuka pilihan bulan dan tahun (dropdown)
+  // bulan tampil seperti di situs; ditekan membuka kalender kecil bergaya aplikasi (bukan dropdown bawaan)
   await entry.getByRole('button', { name: /^Mulai:/ }).click()
-  await expect(entry.getByRole('combobox', { name: /\(bulan\)$/ })).toBeVisible()
-  await expect(entry.getByRole('combobox', { name: /\(tahun\)$/ })).toBeVisible()
-  // tinggalkan dropdown sebelum mengisi kolom lain
-  await entry.getByRole('textbox', { name: 'Instansi', exact: true }).click()
+  const calendar = page.getByRole('dialog', { name: /Mulai \(bulan dan tahun\)/ })
+  await expect(calendar).toBeVisible()
+  await expect(page.getByRole('combobox')).toHaveCount(0)
+  await calendar.getByRole('button', { name: 'Tahun sebelumnya' }).click()
+  await calendar.getByRole('button', { name: /^Mar \d{4}$/ }).click()
+  await expect(calendar).toHaveCount(0)
+  await expect(entry.getByRole('button', { name: /^Mulai: Mar/ })).toBeVisible()
   // uraian tampil seperti di situs; ditekan baru bisa diketik
   await entry.getByRole('button', { name: /^Uraian \(Indonesia\)/ }).click()
   await entry.getByRole('textbox', { name: 'Uraian (Indonesia)' }).fill('Uraian **E2E**.')
@@ -1081,6 +1084,8 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   ).toHaveCount(0)
   // ikon kartu Resume CV tidak lagi tombol unggah: hanya link yang diketik
   await expect(contacts.getByRole('button', { name: 'Berkas Resume CV' })).toHaveCount(0)
+  // keterangan "Google Drive" tidak tampil di admin (revisi 2026-11-16)
+  await expect(contacts.getByText('Google Drive')).toHaveCount(0)
 })
 
 test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketik', async ({

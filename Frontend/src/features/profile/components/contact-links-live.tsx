@@ -253,11 +253,6 @@ export function ContactLinksLive({
           )}
           <span className="grid min-w-0 gap-2">
             <span className="text-sm font-semibold">{cvTitle}</span>
-            {cvShown ? (
-              <span className={cn('text-[0.8125rem]', hasCv ? 'text-primary-fg/75' : 'text-muted')}>
-                {cvShown}
-              </span>
-            ) : null}
             {(() => {
               const reg = register('cvUrl')
               return (

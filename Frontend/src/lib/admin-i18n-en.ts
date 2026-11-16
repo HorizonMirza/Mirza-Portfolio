@@ -19,8 +19,9 @@ export const EN: Record<string, string> = {
   // top bar dan menu profil
   'Menu profil': 'Profile menu',
   'Ubah {item}': 'Edit {item}',
-  '{label} (bulan)': '{label} (month)',
-  '{label} (tahun)': '{label} (year)',
+  '{label} (bulan dan tahun)': '{label} (month and year)',
+  'Tahun sebelumnya': 'Previous year',
+  'Tahun berikutnya': 'Next year',
   'Judul dan ringkasan wajib diisi.': 'Title and summary are required.',
   'Semua pengalaman': 'All experience',
   'Masih berlangsung': 'Still ongoing',
@@ -104,7 +105,6 @@ export const EN: Record<string, string> = {
   Simpan: 'Save',
   Batal: 'Cancel',
   'Menyimpan…': 'Saving…',
-  'Buat project': 'Create project',
   'Tambah pengalaman': 'Add experience',
   'Tambah pendidikan': 'Add education',
   // judul dan deskripsi halaman

@@ -297,3 +297,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Akun: foto penuh dan kamera langsung ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog buram dengan password (aksi changeAccountEmail, DESIGN.md bagian 162) |
 | 2026-11-16 | Garis tepi atas panel isi admin tidak lagi terpotong isi yang digulir (border sungguhan, DESIGN.md bagian 163) |
 | 2026-11-16 | Footer: judul tetap, WhatsApp/Email satu isian, CV hanya link, jarak antar isian; Project: foto sebelum disimpan, tanpa Draf, slug di bilah alamat, daftar admin seperti situs (DESIGN.md bagian 164) |
+| 2026-11-16 | Footer admin tanpa keterangan "Google Drive"; judul daftar Project admin bergaris putus-putus; tombol "Simpan" di project baru; Experience: kalender bulan/tahun bergaya aplikasi (components/admin/month-picker.tsx) menggantikan dropdown bawaan, jarak tombol "Masih berlangsung" |

@@ -2475,6 +2475,10 @@ html:has(.contact-sent) {
   text-overflow: ellipsis;
   line-height: 1.15;
 }
+.pj-title-fit:has(.admin-inline) {
+  /* garis putus-putus judul yang bisa diketik (admin) tidak ikut terpotong */
+  overflow: visible;
+}
 .pj-row-title {
   /* --chars = panjang judul; huruf Oswald kapital rata-rata ±0,5 em: judul pendek tetap ukuran penuh */
   font-size: min(var(--text-h3), calc(100cqi / (var(--chars, 24) * 0.52)));

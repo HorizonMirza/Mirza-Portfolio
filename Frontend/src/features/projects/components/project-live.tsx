@@ -532,7 +532,7 @@ export function ProjectLive({
           onChange={setLang}
           dirty={{ id: dirtyLang('id'), en: dirtyLang('en') }}
         />
-        <SaveBar pending={pending} label={projectId ? 'Simpan' : 'Buat project'} />
+        <SaveBar pending={pending} label="Simpan" />
       </form>
       {picker.element}
     </>
