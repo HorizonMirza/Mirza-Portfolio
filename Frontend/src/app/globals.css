@@ -2721,6 +2721,10 @@ html[data-intro='pending'] .intro {
     /* isian kosong sama tinggi dengan yang terisi (placeholder memakai line-height normal) */
     line-height: inherit;
   }
+  /* isian bulan tampil seperti teks "July 2026" di situs: tanpa ikon kalender */
+  input[type='month'].admin-inline::-webkit-calendar-picker-indicator {
+    display: none;
+  }
   /* satu baris setinggi garis teksnya, kosong atau terisi (Oswald: line-height normal 1,48 kali ukuran
      membuat isian kosong lebih tinggi dari yang terisi) */
   input.admin-inline {

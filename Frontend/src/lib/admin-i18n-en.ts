@@ -253,7 +253,6 @@ export const EN: Record<string, string> = {
   Kerja: 'Work',
   Organisasi: 'Organization',
   Detail: 'Details',
-  'Tidak ditampilkan': 'Not shown',
   Mulai: 'Start',
   Selesai: 'End',
   'Jenis pekerjaan (opsional)': 'Employment type (optional)',
@@ -667,8 +666,6 @@ export const EN: Record<string, string> = {
   'Chip logo': 'Logo Chip',
   // Home → GitHub, warna grafik kontribusi (revisi 2026-11-15)
   'Warna grafik': 'Chart colors',
-  'Ini data contoh. Data GitHub asli belum tersedia: isi GITHUB_TOKEN di environment (Vercel), lalu bagian ini tampil dengan data asli di sini dan di beranda.':
-    'This is sample data. Real GitHub data is not available yet: set GITHUB_TOKEN in the environment (Vercel) and this section shows real data here and on the home page.',
   'Warna GitHub disimpan.': 'GitHub colors saved.',
   Merah: 'Red',
   Kuning: 'Yellow',

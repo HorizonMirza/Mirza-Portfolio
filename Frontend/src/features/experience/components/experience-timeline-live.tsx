@@ -1,8 +1,8 @@
 'use client'
 
-import { Plus, X } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -21,6 +21,7 @@ import {
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
+import { formatMonth } from '@/lib/localized'
 import { cn } from '@/lib/utils'
 
 import { deleteExperience } from '../actions'
@@ -55,6 +56,49 @@ function duration(start: string, end: string, lang: Lang, texts: ExperienceTexts
   return [years ? fmt(years, texts.years) : '', months ? fmt(months, texts.months) : '']
     .filter(Boolean)
     .join(' ')
+}
+
+// Bulan mulai/selesai: tampil seperti di situs ("Jul 2026", bahasa isi yang dipilih); ditekan untuk
+// mengganti lewat isian bulan, lalu kembali ke tampilan situs saat ditinggalkan.
+function MonthField({
+  label,
+  value,
+  lang,
+  invalid,
+  onChange,
+}: {
+  label: string
+  value: string
+  lang: Lang
+  invalid: boolean
+  onChange: (value: string) => void
+}) {
+  const [editing, setEditing] = useState(false)
+  if (editing)
+    return (
+      <input
+        type="month"
+        aria-label={label}
+        value={value}
+        autoFocus
+        onChange={(event) => onChange(event.target.value)}
+        onBlur={() => setEditing(false)}
+        className={cn('admin-inline min-h-6', invalid && 'admin-inline-bad')}
+      />
+    )
+  return (
+    <button
+      type="button"
+      onClick={() => setEditing(true)}
+      className={cn(
+        'admin-editable inline-flex min-h-6 items-center rounded-sm px-0.5',
+        invalid && 'admin-inline-bad',
+      )}
+    >
+      <span className="sr-only">{label}: </span>
+      {/^\d{4}-\d{2}$/.test(value) ? formatMonth(value, lang) : '----'}
+    </button>
+  )
 }
 
 // Admin → Experience (revisi pemilik 2026-11-13, DESIGN.md bagian 147): halaman Pengalaman sama
@@ -123,7 +167,7 @@ export function ExperienceTimelineLive({
                   {tx.none}
                 </p>
               ) : (
-                <ol aria-label={tx.listLabel} className="xp-tl">
+                <ol aria-label={tx.listLabel} className="xp-tl admin-tight">
                   {rows.map((row) => {
                     const v = row.values
                     const err = entries.errors[row.key] ?? {}
@@ -178,6 +222,7 @@ export function ExperienceTimelineLive({
                               placeholder={t('Peran')}
                               invalid={Boolean(err[`title_${lang}`])}
                               onChange={(event) => set({ [`title_${lang}`]: event.target.value })}
+                              className="inline-block w-fit max-w-full align-top"
                             />
                           </h2>
                           <p className="mt-1">
@@ -200,57 +245,38 @@ export function ExperienceTimelineLive({
                               }}
                             />
                             {' · '}
-                            <select
-                              aria-label={t('Jenis pekerjaan (opsional)')}
-                              value={v.employmentType}
+                            {/* jenis pekerjaan: teks bebas per bahasa (mis. Internship), bukan daftar pilihan */}
+                            <InlineInput
+                              key={`emp-${lang}`}
+                              label={label('Jenis pekerjaan (opsional)')}
+                              value={v[`employmentLabel_${lang}`] ?? ''}
+                              placeholder={t('Jenis pekerjaan')}
+                              maxLength={60}
+                              size={Math.max(10, (v[`employmentLabel_${lang}`] ?? '').length + 1)}
+                              invalid={Boolean(err[`employmentLabel_${lang}`])}
                               onChange={(event) =>
-                                set({
-                                  employmentType: event.target.value as typeof v.employmentType,
-                                })
+                                set({ [`employmentLabel_${lang}`]: event.target.value })
                               }
-                              className="admin-inline cursor-pointer"
-                            >
-                              <option value="">{t('Tidak ditampilkan')}</option>
-                              {EMPLOYMENT_TYPES.map((type) => (
-                                <option key={type} value={type}>
-                                  {tx.employment[type]}
-                                </option>
-                              ))}
-                            </select>
+                            />
                           </p>
                           <p className="mt-1 text-sm text-muted tabular-nums [&>*]:mx-0.5 [&>*]:align-middle">
-                            <input
-                              type="month"
-                              aria-label={t('Mulai')}
+                            <MonthField
+                              label={t('Mulai')}
                               value={v.startMonth}
-                              onChange={(event) => set({ startMonth: event.target.value })}
-                              className={cn(
-                                'admin-inline min-h-6',
-                                err.startMonth && 'admin-inline-bad',
-                              )}
+                              lang={lang}
+                              invalid={Boolean(err.startMonth)}
+                              onChange={(value) => set({ startMonth: value })}
                             />
                             <span aria-hidden="true">-</span>
                             {v.endMonth ? (
                               <>
-                                <input
-                                  type="month"
-                                  aria-label={t('Selesai')}
+                                <MonthField
+                                  label={t('Selesai')}
                                   value={v.endMonth}
-                                  onChange={(event) => set({ endMonth: event.target.value })}
-                                  className={cn(
-                                    'admin-inline min-h-6',
-                                    err.endMonth && 'admin-inline-bad',
-                                  )}
+                                  lang={lang}
+                                  invalid={Boolean(err.endMonth)}
+                                  onChange={(value) => set({ endMonth: value })}
                                 />
-                                <button
-                                  type="button"
-                                  aria-label={t('Masih berlangsung')}
-                                  title={t('Masih berlangsung')}
-                                  onClick={() => set({ endMonth: '' })}
-                                  className="inline-flex size-6 items-center justify-center rounded-md hover:bg-surface-2"
-                                >
-                                  <X className="size-3.5" aria-hidden="true" />
-                                </button>
                               </>
                             ) : (
                               <button
@@ -294,6 +320,18 @@ export function ExperienceTimelineLive({
                                 {t(type === 'WORK' ? 'Kerja' : 'Organisasi')}
                               </button>
                             ))}
+                            {v.endMonth ? (
+                              <button
+                                type="button"
+                                onClick={() => set({ endMonth: '' })}
+                                className={cn(
+                                  'inline-flex min-h-7 items-center rounded-md border border-dashed border-border px-2 text-xs font-semibold text-muted hover:text-text',
+                                  hover,
+                                )}
+                              >
+                                {t('Masih berlangsung')}
+                              </button>
+                            ) : null}
                             {/* "Draf" hanya untuk entri yang masih draf (tekan untuk menerbitkan);
                                 hapus logo/foto dan hapus entri berupa ikon kecil */}
                             {v.status === 'DRAFT' ? (
@@ -348,7 +386,14 @@ export function ExperienceTimelineLive({
                           <button
                             type="button"
                             onClick={sideButton('photo')}
-                            className="admin-editable block cursor-pointer rounded-[12px] text-left [--editable-offset:4px]"
+                            className={cn(
+                              'admin-editable cursor-pointer rounded-[12px] [--editable-offset:2px]',
+                              // foto selebar kolom (maks. 20rem) dan terdorong ke garis tengah seperti di situs;
+                              // tahun cukup selebar angkanya
+                              row.pending?.photo || row.photo
+                                ? 'ml-(--xp-push) block w-full max-w-80'
+                                : 'inline-block',
+                            )}
                           >
                             {row.pending?.photo || row.photo ? (
                               <span className="pj-tilt xp-tilt block">

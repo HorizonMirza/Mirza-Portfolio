@@ -996,7 +996,11 @@ export default function ContributionSkyline({
 
     const local = (ev: PointerEvent | MouseEvent) => {
       const r = canvas.getBoundingClientRect()
-      return [ev.clientX - r.left, ev.clientY - r.top] as const
+      // pratinjau admin memperkecil halaman lewat transform (SiteFrame): posisi tetikus diubah ke
+      // satuan tata letak supaya kotak yang ditunjuk sama dengan yang disorot; di situs skalanya 1
+      const k = canvas.offsetWidth > 0 ? r.width / canvas.offsetWidth : 1
+      const scale = Math.abs(k - 1) < 0.02 ? 1 : k
+      return [(ev.clientX - r.left) / scale, (ev.clientY - r.top) / scale] as const
     }
 
     let drag: {

@@ -16,6 +16,8 @@ export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
   })
   return rows.map((e) => ({
     id: e.id,
+    // jenis pekerjaan lama (enum) untuk mengisi kolom teks bila belum ada
+    legacyEmployment: e.employmentType,
     logo: e.logo,
     photo: e.photo,
     values: {
@@ -29,7 +31,8 @@ export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
       startMonth: dateToMonth(e.startDate),
       endMonth: e.endDate ? dateToMonth(e.endDate) : '',
       location: e.location ?? '',
-      employmentType: e.employmentType ?? '',
+      employmentLabel_id: e.employmentLabel_id ?? '',
+      employmentLabel_en: e.employmentLabel_en ?? '',
       inStory: e.inStory,
       status: e.status,
     } satisfies ExperienceInput,

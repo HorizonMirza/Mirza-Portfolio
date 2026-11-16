@@ -24,12 +24,23 @@ export async function saveExperience(
       return fail('Data tidak valid.')
     const parsed = experienceSchema.safeParse(input)
     if (!parsed.success) return fail('Periksa kembali isian.', zodFieldErrors(parsed.error.issues))
-    const { startMonth, endMonth, location, employmentType, organization_en, ...rest } = parsed.data
+    const {
+      startMonth,
+      endMonth,
+      location,
+      employmentLabel_id,
+      employmentLabel_en,
+      organization_en,
+      ...rest
+    } = parsed.data
     const data = {
       ...rest,
       organization_en: emptyToNull(organization_en),
       location: emptyToNull(location),
-      employmentType: employmentType || null,
+      // jenis pekerjaan kini teks bebas; kolom enum lama dikosongkan setelah disimpan dari admin
+      employmentType: null,
+      employmentLabel_id: emptyToNull(employmentLabel_id),
+      employmentLabel_en: emptyToNull(employmentLabel_en),
       startDate: monthToDate(startMonth),
       endDate: endMonth ? monthToDate(endMonth) : null,
     }

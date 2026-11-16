@@ -16,7 +16,8 @@ describe('garis cerita', () => {
       startMonth: '2025-05',
       endMonth: '',
       location: '',
-      employmentType: '',
+      employmentLabel_id: '',
+      employmentLabel_en: '',
       status: 'PUBLISHED',
     })
     expect(parsed.inStory).toBe(false)

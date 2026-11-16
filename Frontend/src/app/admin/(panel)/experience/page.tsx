@@ -52,7 +52,20 @@ export default async function ExperiencePage() {
     <>
       <PageHeader title="Experience" />
       <ExperienceTimelineLive
-        initial={entries.map((e) => ({ key: e.id, ...e }))}
+        // jenis pekerjaan lama (daftar tetap) mengisi kolom teks bebas sampai entri disimpan ulang
+        initial={entries.map(({ legacyEmployment, ...e }) => ({
+          key: e.id,
+          ...e,
+          values: {
+            ...e.values,
+            employmentLabel_id:
+              e.values.employmentLabel_id ||
+              (legacyEmployment ? id.employment[legacyEmployment] : ''),
+            employmentLabel_en:
+              e.values.employmentLabel_en ||
+              (legacyEmployment ? en.employment[legacyEmployment] : ''),
+          },
+        }))}
         texts={{ id, en }}
         configured={isUploadConfigured()}
       />

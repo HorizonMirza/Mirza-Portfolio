@@ -23,3 +23,19 @@ export function durationText(
     .filter(Boolean)
     .join(' ')
 }
+
+// Jenis pekerjaan yang tampil di situs ("PT PGAS Solution · Internship"): teks bebas bahasa itu, lalu
+// jenis lama (daftar tetap), lalu teks bahasa lain. Kosong = tidak ditampilkan.
+export function employmentText(
+  e: {
+    employmentType: string | null
+    employmentLabel_id: string | null
+    employmentLabel_en: string | null
+  },
+  locale: 'id' | 'en',
+  translate: (type: string) => string,
+) {
+  const own = locale === 'id' ? e.employmentLabel_id : e.employmentLabel_en
+  const other = locale === 'id' ? e.employmentLabel_en : e.employmentLabel_id
+  return own || (e.employmentType ? translate(e.employmentType) : '') || other || ''
+}

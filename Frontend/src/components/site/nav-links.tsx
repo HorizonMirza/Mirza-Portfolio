@@ -100,10 +100,8 @@ export function NavLinks({
           return (
             <li key={item.href}>
               <span
-                className={cn(
-                  'relative inline-flex min-h-10 items-center justify-center rounded-full px-4 text-sm font-semibold text-muted',
-                  active && 'bg-surface-2 text-text',
-                )}
+                // pratinjau admin: tanpa penanda menu aktif (revisi pemilik 2026-11-16)
+                className="relative inline-flex min-h-10 items-center justify-center rounded-full px-4 text-sm font-semibold text-muted"
               >
                 {editLabel(item.key)}
               </span>

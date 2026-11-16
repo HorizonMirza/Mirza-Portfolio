@@ -6,7 +6,7 @@ import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
 import { PhotoLightbox } from '@/features/experience/components/public/photo-lightbox'
-import { durationText } from '@/features/experience/display'
+import { durationText, employmentText } from '@/features/experience/display'
 import { getPublicExperiences, type PublicExperience } from '@/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
@@ -77,7 +77,9 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                   <h2 className="text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
                   <p className="mt-1">
                     {org}
-                    {e.employmentType ? ` · ${t(`employment.${e.employmentType}`)}` : ''}
+                    {employmentText(e, locale, (type) => t(`employment.${type}` as never))
+                      ? ` · ${employmentText(e, locale, (type) => t(`employment.${type}` as never))}`
+                      : ''}
                   </p>
                   <p className="mt-1 text-sm text-muted tabular-nums">
                     {formatMonth(e.start, locale)} -{' '}

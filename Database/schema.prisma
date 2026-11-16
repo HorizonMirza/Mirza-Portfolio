@@ -243,32 +243,35 @@ model Skill {
 }
 
 model Experience {
-  id              String          @id @default(uuid(7)) @db.Uuid
-  type            ExperienceType
+  id                 String          @id @default(uuid(7)) @db.Uuid
+  type               ExperienceType
   // nama instansi; organization_en hanya diisi bila nama bahasa Inggrisnya berbeda
   // (mis. "Universitas Bina Nusantara" / "Bina Nusantara University")
-  organization    String
-  organization_en String?
-  title_id        String
-  title_en        String
-  description_id  String          @db.Text
-  description_en  String          @db.Text
-  startDate       DateTime        @db.Date
+  organization       String
+  organization_en    String?
+  title_id           String
+  title_en           String
+  description_id     String          @db.Text
+  description_en     String          @db.Text
+  startDate          DateTime        @db.Date
   // null = masih berlangsung
-  endDate         DateTime?       @db.Date
-  location        String?
-  employmentType  EmploymentType?
-  order           Int             @default(0)
-  status          ContentStatus   @default(PUBLISHED)
-  logoId          String?         @db.Uuid
-  logo            Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  endDate            DateTime?       @db.Date
+  location           String?
+  employmentType     EmploymentType?
+  // jenis pekerjaan teks bebas per bahasa (mis. "Internship"); didahulukan dari employmentType (2026-11-16)
+  employmentLabel_id String?         @db.VarChar(60)
+  employmentLabel_en String?         @db.VarChar(60)
+  order              Int             @default(0)
+  status             ContentStatus   @default(PUBLISHED)
+  logoId             String?         @db.Uuid
+  logo               Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
   // foto kegiatan di sisi seberang timeline (DESIGN.md bagian 38)
-  photoId         String?         @db.Uuid
-  photo           Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
+  photoId            String?         @db.Uuid
+  photo              Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
   // titik di garis cerita "Dari komunitas ke software" di beranda (DESIGN.md bagian 46)
-  inStory         Boolean         @default(false)
-  createdAt       DateTime        @default(now()) @db.Timestamptz(3)
-  updatedAt       DateTime        @updatedAt @db.Timestamptz(3)
+  inStory            Boolean         @default(false)
+  createdAt          DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime        @updatedAt @db.Timestamptz(3)
 
   @@index([type, startDate])
 }

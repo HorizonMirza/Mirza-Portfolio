@@ -597,6 +597,10 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await expect(page.getByRole('button', { name: 'Pendidikan', exact: true })).toHaveCount(0)
   await roles.first().fill(role)
   await entry.getByRole('textbox', { name: 'Instansi', exact: true }).fill('Instansi E2E')
+  // jenis pekerjaan: teks bebas (bukan daftar pilihan); bulan tampil seperti di situs
+  await entry.getByRole('textbox', { name: /^Jenis pekerjaan \(opsional\)/ }).fill('Magang E2E')
+  await expect(entry.getByRole('combobox')).toHaveCount(0)
+  await expect(entry.getByRole('button', { name: /^Mulai:/ })).toBeVisible()
   // uraian tampil seperti di situs; ditekan baru bisa diketik
   await entry.getByRole('button', { name: /^Uraian \(Indonesia\)/ }).click()
   await entry.getByRole('textbox', { name: 'Uraian (Indonesia)' }).fill('Uraian **E2E**.')
@@ -989,13 +993,18 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   // yang dipakai tes situs publik tidak berubah
   await page.goto('/admin/pages/footer')
   const whatsapp = page.getByRole('textbox', { name: 'WhatsApp (opsional)' })
-  const contacts = page.locator('form').filter({ has: whatsapp })
+  // teks kecil kartu tampil seperti di situs; ditekan untuk mengganti tautannya
+  const whatsappShown = page.getByRole('button', { name: /^WhatsApp \(opsional\)/ })
+  const contacts = page
+    .locator('form')
+    .filter({ has: page.getByRole('button', { name: /^Simpan$/ }) })
   // halaman admin bisa lambat dimuat di CI yang sibuk (WebKit): tunggu lebih lama dari 5 detik
-  await expect(page.getByRole('textbox', { name: 'Link CV (opsional)' })).toBeVisible({
+  await expect(page.getByRole('button', { name: /^Link CV \(opsional\)/ })).toBeVisible({
     timeout: 20_000,
   })
   // diulang sampai hidrasi selesai
   await expect(async () => {
+    if (!(await whatsapp.isVisible())) await whatsappShown.click({ timeout: 1000 })
     await whatsapp.fill('nomor-salah')
     await contacts.getByRole('button', { name: 'Simpan' }).click()
     await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })

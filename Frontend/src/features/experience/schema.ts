@@ -35,7 +35,9 @@ export const experienceSchema = z
     startMonth: z.string().regex(MONTH, 'Bulan mulai wajib diisi'),
     endMonth: z.string().refine((v) => v === '' || MONTH.test(v), 'Bulan selesai tidak valid'),
     location: optionalText('Lokasi', 120),
-    employmentType: z.union([z.enum(EMPLOYMENT_TYPES), z.literal('')]),
+    // jenis pekerjaan teks bebas per bahasa, mis. "Internship" / "Magang" (opsional)
+    employmentLabel_id: optionalText('Jenis pekerjaan', 60).default(''),
+    employmentLabel_en: optionalText('Employment type', 60).default(''),
     inStory: z.boolean().default(false),
     status: z.enum(['DRAFT', 'PUBLISHED']),
   })
@@ -60,7 +62,8 @@ export const emptyExperience: ExperienceInput = {
   startMonth: '',
   endMonth: '',
   location: '',
-  employmentType: '',
+  employmentLabel_id: '',
+  employmentLabel_en: '',
   inStory: false,
   status: 'PUBLISHED',
 }

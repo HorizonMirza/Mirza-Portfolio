@@ -57,6 +57,20 @@ export function cvLabel(cvHost: string | null, fileLabel: string) {
   return isDriveHost(cvHost) ? 'Google Drive' : cvHost
 }
 
+// Teks kecil kartu seperti di footer situs untuk nilai yang diketik admin (dipakai pratinjau admin):
+// nomor, email, nama akun dari URL profil, atau host. Nilai kosong = ''.
+export function footerValue(
+  key: Exclude<FooterLinkKey, 'website' | 'cv'>,
+  raw: string | null | undefined,
+) {
+  const value = (raw ?? '').trim()
+  if (!value) return ''
+  if (key === 'whatsapp' || key === 'email') return value
+  const handle = handleFromUrl(value)
+  if (key === 'instagram') return handle ? `@${handle}` : hostOf(value)
+  return handle ?? hostOf(value)
+}
+
 export function footerLinks(
   profile: ProfileLinks,
   { locale, fileLabel }: { locale: string; fileLabel: string },

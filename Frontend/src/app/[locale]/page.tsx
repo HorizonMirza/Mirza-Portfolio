@@ -13,6 +13,7 @@ import { Container } from '@/components/site/section-heading'
 import ContributionSkyline from '@/components/ui/contribution-skyline'
 import { ExperienceAccordion } from '@/features/experience/components/public/experience-accordion'
 import { getPublicExperiences } from '@/features/experience/public'
+import { employmentText } from '@/features/experience/display'
 import { initials, organizationName, sortByLatest } from '@/features/experience/schema'
 import { skylineLabelsFrom } from '@/features/github/labels'
 import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
@@ -234,7 +235,9 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                         <span className="home-xp-role">{loc(e, 'title', locale)}</span>
                         <span className="home-xp-org">
                           {org}
-                          {e.employmentType ? ` · ${tExp(`employment.${e.employmentType}`)}` : ''}
+                          {employmentText(e, locale, (type) => tExp(`employment.${type}` as never))
+                            ? ` · ${employmentText(e, locale, (type) => tExp(`employment.${type}` as never))}`
+                            : ''}
                         </span>
                         <span className="home-xp-when home-xp-when-inline">{when}</span>
                       </span>
