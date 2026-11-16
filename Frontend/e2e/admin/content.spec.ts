@@ -120,22 +120,19 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const skill = main.getByRole('button', { name: 'TypeScript', exact: true })
   await skill.click()
   await expect(skill).toHaveAttribute('aria-pressed', 'true')
+  // foto bisa dipilih sebelum project tersimpan (Cloudinary tidak diatur di tes: muncul pesan belum aktif)
+  await main.locator('.pd-thumbs .pd-add').click()
+  await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
   await page.getByRole('button', { name: 'Buat project' }).click()
   await expect(page.getByText('Project dibuat.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
 
-  // Project baru berstatus draf: tombol Draf (hanya ada untuk draf) menerbitkannya (diulang sampai
-  // halaman edit terhidrasi). Tanpa pilihan status, kategori, unggulan, dan tahun di halaman ini.
+  // Project baru langsung terbit: tanpa tombol Draf, Terbit, Unggulan, kategori, dan tahun di halaman ini
+  await expect(main.getByRole('button', { name: 'Draf', exact: true })).toHaveCount(0)
   await expect(main.getByRole('button', { name: 'Terbit', exact: true })).toHaveCount(0)
   await expect(main.getByRole('button', { name: 'Unggulan di beranda' })).toHaveCount(0)
   // galeri seperti di situs: deretan gambar kecil dengan tombol + untuk menambah gambar
   await expect(main.locator('.pd-thumbs .pd-add')).toHaveCount(1)
-  await expect(async () => {
-    await main.getByRole('button', { name: 'Draf', exact: true }).click({ timeout: 2000 })
-    await expect(main.getByRole('button', { name: 'Draf', exact: true })).toHaveCount(0, {
-      timeout: 1000,
-    })
-  }).toPass()
   await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Project disimpan.')).toBeVisible()
 
@@ -1032,9 +1029,12 @@ test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
     )
     expect(gutter, `${path} masih punya batang gulir`).toBe(0)
     // isi halaman digulir di dalam panel besar; batang gulirnya juga disembunyikan
-    const inner = await page
-      .locator('main')
-      .evaluate((el: HTMLElement) => el.offsetWidth - el.clientWidth)
+    const inner = await page.locator('main').evaluate((el: HTMLElement) => {
+      // garis tepi panel (border) ikut terhitung di offsetWidth, tetapi bukan batang gulir
+      const style = getComputedStyle(el)
+      const borders = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth)
+      return el.offsetWidth - el.clientWidth - borders
+    })
     expect(inner, `${path} panel isi masih punya batang gulir`).toBe(0)
   }
 })
@@ -1059,11 +1059,14 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
     await expect(page.getByText(/^WhatsApp: Nomor WhatsApp/)).toBeVisible({ timeout: 1000 })
   }).toPass()
   await expect(page.getByText('Kontak disimpan.')).toHaveCount(0)
-  // tiap kartu: judul dan teks kecil yang tampil, lalu tautan tujuannya (revisi 2026-11-16)
-  for (const name of ['WhatsApp', 'Email', 'LinkedIn', 'GitHub', 'Instagram'])
-    for (const field of ['Judul kartu', 'Teks kartu'])
-      await expect(page.getByRole('textbox', { name: `${field} ${name}` })).toBeVisible()
-  await expect(page.getByRole('textbox', { name: 'Teks kartu Resume CV' })).toBeVisible()
+  // WhatsApp dan Email satu isian; LinkedIn, GitHub, Instagram: nama yang tampil dan tautan; judul kartu
+  // dan keterangan CV tidak bisa diubah (revisi 2026-11-16)
+  for (const name of ['LinkedIn', 'GitHub', 'Instagram'])
+    await expect(page.getByRole('textbox', { name: `Teks kartu ${name}` })).toBeVisible()
+  for (const name of ['WhatsApp', 'Email'])
+    await expect(page.getByRole('textbox', { name: `Teks kartu ${name}` })).toHaveCount(0)
+  await expect(page.getByRole('textbox', { name: /^Judul kartu/ })).toHaveCount(0)
+  await expect(page.getByRole('textbox', { name: /^Teks kartu Resume CV/ })).toHaveCount(0)
   // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak (DESIGN.md bagian 151)
   await expect(page.locator('.site-frame footer')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toHaveCount(1)
@@ -1076,11 +1079,8 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   await expect(
     page.locator('.site-frame footer h2 input, .site-frame footer h2 textarea'),
   ).toHaveCount(0)
-  // ikon kartu Resume CV langsung membuka pemilih berkas PDF (tanpa jendela, DESIGN.md bagian 148);
-  // Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif
-  await contacts.getByRole('button', { name: 'Berkas Resume CV' }).click()
-  await expect(page.getByText(/Unggah belum aktif/).first()).toBeVisible()
-  await expect(page.getByRole('dialog')).toHaveCount(0)
+  // ikon kartu Resume CV tidak lagi tombol unggah: hanya link yang diketik
+  await expect(contacts.getByRole('button', { name: 'Berkas Resume CV' })).toHaveCount(0)
 })
 
 test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketik', async ({
