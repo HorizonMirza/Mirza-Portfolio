@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
+import { forbidden, redirect, unauthorized } from 'next/navigation'
 import { cache } from 'react'
 
 import { getAuth } from '@/lib/auth'
@@ -15,12 +15,15 @@ export type AdminSession = {
   sessionId: string
 }
 
+// Satu kali per request: sesi Better Auth apa adanya (bisa null).
+const getRawSession = cache(async () => getAuth().api.getSession({ headers: await headers() }))
+
+const isSuperAdmin = (user: object) => (user as { role?: string }).role === 'SUPER_ADMIN'
+
 // Satu kali per request: ambil sesi dan pastikan perannya SUPER_ADMIN.
 export const getAdminSession = cache(async (): Promise<AdminSession | null> => {
-  const session = await getAuth().api.getSession({ headers: await headers() })
-  if (!session) return null
-  const role = (session.user as { role?: string }).role
-  if (role !== 'SUPER_ADMIN') return null
+  const session = await getRawSession()
+  if (!session || !isSuperAdmin(session.user)) return null
   return {
     userId: session.user.id,
     name: session.user.name,
@@ -29,10 +32,20 @@ export const getAdminSession = cache(async (): Promise<AdminSession | null> => {
   }
 })
 
-// Untuk halaman dan layout admin: arahkan ke login bila belum masuk.
+// Untuk halaman dan layout admin (halaman status bersama, revisi pemilik 2026-11-16):
+// - tanpa cookie sesi: proxy sudah mengarahkan ke login sebelum sampai sini; tetap dijaga di sini.
+// - cookie ada tetapi sesinya tidak sah atau berakhir: halaman 401 (app/admin/unauthorized.tsx).
+// - sesi sah tetapi bukan Super Admin: halaman 403 (app/admin/forbidden.tsx).
 export async function requireSuperAdminPage(): Promise<AdminSession> {
+  const session = await getRawSession()
+  if (!session) {
+    const hasCookie = (await headers()).get('cookie')?.includes('mm.session_token')
+    if (!hasCookie) redirect('/admin/login')
+    unauthorized()
+  }
+  if (!isSuperAdmin(session.user)) forbidden()
   const admin = await getAdminSession()
-  if (!admin) redirect('/admin/login')
+  if (!admin) forbidden()
   return admin
 }
 

@@ -33,6 +33,44 @@
     "title": "Sedang diperbarui",
     "body": "Situs ini sedang diperbarui. Silakan buka lagi beberapa saat lagi."
   },
+  "Status": {
+    "200": {
+      "title": "Semua beres.",
+      "body": "Halaman terbuka dengan baik. Tidak ada yang perlu dikhawatirkan."
+    },
+    "301": {
+      "title": "Alamatnya sudah pindah.",
+      "body": "Halaman ini punya alamat baru dan kamu akan diarahkan ke sana."
+    },
+    "400": {
+      "title": "Permintaannya kurang pas.",
+      "body": "Alamat atau isian yang dikirim tidak bisa dibaca. Periksa lagi, lalu coba ulang."
+    },
+    "401": {
+      "title": "Masuk dulu, ya.",
+      "body": "Sesi kamu sudah berakhir atau belum masuk. Masuk lagi untuk melanjutkan."
+    },
+    "403": {
+      "title": "Pintu ini terkunci.",
+      "body": "Akun ini tidak punya akses ke halaman tersebut."
+    },
+    "418": {
+      "title": "Saya teko, bukan mesin kopi.",
+      "body": "Permintaan kopi ditolak dengan sopan. Kode 418 adalah lelucon lama dari awal dunia web."
+    },
+    "429": {
+      "title": "Pelan-pelan dulu.",
+      "body": "Terlalu banyak permintaan dalam waktu singkat. Tunggu sebentar, lalu coba lagi."
+    },
+    "502": {
+      "title": "Jalurnya sedang putus.",
+      "body": "Server perantara tidak mendapat jawaban yang benar. Biasanya pulih dalam beberapa menit."
+    },
+    "home": "Beranda",
+    "retry": "Coba lagi",
+    "login": "Masuk",
+    "dashboard": "Dashboard"
+  },
   "Nav": {
     "label": "Navigasi utama",
     "home": "Beranda",

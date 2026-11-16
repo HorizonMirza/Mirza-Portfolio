@@ -292,3 +292,20 @@ export function AdminAccountSkeleton() {
     </Loading>
   )
 }
+
+// pratinjau halaman status: deretan tab kode, satu baris keterangan, dan panggung pratinjau
+export function AdminStatusSkeleton() {
+  return (
+    <Loading>
+      <div className="flex flex-col">
+        <div className="admin-bleed mb-6 flex gap-2 py-1">
+          {Array.from({ length: 11 }, (_, i) => (
+            <Skeleton key={i} className="h-11 flex-1 rounded-md" />
+          ))}
+        </div>
+        <Skeleton className="mb-3 h-4 w-72 max-w-full" />
+        <Skeleton className="admin-bleed h-[28rem] rounded-md" />
+      </div>
+    </Loading>
+  )
+}

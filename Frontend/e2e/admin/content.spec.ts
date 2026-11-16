@@ -26,6 +26,7 @@ const PAGES = [
   '/admin/pages/footer',
   '/admin/settings',
   '/admin/account',
+  '/admin/status',
 ]
 
 for (const theme of ['light', 'dark'] as const) {
@@ -719,6 +720,24 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
   await expect(page.getByText('Hari menurut WIB')).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Konten di situs' })).toHaveCount(0)
   await expect(summary.getByText('%')).toHaveCount(0)
+})
+
+test('Pengaturan → Halaman status: pratinjau 11 kode status', async ({ page }) => {
+  await page.goto('/admin/settings')
+  await page.getByRole('link', { name: 'Lihat', exact: true }).click()
+  await expect(page).toHaveURL(/\/admin\/status$/)
+  const tabs = page.getByRole('navigation', { name: 'Kode status' })
+  await expect(tabs.getByRole('link')).toHaveCount(11)
+  const preview = page.getByRole('region', { name: 'Pratinjau' })
+  // bawaan 404 (hantu), lalu pindah ke 429
+  await expect(tabs.getByRole('link', { name: '404' })).toHaveAttribute('aria-current', 'page')
+  await expect(preview.getByRole('heading', { level: 1 })).toHaveText('Boo! Halamannya hilang.')
+  await tabs.getByRole('link', { name: '429' }).click()
+  await expect(page).toHaveURL(/code=429$/)
+  await expect(preview.getByRole('heading', { level: 1 })).toHaveText('Pelan-pelan dulu.')
+  await expect(
+    page.getByText('Hanya pratinjau: batas permintaan tampil sebagai pesan di form.'),
+  ).toBeVisible()
 })
 
 test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {

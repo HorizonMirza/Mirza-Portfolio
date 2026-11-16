@@ -29,9 +29,17 @@ test.describe('akses admin tanpa sesi', () => {
     await expect(page.getByLabel('Email')).toBeFocused()
   })
 
-  test('cookie sesi palsu ditolak', async ({ page, context, baseURL }) => {
+  test('cookie sesi palsu ditolak dengan halaman 401 yang menuju login', async ({
+    page,
+    context,
+    baseURL,
+  }) => {
     await context.addCookies([{ name: 'mm.session_token', value: 'palsu.palsu', url: baseURL! }])
-    await page.goto('/admin')
+    const res = await page.goto('/admin')
+    expect(res?.status()).toBe(401)
+    await expect(page.getByRole('heading', { level: 1, name: 'Masuk dulu, ya.' })).toBeVisible()
+    await expect(page.getByRole('navigation', { name: 'Menu admin' })).toHaveCount(0)
+    await page.getByRole('link', { name: 'Masuk' }).click()
     await expect(page).toHaveURL(/\/admin\/login/)
   })
 

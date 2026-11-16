@@ -1908,3 +1908,18 @@ Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
 - **Perbaikan:** kepala tabel yang menempel kini berlatar pekat (`bg-bg`, `border-separate`) sehingga baris yang digulir tidak tembus di belakang judul kolom (latar kaca admin tembus pandang).
 - **Lanjutan (malam):** tabel Rincian per hari langsung menempel di kartunya tanpa bingkai sendiri. Pesan terbaru disusun seperti tabel tak bergaris (CSS subgrid): kolom nama/subjek, status, dan waktu sejajar di semua baris, garis tipis hanya di antara baris.
 - **Lanjutan kedua:** bingkai tabel Rincian per hari dikembalikan (kotak bergaris di dalam kartu, seperti sebelumnya). Urutan ditukar: **Pesan terbaru di kiri, Rincian per hari di kanan**.
+
+## 168. Halaman status untuk 11 kode HTTP (2026-11-16 malam)
+
+Pemilik meminta halaman untuk kode 200, 301, 400, 401, 403, 404, 418, 429, 500, 502, 503 dan memilih "desain semua + pasang".
+- **Satu desain** (`components/ui/status-page.tsx`), turunan desain hantu 404 yang dipilih pemilik: angka depan, ikon melayang pengganti angka tengah, angka belakang (Oswald), judul huruf besar, satu kalimat, tombol. Ikon: 200 centang, 301 penunjuk jalan, 400 berkas tanda tanya, 401 kunci, 403 perisai silang, 404 hantu, 418 cangkir, 429 jam pasir, 500 server rusak, 502 colokan lepas, 503 kunci pas. Animasi CSS `.g404-*`, tanpa JavaScript, `prefers-reduced-motion` dihormati; terang/gelap dari token.
+- **Teks dua bahasa** di `messages/*.json` → `Status` (200, 301, 400, 401, 403, 418, 429, 502 + tombol). 404, 500, dan 503 tetap memakai `NotFound`, `Error`, `Maintenance` (bisa diubah dari admin seperti sebelumnya).
+- **Dipasang di tempat aslinya:**
+  - 404: alamat yang tidak ada (situs dan 404 global), status 404.
+  - 500: galat halaman situs, galat global, dan galat panel admin (di dalam bingkai panel).
+  - 503: Mode perawatan (tampilan; nama pemilik di atas angka). Kode HTTP halaman perawatan masih 200 dengan noindex.
+  - 401: `/admin` dengan cookie sesi yang tidak sah atau berakhir → `unauthorized()` → `app/admin/unauthorized.tsx`, status 401, tombol Masuk. Tanpa cookie tetap langsung ke login lewat proxy.
+  - 403: masuk dengan akun yang bukan Super Admin → `forbidden()` → `app/admin/forbidden.tsx`, status 403. Butuh `experimental.authInterrupts` di `next.config.ts`.
+  - 418: easter egg `/id/418` dan `/en/418`, kode HTTP 418 dari proxy (`NextResponse.rewrite` dengan status), noindex.
+- **Hanya pratinjau** (bukan error yang dilihat pengunjung atau tidak dikirim aplikasi): 200, 301, 400, 429 (batas permintaan tampil sebagai pesan di form kontak dan login), 502 (dikirim server Vercel).
+- **Pratinjau admin** `/admin/status` (Pengaturan → Lanjutan → Halaman status → Lihat): tab 11 kode (`?code=`), satu baris keterangan tempat kode itu muncul, panggung pratinjau dengan tombol contoh; bahasa mengikuti bahasa admin.

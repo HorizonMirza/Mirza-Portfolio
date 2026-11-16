@@ -320,3 +320,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Revisi Dashboard kedua: label kotak tanpa periode, grafik dipercantik, Rincian per hari jadi kotak sendiri di samping Pesan terbaru, tanpa Semua pesan, "Latest Messages", kepala tabel tidak tembus saat digulir (DESIGN.md bagian 167) |
 | 2026-11-16 | Dashboard: tabel Rincian per hari tanpa bingkai sendiri, status dan waktu Pesan terbaru sejajar seperti tabel tak bergaris (subgrid) |
 | 2026-11-16 | Dashboard: bingkai tabel Rincian per hari dikembalikan, Pesan terbaru di kiri dan Rincian per hari di kanan |
+| 2026-11-16 | Halaman status 11 kode HTTP (desain hantu bersama, ID/EN): 404, 500, 503 (perawatan), 401 dan 403 admin (authInterrupts), 418 easter egg dengan status HTTP 418; 200, 301, 400, 429, 502 sebagai pratinjau di /admin/status (DESIGN.md bagian 168) |

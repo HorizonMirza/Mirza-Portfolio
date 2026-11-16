@@ -86,6 +86,29 @@ export const EN: Record<string, string> = {
   'Pesan Masuk': 'Messages Received',
   'Data per pengunjung disimpan sesuai Pengaturan': 'Per-visitor data is kept as set in Settings',
   'Kunjungan harian': 'Daily Visits',
+  'Halaman status': 'Status pages',
+  'Pratinjau halaman untuk 11 kode HTTP, dari 200 sampai 503.':
+    'Preview the pages for 11 HTTP codes, from 200 to 503.',
+  Lihat: 'View',
+  'Kode status': 'Status code',
+  Pratinjau: 'Preview',
+  'Hanya pratinjau: 200 berarti halaman berhasil dibuka.':
+    'Preview only: 200 means the page opened successfully.',
+  'Hanya pratinjau: 301 langsung memindahkan ke alamat baru.':
+    'Preview only: 301 moves straight to the new address.',
+  'Hanya pratinjau: permintaan salah ditolak sebelum halaman dibuat.':
+    'Preview only: a bad request is rejected before a page is built.',
+  'Admin: sesi tidak sah atau sudah berakhir.': 'Admin: the session is invalid or has ended.',
+  'Admin: masuk dengan akun yang bukan Super Admin.':
+    'Admin: signed in with an account that is not Super Admin.',
+  'Situs: alamat yang tidak ada.': 'Site: an address that does not exist.',
+  'Situs: easter egg di /id/418 dan /en/418.': 'Site: an easter egg at /id/418 and /en/418.',
+  'Hanya pratinjau: batas permintaan tampil sebagai pesan di form.':
+    'Preview only: the request limit shows as a message in the form.',
+  'Situs dan admin: halaman gagal dimuat.': 'Site and admin: the page failed to load.',
+  'Hanya pratinjau: 502 dikirim server Vercel, bukan aplikasi.':
+    'Preview only: 502 is sent by the Vercel server, not the app.',
+  'Situs: Mode perawatan di Pengaturan.': 'Site: Maintenance mode in Settings.',
   'Rincian per hari': 'Daily Breakdown',
   'Pengunjung (garis putus)': 'Visitors (Dashed Lines)',
   Pengalaman: 'Experience',

@@ -40,6 +40,12 @@ export default async function proxy(request: NextRequest) {
     return adminResponse(request)
   }
 
+  // Easter egg 418 "I'm a teapot" (app/[locale]/418): halamannya dirender seperti biasa, tetapi kode
+  // status HTTP-nya 418 (permintaan pemilik 2026-11-16).
+  if (/^\/(id|en)\/418\/?$/.test(pathname)) {
+    return NextResponse.rewrite(request.nextUrl, { status: 418 })
+  }
+
   // Alamat tanpa awalan bahasa (mis. mmirza.site/): bahasa awal dari Admin → Pengaturan. "Ikuti browser"
   // dan pengunjung yang pernah memilih bahasa (cookie NEXT_LOCALE dari next-intl) tetap lewat next-intl.
   const prefixed = routing.locales.some(

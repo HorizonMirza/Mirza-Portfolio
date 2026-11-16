@@ -2,11 +2,12 @@
 
 import { useTranslations } from 'next-intl'
 
-import { Container } from '@/components/site/section-heading'
-import { Button } from '@/components/ui/button'
+import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-button'
+import { StatusPage } from '@/components/ui/status-page'
 import { Link } from '@/i18n/navigation'
 
-// Pesan sopan tanpa detail teknis (DESIGN.md bagian 6).
+// 500 di dalam situs: pesan sopan tanpa detail teknis (DESIGN.md bagian 6), desain halaman status
+// bersama (components/ui/status-page.tsx, revisi pemilik 2026-11-16).
 export default function LocaleError({
   reset,
 }: {
@@ -15,16 +16,23 @@ export default function LocaleError({
 }) {
   const t = useTranslations('Error')
   return (
-    <Container className="flex min-h-[60dvh] flex-col justify-center py-16">
-      <p className="font-mono text-label tracking-widest text-note uppercase">500</p>
-      <h1 className="mt-3 text-h1 font-bold">{t('title')}</h1>
-      <p className="mt-4 max-w-prose text-muted">{t('body')}</p>
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Button onClick={() => reset()}>{t('retry')}</Button>
-        <Button asChild variant="secondary">
-          <Link href="/">{t('home')}</Link>
-        </Button>
-      </div>
-    </Container>
+    <StatusPage
+      code={500}
+      title={t('title')}
+      body={t('body')}
+      action={
+        <>
+          <button type="button" onClick={() => reset()} className={flowButtonClassName}>
+            <FlowButtonContent text={t('retry')} />
+          </button>
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center rounded-full border border-border-strong px-6 font-medium transition-colors hover:border-text"
+          >
+            {t('home')}
+          </Link>
+        </>
+      }
+    />
   )
 }

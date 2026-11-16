@@ -22,6 +22,9 @@ const nextConfig: NextConfig = {
     // 404 global untuk URL yang tidak cocok rute mana pun (app/global-not-found.tsx). URL ber-titik yang
     // tertangkap [locale] dialihkan lewat rewrite afterFiles di bawah.
     globalNotFound: true,
+    // halaman 401 dan 403 admin lewat unauthorized() dan forbidden() (app/admin/unauthorized.tsx dan
+    // forbidden.tsx, halaman status bersama, revisi pemilik 2026-11-16)
+    authInterrupts: true,
   },
   // Halaman Skill digabung ke beranda (keputusan pemilik 2026-10-01); tautan lama diarahkan ke sana.
   async redirects() {

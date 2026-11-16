@@ -1,33 +1,31 @@
 'use client'
 
 import { useAdminT } from '@/components/admin/admin-lang'
-import { Button } from '@/components/ui/button'
+import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-button'
+import { StatusPage } from '@/components/ui/status-page'
 
 // Galat di halaman panel admin: sidebar dan header tetap tampil, hanya isi halaman yang diganti
-// pesan ini. Sebelumnya jatuh ke halaman bawaan Next (audit 2026-10-31, GAP-06). Teks mengikuti
-// bahasa admin. Detail teknis tidak ditampilkan; kode digest bisa dicocokkan dengan log server.
+// halaman status 500 (desain bersama, revisi pemilik 2026-11-16). Sebelumnya jatuh ke halaman bawaan
+// Next (audit 2026-10-31, GAP-06). Teks mengikuti bahasa admin. Detail teknis tidak ditampilkan; kode
+// digest bisa dicocokkan dengan log server.
 export default function AdminError({ error, retry }: { error: unknown; retry: () => void }) {
   const t = useAdminT()
   const digest =
     error instanceof Error && 'digest' in error && typeof error.digest === 'string'
       ? error.digest
       : null
+  const body = t('Coba muat ulang. Bila tetap gagal, periksa koneksi database atau log server.')
   return (
-    <div className="flex min-h-[50dvh] flex-col justify-center py-12">
-      <p className="font-mono text-label tracking-widest text-note uppercase">{t('Galat')}</p>
-      <h1 className="mt-3 text-h2 font-bold">{t('Halaman admin gagal dimuat')}</h1>
-      <p className="mt-4 max-w-prose text-muted">
-        {t('Coba muat ulang. Bila tetap gagal, periksa koneksi database atau log server.')}
-        {digest ? (
-          <>
-            {' '}
-            {t('Kode:')} <code className="font-mono">{digest}</code>
-          </>
-        ) : null}
-      </p>
-      <div className="mt-8">
-        <Button onClick={() => retry()}>{t('Coba lagi')}</Button>
-      </div>
-    </div>
+    <StatusPage
+      code={500}
+      fullHeight={false}
+      title={t('Halaman admin gagal dimuat')}
+      body={digest ? `${body} ${t('Kode:')} ${digest}` : body}
+      action={
+        <button type="button" onClick={() => retry()} className={flowButtonClassName}>
+          <FlowButtonContent text={t('Coba lagi')} />
+        </button>
+      }
+    />
   )
 }

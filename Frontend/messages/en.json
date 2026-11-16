@@ -33,6 +33,44 @@
     "title": "Being updated",
     "body": "This site is being updated. Please check back in a little while."
   },
+  "Status": {
+    "200": {
+      "title": "All good.",
+      "body": "The page loaded fine. Nothing to worry about."
+    },
+    "301": {
+      "title": "This address has moved.",
+      "body": "This page lives at a new address, and you will be taken there."
+    },
+    "400": {
+      "title": "That request did not fit.",
+      "body": "The address or data sent could not be read. Check it, then try again."
+    },
+    "401": {
+      "title": "Please sign in first.",
+      "body": "Your session has ended or you have not signed in. Sign in again to continue."
+    },
+    "403": {
+      "title": "This door is locked.",
+      "body": "This account does not have access to that page."
+    },
+    "418": {
+      "title": "I am a teapot, not a coffee machine.",
+      "body": "Your coffee request was politely declined. Code 418 is an old joke from the early web."
+    },
+    "429": {
+      "title": "Easy there.",
+      "body": "Too many requests in a short time. Wait a moment, then try again."
+    },
+    "502": {
+      "title": "The line is down.",
+      "body": "A gateway server got a bad response. It usually recovers within a few minutes."
+    },
+    "home": "Home",
+    "retry": "Try again",
+    "login": "Sign in",
+    "dashboard": "Dashboard"
+  },
   "Nav": {
     "label": "Main navigation",
     "home": "Home",

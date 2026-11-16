@@ -558,3 +558,22 @@ test('halaman privasi memuat kredit logo', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Kredit' })).toBeVisible()
   await expect(page.getByText(/Simple Icons.*Jason Long, CC BY 3\.0/)).toBeVisible()
 })
+
+test('418 easter egg: kode status HTTP 418, desain halaman status, dua bahasa', async ({
+  page,
+}) => {
+  for (const [path, title] of [
+    ['/id/418', 'Saya teko, bukan mesin kopi.'],
+    ['/en/418', 'I am a teapot, not a coffee machine.'],
+  ] as const) {
+    const res = await page.goto(path)
+    expect(res?.status()).toBe(418)
+    await expect(page.getByRole('heading', { level: 1, name: title })).toBeVisible()
+    // Next juga menyisipkan noindex untuk respons non-200; semua tag robots harus noindex
+    const robots = await page
+      .locator('meta[name="robots"]')
+      .evaluateAll((els) => els.map((el) => el.getAttribute('content')))
+    expect(robots.length).toBeGreaterThan(0)
+    for (const content of robots) expect(content).toContain('noindex')
+  }
+})
