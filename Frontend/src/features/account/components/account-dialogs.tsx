@@ -1,6 +1,6 @@
 'use client'
 
-import { Lock, Mail } from 'lucide-react'
+import { Mail, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, type RefObject, useId, useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -8,8 +8,8 @@ import { toast } from 'sonner'
 import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
+import { IconInput } from '@/components/admin/icon-input'
 import { PasswordInput } from '@/components/admin/password-input'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import type { ActionResult } from '@/lib/action-result'
 
@@ -146,27 +146,25 @@ export function ChangeIdentityDialog({
           })
         }}
       >
-        {/* nama atau email sekarang (desain 3, "Kartu profil", pilihan pemilik 2026-11-16): baris seperti di
-            halaman Akun dengan lingkaran inisial atau ikon, nilai, label kecil, dan gembok; hanya
-            ditampilkan, tidak bisa ditekan atau diubah */}
-        <div className="flex items-center gap-3 rounded-2xl bg-surface-2 p-3 select-none">
+        {/* nama atau email sekarang: kartu bergaris dengan ikon bulat, keterangan kecil di atas dan
+            nilainya di bawah (tata letak form Ganti Username/Password acuan pemilik 2026-11-16);
+            hanya ditampilkan, tidak bisa ditekan atau diubah */}
+        <div className="flex items-center gap-3 rounded-lg border border-border bg-surface px-3 py-2.5 select-none">
           <span
             aria-hidden="true"
-            className="grid size-11 shrink-0 place-items-center rounded-full bg-text text-lg font-bold text-bg [&_svg]:size-5"
+            className="grid size-9 shrink-0 place-items-center rounded-full border border-border-strong text-muted [&_svg]:size-4"
           >
-            {kind === 'email' ? <Mail /> : (Array.from(current)[0] ?? '').toUpperCase()}
+            {kind === 'email' ? <Mail /> : <User />}
           </span>
           <span className="flex min-w-0 flex-1 flex-col">
-            <span className="text-[17px] break-words">{current}</span>
-            <span className="text-xs font-semibold tracking-wide text-muted uppercase">
-              {t(copy.oldLabel)}
-            </span>
+            <span className="text-xs text-muted">{t(copy.oldLabel)}</span>
+            <span className="text-base break-words">{current}</span>
           </span>
-          <Lock className="size-4 shrink-0 text-muted" aria-hidden="true" />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor={`${id}-new`}>{t(copy.newLabel)}</Label>
-          <Input
+          <IconInput
+            icon={kind === 'email' ? <Mail /> : <User />}
             id={`${id}-new`}
             type={copy.type}
             value={value}
@@ -212,7 +210,7 @@ export function ChangeIdentityDialog({
         <Button
           type="submit"
           disabled={pending || value.trim() === '' || password === ''}
-          className="w-full"
+          className="self-end"
         >
           {pending ? t('Menyimpan…') : t('Simpan')}
         </Button>

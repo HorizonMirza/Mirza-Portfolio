@@ -23,7 +23,7 @@ const empty: ChangePasswordInput = { currentPassword: '', newPassword: '', confi
 const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat kuat'] as const
 
 // Ganti password di panel Akun (DESIGN.md bagian 120): aturan wajib dicentang langsung saat mengetik
-// dan meter kekuatan empat ruas. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
+// dan garis kekuatan. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
 // perangkat ikut berubah (perangkat lain dikeluarkan).
 export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
   const t = useAdminT()
@@ -88,38 +88,31 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
         )}
       </Field>
       <div className="flex flex-col gap-2">
-        <div className="grid grid-cols-4 gap-1" aria-hidden="true">
-          {[1, 2, 3, 4].map((i) => (
-            <span
-              key={i}
-              className={cn(
-                'h-1.5 rounded-full transition-colors duration-200',
-                i <= strength
-                  ? strength <= 1
-                    ? 'bg-danger'
-                    : strength === 2
-                      ? 'bg-muted'
-                      : 'bg-success'
-                  : 'bg-surface-2',
-              )}
-            />
-          ))}
+        {/* satu garis kekuatan, lalu daftar syarat kecil (tata letak form Ganti Password acuan pemilik
+            2026-11-16); label kekuatan tetap dibacakan pembaca layar */}
+        <div className="h-1 overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
+          <span
+            className={cn(
+              'block h-full rounded-full transition-[width,background-color] duration-200',
+              strength <= 1 ? 'bg-danger' : strength === 2 ? 'bg-muted' : 'bg-success',
+            )}
+            style={{ width: `${strength * 25}%` }}
+          />
         </div>
-        <p className="text-sm text-muted" aria-live="polite">
-          {strength > 0
-            ? t('Kekuatan: {level}', { level: t(STRENGTH_LABEL[strength]!) })
-            : t('Kekuatan password tampil saat Anda mengetik.')}
+        <p className="sr-only" aria-live="polite">
+          {strength > 0 ? t('Kekuatan: {level}', { level: t(STRENGTH_LABEL[strength]!) }) : ''}
         </p>
-        <ul className="flex flex-col gap-1 text-sm">
+        <p className="mt-1 text-sm font-medium">{t('Syarat password:')}</p>
+        <ul className="flex flex-col gap-1 text-[13px]">
           {rules.map((rule) => (
             <li
               key={rule.label}
               className={cn('flex items-center gap-2', rule.ok ? 'text-text' : 'text-muted')}
             >
               {rule.ok ? (
-                <Check className="size-4 text-success" aria-hidden="true" />
+                <Check className="size-3.5 text-success" aria-hidden="true" />
               ) : (
-                <X className="size-4" aria-hidden="true" />
+                <X className="size-3.5" aria-hidden="true" />
               )}
               <span>
                 {rule.label}
@@ -132,7 +125,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
           ))}
         </ul>
       </div>
-      <Button type="submit" disabled={pending} className="w-full">
+      <Button type="submit" disabled={pending} className="self-end">
         {pending ? t('Menyimpan…') : t('Simpan')}
       </Button>
     </form>

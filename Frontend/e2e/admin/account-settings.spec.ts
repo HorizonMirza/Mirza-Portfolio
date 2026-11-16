@@ -56,7 +56,7 @@ test.describe('Admin → Akun', () => {
     await expect(dialog.getByRole('listitem').filter({ hasText: 'Ulangan sama' })).toContainText(
       '(terpenuhi)',
     )
-    // tombol mata menampilkan dan menyembunyikan isian; tombol simpan satu baris penuh
+    // tombol mata menampilkan dan menyembunyikan isian; tombol Simpan di kanan bawah (tata letak acuan)
     await expect(next).toHaveAttribute('type', 'password')
     await dialog.getByRole('button', { name: 'Tampilkan password' }).nth(1).click()
     await expect(next).toHaveAttribute('type', 'text')
@@ -66,7 +66,10 @@ test.describe('Admin → Akun', () => {
     const save = dialog.getByRole('button', { name: 'Simpan', exact: true })
     const box = await dialog.boundingBox()
     const saveBox = await save.boundingBox()
-    expect(saveBox!.width).toBeGreaterThan(box!.width - 80)
+    expect(saveBox!.width).toBeLessThan(box!.width / 2)
+    expect(saveBox!.x + saveBox!.width).toBeGreaterThan(box!.x + box!.width - 40)
+    // judul syarat dan garis kekuatan tunggal tampil
+    await expect(dialog.getByText('Syarat password:')).toBeVisible()
     // tidak dikirim: mengganti password akan mengeluarkan sesi tes lain
     await page.keyboard.press('Escape')
     await expect(dialog).toHaveCount(0)

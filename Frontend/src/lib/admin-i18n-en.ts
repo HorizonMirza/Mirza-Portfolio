@@ -528,7 +528,7 @@ export const EN: Record<string, string> = {
   'Peran beranda': 'Roles',
   'Skill teknis': 'Technical skills',
   'Kartu pembuka muncul': 'Introduction card shows',
-  'Kekuatan password tampil saat Anda mengetik.': 'Password strength appears as you type.',
+  'Syarat password:': 'Password requirements:',
   'Kekuatan: {level}': 'Strength: {level}',
   Keluarkan: 'Sign out',
   'Keluarkan semua perangkat lain': 'Sign out all other devices',
