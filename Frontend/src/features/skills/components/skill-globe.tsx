@@ -270,6 +270,7 @@ export function SkillGlobe({
       if (!painted) {
         painted = true
         stage.dataset.canvas = ''
+        stage.dataset.ready = ''
       }
       draw()
     }
@@ -593,6 +594,10 @@ export function SkillGlobe({
 
     resize()
     draw()
+    // skeleton shimmer dicabut saat logo pertama selesai digambar; pengaman bila sprite gagal dibuat
+    const readyTimer = window.setTimeout(() => {
+      stage.dataset.ready = ''
+    }, 4000)
     // lebar nama berubah setelah font termuat
     void document.fonts?.ready.then(() => {
       if (disposed) return
@@ -647,6 +652,7 @@ export function SkillGlobe({
     reduce.addEventListener('change', onMotion)
 
     return () => {
+      window.clearTimeout(readyTimer)
       disposed = true
       cancelResume()
       cancelAnimationFrame(frame)

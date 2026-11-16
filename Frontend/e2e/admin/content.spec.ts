@@ -54,7 +54,16 @@ for (const theme of ['light', 'dark'] as const) {
       // di dalamnya berukuran penuh di situs tetapi terukur lebih kecil dari 24 px di sini
       if (SCALED_PREVIEWS.includes(path)) axe.disableRules(['target-size'])
       const results = await axe.analyze()
-      failures.push(...results.violations.map((v) => `${path} ${v.id}: ${v.help}`))
+      // sertakan elemen yang melanggar agar kegagalan yang jarang muncul bisa dilacak
+      failures.push(
+        ...results.violations.map(
+          (v) =>
+            `${path} ${v.id}: ${v.help} -> ${v.nodes
+              .slice(0, 3)
+              .map((n) => n.html.slice(0, 200))
+              .join(' | ')}`,
+        ),
+      )
     }
     expect(failures).toEqual([])
   })

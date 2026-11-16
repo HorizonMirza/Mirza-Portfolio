@@ -44,7 +44,8 @@ export function SaveBar({ pending, label = 'Simpan' }: { pending: boolean; label
     <button
       type="submit"
       disabled={pending}
-      className="admin-bleed min-h-11 rounded-md bg-text text-sm font-semibold text-bg transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+      data-pending={pending ? '' : undefined}
+      className="save-bar admin-bleed relative min-h-11 overflow-hidden rounded-md bg-text text-sm font-semibold text-bg transition-opacity hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
     >
       {pending ? t('Menyimpan…') : t(label)}
     </button>

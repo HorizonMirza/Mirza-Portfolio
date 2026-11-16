@@ -729,6 +729,8 @@ export default function ContributionSkyline({
 
     const draw = () => {
       if (!W || !n) return
+      // skeleton shimmer dicabut begitu grafik pertama digambar
+      if (!stage.dataset.ready) stage.dataset.ready = ''
       const e = easeInOutCubic(t)
       const cam = camera(e, baseYaw - YAW_3D + yaw, elev)
       const Hc = lerp(H2, H3, e)
@@ -1191,6 +1193,10 @@ export default function ContributionSkyline({
       }
     })
     ro.observe(stage)
+    // pengaman: tanpa data atau lebar, shimmer tidak boleh menempel selamanya
+    const readyTimer = window.setTimeout(() => {
+      stage.dataset.ready = ''
+    }, 4000)
 
     // next-themes mengganti kelas .dark di <html>
     const mo = new MutationObserver(retheme)
@@ -1236,6 +1242,7 @@ export default function ContributionSkyline({
     return () => {
       if (raf) cancelAnimationFrame(raf)
       io?.disconnect()
+      window.clearTimeout(readyTimer)
       ro.disconnect()
       mo.disconnect()
       reduceMq.removeEventListener('change', onReduce)
@@ -1360,7 +1367,7 @@ export default function ContributionSkyline({
         <div className="relative px-3 pt-3 sm:px-4 sm:pt-4">
           <div
             ref={stageRef}
-            className="relative w-full [scrollbar-width:none] overflow-hidden rounded-md outline-offset-4 outline-text focus-visible:outline-2 has-[:focus-visible]:outline-2 [&::-webkit-scrollbar]:hidden"
+            className="contrib-stage relative w-full [scrollbar-width:none] overflow-hidden rounded-md outline-offset-4 outline-text focus-visible:outline-2 has-[:focus-visible]:outline-2 [&::-webkit-scrollbar]:hidden"
             style={{ height: 150 }}
           >
             <canvas

@@ -5,6 +5,7 @@ import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 're
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
+import { cn } from '@/lib/utils'
 
 import { clampOffset, coverScale, effectiveSize, exportSize, type Rotation } from '../crop-math'
 import { maxSideOf, UPLOAD_TARGETS, type UploadTarget } from '../targets'
@@ -191,7 +192,10 @@ export function ImageCropDialog({
         ) : (
           <div className="mt-4 flex flex-col gap-4">
             <div
-              className="mx-auto overflow-hidden rounded-md border border-border bg-surface-2"
+              className={cn(
+                'relative mx-auto overflow-hidden rounded-md border border-border bg-surface-2',
+                !bitmap && 'skeleton',
+              )}
               style={{ width: frameW, height: frameH, maxWidth: '100%' }}
             >
               <canvas

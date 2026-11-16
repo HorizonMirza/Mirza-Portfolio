@@ -293,6 +293,11 @@ export function ProjectLive({
                         />
                       )}
                     </div>
+                  ) : picker.busy ? (
+                    <span
+                      aria-hidden="true"
+                      className="skeleton block aspect-video w-full rounded-none"
+                    />
                   ) : (
                     <button
                       type="button"
@@ -347,6 +352,14 @@ export function ProjectLive({
                       />
                     </button>
                   ))}
+                  {/* gambar yang sedang diunggah */}
+                  {picker.busy ? (
+                    <span
+                      aria-hidden="true"
+                      className="skeleton shrink-0 rounded-lg"
+                      style={{ flex: '0 1 4.75rem', minWidth: '2.75rem', aspectRatio: '16 / 10' }}
+                    />
+                  ) : null}
                   {/* + menambah gambar; tanpa sampul, gambar pertama menjadi sampul seperti di situs */}
                   <button
                     type="button"

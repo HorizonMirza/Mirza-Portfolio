@@ -613,6 +613,8 @@ export function IdLanyard({
     resize()
     build()
     draw()
+    // skeleton shimmer dicabut begitu kartu pertama digambar
+    wrapEl.dataset.ready = ''
     img.onload = () => draw()
     api.current = {
       redraw: () => draw(),
@@ -672,7 +674,7 @@ export function IdLanyard({
     <div
       ref={box}
       aria-hidden={editable ? undefined : 'true'}
-      className={cn('relative z-10 select-none', className)}
+      className={cn('lanyard-box relative z-10 select-none', className)}
       style={{ height: BOX_H }}
     >
       <canvas

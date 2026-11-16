@@ -3385,6 +3385,70 @@ html[data-intro='pending'] .intro {
   }
 }
 
+/* Skeleton shimmer untuk kanvas (globe skill, grafik kontribusi GitHub, kartu ID): selama kanvas belum
+   menggambar bingkai pertama, blok abu-abu berkilau menutupi area dan tidak menghalangi sentuhan.
+   Komponen memasang data-ready begitu gambar pertama selesai (atau setelah 4 detik sebagai pengaman).
+   Diam saat prefers-reduced-motion. */
+.globe-stage:not([data-ready])::before,
+.contrib-stage:not([data-ready])::before,
+.lanyard-box:not([data-ready])::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: 8px;
+  background:
+    linear-gradient(
+        90deg,
+        transparent,
+        color-mix(in srgb, var(--text) 9%, transparent),
+        transparent
+      )
+      0 0 / 200% 100%,
+    color-mix(in srgb, var(--text) 8%, var(--bg));
+  animation: canvas-shimmer 1.6s linear infinite;
+}
+@keyframes canvas-shimmer {
+  from {
+    background-position:
+      200% 0,
+      0 0;
+  }
+  to {
+    background-position:
+      -200% 0,
+      0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .globe-stage:not([data-ready])::before,
+  .contrib-stage:not([data-ready])::before,
+  .lanyard-box:not([data-ready])::before {
+    animation: none;
+  }
+}
+
+/* Tombol Simpan yang sedang menyimpan: kilau berjalan di atas tombol (kelas dipasang SaveBar). */
+.save-bar[data-pending]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--bg) 45%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .save-bar[data-pending]::after {
+    display: none;
+  }
+}
+
 /* Panel admin kaca hitam-putih (pilihan pemilik 2026-11-11, demo 5+, DESIGN.md bagian 112): top bar,
    sidebar, dan panel isi dari kaca buram di atas latar gradasi, titik, atau polos. Token
    permukaan admin dibuat tembus pandang sehingga kartu, tabel, dan form ikut menjadi kaca. Nilai

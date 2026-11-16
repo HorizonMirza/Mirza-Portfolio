@@ -1845,3 +1845,14 @@ Pilihan pemilik "lakukan hal yang sama untuk seluruhnya" → "Ubah langsung di p
 - Garis putus-putus foto berjarak 6 px merata di dalam tepi foto, sama untuk sampul dan gambar galeri; gambar kedua dan seterusnya juga bergaris (tidak bisa diganti, hanya dihapus) dan tong sampah hapus selalu tampil di pojok foto, tidak lagi menunggu sorotan.
 - Ringkasan tidak lagi tampil di halaman ubah project yang sudah ada (diketik di daftar project); hanya muncul di "Project baru" karena wajib diisi sebelum project bisa dibuat.
 - Pilihan teknologi: per kategori skill dengan judul seperti di halaman Skill teknis dan kotak skill berlogo (`listSkillOptions` kini mengembalikan logo lewat `resolveLogo`). Yang dipilih berbingkai tegas, yang belum berbingkai putus-putus.
+
+## 160. Skeleton shimmer melengkapi seluruh aplikasi (2026-11-16 sore)
+
+Sebelumnya skeleton ada di perpindahan halaman publik (`NavigationSkeleton`), semua `loading.tsx` panel admin, dan gambar (`SHIMMER_PLACEHOLDER`). Celah yang ditutup:
+
+- **Halaman masuk admin**: `app/admin/login/loading.tsx` (latar hitam, kartu form).
+- **Kanvas** (globe skill, grafik kontribusi GitHub, kartu ID): blok kilau `::before` (`.globe-stage`, `.contrib-stage`, `.lanyard-box`) menutupi area sampai komponen memasang `data-ready` setelah bingkai pertama digambar. Pengaman: globe dan grafik memasang `data-ready` sendiri setelah 4 detik bila gambar pertama tak kunjung ada, supaya kilau tidak menempel. Tidak menghalangi sentuhan, diam saat `prefers-reduced-motion`.
+- **Tombol Simpan** (`SaveBar`) berkilau selama menyimpan.
+- **Galeri project** (admin): kotak kilau di deretan gambar kecil, atau di foto besar bila belum ada gambar, selama unggahan berjalan.
+- **Pemotong gambar**: bingkai berkilau selama gambar dibaca.
+- Tetap tanpa skeleton: gambar kecil `<img>` logo (14-20 px), pratinjau blob di dialog, dan teks yang sudah dirender server.

@@ -124,7 +124,11 @@ test.describe('tampilan halaman login', () => {
       await page.addInitScript((t) => localStorage.setItem('mmirza-theme', t), theme)
       await page.goto('/admin/login')
       await expect(page.getByRole('heading', { name: 'Welcome Back King!' })).toBeVisible()
-      await expect(page.locator('main').locator('..')).toHaveCSS('background-color', 'rgb(0, 0, 0)')
+      // getByRole hanya mengambil <main> yang terlihat: Next menyimpan salinan halaman tersembunyi
+      await expect(page.getByRole('main').locator('..')).toHaveCSS(
+        'background-color',
+        'rgb(0, 0, 0)',
+      )
       // tombol lihat sandi membuka dan menutup isi kolom password
       const password = page.getByLabel('Password', { exact: true })
       await expect(password).toHaveAttribute('type', 'password')
