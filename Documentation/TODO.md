@@ -318,3 +318,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Dashboard desain 01 "Ringkas": 4 angka dengan naik/turun dan grafik kecil, periode 7/30/90 hari (`?range=`), grafik tayangan + pengunjung, tabel, pesan terbaru, konten di situs (DESIGN.md bagian 165) |
 | 2026-11-16 | Revisi Dashboard: selebar panel, tanpa persen, tanpa "Hari menurut WIB", "Daily Visits"/"Visitors (Dashed Lines)", kotak periode lancip bergaris, tabel langsung tampil, Konten di situs dihapus, Pesan terbaru satu baris penuh (DESIGN.md bagian 166) |
 | 2026-11-16 | Revisi Dashboard kedua: label kotak tanpa periode, grafik dipercantik, Rincian per hari jadi kotak sendiri di samping Pesan terbaru, tanpa Semua pesan, "Latest Messages", kepala tabel tidak tembus saat digulir (DESIGN.md bagian 167) |
+| 2026-11-16 | Dashboard: tabel Rincian per hari tanpa bingkai sendiri, status dan waktu Pesan terbaru sejajar seperti tabel tak bergaris (subgrid) |

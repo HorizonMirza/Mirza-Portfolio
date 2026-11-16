@@ -180,7 +180,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
             role="region"
             aria-label={`${t('Rincian per hari')}, ${days}`}
             tabIndex={0}
-            className="mt-3 max-h-80 min-h-0 flex-1 overflow-y-auto rounded-md border border-border lg:max-h-none lg:min-h-64 lg:flex-[1_1_0px]"
+            className="mt-3 max-h-80 min-h-0 flex-1 overflow-y-auto lg:max-h-none lg:min-h-64 lg:flex-[1_1_0px]"
           >
             <table className="w-full border-separate border-spacing-0 text-left text-sm">
               <caption className="sr-only">
@@ -231,14 +231,19 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
               {t('Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.')}
             </p>
           ) : (
-            <ul className="mt-2 divide-y divide-border">
+            /* kolom seperti tabel tanpa garis tabel: nama/subjek, status, waktu sejajar di semua baris
+               (subgrid; revisi pemilik 2026-11-16) */
+            <ul className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
               {messages.map((m) => (
-                <li key={m.id}>
+                <li
+                  key={m.id}
+                  className="col-span-full grid grid-cols-subgrid border-b border-border last:border-b-0"
+                >
                   <Link
                     href={`/admin/messages/${m.id}`}
-                    className="flex min-w-0 items-center gap-3 py-2.5 hover:opacity-80"
+                    className="col-span-full grid grid-cols-subgrid items-center py-2.5 hover:opacity-80"
                   >
-                    <span className="min-w-0 flex-1">
+                    <span className="min-w-0">
                       <span className="block truncate font-semibold">{m.name}</span>
                       <span className="block truncate text-sm text-muted">
                         {m.subject || t('(tanpa subjek)')}
@@ -246,7 +251,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                     </span>
                     <span
                       className={cn(
-                        'shrink-0 rounded-full border px-2 text-xs font-semibold',
+                        'justify-self-start rounded-full border px-2 text-xs font-semibold',
                         m.status === 'NEW'
                           ? 'border-text bg-text text-bg'
                           : 'border-border-strong text-muted',
@@ -254,7 +259,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                     >
                       {t(STATUS_LABEL[m.status])}
                     </span>
-                    <span className="hidden shrink-0 font-mono text-xs text-muted sm:inline">
+                    <span className="hidden justify-self-end font-mono text-xs text-muted tabular-nums sm:inline">
                       {formatDateTime(m.createdAt, lang)}
                     </span>
                   </Link>
