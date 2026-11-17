@@ -2,7 +2,7 @@
 
 import { ImagePlus, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
@@ -136,16 +136,15 @@ export function SkillsLive({
   const [skillEdits, setSkillEdits] = useState<Record<string, string>>({})
   const [newCats, setNewCats] = useState<NewCategory[]>([])
   const [newSkills, setNewSkills] = useState<NewSkill[]>([])
-  const [counter, setCounter] = useState(0)
+  // penghitung kunci sementara: ref agar dua penambahan dalam satu putaran render tidak membaca nomor
+  // yang sama (audit 2026-11-17, BUG-06)
+  const counter = useRef(0)
 
   const serverName = (c: SkillCategoryRow, l: Lang) => (l === 'en' ? c.name_en : c.name_id)
   const shownName = (c: SkillCategoryRow, l: Lang) => catEdits[c.id]?.[l] ?? serverName(c, l)
   const tools =
     'flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-md:opacity-100'
-  const nextKey = () => {
-    setCounter((n) => n + 1)
-    return `new-${counter}`
-  }
+  const nextKey = () => `new-${counter.current++}`
 
   const dirty =
     Object.keys(catEdits).length > 0 ||
