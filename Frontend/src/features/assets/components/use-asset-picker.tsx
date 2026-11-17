@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 
+import { resolveMime } from '../file-type'
 import { UPLOAD_TARGETS, type UploadTarget } from '../targets'
 import { uploadAsset, type UploadStage } from '../upload-client'
 import { ImageCropDialog } from './image-crop-dialog'
@@ -104,7 +105,7 @@ export function useAssetPicker({
     const job = next.current
     if (!file || !job) return
     const spec = UPLOAD_TARGETS[job.target]
-    if (!spec.accept.split(',').includes(file.type)) {
+    if (!spec.accept.split(',').includes(resolveMime(file.name, file.type))) {
       toast.error(
         t('Tipe tidak didukung. Gunakan {formats}.', { formats: spec.formats.join(', ') }),
       )
