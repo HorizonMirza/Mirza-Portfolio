@@ -1988,3 +1988,13 @@ Sembilan bug dari audit menyeluruh diperbaiki setelah direproduksi di aplikasi l
 - **BUG-06 Kunci skill baru**: penghitung `new-N` memakai `useRef`, bukan state.
 - **BUG-09 dan BUG-11 Logo globe** (`globe-sprites.ts`, `image-origin.ts`): logo domain lain (unggahan Cloudinary) dimuat ulang dengan `crossOrigin="anonymous"` agar kanvas tidak tercemar dan versi abu-abunya bisa dibuat; bila gagal, gambar asli tetap dipakai. Logo yang gagal dimuat (404) dilewati sehingga tidak ada galat `drawImage`.
 - **BUG-10 Berkas bertipe kosong** (`features/assets/file-type.ts`): bila `file.type` kosong, jenis diturunkan dari ekstensi; server tetap memeriksa hasil unggahan.
+
+## 176. Perbaikan inefisiensi dari audit 17-11 (2026-11-17)
+
+Lima temuan EFF dari audit diperiksa di aplikasi lokal, lalu diperbaiki.
+
+- **EFF-01 Daftar pesan** (`features/messages/queries.ts`): `listMessages` memakai `$queryRaw` berparameter dengan `left(body, 49)`, bukan isi penuh (50 pesan × 5.000 karakter: 259 KB menjadi sekitar 11 KB). 49 = `MESSAGE_PREVIEW_CHARS + 1`, satu karakter lebih agar daftar tahu isinya lebih panjang dan memberi "…". Isi lengkap tetap dibaca di `getMessage`.
+- **EFF-02 Simpan profil**: halaman Tentang hanya memanggil `saveProfile` bila form berubah (`isDirty`). Tanpa perubahan apa pun muncul "Tidak ada perubahan." / "No changes.".
+- **EFF-03 Log audit** (`lib/audit.ts`): `writeAudit` melewati aksi `update` yang tidak mengubah apa pun, dan `diffSnapshots` mencatat kolom JSON berupa objek per kunci (satu volume suara = satu angka, bukan sembilan). Satu baris per perubahan tetap ditulis: itu jejak audit. Dugaan awal bahwa tiap baris memuat seluruh pengaturan ternyata keliru; isinya memang sudah hanya kolom yang berubah.
+- **EFF-04 Pemformat tanggal** (`lib/localized.ts`): `formatDateShort` memakai pemformat per bahasa yang dibuat sekali. Dampak nyata kecil (hanya halaman Privasi).
+- **EFF-05 Ukuran gambar** (`features/assets/targets.ts`): tiap tujuan gambar punya `maxSide` sendiri (logo 512, foto 2000) menggantikan tebakan dari batas ukuran berkas. **Asumsi:** foto kartu ID Kontak naik dari 512 ke 1024 px (foto orang, layar retina); ubah satu angka bila Mirza ingin ukuran lain.
