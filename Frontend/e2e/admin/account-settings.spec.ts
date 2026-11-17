@@ -282,7 +282,7 @@ test.describe('Admin → Pengaturan', () => {
 
   test('batas pesan per jam di luar 1–50 ditandai tanpa disimpan', async ({ page }) => {
     await page.goto('/admin/settings')
-    const limit = page.getByRole('spinbutton', { name: 'Batas Pesan per Jam' })
+    const limit = page.getByRole('textbox', { name: 'Batas Pesan per Jam' })
     // Isian bisa masuk sebelum React selesai hidrasi (WebKit di CI): diulang sampai tanda galat
     // muncul. Hanya nilai tidak sah yang diisi, jadi tidak ada yang tersimpan.
     await expect(async () => {
@@ -292,6 +292,6 @@ test.describe('Admin → Pengaturan', () => {
     }).toPass()
     await expect(page.getByText('Isi angka 1 sampai 50')).toBeVisible()
     await page.reload()
-    await expect(page.getByRole('spinbutton', { name: 'Batas Pesan per Jam' })).not.toHaveValue('0')
+    await expect(page.getByRole('textbox', { name: 'Batas Pesan per Jam' })).not.toHaveValue('0')
   })
 })

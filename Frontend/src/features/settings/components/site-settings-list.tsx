@@ -489,17 +489,20 @@ function NumberControl({ ids, value, onSave }: { ids: Ids; value: number; onSave
   const errorId = `${ids.title}-error`
   return (
     <div className="flex flex-col items-end gap-1">
+      {/* angka hanya diketik: tanpa panah naik-turun dan tanpa ubah lewat gulir (revisi pemilik
+          2026-11-17); selain angka diabaikan */}
       <Input
-        type="number"
+        type="text"
         inputMode="numeric"
-        min={CONTACT_PER_HOUR_MIN}
-        max={CONTACT_PER_HOUR_MAX}
+        pattern="[0-9]*"
+        maxLength={2}
+        autoComplete="off"
         value={draft}
         aria-labelledby={ids.title}
         aria-describedby={valid ? ids.description : `${ids.description} ${errorId}`}
         aria-invalid={valid ? undefined : true}
         onChange={(e) => {
-          const next = e.target.value
+          const next = e.target.value.replace(/\D/g, '')
           setDraft(next)
           const n = Number(next)
           if (

@@ -34,9 +34,9 @@ function TabsSkeleton({ count, stretch = false }: { count: number; stretch?: boo
   if (stretch)
     return (
       // turun baris seperti FilterTabs, tidak digeser menyamping
-      <div className="admin-bleed mb-6 grid grid-cols-[repeat(auto-fit,minmax(min(100%,8rem),1fr))] gap-2 py-1">
+      <div className="admin-bleed mb-6 flex flex-wrap gap-2 py-1">
         {Array.from({ length: count }, (_, i) => (
-          <Skeleton key={i} className="h-11 rounded-md" />
+          <Skeleton key={i} className="h-11 flex-[1_1_min(8rem,calc(50%-0.25rem))] rounded-md" />
         ))}
       </div>
     )

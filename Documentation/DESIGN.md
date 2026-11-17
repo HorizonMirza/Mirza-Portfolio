@@ -1969,3 +1969,9 @@ Pemilik meminta situs dan panel Super Admin rapi di HP, tablet, dan desktop: tid
 - **Sidebar menciut**: nama admin dan "Super Admin" kembali satu baris (`truncate`). Sebelumnya (bagian 170) nama boleh turun baris, sehingga saat sidebar menyempit nama terpecah per huruf dan mendorong foto serta menu ke bawah. Sekarang hanya tulisan yang memudar; foto dan ikon tetap di tempatnya.
 - **Dashboard di HP**: tombol periode 7/30/90 Hari lebih kecil (tinggi 28 px, teks 11 px; dari `sm` kembali ukuran biasa).
 - **GitHub di HP**: lima pilihan warna tetap satu baris, kotak warna 8 px dan teks kecil di bawah `sm` agar tidak melewati garis tombol.
+
+## 174. Revisi 17-11 malam 2: tab 2x2 dan sisa baris penuh, Navbar admin satu baris, isian angka (2026-11-17)
+
+- **Tab admin** (`FilterTabs stretch`): flex-wrap dengan dasar lebar `min(label terpanjang, setengah baris)`, jadi selalu minimal dua per baris (tab Beranda 2×2 di HP, juga dalam bahasa Inggris) dan tombol yang tersisa di baris terakhir melebar penuh (503 di Halaman Status, Arsip di Pesan).
+- **Pratinjau Navbar** admin di HP: kelima menu satu baris (teks 11 px, padding rapat); dari `sm` kembali ukuran situs.
+- **Batas Pesan per Jam**: isian teks angka (`inputMode="numeric"`, selain angka diabaikan, maksimal 2 digit) tanpa panah naik-turun dan tanpa berubah saat digulir.

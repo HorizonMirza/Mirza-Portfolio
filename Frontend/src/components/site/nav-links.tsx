@@ -85,8 +85,8 @@ export function NavLinks({
     <ul
       className={cn(
         variant === 'top'
-          ? // pratinjau Navbar di admin: menu yang tidak muat turun baris (revisi pemilik 2026-11-17)
-            cn('flex items-center gap-1', editLabel && 'flex-wrap justify-center')
+          ? // pratinjau Navbar di admin: satu baris rapat di HP (revisi pemilik 2026-11-17)
+            cn('flex items-center gap-1', editLabel && 'justify-center gap-0 sm:gap-1')
           : 'relative grid w-full grid-cols-5 gap-(--nav-gap) [--nav-gap:0.25rem]',
       )}
     >
@@ -101,8 +101,9 @@ export function NavLinks({
           return (
             <li key={item.href}>
               <span
-                // pratinjau admin: tanpa penanda menu aktif (revisi pemilik 2026-11-16)
-                className="relative inline-flex min-h-10 items-center justify-center rounded-full px-4 text-sm font-semibold text-muted"
+                // pratinjau admin: tanpa penanda menu aktif (revisi pemilik 2026-11-16); di HP lebih rapat
+                // agar kelima menu muat satu baris (revisi pemilik 2026-11-17)
+                className="relative inline-flex min-h-8 items-center justify-center rounded-full px-1.5 text-[0.6875rem] font-semibold whitespace-nowrap text-muted sm:min-h-10 sm:px-4 sm:text-sm"
               >
                 {editLabel(item.key)}
               </span>

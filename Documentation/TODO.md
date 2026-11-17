@@ -326,3 +326,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-17 | Revisi: hero Home sampai tangan di tablet kecil, animasi laci menu admin, Halaman Status di sidebar, keterangan kode di pojok kiri bawah pratinjau, "Pesan Terbaru" dan "Rincian Perhari" (DESIGN.md bagian 171) |
 | 2026-11-17 | Revisi sore: hero rata bawah di tablet kecil, Halaman Status di atas Pesan, sidebar penuh kembali mulai 1024 px, Title Case label/judul/tombol seluruh aplikasi ID dan EN (DESIGN.md bagian 172) |
 | 2026-11-17 | Revisi malam: wajah hero lebih besar di tablet (tata letak tablet mulai 480 px, landscape memakai susunan desktop), sidebar menciut tanpa bergeser, tombol periode Dashboard dan pilihan warna GitHub lebih kecil di HP (DESIGN.md bagian 173) |
+| 2026-11-17 | Revisi malam 2: tab admin minimal dua per baris dan sisa baris penuh, Navbar admin satu baris di HP, isian Batas Pesan per Jam tanpa panah (DESIGN.md bagian 174) |

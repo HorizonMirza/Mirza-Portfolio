@@ -6,7 +6,9 @@ import { cn } from '@/lib/utils'
 // stretch: satu baris selebar panel sampai tepi kiri-kanan, tombol terpisah sama lebar, yang aktif
 // terisi penuh (tab Home, revisi pemilik 2026-11-11 dan 2026-11-12, DESIGN.md bagian 129 dan 131).
 // Tidak pernah digeser menyamping (revisi pemilik 2026-11-17): bila tidak muat dalam satu baris,
-// tombol turun ke baris berikutnya dengan lebar sama (grid auto-fit, lebar minimum dari label terpanjang).
+// tombol turun ke baris berikutnya. Flex-wrap dengan dasar lebar dari label terpanjang, paling lebar
+// setengah baris (jadi selalu minimal dua per baris, mis. Beranda 2x2 di HP); tombol yang tersisa di
+// baris terakhir melebar penuh (mis. 503 di Halaman Status, Arsip di Pesan).
 export function FilterTabs({
   label,
   items,
@@ -26,16 +28,14 @@ export function FilterTabs({
         aria-label={label}
         // selebar panel isi sampai tepi kiri-kanan (revisi pemilik 2026-11-12), keluar dari batas
         // max-w-6xl isi halaman: 100cqw = lebar isi <main> (@container di layout panel)
-        className="admin-bleed mb-6 grid gap-2 py-1"
-        style={{
-          gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, ${minRem.toFixed(2)}rem), 1fr))`,
-        }}
+        className="admin-bleed mb-6 flex flex-wrap gap-2 py-1"
       >
         {items.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             aria-current={item.active ? 'page' : undefined}
+            style={{ flex: `1 1 min(${minRem.toFixed(2)}rem, calc(50% - 0.25rem))` }}
             className={cn(
               'inline-flex min-h-11 min-w-0 items-center justify-center rounded-md px-3 text-center text-sm font-semibold transition-colors',
               item.active

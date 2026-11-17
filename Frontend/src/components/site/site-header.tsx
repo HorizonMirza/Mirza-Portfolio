@@ -57,7 +57,7 @@ export async function SiteHeader({
                 : 'hidden lg:block'
             }
           >
-            <div className={editable ? `${pill} max-lg:rounded-3xl` : pill}>
+            <div className={pill}>
               <NavLinks variant="top" currentPath={currentPath} />
             </div>
           </nav>
