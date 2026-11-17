@@ -84,7 +84,7 @@ export function ProfileLive({
     register,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = form
   const values = useWatch({ control })
   const otherLang: Lang = lang === 'id' ? 'en' : 'id'
@@ -104,12 +104,17 @@ export function ProfileLive({
   const onSubmit = form.handleSubmit(
     (submitted) => {
       startTransition(async () => {
-        const result = await saveProfile(submitted)
-        if (applyResult(result, form.setError)) form.reset(submitted)
+        // profil hanya disimpan bila ada isian yang berubah; tanpa itu Simpan menulis ulang profil
+        // dan satu baris log audit kosong (audit 2026-11-17, EFF-02)
+        if (isDirty) {
+          const result = await saveProfile(submitted)
+          if (applyResult(result, form.setError)) form.reset(submitted)
+        }
         // pendidikan yang berubah ikut disimpan
         const edu = await entries.saveAll()
         if (edu.failed > 0) toast.error(t('Periksa kembali isian pendidikan.'))
         if (edu.saved > 0) router.refresh()
+        if (!isDirty && edu.saved === 0 && edu.failed === 0) toast(t('Tidak ada perubahan.'))
       })
     },
     (invalid) => {

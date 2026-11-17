@@ -355,6 +355,7 @@ export const EN: Record<string, string> = {
   'Format email tidak valid': 'Invalid email format',
   'Nomor WhatsApp: 8–15 angka, boleh diawali +': 'WhatsApp number: 8–15 digits, may start with +',
   'Profil disimpan.': 'Profile saved.',
+  'Tidak ada perubahan.': 'No changes.',
   'Isi profil di About → Profil dulu.': 'Fill in the profile in About → Profile first.',
   'Kontak disimpan.': 'Contacts saved.',
   'Peran disimpan.': 'Roles saved.',
