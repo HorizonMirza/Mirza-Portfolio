@@ -411,10 +411,13 @@ function Choice<V extends string>({
 function useDelayedSave() {
   const timer = useRef<number | undefined>(undefined)
   useEffect(() => () => window.clearTimeout(timer.current), [])
-  return (run: () => void) => {
+  const later = (run: () => void) => {
     window.clearTimeout(timer.current)
     timer.current = window.setTimeout(run, TYPING_DELAY_MS)
   }
+  // membatalkan simpan yang masih menunggu (audit 2026-11-17, BUG-02)
+  later.cancel = () => window.clearTimeout(timer.current)
+  return later
 }
 
 function VolumeControl({
@@ -504,6 +507,9 @@ function NumberControl({ ids, value, onSave }: { ids: Ids; value: number; onSave
         onChange={(e) => {
           const next = e.target.value.replace(/\D/g, '')
           setDraft(next)
+          // ketikan baru membatalkan simpan yang menunggu, termasuk saat isian kembali ke nilai
+          // tersimpan atau dikosongkan; tanpa ini angka yang sudah dibatalkan tetap tersimpan
+          later.cancel()
           const n = Number(next)
           if (
             next.trim() !== '' &&

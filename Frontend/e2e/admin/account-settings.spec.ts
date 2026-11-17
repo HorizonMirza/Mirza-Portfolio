@@ -280,6 +280,25 @@ test.describe('Admin → Pengaturan', () => {
     await expect(maintenance).toHaveAttribute('aria-checked', 'false')
   })
 
+  test('angka yang dikembalikan ke nilai semula sebelum tersimpan tidak ikut tersimpan', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name !== SESSION_PROJECT, 'mengubah pengaturan bersama')
+    await page.goto('/admin/settings')
+    const limit = page.getByRole('textbox', { name: 'Batas Pesan per Jam' })
+    const original = await limit.inputValue()
+    const other = original === '7' ? '8' : '7'
+    await limit.click()
+    await limit.press('Control+A')
+    await limit.pressSequentially(other)
+    await limit.press('Control+A')
+    await limit.pressSequentially(original)
+    // ketiadaan simpan tidak bisa ditunggu lewat kejadian: tunggu lebih lama dari jeda simpan (600 ms)
+    await page.waitForTimeout(1500)
+    await expect(limit).toHaveValue(original)
+    await page.reload()
+    await expect(page.getByRole('textbox', { name: 'Batas Pesan per Jam' })).toHaveValue(original)
+  })
   test('batas pesan per jam di luar 1–50 ditandai tanpa disimpan', async ({ page }) => {
     await page.goto('/admin/settings')
     const limit = page.getByRole('textbox', { name: 'Batas Pesan per Jam' })
