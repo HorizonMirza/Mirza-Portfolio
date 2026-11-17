@@ -20,11 +20,22 @@ export function formatMonth(month: string, locale: AppLocale): string {
   return monthFormatters[locale].format(new Date(`${month}-01T00:00:00Z`))
 }
 
-export function formatDateShort(iso: string, locale: AppLocale): string {
-  return new Intl.DateTimeFormat(intlLocale[locale], {
+// Seperti monthFormatters: pemformat dibuat sekali per bahasa, bukan tiap panggilan (membuat
+// Intl.DateTimeFormat jauh lebih mahal daripada memakainya; audit 2026-11-17, EFF-04).
+const dateShortFormatters: Record<AppLocale, Intl.DateTimeFormat> = {
+  id: shortDateFormatter(intlLocale.id),
+  en: shortDateFormatter(intlLocale.en),
+}
+
+function shortDateFormatter(locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
     timeZone: 'Asia/Jakarta',
-  }).format(new Date(iso))
+  })
+}
+
+export function formatDateShort(iso: string, locale: AppLocale): string {
+  return dateShortFormatters[locale].format(new Date(iso))
 }

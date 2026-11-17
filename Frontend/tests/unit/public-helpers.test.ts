@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getEmailConfig } from '@/lib/email'
 import { browserAddress } from '@/features/projects/browser-address'
 import { siteHost, siteUrl } from '@/lib/env'
-import { formatMonth, loc } from '@/lib/localized'
+import { formatDateShort, formatMonth, loc } from '@/lib/localized'
 import { safeImage } from '@/lib/public-image'
 import { isBot, isSameOrigin } from '@/lib/request'
 import { pageMetadata, whatsappUrl } from '@/lib/seo'
@@ -20,6 +20,16 @@ describe('loc dan formatMonth', () => {
   it('bulan diformat tanpa bergeser zona waktu', () => {
     expect(formatMonth('2025-07', 'id')).toMatch(/Jul.*2025/)
     expect(formatMonth('2021-01', 'en')).toMatch(/Jan.*2021/)
+  })
+})
+
+describe('formatDateShort', () => {
+  it('tanggal pendek dalam zona Asia/Jakarta, tiap bahasa', () => {
+    expect(formatDateShort('2026-11-10T08:00:00Z', 'id')).toMatch(/^10 Nov 2026$/)
+    expect(formatDateShort('2026-11-10T08:00:00Z', 'en')).toMatch(/^10 Nov 2026$/)
+  })
+  it('lewat tengah malam UTC sudah hari berikutnya di Jakarta', () => {
+    expect(formatDateShort('2026-11-10T20:00:00Z', 'id')).toBe('11 Nov 2026')
   })
 })
 
