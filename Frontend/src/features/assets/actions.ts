@@ -4,7 +4,13 @@ import { z } from 'zod'
 
 import type { Prisma } from '@/generated/prisma/client'
 import type { CacheTag } from '@/lib/cache-tags'
-import { type ActionResult, fail, ok, toActionError } from '@/lib/action-result'
+import {
+  type ActionResult,
+  fail,
+  ok,
+  toActionError,
+  uniqueViolationFields,
+} from '@/lib/action-result'
 import { writeAudit } from '@/lib/audit'
 import { requireSuperAdmin } from '@/lib/auth-guard'
 import {
@@ -132,6 +138,19 @@ export async function attachUploadedAsset(
 
     if (!verifyUploadSignature(result, config.apiSecret))
       return fail('Tanda tangan unggahan tidak cocok.')
+
+    // Aman diulang: bila jawaban pertama hilang di jalan, browser mengirim ulang permintaan yang
+    // sama. Berkas dengan public_id ini sudah tercatat oleh permintaan pertama, jadi cukup dijawab
+    // sukses dan berkasnya jangan dihapus (audit 2026-11-17, BUG-01).
+    const already = await getDb().asset.findUnique({
+      where: { publicId: result.public_id },
+      select: { id: true },
+    })
+    if (already) {
+      revalidateFor(t.data)
+      return ok(`${spec.label} tersimpan.`)
+    }
+
     uploadedPublicId = result.public_id
     uploadedType = result.resource_type
     // Setelah titik ini berkas sudah ada di Cloudinary: setiap penolakan juga menghapusnya.
@@ -316,14 +335,22 @@ export async function attachUploadedAsset(
     revalidateFor(t.data)
     return ok(`${spec.label} tersimpan.`)
   } catch (error) {
-    // Berkas sudah di Cloudinary tapi gagal dicatat: hapus agar tidak jadi yatim.
-    if (uploadedPublicId) await destroyRemoteAsset(uploadedPublicId, uploadedType)
+    // Berkas sudah di Cloudinary tapi gagal dicatat: hapus agar tidak jadi yatim. Kecuali galatnya
+    // "public_id sudah ada": permintaan lain (balapan dengan percobaan ulang) sudah mencatatnya,
+    // dan menghapus berkasnya merusak catatan itu.
+    if (uploadedPublicId && !isDuplicatePublicId(error))
+      await destroyRemoteAsset(uploadedPublicId, uploadedType)
     if (error instanceof ProfileMissingError) return fail('Simpan profil dulu sebelum mengunggah.')
     return toActionError(error)
   }
 }
 
 class ProfileMissingError extends Error {}
+
+function isDuplicatePublicId(error: unknown): boolean {
+  const known = error as { code?: unknown; meta?: Record<string, unknown> }
+  return known?.code === 'P2002' && uniqueViolationFields(known.meta).includes('publicId')
+}
 
 // Teks alternatif bawaan dari data pemilik berkas, dalam dua bahasa
 async function defaultAlt(
