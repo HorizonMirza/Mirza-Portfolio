@@ -107,6 +107,7 @@ export const EN: Record<string, string> = {
   'Situs: Mode perawatan di Pengaturan.': 'Site: Maintenance mode in Settings.',
   'Rincian Perhari': 'Daily Breakdown',
   'Pengunjung (Garis Putus)': 'Visitors (Dashed Lines)',
+  'Pengunjung (Total Harian)': 'Visitors (Daily Total)',
   Pengalaman: 'Experience',
   Skill: 'Skills',
   Ringkasan: 'Summary',

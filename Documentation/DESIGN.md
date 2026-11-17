@@ -1902,7 +1902,7 @@ Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
 
 ## 167. Revisi Dashboard kedua (2026-11-16 malam)
 
-- Label kotak angka tanpa periode ("Pengunjung", bukan "Pengunjung, 30 hari"); periode cukup dari kotak 7/30/90 hari.
+- Label kotak angka tanpa periode ("Pengunjung", bukan "Pengunjung, 30 hari"); periode cukup dari kotak 7/30/90 hari. Sejak 2026-11-17 kotak pertama berlabel "Pengunjung (Total Harian)": angkanya penjumlahan pengunjung unik per hari, jadi orang yang sama di beberapa hari terhitung tiap hari (kode pengunjung memuat tanggal demi privasi, tidak bisa dicocokkan lintas hari; audit 2026-11-17, BUG-03).
 - **Grafik dipercantik:** tinggi 18 rem, arsiran bergradasi untuk tayangan dan pengunjung, garis bantu putus-putus, sumbu bawah bergaris, titik bercincin saat disorot, kursor putus-putus, tooltip berisi hari dan tanggal serta dua angka dengan penanda warna.
 - **Rincian per hari** ("Daily Breakdown") jadi kotak sendiri, bisa digulir, berdampingan dengan **Pesan terbaru** ("Latest Messages") dalam satu baris dua kolom (satu kolom di HP). Tombol "Semua pesan" dihapus; Pesan terbaru menampilkan 5 pesan.
 - **Perbaikan:** kepala tabel yang menempel kini berlatar pekat (`bg-bg`, `border-separate`) sehingga baris yang digulir tidak tembus di belakang judul kolom (latar kaca admin tembus pandang).

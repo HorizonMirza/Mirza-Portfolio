@@ -690,7 +690,13 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 Hari, tabel langsun
 }) => {
   await page.goto('/admin')
   const summary = page.getByRole('region', { name: 'Ringkasan' })
-  for (const label of ['Pengunjung', 'Tayangan Halaman', 'Unduhan CV', 'Pesan Masuk'])
+  // kotak pertama menjumlahkan pengunjung unik per hari, jadi labelnya "Total Harian" (BUG-03)
+  for (const label of [
+    'Pengunjung \\(Total Harian\\)',
+    'Tayangan Halaman',
+    'Unduhan CV',
+    'Pesan Masuk',
+  ])
     await expect(summary.getByRole('link', { name: new RegExp(`^${label} \\d`) })).toBeVisible()
   const period = page.getByRole('navigation', { name: 'Periode' })
   await expect(period.getByRole('link', { name: '30 Hari' })).toHaveAttribute(
