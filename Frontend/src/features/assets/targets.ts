@@ -7,6 +7,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/profile',
     maxBytes: 5 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -18,6 +20,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/profile',
     maxBytes: 5 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -37,6 +41,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/projects',
     maxBytes: 5 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -47,6 +53,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/projects',
     maxBytes: 5 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -58,6 +66,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/experience',
     maxBytes: 2 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 512,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -68,6 +78,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/experience',
     maxBytes: 5 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -81,6 +93,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/skills',
     maxBytes: 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 512,
     formats: ['png', 'webp', 'avif', 'jpg', 'jpeg'],
     accept: 'image/png,image/webp,image/avif,image/jpeg',
     decorative: true,
@@ -93,6 +107,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/profile',
     maxBytes: 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 512,
     formats: ['png', 'webp', 'avif', 'jpg', 'jpeg'],
     accept: 'image/png,image/webp,image/avif,image/jpeg',
     aspect: 1,
@@ -106,6 +122,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/contact',
     maxBytes: 2 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 1024,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
@@ -119,6 +137,8 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/hero',
     maxBytes: 4 * 1024 * 1024,
+    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
+    maxSide: 2000,
     formats: ['png', 'webp', 'avif'],
     accept: 'image/png,image/webp,image/avif',
     ratio: { w: 1120, h: 1100, tolerance: 0.03, minWidth: 700 },
@@ -127,9 +147,13 @@ export const UPLOAD_TARGETS = {
 
 export type UploadTarget = keyof typeof UPLOAD_TARGETS
 
-// Sisi terpanjang gambar hasil potong (piksel): logo kecil cukup 512, foto 2000
+// Sisi terpanjang gambar hasil potong (piksel), dari maxSide tiap tujuan: logo 512, foto 2000, foto
+// kartu ID 1024. Dulu ditebak dari batas ukuran berkas (<= 2 MB berarti 512), sehingga foto kartu ID
+// ikut 512 px hanya karena batas berkasnya 2 MB. Tujuan tanpa maxSide (PDF) tidak melewati pemotong
+// gambar.
 export function maxSideOf(target: UploadTarget): number {
-  return UPLOAD_TARGETS[target].maxBytes <= 2 * 1024 * 1024 ? 512 : 2000
+  const spec = UPLOAD_TARGETS[target]
+  return 'maxSide' in spec ? spec.maxSide : 2000
 }
 export const UPLOAD_TARGET_KEYS = Object.keys(UPLOAD_TARGETS) as UploadTarget[]
 
