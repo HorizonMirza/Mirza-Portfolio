@@ -1922,7 +1922,7 @@ Pemilik meminta halaman untuk kode 200, 301, 400, 401, 403, 404, 418, 429, 500, 
   - 403: masuk dengan akun yang bukan Super Admin → `forbidden()` → `app/admin/forbidden.tsx`, status 403. Butuh `experimental.authInterrupts` di `next.config.ts`.
   - 418: easter egg `/id/418` dan `/en/418`, kode HTTP 418 dari proxy (`NextResponse.rewrite` dengan status), noindex.
 - **Hanya pratinjau** (bukan error yang dilihat pengunjung atau tidak dikirim aplikasi): 200, 301, 400, 429 (batas permintaan tampil sebagai pesan di form kontak dan login), 502 (dikirim server Vercel).
-- **Pratinjau admin** `/admin/status` (Pengaturan → Lanjutan → Halaman status → Lihat): tab 11 kode (`?code=`), satu baris keterangan tempat kode itu muncul, panggung pratinjau dengan tombol contoh; bahasa mengikuti bahasa admin.
+- **Pratinjau admin** `/admin/status` (sejak bagian 171: menu sidebar Halaman Status): tab 11 kode (`?code=`), satu baris keterangan tempat kode itu muncul, panggung pratinjau dengan tombol contoh; bahasa mengikuti bahasa admin.
 
 ## 169. Efek loading menyeluruh: loading biasa dan skeleton shimmer sesuai layout (2026-11-16 malam)
 
@@ -1947,3 +1947,11 @@ Pemilik meminta situs dan panel Super Admin rapi di HP, tablet, dan desktop: tid
 - **Teks**: keterangan marquee Home, alamat di bingkai browser project, nama di sidebar, nama/subjek Pesan terbaru, nama dan cuplikan di daftar Pesan, nilai kartu Footer, dan pilihan dropdown turun baris, tidak lagi dipotong "…". Cuplikan pesan tetap dipendekkan 48 huruf di server (isi lengkap di halaman detail).
 - **Tabel Rincian per hari** (Dashboard): jarak sel lebih rapat di HP agar tiga kolom muat tanpa geser.
 - Yang sengaja dibiarkan: foto dan nama besar di hero Home lebih lebar dari layar sebagai efek desain (latar foto memudar, huruf tetap terbaca utuh).
+
+## 171. Revisi 17-11: hero tablet kecil, animasi laci, Halaman Status di sidebar (2026-11-17)
+
+- **Hero Home** di layar lebar-pendek di bawah 768 px (mis. 575×767): lebar foto `min(140cqw, sisa tinggi hero di atas menu ikon)`, sehingga foto terlihat sampai tangan, bukan wajah saja. HP biasa tidak berubah.
+- **Laci menu admin** (HP dan tablet): geser masuk 460 ms dengan perlambatan lembut, keluar 300 ms, latar memudar, menu muncul berurutan (`.sheet-panel`, `.sheet-overlay` di globals.css). Sebelumnya tanpa animasi.
+- **Halaman Status** menjadi menu sidebar sendiri (ikon hantu) di bawah Pesan; baris "Halaman status" di Pengaturan → Lanjutan dihapus. Nama ditulis "Halaman Status" / "Status Pages".
+- **Keterangan kode** di pratinjau Halaman Status (mis. "Hanya pratinjau: 200 berarti halaman berhasil dibuka.") pindah ke pojok kiri bawah kotak pratinjau.
+- **Dashboard**: judul "Pesan Terbaru" dan "Rincian Perhari" (EN tetap "Latest Messages", "Daily Breakdown").

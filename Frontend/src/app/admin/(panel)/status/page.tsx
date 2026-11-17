@@ -9,7 +9,7 @@ import { requireSuperAdminPage } from '@/lib/auth-guard'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: t('Halaman status') }
+  return { title: t('Halaman Status') }
 }
 
 // Kode yang bukan error atau tidak dikirim aplikasi (502 dari server Vercel) hanya bisa dilihat di sini;
@@ -58,7 +58,7 @@ export default async function StatusPreviewPage({ searchParams }: PageProps<'/ad
 
   return (
     <div className="flex flex-col">
-      <h1 className="sr-only">{t('Halaman status')}</h1>
+      <h1 className="sr-only">{t('Halaman Status')}</h1>
       <FilterTabs
         stretch
         label={t('Kode status')}
@@ -68,10 +68,9 @@ export default async function StatusPreviewPage({ searchParams }: PageProps<'/ad
           active: c === code,
         }))}
       />
-      <p className="mb-3 text-sm text-muted">{t(WHERE[code])}</p>
       <section
         aria-label={t('Pratinjau')}
-        className="admin-bleed overflow-hidden rounded-md border border-border bg-bg"
+        className="admin-bleed relative overflow-hidden rounded-md border border-border bg-bg"
       >
         <StatusPage
           code={code}
@@ -89,6 +88,9 @@ export default async function StatusPreviewPage({ searchParams }: PageProps<'/ad
             ) : null
           }
         />
+        {/* keterangan tempat kode ini muncul, di pojok kiri bawah pratinjau (revisi pemilik
+            2026-11-17); boleh turun baris di layar sempit */}
+        <p className="absolute right-4 bottom-3 left-4 text-xs text-muted">{t(WHERE[code])}</p>
       </section>
     </div>
   )

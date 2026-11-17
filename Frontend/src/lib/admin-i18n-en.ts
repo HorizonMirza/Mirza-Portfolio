@@ -86,10 +86,7 @@ export const EN: Record<string, string> = {
   'Pesan Masuk': 'Messages Received',
   'Data per pengunjung disimpan sesuai Pengaturan': 'Per-visitor data is kept as set in Settings',
   'Kunjungan harian': 'Daily Visits',
-  'Halaman status': 'Status pages',
-  'Pratinjau halaman untuk 11 kode HTTP, dari 200 sampai 503.':
-    'Preview the pages for 11 HTTP codes, from 200 to 503.',
-  Lihat: 'View',
+  'Halaman Status': 'Status Pages',
   'Kode status': 'Status code',
   Pratinjau: 'Preview',
   'Hanya pratinjau: 200 berarti halaman berhasil dibuka.':
@@ -109,14 +106,14 @@ export const EN: Record<string, string> = {
   'Hanya pratinjau: 502 dikirim server Vercel, bukan aplikasi.':
     'Preview only: 502 is sent by the Vercel server, not the app.',
   'Situs: Mode perawatan di Pengaturan.': 'Site: Maintenance mode in Settings.',
-  'Rincian per hari': 'Daily Breakdown',
+  'Rincian Perhari': 'Daily Breakdown',
   'Pengunjung (garis putus)': 'Visitors (Dashed Lines)',
   Pengalaman: 'Experience',
   Skill: 'Skills',
   Ringkasan: 'Summary',
   'Lihat sebagai tabel': 'Show as table',
   Tanggal: 'Date',
-  'Pesan terbaru': 'Latest Messages',
+  'Pesan Terbaru': 'Latest Messages',
   'Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.':
     'No messages yet. Messages from the Contact form will appear here.',
   '(tanpa subjek)': '(no subject)',

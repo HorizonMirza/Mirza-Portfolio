@@ -2996,7 +2996,10 @@ html[data-intro='pending'] .intro {
   /* ruang kosong di atas rambut dalam foto (±6,6% tinggi) dikurangi agar kepala tepat di bawah nama */
   --photo-top: calc(var(--name-top) + 1.8 * var(--name-size) + 2cqh - 7cqw);
   --face-x: 50%;
-  --photo-w: 140cqw;
+  /* foto 140cqw, tetapi tidak lebih tinggi dari sisa hero di atas menu ikon bawah (7rem untuk peran
+     dan menu): di layar HP/tablet kecil yang lebar dan pendek (mis. 575x767) foto tetap terlihat
+     sampai tangan, bukan wajah saja (revisi pemilik 2026-11-17) */
+  --photo-w: min(140cqw, calc((100cqh - var(--photo-top) - 7rem) / 0.982));
   --face-y: calc(var(--photo-top) + 0.28 * 0.982 * var(--photo-w));
   --face-rx: 0px;
   --face-ry: 0px;
@@ -3491,6 +3494,77 @@ html[data-intro='pending'] .intro {
    permukaan admin dibuat tembus pandang sehingga kartu, tabel, dan form ikut menjadi kaca. Nilai
    --g-* diatur lewat tombol Tampilan (glass-settings.tsx) dan tersimpan di browser. */
 .admin-glass,
+/* Laci menu (Sheet): geser masuk dengan perlambatan lembut, keluar sedikit lebih cepat; latar memudar;
+   menu muncul berurutan (revisi pemilik 2026-11-17: animasi laci jangan kaku). Reduced motion:
+   aturan global memendekkan semua animasi. */
+@keyframes sheet-in {
+  from {
+    transform: translateX(-104%);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateX(-104%);
+  }
+}
+@keyframes sheet-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheet-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+}
+.sheet-panel[data-state='open'] {
+  animation: sheet-in 460ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sheet-panel[data-state='closed'] {
+  animation: sheet-out 300ms cubic-bezier(0.55, 0, 0.75, 0.2) forwards;
+}
+.sheet-overlay[data-state='open'] {
+  animation: sheet-fade-in 360ms ease-out;
+}
+.sheet-overlay[data-state='closed'] {
+  animation: sheet-fade-out 300ms ease-in forwards;
+}
+.sheet-panel[data-state='open'] li {
+  animation: sheet-item-in 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.sheet-panel[data-state='open'] li:nth-child(1) {
+  animation-delay: 80ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(2) {
+  animation-delay: 110ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(3) {
+  animation-delay: 140ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(4) {
+  animation-delay: 170ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(5) {
+  animation-delay: 200ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(6) {
+  animation-delay: 230ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(7) {
+  animation-delay: 260ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(8) {
+  animation-delay: 290ms;
+}
+.sheet-panel[data-state='open'] li:nth-child(n + 9) {
+  animation-delay: 320ms;
+}
 .admin-sheet {
   --g-blur: 22px;
   --g-op: 0.42;

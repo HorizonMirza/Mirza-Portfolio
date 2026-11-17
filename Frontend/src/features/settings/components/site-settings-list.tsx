@@ -1,7 +1,6 @@
 'use client'
 
 import { Volume2 } from 'lucide-react'
-import Link from 'next/link'
 import { type ReactNode, useEffect, useId, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
@@ -275,19 +274,7 @@ export function SiteSettingsList({
 
       <Group title={t('Lanjutan')}>
         <MaintenanceRow on={values.maintenanceMode} onSave={save} />
-        <Row
-          title={t('Halaman status')}
-          description={t('Pratinjau halaman untuk 11 kode HTTP, dari 200 sampai 503.')}
-          control={(ids) => (
-            <Link
-              href="/admin/status"
-              aria-describedby={ids.description}
-              className="inline-flex min-h-9 items-center rounded-md border border-border-strong px-3 text-sm font-semibold transition-colors hover:border-text"
-            >
-              {t('Lihat')}
-            </Link>
-          )}
-        />
+        {/* Halaman status pindah ke sidebar (revisi pemilik 2026-11-17) */}
       </Group>
     </div>
   )

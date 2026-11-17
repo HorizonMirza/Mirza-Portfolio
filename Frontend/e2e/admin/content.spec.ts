@@ -715,8 +715,8 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
     'page',
   )
   // Rincian per hari dan Pesan terbaru berdampingan; tanpa tombol Semua pesan
-  const breakdown = page.getByRole('heading', { name: 'Rincian per hari' })
-  const latest = page.getByRole('heading', { name: 'Pesan terbaru' })
+  const breakdown = page.getByRole('heading', { name: 'Rincian Perhari' })
+  const latest = page.getByRole('heading', { name: 'Pesan Terbaru' })
   await expect(latest).toBeVisible()
   await expect(page.getByRole('main').getByRole('link', { name: 'Semua pesan' })).toHaveCount(0)
   if (!isMobile) {
@@ -731,9 +731,15 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
   await expect(summary.getByText('%')).toHaveCount(0)
 })
 
-test('Pengaturan → Halaman status: pratinjau 11 kode status', async ({ page }) => {
-  await page.goto('/admin/settings')
-  await page.getByRole('link', { name: 'Lihat', exact: true }).click()
+test('sidebar → Halaman Status: pratinjau 11 kode status', async ({ page, isMobile }) => {
+  // menu sendiri di sidebar (revisi pemilik 2026-11-17), bukan lagi baris di Pengaturan
+  await page.goto('/admin')
+  if (isMobile) await page.getByRole('button', { name: 'Menu samping' }).click()
+  await page
+    .getByRole('navigation', { name: 'Menu admin' })
+    .locator('visible=true')
+    .getByRole('link', { name: 'Halaman Status' })
+    .click()
   await expect(page).toHaveURL(/\/admin\/status$/)
   const tabs = page.getByRole('navigation', { name: 'Kode status' })
   await expect(tabs.getByRole('link')).toHaveCount(11)
@@ -744,9 +750,12 @@ test('Pengaturan → Halaman status: pratinjau 11 kode status', async ({ page })
   await tabs.getByRole('link', { name: '429' }).click()
   await expect(page).toHaveURL(/code=429$/)
   await expect(preview.getByRole('heading', { level: 1 })).toHaveText('Pelan-pelan dulu.')
-  await expect(
-    page.getByText('Hanya pratinjau: batas permintaan tampil sebagai pesan di form.'),
-  ).toBeVisible()
+  // keterangan di pojok kiri bawah pratinjau (revisi pemilik 2026-11-17)
+  const note = preview.getByText('Hanya pratinjau: batas permintaan tampil sebagai pesan di form.')
+  await expect(note).toBeVisible()
+  const [n, box] = [(await note.boundingBox())!, (await preview.boundingBox())!]
+  expect(n.x - box.x).toBeLessThan(40)
+  expect(box.y + box.height - (n.y + n.height)).toBeLessThan(40)
 })
 
 test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({ page }) => {

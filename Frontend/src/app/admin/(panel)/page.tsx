@@ -173,7 +173,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
       {/* pesan terbaru (kiri) dan rincian per hari (kanan): satu baris dua kolom (revisi pemilik 2026-11-16) */}
       <div className="grid items-stretch gap-3 lg:grid-cols-2">
         <Card className="min-w-0">
-          <h2 className="text-h3 font-semibold">{t('Pesan terbaru')}</h2>
+          <h2 className="text-h3 font-semibold">{t('Pesan Terbaru')}</h2>
           {messages.length === 0 ? (
             <p className="mt-3 text-sm text-muted">
               {t('Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.')}
@@ -217,12 +217,12 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
           )}
         </Card>
         <Card className="flex min-w-0 flex-col">
-          <h2 className="text-h3 font-semibold">{t('Rincian per hari')}</h2>
+          <h2 className="text-h3 font-semibold">{t('Rincian Perhari')}</h2>
           {/* kotak sendiri yang bisa digulir; kepala tabel menempel dengan latar pekat agar baris yang
             lewat di bawahnya tidak tembus (latar kaca admin tembus pandang) */}
           <div
             role="region"
-            aria-label={`${t('Rincian per hari')}, ${days}`}
+            aria-label={`${t('Rincian Perhari')}, ${days}`}
             tabIndex={0}
             className="mt-3 max-h-80 min-h-0 flex-1 overflow-y-auto rounded-md border border-border lg:max-h-none lg:min-h-64 lg:flex-[1_1_0px]"
           >
