@@ -9,6 +9,7 @@ import { DeleteMessageButton } from '@/features/messages/components/message-acti
 import {
   countMessagesByStatus,
   listMessages,
+  MESSAGE_PREVIEW_CHARS,
   MESSAGES_PAGE_SIZE,
 } from '@/features/messages/queries'
 import {
@@ -19,9 +20,6 @@ import {
 import { getAdminT } from '@/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@/lib/auth-guard'
 import { formatDateTime } from '@/lib/format'
-
-// panjang isi pesan di daftar sebelum dipotong dengan "…"
-const PREVIEW = 48
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -82,7 +80,9 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
                 <span className="min-w-0 flex-1 text-sm [overflow-wrap:anywhere]">
                   {m.subject ? <span className="font-medium">{m.subject} · </span> : null}
                   <span className="text-muted">
-                    {m.body.length > PREVIEW ? `${m.body.slice(0, PREVIEW).trimEnd()}…` : m.body}
+                    {m.body.length > MESSAGE_PREVIEW_CHARS
+                      ? `${m.body.slice(0, MESSAGE_PREVIEW_CHARS).trimEnd()}…`
+                      : m.body}
                   </span>
                 </span>
                 <span className="shrink-0 text-xs text-muted tabular-nums">
