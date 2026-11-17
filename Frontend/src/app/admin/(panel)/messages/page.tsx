@@ -75,10 +75,11 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
               >
                 <span className="flex min-w-0 items-center gap-2 sm:w-52 sm:shrink-0">
                   {m.status === 'NEW' ? <Badge tone="primary">{t('Baru')}</Badge> : null}
-                  <span className="truncate font-medium">{m.name}</span>
+                  <span className="font-medium [overflow-wrap:anywhere]">{m.name}</span>
                 </span>
-                {/* isi dipotong pendek dengan "…" agar tidak mendekati tanggal */}
-                <span className="min-w-0 flex-1 truncate text-sm">
+                {/* cuplikan isi (dipendekkan di server); turun baris bila tidak muat, tidak dipotong
+                    lagi oleh lebar layar (revisi pemilik 2026-11-17) */}
+                <span className="min-w-0 flex-1 text-sm [overflow-wrap:anywhere]">
                   {m.subject ? <span className="font-medium">{m.subject} · </span> : null}
                   <span className="text-muted">
                     {m.body.length > PREVIEW ? `${m.body.slice(0, PREVIEW).trimEnd()}…` : m.body}

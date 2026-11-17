@@ -183,6 +183,7 @@ export function ExperienceTimelineLive({
                           </h2>
                           <p className="mt-2.5">
                             <InlineInput
+                              wrap
                               key={`org-${lang}`}
                               label={
                                 lang === 'en'
@@ -203,6 +204,7 @@ export function ExperienceTimelineLive({
                             {' · '}
                             {/* jenis pekerjaan: teks bebas per bahasa (mis. Internship), bukan daftar pilihan */}
                             <InlineInput
+                              wrap
                               key={`emp-${lang}`}
                               label={label('Jenis pekerjaan (opsional)')}
                               value={v[`employmentLabel_${lang}`] ?? ''}

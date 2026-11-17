@@ -1,7 +1,9 @@
 'use client'
 
 import {
+  type ChangeEvent,
   type ComponentPropsWithoutRef,
+  type KeyboardEvent,
   type ReactNode,
   type Ref,
   useLayoutEffect,
@@ -110,14 +112,19 @@ function setRefs<T>(el: T, refs: (Ref<T> | undefined)[]) {
 type InlineBase = { label: string; invalid?: boolean; describedBy?: string }
 
 // Teks satu baris yang diketik langsung: huruf, warna, dan ukuran ikut teks di sekitarnya.
+// wrap: teks yang bisa panjang (nama instansi, jurusan, URL) boleh turun baris bila tidak muat, tidak
+// terpotong (revisi pemilik 2026-11-17). Tetap satu baris data: Enter tidak membuat baris baru.
 export function InlineInput({
   label,
   invalid,
   describedBy,
   className,
   ref,
+  wrap = false,
   ...rest
-}: InlineBase & ComponentPropsWithoutRef<'input'> & { ref?: Ref<HTMLInputElement> }) {
+}: InlineBase &
+  ComponentPropsWithoutRef<'input'> & { ref?: Ref<HTMLInputElement>; wrap?: boolean }) {
+  if (wrap) return <InlineWrap {...{ label, invalid, describedBy, className, ref, ...rest }} />
   return (
     <input
       {...rest}
@@ -127,6 +134,71 @@ export function InlineInput({
       aria-describedby={describedBy}
       spellCheck={false}
       className={cn('admin-inline', invalid && 'admin-inline-bad', className)}
+    />
+  )
+}
+
+function omitType<T extends { type?: unknown }>(props: T) {
+  const copy = { ...props }
+  delete copy.type
+  return copy
+}
+
+// isian satu baris yang boleh turun baris: textarea selebar isinya (field-sizing), paling lebar 100%
+function InlineWrap({
+  label,
+  invalid,
+  describedBy,
+  className,
+  size,
+  value,
+  onChange,
+  onKeyDown,
+  inputMode,
+  ref,
+  ...rest
+}: InlineBase &
+  ComponentPropsWithoutRef<'input'> & {
+    // ref dari register() react-hook-form: wajib sampai ke textarea agar nilainya terbaca
+    ref?: Ref<HTMLInputElement>
+  }) {
+  const area = useRef<HTMLTextAreaElement | null>(null)
+  // browser tanpa field-sizing: tinggi mengikuti isi lewat scrollHeight
+  useLayoutEffect(() => {
+    const el = area.current
+    if (!el || CSS.supports('field-sizing', 'content')) return
+    const fit = () => {
+      el.style.height = 'auto'
+      el.style.height = `${el.scrollHeight}px`
+    }
+    fit()
+    const observer = new ResizeObserver(fit)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [value])
+  return (
+    <textarea
+      // atribut khusus input (type) tidak berlaku untuk textarea
+      {...(omitType(rest) as ComponentPropsWithoutRef<'textarea'>)}
+      ref={(el) => setRefs(el, [area, ref as Ref<HTMLTextAreaElement> | undefined])}
+      rows={1}
+      cols={size}
+      value={value}
+      inputMode={inputMode}
+      aria-label={label}
+      aria-invalid={invalid || undefined}
+      aria-describedby={describedBy}
+      spellCheck={false}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') event.preventDefault()
+        onKeyDown?.(event as unknown as KeyboardEvent<HTMLInputElement>)
+      }}
+      // pemanggil hanya membaca event.target.value, sama untuk input dan textarea
+      onChange={(event) => {
+        event.target.value = event.target.value.replace(/[\r\n]+/g, ' ')
+        onChange?.(event as unknown as ChangeEvent<HTMLInputElement>)
+      }}
+      className={cn('admin-inline admin-wrap', invalid && 'admin-inline-bad', className)}
     />
   )
 }

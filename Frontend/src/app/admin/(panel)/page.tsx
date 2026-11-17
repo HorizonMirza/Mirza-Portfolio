@@ -192,8 +192,8 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                     className="col-span-full grid grid-cols-subgrid items-center py-2.5 hover:opacity-80"
                   >
                     <span className="min-w-0">
-                      <span className="block truncate font-semibold">{m.name}</span>
-                      <span className="block truncate text-sm text-muted">
+                      <span className="block font-semibold [overflow-wrap:anywhere]">{m.name}</span>
+                      <span className="block text-sm [overflow-wrap:anywhere] text-muted">
                         {m.subject || t('(tanpa subjek)')}
                       </span>
                     </span>
@@ -241,7 +241,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                       key={label}
                       scope="col"
                       className={cn(
-                        'sticky top-0 z-10 border-b border-border bg-bg px-3 py-2 font-medium text-muted',
+                        'sticky top-0 z-10 border-b border-border bg-bg px-2 py-2 font-medium text-muted sm:px-3',
                         align,
                       )}
                     >
@@ -253,13 +253,13 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
               <tbody>
                 {[...current].reverse().map((v) => (
                   <tr key={v.day}>
-                    <td className="border-b border-border px-3 py-2">
+                    <td className="border-b border-border px-2 py-2 sm:px-3">
                       {formatDayKey(v.day, lang)}
                     </td>
-                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
+                    <td className="border-b border-border px-2 py-2 text-right tabular-nums sm:px-3">
                       {formatNumber(v.views, lang)}
                     </td>
-                    <td className="border-b border-border px-3 py-2 text-right tabular-nums">
+                    <td className="border-b border-border px-2 py-2 text-right tabular-nums sm:px-3">
                       {v.visitors === null ? '—' : formatNumber(v.visitors, lang)}
                     </td>
                   </tr>

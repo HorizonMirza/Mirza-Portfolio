@@ -96,6 +96,7 @@ export function EducationCardsLive({
               <div className="ab-edu-text flex min-w-0 flex-1 flex-col items-start gap-2.5 pr-8">
                 <h3 className="font-display text-2xl leading-[1.1] font-bold uppercase">
                   <InlineInput
+                    wrap
                     key={`org-${lang}`}
                     label={
                       lang === 'en'
@@ -117,6 +118,7 @@ export function EducationCardsLive({
                 </h3>
                 <p className="text-muted">
                   <InlineInput
+                    wrap
                     key={`title-${lang}`}
                     label={label('Jenjang / jurusan')}
                     value={v[`title_${lang}`] ?? ''}

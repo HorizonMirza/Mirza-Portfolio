@@ -193,6 +193,7 @@ export function ProjectListLive({
                         <div className="pj-title-box flex flex-col gap-3 pe-4 md:px-6">
                           <p className="pj-role">
                             <InlineInput
+                              wrap
                               label={label('Peran saya (opsional)')}
                               value={shown(row, 'role')}
                               placeholder={t('Peran saya (opsional)')}

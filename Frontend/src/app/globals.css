@@ -917,7 +917,14 @@ button.xp-frame {
   border: 3px solid var(--text);
   border-top: 0;
 }
-@media (max-width: 860px) {
+/* Tata letak HP halaman Tentang mengikuti lebar wadahnya (.ab-wrap), bukan lebar layar, agar panggung
+   pratinjau admin yang lebih sempit dari layar ikut berganti ke satu kolom (revisi pemilik 2026-11-17).
+   812 px = isi Container saat layar 860 px (px-6 kiri-kanan), jadi situs publik berganti di titik yang
+   sama seperti dulu. */
+.ab-wrap {
+  container: about / inline-size;
+}
+@container about (max-width: 812px) {
   .ab-band {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
@@ -968,6 +975,16 @@ button.xp-frame {
   }
   .ab-edu-card h3 {
     font-size: 1.375rem;
+  }
+}
+/* wadah sangat sempit (pratinjau admin di HP): logo di atas teks agar nama kampus dan jurusan
+   mendapat selebar kartu, tidak terpatah per huruf */
+@container about (max-width: 320px) {
+  .ab-edu-card {
+    flex-direction: column;
+  }
+  .ab-edu-card .ab-edu-text {
+    padding-right: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1897,8 +1914,9 @@ html:has(.contact-sent) {
   justify-content: safe center;
   gap: 0.5rem;
   margin-top: 0.5rem;
-  /* satu baris; bila foto sangat banyak baris ini bisa digeser ke samping */
-  overflow-x: auto;
+  /* foto yang tidak muat turun ke baris berikutnya, tidak digeser ke samping (revisi pemilik
+     2026-11-17) */
+  flex-wrap: wrap;
   /* ruang untuk garis fokus agar tidak terpotong oleh overflow */
   padding: 5px;
   scrollbar-width: thin;
@@ -2021,12 +2039,12 @@ html:has(.contact-sent) {
   transition: opacity 0.25s ease-out;
 }
 .home-marquee-caption {
-  overflow: hidden;
   padding-inline: 0.125rem;
   font-size: 0.9375rem;
   font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* nama project panjang turun baris, tidak dipotong "…" (revisi pemilik 2026-11-17) */
+  line-height: 1.3;
+  text-wrap: balance;
 }
 @media (hover: hover) and (pointer: fine) {
   .home-marquee-hover {
@@ -2357,8 +2375,8 @@ html:has(.contact-sent) {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   line-height: 1.6;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* alamat panjang turun baris di layar sempit, tidak dipotong "…" (revisi pemilik 2026-11-17) */
+  overflow-wrap: anywhere;
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .pj-zz:hover .pj-browser {
@@ -2744,6 +2762,18 @@ html[data-intro='pending'] .intro {
      membuat isian kosong lebih tinggi dari yang terisi) */
   input.admin-inline {
     height: 1lh;
+  }
+  /* isian satu baris yang boleh turun baris (InlineInput wrap): selebar isinya sampai selebar
+     wadah, lalu turun baris; URL tanpa spasi dipatah di mana saja (revisi pemilik 2026-11-17) */
+  textarea.admin-wrap {
+    display: inline-block;
+    max-width: 100%;
+    min-height: 1lh;
+    vertical-align: top;
+    resize: none;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
   }
   /* isian yang salah: garis merah di bawah teks */
   .admin-inline-bad {

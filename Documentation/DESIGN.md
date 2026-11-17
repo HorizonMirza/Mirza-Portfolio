@@ -1932,3 +1932,18 @@ Pemilik meminta efek loading di seluruh aplikasi, dibagi dua: loading biasa dan 
   - Situs publik: `NavigationSkeleton` memakai bentuk ini (tetap tanpa `loading.tsx`, bagian 111).
   - Admin: tiap `loading.tsx` memakai bentuk halamannya. Halaman ubah-langsung → `AdminStageSkeleton` (tab modul bila ada, panggung pratinjau dengan bentuk halaman situs, baris ID/EN bila halaman punya, Simpan): Profil (About), Pengalaman, Projects, detail/baru Project, Peran (Home, 4 tab), Skill (4 tab), GitHub (`AdminGithubSkeleton`, 4 tab + 5 kotak warna, `loading.tsx` baru), modul halaman (`pages/[module]` membaca modul dari alamat: kartu pembuka, Contact, Navbar, Footer). Pesan → daftar baris (status, nama, cuplikan, tanggal, hapus), detail pesan, Pengaturan (9 geseran Suara + kelompok), Akun, Dashboard, dan Halaman status tetap memakai skeleton masing-masing.
 - **Perbaikan:** `.skeleton` di `globals.css` dipindah ke `@layer components`. Sebelumnya aturan tanpa lapisan ini selalu menang atas kelas Tailwind, sehingga `absolute`, `rounded-full`, `rounded-none`, dan `hidden` pada blok skeleton diabaikan (bentuk hero, pil, dan elemen khusus HP/desktop tidak sesuai).
+
+## 170. Responsif menyeluruh: tidak ada yang digeser menyamping atau terpotong (2026-11-17)
+
+Pemilik meminta situs dan panel Super Admin rapi di HP, tablet, dan desktop: tidak ada yang perlu digeser; bila tidak muat, isi turun ke bawah; tidak ada yang terpotong. Diperiksa otomatis di 360, 390, 768, 820, 1024, 1180, 1280, dan 1366 px untuk 31 halaman (luapan halaman, gulir samping di dalam elemen, isi keluar layar, teks terpotong "…"), lalu dicek visual.
+- **Tab admin** (Beranda, Pesan, Halaman status): tidak lagi digeser menyamping; grid `auto-fit` dengan lebar minimum dari label terpanjang, sehingga tab yang tidak muat turun baris (Beranda di HP 2×2, kode status 4 per baris).
+- **Sidebar penuh mulai 1280 px** (dulu 1024): di tablet dan laptop kecil sidebar berupa rel ikon agar panggung pratinjau cukup lebar; hamburger membuka laci di bawah 1280 px.
+- **Top bar HP**: tombol 40 px, nama halaman turun baris bila panjang (tidak lagi "Dashb…").
+- **Isian yang bisa panjang** (nama instansi, jurusan, jenis pekerjaan, peran, chip, URL, slug, teks kartu Footer, menu Navbar): `InlineInput wrap` berupa textarea selebar isinya yang turun baris; Enter tidak membuat baris baru, URL dipatah di mana saja.
+- **Halaman Tentang** memakai container query (`.ab-wrap`, titik 812 px = layar 860 px di situs publik, jadi situs publik tidak berubah): panggung admin yang sempit otomatis satu kolom; wadah ≤ 320 px menaruh logo pendidikan di atas teks.
+- **Pratinjau Navbar** admin: menu turun baris di layar sempit.
+- **Grafik GitHub** selalu dipaskan selebar kotaknya (tidak lagi kanvas lebar yang digeser di HP), di situs dan admin.
+- **Galeri foto project**: deretan foto kecil turun baris, tidak digeser.
+- **Teks**: keterangan marquee Home, alamat di bingkai browser project, nama di sidebar, nama/subjek Pesan terbaru, nama dan cuplikan di daftar Pesan, nilai kartu Footer, dan pilihan dropdown turun baris, tidak lagi dipotong "…". Cuplikan pesan tetap dipendekkan 48 huruf di server (isi lengkap di halaman detail).
+- **Tabel Rincian per hari** (Dashboard): jarak sel lebih rapat di HP agar tiga kolom muat tanpa geser.
+- Yang sengaja dibiarkan: foto dan nama besar di hero Home lebih lebar dari layar sebagai efek desain (latar foto memudar, huruf tetap terbaca utuh).

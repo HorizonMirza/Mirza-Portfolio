@@ -84,7 +84,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
   )
 
   return (
-    <Container className="pb-20">
+    <Container className="ab-wrap pb-20">
       <PageIntro title={t('title')} align="center" />
       <div className="ab-band">
         <PhotoTilt>

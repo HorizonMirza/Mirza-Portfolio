@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils'
 // Filter sebagai tautan (?status=...) agar bisa dibagikan dan bekerja tanpa JavaScript.
 // stretch: satu baris selebar panel sampai tepi kiri-kanan, tombol terpisah sama lebar, yang aktif
 // terisi penuh (tab Home, revisi pemilik 2026-11-11 dan 2026-11-12, DESIGN.md bagian 129 dan 131).
-// Di layar sempit digeser menyamping.
+// Tidak pernah digeser menyamping (revisi pemilik 2026-11-17): bila tidak muat dalam satu baris,
+// tombol turun ke baris berikutnya dengan lebar sama (grid auto-fit, lebar minimum dari label terpanjang).
 export function FilterTabs({
   label,
   items,
@@ -15,13 +16,20 @@ export function FilterTabs({
   items: { href: string; label: string; count?: number; active: boolean }[]
   stretch?: boolean
 }) {
-  if (stretch)
+  if (stretch) {
+    const text = (item: (typeof items)[number]) =>
+      item.count !== undefined ? `${item.label} (${item.count})` : item.label
+    // perkiraan lebar label terpanjang (±0,5 rem per huruf text-sm) + padding tombol px-3
+    const minRem = Math.max(...items.map((item) => text(item).length)) * 0.5 + 1.75
     return (
       <nav
         aria-label={label}
         // selebar panel isi sampai tepi kiri-kanan (revisi pemilik 2026-11-12), keluar dari batas
         // max-w-6xl isi halaman: 100cqw = lebar isi <main> (@container di layout panel)
-        className="admin-bleed no-scrollbar mb-6 flex gap-2 overflow-x-auto overscroll-x-contain py-1"
+        className="admin-bleed mb-6 grid gap-2 py-1"
+        style={{
+          gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, ${minRem.toFixed(2)}rem), 1fr))`,
+        }}
       >
         {items.map((item) => (
           <Link
@@ -29,18 +37,19 @@ export function FilterTabs({
             href={item.href}
             aria-current={item.active ? 'page' : undefined}
             className={cn(
-              'inline-flex min-h-11 min-w-fit flex-1 basis-0 items-center justify-center rounded-md px-4 text-sm font-semibold whitespace-nowrap transition-colors',
+              'inline-flex min-h-11 min-w-0 items-center justify-center rounded-md px-3 text-center text-sm font-semibold transition-colors',
               item.active
                 ? 'bg-text text-bg'
                 : 'border border-border bg-surface text-muted hover:bg-surface-2 hover:text-text',
             )}
           >
             {/* jumlah dalam kurung, huruf sama dengan namanya (revisi pemilik 2026-11-16) */}
-            {item.count !== undefined ? `${item.label} (${item.count})` : item.label}
+            {text(item)}
           </Link>
         ))}
       </nav>
     )
+  }
   return (
     <nav
       aria-label={label}

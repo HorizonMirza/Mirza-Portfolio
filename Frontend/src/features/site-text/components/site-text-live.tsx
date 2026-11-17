@@ -117,6 +117,7 @@ export function EditText({
     )
   return (
     <InlineInput
+      wrap
       id={id}
       label={label}
       value={shown}

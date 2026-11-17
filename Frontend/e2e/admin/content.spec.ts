@@ -170,7 +170,12 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   await page.goto('/admin/projects')
   const titleBox = page.locator('textarea[aria-label="Judul (Indonesia)"]', { hasText: titleId })
   await expect(titleBox).toHaveCount(1)
-  await expect(page.locator(`input[value="${roleText}"]`).filter({ visible: true })).toHaveCount(1)
+  // peran memakai isian yang boleh turun baris (textarea, revisi 2026-11-17): isi ada di teksnya
+  await expect(
+    page
+      .locator('textarea[aria-label="Peran saya (opsional) (Indonesia)"]', { hasText: roleText })
+      .filter({ visible: true }),
+  ).toHaveCount(1)
   const row = page.getByRole('listitem').filter({ has: titleBox })
   await expect(row.getByRole('link', { name: /^Ubah / }).first()).toBeAttached()
   // tanpa penanda "Unggulan"
@@ -381,6 +386,7 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
 
 test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Peran', async ({
   page,
+  isMobile,
 }) => {
   // tab Foto beranda dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 141): alamat lamanya
   // diarahkan ke tab Peran
@@ -392,9 +398,12 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
     'aria-current',
     'page',
   )
-  // satu baris: semua tab sejajar di atas
+  // satu baris di layar lebar; di HP turun jadi 2x2, tidak digeser menyamping (revisi 2026-11-17)
   const tops = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
-  expect(new Set(tops).size).toBe(1)
+  expect(new Set(tops).size).toBe(isMobile ? 2 : 1)
+  const vw = page.viewportSize()!.width
+  const rights = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().right))
+  for (const r of rights) expect(r).toBeLessThanOrEqual(vw)
   // beranda 1:1: navbar situs asli (tidak bisa ditekan) dan peran diketik di tempatnya
   await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Peran ke-2 (Indonesia)' })).toBeVisible()
@@ -908,7 +917,7 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   await expect(aside).toHaveAttribute('data-collapsed', 'false')
   // nama lengkap tidak terpotong di sidebar lebar
   const identity = aside.getByRole('link', { name: /kembali ke Dashboard$/ })
-  const name = identity.locator('span.truncate')
+  const name = identity.locator('span.font-semibold')
   expect(await name.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
   await expect(menu.getByRole('link', { name: 'Privasi' })).toHaveCount(0)
   await expect(menu.getByRole('link', { name: 'Halaman lain' })).toHaveCount(0)

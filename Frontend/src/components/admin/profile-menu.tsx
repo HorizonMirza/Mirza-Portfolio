@@ -40,7 +40,7 @@ export function SidebarIdentity({
   const pathname = usePathname()
   const router = useRouter()
   // teks: tablet disembunyikan (tetap untuk pembaca layar); desktop memudar saat menciut
-  const hideText = cn('max-lg:sr-only', fadeLabel(compact))
+  const hideText = cn('max-xl:sr-only', fadeLabel(compact))
   return (
     <Link
       href="/admin"
@@ -51,7 +51,7 @@ export function SidebarIdentity({
         router.refresh()
       }}
       // foto tepat di tengah rel 4.75rem di kedua keadaan: (4.75 - 2 x 0.75 - 2.5) / 2
-      className="flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-1.5 py-1.5 transition-colors hover:bg-surface-2 max-lg:justify-center max-lg:px-0"
+      className="flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-1.5 py-1.5 transition-colors hover:bg-surface-2 max-xl:justify-center max-xl:px-0"
     >
       <span className="size-10 shrink-0">
         <Image
@@ -65,7 +65,9 @@ export function SidebarIdentity({
         />
       </span>
       <span className={cn('min-w-0 flex-1', hideText)}>
-        <span className="block truncate text-sm leading-snug font-semibold">{adminName}</span>
+        <span className="block text-sm leading-snug font-semibold [overflow-wrap:anywhere]">
+          {adminName}
+        </span>
         <span className="block text-xs text-muted">Super Admin</span>
       </span>
       <span className="sr-only">{t(', kembali ke Dashboard')}</span>
@@ -124,7 +126,7 @@ export function ProfileMenu() {
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border hover:bg-surface-2"
+        className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border hover:bg-surface-2 sm:size-11"
       >
         <EllipsisVertical className="size-5" aria-hidden="true" />
       </button>

@@ -37,7 +37,7 @@ export function useSidebarState() {
 // Tulisan tetap ada untuk pembaca layar walau tidak terlihat. DESIGN.md bagian 127.
 export function fadeLabel(compact: boolean) {
   return cn(
-    'lg:transition-opacity motion-reduce:transition-none',
-    compact ? 'lg:opacity-0 lg:duration-150' : 'lg:opacity-100 lg:delay-200 lg:duration-300',
+    'xl:transition-opacity motion-reduce:transition-none',
+    compact ? 'xl:opacity-0 xl:duration-150' : 'xl:opacity-100 xl:delay-200 xl:duration-300',
   )
 }

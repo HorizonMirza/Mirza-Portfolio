@@ -200,7 +200,7 @@ export function GlassControl() {
         aria-controls={open ? panelId : undefined}
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          'inline-flex h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold transition-colors hover:bg-surface-2',
+          'inline-flex h-10 items-center gap-2 rounded-xl px-2.5 text-sm font-semibold transition-colors hover:bg-surface-2 sm:h-11 sm:px-3',
           open && 'bg-surface-2',
         )}
       >

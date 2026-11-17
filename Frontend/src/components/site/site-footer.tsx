@@ -74,7 +74,7 @@ function SimpleCard({
       </span>
       <span className="grid min-w-0 gap-0.5">
         <span className="text-sm font-semibold">{title}</span>
-        <span className="truncate text-sm text-muted">{value}</span>
+        <span className="text-sm [overflow-wrap:anywhere] text-muted">{value}</span>
         {hint ? <span className="text-xs text-note">{hint}</span> : null}
       </span>
     </div>
@@ -191,7 +191,10 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
               {link.key === 'cv' ? t('cv') : tSocial(link.key)}
             </span>
             <span
-              className={cn('truncate text-[0.8125rem]', cv ? 'text-primary-fg/75' : 'text-muted')}
+              className={cn(
+                'text-[0.8125rem] [overflow-wrap:anywhere]',
+                cv ? 'text-primary-fg/75' : 'text-muted',
+              )}
             >
               {link.value}
             </span>

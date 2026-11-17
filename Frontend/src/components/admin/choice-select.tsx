@@ -97,7 +97,7 @@ export function ChoiceSelect<V extends string>({
         onKeyDown={onKeyDown}
         className="flex min-h-11 w-full min-w-44 items-center justify-between gap-3 rounded-md border border-border-strong bg-surface px-3 text-left text-base text-text hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        <span className="truncate">{options[selected]?.[1]}</span>
+        <span className="min-w-0 text-left [overflow-wrap:anywhere]">{options[selected]?.[1]}</span>
         <ChevronDown
           aria-hidden="true"
           className={cn('size-4 shrink-0 text-muted transition-transform', open && 'rotate-180')}

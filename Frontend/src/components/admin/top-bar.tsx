@@ -13,7 +13,7 @@ import { useSidebarState } from '@/components/admin/sidebar-state'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
-const DESKTOP = '(min-width: 1024px)'
+const DESKTOP = '(min-width: 1280px)'
 
 function subscribeDesktop(onChange: () => void) {
   const query = window.matchMedia(DESKTOP)
@@ -38,23 +38,24 @@ export function AdminTopBar() {
   const current = adminNav.find((item) => isNavActive(pathname, item))
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <header className="admin-glass-panel relative z-30 flex h-[3.875rem] shrink-0 items-center gap-1.5 rounded-[18px] px-2 sm:gap-2 sm:px-3 md:rounded-[20px] md:pr-3">
+      <header className="admin-glass-panel relative z-30 flex h-[3.875rem] shrink-0 items-center gap-1 rounded-[18px] px-1.5 sm:gap-2 sm:px-3 md:rounded-[20px] md:pr-3">
         <button
           type="button"
           aria-label={t('Menu samping')}
           aria-expanded={desktop ? !collapsed : open}
           onClick={() => (window.matchMedia(DESKTOP).matches ? toggle() : setOpen(true))}
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-surface-2"
+          className="inline-flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-2 sm:size-11"
         >
           <Menu className="size-5" aria-hidden="true" />
         </button>
-        {/* nama halaman (revisi pemilik 2026-11-06), Inter biasa seperti layar utama (2026-11-11) */}
-        <p className="min-w-0 flex-1 truncate text-lg font-semibold tracking-tight sm:text-xl">
+        {/* nama halaman (revisi pemilik 2026-11-06), Inter biasa seperti layar utama (2026-11-11);
+            di HP sempit turun baris, tidak terpotong (revisi pemilik 2026-11-17) */}
+        <p className="min-w-0 flex-1 text-base leading-tight font-semibold tracking-tight sm:text-xl">
           {t(current?.label ?? 'Admin')}
         </p>
         <GlassControl />
-        <LangSwitch />
-        <ThemeToggle className="size-11" label={t('Mode gelap')} />
+        <LangSwitch className="size-10 sm:size-11" />
+        <ThemeToggle className="size-10 sm:size-11" label={t('Mode gelap')} />
         <ProfileMenu />
       </header>
       {/* bisa digulir: di HP pendek menu terbawah tetap terjangkau */}

@@ -688,8 +688,9 @@ export default function ContributionSkyline({
     // Kanvas lebar (bisa digeser) dipakai di layar sempit kecuali saat 3D sudah diam. Selama morph
     // kanvas tetap lebar dan adegan 3D digambar di jendela yang sedang terlihat, sehingga peralihan
     // 2D <-> 3D tidak melompat (revisi pemilik 2026-10-16: transisi di HP jangan patah).
-    const wantsScroll = () =>
-      Math.round(stage.clientWidth) < NARROW_WIDTH && !(target === 1 && t === 1)
+    // Revisi pemilik 2026-11-17: tidak ada lagi yang perlu digeser menyamping, jadi grafik selalu
+    // dipaskan selebar kotaknya (sel lebih kecil di HP). Jalur kanvas lebar di bawah dibiarkan.
+    const wantsScroll = () => false
     let scrolling = false
 
     const relayout = () => {

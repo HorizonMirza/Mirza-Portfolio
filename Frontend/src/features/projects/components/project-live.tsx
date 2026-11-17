@@ -230,6 +230,7 @@ export function ProjectLive({
               <header className="pd-head mt-2 gap-1 md:mt-6">
                 <span className="pj-role">
                   <InlineInput
+                    wrap
                     key={`role_${lang}`}
                     label={label('Peran saya (opsional)')}
                     {...register(`role_${lang}`)}
@@ -288,13 +289,14 @@ export function ProjectLive({
                         {tx[key]}
                       </button>
                       <InlineInput
+                        wrap
                         label={t(urlLabel)}
                         type="url"
                         inputMode="url"
                         {...register(url)}
                         placeholder="https://…"
                         invalid={Boolean(err(url))}
-                        className="w-full text-center font-mono text-xs leading-6 text-ellipsis text-muted"
+                        className="w-full text-center font-mono text-xs leading-6 text-muted"
                       />
                     </div>
                   ))}
@@ -312,9 +314,13 @@ export function ProjectLive({
                     <i />
                   </span>
                   {/* alamat halaman project: bagian akhirnya (slug) diketik di sini seperti kolom alamat */}
-                  <span className="pj-browser-url admin-tight flex items-center">
-                    <span aria-hidden="true">{host}/projects/</span>
+                  {/* di bilah sempit slug turun ke baris berikutnya utuh, alamat tidak dipatah */}
+                  <span className="pj-browser-url admin-tight flex flex-wrap items-center">
+                    <span aria-hidden="true" className="whitespace-nowrap">
+                      {host}/projects/
+                    </span>
                     <InlineInput
+                      wrap
                       label={t('Slug')}
                       {...register('slug')}
                       placeholder="nama-project"

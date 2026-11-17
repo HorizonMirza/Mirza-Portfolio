@@ -148,7 +148,7 @@ export function ProfileLive({
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
         <LiveStage className="bg-bg text-text">
           {/* sama dengan halaman Tentang situs: Container, judul halaman, pita, lalu bio + pendidikan */}
-          <Container className="site-ui pb-20">
+          <Container className="site-ui ab-wrap pb-20">
             <div lang={lang}>
               <PageIntro title={bioHeading[lang]} align="center" />
               <div className="ab-band">
@@ -214,6 +214,7 @@ export function ProfileLive({
                             <span className="sr-only">{t('Ganti logo chip')}</span>
                           </button>
                           <InlineInput
+                            wrap
                             key={name('aboutChipLabel')}
                             label={label('Teks chip')}
                             value={chipText}
@@ -252,6 +253,7 @@ export function ProfileLive({
                   {/* peran bawaan tampil sebagai teks biasa seperti di situs; teks yang sama dengan
                       bawaan disimpan kosong (ikut bawaan), sama seperti Home → Peran */}
                   <InlineInput
+                    wrap
                     key={name('aboutBandRoles')}
                     label={label('Peran di halaman Tentang')}
                     value={roles}

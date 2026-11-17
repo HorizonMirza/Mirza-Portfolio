@@ -85,7 +85,8 @@ export function NavLinks({
     <ul
       className={cn(
         variant === 'top'
-          ? 'flex items-center gap-1'
+          ? // pratinjau Navbar di admin: menu yang tidak muat turun baris (revisi pemilik 2026-11-17)
+            cn('flex items-center gap-1', editLabel && 'flex-wrap justify-center')
           : 'relative grid w-full grid-cols-5 gap-(--nav-gap) [--nav-gap:0.25rem]',
       )}
     >

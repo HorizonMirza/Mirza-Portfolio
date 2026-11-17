@@ -125,6 +125,7 @@ export function HeroRolesForm({
                     {slots.map((role, i) => (
                       <li key={`${lang}-${i}`}>
                         <InlineInput
+                          wrap
                           label={t('Peran ke-{n} ({lang})', {
                             n: i + 1,
                             lang: t(LANG_NAME[lang]),

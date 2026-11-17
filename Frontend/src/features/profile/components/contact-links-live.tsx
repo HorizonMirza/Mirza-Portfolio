@@ -213,11 +213,12 @@ export function ContactLinksLive({
                 <span className="text-sm font-semibold">{t(c.title)}</span>
                 {isSocial(c.key) ? (
                   <InlineInput
+                    wrap
                     label={t('Teks kartu {name}', { name: t(c.title) })}
                     {...register(`labels.${c.key}.value`)}
                     maxLength={80}
                     invalid={Boolean(errors.labels?.[c.key]?.value)}
-                    className="min-h-6 w-full text-[0.8125rem] text-ellipsis text-muted"
+                    className="min-h-6 w-full text-[0.8125rem] text-muted"
                   />
                 ) : null}
                 {(() => {
@@ -226,6 +227,7 @@ export function ContactLinksLive({
                   })
                   return (
                     <InlineInput
+                      wrap
                       label={t('{name} (opsional)', { name: t(c.title) })}
                       type={kind}
                       inputMode={kind}
@@ -233,7 +235,7 @@ export function ContactLinksLive({
                       placeholder={c.placeholder}
                       invalid={Boolean(errorOf(c.field))}
                       className={cn(
-                        'min-h-6 w-full text-ellipsis text-muted',
+                        'min-h-6 w-full text-muted',
                         isSocial(c.key) ? 'font-mono text-xs' : 'text-[0.8125rem]',
                       )}
                     />
@@ -257,6 +259,7 @@ export function ContactLinksLive({
               const reg = register('cvUrl')
               return (
                 <InlineInput
+                  wrap
                   label={t('Link CV (opsional)')}
                   type="url"
                   inputMode="url"
@@ -266,7 +269,7 @@ export function ContactLinksLive({
                   }
                   invalid={Boolean(errors.cvUrl)}
                   className={cn(
-                    'min-h-6 w-full font-mono text-xs text-ellipsis',
+                    'min-h-6 w-full font-mono text-xs',
                     hasCv ? 'text-primary-fg/75 placeholder:text-primary-fg/75' : 'text-muted',
                   )}
                 />
