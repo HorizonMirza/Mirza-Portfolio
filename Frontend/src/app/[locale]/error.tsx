@@ -7,12 +7,14 @@ import { StatusPage } from '@/components/ui/status-page'
 import { Link } from '@/i18n/navigation'
 
 // 500 di dalam situs: pesan sopan tanpa detail teknis (DESIGN.md bagian 6), desain halaman status
-// bersama (components/ui/status-page.tsx, revisi pemilik 2026-11-16).
+// bersama (components/ui/status-page.tsx, revisi pemilik 2026-11-16). "Coba Lagi" memakai retry()
+// (mengambil ulang data dari server) seperti halaman galat lain, bukan reset() yang hanya
+// menggambar ulang dengan data yang sama (audit 2026-11-17, BUG-04).
 export default function LocaleError({
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string }
-  reset: () => void
+  retry: () => void
 }) {
   const t = useTranslations('Error')
   return (
@@ -22,7 +24,7 @@ export default function LocaleError({
       body={t('body')}
       action={
         <>
-          <button type="button" onClick={() => reset()} className={flowButtonClassName}>
+          <button type="button" onClick={() => retry()} className={flowButtonClassName}>
             <FlowButtonContent text={t('retry')} />
           </button>
           <Link
