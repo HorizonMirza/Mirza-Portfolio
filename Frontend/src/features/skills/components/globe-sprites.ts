@@ -6,6 +6,8 @@
 // Ukuran dan jarak diambil dari tata letak tombol HTML (diukur sekali), warna dari token tema, dan
 // keadaan (terpilih, kategori menonjol/redup, disorot) sama dengan aturan .globe-* di globals.css.
 
+import { isCrossOrigin } from '../image-origin'
+
 export type ItemGeometry = {
   // ukuran tombol tanpa transform
   bw: number
@@ -128,6 +130,22 @@ export function measureItem(button: HTMLElement, ctx: CanvasRenderingContext2D):
 
 // Sprite isi logo: <img> (logo asli WebP), <svg> (logo satu warna atau ikon umum, warnanya dari CSS),
 // atau singkatan teks. Logo hitam (data-invert-dark) dibalik warnanya di tema gelap, sama dengan CSS.
+// Gambar logo yang boleh digambar ke kanvas dan dibaca pikselnya, atau null bila tidak bisa dipakai.
+// - Gagal dimuat (404, jaringan): null, sebab drawImage pada gambar rusak melempar galat (BUG-11).
+// - Dari domain lain (logo unggahan di Cloudinary): dimuat ulang dengan CORS agar kanvas tidak
+//   tercemar dan versi abu-abunya bisa dibuat (BUG-09). Bila muat ulang gagal, gambar aslinya tetap
+//   dipakai: logo tampil berwarna, sama seperti sebelumnya.
+async function drawableImage(img: HTMLImageElement): Promise<HTMLImageElement | null> {
+  if (!img.naturalWidth) return null
+  const src = img.currentSrc || img.src
+  if (!isCrossOrigin(src, location.href)) return img
+  const copy = new Image()
+  copy.crossOrigin = 'anonymous'
+  copy.src = src
+  await copy.decode().catch(() => undefined)
+  return copy.naturalWidth ? copy : img
+}
+
 export async function buildSprite(
   button: HTMLElement,
   size: number,
@@ -146,7 +164,7 @@ export async function buildSprite(
   if (img) {
     img.loading = 'eager'
     await img.decode().catch(() => undefined)
-    source = img
+    source = await drawableImage(img)
     invert = dark && img.hasAttribute('data-invert-dark')
   } else if (svg) {
     const color = getComputedStyle(svg).color
@@ -215,7 +233,7 @@ function recolor(
     }
     ctx.putImageData(data, 0, 0)
   } catch {
-    // canvas tercemar (tidak mungkin untuk berkas satu origin): biarkan apa adanya
+    // kanvas tercemar (logo domain lain yang tidak mengizinkan CORS, lihat drawableImage): biarkan apa adanya
   }
 }
 
