@@ -14,6 +14,22 @@ function compact(value: unknown): unknown {
   return value
 }
 
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+// Kolom JSON berupa objek (mis. volume suara: sembilan angka) dibandingkan per kunci, supaya
+// perubahan satu kunci tidak menyalin seluruh objek ke log (audit 2026-11-17, EFF-03).
+function changedKeys(a: Record<string, unknown>, b: Record<string, unknown>) {
+  return [...new Set([...Object.keys(a), ...Object.keys(b)])].filter(
+    (k) => JSON.stringify(a[k]) !== JSON.stringify(b[k]),
+  )
+}
+
+function pick(source: Record<string, unknown>, keys: string[]) {
+  return Object.fromEntries(keys.map((k) => [k, source[k] ?? null]))
+}
+
 // Hanya field yang berubah, dengan teks panjang dipotong agar tabel audit tetap kecil.
 export function diffSnapshots(before: Snapshot | null, after: Snapshot | null) {
   const keys = new Set([...Object.keys(before ?? {}), ...Object.keys(after ?? {})])
@@ -22,8 +38,11 @@ export function diffSnapshots(before: Snapshot | null, after: Snapshot | null) {
     if (key === 'updatedAt' || key === 'createdAt') continue
     const a = compact(before?.[key])
     const b = compact(after?.[key])
-    if (JSON.stringify(a) !== JSON.stringify(b))
-      changes[key] = { before: a ?? null, after: b ?? null }
+    if (JSON.stringify(a) === JSON.stringify(b)) continue
+    if (isPlainObject(a) && isPlainObject(b)) {
+      const sub = changedKeys(a, b)
+      changes[key] = { before: pick(a, sub), after: pick(b, sub) }
+    } else changes[key] = { before: a ?? null, after: b ?? null }
   }
   return changes
 }
@@ -42,6 +61,9 @@ export async function writeAudit(
   },
 ) {
   const diff = diffSnapshots(input.before ?? null, input.after ?? null)
+  // Simpan tanpa perubahan tidak menulis baris (audit 2026-11-17, EFF-02 dan EFF-03): log audit tidak
+  // dibersihkan otomatis, jadi baris kosong hanya menumpuk.
+  if (input.action === 'update' && Object.keys(diff).length === 0) return
   await tx.auditLog.create({
     data: {
       actorId: input.actorId,
