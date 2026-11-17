@@ -108,8 +108,3 @@ export function adminTextWillChange(text: string, next: AdminLang): boolean {
   const id = reverse.get(text)
   return (id !== undefined && (ID[id] ?? id) !== text) || text in ID
 }
-
-// Teks bertemplat (angka di dalam kalimat)
-export function adminDrafts(lang: AdminLang, count: number) {
-  return lang === 'en' ? `${count} draft${count === 1 ? '' : 's'}` : `${count} draf`
-}

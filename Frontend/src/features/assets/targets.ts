@@ -167,9 +167,3 @@ export function checkImageShape(
   if (width < minWidth) return `Lebar gambar minimal ${minWidth} px, gambar ini ${width} px.`
   return null
 }
-
-export function formatBytes(bytes: number) {
-  return bytes >= 1024 * 1024
-    ? `${(bytes / 1024 / 1024).toFixed(1)} MB`
-    : `${Math.round(bytes / 1024)} KB`
-}

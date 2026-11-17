@@ -68,8 +68,7 @@
     },
     "home": "Beranda",
     "retry": "Coba Lagi",
-    "login": "Masuk",
-    "dashboard": "Dashboard"
+    "login": "Masuk"
   },
   "Nav": {
     "label": "Navigasi Utama",

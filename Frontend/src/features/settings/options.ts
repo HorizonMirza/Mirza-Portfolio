@@ -8,8 +8,6 @@ export const LOCALE_CHOICES = ['browser', 'id', 'en'] as const
 export const INTRO_FREQUENCIES = ['once', 'visit', 'weekly'] as const
 export const RETENTION_CHOICES = [30, 90, 365] as const
 
-export type DefaultTheme = (typeof THEME_CHOICES)[number]
-export type DefaultLocaleChoice = (typeof LOCALE_CHOICES)[number]
 export type IntroFrequency = (typeof INTRO_FREQUENCIES)[number]
 
 export const CONTACT_PER_HOUR_MIN = 1

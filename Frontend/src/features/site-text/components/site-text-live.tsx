@@ -19,9 +19,7 @@ import {
   LANG_NAME,
   type Lang,
   LangRow,
-  LangToggle,
   LiveErrors,
-  LiveStage,
   SaveBar,
   useEditLang,
 } from '@/components/admin/live-edit'
@@ -138,7 +136,6 @@ export function SiteTextLive({
   moduleId,
   initialValues,
   defaults,
-  frame = false,
   languages = true,
   saveTexts = true,
   children,
@@ -146,9 +143,6 @@ export function SiteTextLive({
   moduleId: ModuleId
   initialValues: Values
   defaults: Defaults
-  // pratinjau 1:1 di bingkai layar (SiteFrame) dengan pilihan ID/EN di atas Simpan; selain itu
-  // panggung hitam dengan tombol bahasa di sudut
-  frame?: boolean
   // pilihan ID/EN di atas Simpan; dimatikan bila halaman tidak punya teks yang diubah per bahasa
   languages?: boolean
   // false: halaman hanya menyimpan bagian lain (mis. kartu kontak Footer), teksnya tidak diubah
@@ -227,25 +221,12 @@ export function SiteTextLive({
     <TextCtx.Provider value={{ lang, values, defaults, errors, set }}>
       <ExtraSaveCtx.Provider value={registerExtra}>
         <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
-          {frame ? (
-            <SiteFrame autoHeight>
-              <div lang={lang}>{children}</div>
-            </SiteFrame>
-          ) : (
-            <LiveStage className="relative bg-bg px-4 pt-14 pb-10 text-text sm:px-10">
-              <LangToggle
-                lang={lang}
-                onChange={setLang}
-                dirty={{ id: dirty('id'), en: dirty('en') }}
-                className="absolute top-3 right-3"
-              />
-              <div lang={lang} className="mx-auto flex max-w-[1000px] flex-col gap-10">
-                {children}
-              </div>
-            </LiveStage>
-          )}
+          {/* pratinjau 1:1 di bingkai layar dengan pilihan ID/EN di atas Simpan */}
+          <SiteFrame autoHeight>
+            <div lang={lang}>{children}</div>
+          </SiteFrame>
           <LiveErrors messages={messages} />
-          {frame && languages ? (
+          {languages ? (
             <LangRow lang={lang} onChange={setLang} dirty={{ id: dirty('id'), en: dirty('en') }} />
           ) : null}
           <SaveBar pending={pending} />

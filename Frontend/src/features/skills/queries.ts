@@ -29,8 +29,6 @@ export async function listSkillCategoriesAdmin() {
   })
 }
 
-export type SkillCategoryAdmin = Awaited<ReturnType<typeof listSkillCategoriesAdmin>>[number]
-
 export async function listSkillOptions() {
   const categories = await listSkillCategoriesAdmin()
   return categories.map((c) => ({

@@ -244,5 +244,3 @@ export async function moveProject(projectId: string, direction: unknown): Promis
     return toActionError(error)
   }
 }
-
-// Ambil metadata repo publik untuk mengisi form. Tidak menulis ke database.

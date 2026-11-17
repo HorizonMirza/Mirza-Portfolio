@@ -23,7 +23,7 @@ export type Lang = 'id' | 'en'
 export const LANG_NAME: Record<Lang, string> = { id: 'Indonesia', en: 'Inggris' }
 
 // Bahasa isi yang sedang diubah: awalnya sama dengan bahasa tampilan admin dan ikut berganti saat
-// bahasa admin diganti di top bar; tombol ID/EN di panggung bisa memilih bahasa lain.
+// bahasa admin diganti di top bar; tombol ID/EN di atas Simpan (LangRow) bisa memilih bahasa lain.
 export function useEditLang(): [Lang, (lang: Lang) => void] {
   const { lang: adminLang } = useAdminLang()
   const [lang, setLang] = useState<Lang>(adminLang)
@@ -56,49 +56,6 @@ export function SaveBar({ pending, label = 'Simpan' }: { pending: boolean; label
         {pending ? t('Menyimpan…') : t(label)}
       </span>
     </button>
-  )
-}
-
-// pilihan bahasa yang sedang diubah; titik kecil = bahasa itu sudah diubah tetapi belum disimpan
-export function LangToggle({
-  lang,
-  onChange,
-  dirty,
-  className,
-}: {
-  lang: Lang
-  onChange: (lang: Lang) => void
-  dirty?: Partial<Record<Lang, boolean>>
-  className?: string
-}) {
-  const t = useAdminT()
-  return (
-    <div
-      role="group"
-      aria-label={t('Bahasa yang Diubah')}
-      className={cn('inline-flex rounded-md border border-border bg-surface p-0.5', className)}
-    >
-      {(['id', 'en'] as const).map((l) => (
-        <button
-          key={l}
-          type="button"
-          aria-pressed={l === lang}
-          onClick={() => onChange(l)}
-          className={cn(
-            'relative min-h-9 min-w-11 rounded-[5px] px-3 text-xs font-semibold',
-            l === lang ? 'bg-text text-bg' : 'text-muted hover:text-text',
-          )}
-        >
-          {l.toUpperCase()}
-          {dirty?.[l] ? (
-            <span
-              aria-hidden="true"
-              className="absolute top-1 right-1 size-1.5 rounded-full bg-current"
-            />
-          ) : null}
-        </button>
-      ))}
-    </div>
   )
 }
 
@@ -281,16 +238,6 @@ export function Note({ children, className }: { children: ReactNode; className?:
     >
       {typeof children === 'string' ? t(children) : children}
     </p>
-  )
-}
-
-// kotak bergaris putus untuk keadaan kosong atau tersembunyi
-export function StateBox({ note, children }: { note: string; children: ReactNode }) {
-  return (
-    <div className="rounded-md border border-dashed border-border p-4">
-      <Note>{note}</Note>
-      {children}
-    </div>
   )
 }
 

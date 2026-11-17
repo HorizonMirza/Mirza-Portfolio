@@ -4,57 +4,26 @@ import { AdminText } from '@/components/admin/admin-lang'
 import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shapes'
 import { Skeleton, SkeletonLines, SkeletonPage } from '@/components/shared/skeleton'
 import { Card } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 
 // Skeleton panel admin untuk loading.tsx (DESIGN.md bagian 111). Halaman admin selalu mengambil data
 // langsung dari database, jadi skeleton ini tampil setiap pindah menu sampai datanya siap. Sidebar
-// dan top bar tetap tampil karena ada di layout; bentuk blok meniru PageHeader, tab modul, tabel
-// data, daftar, dan kartu form.
+// dan top bar tetap tampil karena ada di layout; bentuk blok meniru tab modul, daftar, dan tata letak
+// tiap halaman.
 
 function Loading({ children }: { children: ReactNode }) {
   return <SkeletonPage label={<AdminText text="Memuat Halaman…" />}>{children}</SkeletonPage>
 }
 
-function HeaderSkeleton({ action = false }: { action?: boolean }) {
-  return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-      {/* judul besar tidak lagi tampil di panel isi (DESIGN.md bagian 118), hanya deskripsi */}
-      <span className="flex min-w-0 flex-1 flex-col gap-3">
-        <Skeleton className="h-4 w-[min(100%,32rem)]" />
-      </span>
-      {action ? <Skeleton className="h-11 w-28 rounded-full" /> : null}
-    </div>
-  )
-}
-
-// tab modul (ModuleTabs) dan tab filter (FilterTabs) memakai kapsul yang sama; stretch: satu baris
-// tombol sama lebar seperti tab Home (bagian 129)
-function TabsSkeleton({ count, stretch = false }: { count: number; stretch?: boolean }) {
+// tab modul: satu baris tombol sama lebar seperti tab Home (bagian 129), turun baris seperti
+// FilterTabs, tidak digeser menyamping
+function TabsSkeleton({ count }: { count: number }) {
   if (count === 0) return null
-  if (stretch)
-    return (
-      // turun baris seperti FilterTabs, tidak digeser menyamping
-      <div className="admin-bleed mb-6 flex flex-wrap gap-2 py-1">
-        {Array.from({ length: count }, (_, i) => (
-          <Skeleton key={i} className="h-11 flex-[1_1_min(8rem,calc(50%-0.25rem))] rounded-md" />
-        ))}
-      </div>
-    )
   return (
-    <div className="mb-4 flex flex-wrap gap-1 rounded-3xl border border-border bg-surface-2 p-1 sm:inline-flex">
+    <div className="admin-bleed mb-6 flex flex-wrap gap-2 py-1">
       {Array.from({ length: count }, (_, i) => (
-        <Skeleton key={i} className="h-9 w-24 rounded-full" />
+        <Skeleton key={i} className="h-11 flex-[1_1_min(8rem,calc(50%-0.25rem))] rounded-md" />
       ))}
     </div>
-  )
-}
-
-function FieldSkeleton({ tall = false }: { tall?: boolean }) {
-  return (
-    <span className="flex flex-col gap-2">
-      <Skeleton className="h-3.5 w-28" />
-      <Skeleton className={cn('w-full rounded-xl', tall ? 'h-28' : 'h-11')} />
-    </span>
   )
 }
 
@@ -104,64 +73,11 @@ export function AdminDashboardSkeleton() {
   )
 }
 
-// halaman berisi tabel data (Project, Experience, Pendidikan): pencarian, tabel di layar lebar,
-// kartu di layar sempit
-export function AdminTableSkeleton({ tabs = 0, columns = 5 }: { tabs?: number; columns?: number }) {
-  const rows = 6
-  return (
-    <Loading>
-      <HeaderSkeleton action />
-      <TabsSkeleton count={tabs} />
-      <div className="flex flex-col gap-4">
-        <Skeleton className="h-11 w-full max-w-sm rounded-xl" />
-        <ul className="grid gap-3 md:grid-cols-2 xl:hidden">
-          {Array.from({ length: 4 }, (_, i) => (
-            <li
-              key={i}
-              className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4"
-            >
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-3 w-1/2" />
-              <span className="flex gap-2">
-                <Skeleton className="h-9 w-20 rounded-full" />
-                <Skeleton className="h-9 w-20 rounded-full" />
-              </span>
-            </li>
-          ))}
-        </ul>
-        <div className="hidden overflow-hidden rounded-2xl border border-border xl:block">
-          <div className="flex gap-6 bg-surface-2 px-4 py-3">
-            {Array.from({ length: columns }, (_, i) => (
-              <Skeleton key={i} className={cn('h-3.5', i === 0 ? 'w-40' : 'w-20')} />
-            ))}
-          </div>
-          {Array.from({ length: rows }, (_, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-6 border-t border-border bg-surface px-4 py-4"
-            >
-              {Array.from({ length: columns }, (_, k) => (
-                <Skeleton
-                  key={k}
-                  className={cn(
-                    'h-3.5',
-                    k === 0 ? 'w-56' : k === columns - 1 ? 'ml-auto w-32' : 'w-20',
-                  )}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </Loading>
-  )
-}
-
 // Pesan: tab Baru/Dibaca/Arsip selebar panel, lalu baris pesan (status, nama, cuplikan, waktu, hapus)
 export function AdminListSkeleton() {
   return (
     <Loading>
-      <TabsSkeleton count={3} stretch />
+      <TabsSkeleton count={3} />
       <ul className="admin-bleed divide-y divide-border">
         {Array.from({ length: 10 }, (_, i) => (
           <li key={i} className="flex items-center gap-4 px-2 py-3">
@@ -173,45 +89,6 @@ export function AdminListSkeleton() {
           </li>
         ))}
       </ul>
-    </Loading>
-  )
-}
-
-type FormCard = { fields: number; columns?: 1 | 2; tall?: number }
-
-// halaman form (Profil, Pengaturan, Akun, teks halaman, tambah/ubah data)
-export function AdminFormSkeleton({
-  tabs = 0,
-  cards = [
-    { fields: 4, columns: 2 },
-    { fields: 3, tall: 1 },
-  ],
-  narrow = false,
-  stretchTabs = false,
-}: {
-  tabs?: number
-  cards?: FormCard[]
-  narrow?: boolean
-  // tab Home: satu baris selebar panel, tanpa deskripsi di atasnya
-  stretchTabs?: boolean
-}) {
-  return (
-    <Loading>
-      {stretchTabs ? null : <HeaderSkeleton />}
-      <TabsSkeleton count={tabs} stretch={stretchTabs} />
-      <div className={cn('flex flex-col gap-6', narrow && 'max-w-lg')}>
-        {cards.map((card, i) => (
-          <Card key={i} className="flex flex-col gap-5">
-            <Skeleton className="h-6 w-44" />
-            <div className={cn('grid gap-5', card.columns === 2 && 'md:grid-cols-2')}>
-              {Array.from({ length: card.fields }, (_, k) => (
-                <FieldSkeleton key={k} tall={k >= card.fields - (card.tall ?? 0)} />
-              ))}
-            </div>
-          </Card>
-        ))}
-        <Skeleton className="h-11 w-28 self-end rounded-full" />
-      </div>
     </Loading>
   )
 }
@@ -365,7 +242,7 @@ export function AdminStageSkeleton({
 }) {
   return (
     <Loading>
-      <TabsSkeleton count={tabs} stretch />
+      <TabsSkeleton count={tabs} />
       <div className="flex flex-col gap-3">
         <div className="admin-bleed overflow-hidden rounded-md border border-border bg-bg/40 px-4 py-6 md:px-8">
           <PageShapeSkeleton shape={shape} />

@@ -30,7 +30,6 @@ import { cn } from '@/lib/utils'
 // top bar, judul halaman, dashboard; DESIGN.md bagian 113) sekaligus bahasa isian form dua bahasa
 // (pilihan pemilik 2026-10-26). Disimpan hanya di cookie agar server dan browser selalu merender
 // bahasa yang sama (pilihan lama di localStorage sengaja tidak dibaca: bisa membuat tampilan campur).
-export type ContentLang = AdminLang
 
 const listeners = new Set<() => void>()
 // panel admin: kolom form ikut diacak, dan batas node lebih besar karena satu layar memuat banyak teks

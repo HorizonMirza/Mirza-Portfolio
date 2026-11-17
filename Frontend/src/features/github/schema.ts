@@ -7,5 +7,3 @@ import { GITHUB_PRESET_KEYS } from '@/lib/github-palette'
 export const githubPaletteSchema = z.object({
   preset: z.enum(GITHUB_PRESET_KEYS, { error: 'Pilihan warna tidak dikenal.' }),
 })
-
-export type GithubPaletteInput = z.input<typeof githubPaletteSchema>

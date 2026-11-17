@@ -10,19 +10,6 @@ export function Container({ className, children }: { className?: string; childre
   )
 }
 
-export function Chip({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-sm border border-border bg-surface-2 px-2 py-0.5 font-mono text-xs text-text',
-        className,
-      )}
-    >
-      {children}
-    </span>
-  )
-}
-
 export function PageIntro({
   eyebrow,
   title,

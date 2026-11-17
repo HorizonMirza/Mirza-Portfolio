@@ -5,12 +5,6 @@ import { optionalText, optionalUrl, requiredText } from '@/lib/validation'
 
 // Kunci link sosial yang didukung. Kolom socials (JSON) hanya menyimpan kunci ini.
 export const SOCIAL_KEYS = ['linkedin', 'github', 'instagram', 'website'] as const
-export const socialLabel: Record<(typeof SOCIAL_KEYS)[number], string> = {
-  linkedin: 'LinkedIn',
-  github: 'GitHub',
-  instagram: 'Instagram',
-  website: 'Situs Lain',
-}
 
 export const profileSchema = z.object({
   name: requiredText('Nama', 80),

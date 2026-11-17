@@ -68,8 +68,7 @@
     },
     "home": "Home",
     "retry": "Try Again",
-    "login": "Sign in",
-    "dashboard": "Dashboard"
+    "login": "Sign in"
   },
   "Nav": {
     "label": "Main Navigation",

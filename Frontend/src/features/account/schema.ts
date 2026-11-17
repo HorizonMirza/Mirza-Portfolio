@@ -33,8 +33,6 @@ export const accountNameSchema = z.object({
   password: confirmPassword,
 })
 
-export type AccountNameInput = z.input<typeof accountNameSchema>
-
 export const accountEmailSchema = z.object({
   email: z
     .string()
@@ -44,5 +42,3 @@ export const accountEmailSchema = z.object({
     .pipe(z.email('Format email tidak valid')),
   password: confirmPassword,
 })
-
-export type AccountEmailInput = z.input<typeof accountEmailSchema>

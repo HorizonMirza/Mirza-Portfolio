@@ -38,5 +38,3 @@ export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
     } satisfies ExperienceInput,
   }))
 }
-
-export type ExperienceEntryAdmin = Awaited<ReturnType<typeof listExperienceEntriesAdmin>>[number]

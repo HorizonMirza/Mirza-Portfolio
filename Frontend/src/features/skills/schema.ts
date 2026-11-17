@@ -17,5 +17,4 @@ export const skillSchema = z.object({
   categoryId: z.uuid('Pilih Kategori'),
 })
 
-export type SkillCategoryInput = z.input<typeof skillCategorySchema>
 export type SkillInput = z.input<typeof skillSchema>

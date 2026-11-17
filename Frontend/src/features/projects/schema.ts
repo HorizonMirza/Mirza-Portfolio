@@ -11,11 +11,6 @@ import {
 export const PROJECT_CATEGORIES = ['SOFTWARE', 'COMMUNITY_BUSINESS'] as const
 export const CONTENT_STATUSES = ['DRAFT', 'PUBLISHED'] as const
 
-export const projectCategoryLabel: Record<(typeof PROJECT_CATEGORIES)[number], string> = {
-  SOFTWARE: 'Software',
-  COMMUNITY_BUSINESS: 'Komunitas & Bisnis',
-}
-
 // Batas atas tahun dihitung saat validasi, bukan saat modul dimuat: server yang hidup melewati
 // pergantian tahun tetap menerima tahun baru (audit 2026-10-31, BUG-04).
 function maxProjectYear() {

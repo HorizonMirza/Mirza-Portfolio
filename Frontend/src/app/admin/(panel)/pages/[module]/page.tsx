@@ -127,7 +127,6 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
       moduleId={moduleId}
       initialValues={texts.values}
       defaults={defaults}
-      frame
       // Footer: tanpa teks yang diubah per bahasa, hanya kartu kontak
       languages={moduleId !== 'footer'}
       saveTexts={moduleId !== 'footer'}
