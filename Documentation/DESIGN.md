@@ -1975,3 +1975,16 @@ Pemilik meminta situs dan panel Super Admin rapi di HP, tablet, dan desktop: tid
 - **Tab admin** (`FilterTabs stretch`): flex-wrap dengan dasar lebar `min(label terpanjang, setengah baris)`, jadi selalu minimal dua per baris (tab Beranda 2×2 di HP, juga dalam bahasa Inggris) dan tombol yang tersisa di baris terakhir melebar penuh (503 di Halaman Status, Arsip di Pesan).
 - **Pratinjau Navbar** admin di HP: kelima menu satu baris (teks 11 px, padding rapat); dari `sm` kembali ukuran situs.
 - **Batas Pesan per Jam**: isian teks angka (`inputMode="numeric"`, selain angka diabaikan, maksimal 2 digit) tanpa panah naik-turun dan tanpa berubah saat digulir.
+
+## 175. Perbaikan bug dari audit 17-11 (2026-11-17)
+
+Sembilan bug dari audit menyeluruh diperbaiki setelah direproduksi di aplikasi lokal (BUG-07 dan BUG-08 tidak dikerjakan: BUG-08 ternyata bukan bug, BUG-07 hanya kosmetik halus).
+
+- **BUG-01 Simpan foto aman diulang** (`features/assets/actions.ts`): bila Asset dengan `public_id` yang sama sudah tercatat (jawaban pertama hilang lalu browser mengirim ulang), jawaban sukses dan berkas Cloudinary tidak dihapus. Galat unik `publicId` (balapan dua permintaan) juga tidak memicu penghapusan.
+- **BUG-02 Isian angka**: `useDelayedSave().cancel()` dipanggil di setiap ketikan, jadi angka yang dikembalikan atau dikosongkan sebelum 0,6 detik tidak ikut tersimpan.
+- **BUG-03 Dashboard**: kotak pertama berlabel "Pengunjung (Total Harian)" / "Visitors (Daily Total)". Angkanya penjumlahan pengunjung unik per hari; kode pengunjung memuat tanggal demi privasi sehingga tidak bisa dicocokkan lintas hari.
+- **BUG-04 Halaman galat publik**: "Coba Lagi" memakai `retry()` (ambil ulang data), bukan `reset()`.
+- **BUG-05 Lihat Situs**: tautan di Menu Profil mengikuti bahasa admin (`/id` atau `/en`).
+- **BUG-06 Kunci skill baru**: penghitung `new-N` memakai `useRef`, bukan state.
+- **BUG-09 dan BUG-11 Logo globe** (`globe-sprites.ts`, `image-origin.ts`): logo domain lain (unggahan Cloudinary) dimuat ulang dengan `crossOrigin="anonymous"` agar kanvas tidak tercemar dan versi abu-abunya bisa dibuat; bila gagal, gambar asli tetap dipakai. Logo yang gagal dimuat (404) dilewati sehingga tidak ada galat `drawImage`.
+- **BUG-10 Berkas bertipe kosong** (`features/assets/file-type.ts`): bila `file.type` kosong, jenis diturunkan dari ekstensi; server tetap memeriksa hasil unggahan.
