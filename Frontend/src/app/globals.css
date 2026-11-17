@@ -3215,8 +3215,10 @@ html[data-intro='pending'] .intro {
   height: 100%;
   pointer-events: none;
 }
-/* tablet: foto 84cqh rata bawah, nama di 12% dan sedikit menutupi kepala dengan lubang wajah */
-@media (min-width: 48rem) {
+/* tablet: foto 84cqh rata bawah, nama di 12% dan sedikit menutupi kepala dengan lubang wajah. Mulai
+   480 px (dulu 768 px) agar tablet kecil seperti 575x767 juga mendapat wajah besar (revisi pemilik
+   2026-11-17) */
+@media (min-width: 30rem) {
   .hero {
     --name-size: min(13cqw, 11cqh);
     --name-top: 12cqh;
@@ -3240,8 +3242,8 @@ html[data-intro='pending'] .intro {
     inset: auto 1rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
-/* layar lebar: foto setinggi hero, nama lebih besar */
-@media (min-width: 64rem) {
+/* layar lebar, juga tablet/HP yang melebar (landscape): foto setinggi hero, nama lebih besar */
+@media (min-width: 64rem), (min-width: 30rem) and (min-aspect-ratio: 1/1) {
   .hero-shell {
     --hero-head: 58px;
   }

@@ -144,7 +144,8 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                 replace
                 aria-current={r === range ? 'page' : undefined}
                 className={cn(
-                  'inline-flex min-h-9 items-center px-3.5 text-xs font-semibold transition-colors',
+                  // di HP lebih kecil (revisi pemilik 2026-11-17)
+                  'inline-flex min-h-7 items-center px-2.5 text-[0.6875rem] font-semibold transition-colors sm:min-h-9 sm:px-3.5 sm:text-xs',
                   r === range ? 'bg-text text-bg' : 'text-muted hover:bg-surface-2 hover:text-text',
                 )}
               >

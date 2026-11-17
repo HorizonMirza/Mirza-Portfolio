@@ -75,7 +75,8 @@ export function GithubLive({
           </Container>
         </section>
       </SiteFrame>
-      {/* lima warna grafik, satu baris selebar Simpan */}
+      {/* lima warna grafik, satu baris selebar Simpan; di HP kotak warna dan teks lebih kecil agar tidak
+          melewati garis tombol (revisi pemilik 2026-11-17) */}
       <div
         role="group"
         aria-label={t('Warna Grafik')}
@@ -88,15 +89,19 @@ export function GithubLive({
             aria-pressed={key === preset}
             onClick={() => setPreset(key)}
             className={cn(
-              'grid min-h-11 content-center justify-items-center gap-1.5 rounded-md border px-2 py-2 text-sm font-semibold',
+              'grid min-h-11 min-w-0 content-center justify-items-center gap-1.5 rounded-md border px-1 py-2 text-xs font-semibold sm:px-2 sm:text-sm',
               key === preset
                 ? 'border-text bg-text text-bg'
                 : 'border-border text-muted hover:text-text',
             )}
           >
-            <span aria-hidden="true" className="flex gap-0.5">
+            <span aria-hidden="true" className="flex gap-px sm:gap-0.5">
               {GITHUB_PRESETS[key].light.map((color) => (
-                <span key={color} className="size-3 rounded-[3px]" style={{ background: color }} />
+                <span
+                  key={color}
+                  className="size-2 rounded-[2px] sm:size-3 sm:rounded-[3px]"
+                  style={{ background: color }}
+                />
               ))}
             </span>
             {t(PRESET_NAME[key])}

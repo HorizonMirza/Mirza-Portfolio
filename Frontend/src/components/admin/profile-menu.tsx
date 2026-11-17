@@ -65,10 +65,10 @@ export function SidebarIdentity({
         />
       </span>
       <span className={cn('min-w-0 flex-1', hideText)}>
-        <span className="block text-sm leading-snug font-semibold [overflow-wrap:anywhere]">
-          {adminName}
-        </span>
-        <span className="block text-xs text-muted">Super Admin</span>
+        {/* satu baris: saat sidebar menciut teks hanya memudar, tidak boleh turun baris per huruf yang
+            mendorong foto dan menu ke bawah (revisi pemilik 2026-11-17) */}
+        <span className="block truncate text-sm leading-snug font-semibold">{adminName}</span>
+        <span className="block truncate text-xs text-muted">Super Admin</span>
       </span>
       <span className="sr-only">{t(', kembali ke Dashboard')}</span>
     </Link>
