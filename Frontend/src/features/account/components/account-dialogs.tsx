@@ -69,16 +69,16 @@ const IDENTITY: Record<
   }
 > = {
   name: {
-    title: 'Ganti nama',
-    oldLabel: 'Nama lama',
-    newLabel: 'Nama baru',
+    title: 'Ganti Nama',
+    oldLabel: 'Nama Lama',
+    newLabel: 'Nama Baru',
     type: 'text',
     maxLength: 80,
   },
   email: {
-    title: 'Ganti email',
-    oldLabel: 'Email lama',
-    newLabel: 'Email baru',
+    title: 'Ganti Email',
+    oldLabel: 'Email Lama',
+    newLabel: 'Email Baru',
     placeholder: 'nama@gmail.com',
     type: 'email',
     maxLength: 254,
@@ -239,7 +239,7 @@ export function ChangePasswordDialog({
     <FormDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={t('Ganti password')}
+      title={t('Ganti Password')}
       returnFocus={returnFocus}
     >
       <ChangePasswordForm

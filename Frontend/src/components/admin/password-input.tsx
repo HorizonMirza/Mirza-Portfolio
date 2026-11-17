@@ -26,7 +26,7 @@ export function PasswordInput({ className, ...props }: Omit<ComponentProps<typeo
       <button
         type="button"
         aria-pressed={shown}
-        aria-label={shown ? t('Sembunyikan password') : t('Tampilkan password')}
+        aria-label={shown ? t('Sembunyikan Password') : t('Tampilkan Password')}
         onClick={() => setShown((value) => !value)}
         className="absolute end-1 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-md text-muted hover:text-text"
       >

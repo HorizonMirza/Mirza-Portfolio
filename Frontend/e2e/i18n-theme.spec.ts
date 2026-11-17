@@ -84,13 +84,13 @@ test('pengunjung dengan pilihan tema lama tetap mulai dari gelap', async ({ brow
   await context.close()
 })
 
-// Tombol tema ada di header setiap halaman. Diuji di halaman ringan (Privasi), bukan beranda: di WebKit
+// Tombol Tema ada di header setiap halaman. Diuji di halaman ringan (Privasi), bukan beranda: di WebKit
 // CI tanpa GPU, efek cairan dan globe beranda menyita thread utama sehingga klik baru diproses ±5 detik
 // kemudian (run #257 dan #259), yang menguji beban mesin CI, bukan tombolnya.
 test('satu tombol tema membalik gelap dan terang, lalu tersimpan', async ({ page }) => {
   await page.goto('/id/privacy')
   const html = page.locator('html')
-  const toggle = page.getByRole('button', { name: 'Mode gelap' })
+  const toggle = page.getByRole('button', { name: 'Mode Gelap' })
 
   // tampilan awal gelap (keputusan pemilik M4)
   await expect(html).toHaveClass(/dark/)
@@ -125,7 +125,7 @@ test('tombol tema tetap berganti bila browser tidak menjalankan callback View Tr
   })
   await page.goto('/id/privacy')
   const html = page.locator('html')
-  const toggle = page.getByRole('button', { name: 'Mode gelap' })
+  const toggle = page.getByRole('button', { name: 'Mode Gelap' })
   await expect(toggle).toHaveAttribute('aria-pressed', 'true')
   await toggle.click()
   await expect(html).toHaveClass(/light/, { timeout: 2000 })
@@ -136,7 +136,7 @@ test('tombol tema tetap berganti bila browser tidak menjalankan callback View Tr
 test('tautan lewati konten muncul saat difokus dengan keyboard', async ({ page }) => {
   await page.goto('/id')
   await page.keyboard.press('Tab')
-  const skip = page.getByRole('link', { name: 'Lewati ke konten utama' })
+  const skip = page.getByRole('link', { name: 'Lewati ke Konten Utama' })
   await expect(skip).toBeFocused()
   await expect(skip).toBeVisible()
 })
@@ -158,7 +158,7 @@ test('tidak ada error di console', async ({ page, browserName }) => {
     errors.push(error.message)
   })
   await page.goto('/id')
-  await page.getByRole('button', { name: 'Mode gelap' }).click()
+  await page.getByRole('button', { name: 'Mode Gelap' }).click()
   for (const path of [
     '/en',
     '/en/about',

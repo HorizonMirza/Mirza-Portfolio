@@ -2996,10 +2996,10 @@ html[data-intro='pending'] .intro {
   /* ruang kosong di atas rambut dalam foto (±6,6% tinggi) dikurangi agar kepala tepat di bawah nama */
   --photo-top: calc(var(--name-top) + 1.8 * var(--name-size) + 2cqh - 7cqw);
   --face-x: 50%;
-  /* foto 140cqw, tetapi tidak lebih tinggi dari sisa hero di atas menu ikon bawah (7rem untuk peran
-     dan menu): di layar HP/tablet kecil yang lebar dan pendek (mis. 575x767) foto tetap terlihat
-     sampai tangan, bukan wajah saja (revisi pemilik 2026-11-17) */
-  --photo-w: min(140cqw, calc((100cqh - var(--photo-top) - 7rem) / 0.982));
+  /* foto 140cqw, tetapi tidak lebih tinggi dari sisa hero di bawah nama: di layar HP/tablet kecil yang
+     lebar dan pendek (mis. 575x767) foto terlihat sampai tangan dan rata ke tepi bawah seperti desktop,
+     bukan wajah saja (revisi pemilik 2026-11-17) */
+  --photo-w: min(140cqw, calc((100cqh - var(--photo-top)) / 0.982));
   --face-y: calc(var(--photo-top) + 0.28 * 0.982 * var(--photo-w));
   --face-rx: 0px;
   --face-ry: 0px;

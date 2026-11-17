@@ -29,8 +29,8 @@ type Params = { params: Promise<{ module: string }> }
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const found = findModule((await params).module)
   const { t } = await getAdminT()
-  if (found?.id === 'intro') return { title: `${t('Kartu pembuka')} · Home` }
-  return { title: t(found?.label ?? 'Halaman situs') }
+  if (found?.id === 'intro') return { title: `${t('Kartu Pembuka')} · Home` }
+  return { title: t(found?.label ?? 'Halaman Situs') }
 }
 
 // Satu halaman admin per modul situs publik. Teks dua bahasa dari daftar di features/site-text/catalog.ts;

@@ -94,7 +94,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
   const range = toDashboardRange((await searchParams).range)
   const [current, messages] = await Promise.all([getDailyStats(range), getRecentMessages(5)])
   const { lang, t } = await getAdminT()
-  const days = t('{days} hari', { days: range })
+  const days = t('{days} Hari', { days: range })
   const partialVisitors = current.some((d) => d.visitors === null)
 
   const tiles: { key: Metric; label: string; href: string }[] = [
@@ -129,7 +129,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
 
       <Card id="kunjungan" className="scroll-mt-20">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-h3 font-semibold">{t('Kunjungan harian')}</h2>
+          <h2 className="text-h3 font-semibold">{t('Kunjungan Harian')}</h2>
           {/* kotak periode bersudut kecil dengan garis antar-pilihan, yang aktif terisi penuh seperti
               tab lain di panel admin (revisi pemilik 2026-11-16) */}
           <nav
@@ -148,7 +148,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                   r === range ? 'bg-text text-bg' : 'text-muted hover:bg-surface-2 hover:text-text',
                 )}
               >
-                {t('{days} hari', { days: r })}
+                {t('{days} Hari', { days: r })}
               </Link>
             ))}
           </nav>
@@ -165,7 +165,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
           </span>
           <span className="inline-flex items-center gap-1.5">
             <i className="size-2 rounded-full bg-muted" />
-            {t('Pengunjung (garis putus)')}
+            {t('Pengunjung (Garis Putus)')}
           </span>
         </div>
       </Card>
@@ -194,7 +194,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                     <span className="min-w-0">
                       <span className="block font-semibold [overflow-wrap:anywhere]">{m.name}</span>
                       <span className="block text-sm [overflow-wrap:anywhere] text-muted">
-                        {m.subject || t('(tanpa subjek)')}
+                        {m.subject || t('(Tanpa Subjek)')}
                       </span>
                     </span>
                     <span
@@ -228,7 +228,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
           >
             <table className="w-full border-separate border-spacing-0 text-left text-sm">
               <caption className="sr-only">
-                {t('Kunjungan harian')}, {days}
+                {t('Kunjungan Harian')}, {days}
               </caption>
               <thead>
                 <tr>

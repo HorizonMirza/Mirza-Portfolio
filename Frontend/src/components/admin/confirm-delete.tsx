@@ -18,7 +18,7 @@ import type { ActionResult } from '@/lib/action-result'
 
 export function ConfirmDelete({
   itemLabel,
-  title = 'Hapus data',
+  title = 'Hapus Data',
   onConfirm,
   onDone,
   iconOnly = false,

@@ -38,7 +38,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   const xpHeading = page.getByRole('heading', { name: 'Pengalaman' })
   await expect(xpHeading).toBeVisible()
   await expect(xpHeading.locator('span[aria-hidden="true"]')).toHaveCount(0)
-  await expect(page.getByText(/Semua pengalaman/)).toHaveCount(0)
+  await expect(page.getByText(/Semua Pengalaman/)).toHaveCount(0)
   const xp = page.locator('details.home-xp')
   await expect(xp.first()).not.toHaveAttribute('open', '')
   await xp.nth(1).locator('summary').click()
@@ -52,10 +52,10 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   const xpBox = await xpHeading.boundingBox()
   const projectsBox = await projectsHeading.boundingBox()
   expect(projectsBox!.y).toBeGreaterThan(xpBox!.y)
-  for (const name of ['Project pilihan', /Semua project/]) {
+  for (const name of ['Project pilihan', /Semua Project/]) {
     await expect(page.getByText(name)).toHaveCount(0)
   }
-  const covers = page.getByRole('list', { name: 'Daftar project' }).getByRole('link')
+  const covers = page.getByRole('list', { name: 'Daftar Project' }).getByRole('link')
   const firstCover = covers.first()
   await expect(firstCover).toHaveAttribute('href', /\/id\/projects\/.+/)
   // nama project (demo N5): layar sentuh menampilkan nama di bawah sampul, layar dengan kursor
@@ -168,7 +168,7 @@ test('menu bawah HP tetap di dalam layar setelah pindah halaman', async ({ page,
 test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, isMobile }) => {
   await page.goto('/id')
   // desktop: kapsul atas berisi teks; HP: kapsul ikon di bawah layar (label untuk pembaca layar)
-  const nav = page.getByRole('navigation', { name: 'Navigasi utama' })
+  const nav = page.getByRole('navigation', { name: 'Navigasi Utama' })
   await expect(nav).toHaveCount(1)
   if (isMobile) await expect(nav).toHaveCSS('position', 'fixed')
   await expect(nav.getByRole('link', { name: 'Beranda' })).toHaveAttribute('aria-current', 'page')
@@ -234,7 +234,7 @@ test.describe('globe skill', () => {
     const errors: string[] = []
     page.on('pageerror', (e) => errors.push(e.message))
     await page.goto('/id')
-    const globe = page.getByRole('group', { name: 'Globe skill' })
+    const globe = page.getByRole('group', { name: 'Globe Skill' })
     // globe di tengah layar dulu: bila Playwright harus scroll sebelum klik, scroll itu (> 48 px)
     // melepas pilihan sehingga klik "tekan ulang" malah memilih lagi (viewport Safari lebih pendek)
     await globe.evaluate((el) => el.scrollIntoView({ block: 'center' }))
@@ -275,12 +275,12 @@ test.describe('globe skill', () => {
     await expect(next).toBeFocused()
     await expect(next).toHaveAttribute('aria-pressed', 'true')
     await expect(panel).toContainText(nextName)
-    await expect(page.getByRole('list', { name: 'Daftar skill' })).toContainText('TypeScript')
+    await expect(page.getByRole('list', { name: 'Daftar Skill' })).toContainText('TypeScript')
     // kategori lewat menu: logo kategori lain diredupkan, Esc menutup menu
     const toggle = page.getByRole('button', { name: /^Kategori/ })
     await toggle.click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'true')
-    const category = page.getByRole('group', { name: 'Kategori skill' }).getByRole('button', {
+    const category = page.getByRole('group', { name: 'Kategori Skill' }).getByRole('button', {
       name: /^Frontend/,
     })
     await category.click()
@@ -303,7 +303,7 @@ test.describe('globe skill', () => {
     await expect(toggle).toContainText('Frontend')
     await toggle.click()
     await page
-      .getByRole('group', { name: 'Kategori skill' })
+      .getByRole('group', { name: 'Kategori Skill' })
       .getByRole('button', { name: /^Semua/ })
       .click()
     await expect(toggle).toContainText('Semua')
@@ -377,7 +377,7 @@ test.describe('form kontak', () => {
     await page.getByLabel('Nama').fill('Tamu E2E')
     await page.getByLabel('Email').fill('bukan-email')
     await page.getByLabel('Pesan').fill('pendek')
-    await page.getByRole('button', { name: 'Kirim pesan' }).click()
+    await page.getByRole('button', { name: 'Kirim Pesan' }).click()
     await expect(page.getByText('Format email tidak valid')).toBeVisible()
     await expect(page.getByText('Pesan minimal 10 karakter')).toBeVisible()
     await expect(page.getByRole('alert').filter({ hasText: 'Periksa kembali' })).toBeFocused()
@@ -389,8 +389,8 @@ test.describe('form kontak', () => {
     await page.getByLabel('Name').fill(`E2E visitor ${testInfo.project.name}`)
     await page.getByLabel('Email').fill('visitor@example.com')
     await page.getByLabel('Message').fill('Hello, this is an automated end-to-end test message.')
-    await page.getByRole('button', { name: 'Send message' }).click()
-    await expect(page.getByRole('status')).toContainText('Message sent')
+    await page.getByRole('button', { name: 'Send Message' }).click()
+    await expect(page.getByRole('status')).toContainText('Message Sent')
   })
 })
 
@@ -404,8 +404,8 @@ test('form kontak berfungsi tanpa JavaScript', async ({ browser, baseURL }) => {
   await page.getByLabel('Nama').fill('Tanpa JS')
   await page.getByLabel('Email').fill('nojs@example.com')
   await page.getByLabel('Pesan').fill('Pesan ini dikirim tanpa JavaScript.')
-  await page.getByRole('button', { name: 'Kirim pesan' }).click()
-  await expect(page.getByText('Pesan terkirim')).toBeVisible()
+  await page.getByRole('button', { name: 'Kirim Pesan' }).click()
+  await expect(page.getByText('Pesan Terkirim')).toBeVisible()
   await context.close()
 })
 
@@ -417,8 +417,8 @@ test('rate limit kontak: pesan ke-6 dalam satu jam ditolak', async ({ browser, b
     await page.getByLabel('Nama').fill(`Rate ${i}`)
     await page.getByLabel('Email').fill('rate@example.com')
     await page.getByLabel('Pesan').fill('Pesan uji rate limit nomor ' + i)
-    await page.getByRole('button', { name: 'Kirim pesan' }).click()
-    if (i < 5) await expect(page.getByText('Pesan terkirim')).toBeVisible()
+    await page.getByRole('button', { name: 'Kirim Pesan' }).click()
+    if (i < 5) await expect(page.getByText('Pesan Terkirim')).toBeVisible()
   }
   await expect(page.getByText('Terlalu banyak pesan dari jaringan ini')).toBeVisible()
   await context.close()

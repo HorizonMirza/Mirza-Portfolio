@@ -128,14 +128,14 @@ export function MonthPicker({
               ref={panel}
               id={id}
               role="dialog"
-              aria-label={t('{label} (bulan dan tahun)', { label })}
+              aria-label={t('{label} (Bulan dan Tahun)', { label })}
               style={{ top: pos.top, left: pos.left, width: WIDTH }}
               className="fixed z-[70] rounded-lg border border-border bg-surface p-3 font-sans text-text shadow-xl"
             >
               <div className="mb-2 flex items-center justify-between">
                 <button
                   type="button"
-                  aria-label={t('Tahun sebelumnya')}
+                  aria-label={t('Tahun Sebelumnya')}
                   disabled={year <= FIRST_YEAR}
                   onClick={() => setYear((y) => y - 1)}
                   className="inline-flex size-8 items-center justify-center rounded-md text-muted hover:bg-surface-2 hover:text-text disabled:opacity-40"
@@ -147,7 +147,7 @@ export function MonthPicker({
                 </span>
                 <button
                   type="button"
-                  aria-label={t('Tahun berikutnya')}
+                  aria-label={t('Tahun Berikutnya')}
                   disabled={year >= lastYear}
                   onClick={() => setYear((y) => y + 1)}
                   className="inline-flex size-8 items-center justify-center rounded-md text-muted hover:bg-surface-2 hover:text-text disabled:opacity-40"

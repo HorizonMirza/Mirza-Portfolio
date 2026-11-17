@@ -25,7 +25,7 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
             action={
               <>
                 <button type="button" onClick={() => retry()} className={flowButtonClassName}>
-                  <FlowButtonContent text="Coba lagi" />
+                  <FlowButtonContent text="Coba Lagi" />
                 </button>
                 {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- dokumen ini di luar layout dan router */}
                 <a

@@ -100,11 +100,11 @@ export function EducationCardsLive({
                     key={`org-${lang}`}
                     label={
                       lang === 'en'
-                        ? t('Instansi dalam bahasa Inggris (opsional)')
-                        : t('Sekolah / kampus')
+                        ? t('Instansi dalam Bahasa Inggris (Opsional)')
+                        : t('Sekolah / Kampus')
                     }
                     value={org}
-                    placeholder={t('Sekolah / kampus')}
+                    placeholder={t('Sekolah / Kampus')}
                     invalid={Boolean(err.organization)}
                     size={Math.max(4, org.length + 1)}
                     className="max-w-full"
@@ -120,9 +120,9 @@ export function EducationCardsLive({
                   <InlineInput
                     wrap
                     key={`title-${lang}`}
-                    label={label('Jenjang / jurusan')}
+                    label={label('Jenjang / Jurusan')}
                     value={v[`title_${lang}`] ?? ''}
-                    placeholder={t('Jenjang / jurusan')}
+                    placeholder={t('Jenjang / Jurusan')}
                     invalid={Boolean(err[`title_${lang}`])}
                     size={Math.max(4, (v[`title_${lang}`] ?? '').length + 1)}
                     className="max-w-full"
@@ -131,7 +131,7 @@ export function EducationCardsLive({
                 </p>
                 <p className="flex flex-wrap items-center gap-x-2.5 gap-y-2 text-sm text-muted tabular-nums">
                   <InlineInput
-                    label={t('Tahun mulai')}
+                    label={t('Tahun Mulai')}
                     inputMode="numeric"
                     maxLength={4}
                     size={4}
@@ -148,7 +148,7 @@ export function EducationCardsLive({
                   {/* tahun selesai: ketik angka, atau teks apa pun tanpa angka (mis. Present) berarti masih
                       berlangsung; tidak ada tombol terpisah */}
                   <InlineInput
-                    label={t('Tahun selesai')}
+                    label={t('Tahun Selesai')}
                     maxLength={12}
                     size={Math.max(4, (v.endMonth ? 4 : presentLabel.length) + 1)}
                     value={v.endMonth ? v.endMonth.split('-')[0] : presentLabel}
@@ -217,7 +217,7 @@ export function EducationCardsLive({
             className="flex min-h-16 w-full items-center justify-center gap-2 rounded-[24px] border border-dashed border-border text-sm font-semibold text-muted hover:text-text"
           >
             <Plus className="size-4" aria-hidden="true" />
-            {t('Tambah pendidikan')}
+            {t('Tambah Pendidikan')}
           </button>
         </li>
       </ul>

@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) return new Response(null, { status: 400 })
 
-  // "Hitung kunjungan" mati di Admin → Pengaturan: tidak ada yang dicatat (pelacak juga tidak dipasang;
+  // "Hitung Kunjungan" mati di Admin → Pengaturan: tidak ada yang dicatat (pelacak juga tidak dipasang;
   // ini pengaman untuk halaman lama yang masih terbuka)
   if (!(await getSiteSettings()).trackVisits) return noContent()
 

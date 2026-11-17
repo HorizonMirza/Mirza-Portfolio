@@ -4,10 +4,10 @@
     "description": "Portofolio Muhammad Mirza, mahasiswa Computer Science (Artificial Intelligence) di BINUS University dan fullstack developer."
   },
   "Common": {
-    "skipToContent": "Lewati ke konten utama",
+    "skipToContent": "Lewati ke Konten Utama",
     "openInNewTab": "(membuka tab baru)",
     "whatsapp": "Chat lewat WhatsApp",
-    "loadingPage": "Memuat halaman…"
+    "loadingPage": "Memuat Halaman…"
   },
   "Locale": {
     "id": "Bahasa Indonesia",
@@ -15,7 +15,7 @@
     "switchTo": "{code}, ganti bahasa ke {language}"
   },
   "Theme": {
-    "darkMode": "Mode gelap"
+    "darkMode": "Mode Gelap"
   },
   "Intro": {
     "eyebrow": "Portofolio - {name}",
@@ -30,7 +30,7 @@
     "home": "Beranda"
   },
   "Maintenance": {
-    "title": "Sedang diperbarui",
+    "title": "Sedang Diperbarui",
     "body": "Situs ini sedang diperbarui. Silakan buka lagi beberapa saat lagi."
   },
   "Status": {
@@ -67,12 +67,12 @@
       "body": "Server perantara tidak mendapat jawaban yang benar. Biasanya pulih dalam beberapa menit."
     },
     "home": "Beranda",
-    "retry": "Coba lagi",
+    "retry": "Coba Lagi",
     "login": "Masuk",
     "dashboard": "Dashboard"
   },
   "Nav": {
-    "label": "Navigasi utama",
+    "label": "Navigasi Utama",
     "home": "Beranda",
     "about": "Tentang",
     "experience": "Pengalaman",
@@ -80,7 +80,7 @@
     "contact": "Kontak"
   },
   "Footer": {
-    "contactHeading": "Hubungi saya",
+    "contactHeading": "Hubungi Saya",
     "cv": "Resume CV",
     "cvFile": "PDF",
     "copyright": "© {year} {name}",
@@ -105,7 +105,7 @@
     "stackHeading": "Keahlian Teknis",
     "githubHeading": "GitHub",
     "projectsHeading": "Project",
-    "projectList": "Daftar project",
+    "projectList": "Daftar Project",
     "experienceHeading": "Pengalaman"
   },
   "About": {
@@ -117,19 +117,19 @@
     "noEducation": "Belum ada riwayat pendidikan yang diterbitkan."
   },
   "Experience": {
-    "photoOpen": "Perbesar foto {org}",
-    "photoClose": "Semua pengalaman",
+    "photoOpen": "Perbesar Foto {org}",
+    "photoClose": "Semua Pengalaman",
     "metaTitle": "Pengalaman",
     "metaDescription": "Pengalaman kerja dan organisasi Muhammad Mirza, dari yang terbaru.",
     "title": "Pengalaman",
     "none": "Belum ada pengalaman yang diterbitkan.",
     "durationYears": "{count} Tahun",
     "durationMonths": "{count} Bulan",
-    "listLabel": "Riwayat pengalaman",
+    "listLabel": "Riwayat Pengalaman",
     "employment": {
-      "FULL_TIME": "Penuh waktu",
-      "PART_TIME": "Paruh waktu",
-      "SELF_EMPLOYED": "Usaha sendiri",
+      "FULL_TIME": "Penuh Waktu",
+      "PART_TIME": "Paruh Waktu",
+      "SELF_EMPLOYED": "Usaha Sendiri",
       "FREELANCE": "Freelance",
       "CONTRACT": "Kontrak",
       "INTERNSHIP": "Magang",
@@ -144,25 +144,25 @@
     "metaDescription": "Software yang dibangun dan komunitas yang dikelola Muhammad Mirza.",
     "title": "Project",
     "empty": "Belum ada project yang diterbitkan.",
-    "back": "Semua project",
-    "demo": "Lihat aplikasi",
+    "back": "Semua Project",
+    "demo": "Lihat Aplikasi",
     "repo": "GitHub",
     "stack": "Teknologi",
     "image": "Gambar",
-    "gallery": "Foto aplikasi {title}",
+    "gallery": "Foto Aplikasi {title}",
     "imageOf": "Gambar {current} dari {total}"
   },
   "Contact": {
     "metaTitle": "Kontak",
     "metaDescription": "Kirim pesan ke Muhammad Mirza untuk tawaran kerja atau project.",
-    "title": "Mari bekerja sama",
+    "title": "Mari Bekerja Sama",
     "intro": "Mari bangun sesuatu yang berdampak bersama. Saya balas ke email yang Anda tulis.",
     "name": "Nama",
     "email": "Email",
-    "subject": "Subjek (opsional)",
+    "subject": "Subjek (Opsional)",
     "message": "Pesan",
     "honeypot": "Jangan isi kolom ini",
-    "send": "Kirim pesan",
+    "send": "Kirim Pesan",
     "sending": "Mengirim…",
     "error": "Pesan belum terkirim. Coba lagi, atau hubungi saya langsung lewat tautan di bagian bawah halaman.",
     "rateLimited": "Terlalu banyak pesan dari jaringan ini. Coba lagi dalam satu jam.",
@@ -173,17 +173,17 @@
     "subjectTooLong": "Subjek maksimal 150 karakter",
     "messageShort": "Pesan minimal 10 karakter",
     "messageLong": "Pesan maksimal 5.000 karakter",
-    "sentTitle": "Pesan terkirim",
+    "sentTitle": "Pesan Terkirim",
     "sentBadge": "Masuk",
     "ticketFrom": "Dari",
     "ticketReplyTo": "Balasan ke",
     "ticketSubject": "Subjek",
     "ticketMessage": "Pesan",
     "ticketTime": "Waktu",
-    "another": "Tulis pesan lain",
+    "another": "Tulis Pesan Lain",
     "cardRole": "Fullstack Developer",
     "cardSite": "mmirza.site",
-    "closedTitle": "Form pesan sedang ditutup",
+    "closedTitle": "Form Pesan Sedang Ditutup",
     "closedBody": "Saat ini saya tidak menerima pesan lewat form. Hubungi saya lewat tautan di bagian bawah halaman.",
     "closed": "Form pesan sedang ditutup. Hubungi saya lewat tautan di bagian bawah halaman."
   },
@@ -193,30 +193,30 @@
     "title": "Kebijakan Privasi",
     "updated": "Terakhir diperbarui {date}",
     "intro": "Situs ini tidak memakai cookie pelacak dan tidak menjual data. Berikut data yang dikumpulkan dan alasannya.",
-    "visitsHeading": "Statistik kunjungan",
+    "visitsHeading": "Statistik Kunjungan",
     "visitsBody": "Setiap halaman yang dibuka dicatat beserta bahasanya. Untuk menghitung pengunjung unik per hari, alamat IP dan jenis browser diubah menjadi kode acak satu arah dengan kunci yang berganti setiap hari, jadi Anda tidak bisa dikenali atau dilacak lintas hari. Alamat IP mentah tidak disimpan. Data mentah dihapus setelah {days} hari, hanya ringkasan harian yang disimpan.",
-    "contactHeading": "Formulir kontak",
+    "contactHeading": "Formulir Kontak",
     "contactBody": "Nama, email, subjek, dan isi pesan disimpan agar saya bisa membalas. Alamat IP hanya disimpan sebagai kode acak untuk mencegah spam. Pesan disimpan sampai saya menghapusnya.",
     "cvHeading": "Unduhan CV",
     "cvBody": "Hanya jumlah unduhan dan bahasa halaman yang dicatat, tanpa data pribadi.",
-    "servicesHeading": "Layanan pihak ketiga",
+    "servicesHeading": "Layanan Pihak Ketiga",
     "servicesBody": "Situs dijalankan di Vercel, database di Neon (Singapura), serta gambar dan CV di Cloudinary. Layanan berikut hanya dipakai bila sedang diaktifkan: Resend untuk mengirim email, Vercel Web Analytics dan Speed Insights untuk mencatat jumlah kunjungan dan kecepatan halaman tanpa cookie (alamat halaman tanpa parameter), dan Sentry untuk laporan error server tanpa data pribadi. Masing-masing hanya menerima data yang dibutuhkan untuk menjalankan fungsinya.",
     "rightsHeading": "Hak Anda",
     "rightsBody": "Anda bisa meminta salinan atau penghapusan data Anda lewat halaman kontak.",
-    "contactLink": "Buka halaman kontak",
+    "contactLink": "Buka Halaman Kontak",
     "creditsHeading": "Kredit",
     "creditsBody": "Logo dari Devicon (MIT) dan Simple Icons, merek dagang milik pemiliknya; logo Git oleh Jason Long, CC BY 3.0. Logo Word, Excel, dan PowerPoint milik Microsoft, Claude milik Anthropic, Codex milik OpenAI, Kiro milik Amazon, dan Google Antigravity milik Google."
   },
   "Error": {
-    "title": "Terjadi kesalahan",
+    "title": "Terjadi Kesalahan",
     "body": "Halaman ini gagal dimuat. Coba lagi sebentar lagi.",
-    "retry": "Coba lagi",
-    "home": "Kembali ke beranda"
+    "retry": "Coba Lagi",
+    "home": "Kembali ke Beranda"
   },
   "SkillGlobe": {
-    "label": "Globe skill",
-    "list": "Daftar skill",
-    "categories": "Kategori skill",
+    "label": "Globe Skill",
+    "list": "Daftar Skill",
+    "categories": "Kategori Skill",
     "category": "Kategori",
     "all": "Semua"
   },
@@ -226,15 +226,15 @@
     "none": "Tidak ada kontribusi",
     "inLastYear": "dalam setahun terakhir",
     "on": "pada",
-    "busiest": "Hari tersibuk",
-    "longest": "Rentetan terpanjang",
-    "current": "Rentetan saat ini",
+    "busiest": "Hari Tersibuk",
+    "longest": "Rentetan Terpanjang",
+    "current": "Rentetan Saat Ini",
     "day": "hari",
     "days": "hari",
     "less": "Sedikit",
     "more": "Banyak",
-    "view": "Tampilan grafik",
-    "flat": "Peta panas datar",
+    "view": "Tampilan Grafik",
+    "flat": "Peta Panas Datar",
     "skyline": "Skyline 3D",
     "keys": "Gunakan tombol panah untuk membaca tiap hari."
   }

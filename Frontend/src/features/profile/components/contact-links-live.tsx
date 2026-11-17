@@ -214,7 +214,7 @@ export function ContactLinksLive({
                 {isSocial(c.key) ? (
                   <InlineInput
                     wrap
-                    label={t('Teks kartu {name}', { name: t(c.title) })}
+                    label={t('Teks Kartu {name}', { name: t(c.title) })}
                     {...register(`labels.${c.key}.value`)}
                     maxLength={80}
                     invalid={Boolean(errors.labels?.[c.key]?.value)}
@@ -228,7 +228,7 @@ export function ContactLinksLive({
                   return (
                     <InlineInput
                       wrap
-                      label={t('{name} (opsional)', { name: t(c.title) })}
+                      label={t('{name} (Opsional)', { name: t(c.title) })}
                       type={kind}
                       inputMode={kind}
                       {...reg}
@@ -260,7 +260,7 @@ export function ContactLinksLive({
               return (
                 <InlineInput
                   wrap
-                  label={t('Link CV (opsional)')}
+                  label={t('Link CV (Opsional)')}
                   type="url"
                   inputMode="url"
                   {...reg}
@@ -288,7 +288,7 @@ export function ContactLinksLive({
                 rel="noreferrer"
                 className="underline underline-offset-4"
               >
-                {t('Buka berkas')}
+                {t('Buka Berkas')}
                 <span className="sr-only">{t('(membuka tab baru)')}</span>
               </a>
               <RemoveAssetButton

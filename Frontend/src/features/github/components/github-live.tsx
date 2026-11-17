@@ -78,7 +78,7 @@ export function GithubLive({
       {/* lima warna grafik, satu baris selebar Simpan */}
       <div
         role="group"
-        aria-label={t('Warna grafik')}
+        aria-label={t('Warna Grafik')}
         className="admin-bleed grid grid-cols-5 gap-2"
       >
         {GITHUB_PRESET_KEYS.map((key) => (

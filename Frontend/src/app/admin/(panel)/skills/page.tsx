@@ -15,7 +15,7 @@ import { isUploadConfigured } from '@/lib/uploads'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: `${t('Skill teknis')} · Home` }
+  return { title: `${t('Skill Teknis')} · Home` }
 }
 
 // Home → Skill teknis (revisi pemilik 2026-11-15, DESIGN.md bagian 153): bagian "Keahlian Teknis"

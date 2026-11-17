@@ -199,7 +199,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         >
           {/* Transisi antarbagian "judul tirai" (pilihan pemilik 2026-10-16, demo T3): judul naik dari
               balik batasnya, isi bagian menyusul memudar. Diatur .home-curtain di globals.css. */}
-          {/* Revisi pemilik 2026-10-16: tanpa nomor bagian dan tanpa tautan "Semua pengalaman",
+          {/* Revisi pemilik 2026-10-16: tanpa nomor bagian dan tanpa tautan "Semua Pengalaman",
               judul di tengah seperti bagian Project */}
           <Container>
             <h2 id="experience-title" className="mb-8 text-center text-h2 font-bold">

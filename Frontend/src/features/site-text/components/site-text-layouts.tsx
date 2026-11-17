@@ -99,12 +99,12 @@ function ContactLayout({ name, photo, photoCrop, photoAsset, uploadConfigured }:
                   onClick={() => picker.pick('contact-photo')}
                   className="sr-only focus-visible:not-sr-only focus-visible:px-2 focus-visible:py-1 focus-visible:text-xs focus-visible:text-white"
                 >
-                  {t('Ganti foto kartu ID')}
+                  {t('Ganti Foto Kartu ID')}
                 </button>
                 {photoAsset ? (
                   <RemoveAssetButton
                     assetId={photoAsset.id}
-                    label={t('Foto kartu ID')}
+                    label={t('Foto Kartu ID')}
                     onDone={() => router.refresh()}
                   />
                 ) : null}

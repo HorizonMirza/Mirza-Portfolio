@@ -64,7 +64,7 @@ export function LiquidMaskPortrait({
   disabled = false,
 }: {
   children: ReactNode
-  // Admin → Pengaturan "Animasi hero" mati: hanya isi HTML, tanpa canvas dan tanpa pendengar kursor
+  // Admin → Pengaturan "Animasi Hero" mati: hanya isi HTML, tanpa canvas dan tanpa pendengar kursor
   disabled?: boolean
   // alamat gambar kedua (satu origin dengan situs, atau Cloudinary yang mengirim header CORS)
   back: string

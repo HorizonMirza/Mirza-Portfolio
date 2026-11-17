@@ -64,7 +64,7 @@ export function ProfileLive({
   chip: Record<Lang, PhotoCardChip | null>
   // judul halaman dan bagian bio di situs (teks halaman About.title)
   bioHeading: Record<Lang, string>
-  // peran yang tampil di situs selama "Peran di halaman Tentang" kosong
+  // peran yang tampil di situs selama "Peran di Halaman Tentang" kosong
   rolesFallback: Record<Lang, string>
   configured: boolean
   // entri pendidikan (diubah langsung di kartu)
@@ -173,14 +173,14 @@ export function ProfileLive({
                             sizes="300px"
                             className="ab-pc-photo"
                           />
-                          <span className="sr-only">{t('Ganti foto kartu About')}</span>
+                          <span className="sr-only">{t('Ganti Foto Kartu About')}</span>
                         </button>
                         {/* hapus foto kartu: kartu kembali memakai foto profil */}
                         {aboutPhoto ? (
                           <span className="absolute top-2 left-2 z-10 rounded-md bg-bg/80 opacity-0 backdrop-blur transition-opacity group-focus-within/photo:opacity-100 group-hover/photo:opacity-100 max-md:opacity-100">
                             <RemoveAssetButton
                               assetId={aboutPhoto.id}
-                              label={t('Foto kartu About')}
+                              label={t('Foto Kartu About')}
                               onDone={() => router.refresh()}
                             />
                           </span>
@@ -211,14 +211,14 @@ export function ProfileLive({
                             ) : (
                               <span aria-hidden="true">{chipInitials}</span>
                             )}
-                            <span className="sr-only">{t('Ganti logo chip')}</span>
+                            <span className="sr-only">{t('Ganti Logo Chip')}</span>
                           </button>
                           <InlineInput
                             wrap
                             key={name('aboutChipLabel')}
-                            label={label('Teks chip')}
+                            label={label('Teks Chip')}
                             value={chipText}
-                            placeholder={t('Kampus atau perusahaan')}
+                            placeholder={t('Kampus atau Perusahaan')}
                             invalid={Boolean(err(name('aboutChipLabel')))}
                             size={Math.max(10, chipText.length + 1)}
                             maxLength={60}
@@ -235,7 +235,7 @@ export function ProfileLive({
                           {chipLogo ? (
                             <RemoveAssetButton
                               assetId={chipLogo.id}
-                              label={t('Logo chip')}
+                              label={t('Logo Chip')}
                               onDone={() => router.refresh()}
                             />
                           ) : null}
@@ -255,7 +255,7 @@ export function ProfileLive({
                   <InlineInput
                     wrap
                     key={name('aboutBandRoles')}
-                    label={label('Peran di halaman Tentang')}
+                    label={label('Peran di Halaman Tentang')}
                     value={roles}
                     invalid={Boolean(err(name('aboutBandRoles')))}
                     onChange={(event) => {
@@ -295,8 +295,8 @@ export function ProfileLive({
         <LiveErrors messages={messages} />
         {/* chip di kartu foto: satu baris selebar Simpan (revisi 2026-11-13) */}
         <div className="admin-bleed grid grid-cols-2 gap-2">
-          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip logo')}
-          {toggle('showFlag', values.showFlag ?? true, 'Chip bendera')}
+          {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip Logo')}
+          {toggle('showFlag', values.showFlag ?? true, 'Chip Bendera')}
         </div>
         {/* bahasa isi tepat di atas Simpan, bentuknya sama dengan tombol chip */}
         <LangRow lang={lang} onChange={setLang} />

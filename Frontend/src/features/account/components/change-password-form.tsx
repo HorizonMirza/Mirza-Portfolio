@@ -20,7 +20,7 @@ import { type ChangePasswordInput, changePasswordSchema } from '../schema'
 
 const empty: ChangePasswordInput = { currentPassword: '', newPassword: '' }
 
-const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat kuat'] as const
+const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat Kuat'] as const
 
 // Ganti password di panel Akun (DESIGN.md bagian 120): aturan wajib dicentang langsung saat mengetik
 // dan garis kekuatan. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
@@ -44,14 +44,14 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
   // lima syarat yang ditampilkan, urutan dan tulisan sesuai permintaan pemilik 2026-11-16; "berbeda dari
   // password saat ini" tetap diperiksa saat Simpan lewat changePasswordSchema
   const rules = [
-    { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Minimal 1 angka') },
+    { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Minimal 1 Angka') },
     {
       ok: (next ?? '').length >= MIN_PASSWORD_LENGTH,
-      label: t('Minimal {min} karakter', { min: MIN_PASSWORD_LENGTH }),
+      label: t('Minimal {min} Karakter', { min: MIN_PASSWORD_LENGTH }),
     },
-    { ok: PASSWORD_RULES.lower(next ?? ''), label: t('Minimal 1 huruf kecil') },
-    { ok: PASSWORD_RULES.upper(next ?? ''), label: t('Minimal 1 huruf besar') },
-    { ok: PASSWORD_RULES.symbol(next ?? ''), label: t('Minimal 1 karakter spesial') },
+    { ok: PASSWORD_RULES.lower(next ?? ''), label: t('Minimal 1 Huruf Kecil') },
+    { ok: PASSWORD_RULES.upper(next ?? ''), label: t('Minimal 1 Huruf Besar') },
+    { ok: PASSWORD_RULES.symbol(next ?? ''), label: t('Minimal 1 Karakter Spesial') },
   ]
 
   const onSubmit = form.handleSubmit((values) => {
@@ -68,7 +68,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
       {/* username tersembunyi membantu pengelola password mengenali akun */}
       <input type="text" name="username" autoComplete="username" hidden readOnly />
-      <Field id="currentPassword" label="Password saat ini" error={errors.currentPassword?.message}>
+      <Field id="currentPassword" label="Password Saat Ini" error={errors.currentPassword?.message}>
         {(a) => (
           <PasswordInput
             autoComplete="current-password"
@@ -78,7 +78,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
           />
         )}
       </Field>
-      <Field id="newPassword" label="Password baru" error={errors.newPassword?.message}>
+      <Field id="newPassword" label="Password Baru" error={errors.newPassword?.message}>
         {(a) => (
           <PasswordInput
             autoComplete="new-password"
@@ -103,7 +103,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
         <p className="sr-only" aria-live="polite">
           {strength > 0 ? t('Kekuatan: {level}', { level: t(STRENGTH_LABEL[strength]!) }) : ''}
         </p>
-        <p className="mt-1 text-sm font-medium">{t('Syarat password:')}</p>
+        <p className="mt-1 text-sm font-medium">{t('Syarat Password:')}</p>
         <ul className="flex flex-col gap-1 text-[13px]">
           {rules.map((rule) => (
             <li

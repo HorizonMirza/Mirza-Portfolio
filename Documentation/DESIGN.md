@@ -1955,3 +1955,10 @@ Pemilik meminta situs dan panel Super Admin rapi di HP, tablet, dan desktop: tid
 - **Halaman Status** menjadi menu sidebar sendiri (ikon hantu) di bawah Pesan; baris "Halaman status" di Pengaturan → Lanjutan dihapus. Nama ditulis "Halaman Status" / "Status Pages".
 - **Keterangan kode** di pratinjau Halaman Status (mis. "Hanya pratinjau: 200 berarti halaman berhasil dibuka.") pindah ke pojok kiri bawah kotak pratinjau.
 - **Dashboard**: judul "Pesan Terbaru" dan "Rincian Perhari" (EN tetap "Latest Messages", "Daily Breakdown").
+
+## 172. Revisi 17-11 sore: hero rata bawah di tablet kecil, sidebar kembali, Title Case (2026-11-17)
+
+- **Hero Home** di layar lebar-pendek di bawah 768 px: foto selebar `min(140cqw, sisa tinggi hero di bawah nama)`, jadi foto sampai ke tepi bawah seperti desktop (menu ikon di atas lengan). HP biasa tidak berubah.
+- **Halaman Status** di sidebar dipindah ke atas Pesan.
+- **Sidebar lebar penuh kembali mulai 1024 px** (bagian 170 sempat menaikkannya ke 1280 px; di laptop dengan skala Windows 125% sidebar jadi ikon saja). Halaman Tentang tetap aman di 1024 px karena container query bagian 170.
+- **Title Case seluruh aplikasi** (permintaan pemilik: kata kedua dan seterusnya huruf besar): label, judul, tombol, tab, menu, pilihan, kepala kolom, dan placeholder di panel admin (kunci `admin-i18n-en.ts` dan nilai Inggrisnya) serta teks situs di `messages/*.json` (mis. "Kirim Pesan", "Semua Project", "Lihat Aplikasi", "Hari Tersibuk"). Kata sambung tetap kecil kecuali di awal (ID: di, ke, dari, dan, atau, yang, untuk, dengan, pada, dalam, per, sebagai, oleh, lewat, sampai; EN: a, an, the, of, to, in, on, for, and, or, at, by, as, from, with, via). Kalimat lengkap tetap huruf biasa: pesan galat dan validasi, notifikasi, deskripsi baris Pengaturan, keterangan kecil, dan teks pembaca layar yang berupa potongan kalimat. Teks situs yang sudah diubah pemilik lewat admin (tersimpan di database) tidak ikut berubah.

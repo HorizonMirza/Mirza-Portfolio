@@ -75,7 +75,7 @@ export function LangToggle({
   return (
     <div
       role="group"
-      aria-label={t('Bahasa yang diubah')}
+      aria-label={t('Bahasa yang Diubah')}
       className={cn('inline-flex rounded-md border border-border bg-surface p-0.5', className)}
     >
       {(['id', 'en'] as const).map((l) => (
@@ -310,7 +310,7 @@ export function LangRow({
   return (
     <div
       role="group"
-      aria-label={t('Bahasa yang diubah')}
+      aria-label={t('Bahasa yang Diubah')}
       className="admin-bleed grid grid-cols-2 gap-2"
     >
       {(['id', 'en'] as const).map((l) => (

@@ -9,7 +9,7 @@ export const socialLabel: Record<(typeof SOCIAL_KEYS)[number], string> = {
   linkedin: 'LinkedIn',
   github: 'GitHub',
   instagram: 'Instagram',
-  website: 'Situs lain',
+  website: 'Situs Lain',
 }
 
 export const profileSchema = z.object({
@@ -18,13 +18,13 @@ export const profileSchema = z.object({
   headline_en: requiredText('Headline', 160),
   bio_id: requiredText('Bio', 4000),
   bio_en: requiredText('Bio', 4000),
-  currentRole_id: optionalText('Posisi sekarang', 160),
+  currentRole_id: optionalText('Posisi Sekarang', 160),
   currentRole_en: optionalText('Current role', 160),
   // kartu foto halaman Tentang (2026-11-10)
-  aboutBandRoles_id: optionalText('Peran di halaman Tentang', 120).default(''),
+  aboutBandRoles_id: optionalText('Peran di Halaman Tentang', 120).default(''),
   aboutBandRoles_en: optionalText('Roles on the About page', 120).default(''),
   // chip di kartu foto: teks dan logo bisa diganti (mis. logo perusahaan); kosong = ikut pendidikan terbaru
-  aboutChipLabel_id: optionalText('Teks chip', 60).default(''),
+  aboutChipLabel_id: optionalText('Teks Chip', 60).default(''),
   aboutChipLabel_en: optionalText('Chip text', 60).default(''),
   showCampusChip: z.boolean().default(true),
   showFlag: z.boolean().default(true),

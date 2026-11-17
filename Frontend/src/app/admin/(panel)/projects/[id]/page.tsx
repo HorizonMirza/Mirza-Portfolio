@@ -16,7 +16,7 @@ import { isUploadConfigured } from '@/lib/uploads'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: t('Ubah project') }
+  return { title: t('Ubah Project') }
 }
 
 // satu project seperti halaman detail situs, diubah langsung (DESIGN.md bagian 138)

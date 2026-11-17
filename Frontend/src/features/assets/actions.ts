@@ -34,7 +34,7 @@ const NOT_CONFIGURED =
   'Unggah belum aktif: isi CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, dan CLOUDINARY_API_SECRET.'
 
 const altSchema = z.object({
-  alt_id: requiredText('Teks alternatif', 200),
+  alt_id: requiredText('Teks Alternatif', 200),
   alt_en: requiredText('Alt text', 200),
 })
 

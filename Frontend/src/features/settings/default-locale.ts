@@ -9,7 +9,7 @@ const memo = globalThis as unknown as {
   siteLocaleChoice?: { value: SiteLocaleChoice; at: number }
 }
 
-// "Bahasa saat pertama dibuka" (Admin → Pengaturan) untuk proxy.ts. Proxy tidak bisa memakai cache data
+// "Bahasa Saat Pertama Dibuka" (Admin → Pengaturan) untuk proxy.ts. Proxy tidak bisa memakai cache data
 // Next.js, jadi nilainya diingat 60 detik per instance server; hanya dibaca untuk alamat tanpa /id atau
 // /en (kunjungan pertama ke mmirza.site/). Database gangguan: ikuti browser seperti sebelumnya.
 export async function siteDefaultLocale(now: number = Date.now()): Promise<SiteLocaleChoice> {

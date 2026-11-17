@@ -8,9 +8,9 @@ const TABS = {
   // beranda dihapus 2026-11-12 (foto profil diganti dari Akun). About dan Experience tanpa tab sejak
   // 2026-11-13 (DESIGN.md bagian 145-146)
   home: [
-    { label: 'Kartu pembuka', href: '/admin/pages/intro' },
-    { label: 'Peran beranda', href: '/admin/roles' },
-    { label: 'Skill teknis', href: '/admin/skills' },
+    { label: 'Kartu Pembuka', href: '/admin/pages/intro' },
+    { label: 'Peran Beranda', href: '/admin/roles' },
+    { label: 'Skill Teknis', href: '/admin/skills' },
     { label: 'GitHub', href: '/admin/github' },
   ],
 } as const
@@ -31,7 +31,7 @@ export async function ModuleTabs({
   const { t } = await getAdminT()
   return (
     <FilterTabs
-      label={t('Bagian halaman')}
+      label={t('Bagian Halaman')}
       // tab selebar panel di semua modul (revisi pemilik 2026-11-12, DESIGN.md bagian 135)
       stretch
       items={TABS[moduleId].map((tab) => ({

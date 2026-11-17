@@ -101,10 +101,10 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const box = (name: string) => page.getByRole('textbox', { name, exact: true })
   await box('Judul (Indonesia)').fill(titleId)
   await box('Ringkasan (Indonesia)').fill('Ringkasan untuk tes E2E.')
-  await box('Peran saya (opsional) (Indonesia)').fill(roleText)
+  await box('Peran Saya (Opsional) (Indonesia)').fill(roleText)
   // bahasa Inggris lewat tombol EN di atas Simpan; tampilan admin tetap berbahasa Indonesia
   await page
-    .getByRole('group', { name: 'Bahasa yang diubah' })
+    .getByRole('group', { name: 'Bahasa yang Diubah' })
     .getByRole('button', { name: 'EN' })
     .click()
   const titleEn = `E2E project ${suffix}`
@@ -112,11 +112,11 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   await box('Ringkasan (Inggris)').fill('Summary for the E2E test.')
   await box('Slug').fill(`e2e-${suffix}`.toLowerCase())
   // tombol detail: demo tampil, GitHub dimatikan Super Admin walau URL-nya diisi
-  await box('URL demo (opsional)').fill('https://example.com/demo')
-  await box('URL repo (opsional)').fill('https://github.com/example/repo')
+  await box('URL Demo (Opsional)').fill('https://example.com/demo')
+  await box('URL Repo (Opsional)').fill('https://github.com/example/repo')
   const main = page.getByRole('main')
   const repoButton = main
-    .getByRole('group', { name: 'Tombol di halaman detail' })
+    .getByRole('group', { name: 'Tombol di Halaman Detail' })
     .getByRole('button', { name: 'GitHub', exact: true })
   await repoButton.click()
   await expect(repoButton).toHaveAttribute('aria-pressed', 'false')
@@ -131,7 +131,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   await expect(page.getByText('Project dibuat.')).toBeVisible()
   await expect(page).toHaveURL(/\/admin\/projects\/[0-9a-f-]{36}$/)
 
-  // Project baru langsung terbit: tanpa tombol Draf, Terbit, Unggulan, kategori, dan tahun di halaman ini
+  // Project Baru langsung terbit: tanpa tombol Draf, Terbit, Unggulan, kategori, dan tahun di halaman ini
   await expect(main.getByRole('button', { name: 'Draf', exact: true })).toHaveCount(0)
   await expect(main.getByRole('button', { name: 'Terbit', exact: true })).toHaveCount(0)
   await expect(main.getByRole('button', { name: 'Unggulan di beranda' })).toHaveCount(0)
@@ -146,7 +146,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   expect(detail?.status()).toBe(200)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(titleId)
   await expect(page.getByText(roleText)).toBeVisible()
-  await expect(main.getByRole('link', { name: /Lihat aplikasi/ })).toHaveAttribute(
+  await expect(main.getByRole('link', { name: /Lihat Aplikasi/ })).toHaveAttribute(
     'href',
     'https://example.com/demo',
   )
@@ -173,7 +173,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   // peran memakai isian yang boleh turun baris (textarea, revisi 2026-11-17): isi ada di teksnya
   await expect(
     page
-      .locator('textarea[aria-label="Peran saya (opsional) (Indonesia)"]', { hasText: roleText })
+      .locator('textarea[aria-label="Peran Saya (Opsional) (Indonesia)"]', { hasText: roleText })
       .filter({ visible: true }),
   ).toHaveCount(1)
   const row = page.getByRole('listitem').filter({ has: titleBox })
@@ -221,12 +221,12 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
   })
   // globe asli di pratinjau: logo di sisi depan bisa ditekan (tidak inert)
   await expect(page.locator('.site-frame .globe-stage button:not([inert])').first()).toBeAttached()
-  await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toBeVisible()
+  await expect(page.getByRole('group', { name: 'Bahasa yang Diubah' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toBeVisible()
   await expect(
-    page.getByRole('textbox', { name: 'Nama kategori (Indonesia)' }).first(),
+    page.getByRole('textbox', { name: 'Nama Kategori (Indonesia)' }).first(),
   ).toBeVisible()
-  await expect(page.getByRole('textbox', { name: 'Kategori baru' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Kategori Baru' })).toBeVisible()
   // logo skill ditekan: langsung membuka pemilih berkas, tanpa jendela dan tanpa teks alt (revisi
   // 2026-11-15, DESIGN.md bagian 148). Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif.
   await expect(async () => {
@@ -268,11 +268,11 @@ test('skill: kategori dan skill baru tersimpan lewat Simpan, lalu dihapus', asyn
 }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
   const name = `Uji ${Date.now()}`
-  const categoryNames = page.getByRole('textbox', { name: 'Nama kategori (Indonesia)' })
-  const skillNames = page.getByRole('textbox', { name: 'Nama skill' })
+  const categoryNames = page.getByRole('textbox', { name: 'Nama Kategori (Indonesia)' })
+  const skillNames = page.getByRole('textbox', { name: 'Nama Skill' })
   await page.goto('/admin/skills')
   // kategori baru: Enter menambah butir ke daftar (belum tersimpan), lalu skill baru di dalamnya
-  const newCategory = page.getByRole('textbox', { name: 'Kategori baru' })
+  const newCategory = page.getByRole('textbox', { name: 'Kategori Baru' })
   await expect(async () => {
     if (
       !(
@@ -359,7 +359,7 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
     await page.goto('/admin/roles')
     // bingkai pratinjau baru terlihat setelah diukur di browser (setelah hidrasi)
     await expect(roles.first()).toBeVisible()
-    await expect(page.getByRole('group', { name: 'Language being edited' })).toHaveCount(0)
+    await expect(page.getByRole('group', { name: 'Language Being Edited' })).toHaveCount(0)
   }
   await openEnglish()
   const original = await roles.evaluateAll((els) => els.map((el) => (el as HTMLInputElement).value))
@@ -384,17 +384,17 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
     .not.toContain('Test Role Two')
 })
 
-test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Peran', async ({
+test('modul Home: tab Kartu Pembuka, Peran, Skill; foto utama diganti di tab Peran', async ({
   page,
   isMobile,
 }) => {
-  // tab Foto beranda dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 141): alamat lamanya
+  // tab Foto Beranda dihapus (revisi pemilik 2026-11-12, DESIGN.md bagian 141): alamat lamanya
   // diarahkan ke tab Peran
   await page.goto('/admin/pages/home')
   await expect(page).toHaveURL(/\/admin\/roles$/)
-  const tabs = page.getByRole('navigation', { name: 'Bagian halaman' }).getByRole('link')
-  await expect(tabs).toHaveText(['Kartu pembuka', 'Peran beranda', 'Skill teknis', 'GitHub'])
-  await expect(page.getByRole('link', { name: 'Peran beranda' })).toHaveAttribute(
+  const tabs = page.getByRole('navigation', { name: 'Bagian Halaman' }).getByRole('link')
+  await expect(tabs).toHaveText(['Kartu Pembuka', 'Peran Beranda', 'Skill Teknis', 'GitHub'])
+  await expect(page.getByRole('link', { name: 'Peran Beranda' })).toHaveAttribute(
     'aria-current',
     'page',
   )
@@ -410,32 +410,32 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
   await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).not.toHaveValue('')
   await expect(page.locator('.site-frame [inert] .site-bar').first()).toBeAttached()
   // hanya peran yang bisa diubah: foto tidak bisa ditekan (revisi pemilik 2026-11-13)
-  await expect(page.getByRole('button', { name: 'Ganti foto profil' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Ganti Foto Profil' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Ganti foto utama' })).toHaveCount(0)
   // About satu halaman (tab Profil dan Pendidikan digabung 2026-11-13, DESIGN.md bagian 146)
   await page.goto('/admin/profile')
-  await expect(page.getByRole('navigation', { name: 'Bagian halaman' })).toHaveCount(0)
-  await expect(page.getByRole('heading', { name: 'Foto profil' })).toHaveCount(0)
+  await expect(page.getByRole('navigation', { name: 'Bagian Halaman' })).toHaveCount(0)
+  await expect(page.getByRole('heading', { name: 'Foto Profil' })).toHaveCount(0)
   await expect(page.getByLabel('Peran', { exact: true })).toHaveCount(0)
   // nama tetap (tidak bisa diketik), bio dan peran diketik langsung (DESIGN.md bagian 136)
   await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: 'Bio (Indonesia)' })).toBeVisible()
-  await expect(page.getByRole('button', { name: /Ganti foto kartu About$/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Ganti Foto Kartu About$/ })).toBeVisible()
   // chip kartu bersifat umum (revisi 2026-11-15): teks dan logo bisa diganti, bukan lagi chip kampus
-  await expect(page.getByRole('textbox', { name: 'Teks chip (Indonesia)' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Ganti logo chip' })).toBeVisible()
+  await expect(page.getByRole('textbox', { name: 'Teks Chip (Indonesia)' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Ganti Logo Chip' })).toBeVisible()
   // peran tampil sebagai teks biasa seperti di situs (bukan samar), pratinjau tautan dihapus
   // (revisi pemilik 2026-11-13 malam, DESIGN.md bagian 147)
   await expect(
-    page.getByRole('textbox', { name: 'Peran di halaman Tentang (Indonesia)' }),
+    page.getByRole('textbox', { name: 'Peran di Halaman Tentang (Indonesia)' }),
   ).not.toHaveValue('')
   await expect(page.getByRole('textbox', { name: /^Headline/ })).toHaveCount(0)
-  await expect(page.getByRole('button', { name: 'Tambah pendidikan' })).toBeVisible()
-  // Chip logo/Chip bendera, lalu ID/EN, lalu Simpan: tiap baris selebar Simpan
+  await expect(page.getByRole('button', { name: 'Tambah Pendidikan' })).toBeVisible()
+  // Chip Logo/Chip Bendera, lalu ID/EN, lalu Simpan: tiap baris selebar Simpan
   const save = page.getByRole('button', { name: 'Simpan', exact: true })
-  const campus = page.getByRole('button', { name: 'Chip logo' })
-  const flag = page.getByRole('button', { name: 'Chip bendera' })
-  const langs = page.getByRole('group', { name: 'Bahasa yang diubah' })
+  const campus = page.getByRole('button', { name: 'Chip Logo' })
+  const flag = page.getByRole('button', { name: 'Chip Bendera' })
+  const langs = page.getByRole('group', { name: 'Bahasa yang Diubah' })
   const idButton = langs.getByRole('button', { name: 'ID', exact: true })
   const enButton = langs.getByRole('button', { name: 'EN', exact: true })
   const [sb, cb, fb, ib, eb] = await Promise.all(
@@ -452,7 +452,7 @@ test('modul Home: tab Kartu pembuka, Peran, Skill; foto utama diganti di tab Per
     expect(Math.abs(left.x - sb!.x)).toBeLessThan(2)
     expect(Math.abs(right.x + right.width - (sb!.x + sb!.width))).toBeLessThan(2)
   }
-  await expect(page.getByRole('button', { name: 'Chip bendera' })).toHaveAttribute(
+  await expect(page.getByRole('button', { name: 'Chip Bendera' })).toHaveAttribute(
     'aria-pressed',
     /true|false/,
   )
@@ -472,7 +472,7 @@ test('Home: tab GitHub memilih warna grafik dari lima warna lalu mengembalikanny
     'page',
   )
   // lima warna: merah, kuning, hijau, biru (bawaan), ungu; tanpa pilihan tema, tombol kembalikan, dan catatan
-  const choices = page.getByRole('group', { name: 'Warna grafik' }).getByRole('button')
+  const choices = page.getByRole('group', { name: 'Warna Grafik' }).getByRole('button')
   await expect(choices).toHaveText(['Merah', 'Kuning', 'Hijau', 'Biru', 'Ungu'])
   for (const gone of ['Terang', 'Gelap', 'Kembalikan warna bawaan'])
     await expect(page.getByRole('button', { name: gone, exact: true })).toHaveCount(0)
@@ -509,12 +509,12 @@ test('Home: tab GitHub memilih warna grafik dari lima warna lalu mengembalikanny
   )
 })
 
-test('Projects: tanpa tab Teks halaman, menu langsung ke daftar project', async ({ page }) => {
+test('Projects: tanpa tab Teks Halaman, menu langsung ke daftar project', async ({ page }) => {
   // alamat lama diarahkan ke daftar project (revisi 2026-11-15, DESIGN.md bagian 149)
   await page.goto('/admin/pages/projects')
   await expect(page).toHaveURL(/\/admin\/projects$/)
-  await expect(page.getByRole('link', { name: 'Teks halaman' })).toHaveCount(0)
-  await expect(page.getByRole('navigation', { name: 'Bagian halaman' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Teks Halaman' })).toHaveCount(0)
+  await expect(page.getByRole('navigation', { name: 'Bagian Halaman' })).toHaveCount(0)
   await expect(page.locator('aside a[href="/admin/projects"]')).toHaveAttribute(
     'aria-current',
     'page',
@@ -530,23 +530,23 @@ test('About: kartu pendidikan hanya punya satu tombol hapus dan tahun selesai bi
   // tes lain membuat dan menghapus kartu pendidikan di database yang sama: tunggu halaman tenang
   // supaya daftar kartu yang dihitung sudah stabil
   await page.waitForLoadState('networkidle')
-  // satu tombol hapus per kartu (menghapus kartu beserta logonya); tanpa tombol × "Masih berlangsung"
+  // satu tombol hapus per kartu (menghapus kartu beserta logonya); tanpa tombol × "Masih Berlangsung"
   for (const card of await cards.all())
     await expect(card.getByRole('button', { name: /^Hapus/ })).toHaveCount(1)
-  await expect(page.getByRole('button', { name: 'Masih berlangsung' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Masih Berlangsung' })).toHaveCount(0)
   // tahun selesai berupa isian teks: kosong = tampil "Sekarang"/Present, angka = tahun
-  const end = page.getByRole('textbox', { name: 'Tahun selesai' }).last()
+  const end = page.getByRole('textbox', { name: 'Tahun Selesai' }).last()
   await expect(end).toBeVisible()
 })
 
-test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', async ({ page }) => {
+test('Bagian Awal: tab Kartu Pembuka di Home, hanya isinya yang bisa diubah', async ({ page }) => {
   await page.goto('/admin/pages/intro')
   // bukan menu sendiri lagi: tab pertama Home, tujuan menu Home (revisi 2026-11-11)
-  await expect(page.getByRole('link', { name: 'Kartu pembuka', exact: true })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Kartu Pembuka', exact: true })).toHaveAttribute(
     'aria-current',
     'page',
   )
-  await expect(page.getByRole('link', { name: 'Foto beranda', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Foto Beranda', exact: true })).toHaveCount(0)
   // nama halaman di top bar dan menu yang menyala milik Home (Beranda di bahasa admin Indonesia)
   await expect(page.getByRole('banner').getByText('Beranda', { exact: true })).toBeVisible()
   await expect(page.locator('aside a[href="/admin/pages/intro"]')).toHaveAttribute(
@@ -554,7 +554,7 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
     'page',
   )
   // tab selebar panel isi sampai tepi kiri-kanan (revisi 2026-11-12, DESIGN.md bagian 131)
-  const tabsNav = page.getByRole('navigation', { name: 'Bagian halaman' })
+  const tabsNav = page.getByRole('navigation', { name: 'Bagian Halaman' })
   const widths = await tabsNav.evaluate((nav) => {
     const main = document.querySelector('main')!
     const style = getComputedStyle(main)
@@ -570,14 +570,14 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
   const saveWidth = (await save.boundingBox())!.width
   expect(Math.abs(saveWidth - widths.inner)).toBeLessThan(2)
   // pilihan ID/EN satu baris tepat di atas Simpan, sama seperti About (revisi 2026-11-15)
-  const introLangs = page.getByRole('group', { name: 'Bahasa yang diubah' })
+  const introLangs = page.getByRole('group', { name: 'Bahasa yang Diubah' })
   const [lb, sbx] = await Promise.all([introLangs.boundingBox(), save.boundingBox()])
   expect(lb!.y).toBeLessThan(sbx!.y)
   expect(Math.abs(lb!.x - sbx!.x)).toBeLessThan(2)
   expect(Math.abs(lb!.width - sbx!.width)).toBeLessThan(2)
   await expect(page.getByText('Informasi Penting', { exact: true })).toBeVisible()
   await expect(page.getByText(/Esc|\*\*teks\*\*/)).toHaveCount(0)
-  const body = page.getByLabel('Isi kartu pembuka (Indonesia)')
+  const body = page.getByLabel('Isi Kartu Pembuka (Indonesia)')
   await expect(body).toBeVisible()
   expect(await body.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe('rgba(0, 0, 0, 0)')
   const original = await body.inputValue()
@@ -590,11 +590,11 @@ test('Bagian Awal: tab Kartu pembuka di Home, hanya isinya yang bisa diubah', as
   }).toPass()
   // bahasa lain lewat tombol EN di kartu, judul ikut berbahasa Inggris
   await page
-    .getByRole('group', { name: 'Bahasa yang diubah' })
+    .getByRole('group', { name: 'Bahasa yang Diubah' })
     .getByRole('button', { name: 'EN' })
     .click()
   await expect(page.getByText('Important Information', { exact: true })).toBeVisible()
-  await expect(page.getByLabel('Isi kartu pembuka (Inggris)')).toBeVisible()
+  await expect(page.getByLabel('Isi Kartu Pembuka (Inggris)')).toBeVisible()
   // judul, saklar tampil, label, dan tombol kartu adalah teks tetap
   await expect(page.getByLabel('Judul', { exact: true })).toHaveCount(0)
   await expect(page.getByLabel('Tampilkan pemberitahuan pembuka')).toHaveCount(0)
@@ -608,19 +608,19 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await page.goto('/admin/education')
   await expect(page).toHaveURL(/\/admin\/profile$/)
   // kartu pendidikan yang ada bisa diketik langsung
-  await expect(page.getByRole('textbox', { name: 'Sekolah / kampus' }).first()).not.toHaveValue('')
-  const schools = page.getByRole('textbox', { name: 'Sekolah / kampus' })
+  await expect(page.getByRole('textbox', { name: 'Sekolah / Kampus' }).first()).not.toHaveValue('')
+  const schools = page.getByRole('textbox', { name: 'Sekolah / Kampus' })
   const before = await schools.count()
   // tambah kartu baru di tempat (diulang sampai hidrasi selesai), lalu batal
   // klik hanya bila kartu baru belum muncul: render yang lambat (CI, HP) tidak membuat kartu ganda
   await expect(async () => {
     if ((await schools.count()) === before)
-      await page.getByRole('button', { name: 'Tambah pendidikan' }).click({ timeout: 2000 })
+      await page.getByRole('button', { name: 'Tambah Pendidikan' }).click({ timeout: 2000 })
     await expect(schools).toHaveCount(before + 1, { timeout: 1000 })
   }).toPass()
   await expect(page).toHaveURL(/\/admin\/profile$/)
   await expect(
-    page.getByRole('textbox', { name: 'Jenjang / jurusan (Indonesia)' }).last(),
+    page.getByRole('textbox', { name: 'Jenjang / Jurusan (Indonesia)' }).last(),
   ).toHaveValue('')
   // kartu pendidikan tanpa pilihan jenis kerja
   for (const label of ['Kerja', 'Organisasi'])
@@ -637,11 +637,11 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   const count = await roles.count()
   await expect(async () => {
     if ((await roles.count()) === count)
-      await page.getByRole('button', { name: 'Tambah pengalaman' }).click({ timeout: 2000 })
+      await page.getByRole('button', { name: 'Tambah Pengalaman' }).click({ timeout: 2000 })
     await expect(roles).toHaveCount(count + 1, { timeout: 1000 })
   }).toPass()
   await expect(page).toHaveURL(/\/admin\/experience$/)
-  // entri baru di paling atas; tanpa pilihan Kerja/Organisasi dan "Masih berlangsung" di alat entri
+  // entri baru di paling atas; tanpa pilihan Kerja/Organisasi dan "Masih Berlangsung" di alat entri
   const entry = page.getByRole('listitem').filter({ has: roles.first() }).first()
   await expect(entry.getByRole('button', { name: 'Kerja', exact: true })).toHaveCount(0)
   await expect(entry.getByRole('button', { name: 'Organisasi', exact: true })).toHaveCount(0)
@@ -649,14 +649,14 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await roles.first().fill(role)
   await entry.getByRole('textbox', { name: 'Instansi', exact: true }).fill('Instansi E2E')
   // jenis pekerjaan: teks bebas (bukan daftar pilihan); bulan tampil seperti di situs
-  await entry.getByRole('textbox', { name: /^Jenis pekerjaan \(opsional\)/ }).fill('Magang E2E')
+  await entry.getByRole('textbox', { name: /^Jenis Pekerjaan \(Opsional\)/ }).fill('Magang E2E')
   await expect(entry.getByRole('combobox')).toHaveCount(0)
   // bulan tampil seperti di situs; ditekan membuka kalender kecil bergaya aplikasi (bukan dropdown bawaan)
   await entry.getByRole('button', { name: /^Mulai:/ }).click()
-  const calendar = page.getByRole('dialog', { name: /Mulai \(bulan dan tahun\)/ })
+  const calendar = page.getByRole('dialog', { name: /Mulai \(Bulan dan Tahun\)/ })
   await expect(calendar).toBeVisible()
   await expect(page.getByRole('combobox')).toHaveCount(0)
-  await calendar.getByRole('button', { name: 'Tahun sebelumnya' }).click()
+  await calendar.getByRole('button', { name: 'Tahun Sebelumnya' }).click()
   await calendar.getByRole('button', { name: /^Mar \d{4}$/ }).click()
   await expect(calendar).toHaveCount(0)
   await expect(entry.getByRole('button', { name: /^Mulai: Mar/ })).toBeVisible()
@@ -684,7 +684,7 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   await expect(savedRole).toHaveCount(0)
 })
 
-test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsung tampil, dan pesan', async ({
+test('Dashboard desain Ringkas: empat angka, periode 7/30/90 Hari, tabel langsung tampil, dan pesan', async ({
   page,
   isMobile,
 }) => {
@@ -693,7 +693,7 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
   for (const label of ['Pengunjung', 'Tayangan Halaman', 'Unduhan CV', 'Pesan Masuk'])
     await expect(summary.getByRole('link', { name: new RegExp(`^${label} \\d`) })).toBeVisible()
   const period = page.getByRole('navigation', { name: 'Periode' })
-  await expect(period.getByRole('link', { name: '30 hari' })).toHaveAttribute(
+  await expect(period.getByRole('link', { name: '30 Hari' })).toHaveAttribute(
     'aria-current',
     'page',
   )
@@ -705,12 +705,12 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
   await expect(summary.getByText(/\d+ hari/)).toHaveCount(0)
   // tabel langsung tampil, tanpa tombol "Lihat sebagai tabel"
   await expect(page.getByText('Lihat sebagai tabel')).toHaveCount(0)
-  const table = page.getByRole('table', { name: 'Kunjungan harian, 7 hari' })
+  const table = page.getByRole('table', { name: 'Kunjungan Harian, 7 hari' })
   await expect(table.locator('tbody tr')).toHaveCount(7)
   await expect(table.getByRole('columnheader', { name: 'Pengunjung' })).toBeVisible()
-  // periode yang tidak dikenal kembali ke 30 hari
+  // periode yang tidak dikenal kembali ke 30 Hari
   await page.goto('/admin?range=12')
-  await expect(period.getByRole('link', { name: '30 hari' })).toHaveAttribute(
+  await expect(period.getByRole('link', { name: '30 Hari' })).toHaveAttribute(
     'aria-current',
     'page',
   )
@@ -734,14 +734,14 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 hari, tabel langsun
 test('sidebar → Halaman Status: pratinjau 11 kode status', async ({ page, isMobile }) => {
   // menu sendiri di sidebar (revisi pemilik 2026-11-17), bukan lagi baris di Pengaturan
   await page.goto('/admin')
-  if (isMobile) await page.getByRole('button', { name: 'Menu samping' }).click()
+  if (isMobile) await page.getByRole('button', { name: 'Menu Samping' }).click()
   await page
-    .getByRole('navigation', { name: 'Menu admin' })
+    .getByRole('navigation', { name: 'Menu Admin' })
     .locator('visible=true')
     .getByRole('link', { name: 'Halaman Status' })
     .click()
   await expect(page).toHaveURL(/\/admin\/status$/)
-  const tabs = page.getByRole('navigation', { name: 'Kode status' })
+  const tabs = page.getByRole('navigation', { name: 'Kode Status' })
   await expect(tabs.getByRole('link')).toHaveCount(11)
   const preview = page.getByRole('region', { name: 'Pratinjau' })
   // bawaan 404 (hantu), lalu pindah ke 429
@@ -768,7 +768,7 @@ test('skeleton shimmer tampil saat pindah menu admin sampai data siap', async ({
       await new Promise((r) => setTimeout(r, 1500))
     await route.continue().catch(() => {})
   })
-  const loading = page.getByRole('status').filter({ hasText: 'Memuat halaman…' })
+  const loading = page.getByRole('status').filter({ hasText: 'Memuat Halaman…' })
   const tile = page.getByRole('link', { name: /^Pesan Masuk/ })
   await tile.hover()
   await page.waitForLoadState('networkidle')
@@ -785,12 +785,12 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
   isMobile,
 }) => {
   await page.goto('/admin/profile')
-  // About satu halaman tanpa tab (Teks halaman dihapus 2026-11-12, Profil dan Pendidikan digabung
+  // About satu halaman tanpa tab (Teks Halaman dihapus 2026-11-12, Profil dan Pendidikan digabung
   // 2026-11-13, DESIGN.md bagian 142 dan 146)
-  await expect(page.getByRole('link', { name: 'Teks halaman' })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Teks Halaman' })).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveCount(0)
   if (!isMobile) {
-    const menu = page.getByRole('navigation', { name: 'Menu admin' })
+    const menu = page.getByRole('navigation', { name: 'Menu Admin' })
     // nama menu situs berbahasa Indonesia di mode Indonesia (About → Tentang)
     await expect(menu.getByRole('link', { name: 'Tentang' })).toHaveAttribute(
       'aria-current',
@@ -798,7 +798,7 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
     )
     // halaman data (profil, project, skill, pengalaman) hanya lewat tab modul, bukan menu sendiri.
     // Dicek lewat alamat: nama menu Projects/Experience di mode Indonesia memang Project/Pengalaman.
-    // menu About langsung ke tab Profil sejak tab Teks halaman About dihapus (2026-11-12)
+    // menu About langsung ke tab Profil sejak tab Teks Halaman About dihapus (2026-11-12)
     await expect(menu.locator('a[href="/admin/profile"]')).toHaveCount(1)
     // Experience juga langsung ke timeline sejak tab Teks halamannya dihapus (2026-11-13)
     await expect(menu.locator('a[href="/admin/experience"]')).toHaveCount(1)
@@ -815,18 +815,18 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // satu tombol bulat seperti situs publik: kode yang terlihat adalah bahasa tujuan
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
   await expect(toEnglish).toBeVisible()
-  await expect(bar.getByRole('button', { name: 'Mode gelap' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'Mode Gelap' })).toBeVisible()
   // menu profil: tombol titik tiga di top bar di semua ukuran layar (demo 3, DESIGN.md bagian 128)
-  await expect(bar.getByRole('button', { name: 'Menu profil' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'Menu Profil' })).toBeVisible()
   // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; DESIGN.md bagian 113)
   const title = bar.getByText('Kontak', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
   // logo dan nama panel pindah ke sidebar; Akun hanya di menu profil, Pengaturan kembali ke sidebar,
-  // Log audit dan menu Bagian Awal dihapus (revisi 2026-11-11)
+  // Log Audit dan menu Bagian Awal dihapus (revisi 2026-11-11)
   await expect(bar.getByText('Super Admin', { exact: true })).toHaveCount(0)
-  const sidebar = page.getByRole('navigation', { name: 'Menu admin' })
-  for (const gone of ['Akun', 'Log audit', 'Bagian Awal'])
+  const sidebar = page.getByRole('navigation', { name: 'Menu Admin' })
+  for (const gone of ['Akun', 'Log Audit', 'Bagian Awal'])
     await expect(sidebar.getByRole('link', { name: gone })).toHaveCount(0)
   // dicek lewat DOM: di HP sidebar tersembunyi (menunya di laci)
   await expect(page.locator('aside a[href="/admin/settings"]')).toHaveCount(1)
@@ -850,24 +850,24 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // tampilan admin ikut berganti: menu, top bar, judul halaman dari server, dan html lang
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(bar.getByRole('button', { name: 'Appearance' })).toBeAttached()
-  await expect(bar.getByRole('button', { name: 'Dark mode' })).toBeVisible()
+  await expect(bar.getByRole('button', { name: 'Dark Mode' })).toBeVisible()
   await expect(page.locator('aside a[href="/admin/messages"]')).toHaveText(/Messages/)
   // isi halaman juga berbahasa Inggris: tombol Simpan; deskripsi halaman tidak ada lagi
   await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeVisible()
   await expect(page.getByText(/^About page\. Bio/)).toHaveCount(0)
-  await expect(page.getByText('Teks halaman', { exact: true })).toHaveCount(0)
+  await expect(page.getByText('Teks Halaman', { exact: true })).toHaveCount(0)
   // dimuat ulang tetap berbahasa Inggris (cookie dibaca server)
   // tunggu permintaan simpan dan muat ulang data selesai: Firefox membatalkan muat ulang yang menimpanya
   await page.waitForLoadState('networkidle')
   await page.reload()
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page.locator('aside a[href="/admin/messages"]')).toHaveText(/Messages/)
-  const profileEn = page.getByRole('button', { name: /Profile menu$/ })
+  const profileEn = page.getByRole('button', { name: /Profile Menu$/ })
   await profileEn.click()
-  // urutan tetap pilihan pemilik: Akun, Lihat situs
+  // urutan tetap pilihan pemilik: Akun, Lihat Situs
   await expect(
     page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
-  ).toHaveText(['Account', /^View site/])
+  ).toHaveText(['Account', /^View Site/])
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
   // kembalikan ke Indonesia
@@ -878,12 +878,12 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   }).toPass()
   await expect(page.locator('aside a[href="/admin/messages"]')).toHaveText(/Pesan/)
 
-  // menu profil: Akun dan Lihat situs dengan keterangan, lalu Keluar berwarna merah paling bawah
-  const profile = bar.getByRole('button', { name: 'Menu profil' })
+  // menu profil: Akun dan Lihat Situs dengan keterangan, lalu Keluar berwarna merah paling bawah
+  const profile = bar.getByRole('button', { name: 'Menu Profil' })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
   // tanpa keterangan di bawah pilihan (revisi pemilik 2026-11-11)
-  await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat situs/, /^Keluar$/])
+  await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat Situs/, /^Keluar$/])
   // tanpa wajah kedua: foto dan nama admin hanya di puncak sidebar (revisi 2026-11-11)
   await expect(panel.locator('img')).toHaveCount(0)
   await expect(panel.getByText('Super Admin')).toHaveCount(0)
@@ -910,10 +910,10 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   page,
   isMobile,
 }) => {
-  // revisi pemilik 2026-11-11 (DESIGN.md bagian 126); tanpa Privasi dan Halaman lain
+  // revisi pemilik 2026-11-11 (DESIGN.md bagian 126); tanpa Privasi dan Halaman Lain
   await page.goto('/admin')
-  const hamburger = page.getByRole('button', { name: 'Menu samping' })
-  const menu = page.getByRole('navigation', { name: 'Menu admin' }).locator('visible=true')
+  const hamburger = page.getByRole('button', { name: 'Menu Samping' })
+  const menu = page.getByRole('navigation', { name: 'Menu Admin' }).locator('visible=true')
   if (isMobile) {
     await hamburger.click()
     await expect(menu.getByRole('link', { name: 'Pesan' })).toBeVisible()
@@ -929,7 +929,7 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   const name = identity.locator('span.font-semibold')
   expect(await name.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
   await expect(menu.getByRole('link', { name: 'Privasi' })).toHaveCount(0)
-  await expect(menu.getByRole('link', { name: 'Halaman lain' })).toHaveCount(0)
+  await expect(menu.getByRole('link', { name: 'Halaman Lain' })).toHaveCount(0)
   expect(await width()).toBeGreaterThan(225)
   await expect(hamburger).toHaveAttribute('aria-expanded', 'true')
 
@@ -974,7 +974,7 @@ test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   isMobile,
 }) => {
   // revisi pemilik 2026-11-11 (DESIGN.md bagian 114): top bar dan sidebar diam, isi digulir di dalam
-  // form Project baru selalu lebih tinggi dari layar, tidak bergantung pada jumlah data di database
+  // form Project Baru selalu lebih tinggi dari layar, tidak bergantung pada jumlah data di database
   // (database CI baru dan hampir kosong, CI #287)
   await page.goto('/admin/projects/new')
   const main = page.locator('main')
@@ -992,9 +992,9 @@ test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
   expect(await bar.boundingBox()).toEqual(before)
   // pindah menu: isi halaman baru mulai dari atas lagi (di HP lewat laci dari tombol hamburger)
-  if (isMobile) await page.getByRole('button', { name: 'Menu samping' }).click()
+  if (isMobile) await page.getByRole('button', { name: 'Menu Samping' }).click()
   await page
-    .getByRole('navigation', { name: 'Menu admin' })
+    .getByRole('navigation', { name: 'Menu Admin' })
     .locator('visible=true')
     .getByRole('link', { name: 'Dashboard' })
     .click()
@@ -1059,8 +1059,8 @@ test.describe('animasi ganti bahasa admin', () => {
     // termasuk judul halaman yang baru tiba setelah router.refresh(). Teks server yang terlihat di
     // panel isi: tab aktif Home (halaman teks Projects dihapus 2026-11-15)
     await page.goto('/admin/pages/intro')
-    const idTab = 'Kartu pembuka'
-    const enTab = 'Introduction card'
+    const idTab = 'Kartu Pembuka'
+    const enTab = 'Introduction Card'
     const h1 = page.locator('main nav a[aria-current="page"]')
     await expect(h1).toHaveText(idTab)
     await record(page, null)
@@ -1143,7 +1143,7 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
     .locator('form')
     .filter({ has: page.getByRole('button', { name: /^Simpan$/ }) })
   // halaman admin bisa lambat dimuat di CI yang sibuk (WebKit): tunggu lebih lama dari 5 detik
-  await expect(page.getByRole('textbox', { name: /^Link CV \(opsional\)/ })).toBeVisible({
+  await expect(page.getByRole('textbox', { name: /^Link CV \(Opsional\)/ })).toBeVisible({
     timeout: 20_000,
   })
   // diulang sampai hidrasi selesai
@@ -1159,16 +1159,16 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
     await expect(page.getByRole('textbox', { name: `Teks kartu ${name}` })).toBeVisible()
   for (const name of ['WhatsApp', 'Email'])
     await expect(page.getByRole('textbox', { name: `Teks kartu ${name}` })).toHaveCount(0)
-  await expect(page.getByRole('textbox', { name: /^Judul kartu/ })).toHaveCount(0)
+  await expect(page.getByRole('textbox', { name: /^Judul Kartu/ })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: /^Teks kartu Resume CV/ })).toHaveCount(0)
   // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak (DESIGN.md bagian 151)
   await expect(page.locator('.site-frame footer')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toHaveCount(1)
-  // enam kartu (2 baris x 3), tanpa Situs lain, tanpa pilihan bahasa dan tanpa keterangan kartu;
+  // enam kartu (2 baris x 3), tanpa Situs Lain, tanpa pilihan bahasa dan tanpa keterangan kartu;
   // judul dan hak cipta tampil apa adanya
   await expect(page.locator('.site-frame footer ul > li')).toHaveCount(6)
-  await expect(page.getByText('Situs lain', { exact: true })).toHaveCount(0)
-  await expect(page.getByRole('group', { name: 'Bahasa yang diubah' })).toHaveCount(0)
+  await expect(page.getByText('Situs Lain', { exact: true })).toHaveCount(0)
+  await expect(page.getByRole('group', { name: 'Bahasa yang Diubah' })).toHaveCount(0)
   await expect(page.getByText(/Keterangan saat kartu disorot/)).toHaveCount(0)
   await expect(
     page.locator('.site-frame footer h2 input, .site-frame footer h2 textarea'),
@@ -1190,7 +1190,7 @@ test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketi
   await expect(bar.getByRole('textbox', { name: /\(Indonesia\)$/ })).toHaveCount(5)
   await expect(bar.locator('[inert]')).not.toHaveCount(0)
   // nama menu untuk pembaca layar tidak diubah dari admin lagi (revisi 2026-11-15 malam)
-  await expect(page.getByText(/Nama menu untuk pembaca layar/)).toHaveCount(0)
+  await expect(page.getByText(/Nama Menu untuk Pembaca Layar/)).toHaveCount(0)
 
   await page.goto('/admin/pages/contact')
   const frame = page.locator('.site-frame:visible')
@@ -1203,10 +1203,10 @@ test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketi
     frame.locator('input:not([readonly]):not([type=file]), textarea:not([readonly])'),
   ).toHaveCount(3)
   await expect(frame.getByRole('textbox', { name: /^Judul \(Indonesia\)/ })).toBeVisible()
-  await expect(frame.getByRole('textbox', { name: /^Kalimat pembuka/ })).toBeVisible()
+  await expect(frame.getByRole('textbox', { name: /^Kalimat Pembuka/ })).toBeVisible()
   for (const gone of [
-    'Tombol saat mengirim',
-    'Pesan galat formulir',
+    'Tombol Saat Mengirim',
+    'Pesan Galat formulir',
     'Kartu setelah pesan terkirim',
     'Hasil mesin pencari',
   ])
@@ -1215,7 +1215,7 @@ test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketi
   if (wide) {
     // kartu kanvas yang asli (bisa ditarik), bukan tiruan diam
     await expect(frame.locator('canvas')).toHaveCount(1)
-    await expect(page.getByRole('button', { name: 'Ganti foto kartu ID' })).toBeAttached()
+    await expect(page.getByRole('button', { name: 'Ganti Foto Kartu ID' })).toBeAttached()
     await expect(frame.getByRole('textbox', { name: /^Jabatan di kartu ID/ })).toBeVisible()
   }
 })

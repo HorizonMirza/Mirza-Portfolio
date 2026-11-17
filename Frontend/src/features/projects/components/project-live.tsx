@@ -232,9 +232,9 @@ export function ProjectLive({
                   <InlineInput
                     wrap
                     key={`role_${lang}`}
-                    label={label('Peran saya (opsional)')}
+                    label={label('Peran Saya (Opsional)')}
                     {...register(`role_${lang}`)}
-                    placeholder={t('Peran saya (opsional)')}
+                    placeholder={t('Peran Saya (Opsional)')}
                     size={Math.max(16, (v[`role_${lang}`] || '').length + 1)}
                     invalid={Boolean(err(`role_${lang}`))}
                     className="text-center"
@@ -253,13 +253,13 @@ export function ProjectLive({
                     lebar agar tombol dan kolom URL lurus */}
                 <div
                   role="group"
-                  aria-label={t('Tombol di halaman detail')}
+                  aria-label={t('Tombol di Halaman Detail')}
                   className="admin-tight mx-auto mt-4 grid w-full max-w-136 gap-x-4 gap-y-4 sm:grid-cols-2 md:mt-6"
                 >
                   {(
                     [
-                      ['demo', 'showDemo', 'demoUrl', 'URL demo (opsional)'],
-                      ['repo', 'showRepo', 'repoUrl', 'URL repo (opsional)'],
+                      ['demo', 'showDemo', 'demoUrl', 'URL Demo (Opsional)'],
+                      ['repo', 'showRepo', 'repoUrl', 'URL Repo (Opsional)'],
                     ] as const
                   ).map(([key, show, url, urlLabel]) => (
                     <div key={key} className="flex min-w-0 flex-col gap-2">
@@ -361,7 +361,7 @@ export function ProjectLive({
                           onClick={() => pickImage('project-cover', true)}
                           className="admin-editable absolute inset-1.5 cursor-pointer rounded-none [--editable-offset:0px] focus-visible:outline-2 focus-visible:outline-current"
                         >
-                          <span className="sr-only">{t('Ganti sampul')}</span>
+                          <span className="sr-only">{t('Ganti Sampul')}</span>
                         </button>
                       ) : (
                         <div
@@ -452,7 +452,7 @@ export function ProjectLive({
                   onClick={() => pickImage(hasCover ? 'project-gallery' : 'project-cover')}
                 >
                   <Plus className="size-5" aria-hidden="true" />
-                  <span className="sr-only">{hasCover ? t('Tambah ke galeri') : t('Sampul')}</span>
+                  <span className="sr-only">{hasCover ? t('Tambah ke Galeri') : t('Sampul')}</span>
                 </button>
               </div>
               {items.length > 1 ? (

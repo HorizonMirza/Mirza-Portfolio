@@ -22,8 +22,8 @@ function Lamp() {
   )
 }
 
-// rail: sidebar kaca hanya ikon (label tetap ada untuk pembaca layar). Di tablet dan laptop kecil
-// (di bawah 1280 px, agar panggung pratinjau cukup lebar; revisi pemilik 2026-11-17) selalu; di desktop
+// rail: sidebar kaca hanya ikon (label tetap ada untuk pembaca layar). Di tablet selalu; di desktop
+// (mulai 1024 px, dikembalikan atas permintaan pemilik 2026-11-17)
 // saat diciutkan lewat tombol hamburger (compact).
 function NavLinks({
   onNavigate,
@@ -36,10 +36,10 @@ function NavLinks({
 }) {
   const pathname = usePathname()
   const t = useAdminT()
-  const hideText = cn(rail && 'max-xl:sr-only', rail && fadeLabel(compact))
+  const hideText = cn(rail && 'max-lg:sr-only', rail && fadeLabel(compact))
   return (
     <nav
-      aria-label={t('Menu admin')}
+      aria-label={t('Menu Admin')}
       // satu daftar menyambung tanpa label dan jarak kelompok (revisi pemilik 2026-11-11)
       className="flex flex-col gap-0.5"
     >
@@ -61,7 +61,7 @@ function NavLinks({
                   className={cn(
                     'relative flex min-h-10 items-center gap-3 rounded-md px-3.5 text-sm font-semibold whitespace-nowrap text-muted transition-colors hover:bg-surface-2 hover:text-text',
                     // ikon tepat di tengah rel 4.75rem: (4.75 - 2 x 0.75 padding sidebar - 1 ikon) / 2
-                    rail && 'max-xl:justify-center max-xl:px-0 xl:px-[1.125rem]',
+                    rail && 'max-lg:justify-center max-lg:px-0 lg:px-[1.125rem]',
                     active && 'bg-surface-2 text-text',
                   )}
                 >
@@ -96,13 +96,13 @@ export function AdminSidebar(identity: AdminIdentity) {
       className={cn(
         // lebar berganti pelan dan halus (revisi pemilik 2026-11-11: sebelumnya 300 ms terlalu cepat)
         'admin-glass-panel relative z-40 hidden h-full w-[4.75rem] shrink-0 flex-col rounded-[23px] transition-[width] duration-500 ease-in-out-soft motion-reduce:transition-none md:flex',
-        collapsed ? 'xl:w-[4.75rem]' : 'xl:w-[17rem]',
+        collapsed ? 'lg:w-[4.75rem]' : 'lg:w-[17rem]',
       )}
     >
-      <div className="shrink-0 px-2.5 pt-3 xl:px-3">
+      <div className="shrink-0 px-2.5 pt-3 lg:px-3">
         <SidebarIdentity {...identity} compact={collapsed} />
       </div>
-      <div className="no-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-2.5 pt-4 pb-3 xl:px-3">
+      <div className="no-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-2.5 pt-4 pb-3 lg:px-3">
         <NavLinks rail compact={collapsed} />
       </div>
     </aside>

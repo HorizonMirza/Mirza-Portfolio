@@ -211,10 +211,10 @@ export function GlassControl() {
         <div
           id={panelId}
           role="group"
-          aria-label={t('Pengaturan tampilan')}
+          aria-label={t('Pengaturan Tampilan')}
           className="admin-pop fixed inset-x-3 top-20 z-40 flex flex-col gap-4 rounded-[22px] border border-border p-5 shadow-2xl sm:absolute sm:inset-x-auto sm:top-full sm:right-0 sm:mt-3 sm:w-80"
         >
-          <div className="grid grid-cols-3 gap-1.5" role="group" aria-label={t('Preset kaca')}>
+          <div className="grid grid-cols-3 gap-1.5" role="group" aria-label={t('Preset Kaca')}>
             {Object.entries(PRESETS).map(([name, value]) => (
               <button
                 key={name}
@@ -249,7 +249,7 @@ export function GlassControl() {
           />
           <Range
             id={`${id}-edge`}
-            label={t('Cahaya tepi')}
+            label={t('Cahaya Tepi')}
             value={Math.round(glass.edge * 100)}
             output={`${Math.round(glass.edge * 100)}%`}
             min={0}
@@ -261,7 +261,7 @@ export function GlassControl() {
             <p className="text-xs font-semibold">{t('Latar')}</p>
             <div
               role="group"
-              aria-label={t('Latar panel admin')}
+              aria-label={t('Latar Panel Admin')}
               className="grid grid-cols-3 gap-1.5"
             >
               {BACKGROUNDS.map((b) => (
@@ -283,7 +283,7 @@ export function GlassControl() {
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-border text-xs font-semibold transition-colors hover:bg-surface-2"
           >
             <RotateCcw className="size-3.5" aria-hidden="true" />
-            {t('Atur ulang tampilan')}
+            {t('Atur Ulang Tampilan')}
           </button>
         </div>
       ) : null}

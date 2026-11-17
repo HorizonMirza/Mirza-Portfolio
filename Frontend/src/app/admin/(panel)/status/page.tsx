@@ -61,7 +61,7 @@ export default async function StatusPreviewPage({ searchParams }: PageProps<'/ad
       <h1 className="sr-only">{t('Halaman Status')}</h1>
       <FilterTabs
         stretch
-        label={t('Kode status')}
+        label={t('Kode Status')}
         items={STATUS_CODES.map((c) => ({
           href: `/admin/status?code=${c}`,
           label: String(c),

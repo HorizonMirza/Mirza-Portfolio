@@ -45,7 +45,7 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
           loading={pending && busy === 'READ'}
         >
           <Inbox aria-hidden="true" />
-          {t('Keluarkan dari arsip')}
+          {t('Keluarkan dari Arsip')}
         </Button>
       ) : (
         <Button
@@ -79,7 +79,7 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
           loading={pending && busy === 'READ'}
         >
           <MailCheck aria-hidden="true" />
-          {t('Tandai dibaca')}
+          {t('Tandai Dibaca')}
         </Button>
       ) : null}
       <ConfirmDelete

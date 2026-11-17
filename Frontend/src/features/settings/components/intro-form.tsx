@@ -109,7 +109,7 @@ export function IntroForm({
                     baris atas Simpan */}
                 <div className="flex items-center justify-between gap-4">
                   <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>
-                  <div role="group" aria-label={t('Bahasa kartu')} className="intro-lang">
+                  <div role="group" aria-label={t('Bahasa Kartu')} className="intro-lang">
                     {(['id', 'en'] as const).map((l) => (
                       <button
                         key={l}
@@ -134,7 +134,7 @@ export function IntroForm({
                   {card.title}
                 </p>
                 <label htmlFor={name} className="sr-only">
-                  {t('Isi kartu pembuka ({lang})', { lang: t(LANG_NAME[lang]) })}
+                  {t('Isi Kartu Pembuka ({lang})', { lang: t(LANG_NAME[lang]) })}
                 </label>
                 {/* teks kartu yang bisa diketik langsung: tanpa latar, bingkai, atau ikon */}
                 <textarea

@@ -341,7 +341,7 @@ export function SkillsLive({
           <span className="sr-only">{t('Logo {item}', { item: name })}</span>
         </button>
         <InlineInput
-          label={t('Nama skill')}
+          label={t('Nama Skill')}
           value={name}
           maxLength={60}
           size={Math.max(3, name.length + 1)}
@@ -436,7 +436,7 @@ export function SkillsLive({
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <InlineInput
                     key={lang}
-                    label={t('Nama kategori ({lang})', { lang: t(LANG_NAME[lang]) })}
+                    label={t('Nama Kategori ({lang})', { lang: t(LANG_NAME[lang]) })}
                     value={shownName(category, lang)}
                     maxLength={60}
                     size={Math.max(3, shownName(category, lang).length + 1)}
@@ -469,8 +469,8 @@ export function SkillsLive({
                     .map((draft) => skillChip({ key: draft.key, draft }))}
                   <li className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm text-muted">
                     <AddInline
-                      label={t('Tambah skill ke {name}', { name: shownName(category, lang) })}
-                      placeholder={t('+ Skill baru')}
+                      label={t('Tambah Skill ke {name}', { name: shownName(category, lang) })}
+                      placeholder={t('+ Skill Baru')}
                       onAdd={addSkill(category.id)}
                     />
                   </li>
@@ -482,7 +482,7 @@ export function SkillsLive({
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <InlineInput
                     key={lang}
-                    label={t('Nama kategori ({lang})', { lang: t(LANG_NAME[lang]) })}
+                    label={t('Nama Kategori ({lang})', { lang: t(LANG_NAME[lang]) })}
                     value={lang === 'en' ? category.name_en : category.name_id}
                     maxLength={60}
                     size={Math.max(
@@ -523,10 +523,10 @@ export function SkillsLive({
                     .map((draft) => skillChip({ key: draft.key, draft }))}
                   <li className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm text-muted">
                     <AddInline
-                      label={t('Tambah skill ke {name}', {
+                      label={t('Tambah Skill ke {name}', {
                         name: lang === 'en' ? category.name_en : category.name_id,
                       })}
-                      placeholder={t('+ Skill baru')}
+                      placeholder={t('+ Skill Baru')}
                       onAdd={addSkill(category.key)}
                     />
                   </li>
@@ -535,8 +535,8 @@ export function SkillsLive({
             ))}
             <div className="pt-5">
               <AddInline
-                label={t('Kategori baru')}
-                placeholder={t('+ Kategori baru')}
+                label={t('Kategori Baru')}
+                placeholder={t('+ Kategori Baru')}
                 className="text-lg font-semibold text-muted"
                 // nama dipakai untuk bahasa yang sedang dipilih; bahasa lain disalin saat Simpan
                 onAdd={(name) => {

@@ -13,7 +13,7 @@ import { useSidebarState } from '@/components/admin/sidebar-state'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 
-const DESKTOP = '(min-width: 1280px)'
+const DESKTOP = '(min-width: 1024px)'
 
 function subscribeDesktop(onChange: () => void) {
   const query = window.matchMedia(DESKTOP)
@@ -41,7 +41,7 @@ export function AdminTopBar() {
       <header className="admin-glass-panel relative z-30 flex h-[3.875rem] shrink-0 items-center gap-1 rounded-[18px] px-1.5 sm:gap-2 sm:px-3 md:rounded-[20px] md:pr-3">
         <button
           type="button"
-          aria-label={t('Menu samping')}
+          aria-label={t('Menu Samping')}
           aria-expanded={desktop ? !collapsed : open}
           onClick={() => (window.matchMedia(DESKTOP).matches ? toggle() : setOpen(true))}
           className="inline-flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-surface-2 sm:size-11"
@@ -55,7 +55,7 @@ export function AdminTopBar() {
         </p>
         <GlassControl />
         <LangSwitch className="size-10 sm:size-11" />
-        <ThemeToggle className="size-10 sm:size-11" label={t('Mode gelap')} />
+        <ThemeToggle className="size-10 sm:size-11" label={t('Mode Gelap')} />
         <ProfileMenu />
       </header>
       {/* bisa digulir: di HP pendek menu terbawah tetap terjangkau */}
@@ -63,7 +63,7 @@ export function AdminTopBar() {
         aria-describedby={undefined}
         className="admin-sheet admin-glass-panel gap-6 overflow-y-auto overscroll-contain rounded-r-[23px] border-0 pt-16"
       >
-        <SheetTitle className="sr-only">{t('Menu admin')}</SheetTitle>
+        <SheetTitle className="sr-only">{t('Menu Admin')}</SheetTitle>
         <SidebarNav onNavigate={() => setOpen(false)} />
       </SheetContent>
     </Sheet>

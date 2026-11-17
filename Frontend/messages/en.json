@@ -4,10 +4,10 @@
     "description": "Portfolio of Muhammad Mirza, a Computer Science (Artificial Intelligence) student at BINUS University and fullstack developer."
   },
   "Common": {
-    "skipToContent": "Skip to main content",
+    "skipToContent": "Skip to Main Content",
     "openInNewTab": "(opens in a new tab)",
     "whatsapp": "Chat on WhatsApp",
-    "loadingPage": "Loading page…"
+    "loadingPage": "Loading Page…"
   },
   "Locale": {
     "id": "Bahasa Indonesia",
@@ -15,7 +15,7 @@
     "switchTo": "{code}, switch language to {language}"
   },
   "Theme": {
-    "darkMode": "Dark mode"
+    "darkMode": "Dark Mode"
   },
   "Intro": {
     "eyebrow": "Portfolio - {name}",
@@ -30,7 +30,7 @@
     "home": "Home"
   },
   "Maintenance": {
-    "title": "Being updated",
+    "title": "Being Updated",
     "body": "This site is being updated. Please check back in a little while."
   },
   "Status": {
@@ -67,12 +67,12 @@
       "body": "A gateway server got a bad response. It usually recovers within a few minutes."
     },
     "home": "Home",
-    "retry": "Try again",
+    "retry": "Try Again",
     "login": "Sign in",
     "dashboard": "Dashboard"
   },
   "Nav": {
-    "label": "Main navigation",
+    "label": "Main Navigation",
     "home": "Home",
     "about": "About",
     "experience": "Experience",
@@ -80,7 +80,7 @@
     "contact": "Contact"
   },
   "Footer": {
-    "contactHeading": "Get in touch",
+    "contactHeading": "Get in Touch",
     "cv": "Resume CV",
     "cvFile": "PDF",
     "copyright": "© {year} {name}",
@@ -90,7 +90,7 @@
     "whatsappHint": "Chat with me on WhatsApp",
     "emailHint": "Opens a new Gmail message",
     "cvHint": "Open or download my CV",
-    "githubHint": "GitHub profile"
+    "githubHint": "GitHub Profile"
   },
   "Social": {
     "linkedin": "LinkedIn",
@@ -105,7 +105,7 @@
     "stackHeading": "Technical Skills",
     "githubHeading": "GitHub",
     "projectsHeading": "Projects",
-    "projectList": "Project list",
+    "projectList": "Project List",
     "experienceHeading": "Experience"
   },
   "About": {
@@ -117,15 +117,15 @@
     "noEducation": "No education history has been published yet."
   },
   "Experience": {
-    "photoOpen": "Enlarge photo: {org}",
-    "photoClose": "All experience",
+    "photoOpen": "Enlarge Photo: {org}",
+    "photoClose": "All Experience",
     "metaTitle": "Experience",
     "metaDescription": "Work and organization experience of Muhammad Mirza, newest first.",
     "title": "Experience",
     "none": "No experience published yet.",
     "durationYears": "{count, plural, one {# Year} other {# Years}}",
     "durationMonths": "{count, plural, one {# Month} other {# Months}}",
-    "listLabel": "Experience history",
+    "listLabel": "Experience History",
     "employment": {
       "FULL_TIME": "Full-time",
       "PART_TIME": "Part-time",
@@ -144,10 +144,10 @@
     "metaDescription": "Software built and communities run by Muhammad Mirza.",
     "title": "Projects",
     "empty": "No projects published yet.",
-    "back": "All projects",
-    "demo": "View app",
+    "back": "All Projects",
+    "demo": "View App",
     "repo": "GitHub",
-    "stack": "Tech stack",
+    "stack": "Tech Stack",
     "image": "Image",
     "gallery": "Screenshots of {title}",
     "imageOf": "Image {current} of {total}"
@@ -155,14 +155,14 @@
   "Contact": {
     "metaTitle": "Contact",
     "metaDescription": "Send Muhammad Mirza a message about a job or a project.",
-    "title": "Let’s work together",
+    "title": "Let’s Work Together",
     "intro": "Let’s build something impactful together. I’ll reply to the email you leave.",
     "name": "Name",
     "email": "Email",
-    "subject": "Subject (optional)",
+    "subject": "Subject (Optional)",
     "message": "Message",
     "honeypot": "Leave this field empty",
-    "send": "Send message",
+    "send": "Send Message",
     "sending": "Sending…",
     "error": "Your message wasn't sent. Please try again, or reach me directly through the links at the bottom of the page.",
     "rateLimited": "Too many messages from this network. Please try again in an hour.",
@@ -173,17 +173,17 @@
     "subjectTooLong": "Subject can be at most 150 characters",
     "messageShort": "Message must be at least 10 characters",
     "messageLong": "Message can be at most 5,000 characters",
-    "sentTitle": "Message sent",
+    "sentTitle": "Message Sent",
     "sentBadge": "Received",
     "ticketFrom": "From",
     "ticketReplyTo": "Reply to",
     "ticketSubject": "Subject",
     "ticketMessage": "Message",
     "ticketTime": "Time",
-    "another": "Write another message",
+    "another": "Write Another Message",
     "cardRole": "Fullstack Developer",
     "cardSite": "mmirza.site",
-    "closedTitle": "The message form is closed",
+    "closedTitle": "The Message Form Is Closed",
     "closedBody": "I am not taking messages through the form right now. Reach me through the links at the bottom of the page.",
     "closed": "The message form is closed. Reach me through the links at the bottom of the page."
   },
@@ -193,30 +193,30 @@
     "title": "Privacy Policy",
     "updated": "Last updated {date}",
     "intro": "This site uses no tracking cookies and never sells data. Here is what is collected and why.",
-    "visitsHeading": "Visit statistics",
+    "visitsHeading": "Visit Statistics",
     "visitsBody": "Each page view is recorded together with its language. To count unique visitors per day, your IP address and browser type are turned into a one-way random code with a key that changes every day, so you cannot be identified or followed across days. Raw IP addresses are never stored. Raw records are deleted after {days} days; only daily totals are kept.",
-    "contactHeading": "Contact form",
+    "contactHeading": "Contact Form",
     "contactBody": "Your name, email, subject, and message are stored so I can reply. Your IP address is only kept as a random code to prevent spam. Messages are kept until I delete them.",
-    "cvHeading": "CV downloads",
+    "cvHeading": "CV Downloads",
     "cvBody": "Only the number of downloads and the page language are recorded, with no personal data.",
-    "servicesHeading": "Third-party services",
+    "servicesHeading": "Third-party Services",
     "servicesBody": "The site runs on Vercel, the database on Neon (Singapore), and images and the CV on Cloudinary. These services are used only while they are switched on: Resend to send email, Vercel Web Analytics and Speed Insights to record visit counts and page speed without cookies (page addresses without parameters), and Sentry for server error reports without personal data. Each receives only the data it needs to do its job.",
-    "rightsHeading": "Your rights",
+    "rightsHeading": "Your Rights",
     "rightsBody": "You can ask for a copy or deletion of your data through the contact page.",
-    "contactLink": "Go to the contact page",
+    "contactLink": "Go to the Contact Page",
     "creditsHeading": "Credits",
     "creditsBody": "Logos from Devicon (MIT) and Simple Icons, trademarks of their owners; Git logo by Jason Long, CC BY 3.0. The Word, Excel, and PowerPoint logos belong to Microsoft, Claude to Anthropic, Codex to OpenAI, Kiro to Amazon, and Google Antigravity to Google."
   },
   "Error": {
-    "title": "Something went wrong",
+    "title": "Something Went Wrong",
     "body": "This page failed to load. Please try again in a moment.",
-    "retry": "Try again",
-    "home": "Back to home"
+    "retry": "Try Again",
+    "home": "Back to Home"
   },
   "SkillGlobe": {
-    "label": "Skill globe",
-    "list": "Skill list",
-    "categories": "Skill categories",
+    "label": "Skill Globe",
+    "list": "Skill List",
+    "categories": "Skill Categories",
     "category": "Category",
     "all": "All"
   },
@@ -226,16 +226,16 @@
     "none": "No contributions",
     "inLastYear": "in the last year",
     "on": "on",
-    "busiest": "Busiest day",
-    "longest": "Longest streak",
-    "current": "Current streak",
+    "busiest": "Busiest Day",
+    "longest": "Longest Streak",
+    "current": "Current Streak",
     "day": "day",
     "days": "days",
     "less": "Less",
     "more": "More",
-    "view": "Chart view",
-    "flat": "Flat heat map",
-    "skyline": "3D skyline",
+    "view": "Chart View",
+    "flat": "Flat Heat Map",
+    "skyline": "3D Skyline",
     "keys": "Use the arrow keys to read individual days."
   }
 }

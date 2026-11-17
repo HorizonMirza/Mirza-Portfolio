@@ -121,7 +121,7 @@ export function ProjectListLive({
             className="mb-12 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md border border-dashed border-border text-sm font-semibold text-muted hover:text-text"
           >
             <Plus className="size-4" aria-hidden="true" />
-            {t('Project baru')}
+            {t('Project Baru')}
           </Link>
           {rows.length === 0 ? (
             <p className="rounded-lg border border-dashed border-border p-6 text-muted">
@@ -194,9 +194,9 @@ export function ProjectListLive({
                           <p className="pj-role">
                             <InlineInput
                               wrap
-                              label={label('Peran saya (opsional)')}
+                              label={label('Peran Saya (Opsional)')}
                               value={shown(row, 'role')}
-                              placeholder={t('Peran saya (opsional)')}
+                              placeholder={t('Peran Saya (Opsional)')}
                               maxLength={80}
                               size={Math.max(12, shown(row, 'role').length + 1)}
                               onChange={(event) => edit(row, 'role', event.target.value)}

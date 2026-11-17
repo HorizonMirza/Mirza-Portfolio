@@ -13,7 +13,7 @@ import { isUploadConfigured } from '@/lib/uploads'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: t('Project baru') }
+  return { title: t('Project Baru') }
 }
 
 // project baru seperti halaman detail situs; sampul dan galeri setelah disimpan (DESIGN.md bagian 138)
@@ -22,7 +22,7 @@ export default async function NewProjectPage() {
   const [skillGroups, texts] = await Promise.all([listSkillOptions(), projectPreviewTexts()])
   return (
     <>
-      <PageHeader title="Project baru" />
+      <PageHeader title="Project Baru" />
       <ProjectLive
         projectId={null}
         defaultValues={{ ...emptyProject, year: new Date().getFullYear() }}

@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils'
 // data, daftar, dan kartu form.
 
 function Loading({ children }: { children: ReactNode }) {
-  return <SkeletonPage label={<AdminText text="Memuat halaman…" />}>{children}</SkeletonPage>
+  return <SkeletonPage label={<AdminText text="Memuat Halaman…" />}>{children}</SkeletonPage>
 }
 
 function HeaderSkeleton({ action = false }: { action?: boolean }) {

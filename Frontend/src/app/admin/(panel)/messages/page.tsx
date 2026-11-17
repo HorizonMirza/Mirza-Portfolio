@@ -49,7 +49,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
       <PageHeader title="Pesan" />
       <FilterTabs
         stretch
-        label={t('Filter status pesan')}
+        label={t('Filter Status Pesan')}
         items={MESSAGE_STATUSES.map((s) => ({
           href: s === 'NEW' ? '/admin/messages' : `/admin/messages?status=${s}`,
           label: t(messageStatusLabel[s]),
@@ -96,7 +96,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
           ))}
         </ul>
       )}
-      <Pager label={t('Halaman pesan')} page={page} pages={pages} href={pageHref} />
+      <Pager label={t('Halaman Pesan')} page={page} pages={pages} href={pageHref} />
     </>
   )
 }

@@ -20,7 +20,7 @@ let master: GainNode | null = null
 let noiseBuffer: AudioBuffer | null = null
 // satu penguat per jenis suara, tersambung ke penguat utama
 const kindGains = new Map<SoundKind, GainNode>()
-// dipakai tombol "Coba suara" di admin sebelum pengaturan disimpan
+// dipakai tombol "Coba Suara" di admin sebelum pengaturan disimpan
 let override: { kind: SoundKind; level: number } | null = null
 let mixCache: { raw: string; mix: Partial<Record<SoundKind, number>> } | null = null
 
@@ -268,7 +268,7 @@ export function playPhotoShimmerSound() {
   }
 }
 
-// Tombol "Coba suara" di admin: memutar satu suara dengan volume yang sedang digeser (belum tentu
+// Tombol "Coba Suara" di admin: memutar satu suara dengan volume yang sedang digeser (belum tentu
 // tersimpan).
 const SAMPLES: Record<SoundKind, () => void> = {
   nav: () => playNavSound(),

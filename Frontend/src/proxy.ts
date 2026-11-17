@@ -46,7 +46,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.rewrite(request.nextUrl, { status: 418 })
   }
 
-  // Alamat tanpa awalan bahasa (mis. mmirza.site/): bahasa awal dari Admin → Pengaturan. "Ikuti browser"
+  // Alamat tanpa awalan bahasa (mis. mmirza.site/): bahasa awal dari Admin → Pengaturan. "Ikuti Browser"
   // dan pengunjung yang pernah memilih bahasa (cookie NEXT_LOCALE dari next-intl) tetap lewat next-intl.
   const prefixed = routing.locales.some(
     (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`),

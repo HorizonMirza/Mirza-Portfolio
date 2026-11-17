@@ -25,7 +25,7 @@ const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 // 2026-11-11). Urutan tetap di kedua bahasa.
 const MENU_ITEMS = [
   { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
-  { label: 'Lihat situs', href: '/id', icon: ExternalLink, external: true },
+  { label: 'Lihat Situs', href: '/id', icon: ExternalLink, external: true },
 ] as const
 
 // Identitas admin di puncak sidebar (DESIGN.md bagian 128): foto, nama, dan Super Admin sekaligus
@@ -40,7 +40,7 @@ export function SidebarIdentity({
   const pathname = usePathname()
   const router = useRouter()
   // teks: tablet disembunyikan (tetap untuk pembaca layar); desktop memudar saat menciut
-  const hideText = cn('max-xl:sr-only', fadeLabel(compact))
+  const hideText = cn('max-lg:sr-only', fadeLabel(compact))
   return (
     <Link
       href="/admin"
@@ -51,7 +51,7 @@ export function SidebarIdentity({
         router.refresh()
       }}
       // foto tepat di tengah rel 4.75rem di kedua keadaan: (4.75 - 2 x 0.75 - 2.5) / 2
-      className="flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-1.5 py-1.5 transition-colors hover:bg-surface-2 max-xl:justify-center max-xl:px-0"
+      className="flex min-h-14 w-full min-w-0 items-center gap-3 rounded-md px-1.5 py-1.5 transition-colors hover:bg-surface-2 max-lg:justify-center max-lg:px-0"
     >
       <span className="size-10 shrink-0">
         <Image
@@ -122,7 +122,7 @@ export function ProfileMenu() {
     <div ref={root} className="relative flex shrink-0">
       <button
         type="button"
-        aria-label={t('Menu profil')}
+        aria-label={t('Menu Profil')}
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
         onClick={() => setOpen((value) => !value)}

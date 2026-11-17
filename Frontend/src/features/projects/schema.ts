@@ -35,7 +35,7 @@ export const projectSchema = z.object({
   // Dulu wajib sehingga admin harus mengisi teks yang tidak terlihat (audit 2026-10-31, GAP-05).
   description_id: optionalText('Deskripsi', 5000),
   description_en: optionalText('Description', 5000),
-  caseStudy_id: optionalText('Studi kasus', 20000),
+  caseStudy_id: optionalText('Studi Kasus', 20000),
   caseStudy_en: optionalText('Case study', 20000),
   year: z
     .number({ error: 'Tahun wajib diisi' })
@@ -46,8 +46,8 @@ export const projectSchema = z.object({
       if (year > max) ctx.addIssue({ code: 'custom', message: `Tahun maksimal ${max}` })
     }),
   category: z.enum(PROJECT_CATEGORIES),
-  demoUrl: optionalUrl('URL demo'),
-  repoUrl: optionalUrl('URL repo'),
+  demoUrl: optionalUrl('URL Demo'),
+  repoUrl: optionalUrl('URL Repo'),
   showDemo: z.boolean(),
   showRepo: z.boolean(),
   githubRepo: githubRepoSchema,
@@ -71,7 +71,7 @@ export const emptyProject: ProjectInput = {
   description_en: '',
   caseStudy_id: '',
   caseStudy_en: '',
-  // nilai awal saja; halaman "Project baru" mengisi ulang dengan tahun saat halaman dibuka
+  // nilai awal saja; halaman "Project Baru" mengisi ulang dengan tahun saat halaman dibuka
   year: new Date().getFullYear(),
   category: 'SOFTWARE',
   demoUrl: '',

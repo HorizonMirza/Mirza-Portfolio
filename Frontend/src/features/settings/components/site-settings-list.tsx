@@ -74,15 +74,15 @@ export function SiteSettingsList({
   // setiap suara situs: judul dan tempat suara itu terdengar
   const soundRows: [SoundKind, string, string][] = [
     ['nav', t('Menu'), t('Tik kaca saat menu situs dan foto profil di navbar ditekan.')],
-    ['theme', t('Tombol tema'), t('Desir angin saat tema terang atau gelap diganti.')],
+    ['theme', t('Tombol Tema'), t('Desir angin saat tema terang atau gelap diganti.')],
     [
       'language',
-      t('Tombol bahasa'),
+      t('Tombol Bahasa'),
       t('Rentetan bip saat bahasa ID/EN diganti, di situs, kartu pembuka, dan panel admin.'),
     ],
     [
       'experienceToggle',
-      t('Pengalaman di beranda'),
+      t('Pengalaman di Beranda'),
       t('Blip saat daftar pengalaman di beranda dibuka atau ditutup.'),
     ],
     [
@@ -102,7 +102,7 @@ export function SiteSettingsList({
     ],
     [
       'shimmer',
-      t('Kartu foto Tentang'),
+      t('Kartu Foto Tentang'),
       t('Kilau nada saat kursor bergeser di kartu foto halaman Tentang.'),
     ],
     [
@@ -136,7 +136,7 @@ export function SiteSettingsList({
 
       <Group title={t('Tampilan')}>
         <Row
-          title={t('Tema awal pengunjung')}
+          title={t('Tema Awal Pengunjung')}
           description={t('Dipakai sampai pengunjung memilih tema sendiri lewat tombol bulan.')}
           control={(ids) => (
             <Choice
@@ -145,14 +145,14 @@ export function SiteSettingsList({
               options={[
                 ['dark', t('Gelap')],
                 ['light', t('Terang')],
-                ['system', t('Ikuti perangkat')],
+                ['system', t('Ikuti Perangkat')],
               ]}
               onChange={(v) => save('defaultTheme', v)}
             />
           )}
         />
         <Row
-          title={t('Bahasa saat pertama dibuka')}
+          title={t('Bahasa Saat Pertama Dibuka')}
           description={t(
             'Untuk alamat tanpa /id atau /en, mis. mmirza.site. Pengunjung yang pernah memilih bahasa tetap memakai pilihannya.',
           )}
@@ -161,7 +161,7 @@ export function SiteSettingsList({
               ids={ids}
               value={values.defaultLocale}
               options={[
-                ['browser', t('Ikuti browser')],
+                ['browser', t('Ikuti Browser')],
                 ['id', 'Indonesia'],
                 ['en', 'English'],
               ]}
@@ -170,7 +170,7 @@ export function SiteSettingsList({
           )}
         />
         <Row
-          title={t('Kartu pembuka muncul')}
+          title={t('Kartu Pembuka Muncul')}
           description={t('Seberapa sering pengunjung yang sama melihat kartu pembuka.')}
           control={(ids) => (
             <Choice
@@ -178,16 +178,16 @@ export function SiteSettingsList({
               value={values.introFrequency}
               disabled={!values.introEnabled}
               options={[
-                ['once', t('Sekali saja')],
-                ['visit', t('Setiap kunjungan baru')],
-                ['weekly', t('Seminggu sekali')],
+                ['once', t('Sekali Saja')],
+                ['visit', t('Setiap Kunjungan Baru')],
+                ['weekly', t('Seminggu Sekali')],
               ]}
               onChange={(v) => save('introFrequency', v)}
             />
           )}
         />
         <Row
-          title={t('Kartu pembuka')}
+          title={t('Kartu Pembuka')}
           description={t(
             'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.',
           )}
@@ -196,7 +196,7 @@ export function SiteSettingsList({
           )}
         />
         <Row
-          title={t('Animasi hero')}
+          title={t('Animasi Hero')}
           description={t(
             'Efek cairan dan kursor di foto beranda. Bila mati, foto dan nama tetap tampil tanpa efek.',
           )}
@@ -209,7 +209,7 @@ export function SiteSettingsList({
           )}
         />
         <Row
-          title={t('Tombol WhatsApp melayang')}
+          title={t('Tombol WhatsApp Melayang')}
           badge={hasWhatsapp ? null : needs(t('Nomor belum diisi'))}
           description={t(
             'Tombol bulat di pojok kanan bawah situs, membuka chat ke nomor WhatsApp di menu Footer.',
@@ -226,7 +226,7 @@ export function SiteSettingsList({
 
       <Group title={t('Pesan')}>
         <Row
-          title={t('Terima pesan dari form kontak')}
+          title={t('Terima Pesan dari Form Kontak')}
           description={t(
             'Bila mati, form di halaman Kontak diganti tulisan bahwa form sedang ditutup.',
           )}
@@ -235,7 +235,7 @@ export function SiteSettingsList({
           )}
         />
         <Row
-          title={t('Batas pesan per jam')}
+          title={t('Batas Pesan per Jam')}
           description={t('Dari satu jaringan, {min} sampai {max} pesan.', {
             min: CONTACT_PER_HOUR_MIN,
             max: CONTACT_PER_HOUR_MAX,
@@ -246,14 +246,14 @@ export function SiteSettingsList({
 
       <Group title={t('Privasi')}>
         <Row
-          title={t('Hitung kunjungan')}
+          title={t('Hitung Kunjungan')}
           description={t('Untuk grafik di Dashboard. Tanpa cookie dan tanpa IP mentah.')}
           control={(ids) => (
             <Switch ids={ids} on={values.trackVisits} onChange={(v) => save('trackVisits', v)} />
           )}
         />
         <Row
-          title={t('Simpan data kunjungan')}
+          title={t('Simpan Data Kunjungan')}
           description={t(
             'Data mentah yang lebih lama dihapus otomatis setiap hari; ringkasan harian tetap ada. Halaman Privasi ikut menyebut masa simpan ini.',
           )}
@@ -262,9 +262,9 @@ export function SiteSettingsList({
               ids={ids}
               value={String(values.visitRetentionDays)}
               options={[
-                ['30', t('30 hari')],
-                ['90', t('90 hari')],
-                ['365', t('1 tahun')],
+                ['30', t('30 Hari')],
+                ['90', t('90 Hari')],
+                ['365', t('1 Tahun')],
               ]}
               onChange={(v) => save('visitRetentionDays', Number(v) as 30 | 90 | 365)}
             />
@@ -461,8 +461,8 @@ function VolumeControl({
         type="button"
         variant="secondary"
         size="icon"
-        aria-label={t('Coba suara')}
-        title={t('Coba suara')}
+        aria-label={t('Coba Suara')}
+        title={t('Coba Suara')}
         onClick={() => onPreview(draft)}
       >
         <Volume2 aria-hidden="true" />
@@ -535,7 +535,7 @@ function MaintenanceRow({ on, onSave }: { on: boolean; onSave: Save }) {
   }, [asking])
   return (
     <Row
-      title={t('Mode perawatan')}
+      title={t('Mode Perawatan')}
       badge={on ? <Pill tone="danger">{t('Menyala')}</Pill> : null}
       description={t(
         'Pengunjung hanya melihat halaman Sedang diperbarui dan situs tidak diindeks. Panel admin tetap bisa dipakai.',

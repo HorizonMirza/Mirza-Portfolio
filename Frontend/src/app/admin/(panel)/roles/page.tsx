@@ -15,7 +15,7 @@ import { HERO_PORTRAIT } from '@/lib/default-photo'
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getAdminT()
-  return { title: `${t('Peran beranda')} · Home` }
+  return { title: `${t('Peran Beranda')} · Home` }
 }
 
 // Home → Peran: beranda 1:1 seperti di situs, hanya peran yang diketik langsung di

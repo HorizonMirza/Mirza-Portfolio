@@ -95,7 +95,7 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
     // Firefox CI: pindah bahasa adalah muat ulang penuh (layout akar per bahasa). Frame utama tercatat
     // sampai di /en/projects, lalu driver Playwright untuk Firefox kehilangan halaman itu dengan galat
     // internalnya sendiri (juggler FrameTree.js: "domWindow() is undefined") dan tidak melaporkan
-    // halaman pengganti (CI 2026-10-15, dua run). Tombol bahasa di header lolos di Firefox; bedanya
+    // halaman pengganti (CI 2026-10-15, dua run). Tombol Bahasa di header lolos di Firefox; bedanya
     // tes ini memakai addInitScript. Jadi bukti tibanya di /en adalah navigasi frame utama yang tercatat
     // atau halaman mana pun di sesi browser.
     const enProjects = /\/en\/projects$/

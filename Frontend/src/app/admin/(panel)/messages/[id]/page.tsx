@@ -27,7 +27,7 @@ export default async function MessagePage({ params }: PageProps<'/admin/messages
   const message = await getMessage(id)
   if (!message) notFound()
   const { lang, t } = await getAdminT()
-  const subject = message.subject ?? t('Pesan dari portofolio')
+  const subject = message.subject ?? t('Pesan dari Portofolio')
   const mailto = `mailto:${encodeURIComponent(message.email)}?subject=${encodeURIComponent(`Re: ${subject}`)}`
 
   return (
@@ -37,7 +37,7 @@ export default async function MessagePage({ params }: PageProps<'/admin/messages
         className="mb-4 inline-flex min-h-11 items-center gap-2 font-display text-base font-medium tracking-wide text-muted uppercase hover:text-text"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
-        {t('Kembali ke kotak masuk')}
+        {t('Kembali ke Kotak Masuk')}
       </Link>
       <PageHeader
         title={subject}
@@ -64,7 +64,7 @@ export default async function MessagePage({ params }: PageProps<'/admin/messages
           <Button asChild>
             <a href={mailto}>
               <Reply aria-hidden="true" />
-              {t('Balas lewat email')}
+              {t('Balas lewat Email')}
             </a>
           </Button>
           <MessageActions id={message.id} status={message.status} />

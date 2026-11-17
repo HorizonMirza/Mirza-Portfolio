@@ -116,7 +116,7 @@ export function ExperienceTimelineLive({
                 className="mb-12 flex min-h-12 w-full items-center justify-center gap-2 rounded-md border border-dashed border-border font-sans text-sm font-semibold text-muted hover:text-text"
               >
                 <Plus className="size-4" aria-hidden="true" />
-                {t('Tambah pengalaman')}
+                {t('Tambah Pengalaman')}
               </button>
               {rows.length === 0 ? (
                 <p className="rounded-lg border border-dashed border-border p-6 text-muted">
@@ -187,7 +187,7 @@ export function ExperienceTimelineLive({
                               key={`org-${lang}`}
                               label={
                                 lang === 'en'
-                                  ? t('Instansi dalam bahasa Inggris (opsional)')
+                                  ? t('Instansi dalam Bahasa Inggris (Opsional)')
                                   : t('Instansi')
                               }
                               value={org}
@@ -206,9 +206,9 @@ export function ExperienceTimelineLive({
                             <InlineInput
                               wrap
                               key={`emp-${lang}`}
-                              label={label('Jenis pekerjaan (opsional)')}
+                              label={label('Jenis Pekerjaan (Opsional)')}
                               value={v[`employmentLabel_${lang}`] ?? ''}
-                              placeholder={t('Jenis pekerjaan')}
+                              placeholder={t('Jenis Pekerjaan')}
                               maxLength={60}
                               size={Math.max(10, (v[`employmentLabel_${lang}`] ?? '').length + 1)}
                               invalid={Boolean(err[`employmentLabel_${lang}`])}
@@ -240,7 +240,7 @@ export function ExperienceTimelineLive({
                                   onClick={() => set({ endMonth: '' })}
                                   className="admin-editable inline-flex min-h-6 items-center rounded-none px-0.5"
                                 >
-                                  {t('Masih berlangsung')}
+                                  {t('Masih Berlangsung')}
                                 </button>
                               </>
                             ) : (
@@ -339,7 +339,7 @@ export function ExperienceTimelineLive({
                               </span>
                             )}
                             <span className="sr-only">
-                              {t('Foto kegiatan {item}', { item: v.organization })}
+                              {t('Foto Kegiatan {item}', { item: v.organization })}
                             </span>
                           </button>
                         </div>

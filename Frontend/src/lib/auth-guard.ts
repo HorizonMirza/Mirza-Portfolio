@@ -11,7 +11,7 @@ export type AdminSession = {
   userId: string
   name: string
   email: string
-  // sesi yang sedang dipakai (Admin → Akun: "Perangkat ini", tidak bisa dikeluarkan dari daftar)
+  // sesi yang sedang dipakai (Admin → Akun: "Perangkat Ini", tidak bisa dikeluarkan dari daftar)
   sessionId: string
 }
 

@@ -23,7 +23,7 @@ export default function AdminError({ error, retry }: { error: unknown; retry: ()
       body={digest ? `${body} ${t('Kode:')} ${digest}` : body}
       action={
         <button type="button" onClick={() => retry()} className={flowButtonClassName}>
-          <FlowButtonContent text={t('Coba lagi')} />
+          <FlowButtonContent text={t('Coba Lagi')} />
         </button>
       }
     />

@@ -58,9 +58,10 @@ export const adminNav: readonly NavItem[] = [
   { href: '/admin/pages/contact', label: 'Contact', icon: MessageSquare },
   { href: '/admin/pages/navbar', label: 'Navbar', icon: PanelTop },
   { href: '/admin/pages/footer', label: 'Footer', icon: PanelBottom },
-  { href: '/admin/messages', label: 'Pesan', icon: Inbox },
-  // pratinjau 11 halaman status, dipindah dari Pengaturan ke sidebar (revisi pemilik 2026-11-17)
+  // pratinjau 11 halaman status, dipindah dari Pengaturan ke sidebar, di atas Pesan (revisi pemilik
+  // 2026-11-17)
   { href: '/admin/status', label: 'Halaman Status', icon: Ghost },
+  { href: '/admin/messages', label: 'Pesan', icon: Inbox },
   { href: '/admin/settings', label: 'Pengaturan', icon: Settings },
   // Akun dibuka dari menu profil, tidak di sidebar; tetap terdaftar agar nama halaman di top bar
   // berfungsi. Log audit dihapus dari panel (revisi pemilik 2026-11-11), pencatatannya tetap.

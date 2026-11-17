@@ -153,7 +153,7 @@ export async function saveSkill(
     // id dipakai admin untuk langsung membuka jendela logo skill baru
     return ok(skillId ? 'Skill disimpan.' : 'Skill ditambahkan.', { id })
   } catch (error) {
-    return toActionError(error, { name: 'Nama skill' })
+    return toActionError(error, { name: 'Nama Skill' })
   }
 }
 

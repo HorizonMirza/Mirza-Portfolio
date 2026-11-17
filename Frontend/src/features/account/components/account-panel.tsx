@@ -108,7 +108,7 @@ export function AccountPanel({
             type="button"
             onClick={() => picker.pick('profile-photo')}
             disabled={picker.busy}
-            aria-label={t('Ganti foto profil')}
+            aria-label={t('Ganti Foto Profil')}
             className="absolute right-0 bottom-0 grid size-10 place-items-center rounded-full border border-border-strong bg-surface hover:bg-surface-2"
           >
             <Camera className="size-4" aria-hidden="true" />
@@ -131,7 +131,7 @@ export function AccountPanel({
         {adminSince ? (
           <Row
             icon={<CalendarDays />}
-            title={t('Admin sejak')}
+            title={t('Admin Sejak')}
             detail={shortDate(adminSince, lang)}
           />
         ) : null}
@@ -140,7 +140,7 @@ export function AccountPanel({
       <Group title={t('Keamanan')}>
         <Row
           icon={<KeyRound />}
-          title={t('Ganti password')}
+          title={t('Ganti Password')}
           detail={
             passwordChangedAt
               ? t('Terakhir diganti {date}', { date: shortDate(passwordChangedAt, lang) })
@@ -262,7 +262,7 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
     })
 
   return (
-    <Group title={t('Perangkat tertaut · {count}', { count: sessions.length })}>
+    <Group title={t('Perangkat Tertaut · {count}', { count: sessions.length })}>
       {sessions.map((s) => {
         const Icon = s.device.mobile ? Smartphone : Monitor
         const device = deviceName(s.device, t) ?? ''
@@ -279,7 +279,7 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
               <span className="block text-sm text-muted">
                 {s.location ? `${s.location} · ` : ''}
                 {s.current ? (
-                  <span className="font-medium text-success">{t('Aktif sekarang')}</span>
+                  <span className="font-medium text-success">{t('Aktif Sekarang')}</span>
                 ) : (
                   t('Terakhir aktif {time}', { time: formatDateTime(new Date(s.lastActive), lang) })
                 )}
@@ -287,7 +287,7 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
             </span>
             {s.current ? (
               <span className="shrink-0 rounded-md border border-border-strong px-1.5 text-xs leading-5 font-semibold">
-                {t('Perangkat ini')}
+                {t('Perangkat Ini')}
               </span>
             ) : (
               <Button
@@ -340,7 +340,7 @@ function DevicesGroup({ sessions }: { sessions: AccountSession[] }) {
         ) : (
           <Row
             icon={<LogOut />}
-            title={t('Keluar dari semua perangkat lain')}
+            title={t('Keluar dari Semua Perangkat Lain')}
             onClick={() => setConfirming(true)}
             danger
           />

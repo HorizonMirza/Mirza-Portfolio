@@ -185,7 +185,7 @@ export function ImageCropDialog({
         aria-describedby={undefined}
         className="max-h-[92dvh] max-w-[34rem] overflow-y-auto"
       >
-        <DialogTitle>{t('Atur gambar')}</DialogTitle>
+        <DialogTitle>{t('Atur Gambar')}</DialogTitle>
         {failed ? (
           <p className="mt-4 rounded-md border border-dashed border-border p-4 text-sm text-danger">
             {t('Gambar tidak bisa dibaca. Coba berkas lain.')}
@@ -251,7 +251,7 @@ export function ImageCropDialog({
               </button>
               <input
                 type="range"
-                aria-label={t('Ukuran gambar')}
+                aria-label={t('Ukuran Gambar')}
                 min={1}
                 max={MAX_ZOOM}
                 step={0.01}

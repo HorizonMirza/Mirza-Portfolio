@@ -1,7 +1,7 @@
 // Tujuan unggahan dan batasannya. Dipakai di klien (cek awal) dan server (cek ulang).
 export const UPLOAD_TARGETS = {
   'profile-photo': {
-    label: 'Foto profil',
+    label: 'Foto Profil',
     aspect: 1,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -12,7 +12,7 @@ export const UPLOAD_TARGETS = {
   },
   // kartu foto halaman Tentang (2026-11-10); kosong = foto profil
   'about-photo': {
-    label: 'Foto kartu About',
+    label: 'Foto Kartu About',
     aspect: 4 / 5,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -31,7 +31,7 @@ export const UPLOAD_TARGETS = {
     accept: 'application/pdf',
   },
   'project-cover': {
-    label: 'Sampul project',
+    label: 'Sampul Project',
     aspect: 16 / 9,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -41,7 +41,7 @@ export const UPLOAD_TARGETS = {
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
   'project-gallery': {
-    label: 'Galeri project',
+    label: 'Galeri Project',
     aspect: 16 / 9,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -52,7 +52,7 @@ export const UPLOAD_TARGETS = {
   },
   // logo instansi di simpul timeline pengalaman (DESIGN.md bagian 38); PNG transparan paling rapi
   'experience-logo': {
-    label: 'Logo instansi',
+    label: 'Logo Instansi',
     aspect: 1,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -62,7 +62,7 @@ export const UPLOAD_TARGETS = {
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
   'experience-photo': {
-    label: 'Foto kegiatan',
+    label: 'Foto Kegiatan',
     aspect: 4 / 3,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -75,7 +75,7 @@ export const UPLOAD_TARGETS = {
   // 2026-11-12). Hiasan: nama skill selalu tertulis di sebelahnya, jadi tanpa teks alternatif.
   // Persegi dengan latar transparan paling rapi.
   'skill-logo': {
-    label: 'Logo skill',
+    label: 'Logo Skill',
     aspect: 1,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -100,7 +100,7 @@ export const UPLOAD_TARGETS = {
   },
   // foto di kartu ID bertali halaman Kontak (Admin → Contact, 2026-11-15); kosong = potret hero
   'contact-photo': {
-    label: 'Foto kartu ID',
+    label: 'Foto Kartu ID',
     aspect: 176 / 160,
     kind: 'IMAGE',
     resourceType: 'image',
@@ -113,7 +113,7 @@ export const UPLOAD_TARGETS = {
   // posisi kepala, intip visor) dihitung dari foto bawaan, jadi pengganti harus berukuran sebanding
   // dan dibingkai sama. Latar transparan, maka tanpa JPG.
   'hero-portrait': {
-    label: 'Potret hero',
+    label: 'Potret Hero',
     aspect: 1120 / 1100,
     kind: 'IMAGE',
     resourceType: 'image',
