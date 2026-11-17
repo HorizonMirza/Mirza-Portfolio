@@ -868,6 +868,8 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(
     page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
   ).toHaveText(['Account', /^View Site/])
+  // tautan situs mengikuti bahasa admin (audit 2026-11-17, BUG-05)
+  await expect(page.getByRole('link', { name: /^View Site/ })).toHaveAttribute('href', '/en')
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
   // kembalikan ke Indonesia
@@ -884,6 +886,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
   // tanpa keterangan di bawah pilihan (revisi pemilik 2026-11-11)
   await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat Situs/, /^Keluar$/])
+  await expect(panel.getByRole('link', { name: /^Lihat Situs/ })).toHaveAttribute('href', '/id')
   // tanpa wajah kedua: foto dan nama admin hanya di puncak sidebar (revisi 2026-11-11)
   await expect(panel.locator('img')).toHaveCount(0)
   await expect(panel.getByText('Super Admin')).toHaveCount(0)

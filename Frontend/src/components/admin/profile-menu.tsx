@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 
 import { Spinner } from '@/components/ui/spinner'
-import { useAdminT } from '@/components/admin/admin-lang'
+import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { fadeLabel } from '@/components/admin/sidebar-state'
 import { authClient } from '@/lib/auth-client'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
@@ -25,7 +25,8 @@ const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 // 2026-11-11). Urutan tetap di kedua bahasa.
 const MENU_ITEMS = [
   { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
-  { label: 'Lihat Situs', href: '/id', icon: ExternalLink, external: true },
+  // tautan situs mengikuti bahasa admin (audit 2026-11-17, BUG-05)
+  { label: 'Lihat Situs', href: '/', icon: ExternalLink, external: true },
 ] as const
 
 // Identitas admin di puncak sidebar (DESIGN.md bagian 128): foto, nama, dan Super Admin sekaligus
@@ -80,6 +81,7 @@ export function SidebarIdentity({
 export function ProfileMenu() {
   const router = useRouter()
   const t = useAdminT()
+  const { lang } = useAdminLang()
   const [open, setOpen] = useState(false)
   // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan
   // (audit 2026-11-02, PERF-06). Ref ikut dicek karena state baru berlaku di render berikutnya.
@@ -139,7 +141,7 @@ export function ProfileMenu() {
             external ? (
               <a
                 key={href}
-                href={href}
+                href={`/${lang}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={itemClass}
