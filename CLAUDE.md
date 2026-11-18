@@ -8,7 +8,7 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** live di `mmirza.site` sejak 2026-10-01. Milestone 1–4 selesai, M5 selesai di sisi kode; tugas akun pemilik M5 (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda atas keputusan pemilik (2026-10-20). Pekerjaan sekarang berupa revisi dari Mirza (`Documentation/TODO.md`, log di `Documentation/DESIGN.md`).
+**Status:** live di `mmirza.site` sejak 2026-10-01. Milestone 1–4 selesai, M5 selesai di sisi kode; tugas akun pemilik M5 (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda atas keputusan pemilik (2026-10-20). Pekerjaan sekarang berupa revisi dari Mirza (`Documentation/TODO.md`, log di `Documentation/DESIGN.md`). Audit menyeluruh 2026-11-17 sudah diperbaiki dan kode tak terpakai dibersihkan (DESIGN.md bagian 175–186); sisa yang menunggu akun pemilik ada di `TODO.md` bagian "Menunggu dari Pemilik".
 
 **Next.js 16:** API berbeda dari versi lama. Baca `Frontend/AGENTS.md` dan panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 
@@ -24,14 +24,14 @@ Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) +
 | `Documentation/TODO.md` | Milestone dan tugas | Untuk menentukan pekerjaan berikutnya |
 | `Documentation/00-discovery.md` | Jawaban asli pemilik dan keputusan terbuka | Bila ada keraguan tentang maksud pemilik |
 | `Documentation/CONTENT.md` | Konten dari CV (pengalaman, pendidikan, skill, angka yang boleh dipakai) dan yang masih ditanyakan | Sebelum menulis atau mengisi teks/seed apa pun |
-| `Documentation/REFERENCES.md` | Analisis referensi desain, prinsip yang diambil dan yang dilarang | Sebelum keputusan desain atau animasi |
+| `Documentation/REFERENCES.md` | Arsip analisis referensi desain, prinsip yang diambil dan yang dilarang | Sebelum keputusan desain atau animasi |
 | `.agents/skill/SKILL.md` | Resep untuk tugas berulang (entitas baru, halaman baru). Tidak dimuat otomatis oleh Claude Code (bukan di `.claude/skills/`), jadi **baca manual** | Saat menambah entitas atau halaman |
 
 Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md` > `PRD.md` > dokumen lain. Jika Anda mengubah keputusan, perbarui dokumen terkait di commit yang sama.
 
 ## Stack Singkat
 
-Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas 2D/WebGL buatan sendiri (tanpa library animasi) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Resend + React Email · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
+Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas 2D/WebGL buatan sendiri (tanpa library animasi) · grafik admin SVG buatan sendiri (tanpa library grafik) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Resend + React Email · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
 
 ## Perintah
 
@@ -47,11 +47,13 @@ pnpm build          # build production
 pnpm format:check   # Prettier
 pnpm audit --audit-level=moderate  # sama dengan gerbang CI (advisory tanpa perbaikan di alat dev diabaikan di pnpm-workspace.yaml)
 pnpm db:migrate     # prisma migrate dev
+pnpm db:deploy      # prisma migrate deploy (CI; production lewat scripts/vercel-build.sh)
 pnpm db:seed        # data awal dari CV (idempoten)
 pnpm logos:build    # logo WebP globe skill dari scripts/skill-logos/*.svg
+pnpm admin:reset-password  # ganti password admin dari terminal (ADMIN_NEW_PASSWORD=...)
 ```
 
-Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
+Sebelum menyerahkan pekerjaan jalankan: `lint`, `format:check`, `typecheck`, `test`, `build`, dan `test:e2e` (lihat bagian Proses).
 
 ## Aturan Wajib
 
@@ -62,7 +64,8 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 - Jangan mencatat isi pesan, email, atau IP mentah di log.
 
 **Konten dan bahasa**
-- Semua teks publik ada dalam **ID dan EN**: teks UI di `Frontend/messages/*.json`, konten dinamis lewat kolom `*_id` dan `*_en`.
+- Semua teks publik ada dalam **ID dan EN**: teks UI di `Frontend/messages/*.json`, konten dinamis lewat kolom `*_id` dan `*_en`. Teks publik yang boleh diubah admin didaftarkan di `features/site-text/catalog.ts`.
+- Teks panel admin ditulis bahasa Indonesia lewat `useAdminT()`/`adminT()`, terjemahan Inggrisnya di `src/lib/admin-i18n-en.ts` (tes menolak teks admin tanpa terjemahan).
 - Komentar kode dan pesan commit **bahasa Indonesia**. Nama variabel, fungsi, dan berkas **bahasa Inggris**.
 - Commit dari Claude diawali `[CLAUDIA]` lalu Conventional Commits: `[CLAUDIA] feat(projects): tambah halaman detail` (pola repo GAAS). Permintaan pemilik: **jangan** menambah baris `Co-Authored-By`/`Claude-Session` di pesan commit.
 - Ikuti `DESIGN.md` bagian 1 dan 9: tanpa klise dan "AI slop", salinan spesifik dan personal.
@@ -82,7 +85,8 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `typecheck`, `test`, `build`.
 - Tidak ada Dependabot update otomatis. Update dependency dikerjakan manual sebulan sekali atau saat ada alert keamanan (`Documentation/WORKFLOW.md` bagian 10a).
 - Jangan mengambil keputusan yang tercantum "terbuka" di `PRD.md` bagian 11 tanpa konfirmasi. Beri tanda asumsi bila terpaksa memakai default.
 - **Semua pekerjaan langsung di `main`, tidak ada branch lain dan tidak ada PR** (keputusan pemilik). Push ke `main` langsung live di Vercel, jadi jalankan `lint`, `format:check`, `typecheck`, `test`, `build`, dan `test:e2e` sampai hijau sebelum push. Tanpa force push. Satu tujuan per commit. Kriteria selesai: `Documentation/WORKFLOW.md` bagian 4.
-- Jangan menjalankan migrasi dari build preview ke database production. Hosting: `Frontend/vercel.json` (region `sin1`).
+- Jangan menjalankan migrasi dari build preview ke database production. Push ke `main` menjalankan `prisma migrate deploy` di production (`Frontend/scripts/vercel-build.sh`), jadi migrasi yang menghapus tabel, kolom, atau data hanya dibuat atas persetujuan eksplisit pemilik. Hosting: `Frontend/vercel.json` (region `sin1`).
+- Kode, berkas, kunci terjemahan, dan token CSS yang tidak dipakai lagi dihapus di commit yang sama dengan perubahan yang membuatnya mati. Dependency yang tidak terpakai didaftarkan dulu dan minta persetujuan.
 - Laporkan hasil dengan jujur: tes yang gagal, langkah yang dilewati, dan hal yang belum bisa diverifikasi.
 
 ## Struktur
@@ -105,10 +109,11 @@ Documentation/   dokumen perencanaan
 
 - Sandbox bawaan memakai Node 22, sedangkan proyek butuh Node 24 (`Frontend/.nvmrc`). Unduh Node 24 dari nodejs.org (cek SHASUMS256) ke scratchpad lalu taruh di awal `PATH`.
 - Proyek memakai PostgreSQL 17 (CI dan production). Sandbox hanya punya Postgres 16 di `/usr/lib/postgresql/16/bin` (jalankan sebagai user non-root, data di luar repo), cukup untuk uji lokal, tetapi hasil akhir dipastikan oleh CI.
-- Postgres lokal bisa berhenti sendiri saat sesi lama menganggur (galat `Can't reach database server`): jalankan lagi `pg_ctl ... start` sebagai user yang sama. Jangan memakai `prisma migrate reset` untuk merapikan database uji (Prisma menolaknya tanpa persetujuan eksplisit pemilik); pulihkan dengan SQL atau `prisma migrate deploy`.
+- Postgres lokal bisa berhenti sendiri saat sesi lama menganggur (galat `Can't reach database server`): jalankan lagi `pg_ctl ... start` sebagai user yang sama, dengan port dan folder socket yang sama (`-o '-p <port> -k <folder>'`). Bila menolak naik karena `postmaster.pid` basi, hapus berkas itu dan socket lamanya dulu. Jangan memakai `prisma migrate reset` untuk merapikan database uji (Prisma menolaknya tanpa persetujuan eksplisit pemilik); pulihkan dengan SQL atau `prisma migrate deploy`.
 - Kegagalan E2E yang hanya muncul di CI (mesin sibuk) direproduksi dengan `--repeat-each 20 --workers 5 --retries 0` pada proyek browser yang gagal; WebKit lokal butuh `PLAYWRIGHT_BROWSERS_PATH` ke browser yang diunduh Playwright. Firefox bisa gagal dibuka di sandbox, jadi hasilnya dipastikan oleh CI.
-- E2E: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome pnpm test:e2e` (nomor versi folder bisa berubah antar-sandbox: cek dengan `ls -d /opt/pw-browsers/chromium-*/chrome-linux*/chrome`) (jalankan `pnpm build` dulu). Tes admin butuh `ADMIN_EMAIL`/`ADMIN_PASSWORD`: muat `Frontend/.env.local` dengan `set -a && . ./.env.local && set +a` (jangan dicetak) dan tambahkan `BETTER_AUTH_URL=http://localhost:3100`.
+- E2E: `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome pnpm test:e2e` (nomor versi folder bisa berubah antar-sandbox: cek dengan `ls -d /opt/pw-browsers/chromium-*/chrome-linux*/chrome`) (jalankan `pnpm build` dulu). Bila setup login E2E gagal (tetap di `/admin/login`) setelah banyak run, itu rate limit login (5 percobaan per 15 menit per IP): kosongkan tabel `RateLimit` di database uji **lokal** saja (`DELETE FROM "RateLimit"`). Tes admin butuh `ADMIN_EMAIL`/`ADMIN_PASSWORD`: muat `Frontend/.env.local` dengan `set -a && . ./.env.local && set +a` (jangan dicetak) dan tambahkan `BETTER_AUTH_URL=http://localhost:3100`.
 - Hentikan server `next start` lama sebelum build ulang: server lama dengan build baru menyajikan CSS/JS yang tidak cocok.
+- CI membatalkan run lama saat ada push baru ke `main` (`concurrency`); yang menentukan hijau atau merah adalah run untuk commit terakhir.
 - GPU sandbox disimulasikan CPU (SwiftShader): angka bingkai kanvas/WebGL jauh lebih berat daripada di HP sungguhan. Bandingkan sebelum/sesudah di lingkungan yang sama, jangan sebagai angka mutlak.
 - Jangan `pkill -f` dengan pola yang juga muncul di perintah shell itu sendiri.
 
