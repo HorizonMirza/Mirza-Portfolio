@@ -12,6 +12,7 @@ import { getGithubContributions, githubLogin } from '@/features/profile/github-c
 import { getPublicProfile } from '@/features/profile/public'
 import { BRAND_ICONS } from '@/features/skills/brand-icons'
 import type { AppLocale } from '@/i18n/routing'
+import { packContributions } from '@/lib/contributions-pack'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import { loc } from '@/lib/localized'
 import { cn } from '@/lib/utils'
@@ -100,6 +101,8 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const drive = isDriveHost(profile?.cvHost ?? null)
   const login = githubLogin(profile?.socials.github)
   const contributions = login ? await getGithubContributions(login) : null
+  // ke komponen klien hanya bentuk ringkas (PERF-03); null bila data tidak berurutan: tanpa grafik
+  const packedContributions = contributions ? packContributions(contributions.weeks) : null
   const avatar = profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR
   const roles = profile
     ? loc(profile, 'aboutRoles', locale) || loc(profile, 'currentRole', locale)
@@ -155,9 +158,9 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
                 </span>
               </div>
             </div>
-            {contributions ? (
+            {packedContributions ? (
               <ContributionGraph
-                weeks={contributions.weeks}
+                packed={packedContributions}
                 locale={locale}
                 countLabel={{ one: t('contributionOne'), other: t('contributionOther') }}
               />

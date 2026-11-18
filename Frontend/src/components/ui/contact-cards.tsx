@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react'
 
+import { type PackedContributions, unpackContributions } from '@/lib/contributions-pack'
 import { cn } from '@/lib/utils'
 
 // Kartu kontak footer dengan kartu detail saat disorot (permintaan pemilik 2026-10-08, diadaptasi
@@ -176,11 +177,12 @@ export type ContributionDay = { date: string; count: number; level: 0 | 1 | 2 | 
 // Satu tahun aktivitas dalam grid 7 baris (warna --gh-* sama dengan kalender di beranda), dengan
 // keterangan yang tetap di dalam kartu.
 export function ContributionGraph({
-  weeks,
+  packed,
   locale,
   countLabel,
 }: {
-  weeks: ContributionDay[][]
+  /** kalender dalam bentuk ringkas (lib/contributions-pack.ts), supaya payload halaman kecil */
+  packed: PackedContributions
   locale: string
   /** "#" diganti jumlah kontribusi pada hari itu, mis. { one: '# contribution', other: '# contributions' } */
   countLabel: { one: string; other: string }
@@ -188,6 +190,8 @@ export function ContributionGraph({
   const [hovered, setHovered] = useState<{ day: ContributionDay; left: number; top: number }>()
   const containerRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
+
+  const weeks = useMemo(() => unpackContributions(packed), [packed])
 
   const formatter = useMemo(
     () => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', timeZone: 'UTC' }),
