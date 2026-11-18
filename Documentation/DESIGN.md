@@ -2030,3 +2030,12 @@ Empat temuan PERF diukur di build production lokal, lalu dikerjakan (atas perset
 - **PERF-03 Kalender GitHub:** footer mengirim kalender kontribusi ke komponen klien dalam bentuk ringkas (`lib/contributions-pack.ts`, tanggal pertama + satu angka per hari), sekitar 1 KB dibanding 12 KB objek per hari. Data yang tidak berurutan berarti grafik tidak ditampilkan.
 - **PERF-04 Grafik Dashboard:** `components/admin/visits-chart.tsx` digambar dengan SVG buatan sendiri (kurva monoton, grid, hover, tooltip); geometri di `lib/chart-geometry.ts` dengan tes. `recharts` dan dependensi turunannya dihapus dari `package.json`. JS Dashboard turun dari 345 KB menjadi 239 KB gzip. Tampilan mengikuti Desain 01 pilihan pemilik; tinggi grafik diukur dari kotaknya.
 
+## 180. Perbaikan galat dan integritas data dari audit 17-11 (2026-11-18)
+
+ERR-01 dan DB-02, 03, 04 dikerjakan atas persetujuan "eksekusi semuanya". Yang **tidak** dikerjakan: DB-01 dan ERR-02 (tugas akun pemilik: secret backup, `SENTRY_DSN`, UptimeRobot), serta DB-05, 06, 07 (perlu migrasi dan keputusan pemilik).
+
+- **ERR-01 Cron harian:** `app/api/cron/daily/route.ts` memakai `lib/run-steps.ts`; delapan langkah berdiri sendiri. Langkah yang gagal dicatat (`console.error` dan `reportServerError`), langkah lain tetap jalan, dan respons 500 memuat `error.steps` dengan nama langkah yang gagal.
+- **DB-02 Retensi:** cron kini juga menghapus `AuditLog` > 365 hari (**asumsi:** 365 hari; ubah konstanta `AUDIT_LOG_DAYS` bila Mirza ingin lain), `Session` dan `Verification` yang kedaluwarsa.
+- **DB-03 Simpan profil:** bila penyimpanan profil ditolak, pendidikan yang berubah tidak ikut disimpan dan toast menjelaskannya. Kebalikannya (profil tersimpan, pendidikan gagal) tetap memunculkan dua toast yang menjelaskan keadaan.
+- **DB-04 Ganti email:** galat unik pada `User.email` (balapan) ditandai di isian Email, bukan pesan umum.
+

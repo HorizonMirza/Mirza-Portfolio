@@ -333,4 +333,5 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-17 | Perbaikan salah tulis audit: label Logo Chip Kartu, Tandai Belum Dibaca, label galat EN Pengalaman, ringkasan galat Profil tanpa nama kolom, Title Case judul tab beranda dan tombol galat global, tujuh komentar usang (DESIGN.md bagian 177) |
 | 2026-11-18 | Perbaikan keamanan audit: Next.js 16.4.5, audit CI mulai moderate dengan pengabaian picomatch, action GitHub dipin SHA, docker login lewat env, peringatan DATABASE_URL build Docker (DESIGN.md bagian 178) |
 | 2026-11-18 | Perbaikan kinerja audit: path ikon kecil untuk klien admin, kotak commit berhenti di luar layar, kalender GitHub footer ringkas, grafik Dashboard SVG sendiri dan `recharts` dihapus (DESIGN.md bagian 179) |
+| 2026-11-18 | Perbaikan audit ERR-01 dan DB-02, 03, 04: langkah cron berdiri sendiri, retensi log audit 365 hari dan sesi/verifikasi kedaluwarsa, simpan profil berhenti bila ditolak, galat bentrok email di isian (DESIGN.md bagian 180) |
 
