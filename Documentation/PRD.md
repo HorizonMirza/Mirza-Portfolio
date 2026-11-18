@@ -1,6 +1,6 @@
 # PRD — Website Portofolio Muhammad Mirza
 
-Status: **draf v1** · Sumber: `Documentation/00-discovery.md` (jawaban Fase 0–8)
+Status: **v1 live di mmirza.site, diselaraskan dengan kode 2026-11-18** · Sumber: `Documentation/00-discovery.md` (jawaban Fase 0–8)
 Tanda **[ASUMSI]** = keputusan sementara yang saya ambil karena jawaban belum ada. Semuanya terkumpul di bagian 11 dan bisa diubah.
 
 ## 1. Ringkasan Produk
@@ -48,7 +48,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F2 | **About**: bio personal, kartu foto, pendidikan (SMA dan kuliah, dari entri Pengalaman bertipe Pendidikan). Tombol CV dihapus 2026-10-07 (CV ada di footer dan kartu pembuka). Kontak tidak ditampilkan di sini sejak 2026-10-05 (keputusan pemilik) | P0 |
 | F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan logo instansi dan foto kegiatan (filter dihapus 2026-10-03, keputusan pemilik). Pendidikan tidak ditampilkan di sini sejak 2026-10-03 (keputusan pemilik); data pendidikan tetap dipakai halaman About | P0 |
 | F4 | **Skills**: dikelompokkan per kategori dari admin, tanpa progress bar persen. Sejak 2026-10-01 tidak ada halaman sendiri (`/skills` dialihkan ke `/#skills`); tampil di beranda sebagai globe logo yang bisa diputar dan difilter per kategori (DESIGN.md bagian 73, 93) | P0 |
-| F5 | **Projects**: daftar + halaman detail (galeri, tech stack, demo, repo, tahun, studi kasus) + metadata GitHub otomatis | P0 |
+| F5 | **Projects**: daftar + halaman detail (galeri, tech stack, demo, repo, tahun, studi kasus) + tautan demo dan repo (impor dan metadata repo GitHub otomatis dihapus 2026-11-16) | P0 |
 | F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
 | F7 | **Resume CV** (sebelumnya "Unduh CV"): satu klik, file terbaru dari admin, dihitung jumlah unduhannya. Nama tombol seragam di kartu pembuka dan footer: "Resume CV" di ID dan EN (DESIGN.md bagian 56). Tombol di hero dihapus 2026-10-18 | P0 |
 | F8 | **Dua bahasa** ID/EN dengan toggle, URL `/id` dan `/en` | P0 |
@@ -70,14 +70,14 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 |---|---|---|
 | A1 | Login/logout, sesi aman, ganti password | P0 |
 | A2 | Dashboard: pesan baru, statistik pengunjung, unduhan CV, jumlah project/pengalaman/skill (tiap angka menuju halamannya); kartu pelanggan newsletter dihapus 2026-11-06 | P0 |
-| A3 | CRUD Project (dua bahasa, galeri, urutan, terbitkan/draf, impor dari GitHub) | P0 |
+| A3 | CRUD Project (dua bahasa, galeri, urutan; diubah langsung di pratinjau). ~~Terbitkan/draf dan impor dari GitHub~~ dihapus 2026-11-16 | P0 |
 | A4 | CRUD Skill dan kategori | P0 |
 | A5 | CRUD Pengalaman dan Pendidikan | P0 |
 | A6 | Edit Profil dan teks hero, link sosial, upload foto dan CV | P0 |
 | A7 | Kotak masuk pesan (baru/dibaca/arsip) | P0 |
 | A8 | ~~Newsletter: daftar pelanggan dan kirim broadcast~~ **Dihapus 2026-11-06** (F13) | — |
 | A9 | Log audit (siapa mengubah apa, kapan) | P0 · halaman panel **dihapus 2026-11-11** atas keputusan pemilik; pencatatan `AuditLog` di database tetap berjalan |
-| A10 | Pratinjau perubahan sebelum diterbitkan (draf) | P1 |
+| A10 | ~~Pratinjau perubahan sebelum diterbitkan (draf)~~ Digantikan edit langsung di pratinjau situs (2026-11-12, DESIGN.md bagian 133–140); tidak ada status draf di panel | — |
 
 ## 6. User Stories dan Kriteria Penerimaan
 
@@ -86,7 +86,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | U1 | Sebagai **recruiter**, saya ingin mengunduh CV dari halaman utama, agar bisa menilai kandidat dengan cepat. | Tombol "Resume CV" terlihat tanpa scroll di HP 360 px. File PDF terbuka/terunduh dalam ≤ 2 detik. |
 | U2 | Sebagai **recruiter**, saya ingin melihat pengalaman dan pendidikan berurutan waktu, agar tahu latar belakangnya. | Timeline terurut dari terbaru. Tiap entri memuat instansi, peran, periode, uraian. |
 | U3 | Sebagai **klien**, saya ingin melihat project beserta hasilnya, agar yakin pada kemampuannya. | Halaman detail memuat deskripsi, tech stack, galeri, dan tautan demo/repo bila ada. |
-| U4 | Sebagai **developer**, saya ingin membuka repo project, agar bisa menilai kode. | Kartu project menampilkan bahasa, bintang, dan waktu update terakhir dari GitHub. |
+| U4 | Sebagai **developer**, saya ingin membuka repo project, agar bisa menilai kode. | Halaman detail memuat tautan repo bila ada. Statistik GitHub (bahasa, bintang) tidak ditampilkan sejak impor GitHub dihapus. |
 | U5 | Sebagai **pengunjung**, saya ingin mengganti bahasa dan tema, agar nyaman membaca. | Pilihan tersimpan. Semua teks (UI dan konten) berganti tanpa kehilangan halaman. |
 | U6 | Sebagai **pengunjung**, saya ingin mengirim pesan, agar bisa menghubungi Mirza. | Form memvalidasi input, menampilkan status berhasil/gagal yang jelas, dan pesan masuk di admin. |
 | U7 | ~~Sebagai **pengunjung**, saya ingin berlangganan newsletter dan berhenti kapan saja. | Email konfirmasi terkirim. Tautan berhenti berfungsi tanpa login. **2026-10-08:** form berlangganan dihapus dari beranda (F13); alur konfirmasi dan berhenti tetap berfungsi, tetapi saat ini tidak ada tempat mendaftar.~~ **Dihapus 2026-11-06** (F13). |
@@ -129,7 +129,7 @@ Lihat `Documentation/TODO.md`. Ringkas: M1 Setup → M2 Auth + Admin → M3 Hala
 | Form kontak tanpa proteksi | Spam, kuota email habis | Honeypot + rate limit (lihat 11) |
 | Data gratis (Neon, Vercel Hobby) berbatas | Pembatasan atau kehilangan data | Backup terjadwal terenkripsi, rollback Vercel |
 | Konten belum siap (CV, foto, project) | Halaman kosong | Gunakan data seed sementara, ganti saat aset tiba |
-| Widget live chat pihak ketiga | Performa dan privasi | Dimuat hanya saat tombol chat diklik |
+| ~~Widget live chat pihak ketiga~~ (tidak dipakai, bagian 11 no. 3) | Performa dan privasi | Diganti kartu WhatsApp di footer |
 
 ## 11. Keputusan Sementara **[ASUMSI]** yang Menunggu Konfirmasi
 
@@ -143,9 +143,9 @@ Nomor merujuk ke `Documentation/00-discovery.md` bagian 6.
 | 4 | ~~Newsletter: double opt-in, kirim broadcast dari admin lewat Resend.~~ **Selesai 2026-11-06: newsletter dihapus seluruhnya** (keputusan pemilik), broadcast tidak dibuat | — |
 | 5 | ~~Form kontak: honeypot + rate limit~~ **Dikonfirmasi 2026-09-30:** honeypot + rate limit 5 pesan per jam per IP (IP di-hash) | Tanpa proteksi, sesuai jawaban awal |
 | 6 | Secret tidak pernah di-commit, hanya `Frontend/.env.example` | — |
-| 7 | Alur PR ke `main` (Vercel preview otomatis) | Push langsung ke `main` |
+| 7 | ~~Alur PR ke `main` (Vercel preview otomatis)~~ **Diputuskan 2026-09-30:** push langsung ke `main` setelah pemeriksaan lokal lengkap (WORKFLOW.md) | Alur PR |
 | 8 | Resend untuk email, Cloudinary untuk gambar dan CV | Cloudflare R2 |
-| 9 | GitHub API untuk metadata kartu project dan tombol "Impor dari GitHub" di admin | Daftar repo otomatis penuh |
+| 9 | ~~GitHub API untuk metadata kartu project dan tombol "Impor dari GitHub" di admin~~ **Dihapus 2026-11-16.** GitHub kini hanya untuk kalender kontribusi di beranda dan footer (GraphQL, butuh `GITHUB_TOKEN`) | Daftar repo otomatis penuh |
 | 10 | ~~API publik read-only~~ Dibuat di M3 (2026-09-30), **dihapus 2026-11-06** karena tidak dipakai (keputusan pemilik) | Tanpa API publik |
 | 11 | Skill dikelompokkan tanpa level angka | Tampilkan level |
 | 12 | Tampilkan kota dan tombol WhatsApp. Alamat lengkap tidak ditampilkan | Tampilkan alamat penuh |
