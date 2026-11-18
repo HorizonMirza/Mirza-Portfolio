@@ -25,10 +25,6 @@
   --success: #0b7a3e;
   /* Azure versi gelap untuk latar putih: 5,8:1 di putih, 5,3:1 di --surface */
   --note: #1d5fd0;
-  /* --accent dekoratif saja (canvas hero), sama dengan --note */
-  --accent: #1d5fd0;
-  /* warna seri grafik */
-  --chart-1: #1d5fd0;
   /* kalender kontribusi GitHub (level 1-4, biru situs pilihan pemilik 2026-10-16, demo W1;
      level 0 memakai --surface-2) */
   --gh-1: #b9d2f8;
@@ -53,8 +49,6 @@
   --success: #5fd394;
   /* Azure terang untuk latar hitam: 7,5:1 di hitam, 7:1 di --surface */
   --note: #4da3ff;
-  --accent: #4da3ff;
-  --chart-1: #4da3ff;
   --gh-1: #10294a;
   --gh-2: #184a8a;
   --gh-3: #2f78d6;
@@ -79,8 +73,6 @@
     --success: #5fd394;
     /* Azure terang untuk latar hitam: 7,5:1 di hitam, 7:1 di --surface */
     --note: #4da3ff;
-    --accent: #4da3ff;
-    --chart-1: #4da3ff;
     --gh-1: #10294a;
     --gh-2: #184a8a;
     --gh-3: #2f78d6;
@@ -102,15 +94,7 @@
   --color-border-strong: var(--border-strong);
   --color-danger: var(--danger);
   --color-success: var(--success);
-  --color-accent: var(--accent);
   --color-note: var(--note);
-  --color-chart-1: var(--chart-1);
-
-  /* alias untuk komponen shadcn/ui */
-  --color-background: var(--bg);
-  --color-foreground: var(--text);
-  --color-ring: var(--note);
-  --color-input: var(--border-strong);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-oswald), 'Arial Narrow', sans-serif;
@@ -118,7 +102,6 @@
 }
 
 @theme {
-  --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
 
@@ -3573,8 +3556,6 @@ html[data-intro='pending'] .intro {
   --surface: rgb(var(--g-tint) / calc(0.16 + var(--g-op) * 0.6));
   --surface-2: rgb(0 0 0 / 0.05);
   --border: rgb(0 0 0 / 0.09);
-  /* grafik ikut hitam-putih (tema situs), bukan biru */
-  --chart-1: var(--text);
   position: relative;
   isolation: isolate;
 }

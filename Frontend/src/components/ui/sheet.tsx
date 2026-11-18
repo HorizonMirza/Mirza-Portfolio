@@ -10,14 +10,14 @@ import { cn } from '@/lib/utils'
 // animasi CSS halus (.sheet-panel/.sheet-overlay di globals.css, revisi pemilik 2026-11-17); Radix
 // menunggu animasi keluar selesai sebelum melepas panel.
 export const Sheet = DialogPrimitive.Root
-export const SheetTrigger = DialogPrimitive.Trigger
 export const SheetTitle = DialogPrimitive.Title
 
 export function SheetContent({
   className,
   children,
+  closeLabel,
   ...props
-}: ComponentProps<typeof DialogPrimitive.Content>) {
+}: ComponentProps<typeof DialogPrimitive.Content> & { closeLabel: string }) {
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="sheet-overlay fixed inset-0 z-50 bg-black/50" />
@@ -31,7 +31,7 @@ export function SheetContent({
         {children}
         <DialogPrimitive.Close className="absolute top-3 right-3 inline-flex size-10 items-center justify-center rounded-full text-muted hover:bg-surface-2 hover:text-text">
           <X className="size-4" aria-hidden="true" />
-          <span className="sr-only">Tutup menu</span>
+          <span className="sr-only">{closeLabel}</span>
         </DialogPrimitive.Close>
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>

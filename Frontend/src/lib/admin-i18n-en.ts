@@ -3,14 +3,11 @@
 // berubah-ubah dari server (mis. "Judul wajib diisi") ditangani pola di admin-i18n.ts.
 export const EN: Record<string, string> = {
   // menu
-  Utama: 'Main',
   'Halaman Situs': 'Site Pages',
   'Kotak Masuk': 'Inbox',
   'Bagian Awal': 'Intro',
   Privasi: 'Privacy',
-  'Halaman Lain': 'Other Pages',
   Pesan: 'Messages',
-  'Log Audit': 'Audit Log',
   Pengaturan: 'Settings',
   Akun: 'Account',
   'Menu Admin': 'Admin Menu',
@@ -112,7 +109,6 @@ export const EN: Record<string, string> = {
   Pengalaman: 'Experience',
   Skill: 'Skills',
   Ringkasan: 'Summary',
-  'Lihat sebagai tabel': 'Show as table',
   Tanggal: 'Date',
   'Pesan Terbaru': 'Latest Messages',
   'Belum ada pesan. Pesan dari form di halaman Kontak akan tampil di sini.':
@@ -353,7 +349,6 @@ export const EN: Record<string, string> = {
   'Kontak dan Resume CV': 'Contacts and Resume CV',
   'Link CV (Opsional)': 'CV Link (Optional)',
   '{name} (Opsional)': '{name} (Optional)',
-  'Situs Lain': 'Other Site',
   'Link CV': 'CV Link',
   'Email terlalu panjang': 'Email is too long',
   'Format email tidak valid': 'Invalid email format',
@@ -516,7 +511,6 @@ export const EN: Record<string, string> = {
   'Kartu Informasi Penting saat situs dibuka. Isinya diubah di Home, tab Kartu pembuka.':
     'The Important Information card when the site opens. Edit its text in Home, Introduction card tab.',
   'Kartu Pembuka': 'Introduction Card',
-  'Foto Beranda': 'Photos',
   'Peran Beranda': 'Roles',
   'Skill Teknis': 'Technical Skills',
   'Kartu Pembuka Muncul': 'Introduction Card Shows',

@@ -61,6 +61,7 @@ export function AdminTopBar() {
       {/* bisa digulir: di HP pendek menu terbawah tetap terjangkau */}
       <SheetContent
         aria-describedby={undefined}
+        closeLabel={t('Tutup Menu')}
         className="admin-sheet admin-glass-panel gap-6 overflow-y-auto overscroll-contain rounded-r-[23px] border-0 pt-16"
       >
         <SheetTitle className="sr-only">{t('Menu Admin')}</SheetTitle>

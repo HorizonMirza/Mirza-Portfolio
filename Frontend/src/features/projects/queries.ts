@@ -30,8 +30,6 @@ export async function listProjectsAdmin() {
   })
 }
 
-export type ProjectRow = Awaited<ReturnType<typeof listProjectsAdmin>>[number]
-
 // Nilai awal form edit: null diubah menjadi string kosong agar cocok dengan input form.
 export async function getProjectForEdit(id: string): Promise<ProjectInput | null> {
   const p = await getDb().project.findUnique({
