@@ -375,8 +375,6 @@ model CvDownload {
 // Pengaturan situs (satu baris, id = 1). Diubah dari /admin/settings.
 model SiteSetting {
   id                 Int      @id @default(1)
-  // tidak dipakai lagi sejak 2026-11-16 (volume utama dihapus); kolom dibiarkan agar tanpa migrasi yang menghapus data
-  soundVolume        Int      @default(80)
   // volume tiap suara situs 0–100, mis. { "nav": 100, "theme": 60 }; suara yang
   // tidak ada di sini memakai volume penuh (features/settings/options.ts, SOUND_KINDS)
   soundMix           Json     @default("{}")
@@ -406,16 +404,9 @@ model SiteSetting {
   // form kontak menerima pesan dan batas pesan per jam per IP
   contactOpen        Boolean  @default(true)
   contactPerHour     Int      @default(5)
-  // tidak dipakai lagi sejak 2026-11-16 (saklar email pesan baru dihapus; email selalu terkirim bila Resend diatur); kolom dibiarkan agar tanpa migrasi yang menghapus data
-  emailOnMessage     Boolean  @default(true)
-  // tidak dipakai lagi sejak 2026-11-16 (saklar dihapus; email login baru selalu dikirim bila Resend diatur); kolom dibiarkan tanpa migrasi yang menghapus data
-  loginNotify        Boolean  @default(true)
   // statistik kunjungan dan lama kunjungan mentah disimpan (hari)
   trackVisits        Boolean  @default(true)
   visitRetentionDays Int      @default(90)
-  // mesin pencari boleh mengindeks situs (robots.txt dan meta robots)
-  // tidak dipakai lagi sejak 2026-11-16 (saklar dihapus; situs selalu boleh diindeks kecuali mode perawatan); kolom dibiarkan tanpa migrasi yang menghapus data
-  allowIndexing      Boolean  @default(true)
   // pengunjung melihat halaman "Sedang diperbarui"; panel admin tetap bisa dipakai
   maintenanceMode    Boolean  @default(false)
   updatedAt          DateTime @updatedAt @db.Timestamptz(3)
