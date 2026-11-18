@@ -2094,3 +2094,11 @@ Dihapus atau dibetulkan:
 
 Sengaja dipertahankan: log keputusan di `DESIGN.md`, `TODO.md`, riwayat di `CONTENT.md`, arsip `REFERENCES.md`, dan jawaban asli pemilik di `00-discovery.md` (catatan sejarah, bukan isi yang dipakai kode); migrasi database; lisensi font OFL di `src/fonts/` (wajib menyertai font); `components.json` (konfigurasi CLI shadcn); `Frontend/AGENTS.md` (ditulis ulang otomatis oleh `next dev`).
 
+## 187. CLAUDE.md, SKILL.md, dan catatan rilis diperbarui (2026-11-18)
+
+Permintaan pemilik: perbarui `CLAUDE.md`, `.github`, dan `.agents/skill` sesuai keadaan sekarang.
+
+- **CLAUDE.md:** status menyebut audit 2026-11-17 sudah diperbaiki; stack menyebut grafik admin SVG tanpa library; perintah `db:deploy` dan `admin:reset-password` ditambahkan; aturan baru untuk teks yang bisa diubah admin (`site-text/catalog.ts`), teks panel admin (`useAdminT`/`adminT` + `admin-i18n-en.ts`), migrasi yang menghapus data (hanya dengan persetujuan pemilik, karena push ke `main` menjalankannya di production), dan menghapus kode mati di commit yang sama. Catatan sesi cloud ditambah: menyalakan ulang Postgres dengan `postmaster.pid` basi, rate limit login yang menggagalkan setup E2E, dan run CI lama yang dibatalkan `concurrency`.
+- **SKILL.md:** Resep A tanpa status draf, dengan aturan teks admin dan katalog teks situs; dokumen dicatat di `DESIGN.md` dan log `TODO.md`; Resep B menyebut `nav-items.ts` dan modul Navbar; Resep E ikut menjalankan `test:e2e`; Resep F baru untuk menghapus fitur atau kode tak terpakai (commit dan push pindah ke Resep G); larangan membuat migrasi penghapus data tanpa persetujuan.
+- **`.github/release-notes/v1.0.0.md`:** bagian Super Admin mengikuti panel sekarang (edit langsung di pratinjau, unggah dengan pemotong gambar, dasbor dengan grafik pengunjung, pengaturan, riwayat login, cron harian). Workflow CI, release, dan backup sudah sesuai dan tidak diubah.
+
