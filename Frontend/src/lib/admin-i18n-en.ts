@@ -323,7 +323,7 @@ export const EN: Record<string, string> = {
   'Skill dihapus.': 'Skill deleted.',
   'Keluarkan dari Arsip': 'Move Out of Archive',
   Arsipkan: 'Archive',
-  'Tandai belum dibaca': 'Mark as unread',
+  'Tandai Belum Dibaca': 'Mark as Unread',
   'Tandai Dibaca': 'Mark as Read',
   'pesan ini': 'this message',
   'Ditandai belum dibaca.': 'Marked as unread.',

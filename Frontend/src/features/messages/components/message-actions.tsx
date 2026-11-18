@@ -68,7 +68,7 @@ export function MessageActions({ id, status }: { id: string; status: MessageStat
           loading={pending && busy === 'NEW'}
         >
           <MailOpen aria-hidden="true" />
-          {t('Tandai belum dibaca')}
+          {t('Tandai Belum Dibaca')}
         </Button>
       ) : status === 'NEW' ? (
         <Button
