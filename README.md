@@ -27,18 +27,35 @@ Every module comes in Indonesian and English, dark by default with a light theme
 
 - **Edit in place:** each module is edited directly on a live preview of the public page, in both languages (texts, hero photos, profile, projects, skills, experience, education, footer, navbar)
 - **Uploads:** photos, logos, and the CV through Cloudinary, with an in-browser crop dialog
-- **Inbox and dashboard:** contact messages, visitor statistics, and CV downloads
+- **Inbox and dashboard:** contact messages, a visitor chart (hand-drawn SVG, no chart library), and CV downloads
 - **Settings and account:** site options, password, name, and email, plus the login history
 - **Safe by default:** server-side Zod validation, `SUPER_ADMIN` role check, and an audit log on every action
+- **Housekeeping:** a daily cron job rolls up visits and prunes expired sessions, verification tokens, rate-limit rows, orphaned files, and audit entries older than 365 days; a failing step is reported and never stops the others
 
 ## Tech Stack
 
 | Layer | Tools |
 |---|---|
-| **App** | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
-| **Data and auth** | PostgreSQL (Neon), Prisma, Better Auth |
-| **Services** | Cloudinary, Resend, Vercel |
-| **Testing** | Vitest, Playwright, axe |
+| **App** | Next.js 16, React 19, TypeScript (strict), Tailwind CSS 4, next-intl |
+| **Motion** | CSS first (scroll-driven, View Transitions), then self-made canvas 2D and WebGL. No animation library; heavy scenes pause when off-screen or while scrolling |
+| **Data and auth** | PostgreSQL (Neon), Prisma, Better Auth, Zod |
+| **Services** | Cloudinary, Resend, Vercel (region `sin1`, daily cron) |
+| **Testing** | Vitest, Playwright, axe (WCAG 2.2 AA) |
+| **Delivery** | GitHub Actions CI (lint, format, typecheck, tests, `pnpm audit`, gitleaks, E2E on Chromium, Firefox, and WebKit), Docker image on GitHub Packages, daily encrypted database backup workflow (runs once its secrets are set) |
+
+## Run Locally
+
+Needs Node.js 24, pnpm 10, and PostgreSQL 17. Everything runs from `Frontend/`:
+
+```bash
+cd Frontend
+pnpm install
+cp .env.example .env.local    # fill in the values
+pnpm db:migrate && pnpm db:seed
+pnpm dev                      # http://localhost:3000
+```
+
+Before handing work over, run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build`. Details, environment variables, the Docker image, and backup and restore are in [Documentation/DEPLOYMENT.md](Documentation/DEPLOYMENT.md).
 
 ## Repository
 
@@ -46,6 +63,7 @@ Every module comes in Indonesian and English, dark by default with a light theme
 |---|---|
 | `Frontend/` | The Next.js app: public site, `/admin`, API, tests |
 | `Database/` | Prisma schema, migrations, seed data |
-| `Documentation/` | PRD, design, architecture, [deployment & backup](Documentation/DEPLOYMENT.md) |
+| `Documentation/` | [PRD](Documentation/PRD.md), [design](Documentation/DESIGN.md), [architecture](Documentation/ARCHITECTURE.md), [workflow](Documentation/WORKFLOW.md), [deployment & backup](Documentation/DEPLOYMENT.md), [TODO](Documentation/TODO.md) |
+| `.github/` | CI, release (Docker image), and backup workflows |
 
 © Muhammad Mirza Wirya. All rights reserved.
