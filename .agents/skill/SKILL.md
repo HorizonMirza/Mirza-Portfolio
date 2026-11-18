@@ -5,7 +5,7 @@ description: Resep pengerjaan untuk repo portofolio Muhammad Mirza. Gunakan saat
 
 # Skill: Pengerjaan Portofolio Mirza
 
-Baca `CLAUDE.md` dan dokumen di `Documentation/` yang relevan sebelum memakai resep ini. Resep di sini adalah **pola berulang**. Jika bertentangan dengan `Documentation/PRD.md`, ikuti PRD dan laporkan pertentangannya.
+Baca `CLAUDE.md` dan dokumen di `Documentation/` yang relevan sebelum memakai resep ini. Resep di sini adalah **pola berulang**. Jika bertentangan dengan `Documentation/PRD.md`, ikuti PRD dan laporkan pertentangannya. Aturan umum (secret, dependency, migrasi, commit dan push, Definition of Done) ada di `CLAUDE.md` dan `Documentation/WORKFLOW.md`, tidak diulang di sini.
 
 ## Resep A — Menambah entitas konten baru
 
@@ -45,7 +45,7 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
 1. Buat `Frontend/src/app/[locale]/<halaman>/page.tsx` sebagai Server Component.
 2. Ekspor `generateMetadata` (judul, deskripsi, Open Graph, `alternates.languages` untuk `hreflang`).
 3. Struktur semantik: satu `h1`, `main`, heading berurutan.
-4. Ambil data lewat query di `features/`, bukan langsung di halaman.
+4. Ambil data lewat query di `Backend/features/<domain>/`, bukan langsung di halaman.
 5. Tambahkan ke navigasi (`components/site/nav-items.ts`, label `Nav.*` di `messages` dan di modul Navbar `Backend/features/site-text/catalog.ts`) dan ke sitemap.
 6. Cek: 360 px, 768 px, desktop, terang/gelap, ID/EN, navigasi keyboard.
 7. Tambah E2E (halaman terbuka, tautan penting bekerja) dan jalankan axe.
@@ -71,33 +71,12 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
 
 ## Resep E — Memeriksa sebuah fitur sebelum "selesai"
 
-Jalankan `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`, lalu telusuri daftar ini:
+Jalankan `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build && pnpm test:e2e`, lalu cocokkan dengan Definition of Done di `Documentation/WORKFLOW.md` bagian 4. Yang sering terlewat:
 
-**Fungsi dan data**
-- [ ] Sesuai kriteria penerimaan di `PRD.md`
-- [ ] Validasi di server, bukan hanya di form
-- [ ] Mutasi admin memeriksa `SUPER_ADMIN` dan menulis `AuditLog`
-- [ ] Halaman publik ikut diperbarui setelah admin menyimpan (revalidate)
-
-**Bahasa dan tampilan**
-- [ ] ID dan EN lengkap, tidak ada teks yang tertanam di komponen
-- [ ] Terang dan gelap benar, memakai token desain
-- [ ] 360 px, 768 px, desktop tanpa scroll horizontal
-
-**Aksesibilitas**
-- [ ] Bisa dipakai penuh dengan keyboard, fokus terlihat
-- [ ] Label form, alt text dua bahasa, urutan heading
-- [ ] Gerak menghormati `prefers-reduced-motion`
-- [ ] axe tanpa pelanggaran kritis
-
-**Keamanan dan privasi**
-- [ ] Tidak ada secret di kode atau log
-- [ ] Markdown/HTML dari pengguna disanitasi
-- [ ] Tidak ada data pribadi mentah di log atau analitik
-
-**Performa**
-- [ ] Tidak menambah JS klien tanpa alasan, gambar lewat `next/image`
-- [ ] Lighthouse mobile ≥ 90 pada halaman yang terdampak
+- Halaman publik ikut diperbarui setelah admin menyimpan (`revalidateContent`), di `/id` dan `/en`.
+- Tidak ada teks yang tertanam di komponen: teks situs di `messages/*.json`, teks admin lewat `useAdminT()`/`adminT()`.
+- Markdown dari admin disanitasi, gambar lewat `next/image`, tidak ada data pribadi mentah di log.
+- Gerak menghormati `prefers-reduced-motion`, animasi berat berhenti saat di luar layar.
 
 ## Resep F — Menghapus fitur atau kode tak terpakai
 
@@ -107,16 +86,3 @@ Jalankan `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm 
 4. **Kolom atau tabel database** dihapus lewat migrasi baru (`DROP COLUMN`/`DROP TABLE`) hanya dengan persetujuan pemilik, karena push ke `main` menjalankannya di production dan tidak bisa dibatalkan. Pastikan `prisma migrate diff --from-config-datasource --to-schema ../Database/schema.prisma --exit-code` bersih.
 5. **Dependency** tidak dihapus langsung: daftarkan dulu dan minta persetujuan. Periksa juga pemakaian tidak langsung (peer dependency, kode hasil generate, hook Git, `overrides`).
 6. Jalankan Resep E, lalu commit per tujuan.
-
-## Resep G — Commit dan push
-
-- Commit: `[CLAUDIA] tipe(lingkup): deskripsi bahasa Indonesia`, contoh `[CLAUDIA] feat(admin): tambah CRUD skill`. Tanpa baris `Co-Authored-By` atau `Claude-Session` (WORKFLOW.md bagian 3). Zona waktu `TZ=Asia/Jakarta`.
-- Satu commit = satu tujuan. Semua di `main`, tanpa branch dan tanpa PR. Jalankan pemeriksaan lengkap (termasuk `test:e2e`) sebelum push, karena push langsung live.
-
-## Hal yang Tidak Boleh Dilakukan
-
-- Menyimpan secret di repo, atau melonggarkan CSP/CORS/rate limit untuk "memudahkan".
-- Menambah dependency berat (animasi 3D, grafik, UI kit lain) tanpa persetujuan.
-- Membuat migrasi yang menghapus tabel, kolom, atau data tanpa persetujuan pemilik.
-- Menyalin desain atau teks dari situs orang lain. Referensi hanya untuk prinsip.
-- Menandai fitur selesai tanpa tes dan pemeriksaan di HP.
