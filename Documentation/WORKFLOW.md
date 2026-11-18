@@ -1,6 +1,6 @@
 # WORKFLOW — Cara Kerja Proyek
 
-Status: **draf v1**. Berlaku untuk pengembangan bersama antara Muhammad Mirza (pemilik, reviewer) dan Claude (penulis kode).
+Status: **berlaku, diselaraskan dengan kode 2026-11-18**. Berlaku untuk pengembangan bersama antara Muhammad Mirza (pemilik, reviewer) dan Claude (penulis kode).
 
 ## 1. Peran
 
@@ -68,7 +68,7 @@ Sebuah fitur dianggap selesai bila **semua** poin terpenuhi:
 | Komponen | Testing Library | Form, toggle, komponen dengan logika |
 | E2E | Playwright | Alur utama: unduh CV, ganti bahasa/tema, kirim kontak, login admin, CRUD project |
 | Aksesibilitas | axe (di Playwright) | Semua halaman publik dan admin utama |
-| Performa | Lighthouse CI | Home, Projects, detail Project (mobile) |
+| Performa | Lighthouse manual (Chrome DevTools atau PageSpeed Insights) | Home, Projects, detail Project (mobile); CI belum menjalankan Lighthouse |
 | Manual | Anda | Perangkat nyata: Android, iPhone (Safari), laptop. Lihat daftar periksa rilis |
 
 Bug yang ditemukan: tulis tes yang gagal dulu, perbaiki, pastikan tes lulus.
@@ -93,7 +93,7 @@ Claude memeriksa diff sendiri sebelum meminta review, lalu menjalankan review ko
   - [ ] Variabel lingkungan production lengkap
   - [ ] Backup terbaru ada dan pernah diuji pulih
   - [ ] Sitemap, robots, Open Graph diperiksa
-  - [ ] Uptime monitor dan Sentry aktif
+  - [ ] Uptime monitor dan Sentry aktif (saat ini belum, ditunda pemilik)
 - **Rollback:** Vercel Instant Rollback ke deployment sebelumnya. Jika ada migrasi berbahaya, pulihkan dari backup. Catat insiden di `Documentation/`.
 
 ## 8. Alur Pembaruan Konten (harian)
@@ -110,14 +110,14 @@ Perubahan desain, fitur, atau struktur data dikerjakan Claude di kode lalu di-pu
 - Semua secret ada di Vercel Environment Variables dan GitHub Actions Secrets.
 - Lokal memakai `.env.local` (tidak di-commit). Repo hanya berisi `Frontend/.env.example` tanpa nilai asli.
 - Bila secret terlanjur ter-commit: anggap bocor, **cabut dan buat ulang secretnya**, baru bersihkan repo.
-- `gitleaks` berjalan di pre-commit dan CI.
+- `gitleaks` berjalan di CI (job "Scan secret"). Hook pre-commit hanya menjalankan lint-staged (ESLint dan Prettier).
 
 ## 10. Pemeliharaan
 
 | Frekuensi | Kegiatan |
 |---|---|
 | Harian | Update konten lewat admin, baca pesan masuk |
-| Mingguan | Cek Sentry, uptime, dan **Dependabot alerts** (Security → Dependabot) |
+| Mingguan | Cek **Dependabot alerts** (Security → Dependabot), hasil CI, dan Sentry serta uptime bila sudah dipasang |
 | Bulanan | **Update dependency** (lihat bagian 10a), cek skor Lighthouse dan Web Vitals, tinjau statistik unduhan CV dan pesan, bersihkan pesan lama |
 | Triwulan | Uji pemulihan backup, tinjau akses akun dan token |
 
@@ -129,7 +129,7 @@ Update dikerjakan Claude **sebulan sekali**, atau **segera** bila ada peringatan
 
 1. `cd Frontend && pnpm outdated` dan `pnpm audit`.
 2. Naikkan patch/minor sekaligus. Major satu per satu, baca catatan rilisnya (untuk Next.js: panduan di `node_modules/next/dist/docs/`). Ambil hanya versi yang sudah rilis **minimal 7 hari** (cek `npm view <paket> time`), kecuali perbaikan keamanan high/critical; versi yang lebih baru menunggu putaran berikutnya. Perhatikan rentang `^`: `pnpm add paket@^x.y.z` tetap memasang versi terbaru, jadi pasang versi persisnya lalu cek `pnpm ls --depth 0`.
-3. Periksa juga versi GitHub Actions di `.github/workflows/*.yml`. Action milik GitHub (`actions/*`) memakai tag versi; action pihak ketiga (`pnpm/action-setup`, `gitleaks/gitleaks-action`) **dikunci ke SHA commit** dengan versinya di komentar (audit 2026-11-01, SEC-06), karena tag bisa dipindahkan pemiliknya. Untuk menaikkan: `git ls-remote --tags https://github.com/<owner>/<repo>.git`, ambil SHA dari baris `refs/tags/vX.Y.Z^{}` (atau baris tag itu sendiri bila tanpa `^{}`), ganti SHA dan komentar versinya.
+3. Periksa juga versi GitHub Actions di `.github/workflows/*.yml`. **Semua** action (`actions/*`, `pnpm/action-setup`, `gitleaks/gitleaks-action`) **dikunci ke SHA commit** dengan versinya di komentar (audit 2026-11-01 SEC-06 dan 2026-11-17 SEC-03), karena tag bisa dipindahkan pemiliknya. Untuk menaikkan: `git ls-remote --tags https://github.com/<owner>/<repo>.git`, ambil SHA dari baris `refs/tags/vX.Y.Z^{}` (atau baris tag itu sendiri bila tanpa `^{}`), ganti SHA dan komentar versinya.
 4. Celah di dependency tidak langsung yang belum diperbaiki induknya: pakai `overrides` di `Frontend/pnpm-workspace.yaml`, lengkap dengan alasan dan kapan dihapus.
 5. Jalankan pemeriksaan lengkap (lint, typecheck, test, build, E2E), lalu commit `[CLAUDIA] chore(deps): ...` atas nama Horizon Mirza.
 
@@ -154,7 +154,7 @@ Repo GAAS (`HorizonMirza/gaas-generalaffairapplicationsupport`) sudah punya alur
 | Kontributor | Pemilik + 3 asisten AI (Claude Code, Antigravity, Codex) dalam sandbox terpisah | Pemilik + Claude |
 | Awalan commit | `[CLAUDIA]`, `[AGY]`, `[NOVA]` per asisten | Sama: `[CLAUDIA]` + Conventional Commits (`[CLAUDIA] feat(...)`) |
 | Branch | Push langsung ke `main` setelah verifikasi | Sama: langsung ke `main` setelah pemeriksaan lokal lengkap (keputusan pemilik 2026-09-30) |
-| Verifikasi | `dotnet build`, `tsc --noEmit`, Playwright untuk UI, `resetdb` bila skema berubah | `lint`, `typecheck`, `test`, `build`, Playwright + axe, Lighthouse CI |
+| Verifikasi | `dotnet build`, `tsc --noEmit`, Playwright untuk UI, `resetdb` bila skema berubah | `lint`, `typecheck`, `test`, `build`, Playwright + axe, Lighthouse manual |
 | Bahasa | UI Indonesia, dokumen Indonesia | Konten ID/EN, komentar dan commit Indonesia |
 | Dokumen | `CLAUDE.md`, `AGENTS.md`, `Documentation/Prd.md`, `skill.md`, `workflow.md`, `TODO.md` | `CLAUDE.md`, `Documentation/PRD.md`, `ARCHITECTURE.md`, `DESIGN.md`, `WORKFLOW.md`, `TODO.md`, `SKILL.md` |
 | Klarifikasi | Bertanya dulu bila permintaan ambigu, konfirmasi sebelum aksi sulit dibalik | Sama (lihat bagian 12) |

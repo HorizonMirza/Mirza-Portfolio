@@ -70,7 +70,7 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
 
 ## Resep E — Memeriksa sebuah fitur sebelum "selesai"
 
-Jalankan `pnpm lint && pnpm typecheck && pnpm test && pnpm build`, lalu telusuri daftar ini:
+Jalankan `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm build`, lalu telusuri daftar ini:
 
 **Fungsi dan data**
 - [ ] Sesuai kriteria penerimaan di `PRD.md`
@@ -100,7 +100,7 @@ Jalankan `pnpm lint && pnpm typecheck && pnpm test && pnpm build`, lalu telusuri
 
 ## Resep F — Commit dan push
 
-- Commit: `tipe(lingkup): deskripsi bahasa Indonesia`, contoh `feat(admin): tambah CRUD skill`.
+- Commit: `[CLAUDIA] tipe(lingkup): deskripsi bahasa Indonesia`, contoh `[CLAUDIA] feat(admin): tambah CRUD skill`. Tanpa baris `Co-Authored-By` atau `Claude-Session` (WORKFLOW.md bagian 3). Zona waktu `TZ=Asia/Jakarta`.
 - Satu commit = satu tujuan. Semua di `main`, tanpa branch dan tanpa PR. Jalankan pemeriksaan lengkap (termasuk `test:e2e`) sebelum push, karena push langsung live.
 
 ## Hal yang Tidak Boleh Dilakukan

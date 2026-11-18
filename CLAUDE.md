@@ -45,6 +45,7 @@ pnpm test           # Vitest
 pnpm test:e2e       # Playwright (+ axe)
 pnpm build          # build production
 pnpm format:check   # Prettier
+pnpm audit --audit-level=moderate  # sama dengan gerbang CI (advisory tanpa perbaikan di alat dev diabaikan di pnpm-workspace.yaml)
 pnpm db:migrate     # prisma migrate dev
 pnpm db:seed        # data awal dari CV (idempoten)
 pnpm logos:build    # logo WebP globe skill dari scripts/skill-logos/*.svg
