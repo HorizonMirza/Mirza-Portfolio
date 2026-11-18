@@ -1984,7 +1984,7 @@ Sembilan bug dari audit menyeluruh diperbaiki setelah direproduksi di aplikasi l
 
 - **BUG-01 Simpan foto aman diulang** (`features/assets/actions.ts`): bila Asset dengan `public_id` yang sama sudah tercatat (jawaban pertama hilang lalu browser mengirim ulang), jawaban sukses dan berkas Cloudinary tidak dihapus. Galat unik `publicId` (balapan dua permintaan) juga tidak memicu penghapusan.
 - **BUG-02 Isian angka**: `useDelayedSave().cancel()` dipanggil di setiap ketikan, jadi angka yang dikembalikan atau dikosongkan sebelum 0,6 detik tidak ikut tersimpan.
-- **BUG-03 Dashboard**: kotak pertama berlabel "Pengunjung (Total Harian)" / "Visitors (Daily Total)". Angkanya penjumlahan pengunjung unik per hari; kode pengunjung memuat tanggal demi privasi sehingga tidak bisa dicocokkan lintas hari.
+- **BUG-03 Dashboard**: kotak pertama sempat berlabel "Pengunjung (Total Harian)" / "Visitors (Daily Total)"; sejak 2026-11-18 labelnya kembali "Pengunjung" / "Visitors" atas permintaan pemilik (bagian 183). Angkanya penjumlahan pengunjung unik per hari; kode pengunjung memuat tanggal demi privasi sehingga tidak bisa dicocokkan lintas hari.
 - **BUG-04 Halaman galat publik**: "Coba Lagi" memakai `retry()` (ambil ulang data), bukan `reset()`.
 - **BUG-05 Lihat Situs**: tautan di Menu Profil mengikuti bahasa admin (`/id` atau `/en`).
 - **BUG-06 Kunci skill baru**: penghitung `new-N` memakai `useRef`, bukan state.
@@ -2056,4 +2056,8 @@ Seluruh dokumen acuan diperiksa terhadap kode dan diselaraskan. Keputusan pemili
 
 - **CONTENT.md:** diberi status dan petunjuk membaca. Bagian 8 kini dibuka dengan tabel keadaan project sekarang (enam project, diperiksa dari hasil migrasi dan seed), fakta repo GAAS tetap sebagai snapshot, dan draf studi kasus ditandai arsip. Pertanyaan di bagian 10 yang sudah terjawab dicoret dengan hasilnya (tersisa terbuka: izin perusahaan untuk GAAS, bantuan AI coding, status pemakaian GAAS, serta peran MR Coffee dan Swarna Creation). Catatan keputusan yang tersebar dipindah ke bagian 11 (riwayat kronologis). Dikoreksi: catatan bahwa seed membuat GAAS sebagai draf tidak benar, dan catatan ketersediaan serta metadata repo GitHub ditandai sudah dihapus. Paragraf IPK ganda digabung.
 - **REFERENCES.md:** ditandai arsip analisis; tabel perbandingan memakai kondisi sekarang, jawaban pertanyaan bagian 6 dicatat, dan bagian 7 ditandai sudah diproses.
+
+## 183. Revisi label dashboard (2026-11-18)
+
+Keterangan "(Total Harian)" dan "(Daily Totals)" dihapus atas permintaan pemilik: kotak angka pertama di Dashboard berlabel "Pengunjung" / "Visitors". Angkanya tetap penjumlahan pengunjung unik per hari (alasan di bagian 175, BUG-03); keterangan itu tidak lagi ditulis di label.
 

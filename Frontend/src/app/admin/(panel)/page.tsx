@@ -101,7 +101,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
     // jumlah pengunjung unik per hari yang dijumlahkan sepanjang periode: orang yang datang di
     // beberapa hari terhitung tiap hari (kode pengunjung memuat tanggal demi privasi), jadi
     // labelnya menyebut "total harian" (audit 2026-11-17, BUG-03)
-    { key: 'visitors', label: t('Pengunjung (Total Harian)'), href: '#kunjungan' },
+    { key: 'visitors', label: t('Pengunjung'), href: '#kunjungan' },
     { key: 'views', label: t('Tayangan Halaman'), href: '#kunjungan' },
     { key: 'cv', label: t('Unduhan CV'), href: '/admin/pages/footer' },
     { key: 'messages', label: t('Pesan Masuk'), href: '/admin/messages' },

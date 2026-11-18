@@ -336,4 +336,5 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-18 | Perbaikan audit ERR-01 dan DB-02, 03, 04: langkah cron berdiri sendiri, retensi log audit 365 hari dan sesi/verifikasi kedaluwarsa, simpan profil berhenti bila ditolak, galat bentrok email di isian (DESIGN.md bagian 180) |
 | 2026-11-18 | Perapian dokumentasi: README, PRD, ARCHITECTURE, WORKFLOW, DEPLOYMENT, SKILL.md, CLAUDE.md, dan `.env.example` diselaraskan dengan kode; log TODO diurutkan menurut tanggal (DESIGN.md bagian 181) |
 | 2026-11-18 | Perapian CONTENT.md (keadaan project sekarang, pertanyaan terjawab dicoret, riwayat dipindah ke bagian 11) dan REFERENCES.md (ditandai arsip, jawaban dicatat) (DESIGN.md bagian 182) |
+| 2026-11-18 | Revisi pemilik: keterangan "(Total Harian)" dan "(Daily Totals)" dihapus dari label kotak Pengunjung di Dashboard (DESIGN.md bagian 183) |
 
