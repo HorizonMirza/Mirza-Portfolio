@@ -162,6 +162,8 @@ export async function changeAccountEmail(input: unknown): Promise<ActionResult> 
     })
     return ok('Email disimpan.')
   } catch (error) {
-    return toActionError(error)
+    // dua permintaan berbarengan bisa sama-sama lolos pemeriksaan di atas; constraint unik di database
+    // menolak yang kedua, dan galatnya ditandai di isian Email (audit 2026-11-17, DB-04)
+    return toActionError(error, { email: 'Email' })
   }
 }
