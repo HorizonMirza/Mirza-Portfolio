@@ -12,8 +12,6 @@ const eslintConfig = defineConfig([
   prettier,
   globalIgnores([
     '.next/**',
-    'out/**',
-    'build/**',
     'next-env.d.ts',
     'src/generated/**',
     'playwright-report/**',
