@@ -29,15 +29,15 @@ export const experienceSchema = z
     organization: requiredText('Instansi', 120),
     organization_en: optionalText('Instansi (EN)', 120).default(''),
     title_id: requiredText('Peran', 120),
-    title_en: requiredText('Role', 120),
+    title_en: requiredText('Peran (EN)', 120),
     description_id: requiredText('Uraian', 3000),
-    description_en: requiredText('Description', 3000),
+    description_en: requiredText('Uraian (EN)', 3000),
     startMonth: z.string().regex(MONTH, 'Bulan mulai wajib diisi'),
     endMonth: z.string().refine((v) => v === '' || MONTH.test(v), 'Bulan selesai tidak valid'),
     location: optionalText('Lokasi', 120),
     // jenis pekerjaan teks bebas per bahasa, mis. "Internship" / "Magang" (opsional)
     employmentLabel_id: optionalText('Jenis Pekerjaan', 60).default(''),
-    employmentLabel_en: optionalText('Employment type', 60).default(''),
+    employmentLabel_en: optionalText('Jenis Pekerjaan (EN)', 60).default(''),
     inStory: z.boolean().default(false),
     status: z.enum(['DRAFT', 'PUBLISHED']),
   })
