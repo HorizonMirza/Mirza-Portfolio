@@ -38,6 +38,8 @@ export const EN: Record<string, string> = {
   'Tahun Selesai': 'End Year',
   'Periksa kembali isian pengalaman.': 'Check the experience fields again.',
   'Periksa kembali isian pendidikan.': 'Check the education fields again.',
+  'Pendidikan belum disimpan karena profil belum tersimpan.':
+    'Education was not saved because the profile could not be saved.',
   'Foto Kegiatan {item}': '{item} Activity Photo',
   'Logo {item}': '{item} Logo',
   'Buka Berkas': 'Open File',

@@ -108,7 +108,13 @@ export function ProfileLive({
         // dan satu baris log audit kosong (audit 2026-11-17, EFF-02)
         if (isDirty) {
           const result = await saveProfile(submitted)
-          if (applyResult(result, form.setError)) form.reset(submitted)
+          if (!applyResult(result, form.setError)) {
+            // pendidikan tidak ikut disimpan bila profil ditolak, agar admin tidak mengira tidak ada
+            // yang tersimpan padahal sebagian sudah (audit 2026-11-17, DB-03)
+            if (entries.dirty) toast(t('Pendidikan belum disimpan karena profil belum tersimpan.'))
+            return
+          }
+          form.reset(submitted)
         }
         // pendidikan yang berubah ikut disimpan
         const edu = await entries.saveAll()
