@@ -1,7 +1,9 @@
 # REFERENCES — Analisis Referensi
 
 Tanggal analisis: 2026-09-30. Prioritas: **Referensi 1 (utama)**, lalu 2, 3, 4.
-Tujuan: mengambil **prinsip**, bukan menyalin tampilan atau teks. Dokumen `DESIGN.md` dan `PRD.md` belum diubah, menunggu keputusan di bagian 6.
+Tujuan: mengambil **prinsip**, bukan menyalin tampilan atau teks.
+
+Status: **arsip analisis, diselaraskan 2026-11-18.** Pertanyaan di bagian 6 sudah terjawab lewat keputusan pemilik; hasilnya dicatat di bagian itu dan tertuang di `PRD.md` (bagian 11), `DESIGN.md`, dan `ARCHITECTURE.md`. Bagian 1–4 tetap seperti saat dianalisis. Aturan yang berlaku tidak berubah: referensi hanya untuk prinsip, jangan menyalin tema, tata letak, atau teks.
 
 ## Cara Analisis dan Batasannya
 
@@ -115,23 +117,32 @@ Template portofolio kreatif.
 | Aspek | Ref 1 | Ref 2 | Ref 3 | Ref 4 | Rencana Mirza saat ini |
 |---|---|---|---|---|---|
 | Halaman | Satu halaman | Multi-halaman | Multi-halaman | Multi-halaman | Multi-halaman |
-| Hero | WebGL + pelat status | Teks + foto | Tipografi raksasa + potret | Panel gelap membulat | Animasi layar penuh ("Blueprint") |
-| Tema | Terang + gelap tinta, cyan | Terang biru-teal, gelap netral | Terang | Gelap + oranye | Biru, terang + gelap |
+| Hero | WebGL + pelat status | Teks + foto | Tipografi raksasa + potret | Panel gelap membulat | Potret dengan lapisan armor yang terbuka di bawah kursor, nama dan peran (DESIGN.md bagian 83) |
+| Tema | Terang + gelap tinta, cyan | Terang biru-teal, gelap netral | Terang | Gelap + oranye | Hitam-putih dengan aksen biru (DESIGN.md bagian 16), gelap secara bawaan, ada terang (PRD F9) |
 | Bahasa | ID/EN campur | EN | EN | EN | ID/EN dengan toggle |
-| Tema tunggal/metafora | F1 | Lab AI | Tidak ada | Tidak ada | **Belum ada** |
-| Chatbot | Ya (Claude) | Tidak | Tidak | Tidak | "Live chat" belum jelas |
+| Tema tunggal/metafora | F1 | Lab AI | Tidak ada | Tidak ada | Tidak memakai satu metafora tema penuh; ciri khasnya potret + armor |
+| Chatbot | Ya (Claude) | Tidak | Tidak | Tidak | Tidak. Live chat dibatalkan, WhatsApp cukup di footer dan halaman kontak (PRD bagian 11 no. 3) |
 
 ## 6. Pertanyaan untuk Anda
 
 1. **Apa yang Anda sukai dari Referensi 1?** Hero 3D/animasinya, tema-nya yang berkarakter, pelat status di hero, animasi teks, sticky stack, chatbot, atau hal lain? Pilih 2–3 hal utama.
+   **Hasil:** hero berpotret dengan efek yang mengikuti kursor diambil dalam bentuk lebih ringan (liquid mask, 2026-10-18; PRD bagian 11 no. 14). Chatbot tidak diambil (pertanyaan 4).
 2. **Metafora Mirza.** Referensi 1 kuat karena punya satu konsep. Apa yang ingin diwakili situs Anda? Contoh arah: *Blueprint/skema sistem* (sudah ada di rencana), *Ruang kontrol/terminal*, *Peta/atlas perjalanan*. Atau ada minat/latar personal yang bisa dijadikan tema (jawaban 2.1: "ada hal yang tidak ada di website orang lain").
+   **Hasil:** konsep "Horizon" disetujui 2026-09-30 lalu hero diganti potret + armor (2026-10-18/19). Tidak ada satu metafora tema penuh.
 3. **Berapa berat hero yang Anda terima?** Hero 3D seperti Referensi 1 sulit menembus Lighthouse ≥ 90 di HP. Usulan: tampilan kaya di desktop (dimuat lazy), versi ringan/statis di HP, dan bingkai statis untuk `prefers-reduced-motion`. Setuju, atau Anda lebih memilih hero ringan di semua perangkat?
+   **Hasil:** tampilan kaya dengan anggaran performa: animasi berhenti di luar layar dan saat digulir, dan `prefers-reduced-motion` memberi tampilan statis (ARCHITECTURE.md bagian 2, baris Animasi).
 4. **"Live chat" yang Anda minta, apakah maksudnya asisten AI seperti Referensi 1?** Bila ya, ada biaya API per pesan dan risiko disalahgunakan, padahal anggaran Anda hanya domain. Bisa dibatasi (batas harian, rate limit) atau diganti widget chat manusia / tombol WhatsApp.
+   **Hasil:** bukan asisten AI. Tombol WhatsApp melayang (2026-09-30), lalu dihapus; WhatsApp cukup di footer dan halaman kontak (2026-10-03).
 5. **Sertifikat, deck PDF, dan blok "Resume ATS".** Ketiganya ada di referensi dan cocok untuk pencari kerja. Ingin dimasukkan ke v1? (Sertifikat sebelumnya tidak Anda pilih.)
+   **Hasil:** sertifikat tidak masuk v1 (PRD bagian 3). Tombol "Resume CV" ada (PRD F7). Deck PDF dan blok "Resume ATS" terpisah tidak ada di PRD.
 6. **Pelat status di hero** ("Open to Work", lokasi, ketersediaan) yang bisa diubah dari admin. Ingin dipakai?
+   **Hasil:** dibuat, lalu dihapus dari hero (2026-10-18) dan dari admin (2026-11-06); PRD F17.
 7. **Halaman tunggal atau multi-halaman?** Referensi 1 satu halaman panjang, rencana kita multi-halaman (jawaban 10.1). Tetap multi-halaman?
+   **Hasil:** tetap multi-halaman (`/`, `/about`, `/experience`, `/projects`, `/contact`; PRD F1–F6).
 
-## 7. Dampak yang Diusulkan (setelah Anda menjawab)
+## 7. Dampak yang Diusulkan (arsip: sudah diproses)
+
+> Usulan ini ditulis sebelum pertanyaan di bagian 6 dijawab. Keputusan akhirnya tercatat di `PRD.md`, `DESIGN.md`, `ARCHITECTURE.md`, dan `TODO.md`; model `Certificate`, `Document`, dan chatbot **tidak** dibuat.
 
 - `DESIGN.md`: tambahkan metafora dan hero yang dipilih, pelat status, gaya judul bagian, aturan tier performa, modal sertifikat bila diminta.
 - `PRD.md`: tambah fitur (pelat status admin-editable, deck/Resume ATS, sertifikat, chatbot) hanya bila dipilih.
