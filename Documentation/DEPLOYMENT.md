@@ -110,6 +110,7 @@ docker run -d --name mirza-portfolio -p 3000:3000 \
 - Server mandiri (`output: 'standalone'`) hanya aktif saat build Docker (`DOCKER_BUILD=1`), jadi build Vercel dan CI tidak berubah.
 - Isi halaman yang sudah dirender saat build berasal dari data seed; setelah itu halaman mengikuti database yang terhubung (revalidasi, paling lambat 10 menit). `NEXT_PUBLIC_SITE_URL` awal image adalah `https://mmirza.site`; ganti dengan `--build-arg NEXT_PUBLIC_SITE_URL=...` saat membangun sendiri.
 - Membangun lokal dari akar repo: `docker build --network=host -f Frontend/Dockerfile --build-arg DATABASE_URL=<postgres-yang-sudah-dimigrasi> -t mirza-portfolio .`
+- **Jangan pernah memakai URL database production sebagai `DATABASE_URL` saat `docker build`.** Nilai `--build-arg` tercatat di riwayat layer image (`docker history`) dan ikut terkirim bersama image ke GitHub Packages. Pakai database Postgres sementara yang sudah dimigrasi (seperti di `release.yml`); URL production hanya diberikan saat `docker run` lewat `-e`.
 
 - Domain `mmirza.site` (Hostinger) sudah terhubung: A `@` dan CNAME `www` ke Vercel, `www` dialihkan ke `mmirza.site`.
 

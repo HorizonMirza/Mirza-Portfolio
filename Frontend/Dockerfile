@@ -17,6 +17,8 @@ WORKDIR /app/Frontend
 COPY Frontend/package.json Frontend/pnpm-lock.yaml Frontend/pnpm-workspace.yaml Frontend/prisma.config.ts ./
 RUN pnpm install --frozen-lockfile
 COPY Frontend ./
+# Nilai ARG tercatat di riwayat image (docker history): isi hanya dengan database sementara untuk
+# build, jangan URL production (DEPLOYMENT.md bagian image Docker).
 ARG DATABASE_URL
 ARG NEXT_PUBLIC_SITE_URL=https://mmirza.site
 RUN pnpm exec next build
