@@ -1,13 +1,17 @@
 import { timingSafeEqual } from 'node:crypto'
 
 import { getDb } from '@/lib/db'
+import { reportServerError } from '@/lib/error-report'
 import { removeOrphanUploads } from '@/lib/orphan-uploads'
 import { summaryStart } from '@/lib/page-view-summary'
+import { runSteps } from '@/lib/run-steps'
 import { toSiteOptions } from '@/features/settings/options'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 // masa simpan riwayat masuk panel admin (Admin → Akun)
 const LOGIN_EVENT_DAYS = 90
+// masa simpan log audit (jejak perubahan admin); lebih lama dari itu dihapus (audit 2026-11-17, DB-02)
+const AUDIT_LOG_DAYS = 365
 
 // Dipanggil Vercel Cron sekali sehari (vercel.json). Vercel mengirim "Authorization: Bearer <CRON_SECRET>".
 function authorized(request: Request) {
@@ -22,51 +26,93 @@ export async function GET(request: Request) {
   if (!authorized(request))
     return Response.json({ error: { code: 'UNAUTHORIZED' } }, { status: 401 })
   const db = getDb()
+  const daysAgo = (days: number) => new Date(Date.now() - days * DAY_MS)
 
-  // 1) Ringkas hari WIB yang sudah lewat sejak ringkasan terakhir ke PageViewDaily. Idempoten.
-  const latest = await db.pageViewDaily.aggregate({ _max: { date: true } })
-  const since = summaryStart(latest._max.date)
-  const summarized = await db.$executeRaw`
-    INSERT INTO "PageViewDaily" ("id", "date", "path", "locale", "views", "visitors")
-    SELECT gen_random_uuid(), d.day, d.path, d.locale, d.views, d.visitors
-    FROM (
-      SELECT ("createdAt" AT TIME ZONE 'Asia/Jakarta')::date AS day, "path",
-             coalesce("locale", '') AS locale, count(*)::int AS views,
-             count(DISTINCT "visitorHash")::int AS visitors
-      FROM "PageView"
-      WHERE "createdAt" >= ${since}
-      GROUP BY 1, 2, 3
-    ) d
-    WHERE d.day < (now() AT TIME ZONE 'Asia/Jakarta')::date
-    ON CONFLICT ("date", "path", "locale")
-    DO UPDATE SET "views" = EXCLUDED."views", "visitors" = EXCLUDED."visitors"
-  `
-
-  // 2) Hapus kunjungan mentah yang lewat masa simpan (Admin → Pengaturan: 30, 90, atau 365 hari; dibaca
-  // langsung dari database, bukan cache), riwayat masuk admin > 90 hari, dan baris rate limit
-  // kedaluwarsa (> 1 hari).
-  const { visitRetentionDays } = toSiteOptions(
-    await db.siteSetting.findUnique({ where: { id: 1 } }),
-  )
-  const cutoff = new Date(Date.now() - visitRetentionDays * DAY_MS)
-  const removedViews = await db.pageView.deleteMany({ where: { createdAt: { lt: cutoff } } })
-  const removedLogins = await db.loginEvent.deleteMany({
-    where: { createdAt: { lt: new Date(Date.now() - LOGIN_EVENT_DAYS * DAY_MS) } },
-  })
-  const removedLimits = await db.rateLimit.deleteMany({
-    where: { windowStart: { lt: BigInt(Date.now() - 24 * 60 * 60 * 1000) } },
-  })
-
-  // 3) Berkas unggahan Cloudinary tanpa baris Asset, lebih tua dari 48 jam (DB-07).
-  const removedOrphanUploads = await removeOrphanUploads(db)
-
-  return Response.json({
-    data: {
-      summarized,
-      removedPageViews: removedViews.count,
-      removedLoginEvents: removedLogins.count,
-      removedRateLimits: removedLimits.count,
-      removedOrphanUploads,
+  // Tiap langkah berdiri sendiri: satu yang gagal tidak menghentikan yang lain, dan respons 500 menyebut
+  // langkah mana yang gagal agar Vercel Cron menandai run itu gagal (audit 2026-11-17, ERR-01).
+  const { data, failed } = await runSteps(
+    {
+      // 1) Ringkas hari WIB yang sudah lewat sejak ringkasan terakhir ke PageViewDaily. Idempoten.
+      ringkasan: async () => {
+        const latest = await db.pageViewDaily.aggregate({ _max: { date: true } })
+        const since = summaryStart(latest._max.date)
+        const summarized = await db.$executeRaw`
+          INSERT INTO "PageViewDaily" ("id", "date", "path", "locale", "views", "visitors")
+          SELECT gen_random_uuid(), d.day, d.path, d.locale, d.views, d.visitors
+          FROM (
+            SELECT ("createdAt" AT TIME ZONE 'Asia/Jakarta')::date AS day, "path",
+                   coalesce("locale", '') AS locale, count(*)::int AS views,
+                   count(DISTINCT "visitorHash")::int AS visitors
+            FROM "PageView"
+            WHERE "createdAt" >= ${since}
+            GROUP BY 1, 2, 3
+          ) d
+          WHERE d.day < (now() AT TIME ZONE 'Asia/Jakarta')::date
+          ON CONFLICT ("date", "path", "locale")
+          DO UPDATE SET "views" = EXCLUDED."views", "visitors" = EXCLUDED."visitors"
+        `
+        return { summarized }
+      },
+      // 2) Kunjungan mentah yang lewat masa simpan (Admin → Pengaturan: 30, 90, atau 365 hari; dibaca
+      // langsung dari database, bukan cache).
+      kunjungan: async () => {
+        const { visitRetentionDays } = toSiteOptions(
+          await db.siteSetting.findUnique({ where: { id: 1 } }),
+        )
+        const removed = await db.pageView.deleteMany({
+          where: { createdAt: { lt: daysAgo(visitRetentionDays) } },
+        })
+        return { removedPageViews: removed.count }
+      },
+      // 3) Riwayat masuk admin > 90 hari.
+      'riwayat-masuk': async () => {
+        const removed = await db.loginEvent.deleteMany({
+          where: { createdAt: { lt: daysAgo(LOGIN_EVENT_DAYS) } },
+        })
+        return { removedLoginEvents: removed.count }
+      },
+      // 4) Baris rate limit kedaluwarsa (> 1 hari).
+      'rate-limit': async () => {
+        const removed = await db.rateLimit.deleteMany({
+          where: { windowStart: { lt: BigInt(Date.now() - DAY_MS) } },
+        })
+        return { removedRateLimits: removed.count }
+      },
+      // 5) Log audit lebih tua dari AUDIT_LOG_DAYS (DB-02).
+      'log-audit': async () => {
+        const removed = await db.auditLog.deleteMany({
+          where: { createdAt: { lt: daysAgo(AUDIT_LOG_DAYS) } },
+        })
+        return { removedAuditLogs: removed.count }
+      },
+      // 6) Sesi login dan token verifikasi yang sudah kedaluwarsa (DB-02).
+      sesi: async () => {
+        const removed = await db.session.deleteMany({ where: { expiresAt: { lt: new Date() } } })
+        return { removedSessions: removed.count }
+      },
+      verifikasi: async () => {
+        const removed = await db.verification.deleteMany({
+          where: { expiresAt: { lt: new Date() } },
+        })
+        return { removedVerifications: removed.count }
+      },
+      // 7) Berkas unggahan Cloudinary tanpa baris Asset, lebih tua dari 48 jam (DB-07 audit 11-02).
+      'berkas-yatim': async () => ({ removedOrphanUploads: await removeOrphanUploads(db) }),
     },
-  })
+    async (name, error) => {
+      console.error(
+        `[cron-daily] langkah "${name}" gagal`,
+        error instanceof Error ? error.message : error,
+      )
+      await reportServerError(
+        error,
+        { path: '/api/cron/daily', method: 'GET' },
+        { routePath: '/api/cron/daily', routeType: 'route' },
+      )
+    },
+  )
+
+  if (failed.length)
+    return Response.json({ data, error: { code: 'STEP_FAILED', steps: failed } }, { status: 500 })
+  return Response.json({ data })
 }
