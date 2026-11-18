@@ -161,7 +161,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
-      {/* Hero (revisi pemilik 2026-10-19, DESIGN.md bagian 85 dan 86): foto besar tanpa bingkai rata
+      {/* Hero (revisi pemilik 2026-10-19): foto besar tanpa bingkai rata
           bawah, nama dua baris memudar ke bawah di belakang dan di depan foto. Salinan depan dilubangi di
           area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
       {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
@@ -275,7 +275,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               dua kali agar putaran tidak terputus; salinan kedua disembunyikan dari pembaca layar
               dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih
               dan saat di luar layar. Tombol jeda dihapus 2026-11-06 atas keputusan pemilik
-              (DESIGN.md bagian 106). */}
+              (revisi 2026-11-06). */}
           <div className="home-marquee-wrap">
             <div className="home-marquee">
               <ul

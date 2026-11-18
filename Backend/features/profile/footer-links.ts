@@ -1,6 +1,6 @@
 import { whatsappUrl } from '@backend/lib/seo'
 
-// Daftar kartu kontak di footer (DESIGN.md bagian 29): urutan tetap, kartu yang datanya kosong
+// Daftar kartu kontak di footer (revisi 2026-10-03): urutan tetap, kartu yang datanya kosong
 // di admin tidak ditampilkan. Fungsi murni agar mudah dites.
 
 export type FooterLinkKey =

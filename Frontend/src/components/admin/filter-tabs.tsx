@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 // Filter sebagai tautan (?status=...) agar bisa dibagikan dan bekerja tanpa JavaScript.
 // stretch: satu baris selebar panel sampai tepi kiri-kanan, tombol terpisah sama lebar, yang aktif
-// terisi penuh (tab Home, revisi pemilik 2026-11-11 dan 2026-11-12, DESIGN.md bagian 129 dan 131).
+// terisi penuh (tab Home, revisi pemilik 2026-11-11 dan 2026-11-12).
 // Tidak pernah digeser menyamping (revisi pemilik 2026-11-17): bila tidak muat dalam satu baris,
 // tombol turun ke baris berikutnya. Flex-wrap dengan dasar lebar dari label terpanjang, paling lebar
 // setengah baris (jadi selalu minimal dua per baris, mis. Beranda 2x2 di HP); tombol yang tersisa di

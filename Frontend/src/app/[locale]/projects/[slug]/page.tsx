@@ -68,7 +68,7 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         <BackToProjects slug={project.slug} label={t('back')} />
       </nav>
 
-      {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip", DESIGN.md bagian 47): hanya
+      {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip"): hanya
           peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
           uraian, dan studi kasus tidak ditampilkan di sini. */}
       <header className="pd-head pj-title-box mt-2 md:mt-6">

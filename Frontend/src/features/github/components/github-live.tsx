@@ -28,7 +28,7 @@ const PRESET_NAME: Record<GithubPresetKey, string> = {
   purple: 'Ungu',
 }
 
-// Admin → Home → GitHub (revisi pemilik 2026-11-15, DESIGN.md bagian 149): bagian GitHub beranda
+// Admin → Home → GitHub (revisi pemilik 2026-11-15): bagian GitHub beranda
 // tampil seperti di situs (grafik kontribusi, tinggi mengikuti isi agar tampilan 3D tidak terpotong)
 // dan warna grafiknya dipilih dari lima warna: merah, kuning, hijau, biru, dan ungu. Pratinjau
 // memakai data kontribusi asli bila tersedia, selain itu data contoh.

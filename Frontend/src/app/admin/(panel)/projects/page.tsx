@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Project') }
 }
 
-// daftar project persis seperti halaman Project situs; sampul ditekan untuk diubah (DESIGN.md bagian 138
+// daftar project persis seperti halaman Project situs; sampul ditekan untuk diubah (revisi 2026-11-12
 // dan 164)
 export default async function ProjectsPage() {
   await requireSuperAdminPage()

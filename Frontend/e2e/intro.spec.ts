@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 
 import { waitForFiniteAnimations } from './wait'
 
-// Pemberitahuan pembuka (DESIGN.md bagian 53). Situs menyembunyikannya untuk browser otomatis
+// Pemberitahuan pembuka (revisi 2026-10-12). Situs menyembunyikannya untuk browser otomatis
 // (navigator.webdriver), jadi tes ini berpura-pura sebagai pengunjung biasa.
 // Tanpa animasi: kartu yang masih masuk (transparan dan bergeser) membuat cek kontras salah baca dan
 // klik di Firefox meleset (CI 2026-10-12).

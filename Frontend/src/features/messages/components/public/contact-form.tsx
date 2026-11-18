@@ -21,7 +21,7 @@ type ErrorKey =
   | 'messageShort'
   | 'messageLong'
 
-// Form kontak (DESIGN.md bagian 34). "Coba Lagi" memasang ulang form lewat key, sehingga state
+// Form kontak (revisi 2026-10-03). "Coba Lagi" memasang ulang form lewat key, sehingga state
 // useActionState kembali kosong.
 export function ContactForm() {
   const [round, setRound] = useState(0)

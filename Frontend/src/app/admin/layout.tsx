@@ -12,7 +12,7 @@ import { ADMIN_LANG_COOKIE, parseAdminLang } from '@backend/lib/admin-i18n'
 import { THEME_STORAGE_KEY } from '@/lib/theme'
 
 // Root layout kedua (tanpa awalan bahasa). Panel admin berbahasa Indonesia, bisa diganti ke Inggris
-// lewat tombol ID/EN di top bar (cookie, DESIGN.md bagian 113).
+// lewat tombol ID/EN di top bar (cookie, revisi 2026-11-11).
 export const metadata: Metadata = {
   title: { default: 'Admin', template: '%s · Admin' },
   robots: { index: false, follow: false },
@@ -23,7 +23,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
   const [nonce, settings, lang] = await Promise.all([
     headers().then((h) => h.get('x-nonce') ?? undefined),
     getSiteSettings(),
-    // bahasa tampilan admin dari tombol ID/EN di top bar (DESIGN.md bagian 113)
+    // bahasa tampilan admin dari tombol ID/EN di top bar (revisi 2026-11-11)
     cookies().then((c) => parseAdminLang(c.get(ADMIN_LANG_COOKIE)?.value)),
   ])
   return (
@@ -34,7 +34,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
       data-sound-mix={JSON.stringify(settings.soundMix)}
       suppressHydrationWarning
     >
-      {/* admin-ui: seluruh panel admin memakai Inter biasa tanpa huruf kapital (globals.css, DESIGN.md bagian 113) */}
+      {/* admin-ui: seluruh panel admin memakai Inter biasa tanpa huruf kapital (globals.css, revisi 2026-11-11) */}
       <body className="admin-ui bg-bg text-text">
         <a
           href="#main"

@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Home → GitHub: bagian GitHub beranda seperti di situs; warna grafik kontribusinya dipilih dari lima warna
-// (DESIGN.md bagian 149). Teks grafik mengikuti bahasa tampilan admin.
+// (revisi 2026-11-15). Teks grafik mengikuti bahasa tampilan admin.
 export default async function GithubPage() {
   await requireSuperAdminPage()
   const lang = await getAdminLang()

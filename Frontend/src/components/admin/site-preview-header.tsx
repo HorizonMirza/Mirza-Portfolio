@@ -4,7 +4,7 @@ import { getMessages } from 'next-intl/server'
 import { SiteHeader } from '@/components/site/site-header'
 import type { AppLocale } from '@backend/i18n/routing'
 
-// Navbar situs yang asli di dalam pratinjau 1:1 admin (SiteFrame, DESIGN.md bagian 141): teks dalam
+// Navbar situs yang asli di dalam pratinjau 1:1 admin (SiteFrame, revisi 2026-11-12): teks dalam
 // bahasa yang sedang diubah, menu halaman yang ditiru menyala. Hanya tampilan: inert (tidak bisa
 // ditekan atau difokus) agar tombol bahasa, tema, dan menu situs tidak bekerja dari admin.
 export async function SitePreviewHeader({

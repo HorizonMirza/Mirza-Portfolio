@@ -29,7 +29,7 @@ const MENU_ITEMS = [
   { label: 'Lihat Situs', href: '/', icon: ExternalLink, external: true },
 ] as const
 
-// Identitas admin di puncak sidebar (DESIGN.md bagian 128): foto, nama, dan Super Admin sekaligus
+// Identitas admin di puncak sidebar (revisi 2026-11-11): foto, nama, dan Super Admin sekaligus
 // tombol kembali ke Dashboard. Di Dashboard sendiri datanya dimuat ulang. Satu-satunya tempat wajah
 // admin di panel; menu profil di top bar sengaja tanpa foto.
 export function SidebarIdentity({
@@ -76,7 +76,7 @@ export function SidebarIdentity({
   )
 }
 
-// Menu profil di top bar, di samping tombol tema (demo 3 "Titik tiga", DESIGN.md bagian 128): tombol
+// Menu profil di top bar, di samping tombol tema (demo 3 "Titik tiga", revisi 2026-11-11): tombol
 // titik tiga bulat yang netral, bukan wajah kedua. Isi: Akun, Lihat situs, lalu Keluar merah.
 export function ProfileMenu() {
   const router = useRouter()

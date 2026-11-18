@@ -1,4 +1,4 @@
-// Placeholder berkilau untuk next/image (placeholder={SHIMMER_PLACEHOLDER}, DESIGN.md bagian 111):
+// Placeholder berkilau untuk next/image (placeholder={SHIMMER_PLACEHOLDER}, revisi 2026-11-10):
 // tampil sebagai latar <img> sampai gambarnya termuat, lalu dilepas next/image sendiri, jadi tanpa
 // JavaScript tambahan dan kilau berhenti setelah gambar tampil. SVG tanpa viewBox dan tanpa ukuran
 // tetap agar mengisi seluruh bidang gambar (background-size cover/contain). Abu-abu transparan cocok

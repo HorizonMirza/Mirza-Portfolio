@@ -39,7 +39,7 @@ describe('pola dan isian kamus admin', () => {
 })
 
 // Setiap t('...') di kode admin harus ada di kamus Inggris, agar tombol ID/EN benar-benar mengganti
-// seluruh tampilan admin (permintaan pemilik 2026-11-11, DESIGN.md bagian 115).
+// seluruh tampilan admin (permintaan pemilik 2026-11-11).
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name)

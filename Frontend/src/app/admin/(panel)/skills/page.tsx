@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('Skill Teknis')} · Home` }
 }
 
-// Home → Skill teknis (revisi pemilik 2026-11-15, DESIGN.md bagian 153): bagian "Keahlian Teknis"
+// Home → Skill teknis (revisi pemilik 2026-11-15): bagian "Keahlian Teknis"
 // tampil seperti di beranda situs (globe, tiap bahasa dari data tersimpan), di bawahnya bagian untuk
 // mengubah dan menambah kategori dan skill; ID/EN dan Simpan di paling bawah seperti halaman lain.
 export default async function SkillsPage() {

@@ -28,7 +28,7 @@ const WHERE: Record<StatusCode, string> = {
   503: 'Situs: Mode perawatan di Pengaturan.',
 }
 
-// Pratinjau halaman status (permintaan pemilik 2026-11-16, DESIGN.md bagian 168): satu kode per tab,
+// Pratinjau halaman status (permintaan pemilik 2026-11-16): satu kode per tab,
 // bahasa mengikuti bahasa admin; tombol di pratinjau hanya contoh (tidak bisa ditekan).
 export default async function StatusPreviewPage({ searchParams }: PageProps<'/admin/status'>) {
   await requireSuperAdminPage()

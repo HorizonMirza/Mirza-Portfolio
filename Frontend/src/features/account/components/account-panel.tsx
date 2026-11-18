@@ -48,7 +48,7 @@ function shortDate(iso: string, lang: 'id' | 'en') {
   }).format(new Date(iso))
 }
 
-// Admin → Akun, desain 1 "Profil ala WhatsApp" (pilihan pemilik 2026-11-11, DESIGN.md bagian 124):
+// Admin → Akun, desain 1 "Profil ala WhatsApp" (pilihan pemilik 2026-11-11):
 // foto besar di tengah, nama dan peran, lalu daftar berkelompok Info, Keamanan, dan Perangkat tertaut.
 // Revisi pemilik 2026-11-16: tombol kamera langsung membuka pemilih berkas lalu pengaturan ukuran
 // (foto sendiri tidak bisa ditekan); email tampil apa adanya; ganti nama, email, dan password berupa
@@ -76,7 +76,7 @@ export function AccountPanel({
   const { lang } = useAdminLang()
   const router = useRouter()
   const [dialog, setDialog] = useState<Dialog | null>(null)
-  // kamera: langsung ke pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  // kamera: langsung ke pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
   const picker = useAssetPicker({ configured: uploadReady, onDone: () => router.refresh() })
   const setDialogOpen = (name: Dialog) => (open: boolean) => setDialog(open ? name : null)
   // pembuka dialog, tempat fokus kembali saat dialog ditutup

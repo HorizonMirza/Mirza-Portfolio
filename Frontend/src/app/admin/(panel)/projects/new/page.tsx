@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Project Baru') }
 }
 
-// project baru seperti halaman detail situs; sampul dan galeri setelah disimpan (DESIGN.md bagian 138)
+// project baru seperti halaman detail situs; sampul dan galeri setelah disimpan (revisi 2026-11-12)
 export default async function NewProjectPage() {
   await requireSuperAdminPage()
   const [skillGroups, texts] = await Promise.all([listSkillOptions(), projectPreviewTexts()])

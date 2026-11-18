@@ -32,7 +32,7 @@ function clean(value: string | undefined) {
     .join(' | ')
 }
 
-// Admin → Home, tab Peran (revisi pemilik 2026-11-12, DESIGN.md bagian 141): beranda tampil 1:1
+// Admin → Home, tab Peran (revisi pemilik 2026-11-12): beranda tampil 1:1
 // seperti di situs (navbar dan hero asli di bingkai layar, SiteFrame). Peran di kiri dan kanan bawah
 // diketik langsung di tempatnya; bahasanya mengikuti tombol bahasa admin di top bar. Hanya peran
 // yang bisa diubah (revisi pemilik 2026-11-13): foto utama tidak bisa ditekan. Peran disimpan sebagai satu teks dipisah "|";

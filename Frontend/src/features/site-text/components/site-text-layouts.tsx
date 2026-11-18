@@ -19,7 +19,7 @@ import type { ModuleId } from '@backend/features/site-text/catalog'
 
 import { EditText, ShownText, useShownText } from './site-text-live'
 
-// Tata letak pratinjau per modul (DESIGN.md bagian 152): halaman Navbar, Contact, dan Footer tampil
+// Tata letak pratinjau per modul (revisi 2026-11-15): halaman Navbar, Contact, dan Footer tampil
 // 1:1 seperti situs di bingkai layar (SiteFrame), memakai kelas dan susunan yang sama. Hanya yang
 // memang diubah admin yang berupa isian bergaris putus-putus: nama menu (Navbar), foto, jabatan,
 // judul, dan pengantar (Contact), nilai kartu kontak (Footer). Tulisan lain tampil apa adanya.

@@ -17,7 +17,7 @@ import {
 import { useAdminT } from '@/components/admin/admin-lang'
 import { cn } from '@/lib/utils'
 
-// Tampilan kaca panel admin (pilihan pemilik 2026-11-11, demo 5+, DESIGN.md bagian 112): blur,
+// Tampilan kaca panel admin (pilihan pemilik 2026-11-11, demo 5+): blur,
 // kepekatan, cahaya tepi, dan latar. Diadaptasi dari komponen rujukan "Adjustable Glass Dashboard"
 // tanpa GSAP (aturan proyek: tanpa library animasi) dan tanpa gambar dari luar (CSP).
 // Tersimpan di browser pemilik; nilai di luar batas dikembalikan ke bawaan.

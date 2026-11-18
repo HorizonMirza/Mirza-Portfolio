@@ -86,7 +86,7 @@ const CARDS: {
 const isSocial = (key: Key): key is SocialKey =>
   key === 'linkedin' || key === 'github' || key === 'instagram'
 
-// Admin → Footer, kartu kontak (DESIGN.md bagian 139, 151, dan 161): kartu tautan seperti di footer
+// Admin → Footer, kartu kontak (revisi 2026-11-12 dan 2026-11-15, dan 161): kartu tautan seperti di footer
 // situs, diketik langsung di tempatnya. Dipasang di dalam pratinjau Footer (SiteTextLive) tanpa form
 // dan tombol Simpan sendiri: disimpan bersama teks footer lewat satu tombol Simpan. Kartu kosong tidak
 // tampil di situs, jadi ditandai bergaris putus. Judul kartu (WhatsApp, Email, ...) tetap. WhatsApp

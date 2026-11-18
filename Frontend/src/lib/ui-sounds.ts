@@ -1,5 +1,5 @@
 // Semua suara situs, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa library). Hanya
-// diputar dari tindakan pengguna (DESIGN.md bagian 22 dan 31).
+// diputar dari tindakan pengguna (revisi 2026-10-01 dan 2026-10-03).
 // Volume tiap suara (0–100) diatur Super Admin di /admin/settings, dikirim lewat atribut
 // data-sound-mix di <html>. 0 berarti suara itu mati; suara yang belum diatur berbunyi penuh.
 

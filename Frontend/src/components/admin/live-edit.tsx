@@ -16,7 +16,7 @@ import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { cn } from '@/lib/utils'
 
-// Alat bersama "ubah langsung di pratinjau" (DESIGN.md bagian 133): halaman admin tampil seperti di
+// Alat bersama "ubah langsung di pratinjau" (revisi 2026-11-12): halaman admin tampil seperti di
 // situs dan teksnya diketik langsung di tempatnya, tanpa kotak isian, hanya kursor berkedip.
 
 export type Lang = 'id' | 'en'
@@ -242,7 +242,7 @@ export function Note({ children, className }: { children: ReactNode; className?:
 }
 
 // Pilihan bahasa isi dalam satu baris selebar Simpan, tepat di atasnya; bentuknya sama dengan tombol
-// Chip kampus/Chip bendera (revisi pemilik 2026-11-13, DESIGN.md bagian 147)
+// Chip kampus/Chip bendera (revisi pemilik 2026-11-13)
 export function LangRow({
   lang,
   onChange,
@@ -285,7 +285,7 @@ export function LangRow({
 }
 
 // Teks Markdown (uraian, grade): tampil seperti di situs, ditekan untuk diketik; saat kolom
-// ditinggalkan tampil lagi seperti di situs (DESIGN.md bagian 147)
+// ditinggalkan tampil lagi seperti di situs (revisi 2026-11-13)
 export function MarkdownInline({
   value,
   onChange,

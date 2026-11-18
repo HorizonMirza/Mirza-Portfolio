@@ -1,6 +1,6 @@
 import { EN } from '@backend/lib/admin-i18n-en'
 
-// Bahasa tampilan panel admin (permintaan pemilik 2026-11-11, DESIGN.md bagian 113 dan 115): tombol
+// Bahasa tampilan panel admin (permintaan pemilik 2026-11-11): tombol
 // ID/EN di top bar mengganti seluruh tampilan admin sekaligus bahasa isian form dua bahasa. Pilihan
 // disimpan di cookie agar halaman server langsung dirender dalam bahasa itu. Kunci kamus adalah teks
 // Indonesia persis seperti di kode; teks isian dari database (mis. nama project) tidak diterjemahkan.
@@ -17,7 +17,7 @@ export type AdminVars = Record<string, string | number>
 
 // Nama halaman situs yang di kode ditulis dalam bahasa Inggris (sama dengan menu situs publik versi
 // Inggris). Dalam mode Indonesia memakai nama menu situs publik versi Indonesia (messages/id.json Nav)
-// agar tidak ada nama Inggris di tampilan Indonesia (permintaan pemilik 2026-11-11, DESIGN.md bagian 116).
+// agar tidak ada nama Inggris di tampilan Indonesia (permintaan pemilik 2026-11-11).
 const ID: Record<string, string> = {
   Home: 'Beranda',
   About: 'Tentang',
@@ -100,7 +100,7 @@ export function adminT(lang: AdminLang, text: string, vars?: AdminVars): string 
 
 // Perkiraan apakah teks yang sedang tampil akan berganti saat bahasa admin diganti ke `next`. Dipakai
 // efek acak huruf agar teks dari server ikut diacak sejak tombol ditekan, sebelum teks barunya tiba
-// (DESIGN.md bagian 117). Hanya teks kamus; isian data (mis. judul project) ikut saat teksnya tiba.
+// (revisi 2026-11-11). Hanya teks kamus; isian data (mis. judul project) ikut saat teksnya tiba.
 let reverse: Map<string, string> | null = null
 export function adminTextWillChange(text: string, next: AdminLang): boolean {
   if (next === 'en') return translate(text) !== text || text in ID_REVERSE

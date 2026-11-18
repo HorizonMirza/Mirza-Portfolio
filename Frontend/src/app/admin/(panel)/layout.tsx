@@ -19,14 +19,14 @@ export default async function PanelLayout({ children }: { children: ReactNode })
   const profile = await getPublicProfile()
   const identity = { adminName: admin.name, photo: profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR }
   const lang = await getAdminLang()
-  // sidebar desktop diciutkan lewat hamburger (DESIGN.md bagian 126), dibaca server agar tidak melompat
+  // sidebar desktop diciutkan lewat hamburger (revisi 2026-11-11), dibaca server agar tidak melompat
   const collapsed = (await cookies()).get(SIDEBAR_COOKIE)?.value === 'collapsed'
   return (
     <AdminLangProvider initial={lang}>
-      {/* Desain 5+ (pilihan pemilik 2026-11-11, DESIGN.md bagian 112): top bar, sidebar, dan panel isi
+      {/* Desain 5+ (pilihan pemilik 2026-11-11): top bar, sidebar, dan panel isi
           dari kaca buram hitam-putih di atas latar yang bisa diatur lewat tombol Tampilan */}
       <AdminGlassShell>
-        {/* Kerangka tetap setinggi layar (revisi pemilik 2026-11-11, DESIGN.md bagian 114): sidebar
+        {/* Kerangka tetap setinggi layar (revisi pemilik 2026-11-11): sidebar
             penuh dari atas sampai bawah, top bar selebar panel isi, keduanya tidak ikut bergulir. Hanya
             isi di dalam panel besar yang digulir (batang gulir disembunyikan). */}
         <SidebarStateProvider initialCollapsed={collapsed}>

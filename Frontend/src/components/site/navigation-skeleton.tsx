@@ -48,8 +48,8 @@ function internalTarget(event: MouseEvent): string | null {
   return url.pathname
 }
 
-// Skeleton shimmer saat pindah halaman di situs publik (pilihan pemilik 2026-11-11, DESIGN.md bagian
-// 125). Halaman publik sengaja tanpa loading.tsx (bagian 111: HTML statis jadi skeleton, 404 jadi 200),
+// Skeleton shimmer saat pindah halaman di situs publik (pilihan pemilik 2026-11-11).
+// Halaman publik sengaja tanpa loading.tsx (revisi 2026-11-10: HTML statis jadi skeleton, 404 jadi 200),
 // jadi skeleton ini hanya ada di browser: muncul setelah tautan ditekan bila halaman tujuan belum siap
 // dalam 150 ms, menutupi isi lama dengan bentuk halaman tujuan, lalu hilang begitu alamat berganti.
 // Tanpa JavaScript dan untuk mesin pencari tidak ada yang berubah.

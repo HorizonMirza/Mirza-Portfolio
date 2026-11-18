@@ -24,7 +24,7 @@ export async function SiteHeader({
   editable = false,
 }: {
   locale: AppLocale
-  // pratinjau admin (DESIGN.md bagian 141): halaman situs yang ditiru, untuk menu yang menyala
+  // pratinjau admin (revisi 2026-11-12): halaman situs yang ditiru, untuk menu yang menyala
   currentPath?: string
   // pratinjau Admin → Navbar: nama menu bisa diketik (NavEditProvider), kapsul menu selalu tampil
   // (di layar kecil di baris sendiri), foto dan tombol bahasa/tema hanya tampilan

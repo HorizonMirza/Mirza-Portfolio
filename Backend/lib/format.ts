@@ -1,7 +1,7 @@
 // Semua waktu disimpan UTC dan ditampilkan dalam zona Asia/Jakarta (CLAUDE.md, pelajaran GAAS F-01).
 export const DISPLAY_TIME_ZONE = 'Asia/Jakarta'
 
-// Bahasa tampilan: 'id' (bawaan) atau 'en' untuk panel admin berbahasa Inggris (DESIGN.md bagian 115).
+// Bahasa tampilan: 'id' (bawaan) atau 'en' untuk panel admin berbahasa Inggris (revisi 2026-11-11).
 type DisplayLang = 'id' | 'en'
 const LOCALE: Record<DisplayLang, string> = { id: 'id-ID', en: 'en-US' }
 

@@ -23,7 +23,7 @@ export type IntroPreviewTexts = Record<
 
 const MAX = 600
 
-// Admin → Home, tab Kartu pembuka (revisi pemilik 2026-11-12, DESIGN.md bagian 131-132 dan 141):
+// Admin → Home, tab Kartu pembuka (revisi pemilik 2026-11-12):
 // layar kartu "Informasi Penting" tampil 1:1 seperti yang dilihat pengunjung (latar kotak commit,
 // huruf situs) di bingkai layar SiteFrame. Isi kartu langsung bisa diketik di tempatnya, tanpa kotak
 // isian dan tanpa ikon (hanya kursor berkedip), seperti mengetik di kolom pesan. Tombol ID/EN di kartu memilih bahasa yang diubah.
@@ -96,7 +96,7 @@ export function IntroForm({
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
-      {/* 1:1 seperti di situs (revisi pemilik 2026-11-12, DESIGN.md bagian 141): layar kartu pembuka
+      {/* 1:1 seperti di situs (revisi pemilik 2026-11-12): layar kartu pembuka
           (.intro, latar kotak commit) di bingkai layar SiteFrame */}
       <SiteFrame>
         <div className="intro flex" lang={lang}>

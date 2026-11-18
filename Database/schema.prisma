@@ -268,10 +268,10 @@ model Experience {
   status             ContentStatus   @default(PUBLISHED)
   logoId             String?         @db.Uuid
   logo               Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
-  // foto kegiatan di sisi seberang timeline (DESIGN.md bagian 38)
+  // foto kegiatan di sisi seberang timeline (revisi 2026-10-03)
   photoId            String?         @db.Uuid
   photo              Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
-  // titik di garis cerita "Dari komunitas ke software" di beranda (DESIGN.md bagian 46)
+  // titik di garis cerita "Dari komunitas ke software" di beranda (revisi 2026-10-08)
   inStory            Boolean         @default(false)
   createdAt          DateTime        @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime        @updatedAt @db.Timestamptz(3)
@@ -389,7 +389,7 @@ model SiteSetting {
   contactPhoto       Asset?   @relation("ContactCardPhoto", fields: [contactPhotoId], references: [id], onDelete: SetNull)
   // warna grafik kontribusi GitHub di beranda: { light: [4 hex], dark: [4 hex] }; kosong = biru bawaan
   githubPalette      Json?
-  // Admin → Pengaturan (DESIGN.md bagian 119). Pilihan teks divalidasi Zod (features/settings/options.ts).
+  // Admin → Pengaturan (revisi 2026-11-11). Pilihan teks divalidasi Zod (features/settings/options.ts).
   // tema awal pengunjung yang belum memilih: dark | light | system
   defaultTheme       String   @default("dark")
   // efek cairan dan kursor titik+cincin di foto beranda
@@ -412,7 +412,7 @@ model SiteSetting {
   updatedAt          DateTime @updatedAt @db.Timestamptz(3)
 }
 
-// Riwayat masuk panel admin (Admin → Akun, DESIGN.md bagian 120): berhasil dan gagal. Tanpa IP dan
+// Riwayat masuk panel admin (Admin → Akun, revisi 2026-11-11): berhasil dan gagal. Tanpa IP dan
 // tanpa email yang diketik; hanya user-agent (diringkas saat ditampilkan) dan kota/negara dari header
 // Vercel. Dihapus setelah 90 hari oleh cron harian.
 model LoginEvent {

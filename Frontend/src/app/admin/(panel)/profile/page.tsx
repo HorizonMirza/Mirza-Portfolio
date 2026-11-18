@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('About') }
 }
 
-// About: halaman Tentang dalam satu halaman, profil dan pendidikan (DESIGN.md bagian 136 dan 146)
+// About: halaman Tentang dalam satu halaman, profil dan pendidikan (revisi 2026-11-12 dan 2026-11-13)
 export default async function ProfilePage() {
   await requireSuperAdminPage()
   const [values, assets, profile, experiences, tId, tEn, educationRows, tIdExp] = await Promise.all(

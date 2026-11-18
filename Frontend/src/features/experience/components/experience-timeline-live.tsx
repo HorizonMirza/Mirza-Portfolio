@@ -62,7 +62,7 @@ function duration(start: string, end: string, lang: Lang, texts: ExperienceTexts
     .join(' ')
 }
 
-// Admin → Experience (revisi pemilik 2026-11-13, DESIGN.md bagian 147): halaman Pengalaman sama
+// Admin → Experience (revisi pemilik 2026-11-13): halaman Pengalaman sama
 // persis seperti di situs dan semuanya diubah di halaman ini (tanpa pindah halaman): peran, instansi,
 // jenis pekerjaan, bulan mulai dan selesai, uraian (tampil seperti di situs, ditekan untuk diketik),
 // logo dan foto (ditekan untuk diganti). "+ Tambah pengalaman" menambah entri di tempat. Jenis
@@ -81,7 +81,7 @@ export function ExperienceTimelineLive({
   const router = useRouter()
   const [lang, setLang] = useEditLang()
   const [pending, startTransition] = useTransition()
-  // logo dan foto ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  // logo dan foto ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const entries = useEntries(initial)
   const tx = texts[lang]

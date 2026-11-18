@@ -39,7 +39,7 @@ export function chipFrom({
   }
 }
 
-// Kartu foto halaman Tentang (pilihan C, DESIGN.md bagian 39): foto tanpa bingkai tebal dan tanpa
+// Kartu foto halaman Tentang (pilihan C, revisi 2026-10-05): foto tanpa bingkai tebal dan tanpa
 // siku bidik, chip kampus di sudut atas, dan chip bendera (kaca, warnanya ikut tema).
 // Chip kampus hanya tampil bila datanya ada; fotonya dipasang oleh halaman lewat `photo`.
 export function AboutPhotoCard({

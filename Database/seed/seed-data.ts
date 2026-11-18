@@ -61,7 +61,7 @@ export const profile: SeedProfile = {
     linkedin: "https://www.linkedin.com/in/muhammad-mirza-wirya",
     github: "https://github.com/HorizonMirza",
   },
-  // nama perusahaan sesuai CV, dikonfirmasi pemilik 2026-11-04 (CONTENT.md bagian 10 no. 11)
+  // nama perusahaan sesuai CV, dikonfirmasi pemilik 2026-11-04 (CONTENT.md)
   currentRole: {
     id: "Fullstack Developer & Asset Management Intern di PT PGAS Solution",
     en: "Fullstack Developer & Asset Management Intern at PT PGAS Solution",

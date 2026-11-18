@@ -142,7 +142,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             {/* statistik kunjungan bisa dimatikan di Admin → Pengaturan (/api/track juga menolak) */}
             {settings.trackVisits && !maintenance ? <PageViewTracker /> : null}
             {settings.whatsappButton && !maintenance ? <WhatsAppFloat /> : null}
-            {/* skeleton shimmer saat pindah halaman, hanya di browser (DESIGN.md bagian 125) */}
+            {/* skeleton shimmer saat pindah halaman, hanya di browser (revisi 2026-11-11) */}
             {maintenance ? null : <NavigationSkeleton />}
             {/* pemberitahuan pembuka dari Admin → Home, tab Kartu pembuka, frekuensinya dari Admin → Pengaturan */}
             {intro ? <IntroNoticeSlot locale={locale} intro={intro} /> : null}

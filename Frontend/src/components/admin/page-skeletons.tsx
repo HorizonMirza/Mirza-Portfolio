@@ -5,7 +5,7 @@ import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shap
 import { Skeleton, SkeletonLines, SkeletonPage } from '@/components/shared/skeleton'
 import { Card } from '@/components/ui/card'
 
-// Skeleton panel admin untuk loading.tsx (DESIGN.md bagian 111). Halaman admin selalu mengambil data
+// Skeleton panel admin untuk loading.tsx (revisi 2026-11-10). Halaman admin selalu mengambil data
 // langsung dari database, jadi skeleton ini tampil setiap pindah menu sampai datanya siap. Sidebar
 // dan top bar tetap tampil karena ada di layout; bentuk blok meniru tab modul, daftar, dan tata letak
 // tiap halaman.
@@ -14,7 +14,7 @@ function Loading({ children }: { children: ReactNode }) {
   return <SkeletonPage label={<AdminText text="Memuat Halaman…" />}>{children}</SkeletonPage>
 }
 
-// tab modul: satu baris tombol sama lebar seperti tab Home (bagian 129), turun baris seperti
+// tab modul: satu baris tombol sama lebar seperti tab Home (revisi 2026-11-11), turun baris seperti
 // FilterTabs, tidak digeser menyamping
 function TabsSkeleton({ count }: { count: number }) {
   if (count === 0) return null
@@ -30,7 +30,7 @@ function TabsSkeleton({ count }: { count: number }) {
 export function AdminDashboardSkeleton() {
   return (
     <Loading>
-      {/* meniru desain 01 "Ringkas" (DESIGN.md bagian 165 dan 166), selebar panel isi */}
+      {/* meniru desain 01 "Ringkas" (revisi 2026-11-16), selebar panel isi */}
       <div className="admin-bleed flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (

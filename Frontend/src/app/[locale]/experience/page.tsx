@@ -32,7 +32,7 @@ export async function generateMetadata({
 // pemilik 2026-10-03). Data pendidikan tetap dipakai halaman Tentang.
 const SHOWN = ['WORK', 'ORGANIZATION'] as const
 
-// Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03, DESIGN.md bagian 38): hitam-putih,
+// Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03): hitam-putih,
 // tanpa kalimat pengantar dan tanpa filter (revisi pemilik).
 export default async function ExperiencePage({ params }: PageProps<'/[locale]/experience'>) {
   const locale = await resolveLocale(params)

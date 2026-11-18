@@ -134,7 +134,7 @@ export function EditText({
   )
 }
 
-// Admin → modul situs (About, Experience, Projects, Contact, Navbar, Footer), DESIGN.md bagian 135:
+// Admin → modul situs (About, Experience, Projects, Contact, Navbar, Footer), revisi 2026-11-12:
 // halaman tampil seperti di situs dan teksnya diketik langsung. Tombol ID/EN memilih bahasa yang
 // diubah; Simpan satu baris di bawah.
 export function SiteTextLive({

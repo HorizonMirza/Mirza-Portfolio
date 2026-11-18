@@ -25,8 +25,8 @@ function withYear(month: string, year: string, fallbackMonth = '01') {
   return `${year}-${mm}`
 }
 
-// Kartu Pendidikan halaman Tentang di Admin → About (revisi pemilik 2026-11-13, DESIGN.md bagian
-// 147): sama dengan kartu di situs (logo, kampus, jurusan, tahun, grade), semuanya diubah langsung di
+// Kartu Pendidikan halaman Tentang di Admin → About (revisi pemilik 2026-11-13):
+// sama dengan kartu di situs (logo, kampus, jurusan, tahun, grade), semuanya diubah langsung di
 // halaman ini. Logo ditekan untuk diganti (entri tersimpan); "+ Tambah pendidikan" menambah kartu
 // baru di tempat. Status dan hapus muncul saat kartu disorot. Disimpan bersama tombol Simpan halaman.
 export function EducationCardsLive({
@@ -44,7 +44,7 @@ export function EducationCardsLive({
 }) {
   const t = useAdminT()
   const router = useRouter()
-  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const label = (text: string) => `${t(text)} (${t(LANG_NAME[lang])})`
   // dari yang paling lama ke terbaru, seperti halaman Tentang; kartu baru di akhir

@@ -27,7 +27,7 @@ const TYPING_DELAY_MS = 600
 
 type Save = <K extends SiteOptionKey>(key: K, value: SiteOptions[K]) => void
 
-// Admin → Pengaturan, desain 1 "Daftar berkelompok" (pilihan pemilik 2026-11-11, DESIGN.md bagian 119):
+// Admin → Pengaturan, desain 1 "Daftar berkelompok" (pilihan pemilik 2026-11-11):
 // kelompok Suara, Tampilan, Pesan, Privasi, Lanjutan (revisi pemilik 2026-11-16: semua suara satu
 // kelompok, Tampilan dan Konten digabung); tiap baris satu pengaturan dengan kontrol di kanan. Setiap perubahan langsung disimpan (tanpa tombol Simpan) lalu muncul notifikasi "Tersimpan".
 // Gagal disimpan: kontrol kembali ke nilai terakhir yang tersimpan.

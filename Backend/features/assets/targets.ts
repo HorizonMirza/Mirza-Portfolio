@@ -58,7 +58,7 @@ export const UPLOAD_TARGETS = {
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
-  // logo instansi di simpul timeline pengalaman (DESIGN.md bagian 38); PNG transparan paling rapi
+  // logo instansi di simpul timeline pengalaman (revisi 2026-10-03); PNG transparan paling rapi
   'experience-logo': {
     label: 'Logo Instansi',
     aspect: 1,

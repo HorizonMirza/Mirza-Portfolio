@@ -30,7 +30,7 @@ export async function generateMetadata({
   })
 }
 
-// Halaman Tentang memakai rancangan C (pilihan pemilik 2026-10-05, DESIGN.md bagian 39): pita
+// Halaman Tentang memakai rancangan C (pilihan pemilik 2026-10-05): pita
 // hitam dengan nama dan peran, kartu foto menggantung yang bisa dimiringkan, lalu bio di kiri dan
 // pendidikan di kanan. Semua isi diatur dari admin: nama, foto, bio, dan peran di Profil;
 // pendidikan sebagai entri Pengalaman berjenis Pendidikan. CV ada di footer.

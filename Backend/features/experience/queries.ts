@@ -6,7 +6,7 @@ import { getDb } from '@backend/lib/db'
 import { dateToMonth, type ExperienceInput, type ExperienceKind } from './schema'
 
 // Entri lengkap untuk diubah langsung di halaman Admin → About (pendidikan) dan Admin → Experience
-// (revisi pemilik 2026-11-13, DESIGN.md bagian 147): nilai form dan berkas logo/foto per entri.
+// (revisi pemilik 2026-11-13): nilai form dan berkas logo/foto per entri.
 // Pendidikan dikelola di About, kerja dan organisasi di Experience (2026-11-10).
 export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
   const rows = await getDb().experience.findMany({

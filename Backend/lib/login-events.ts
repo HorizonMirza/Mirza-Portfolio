@@ -25,7 +25,7 @@ export function locationFromHeaders(
   return place || null
 }
 
-// Catat satu percobaan masuk panel admin (Admin → Akun, DESIGN.md bagian 120). Email yang diketik tidak
+// Catat satu percobaan masuk panel admin (Admin → Akun, revisi 2026-11-11). Email yang diketik tidak
 // disimpan: hanya dipakai untuk mencari akun pemiliknya. Gagal mencatat tidak boleh menggagalkan login.
 export async function recordLoginEvent(input: {
   kind: 'success' | 'failed'

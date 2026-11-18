@@ -1,4 +1,4 @@
-// Kamus bahasa Inggris panel admin (DESIGN.md bagian 113 dan 115). Kunci = teks Indonesia persis
+// Kamus bahasa Inggris panel admin (revisi 2026-11-11). Kunci = teks Indonesia persis
 // seperti di kode; {nama} adalah tempat nilai yang diisi saat dipakai. Kalimat dengan bagian yang
 // berubah-ubah dari server (mis. "Judul wajib diisi") ditangani pola di admin-i18n.ts.
 export const EN: Record<string, string> = {
@@ -145,7 +145,7 @@ export const EN: Record<string, string> = {
   'Tulisan di menu navigasi atas dan bawah situs.':
     'Labels in the top and bottom navigation menus.',
   'Teks di bagian bawah setiap halaman.': 'Text at the bottom of every page.',
-  // seluruh panel admin (DESIGN.md bagian 115)
+  // seluruh panel admin (revisi 2026-11-11)
   'Hapus {item}': 'Delete {item}',
   Hapus: 'Delete',
   // judul dialog hapus umum, tanpa nama butir (revisi 2026-11-16)
@@ -480,7 +480,7 @@ export const EN: Record<string, string> = {
   Semua: 'All',
   menjadi: 'became',
   Dashboard: 'Dashboard',
-  // Pengaturan, Akun, dan Log audit (DESIGN.md bagian 119–121)
+  // Pengaturan, Akun, dan Log audit (revisi 2026-11-11)
   '(belum terpenuhi)': '(not met yet)',
   '(terpenuhi)': '(met)',
   '1 Tahun': '1 Year',
@@ -602,7 +602,7 @@ export const EN: Record<string, string> = {
   Ikon: 'Icon',
   Bio: 'Bio',
   Ukuran: 'Size',
-  // Akun desain 1 (DESIGN.md bagian 124)
+  // Akun desain 1 (revisi 2026-11-11)
   'Admin Sejak': 'Admin Since',
   'Aktif Sekarang': 'Active Now',
   'Belum pernah diganti dari panel': 'Not changed from the panel yet',

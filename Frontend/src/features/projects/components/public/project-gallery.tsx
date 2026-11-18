@@ -9,7 +9,7 @@ import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
 
-// Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08, DESIGN.md bagian 47): satu
+// Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08): satu
 // foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan
 // layar laptop maupun HP tidak terpotong. Foto besar yang dirender hanya foto aktif, dua tetangganya,
 // dan foto yang sudah pernah dilihat: semua foto bertumpuk di area terlihat sehingga lazy-load

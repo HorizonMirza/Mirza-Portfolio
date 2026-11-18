@@ -86,7 +86,7 @@ function SimpleCard({
   )
 }
 
-// Footer (pilihan pemilik 2026-10-03, demo nomor 2; DESIGN.md bagian 29): kartu tautan berisi ikon,
+// Footer (pilihan pemilik 2026-10-03, demo nomor 2): kartu tautan berisi ikon,
 // nama, dan alamat untuk WhatsApp, Email, LinkedIn, GitHub, Instagram, dan Resume CV (kartu CV
 // disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta.
 // Revisi pemilik 2026-10-08: daftar kartu tetap seperti sebelumnya; saat sebuah kartu disorot,

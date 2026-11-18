@@ -86,7 +86,7 @@ function StatTile({
 
 const STATUS_LABEL = { NEW: 'Baru', READ: 'Dibaca', ARCHIVED: 'Arsip' } as const
 
-// Desain 01 "Ringkas" (pilihan pemilik 2026-11-16, DESIGN.md bagian 165 dan 166): selebar panel isi
+// Desain 01 "Ringkas" (pilihan pemilik 2026-11-16): selebar panel isi
 // sampai tepi kiri-kanan, empat angka dengan grafik kecil, kunjungan harian dengan periode 7/30/90
 // hari (lewat ?range=, tanpa JavaScript tambahan), lalu Rincian per hari dan Pesan terbaru berdampingan.
 export default async function DashboardPage({ searchParams }: PageProps<'/admin'>) {

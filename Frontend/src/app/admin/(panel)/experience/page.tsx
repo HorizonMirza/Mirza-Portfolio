@@ -40,7 +40,7 @@ async function siteTexts(locale: 'id' | 'en'): Promise<ExperienceTexts['id']> {
 }
 
 // Experience: halaman Pengalaman situs tampil sama persis dan diubah langsung di halaman ini, tanpa
-// tab Teks halaman dan tanpa pindah halaman (revisi pemilik 2026-11-13, DESIGN.md bagian 145 dan 147).
+// tab Teks halaman dan tanpa pindah halaman (revisi pemilik 2026-11-13).
 export default async function ExperiencePage() {
   await requireSuperAdminPage()
   const [entries, id, en] = await Promise.all([

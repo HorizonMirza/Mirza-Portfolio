@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 import { TechChips } from './tech-chips'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
-// Satu baris di halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag", DESIGN.md bagian 48):
+// Satu baris di halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag"):
 // gambar dan teks berdampingan, sisi gambar bergantian tiap baris di layar lebar; di HP gambar di
 // atas teks. Gambar masuk dari sisinya dan teks menyusul (reveal); seluruh baris bisa diklik.
 // Revisi pemilik 2026-10-08: gambar 16:9 seperti layar desktop; baris nomor/kategori/tahun dan

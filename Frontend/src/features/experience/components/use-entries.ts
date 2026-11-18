@@ -42,7 +42,7 @@ function fillOtherLanguage(v: ExperienceInput): ExperienceInput {
   return next
 }
 
-// Daftar entri pengalaman/pendidikan yang diubah langsung di halaman (DESIGN.md bagian 147): tiap
+// Daftar entri pengalaman/pendidikan yang diubah langsung di halaman (revisi 2026-11-13): tiap
 // entri menyimpan nilainya sendiri; Simpan menyimpan semua entri yang berubah sekaligus. Data baru
 // dari server (setelah router.refresh) diambil untuk entri yang tidak sedang diubah.
 export function useEntries(initial: EntryRow[]) {

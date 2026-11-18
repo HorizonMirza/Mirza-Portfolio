@@ -22,7 +22,7 @@ const empty: ChangePasswordInput = { currentPassword: '', newPassword: '' }
 
 const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat Kuat'] as const
 
-// Ganti password di panel Akun (DESIGN.md bagian 120): aturan wajib dicentang langsung saat mengetik
+// Ganti password di panel Akun (revisi 2026-11-11): aturan wajib dicentang langsung saat mengetik
 // dan garis kekuatan. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
 // perangkat ikut berubah (perangkat lain dikeluarkan).
 export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {

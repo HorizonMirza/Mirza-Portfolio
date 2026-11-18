@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Nama menu tetap "Pengaturan": sekarang berisi pengaturan seluruh situs, bukan hanya suara
-// (revisi pemilik 2026-11-11, DESIGN.md bagian 119).
+// (revisi pemilik 2026-11-11).
 export default async function SettingsPage() {
   await requireSuperAdminPage()
   const [options, profile] = await Promise.all([getSiteOptionsForEdit(), getPublicProfile()])

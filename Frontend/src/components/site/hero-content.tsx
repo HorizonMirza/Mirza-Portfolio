@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 
-// Isi hero beranda (revisi pemilik 2026-10-19, DESIGN.md bagian 85 dan 86): halo, nama dua baris di
+// Isi hero beranda (revisi pemilik 2026-10-19): halo, nama dua baris di
 // belakang foto, foto rata bawah, salinan nama di depan foto yang dilubangi di area wajah, lalu peran
 // di pojok bawah. Dipakai beranda dan pratinjau Admin → Home → Peran agar keduanya sama persis
-// (DESIGN.md bagian 141).
+// (revisi 2026-11-12).
 export function HeroContent({
   name,
   portrait,

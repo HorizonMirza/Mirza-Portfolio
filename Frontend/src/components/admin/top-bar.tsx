@@ -21,8 +21,8 @@ function subscribeDesktop(onChange: () => void) {
   return () => query.removeEventListener('change', onChange)
 }
 
-// Top bar kaca (DESIGN.md bagian 112-113, 126): di kiri tombol hamburger dan nama halaman; di kanan
-// Tampilan, bahasa tampilan ID/EN, tema, dan menu profil titik tiga (bagian 128). Hamburger di desktop
+// Top bar kaca (revisi 2026-11-11): di kiri tombol hamburger dan nama halaman; di kanan
+// Tampilan, bahasa tampilan ID/EN, tema, dan menu profil titik tiga (revisi 2026-11-11). Hamburger di desktop
 // menciutkan sidebar menjadi ikon atau melebarkannya lagi; di HP dan tablet membuka laci berisi seluruh
 // menu. Foto admin hanya di puncak sidebar, tidak diulang di sini.
 export function AdminTopBar() {

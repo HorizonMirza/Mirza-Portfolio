@@ -13,7 +13,7 @@ export type AccountSession = {
   current: boolean
 }
 
-// Data Admin → Akun (DESIGN.md bagian 120): identitas, sesi aktif, dan ganti password terakhir.
+// Data Admin → Akun (revisi 2026-11-11): identitas, sesi aktif, dan ganti password terakhir.
 export async function getAccountOverview(userId: string, currentSessionId: string) {
   const db = getDb()
   const now = new Date()

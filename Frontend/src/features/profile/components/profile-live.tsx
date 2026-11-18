@@ -35,7 +35,7 @@ import { AboutPhotoCard, type PhotoCardChip } from './about-photo-card'
 
 type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles' | 'aboutChipLabel'
 
-// Admin → About (DESIGN.md bagian 136, 146, dan 147): halaman Tentang sama persis seperti di situs
+// Admin → About (revisi 2026-11-12 dan 2026-11-13, dan 147): halaman Tentang sama persis seperti di situs
 // (judul, pita berisi kartu foto yang menggantung, nama, peran, lalu bio dan kartu pendidikan
 // berdampingan), semuanya diubah di halaman ini. Peran tampil seperti di situs (peran bawaan sebagai
 // teks biasa, sama seperti Home → Peran) dan diketik langsung; nama tetap. Foto kartu ditekan untuk

@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-// Pengaturan situs yang disimpan otomatis per baris (Admin → Pengaturan, DESIGN.md bagian 119).
+// Pengaturan situs yang disimpan otomatis per baris (Admin → Pengaturan, revisi 2026-11-11).
 // Dipakai bersama oleh form (klien) dan action (server), jadi tanpa import server.
 
 export const THEME_CHOICES = ['dark', 'light', 'system'] as const

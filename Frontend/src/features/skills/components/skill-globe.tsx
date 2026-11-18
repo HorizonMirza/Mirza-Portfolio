@@ -155,7 +155,7 @@ function Glyph({ item }: { item: SkillItem }) {
   )
 }
 
-// Globe skill di beranda (DESIGN.md bagian 73, pilihan pemilik demo S4 + warna kategori S7): logo skill
+// Globe skill di beranda (revisi 2026-10-18, pilihan pemilik demo S4 + warna kategori S7): logo skill
 // di permukaan bola bergaris lintang-bujur. Bola berputar pelan, bisa digeser (mouse atau jari ke
 // samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Menu kategori
 // meredupkan kategori lain. Logo adalah tombol toggle biasa (Enter/Spasi, panah kiri/kanan); hanya

@@ -10,7 +10,7 @@ test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' 
 const SESSION_PROJECT = 'chromium'
 
 test.describe('Admin → Akun', () => {
-  // Desain 1 "Profil ala WhatsApp" (DESIGN.md bagian 124): semua kelompok langsung terlihat. Revisi
+  // Desain 1 "Profil ala WhatsApp" (revisi 2026-11-11): semua kelompok langsung terlihat. Revisi
   // 2026-11-16: foto penuh, kamera ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog.
   test('identitas, email tampil apa adanya, perangkat langsung terlihat', async ({ page }) => {
     await page.goto('/admin/account')

@@ -10,7 +10,7 @@ import { fadeLabel, useSidebarState } from '@/components/admin/sidebar-state'
 import { cn } from '@/lib/utils'
 
 // Lampu hitam/putih (ikut warna teks tema) di tepi kiri menu aktif, seperti topbar situs publik.
-// Dikembalikan atas permintaan pemilik 2026-11-11 (sempat dihapus di DESIGN.md bagian 122).
+// Dikembalikan atas permintaan pemilik 2026-11-11 (sempat dihapus di).
 function Lamp() {
   return (
     <span
@@ -83,7 +83,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return <NavLinks onNavigate={onNavigate} />
 }
 
-// Sidebar kaca (DESIGN.md bagian 112-114, 126, 128): penuh dari atas sampai bawah layar di kiri top bar
+// Sidebar kaca (revisi 2026-11-11): penuh dari atas sampai bawah layar di kiri top bar
 // dan panel isi, tidak ikut bergulir. Puncaknya foto, nama, dan Super Admin sekaligus tombol kembali ke
 // Dashboard (satu-satunya wajah admin di panel), lalu menu (digulir sendiri tanpa batang
 // gulir). Tablet (768-1023 px): rel ikon. Desktop: 17rem (238 px, rem desktop 14 px): nama lengkap butuh 222 px, sisa 16 px untuk huruf cadangan, atau rel

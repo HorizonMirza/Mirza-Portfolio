@@ -43,12 +43,12 @@ export default async function SiteModulePage({ params }: Params) {
   if (!found) notFound()
   const moduleId: ModuleId = found.id
   if (moduleId === 'home') redirect('/admin/roles')
-  // About tanpa tab Teks halaman (revisi pemilik 2026-11-12, DESIGN.md bagian 142): teksnya tetap
+  // About tanpa tab Teks halaman (revisi pemilik 2026-11-12): teksnya tetap
   // tampil di situs (bawaan atau yang tersimpan sebelumnya), hanya tidak diubah dari admin lagi
   if (moduleId === 'about') redirect('/admin/profile')
-  // Experience juga tanpa tab Teks halaman (revisi pemilik 2026-11-13, DESIGN.md bagian 145)
+  // Experience juga tanpa tab Teks halaman (revisi pemilik 2026-11-13)
   if (moduleId === 'experience') redirect('/admin/experience')
-  // Projects juga (revisi pemilik 2026-11-15, DESIGN.md bagian 149)
+  // Projects juga (revisi pemilik 2026-11-15)
   if (moduleId === 'projects') redirect('/admin/projects')
   // Bagian Awal satu kelompok tab dengan Home, tanpa deskripsi (revisi pemilik 2026-11-11)
   const inHome = moduleId === 'intro'
@@ -69,7 +69,7 @@ export default async function SiteModulePage({ params }: Params) {
   )
 }
 
-// Home → Kartu pembuka: kartu seperti di situs, isinya diubah di tempat (DESIGN.md bagian 131)
+// Home → Kartu pembuka: kartu seperti di situs, isinya diubah di tempat (revisi 2026-11-12)
 async function IntroEditor() {
   const [values, profile, tId, tEn] = await Promise.all([
     getIntroForEdit(),
@@ -108,7 +108,7 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
     moduleId === 'contact' ? getContactPhotoAsset() : null,
   ])
   const name = profile?.name ?? 'Muhammad Mirza'
-  // Navbar, Contact, dan Footer tampil 1:1 seperti situs di bingkai layar (DESIGN.md bagian 151)
+  // Navbar, Contact, dan Footer tampil 1:1 seperti situs di bingkai layar (revisi 2026-11-15)
   const extras: LayoutExtras = {
     name,
     photo: contactPhoto?.url ?? settings.heroPortrait?.url ?? HERO_PORTRAIT.src,
@@ -137,7 +137,7 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
 }
 
 // Footer: kartu kontak dan Resume CV seperti di footer situs, diketik langsung di pratinjau dan
-// disimpan bersama teks footer (DESIGN.md bagian 139 dan 151)
+// disimpan bersama teks footer (revisi 2026-11-12 dan 2026-11-15)
 async function footerContacts() {
   const [links, assets] = await Promise.all([getContactLinksForEdit(), getProfileAssets()])
   return (

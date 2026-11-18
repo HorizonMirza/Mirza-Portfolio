@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Home → Peran: beranda 1:1 seperti di situs, hanya peran yang diketik langsung di
-// pratinjau (DESIGN.md bagian 129, 133, dan 141); action dan validasinya tetap saveHeroRoles.
+// pratinjau (revisi 2026-11-11 dan 2026-11-12, dan 141); action dan validasinya tetap saveHeroRoles.
 export default async function HeroRolesPage() {
   await requireSuperAdminPage()
   const [roles, profile, portrait, tId, tEn, lang] = await Promise.all([

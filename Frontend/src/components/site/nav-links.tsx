@@ -72,7 +72,7 @@ export function NavLinks({
   currentPath,
 }: {
   variant: 'top' | 'bottom'
-  // pratinjau admin (DESIGN.md bagian 141): halaman situs yang sedang ditiru, mis. '/' untuk beranda
+  // pratinjau admin (revisi 2026-11-12): halaman situs yang sedang ditiru, mis. '/' untuk beranda
   currentPath?: string
 }) {
   const t = useTranslations('Nav')

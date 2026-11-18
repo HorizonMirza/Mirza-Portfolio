@@ -27,7 +27,7 @@ import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 // Bahasa admin (tombol ID/EN di top bar). Sejak 2026-11-11 mengganti bahasa tampilan admin (menu,
-// top bar, judul halaman, dashboard; DESIGN.md bagian 113) sekaligus bahasa isian form dua bahasa
+// top bar, judul halaman, dashboard; revisi 2026-11-11) sekaligus bahasa isian form dua bahasa
 // (pilihan pemilik 2026-10-26). Disimpan hanya di cookie agar server dan browser selalu merender
 // bahasa yang sama (pilihan lama di localStorage sengaja tidak dibaca: bisa membuat tampilan campur).
 
@@ -82,7 +82,7 @@ export function AdminLangProvider({
   }, [refreshing])
 
   // Seluruh teks yang berubah ikut efek acak huruf dan selesai BERSAMAAN (permintaan pemilik
-  // 2026-11-11, DESIGN.md bagian 116-117): teks client component berganti seketika, teks server
+  // 2026-11-11): teks client component berganti seketika, teks server
   // component (judul, deskripsi, kartu) tiba bertahap setelah router.refresh(). Semua ditahan acak
   // sampai muat ulang selesai dan halaman tenang, lalu terurai serempak.
   const setLang = useCallback(
@@ -128,7 +128,7 @@ export function AdminText({ text }: { text: string }) {
 
 // Satu tombol bulat seperti tombol bahasa situs publik (revisi pemilik 2026-11-06, menggantikan
 // pasangan ID | EN): kode yang terlihat adalah bahasa tujuan dan menjadi awal nama aksesibel
-// (WCAG 2.5.3, DESIGN.md bagian 102). Saat ditekan: suara acak digital yang sama, tampilan dan kolom
+// (WCAG 2.5.3, revisi 2026-11-06). Saat ditekan: suara acak digital yang sama, tampilan dan kolom
 // isian berganti bahasa, lalu semua teks yang berubah di layar diacak dan terurai seperti di situs
 // publik (lihat AdminLangProvider).
 export function LangSwitch({ className }: { className?: string }) {

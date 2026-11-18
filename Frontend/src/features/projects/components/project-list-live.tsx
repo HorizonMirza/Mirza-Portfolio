@@ -41,7 +41,7 @@ type ProjectListRow = {
   chips: ChipData[]
 }
 
-// Daftar project persis seperti halaman Project situs (DESIGN.md bagian 138 dan 164): judul halaman,
+// Daftar project persis seperti halaman Project situs (revisi 2026-11-12 dan 2026-11-16): judul halaman,
 // baris zig-zag dengan sampul di bingkai browser miring, peran, judul huruf besar, ringkasan, chip
 // teknologi, dan nomor besar, dirender dengan markup dan kelas situs di dalam bingkai layar yang
 // diperkecil (SiteFrame). Peran, judul, dan ringkasan diketik langsung di tempatnya (bergaris

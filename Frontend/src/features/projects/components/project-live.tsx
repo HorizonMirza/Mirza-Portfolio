@@ -54,7 +54,7 @@ type StageItem = {
 
 type ButtonTexts = Record<Lang, { demo: string; repo: string; back: string; stack: string }>
 
-// Admin → Projects, satu project (DESIGN.md bagian 138): halaman detail project seperti di situs
+// Admin → Projects, satu project (revisi 2026-11-12): halaman detail project seperti di situs
 // (tautan kembali, peran, judul, tombol aplikasi dan GitHub, galeri di bingkai browser), diketik
 // langsung. Tombol ditekan untuk ditampilkan atau disembunyikan, URL-nya diketik di bawah tombol.
 // Galeri seperti di situs (foto besar + deretan gambar kecil, foto pertama = sampul): foto sampul
@@ -85,7 +85,7 @@ export function ProjectLive({
   const t = useAdminT()
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const [lang, setLang] = useEditLang()
   // foto yang sedang tampil di galeri (0 = sampul bila ada)

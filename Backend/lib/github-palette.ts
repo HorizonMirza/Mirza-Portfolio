@@ -1,4 +1,4 @@
-// Warna grafik kontribusi GitHub di beranda (DESIGN.md bagian 149). Tanpa import klien atau server,
+// Warna grafik kontribusi GitHub di beranda (revisi 2026-11-15). Tanpa import klien atau server,
 // jadi dipakai bersama oleh komponen grafik (klien), form admin, dan pengaturan situs (server).
 
 /** Empat warna per tema, dari aktivitas paling ringan ke paling berat. */

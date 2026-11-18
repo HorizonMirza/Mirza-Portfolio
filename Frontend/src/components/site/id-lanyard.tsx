@@ -6,7 +6,7 @@ import { type ReactNode, useEffect, useRef } from 'react'
 import { playLanyardSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
-// Kartu ID bertali di samping form kontak (DESIGN.md bagian 36). Fisika ditulis sendiri tanpa
+// Kartu ID bertali di samping form kontak (revisi 2026-10-03). Fisika ditulis sendiri tanpa
 // library: tali berupa rantai titik verlet, kartu berupa batang kaku dua titik, sehingga kartu bisa
 // ditarik, dilempar, berayun, berputar semu 3D, dan memantul pelan dari tepi.
 // Tema gelap: kartu kaca + pita putih bertulisan hitam. Tema terang: kartu logam + pita hitam

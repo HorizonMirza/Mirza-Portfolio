@@ -34,7 +34,7 @@ export function useSidebarState() {
 
 // Tulisan di sidebar desktop memudar saat menciut dan muncul lagi setelah sidebar hampir selebar penuh,
 // sementara ikon tetap di tempat (padding sama di kedua keadaan), jadi tidak ada yang melompat.
-// Tulisan tetap ada untuk pembaca layar walau tidak terlihat. DESIGN.md bagian 127.
+// Tulisan tetap ada untuk pembaca layar walau tidak terlihat. revisi 2026-11-11.
 export function fadeLabel(compact: boolean) {
   return cn(
     'lg:transition-opacity motion-reduce:transition-none',

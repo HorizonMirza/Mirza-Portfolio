@@ -5,7 +5,7 @@ import { CLIENT_NAV_TIMEOUT, waitForFiniteAnimations } from './wait'
 
 test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }) => {
   await page.goto('/id')
-  // hero (revisi 2026-10-19, DESIGN.md bagian 85): nama sebagai h1 terbaca utuh dengan spasi di
+  // hero (revisi 2026-10-19): nama sebagai h1 terbaca utuh dengan spasi di
   // belakang foto tanpa bingkai yang memakai liquid mask; panel status, angka, CV, dan sosial dihapus
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^\S+( \S+)+$/)
   const portrait = page.locator('section[aria-labelledby="hero-title"] figure img')
@@ -44,7 +44,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   await xp.nth(1).locator('summary').click()
   await expect(xp.nth(1)).toHaveAttribute('open', '')
   await expect(xp.nth(1).locator('.home-xp-body')).toBeVisible()
-  // Project (revisi pemilik 2026-10-16, DESIGN.md bagian 58): judul tanpa nomor di bawah
+  // Project (revisi pemilik 2026-10-16): judul tanpa nomor di bawah
   // Pengalaman, sampul di pita adalah tautan ke detail, pita tidak berhenti saat disorot
   const projectsHeading = page.getByRole('heading', { name: 'Project', exact: true })
   await expect(projectsHeading).toBeVisible()
@@ -181,7 +181,7 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
   await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
-// Halaman publik sengaja tanpa loading.tsx (DESIGN.md bagian 111): dengan skeleton, HTML statis
+// Halaman publik sengaja tanpa loading.tsx (revisi 2026-11-10): dengan skeleton, HTML statis
 // dikirim berisi skeleton dan isi aslinya disembunyikan sampai ditukar skrip, sehingga tanpa
 // JavaScript yang tampil hanya skeleton, dan halaman bisa berubah menjadi dirender tiap permintaan.
 test('halaman publik tetap statis (ISR) dan terbaca tanpa JavaScript', async ({
@@ -204,7 +204,7 @@ test('halaman publik tetap statis (ISR) dan terbaca tanpa JavaScript', async ({
   await ctx.close()
 })
 
-// Skeleton shimmer saat pindah halaman (DESIGN.md bagian 125): hanya di browser, muncul bila halaman
+// Skeleton shimmer saat pindah halaman (revisi 2026-11-11): hanya di browser, muncul bila halaman
 // tujuan belum siap dalam 150 ms, lalu hilang begitu halaman baru tampil. HTML statis tetap tanpa
 // skeleton (tes di atas). Permintaan data halaman (RSC) diperlambat 1,5 detik agar skeleton terlihat.
 test('skeleton shimmer tampil saat halaman tujuan lambat, lalu hilang', async ({ page }) => {

@@ -121,7 +121,7 @@
   --text-label--line-height: 1.4;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  /* pelan di awal dan akhir: sidebar admin menciut/melebar (DESIGN.md bagian 127) */
+  /* pelan di awal dan akhir: sidebar admin menciut/melebar (revisi 2026-11-11) */
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
@@ -204,7 +204,7 @@
   background-size: 32px 32px;
 }
 
-/* Timeline tengah "fokus aktif" (DESIGN.md bagian 38). HP: garis di kiri, foto di bawah teks.
+/* Timeline tengah "fokus aktif" (revisi 2026-10-03). HP: garis di kiri, foto di bawah teks.
    >= 768 px: garis di tengah, isi bergantian kiri-kanan, foto atau tahun di sisi seberang. */
 .xp-tl {
   position: relative;
@@ -654,7 +654,7 @@ button.xp-frame {
   }
 }
 
-/* Halaman Tentang, rancangan C (DESIGN.md bagian 39): pita hitam, kartu foto menggantung, bio dan
+/* Halaman Tentang, rancangan C (revisi 2026-10-05): pita hitam, kartu foto menggantung, bio dan
    kartu pendidikan. Pita memakai warna teks sebagai latar sehingga otomatis terbalik di tema gelap. */
 .ab-band {
   display: grid;
@@ -1144,7 +1144,7 @@ button.xp-frame {
       rgb(255 255 255 / 0.45)
     );
 }
-/* Kolom yang salah (DESIGN.md bagian 30): kilau dan bingkai merah, ditambah cincin tipis. */
+/* Kolom yang salah (revisi 2026-10-03): kilau dan bingkai merah, ditambah cincin tipis. */
 .login-field.login-field-bad {
   background:
     conic-gradient(
@@ -1248,7 +1248,7 @@ button.xp-frame {
   }
 }
 
-/* Globe skill (features/skills/components/skill-globe.tsx, DESIGN.md bagian 73). Logo diletakkan
+/* Globe skill (features/skills/components/skill-globe.tsx, revisi 2026-10-18). Logo diletakkan
    dari tengah panggung dengan --x/--y (satuan jari-jari --r), --s skala, --o keburaman logo, --lo
    tampil tidaknya nama (hanya sisi depan, agar teks yang tampil selalu kontras penuh). Nilai awal
    dihitung di server; JavaScript memperbaruinya tiap frame. --cat warna kategori, --logo warna brand. */
@@ -1515,7 +1515,7 @@ button.xp-frame {
   }
 }
 
-/* Form kontak (DESIGN.md bagian 33): kilau berjalan mengelilingi kotak seperti di login admin,
+/* Form kontak (revisi 2026-10-03): kilau berjalan mengelilingi kotak seperti di login admin,
    tetapi warnanya ikut tema (gelap di tema terang, terang di tema gelap). Bingkai tipis bermask
    di atas border kolom sehingga mengikuti sudut kotak; diam pada reduced-motion. */
 .field-shine {
@@ -1578,7 +1578,7 @@ button.xp-frame {
   }
 }
 
-/* Tombol kirim form kontak (DESIGN.md bagian 34, pilihan pemilik demo nomor 5): bergaris dengan
+/* Tombol kirim form kontak (revisi 2026-10-03, pilihan pemilik demo nomor 5): bergaris dengan
    kilau berputar seperti kolom, warna ikut tema. Menyusut jadi lingkaran saat mengirim, lalu
    hijau terang mengkilap saat terkirim. */
 .send-btn {
@@ -1659,7 +1659,7 @@ button.xp-frame {
   }
 }
 /* Setelah terkirim: "Kartu berbalik" (pilihan pemilik 2026-10-20, demo 6, menggantikan susut + buka
-   dari DESIGN.md bagian 35 yang terasa kasar). Form dan tiket menumpuk di sel grid yang sama; form
+   dari revisi 2026-10-03 yang terasa kasar). Form dan tiket menumpuk di sel grid yang sama; form
    berputar ke belakang dan tiket (sisi belakang kartu) berputar ke depan dalam 760 ms. Setelah itu
    tinggi sisi form dilipat ke 0 dalam 360 ms, sehingga kotak menyusut halus ke tinggi tiket tanpa
    melompat. Murni CSS agar urutannya sama dengan atau tanpa JavaScript. */
@@ -1836,7 +1836,7 @@ html:has(.contact-sent) {
   background: var(--gh-4);
 }
 
-/* Halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag", DESIGN.md bagian 48).
+/* Halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag").
    Gambar masuk dari sisinya (menggantikan geser 12 px bawaan .reveal), teks menyusul 120 ms. */
 .pj-zz-from-left.reveal[data-reveal='pending'] {
   translate: -32px 0;
@@ -1858,8 +1858,8 @@ html:has(.contact-sent) {
   transition-duration: 600ms;
 }
 
-/* Detail project, pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip", DESIGN.md bagian
-   47): peran, judul, dan tombol di tengah; satu foto besar 16:9 yang bisa digeser; gambar kecil di
+/* Detail project, pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip"):
+   peran, judul, dan tombol di tengah; satu foto besar 16:9 yang bisa digeser; gambar kecil di
    bawah untuk lompat ke foto mana pun. */
 .pd-head {
   display: flex;
@@ -1935,7 +1935,7 @@ html:has(.contact-sent) {
   }
 }
 
-/* Project di beranda (DESIGN.md bagian 54 dan 58): pita sampul datar yang berjalan pelan; tiap
+/* Project di beranda (revisi 2026-10-15 dan 2026-10-16): pita sampul datar yang berjalan pelan; tiap
    sampul tautan ke halaman detail project. Hanya memakai transform (compositor), memudar di kedua
    ujung, tidak berhenti saat disorot (revisi pemilik 2026-10-16), berhenti saat fokus keyboard ada
    di dalamnya, diam pada reduced-motion. */
@@ -1958,7 +1958,7 @@ html:has(.contact-sent) {
 .home-marquee[data-offscreen] .home-marquee-track {
   animation-play-state: paused;
 }
-/* Tombol jeda pita (GAP-02) dihapus atas permintaan pemilik 2026-11-06 (DESIGN.md bagian 106). Pita
+/* Tombol jeda pita (GAP-02) dihapus atas permintaan pemilik 2026-11-06. Pita
    tetap berhenti saat sampul difokus keyboard dan saat di luar layar, dan diam pada reduced-motion. */
 .home-marquee li {
   flex: none;
@@ -2556,7 +2556,7 @@ html:has(.contact-sent) {
   }
 }
 
-/* Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah", DESIGN.md bagian 53).
+/* Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah").
    Latar dan kartu sama dengan login Super Admin (pilihan pemilik 2026-10-15, demo latar 11): <dialog>
    memenuhi layar di atas hitam, kartu kaca gelap di tengah (shader vortex dihapus 2026-11-01). Selalu
    gelap, jadi warna ditulis langsung seperti login, tidak memakai token tema. Halaman tidak bisa
@@ -2699,8 +2699,8 @@ html[data-intro='pending'] .intro {
   text-align: justify;
   hyphens: auto;
 }
-/* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx, DESIGN.md bagian
-   133): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
+/* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx, revisi
+   2026-11-12): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
 /* dalam layer components agar kelas Tailwind di elemen yang sama (ukuran, tebal, rata tengah) menang */
 @layer components {
   .admin-inline {
@@ -2750,7 +2750,7 @@ html[data-intro='pending'] .intro {
   .admin-inline-bad {
     box-shadow: inset 0 -2px 0 var(--danger);
   }
-  /* Penanda bagian yang bisa diubah (permintaan pemilik 2026-11-12, DESIGN.md bagian 144): garis
+  /* Penanda bagian yang bisa diubah (permintaan pemilik 2026-11-12): garis
      putus-putus tipis diam (tanpa kedip, revisi pemilik) di sekeliling teks yang bisa diketik dan
      foto/logo yang bisa ditekan untuk diganti. Hilang saat sedang diketik atau difokus. Outline
      tidak menggeser tata letak. */
@@ -2790,21 +2790,21 @@ html[data-intro='pending'] .intro {
   }
 }
 
-/* Bingkai layar pratinjau 1:1 di admin (components/admin/site-frame.tsx, DESIGN.md bagian 141): isi
+/* Bingkai layar pratinjau 1:1 di admin (components/admin/site-frame.tsx, revisi 2026-11-12): isi
    berukuran satu layar penuh lalu diperkecil. Elemen fixed di dalamnya (latar kartu pembuka, menu
    bawah HP) menempel pada bingkai karena transform. Peran hero bisa diketik (di situs tidak bisa
    ditekan). */
 .site-frame .hero-roles {
   pointer-events: auto;
 }
-/* Admin → Home, Kartu pembuka: isi kartu diketik langsung (DESIGN.md bagian 132). Tanpa bingkai
+/* Admin → Home, Kartu pembuka: isi kartu diketik langsung (revisi 2026-11-12). Tanpa bingkai
    dan garis fokus; hanya kursor berkedip, huruf sama dengan teks kartu. */
 .intro-type {
   font: inherit;
   letter-spacing: inherit;
   caret-color: #fff;
 }
-/* garis penanda bagian yang bisa diubah (DESIGN.md bagian 144); hilang saat sedang diketik. Tidak
+/* garis penanda bagian yang bisa diubah (revisi 2026-11-12); hilang saat sedang diketik. Tidak
    di dalam layer agar menang atas aturan kartu situs yang tidak ber-layer */
 .intro-type:not(:focus) {
   outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
@@ -2953,7 +2953,7 @@ html[data-intro='pending'] .intro {
   }
 }
 
-/* Hero beranda (revisi pemilik 2026-10-19, DESIGN.md bagian 85 dan 86): foto besar tanpa bingkai rata
+/* Hero beranda (revisi pemilik 2026-10-19): foto besar tanpa bingkai rata
    bawah di tengah, nama dua baris memudar ke bawah di belakang foto dan sebagai salinan di depan foto
    yang dilubangi di area wajah. Liquid mask di seluruh hero. Tinggi tetap satu layar agar ukuran
    memakai cqw/cqh. */
@@ -3360,7 +3360,7 @@ html[data-intro='pending'] .intro {
   display: none;
 }
 
-/* Skeleton shimmer (permintaan pemilik 2026-11-10, DESIGN.md bagian 111): blok di loading.tsx
+/* Skeleton shimmer (permintaan pemilik 2026-11-10): blok di loading.tsx
    selama halaman berikutnya dimuat. Kilau bergerak lewat transform pada ::after (dikomposisi GPU),
    bukan background-position, agar tidak menggambar ulang blok tiap bingkai. Reduced motion: blok
    diam tanpa kilau. */
@@ -3462,7 +3462,7 @@ html[data-intro='pending'] .intro {
   }
 }
 
-/* Panel admin kaca hitam-putih (pilihan pemilik 2026-11-11, demo 5+, DESIGN.md bagian 112): top bar,
+/* Panel admin kaca hitam-putih (pilihan pemilik 2026-11-11, demo 5+): top bar,
    sidebar, dan panel isi dari kaca buram di atas latar gradasi, titik, atau polos. Token
    permukaan admin dibuat tembus pandang sehingga kartu, tabel, dan form ikut menjadi kaca. Nilai
    --g-* diatur lewat tombol Tampilan (glass-settings.tsx) dan tersimpan di browser. */
@@ -3675,7 +3675,7 @@ html[data-intro='pending'] .intro {
 }
 
 /* Panel admin: semua huruf Inter biasa seperti teks utama, termasuk judul (h1-h3) dan utilitas
-   font-display; tanpa huruf kapital (pilihan pemilik 2026-11-11, DESIGN.md bagian 113). Variabel
+   font-display; tanpa huruf kapital (pilihan pemilik 2026-11-11). Variabel
    --font-display di :root sudah terurai ke Oswald, jadi ditimpa di sini. */
 @layer base {
   .admin-ui {
@@ -3684,7 +3684,7 @@ html[data-intro='pending'] .intro {
   .admin-ui :is(h1, h2, h3) {
     text-transform: none;
   }
-  /* Pratinjau 1:1 di admin (components/admin/site-frame.tsx, DESIGN.md bagian 141): di dalam bingkai
+  /* Pratinjau 1:1 di admin (components/admin/site-frame.tsx, revisi 2026-11-12): di dalam bingkai
      layar huruf dan huruf kapital kembali seperti situs (Oswald untuk judul). --font-oswald sengaja
      tidak ditimpa .admin-ui agar bisa dipakai di sini. */
   .admin-ui .site-ui {

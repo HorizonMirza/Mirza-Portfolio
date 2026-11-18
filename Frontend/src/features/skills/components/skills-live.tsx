@@ -113,7 +113,7 @@ function holdEnter(event: React.KeyboardEvent<HTMLInputElement>) {
   }
 }
 
-// Admin → Home, tab Skill teknis (revisi pemilik 2026-11-15, DESIGN.md bagian 153): bagian
+// Admin → Home, tab Skill teknis (revisi pemilik 2026-11-15): bagian
 // "Keahlian Teknis" tampil seperti di beranda situs (pratinjau, bahasa mengikuti pilihan ID/EN),
 // di bawahnya bagian untuk mengubah dan menambah kategori dan skill. Nama kategori (per bahasa) dan
 // nama skill serta butir baru tersimpan saat Simpan ditekan; urutan, hapus, ikon, dan pindah
@@ -132,7 +132,7 @@ export function SkillsLive({
   const router = useRouter()
   const [lang, setLang] = useEditLang()
   const [pending, startTransition] = useTransition()
-  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 148)
+  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
 
   // perubahan yang belum disimpan, dicatat terpisah dari data server agar tetap ada saat

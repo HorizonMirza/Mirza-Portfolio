@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Ubah Project') }
 }
 
-// satu project seperti halaman detail situs, diubah langsung (DESIGN.md bagian 138)
+// satu project seperti halaman detail situs, diubah langsung (revisi 2026-11-12)
 export default async function EditProjectPage({ params }: PageProps<'/admin/projects/[id]'>) {
   await requireSuperAdminPage()
   const { id } = await params

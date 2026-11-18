@@ -4,7 +4,7 @@ import { getPublicProfile } from '@backend/features/profile/public'
 import { BRAND_ICONS } from '@backend/features/skills/brand-icons'
 import { whatsappUrl } from '@backend/lib/seo'
 
-// Tombol WhatsApp melayang di pojok kanan bawah (Admin → Pengaturan, DESIGN.md bagian 119). Nomor dari
+// Tombol WhatsApp melayang di pojok kanan bawah (Admin → Pengaturan, revisi 2026-11-11). Nomor dari
 // kartu kontak Footer; tanpa nomor tombol tidak dipasang. Di HP duduk di atas menu bawah.
 export async function WhatsAppFloat() {
   const [profile, t] = await Promise.all([getPublicProfile(), getTranslations('Common')])

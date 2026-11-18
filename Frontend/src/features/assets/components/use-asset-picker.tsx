@@ -21,7 +21,7 @@ type Pending = {
 }
 
 // Pemilih berkas untuk semua gambar dan PDF yang bisa diganti di pratinjau admin (permintaan pemilik
-// 2026-11-15, DESIGN.md bagian 148): menekan gambar langsung membuka pemilih berkas (folder) tanpa
+// 2026-11-15): menekan gambar langsung membuka pemilih berkas (folder) tanpa
 // formulir. Gambar lalu masuk ke pemotong (geser, ukuran bingkai, perbesar/perkecil, putar) dan
 // tersimpan saat Simpan ditekan; PDF langsung diunggah. Satu pemilih bisa dipakai untuk banyak tujuan
 // lewat pick(target, id). `element` harus dirender sekali di komponen pemakai.
