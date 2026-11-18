@@ -2052,3 +2052,8 @@ Seluruh dokumen acuan diperiksa terhadap kode dan diselaraskan. Keputusan pemili
 - **DEPLOYMENT, `.env.example`, SKILL.md, CLAUDE.md:** keterangan `GITHUB_TOKEN`, format commit `[CLAUDIA]` di resep F, `format:check` di resep E, dan perintah `pnpm audit`.
 - **DESIGN dan TODO:** DESIGN diberi petunjuk cara membaca (bagian 11 ke atas adalah log, nomor lebih besar menang); log TODO diurutkan menurut tanggal (50 baris berpindah, isi tidak berubah).
 
+## 182. Perapian CONTENT.md dan REFERENCES.md (2026-11-18)
+
+- **CONTENT.md:** diberi status dan petunjuk membaca. Bagian 8 kini dibuka dengan tabel keadaan project sekarang (enam project, diperiksa dari hasil migrasi dan seed), fakta repo GAAS tetap sebagai snapshot, dan draf studi kasus ditandai arsip. Pertanyaan di bagian 10 yang sudah terjawab dicoret dengan hasilnya (tersisa terbuka: izin perusahaan untuk GAAS, bantuan AI coding, status pemakaian GAAS, serta peran MR Coffee dan Swarna Creation). Catatan keputusan yang tersebar dipindah ke bagian 11 (riwayat kronologis). Dikoreksi: catatan bahwa seed membuat GAAS sebagai draf tidak benar, dan catatan ketersediaan serta metadata repo GitHub ditandai sudah dihapus. Paragraf IPK ganda digabung.
+- **REFERENCES.md:** ditandai arsip analisis; tabel perbandingan memakai kondisi sekarang, jawaban pertanyaan bagian 6 dicatat, dan bagian 7 ditandai sudah diproses.
+
