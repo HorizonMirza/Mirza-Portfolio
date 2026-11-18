@@ -635,6 +635,7 @@ export const EN: Record<string, string> = {
   'Ganti Logo Chip': 'Change Chip Logo',
   'Kampus atau Perusahaan': 'Campus or Company',
   'Logo Chip': 'Chip Logo',
+  'Logo Chip Kartu': 'Card Chip Logo',
   'Teks Chip': 'Chip Text',
   'Chip Logo': 'Logo Chip',
   // Home → GitHub, warna grafik kontribusi (revisi 2026-11-15)

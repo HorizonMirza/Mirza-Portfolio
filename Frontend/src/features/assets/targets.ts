@@ -102,7 +102,7 @@ export const UPLOAD_TARGETS = {
   // logo chip di kartu foto halaman Tentang (2026-11-15): logo kampus, perusahaan, atau lainnya;
   // hiasan karena nama chip selalu tertulis di sebelahnya
   'about-chip-logo': {
-    label: 'Logo chip kartu',
+    label: 'Logo Chip Kartu',
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/profile',
