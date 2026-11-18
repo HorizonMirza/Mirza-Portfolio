@@ -1,6 +1,6 @@
 # ARCHITECTURE — Portofolio Muhammad Mirza
 
-Status: **draf v1**. Bagian ini adalah acuan teknis. Perubahan besar dicatat di bagian 12 (Catatan Keputusan).
+Status: **v1 live (mmirza.site), diselaraskan dengan kode 2026-11-18**. Bagian ini adalah acuan teknis. Perubahan besar dicatat di bagian 12 (Catatan Keputusan); riwayat revisi harian ada di log `DESIGN.md` dan `TODO.md`. Skema lengkap: `Database/schema.prisma`.
 
 ## 1. Prinsip
 
@@ -21,7 +21,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Styling | **Tailwind CSS** + design token CSS variables | Cepat, konsisten, mudah tema gelap/terang | CSS Modules |
 | Komponen | **shadcn/ui** (Radix) | Aksesibel bawaan, kode dimiliki sendiri, mudah disesuaikan | MUI, Chakra |
 | Animasi | **CSS bawaan** (scroll-driven animation, View Transitions, `@starting-style`) untuk reveal, transisi, dan hover. **Canvas 2D buatan sendiri** untuk efek armor hero, globe skill, grafik GitHub, dan kartu ID; **WebGL kecil buatan sendiri** untuk efek cairan armor hero (latar neural vortex ungu dihapus 2026-11-01 karena lag, permintaan pemilik). Tanpa library animasi (Motion tidak terpasang). Semua berhenti di luar layar dan saat digulir (`lib/scroll-idle.ts`) | 0 KB library animasi, ringan di HP, mendukung Lighthouse ≥ 90 dan `prefers-reduced-motion` | Motion (JS lebih berat), GSAP, Three.js (terlalu berat untuk HP), Lenis (mengganggu scroll bawaan dan aksesibilitas) |
-| Tema | **next-themes** | Tanpa flicker, ikut sistem | Buatan sendiri |
+| Tema | **next-themes** | Tanpa flicker. Tema awal selalu gelap, bisa diganti manual (PRD F9) | Buatan sendiri |
 | i18n | **next-intl**, rute `/id` dan `/en` | Server component friendly, SEO (`hreflang`) | i18next |
 | Database | **PostgreSQL 17 di Neon**, dipasang lewat **integrasi Vercel Marketplace** | Serverless, tier gratis permanen, branch database per preview, env terisi otomatis. Fitur yang dipakai: `timestamptz`, `uuid`, `jsonb`, transactional DDL | MySQL (PlanetScale tidak lagi gratis, tanpa `timestamptz`/`uuid` bawaan, DDL tidak transaksional), Supabase (tidur setelah seminggu sepi), Prisma Postgres |
 | ORM | **Prisma 7** (generator `prisma-client`, driver adapter `@prisma/adapter-pg`, `prisma.config.ts`) | Type-safe, migrasi jelas, sesuai pilihan Anda | Drizzle |
@@ -31,25 +31,25 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Form publik (kontak) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
 | Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
 | Daftar admin | Tampil seperti daftar di situs, diubah langsung di pratinjau (DESIGN.md bagian 133–140); TanStack Table dipakai sampai 2026-11-12 lalu dihapus | Admin melihat hasil persis seperti pengunjung; tanpa dependency tabel | TanStack Table, AG Grid (berat) |
-| Grafik dashboard admin | **Recharts** lewat shadcn charts (M2), hanya dimuat di `/admin` | Standar shadcn, tidak membebani halaman publik | Chart.js |
+| Grafik dashboard admin | **SVG buatan sendiri** (`components/admin/visits-chart.tsx`, geometri di `lib/chart-geometry.ts`), hanya dimuat di `/admin`. Sebelumnya Recharts (dihapus 2026-11-18, DESIGN.md bagian 179) | Tanpa library grafik: 102 KB gzip lebih ringan untuk satu grafik area | Recharts, Chart.js |
 | Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
 | Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
-| GitHub | **`fetch` biasa**: REST API untuk metadata project dan impor di admin (di-cache 1 jam), GraphQL API untuk grafik kontribusi beranda (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil) | Hanya beberapa endpoint, tidak perlu library | Octokit, scraping |
-| Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (retensi `PageView`, `RateLimit`), ganti garam hash harian, ringkas statistik | GitHub Actions cron (tetap dipakai untuk backup) |
+| GitHub | **`fetch` biasa** ke GraphQL API untuk kalender kontribusi beranda dan footer (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil). Impor repo dan metadata project dari REST API sudah dihapus (2026-11-16) | Hanya satu endpoint, tidak perlu library | Octokit, scraping |
+| Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (`PageView`, `LoginEvent`, `RateLimit`, `AuditLog`, sesi dan verifikasi kedaluwarsa), ringkas statistik ke `PageViewDaily`, hapus berkas unggahan yatim | GitHub Actions cron (tetap dipakai untuk backup) |
 | Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Web Analytics** + **Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
 | Live chat | ~~Widget pihak ketiga~~ **Tidak dipakai** (PRD 11 no. 3): WhatsApp lewat footer | Tanpa skrip pihak ketiga dan tanpa banner cookie | Tawk.to |
 | Error tracking | **Sentry tanpa SDK**, hanya error server (`src/instrumentation.ts`, keputusan 18) | Tier gratis, tanpa JS klien tambahan | `@sentry/nextjs`, LogRocket |
 | Uptime | **UptimeRobot** (gratis) ke `/api/health`, dipasang pemilik (ditunda 2026-10-20) | Notifikasi email dan Telegram | Better Stack |
 | Unit test | **Vitest** + Testing Library | Cepat, cocok TypeScript | Jest |
 | E2E dan a11y | **Playwright** + `@axe-core/playwright` | Uji lintas browser dan aksesibilitas otomatis | Cypress |
-| Performa | **Lighthouse CI** | Gerbang skor ≥ 90 di CI | Manual |
+| Performa | **Lighthouse manual** (mobile, tiap bulan) dan Web Vitals dari Vercel Speed Insights bila diaktifkan pemilik (ditunda 2026-10-20) | Target skor ≥ 90 dijaga lewat pemeriksaan manual; CI belum menjalankan Lighthouse | Lighthouse CI (belum dipasang) |
 | Bahasa | **TypeScript 6.0** (strict) | Versi jembatan menuju TypeScript 7. TS 7 belum dipakai karena `typescript-eslint` baru mendukung < 6.1 | TypeScript 5.9 |
 | Lint/format | **ESLint 10** + Prettier + `tsc --noEmit` | Standar ekosistem Next. ESLint 9 sudah tidak didukung. Plugin bawaan `eslint-config-next` (react, jsx-a11y, import) belum mendukung ESLint 10, jadi dibungkus `fixupConfigRules` dari `@eslint/compat` | Biome |
 | Git hooks | Husky + lint-staged | Cegah commit yang rusak | — |
 | Scan secret | **gitleaks** di CI | Cegah kebocoran kunci | — |
-| CI/CD | **GitHub Actions** + integrasi Git **Vercel** | Preview per PR, deploy otomatis dari `main` | — |
+| CI/CD | **GitHub Actions** + integrasi Git **Vercel** | Deploy otomatis dari `main` (tanpa PR dan tanpa preview, WORKFLOW.md bagian 2) | — |
 | Hosting | **Vercel** | Terintegrasi Next.js, rollback satu klik | VPS + Docker (lebih banyak kerja) |
 | Domain | `.site` (dibimbing saat deploy) | Pilihan Anda | — |
 
@@ -63,10 +63,9 @@ flowchart LR
     N -->|Prisma| DB[(Neon PostgreSQL)]
     N -->|URL bertanda tangan| CL[Cloudinary<br/>gambar dan CV]
     N -->|kirim email| RS[Resend]
-    N -->|metadata repo| GH[GitHub API]
+    N -->|kalender kontribusi| GH[GitHub API]
     VC[Vercel Cron] -->|harian| N
     N -.->|error| SE[Sentry]
-    V -.->|lazy saat diklik| CH[Widget live chat]
     GA[GitHub Actions] -->|cron: backup terenkripsi| DB
     GA -->|CI: lint, test, build| N
     UT[Uptime monitor] -.->|cek /api/health| E
@@ -80,7 +79,7 @@ flowchart LR
 | Detail project yang terbit setelah build | Dirender saat pertama diminta (`dynamicParams = true` di `[slug]`) lalu di-cache | Tag `projects` |
 | Kontak, Privasi, 404 | Static | — |
 | `/admin/*` | Dinamis, tanpa cache, `noindex` | — |
-| Metadata GitHub | Fetch server dengan `revalidate` 1 jam, gagal = tidak ditampilkan | Data cache Next |
+| Kalender kontribusi GitHub | Fetch server lewat `unstable_cache` (6 jam), gagal atau tanpa token = tidak ditampilkan. Ke komponen klien hanya dikirim bentuk ringkas (`lib/contributions-pack.ts`) | Tag cache + cache data Next |
 
 Catatan:
 - Cache data publik punya batas umur 10 menit (`PUBLIC_CACHE_SECONDS`) sebagai jaring pengaman: tanpa itu, data yang diubah di luar admin (misalnya `pnpm db:seed` setelah deploy pertama) tidak pernah tampil karena cache data bertahan antar-build. Aksi admin tetap langsung terlihat lewat `updateTag`.
@@ -352,21 +351,21 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 - Berkas `'use server'` hanya boleh mengekspor fungsi async. Konstanta dan skema ditaruh di `schema.ts`.
 - Urutan project, kategori, dan skill diubah dengan tombol naik/turun (aksesibel untuk keyboard), urutan ditulis ulang 0..n dalam transaksi. Pengalaman diurutkan dari tanggal mulai.
 - Log audit tidak memuat isi pesan, nama, atau email pengunjung. Email dan WhatsApp profil disamarkan.
-- UI admin hanya berbahasa Indonesia (satu pengguna). Konten yang dikelola tetap dua bahasa.
+- UI admin dua bahasa (ID/EN, cookie `mmirza-admin-lang`; kamus di `lib/admin-i18n-en.ts`). Konten yang dikelola tetap dua bahasa.
 
 | Modul | Halaman | Action |
 |---|---|---|
 | Profil (tab modul About) | `/admin/profile` | `saveProfile` |
-| Project (modul Projects, tanpa tab sejak 2026-11-15) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `deleteProject`, `moveProject`, `importFromGithub` |
+| Project (modul Projects, tanpa tab sejak 2026-11-15) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `saveProjectTexts`, `deleteProject`, `moveProject` (impor GitHub dan status Draf/Terbit dihapus 2026-11-16) |
 | Peran beranda (tab modul Home, sejak 2026-11-11) | `/admin/roles` | `saveHeroRoles` |
 | GitHub (tab modul Home, sejak 2026-11-15) | `/admin/github` | `saveGithubPalette` (satu dari lima warna grafik kontribusi, disimpan di `SiteSetting.githubPalette`) |
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill`; logo skill lewat `signAssetUpload`/`attachUploadedAsset` (target `skill-logo`, 2026-11-12) |
-| Pengalaman (tab modul Experience) | `/admin/experience`, `/new`, `/[id]` | `saveExperience`, `deleteExperience` |
+| Pengalaman dan pendidikan (tab modul Experience; diubah langsung di daftar, tanpa halaman `/new` atau `/[id]`) | `/admin/experience` (pendidikan di `/admin/profile`) | `saveExperience`, `deleteExperience` |
 | Halaman situs (8 modul: Bagian Awal sebagai tab "Kartu pembuka" di Home sejak 2026-11-11, Home, About, Experience, Projects, Contact, Navbar, Footer; Privasi dan Halaman lain dihapus 2026-11-11) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto utama beranda tidak diganti dari admin sejak 2026-11-13 (target `hero-portrait` tetap ada di server; tab Foto beranda dihapus 2026-11-12, foto profil di Akun) |
 | Berkas | di Profil, Project, Pengalaman (logo + foto kegiatan), Skill (logo), dan kartu ID Kontak (`contact-photo`, 2026-11-15) | `signAssetUpload`, `attachUploadedAsset`, `removeAsset` (alt dua bahasa diturunkan otomatis dari konteks, sejak 2026-11-15 tanpa isian alt; target `about-chip-logo` untuk logo chip kartu About) |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
-| Pengaturan | `/admin/settings` | `saveSoundVolume` (volume suara tombol situs publik) |
-| Akun | `/admin/account` | `changePassword` |
+| Pengaturan | `/admin/settings` | `saveSiteOption` (satu opsi per panggilan, kolom dan nilai dibatasi `features/settings/options.ts`) |
+| Akun | `/admin/account` | `changePassword`, `renameAccount`, `changeAccountEmail` (nama dan email meminta password lagi) |
 
 **Unggah Cloudinary** (tanpa SDK): `signAssetUpload` membuat tanda tangan SHA-1 di server (secret tidak ke browser) → browser mengunggah langsung ke `api.cloudinary.com` → `attachUploadedAsset` memverifikasi tanda tangan respons (`public_id` + `version`), memeriksa ulang folder, tipe, format, ukuran, dan asal URL, lalu mencatat `Asset`. Berkas yang ditolak atau diganti dihapus dari Cloudinary. Tanpa kunci `CLOUDINARY_*`, form unggah diganti pesan "belum aktif". `next/image` hanya mengizinkan `res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/`.
 
@@ -384,7 +383,7 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 
 | Metode | Path | Akses | Fungsi |
 |---|---|---|---|
-| POST | `/api/track` | Publik, same-origin, rate limit 300/jam | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
+| POST | `/api/track` | Publik, same-origin, rate limit 120/jam per IP | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
 | GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
 | GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` sesuai masa simpan, `LoginEvent` > 90 hari, `RateLimit` > 1 hari, `AuditLog` > 365 hari, serta `Session` dan `Verification` yang sudah kedaluwarsa, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Tiap langkah berdiri sendiri (`lib/run-steps.ts`): satu yang gagal tidak menghentikan yang lain, dicatat, dikirim ke Sentry bila aktif, dan respons 500 menyebut langkahnya (ERR-01 audit 17-11). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
 | GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
@@ -425,11 +424,11 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Banjir data publik | Beacon `/api/track`: 120 per jam per IP dan batas global 5.000 baris per hari, karena cek asal bisa dipalsukan klien non-browser (SEC-01). Unduhan CV tercatat paling banyak 3 kali per jam per IP (SEC-03). Nama dan subjek pesan dijadikan satu baris sebelum masuk subjek email notifikasi (SEC-04) |
 | Spam form | Honeypot + rate limit + validasi panjang. CAPTCHA hanya jika masih ada spam |
 | Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Respons diverifikasi di server, tipe (gambar, PDF) dan ukuran (5 MB) dicek ulang, berkas ditolak dihapus |
-| Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
+| Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI (pre-commit hanya menjalankan lint-staged) |
 | Header | HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, CSP dengan `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. `upgrade-insecure-requests` hanya di Vercel |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=moderate` di CI (advisory tanpa perbaikan di alat dev diabaikan eksplisit lewat `auditConfig.ignoreGhsas` di `pnpm-workspace.yaml`), semua action GitHub dipin ke SHA, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
-| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Notifikasi login baru via email menyusul bersama Resend (M4) |
+| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Email login baru lewat hook Better Auth + Resend (`src/emails/login-notification.tsx`, ADR 17). Riwayat masuk 90 hari di Admin → Akun |
 | Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `lib/auth-guard.ts`) |
 
 Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
@@ -439,10 +438,10 @@ Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DAT
 | Lingkungan | Tujuan | Database |
 |---|---|---|
 | Lokal | Pengembangan | Postgres 17 lokal (Docker) atau Neon branch `dev` |
-| Preview (per PR) | Review hasil sebelum merge | Neon branch per preview, dibuat dan dihapus otomatis oleh integrasi Vercel (maksimal 10 branch di paket gratis) |
+| Preview (per PR) | **Tidak dipakai**: alur kerja langsung ke `main`. Baris ini hanya untuk bila PR diaktifkan lagi | Neon branch per preview, dibuat dan dihapus otomatis oleh integrasi Vercel (maksimal 10 branch di paket gratis) |
 | Production | Situs live | Neon branch `main` |
 
-Alur kode: branch → PR → CI hijau → Vercel membuat preview → merge ke `main` → Vercel deploy production. Dokumen boleh langsung ke `main` (tidak memicu build).
+Alur kode: kerja langsung di `main` → pemeriksaan lokal lengkap → push → CI dan deploy production otomatis di Vercel (keputusan pemilik, WORKFLOW.md bagian 2). Tidak ada branch, PR, atau preview. Commit yang hanya mengubah dokumen tidak memicu build Vercel.
 
 **Konfigurasi hosting** (`Frontend/vercel.json`):
 
@@ -456,7 +455,7 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 
 **Batas paket gratis** yang relevan: Vercel Hobby (100 GB bandwidth, 1 juta pemanggilan fungsi per bulan, cron maksimal sekali sehari, **hanya untuk penggunaan pribadi non-komersial**) dan Neon Free (0,5 GB, 100 CU-jam, 10 branch, tidur setelah 5 menit). Bila situs kelak menawarkan jasa berbayar, pindah ke Vercel Pro atau Cloudflare Workers.
 
-**Perlindungan `main`** (GitHub ruleset, diatur pemilik): status CI wajib hijau untuk merge PR, force push dan penghapusan branch diblokir, admin ada di bypass list untuk commit dokumen.
+**Perlindungan `main`:** rencananya GitHub ruleset (CI wajib hijau, force push dan hapus branch diblokir, admin di bypass list), tetapi **belum dipasang** (ditunda pemilik 2026-10-20, TODO.md). Sementara itu aturan "tanpa force push" dijaga lewat kesepakatan kerja.
 
 **Rollback:** Vercel "Instant Rollback" ke deployment sebelumnya. Jika migrasi ikut berubah, pulihkan dari backup (bagian 11).
 
@@ -466,18 +465,18 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 
 | Workflow | Pemicu | Isi |
 |---|---|---|
-| `ci.yml` | PR dan push ke `main` | install, `lint`, `format:check`, `typecheck`, `test` (Vitest), migrasi + cek drift skema, seed 2× (idempoten), `build`, Playwright + axe (Chromium, emulasi HP), `gitleaks` |
-| `e2e.yml` | PR | Playwright (Chromium + WebKit + Firefox) dan axe pada URL preview |
-| `lighthouse.yml` | PR | Lighthouse CI, gagal jika kategori < 90 |
-| `backup.yml` | Cron harian | `pg_dump`, kompres, **enkripsi**, simpan sebagai artifact/penyimpanan privat |
+| `ci.yml` | push ke `main` dan PR (run lama dibatalkan oleh push berikutnya) | Tiga job paralel: **Lint, typecheck, unit test** (`prisma validate`, `lint`, `format:check`, `typecheck`, `test`, `pnpm audit --audit-level=moderate`); **Migrasi, seed, build, E2E** (Postgres 17 sementara, migrasi + cek drift skema, seed 2× untuk uji idempoten, `build`, Playwright + axe di Chromium, Firefox, WebKit, dan emulasi HP); **Scan secret (gitleaks)**. Semua action dipin ke SHA |
+| `backup.yml` | Cron harian 02.30 WIB (+ manual) | `pg_dump`, enkripsi gpg, uji pulih otomatis, simpan sebagai artifact 30 hari. Tanpa secret backup, run tetap hijau tetapi **tidak membuat backup** (DEPLOYMENT.md) |
+| `buat-release.yml` | Manual (Run workflow) | Membuat tag dan GitHub Release dari `main`; catatan rilis dari `.github/release-notes/<tag>.md` bila ada |
+| `release.yml` | Release dipublikasikan (+ manual) | Membangun image Docker, uji singkat, kirim ke GitHub Packages (`ghcr.io/horizonmirza/mirza-portfolio`) |
 | (tanpa bot) | Bulanan, manual | Update dependency dan GitHub Actions oleh Claude, commit atas nama pemilik (`WORKFLOW.md` bagian 10a) |
 
 Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib dienkripsi** sebelum diunggah.
 
 ## 11. Monitoring, Logging, dan Backup
 
-- **Sentry:** error server lewat `onRequestError` di `src/instrumentation.ts`, dikirim ke envelope API Sentry dengan `fetch` (tanpa SDK), tanpa header, cookie, IP, dan query string. Error di browser belum dilaporkan (lihat ADR 18).
-- **Uptime monitor:** memeriksa `/api/health` (cek koneksi database). Notifikasi ke email dan Telegram.
+- **Sentry:** error server lewat `onRequestError` di `src/instrumentation.ts`, dikirim ke envelope API Sentry dengan `fetch` (tanpa SDK), tanpa header, cookie, IP, dan query string. Error di browser belum dilaporkan (lihat ADR 18). **Belum aktif di production**: `SENTRY_DSN` belum diisi (ditunda pemilik 2026-10-20); tanpa itu tidak ada yang dikirim.
+- **Uptime monitor:** rencananya UptimeRobot memeriksa `/api/health` (cek koneksi database) dengan notifikasi email dan Telegram. **Belum dipasang** (ditunda pemilik 2026-10-20); endpoint-nya sudah ada.
 - **Vercel Analytics + Speed Insights:** tren traffic dan Web Vitals lapangan, hanya dimuat di Vercel, query string dibuang lewat `beforeSend`.
 - **Backup:** `backup.yml` harian 02.30 WIB: `pg_dump` (Postgres 17) → gpg AES-256 → artifact 30 hari, lalu **diuji pulih otomatis setiap kali** ke Postgres sementara (jumlah Profile, Super Admin, migrasi). Ditambah pemulihan bawaan Neon. Langkah pemulihan manual di `Documentation/DEPLOYMENT.md`.
 - **Log audit:** di database (`AuditLog`). Halaman bacanya di panel dihapus 2026-11-11 atas keputusan pemilik; pencatatan tetap wajib di setiap aksi admin.
@@ -488,15 +487,15 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 |---|---|---|---|
 | 1 | Next.js full-stack tanpa backend terpisah | Cepat selesai, satu deploy | Final (jawaban 17.2), **dikonfirmasi ulang 2026-09-30** |
 | 1a | Tidak memakai ASP.NET Core + Next.js (stack GAAS) atau FastAPI | Dipertimbangkan 2026-09-30. Ditolak karena: (1) recruiter menilai project, bukan arsitektur situs portofolio, dan kemampuan C#/.NET sudah terbukti lewat project GAAS; (2) backend .NET di hosting gratis "tidur" 30–50 detik saat sepi; (3) dua deploy dan dua layanan untuk satu orang; (4) M1 sudah jadi dan teruji. Bisa ditinjau lagi bila target kerja spesifik .NET | Final |
-| 2 | Konten di DB dengan kolom `_id`/`_en` | Sederhana, mudah dicari dan divalidasi, cukup untuk dua bahasa | Diusulkan |
-| 3 | Analitik sendiri tanpa cookie | Tidak perlu banner cookie, data untuk dashboard admin | Diusulkan |
-| 4 | Live chat lewat widget lazy | Vercel tidak menjalankan WebSocket permanen | Menunggu konfirmasi |
-| 5 | Rate limit + honeypot di form publik | Mencegah spam dan kuota email habis | Menunggu konfirmasi (berbeda dari jawaban awal) |
+| 2 | Konten di DB dengan kolom `_id`/`_en` | Sederhana, mudah dicari dan divalidasi, cukup untuk dua bahasa | Final (diterapkan) |
+| 3 | Analitik sendiri tanpa cookie | Tidak perlu banner cookie, data untuk dashboard admin | Final (diterapkan) |
+| 4 | ~~Live chat lewat widget lazy~~ | Vercel tidak menjalankan WebSocket permanen | Tidak berlaku: tombol WhatsApp (2026-09-30), lalu dihapus dan WhatsApp cukup di footer (2026-10-03) |
+| 5 | Rate limit + honeypot di form publik | Mencegah spam dan kuota email habis | Final (dikonfirmasi 2026-09-30) |
 | 6 | Better Auth untuk login admin (menggantikan Auth.js) | Stabil, sesi di database, rate limit bawaan | Final (2026-09-30) |
 | 7 | Rate limit di PostgreSQL, tanpa Upstash | Trafik kecil, satu layanan lebih sedikit | Final (2026-09-30) |
 | 8 | `fetch` untuk GitHub API, React Email untuk template, Vercel Cron untuk tugas harian | Lebih sedikit dependency, gratis | Final (2026-09-30) |
 | 9 | PostgreSQL 17, UUID v7, `timestamptz`, ringkasan `PageViewDaily`, Neon via integrasi Vercel | Konsisten lokal/CI/production, cegah bug zona waktu, hemat kuota | Final (2026-09-30) |
-| 10 | Mutasi admin (termasuk tanda tangan unggah dan impor GitHub) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
+| 10 | Mutasi admin (termasuk tanda tangan unggah) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
 | 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
 | 13 | ~~Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()`~~ **Diganti:** menu HP kini menu bawah tetap (tautan biasa, tanpa `popover`) dan filter pengalaman dihapus 2026-10-03 | Hampir tanpa JavaScript klien | Diganti (revisi pemilik, DESIGN.md) |
