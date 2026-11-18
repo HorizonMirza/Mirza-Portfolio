@@ -32,7 +32,7 @@ export default function GlobalError({ retry }: { error: unknown; retry: () => vo
                   href="/id"
                   className="inline-flex min-h-11 items-center rounded-full border border-border-strong px-6 font-medium transition-colors hover:border-text"
                 >
-                  Kembali ke beranda
+                  Kembali ke Beranda
                 </a>
               </>
             }
