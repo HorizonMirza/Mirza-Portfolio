@@ -55,7 +55,6 @@ function TooltipBody({ point }: { point?: Point }) {
 // datanya ada di tabel Rincian per hari.
 // Grafik SVG buatan sendiri (pengganti recharts, audit 2026-11-17 PERF-04: library itu 102 KB gzip
 // untuk satu grafik). Ukuran mengikuti lebar kotak; geometri ada di lib/chart-geometry.ts.
-const HEIGHT = 288
 const PAD = { top: 12, right: 12, bottom: 30, left: 36 }
 const FONT = 12
 
@@ -63,22 +62,27 @@ export function VisitsChart({ data }: { data: Point[] }) {
   const { lang } = useAdminLang()
   const id = useId().replace(/:/g, '')
   const box = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(0)
+  // ukuran kotak (h-72 berubah dengan ukuran huruf dasar panel), bukan angka tetap
+  const [size, setSize] = useState({ width: 0, height: 0 })
   const [hover, setHover] = useState<number | null>(null)
 
   useEffect(() => {
     const el = box.current
     if (!el) return
-    const update = () => setWidth(Math.round(el.getBoundingClientRect().width))
+    const update = () => {
+      const rect = el.getBoundingClientRect()
+      setSize({ width: Math.round(rect.width), height: Math.round(rect.height) })
+    }
     update()
     const observer = new ResizeObserver(update)
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
 
+  const { width, height } = size
   const n = data.length
   const plotW = Math.max(0, width - PAD.left - PAD.right)
-  const plotH = HEIGHT - PAD.top - PAD.bottom
+  const plotH = Math.max(0, height - PAD.top - PAD.bottom)
   const bottom = PAD.top + plotH
   const maxValue = data.reduce((m, d) => Math.max(m, d.views, d.visitors ?? 0), 0)
   const ticks = niceTicks(maxValue)
@@ -89,7 +93,7 @@ export function VisitsChart({ data }: { data: Point[] }) {
   const visitorRuns = segments(
     data.map((d, i) => (d.visitors === null ? null : { x: x(i), y: y(d.visitors) })),
   )
-  const labelIdx = pickTickIndexes(n, plotW, 78)
+  const labelIdx = pickTickIndexes(n, plotW, 96)
 
   function onMove(event: React.PointerEvent<SVGRectElement>) {
     if (n === 0 || plotW === 0) return
@@ -103,8 +107,8 @@ export function VisitsChart({ data }: { data: Point[] }) {
 
   return (
     <div ref={box} className="relative h-72 w-full" aria-hidden="true">
-      {width > 0 && n > 0 ? (
-        <svg width={width} height={HEIGHT} className="block overflow-visible">
+      {width > 0 && height > 0 && n > 0 ? (
+        <svg width={width} height={height} className="block overflow-visible">
           <defs>
             <linearGradient id={`${id}-views`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--text)" stopOpacity={0.32} />

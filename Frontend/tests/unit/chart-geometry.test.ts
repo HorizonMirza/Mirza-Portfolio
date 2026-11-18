@@ -35,7 +35,7 @@ describe('pickTickIndexes', () => {
       expect(idx[idx.length - 1]).toBe(count - 1)
       const px = (i: number) => (i * width) / (count - 1)
       for (let i = 1; i < idx.length; i++)
-        expect(px(idx[i]) - px(idx[i - 1])).toBeGreaterThanOrEqual(minGap * 0.6)
+        expect(px(idx[i]) - px(idx[i - 1])).toBeGreaterThanOrEqual(minGap * 0.8)
     }
   })
 

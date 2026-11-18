@@ -30,7 +30,7 @@ export function pickTickIndexes(count: number, width: number, minGap: number): n
   const picked: number[] = []
   for (let i = 0; i < count - 1; i += step) picked.push(i)
   // label terakhir tidak boleh menempel pada label sebelumnya
-  if (picked.length > 1 && count - 1 - picked[picked.length - 1] < step * 0.6) picked.pop()
+  if (picked.length > 1 && count - 1 - picked[picked.length - 1] < step * 0.8) picked.pop()
   picked.push(count - 1)
   return picked
 }
