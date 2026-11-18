@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import { GITHUB_PALETTE, type Palette } from '@/lib/github-palette'
+import { GITHUB_PALETTE, type Palette } from '@backend/lib/github-palette'
 
 /**
  * Contribution Skyline: setahun aktivitas sebagai peta panas gaya GitHub yang terlipat menjadi

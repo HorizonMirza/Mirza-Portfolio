@@ -8,16 +8,20 @@ import {
   ContactCards,
   ContributionGraph,
 } from '@/components/ui/contact-cards'
-import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
-import { getPublicProfile } from '@/features/profile/public'
-import { BRAND_ICONS } from '@/features/skills/brand-icons'
-import type { AppLocale } from '@/i18n/routing'
+import { getGithubContributions, githubLogin } from '@backend/features/profile/github-contributions'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { BRAND_ICONS } from '@backend/features/skills/brand-icons'
+import type { AppLocale } from '@backend/i18n/routing'
 import { packContributions } from '@/lib/contributions-pack'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
-import { loc } from '@/lib/localized'
+import { loc } from '@backend/lib/localized'
 import { cn } from '@/lib/utils'
 
-import { type FooterLinkKey, footerLinks, isDriveHost } from './footer-links'
+import {
+  type FooterLinkKey,
+  footerLinks,
+  isDriveHost,
+} from '@backend/features/profile/footer-links'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 function BrandIcon({ slug, className = 'size-5' }: { slug: string; className?: string }) {

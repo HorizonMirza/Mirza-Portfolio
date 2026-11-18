@@ -8,16 +8,16 @@ import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
-import { cvLabel, derivedCardValue } from '@/components/site/footer-links'
+import { cvLabel, derivedCardValue } from '@backend/features/profile/footer-links'
 import { InlineInput, LiveErrors } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { useRegisterExtraSave } from '@/features/site-text/components/site-text-live'
 import { CLIENT_ICON_PATHS, type ClientIconSlug } from '@/features/skills/client-icon-paths'
 import { cn } from '@/lib/utils'
 
-import { saveContactLinks } from '../actions'
-import { type ContactLinksInput, contactLinksSchema } from '../schema'
+import { saveContactLinks } from '@backend/features/profile/actions'
+import { type ContactLinksInput, contactLinksSchema } from '@backend/features/profile/schema'
 
 type Key = 'whatsapp' | 'email' | 'linkedin' | 'github' | 'instagram'
 type SocialKey = 'linkedin' | 'github' | 'instagram'
@@ -32,7 +32,7 @@ function Brand({ slug }: { slug: ClientIconSlug }) {
   )
 }
 
-// urutan kartu sama dengan footer situs (components/site/footer-links.ts). Judul kartu tetap
+// urutan kartu sama dengan footer situs (Backend/features/profile/footer-links.ts). Judul kartu tetap
 // (tidak bisa diubah); WhatsApp dan Email satu isian (nomor/alamat sekaligus yang tampil), akun sosial
 // dua isian (nama yang tampil dan tautan).
 const CARDS: {

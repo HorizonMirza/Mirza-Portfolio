@@ -10,13 +10,7 @@ import prettier from 'eslint-config-prettier/flat'
 const eslintConfig = defineConfig([
   ...fixupConfigRules([...nextVitals, ...nextTs]),
   prettier,
-  globalIgnores([
-    '.next/**',
-    'next-env.d.ts',
-    'src/generated/**',
-    'playwright-report/**',
-    'test-results/**',
-  ]),
+  globalIgnores(['.next/**', 'next-env.d.ts', 'playwright-report/**', 'test-results/**']),
 ])
 
 export default eslintConfig

@@ -3,7 +3,6 @@
 pnpm-lock.yaml
 .next/
 node_modules/
-src/generated/
 test-results/
 playwright-report/
 src/fonts/

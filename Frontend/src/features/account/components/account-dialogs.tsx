@@ -11,9 +11,9 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { IconInput } from '@/components/admin/icon-input'
 import { PasswordInput } from '@/components/admin/password-input'
 import { Label } from '@/components/ui/label'
-import type { ActionResult } from '@/lib/action-result'
+import type { ActionResult } from '@backend/lib/action-result'
 
-import { changeAccountEmail, renameAccount } from '../actions'
+import { changeAccountEmail, renameAccount } from '@backend/features/account/actions'
 import { ChangePasswordForm } from './change-password-form'
 
 // Form di Admin → Akun muncul sebagai dialog dengan latar belakang buram (revisi pemilik 2026-11-16):

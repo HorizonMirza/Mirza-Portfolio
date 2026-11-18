@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 
-import { siteUrl } from '@/lib/env'
-import { getSiteSettings } from '@/features/settings/public'
+import { siteUrl } from '@backend/lib/env'
+import { getSiteSettings } from '@backend/features/settings/public'
 
 // Panel admin dan API tidak diindeks. Deploy preview Vercel tidak diindeks sama sekali. Situs juga tidak
 // diindeks selama mode perawatan menyala (Admin → Pengaturan); halaman publik mendapat meta noindex dari

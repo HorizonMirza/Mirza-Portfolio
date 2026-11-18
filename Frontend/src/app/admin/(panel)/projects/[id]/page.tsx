@@ -3,15 +3,15 @@ import { notFound } from 'next/navigation'
 import { z } from 'zod'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { getProjectAssets } from '@/features/assets/queries'
-import { projectPreviewTexts } from '@/features/projects/admin-texts'
+import { getProjectAssets } from '@backend/features/assets/queries'
+import { projectPreviewTexts } from '@backend/features/projects/admin-texts'
 import { ProjectLive } from '@/features/projects/components/project-live'
-import { getProjectForEdit } from '@/features/projects/queries'
-import { listSkillOptions } from '@/features/skills/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { siteHost } from '@/lib/env'
-import { isUploadConfigured } from '@/lib/uploads'
+import { getProjectForEdit } from '@backend/features/projects/queries'
+import { listSkillOptions } from '@backend/features/skills/queries'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { siteHost } from '@backend/lib/env'
+import { isUploadConfigured } from '@backend/lib/uploads'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

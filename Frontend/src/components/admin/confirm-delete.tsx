@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import type { ActionResult } from '@/lib/action-result'
+import type { ActionResult } from '@backend/lib/action-result'
 
 export function ConfirmDelete({
   itemLabel,

@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { useAdminT } from '@/components/admin/admin-lang'
 
 import { resolveMime } from '../file-type'
-import { UPLOAD_TARGETS, type UploadTarget } from '../targets'
+import { UPLOAD_TARGETS, type UploadTarget } from '@backend/features/assets/targets'
 import { uploadAsset, type UploadStage } from '../upload-client'
 import { ImageCropDialog } from './image-crop-dialog'
 

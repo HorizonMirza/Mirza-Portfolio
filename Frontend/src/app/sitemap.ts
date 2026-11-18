@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
 
-import { getPublishedProjects } from '@/features/projects/public'
-import { routing } from '@/i18n/routing'
-import { siteUrl } from '@/lib/env'
+import { getPublishedProjects } from '@backend/features/projects/public'
+import { routing } from '@backend/i18n/routing'
+import { siteUrl } from '@backend/lib/env'
 
 const STATIC_PATHS = ['', '/about', '/experience', '/projects', '/contact', '/privacy']
 

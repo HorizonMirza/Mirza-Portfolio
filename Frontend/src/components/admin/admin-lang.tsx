@@ -21,7 +21,7 @@ import {
   adminTextWillChange,
   type AdminVars,
   parseAdminLang,
-} from '@/lib/admin-i18n'
+} from '@backend/lib/admin-i18n'
 import { scrambleLanguageSwitch, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'

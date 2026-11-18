@@ -11,7 +11,7 @@ import {
   segments,
   type XY,
 } from '@/lib/chart-geometry'
-import { formatDayKey, formatNumber } from '@/lib/format'
+import { formatDayKey, formatNumber } from '@backend/lib/format'
 
 type Point = { day: string; views: number; visitors: number | null }
 

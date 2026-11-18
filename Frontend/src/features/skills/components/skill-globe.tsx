@@ -14,7 +14,7 @@ import {
 import { isScrolling, onScrollEnd } from '@/lib/scroll-idle'
 import { cn } from '@/lib/utils'
 
-import type { GenericGlyph, SkillItem } from '../skill-items'
+import type { GenericGlyph, SkillItem } from '@backend/features/skills/skill-items'
 
 import {
   buildSprite,

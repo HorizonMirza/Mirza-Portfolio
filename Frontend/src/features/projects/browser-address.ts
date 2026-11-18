@@ -1,7 +1,7 @@
 // Isi kolom alamat bingkai jendela browser (daftar dan detail project): tautan demo tanpa protokol
 // bila ada, selain itu alamat halaman project di situs ini. Host dioper dari server (siteHost() di
-// lib/env), bukan domain yang ditulis mati (audit 2026-10-31, EFF-09); berkas ini juga dipakai galeri
-// di klien, jadi sengaja tidak mengimpor lib/env.
+// Backend/lib/env), bukan domain yang ditulis mati (audit 2026-10-31, EFF-09); berkas ini juga dipakai galeri
+// di klien, jadi sengaja tidak mengimpor Backend/lib/env.
 export function browserAddress(
   project: { slug: string; demoUrl: string | null },
   host: string,

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { adminT, hasAdminTranslation, parseAdminLang } from '@/lib/admin-i18n'
+import { adminT, hasAdminTranslation, parseAdminLang } from '@backend/lib/admin-i18n'
 
 describe('bahasa tampilan admin', () => {
   it('cookie selain "en" dianggap bahasa Indonesia', () => {
@@ -51,7 +51,7 @@ function sourceFiles(dir: string): string[] {
 describe('kelengkapan kamus admin', () => {
   it('semua teks t(...) di panel admin punya terjemahan Inggris', () => {
     // komponen situs publik (folder public/) memakai next-intl, bukan kamus admin
-    const files = ['src/components/admin', 'src/features', 'src/app/admin']
+    const files = ['src/components/admin', 'src/features', 'src/app/admin', '../Backend/features']
       .flatMap(sourceFiles)
       .filter((file) => !/[\\/]public[\\/]/.test(file))
     const missing: string[] = []

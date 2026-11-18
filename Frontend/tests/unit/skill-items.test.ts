@@ -9,7 +9,7 @@ import {
   resolveIcon,
   resolveLogo,
   toSkillItems,
-} from '@/features/skills/skill-items'
+} from '@backend/features/skills/skill-items'
 
 import { skillCategories } from '../../../Database/seed/seed-data'
 

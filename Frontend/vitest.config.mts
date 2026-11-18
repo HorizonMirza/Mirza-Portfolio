@@ -5,7 +5,10 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+    alias: {
+      '@backend': fileURLToPath(new URL('../Backend', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
   test: {
     environment: 'node',

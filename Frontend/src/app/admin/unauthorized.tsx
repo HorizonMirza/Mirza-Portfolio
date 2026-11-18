@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-button'
 import { StatusPage } from '@/components/ui/status-page'
-import { getAdminLang } from '@/lib/admin-lang-server'
+import { getAdminLang } from '@backend/lib/admin-lang-server'
 
 // 401: ada cookie sesi tetapi sesinya tidak sah atau sudah berakhir (lib/auth-guard.ts memanggil
 // unauthorized()). Tanpa cookie sama sekali, proxy langsung mengarahkan ke login. Teks mengikuti

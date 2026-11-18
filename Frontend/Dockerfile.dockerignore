@@ -8,7 +8,7 @@ Documentation
 **/.next
 **/.env*
 !**/.env.example
-Frontend/src/generated
+Backend/generated
 Frontend/test-results
 Frontend/playwright-report
 Frontend/e2e

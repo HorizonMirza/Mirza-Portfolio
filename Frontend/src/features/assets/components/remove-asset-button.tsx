@@ -2,7 +2,7 @@
 
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 
-import { removeAsset } from '../actions'
+import { removeAsset } from '@backend/features/assets/actions'
 
 // Tombol tong sampah kecil untuk menghapus gambar/berkas yang sedang dipakai (sesudah gambar bisa
 // diganti langsung dari pemilih berkas, DESIGN.md bagian 148); hapus memakai konfirmasi.

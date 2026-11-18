@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { RETENTION_DAYS, summaryStart } from '@/lib/page-view-summary'
+import { RETENTION_DAYS, summaryStart } from '@backend/lib/page-view-summary'
 
 const DAY = 24 * 60 * 60 * 1000
 const now = Date.UTC(2026, 10, 2, 12)

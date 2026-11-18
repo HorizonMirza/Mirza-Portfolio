@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { Prisma } from '@/generated/prisma/client'
-import { toActionError, uniqueViolationFields, zodFieldErrors } from '@/lib/action-result'
-import { diffSnapshots } from '@/lib/audit'
-import { UnauthorizedError } from '@/lib/auth-guard'
-import { moveItem } from '@/lib/reorder'
-import { safeAdminRedirect } from '@/lib/safe-redirect'
+import { Prisma } from '@backend/generated/prisma/client'
+import { toActionError, uniqueViolationFields, zodFieldErrors } from '@backend/lib/action-result'
+import { diffSnapshots } from '@backend/lib/audit'
+import { UnauthorizedError } from '@backend/lib/auth-guard'
+import { moveItem } from '@backend/lib/reorder'
+import { safeAdminRedirect } from '@backend/lib/safe-redirect'
 
 describe('moveItem', () => {
   const ids = ['a', 'b', 'c']

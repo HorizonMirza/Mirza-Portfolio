@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { githubRepoSchema, optionalUrl, slugify, slugSchema } from '@/lib/validation'
+import { githubRepoSchema, optionalUrl, slugify, slugSchema } from '@backend/lib/validation'
 
 describe('slugify', () => {
   it('mengubah judul menjadi slug huruf kecil', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { sortByLatest } from '@/features/experience/schema'
+import { sortByLatest } from '@backend/features/experience/schema'
 
 // Tanggal dari CV (Database/seed/seed-data.ts), tanpa pendidikan.
 const items = [

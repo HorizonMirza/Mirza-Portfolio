@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parseAuthEnv, parseServerEnv, resolveBaseUrl, trustedAuthOrigins } from '@/lib/env'
+import { parseAuthEnv, parseServerEnv, resolveBaseUrl, trustedAuthOrigins } from '@backend/lib/env'
 
 describe('parseServerEnv', () => {
   it('menerima URL PostgreSQL yang valid', () => {

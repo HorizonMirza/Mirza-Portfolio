@@ -1,0 +1,81 @@
+import { z } from 'zod'
+
+import {
+  githubRepoSchema,
+  optionalText,
+  optionalUrl,
+  requiredText,
+  slugSchema,
+} from '@backend/lib/validation'
+
+export const PROJECT_CATEGORIES = ['SOFTWARE', 'COMMUNITY_BUSINESS'] as const
+export const CONTENT_STATUSES = ['DRAFT', 'PUBLISHED'] as const
+
+// Batas atas tahun dihitung saat validasi, bukan saat modul dimuat: server yang hidup melewati
+// pergantian tahun tetap menerima tahun baru (audit 2026-10-31, BUG-04).
+function maxProjectYear() {
+  return new Date().getFullYear() + 1
+}
+
+// Dipakai di form (klien) dan divalidasi ulang di Server Action.
+export const projectSchema = z.object({
+  slug: slugSchema,
+  title_id: requiredText('Judul', 120),
+  title_en: requiredText('Title', 120),
+  summary_id: requiredText('Ringkasan', 240),
+  summary_en: requiredText('Summary', 240),
+  role_id: optionalText('Peran', 80),
+  role_en: optionalText('Role', 80),
+  // Opsional: tidak tampil di halaman detail (keputusan pemilik 2026-10-08), hanya dikirim API.
+  // Dulu wajib sehingga admin harus mengisi teks yang tidak terlihat (audit 2026-10-31, GAP-05).
+  description_id: optionalText('Deskripsi', 5000),
+  description_en: optionalText('Description', 5000),
+  caseStudy_id: optionalText('Studi Kasus', 20000),
+  caseStudy_en: optionalText('Case study', 20000),
+  year: z
+    .number({ error: 'Tahun wajib diisi' })
+    .int('Tahun harus bilangan bulat')
+    .min(2000, 'Tahun minimal 2000')
+    .superRefine((year, ctx) => {
+      const max = maxProjectYear()
+      if (year > max) ctx.addIssue({ code: 'custom', message: `Tahun maksimal ${max}` })
+    }),
+  category: z.enum(PROJECT_CATEGORIES),
+  demoUrl: optionalUrl('URL Demo'),
+  repoUrl: optionalUrl('URL Repo'),
+  showDemo: z.boolean(),
+  showRepo: z.boolean(),
+  githubRepo: githubRepoSchema,
+  featured: z.boolean(),
+  status: z.enum(CONTENT_STATUSES),
+  skillIds: z.array(z.uuid()).max(30, 'Maksimal 30 skill'),
+})
+
+export type ProjectInput = z.input<typeof projectSchema>
+export type ProjectValues = z.output<typeof projectSchema>
+
+export const emptyProject: ProjectInput = {
+  slug: '',
+  title_id: '',
+  title_en: '',
+  summary_id: '',
+  summary_en: '',
+  role_id: '',
+  role_en: '',
+  description_id: '',
+  description_en: '',
+  caseStudy_id: '',
+  caseStudy_en: '',
+  // nilai awal saja; halaman "Project Baru" mengisi ulang dengan tahun saat halaman dibuka
+  year: new Date().getFullYear(),
+  category: 'SOFTWARE',
+  demoUrl: '',
+  repoUrl: '',
+  showDemo: true,
+  showRepo: true,
+  githubRepo: '',
+  featured: false,
+  // project baru langsung terbit: tanpa pilihan Draf di admin (revisi pemilik 2026-11-16)
+  status: 'PUBLISHED',
+  skillIds: [],
+}

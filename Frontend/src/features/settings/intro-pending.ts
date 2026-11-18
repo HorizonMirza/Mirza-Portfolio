@@ -1,4 +1,4 @@
-import type { IntroFrequency } from './options'
+import type { IntroFrequency } from '@backend/features/settings/options'
 
 // Penanda "sudah dilihat" kartu pembuka. Frekuensinya diatur di Admin → Pengaturan (2026-11-11):
 // - visit (bawaan, pilihan pemilik 2026-10-12): sekali setiap situs dibuka (tab baru), lewat sessionStorage

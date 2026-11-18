@@ -1,9 +1,9 @@
 import { getTranslations } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
-import { getPublicProfile } from '@/features/profile/public'
-import type { IntroNoticeContent } from '@/features/settings/public'
-import { routing } from '@/i18n/routing'
+import { getPublicProfile } from '@backend/features/profile/public'
+import type { IntroNoticeContent } from '@backend/features/settings/public'
+import { routing } from '@backend/i18n/routing'
 
 import { IntroNotice, type IntroNoticeVersion } from './intro-notice'
 

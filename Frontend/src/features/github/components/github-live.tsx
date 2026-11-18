@@ -12,8 +12,12 @@ import ContributionSkyline, {
   type ContributionDay,
   type SkylineLabels,
 } from '@/components/ui/contribution-skyline'
-import { saveGithubPalette } from '@/features/settings/actions'
-import { GITHUB_PRESET_KEYS, GITHUB_PRESETS, type GithubPresetKey } from '@/lib/github-palette'
+import { saveGithubPalette } from '@backend/features/settings/actions'
+import {
+  GITHUB_PRESET_KEYS,
+  GITHUB_PRESETS,
+  type GithubPresetKey,
+} from '@backend/lib/github-palette'
 import { cn } from '@/lib/utils'
 
 const PRESET_NAME: Record<GithubPresetKey, string> = {

@@ -18,13 +18,13 @@ import { MaintenanceNotice } from '@/components/site/maintenance-notice'
 import { NavigationSkeleton } from '@/components/site/navigation-skeleton'
 import { VercelInsights } from '@/components/site/vercel-insights'
 import { WhatsAppFloat } from '@/components/site/whatsapp-float'
-import { routing } from '@/i18n/routing'
-import { siteUrl } from '@/lib/env'
+import { routing } from '@backend/i18n/routing'
+import { siteUrl } from '@backend/lib/env'
 import { DEFAULT_THEME_ATTR, THEME_STORAGE_KEY } from '@/lib/theme'
-import { getPublicProfile } from '@/features/profile/public'
+import { getPublicProfile } from '@backend/features/profile/public'
 import { IntroNoticeSlot } from '@/features/settings/components/public/intro-notice-slot'
 import { introPendingScript } from '@/features/settings/intro-pending'
-import { getSiteSettings } from '@/features/settings/public'
+import { getSiteSettings } from '@backend/features/settings/public'
 
 // Hanya id dan en yang sah: locale lain ditolak lewat hasLocale() → notFound().
 // Jangan set `dynamicParams = false` di sini. Dengan itu, render ulang ISR setelah admin menyimpan

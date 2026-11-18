@@ -11,15 +11,15 @@ import {
   listMessages,
   MESSAGE_PREVIEW_CHARS,
   MESSAGES_PAGE_SIZE,
-} from '@/features/messages/queries'
+} from '@backend/features/messages/queries'
 import {
   MESSAGE_STATUSES,
   messageStatusLabel,
   parseMessageStatus,
-} from '@/features/messages/schema'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { formatDateTime } from '@/lib/format'
+} from '@backend/features/messages/schema'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { formatDateTime } from '@backend/lib/format'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

@@ -1,9 +1,9 @@
 import { hasLocale } from 'next-intl'
 
-import { getPublishedProject } from '@/features/projects/public'
-import { routing } from '@/i18n/routing'
-import { loc } from '@/lib/localized'
-import { horizonCard, OG_SIZE } from '@/lib/og/card'
+import { getPublishedProject } from '@backend/features/projects/public'
+import { routing } from '@backend/i18n/routing'
+import { loc } from '@backend/lib/localized'
+import { horizonCard, OG_SIZE } from '@backend/lib/og/card'
 
 export const size = OG_SIZE
 export const contentType = 'image/png'

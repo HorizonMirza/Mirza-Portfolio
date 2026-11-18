@@ -1,10 +1,10 @@
 import { hasLocale } from 'next-intl'
 import { getRequestConfig } from 'next-intl/server'
 
-import { applyTextOverrides } from '@/features/site-text/merge'
-import { getTextOverrides } from '@/features/site-text/public'
+import { applyTextOverrides } from '@backend/features/site-text/merge'
+import { getTextOverrides } from '@backend/features/site-text/public'
 
-import { routing } from './routing'
+import { routing } from '@backend/i18n/routing'
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale

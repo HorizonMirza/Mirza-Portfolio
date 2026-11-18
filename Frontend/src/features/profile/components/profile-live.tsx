@@ -21,7 +21,7 @@ import {
   useEditLang,
 } from '@/components/admin/live-edit'
 import { Container, PageIntro } from '@/components/site/section-heading'
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { EducationCardsLive } from '@/features/experience/components/education-cards-live'
@@ -29,8 +29,8 @@ import { type EntryRow, useEntries } from '@/features/experience/components/use-
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
-import { saveProfile } from '../actions'
-import { type ProfileInput, profileSchema } from '../schema'
+import { saveProfile } from '@backend/features/profile/actions'
+import { type ProfileInput, profileSchema } from '@backend/features/profile/schema'
 import { AboutPhotoCard, type PhotoCardChip } from './about-photo-card'
 
 type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles' | 'aboutChipLabel'

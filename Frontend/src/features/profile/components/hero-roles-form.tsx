@@ -16,10 +16,10 @@ import {
 } from '@/components/admin/live-edit'
 import { SiteFrame } from '@/components/admin/site-frame'
 import { HeroContent } from '@/components/site/hero-content'
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 
-import { saveHeroRoles } from '../actions'
-import { type HeroRolesInput, heroRolesSchema } from '../schema'
+import { saveHeroRoles } from '@backend/features/profile/actions'
+import { type HeroRolesInput, heroRolesSchema } from '@backend/features/profile/schema'
 
 function splitRoles(value: string) {
   return value.split('|').map((r) => r.trim())

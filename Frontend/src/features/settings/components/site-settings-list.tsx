@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { previewSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
-import { saveSiteOption } from '../actions'
+import { saveSiteOption } from '@backend/features/settings/actions'
 import {
   CONTACT_PER_HOUR_MAX,
   CONTACT_PER_HOUR_MIN,
@@ -20,7 +20,7 @@ import {
   type SiteOptionKey,
   type SiteOptions,
   type SoundKind,
-} from '../options'
+} from '@backend/features/settings/options'
 
 // jeda sebelum isian angka dan geseran volume disimpan, agar tidak menyimpan setiap langkah
 const TYPING_DELAY_MS = 600

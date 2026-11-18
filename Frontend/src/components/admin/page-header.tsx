@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { getAdminT } from '@/lib/admin-lang-server'
+import { getAdminT } from '@backend/lib/admin-lang-server'
 
 // Judul dan deskripsi diterjemahkan ke bahasa tampilan admin (teks yang belum ada di kamus tetap
 // tampil apa adanya, mis. nama project). Judul besar di panel isi dihapus (revisi pemilik 2026-11-11,

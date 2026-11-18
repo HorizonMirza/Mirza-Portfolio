@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { buildEnvelope, parseDsn, parseStack, reportServerError } from '@/lib/error-report'
+import { buildEnvelope, parseDsn, parseStack, reportServerError } from '@backend/lib/error-report'
 
 const DSN = 'https://abc123@o42.ingest.us.sentry.io/4507'
 

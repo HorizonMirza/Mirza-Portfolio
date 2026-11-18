@@ -6,11 +6,11 @@ import {
   ExperienceTimelineLive,
 } from '@/features/experience/components/experience-timeline-live'
 import { PageHeader } from '@/components/admin/page-header'
-import { listExperienceEntriesAdmin } from '@/features/experience/queries'
-import { EMPLOYMENT_TYPES } from '@/features/experience/schema'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { isUploadConfigured } from '@/lib/uploads'
+import { listExperienceEntriesAdmin } from '@backend/features/experience/queries'
+import { EMPLOYMENT_TYPES } from '@backend/features/experience/schema'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { isUploadConfigured } from '@backend/lib/uploads'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

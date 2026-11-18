@@ -2,8 +2,8 @@ import { getSessionCookie } from 'better-auth/cookies'
 import { type NextRequest, NextResponse } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 
-import { siteDefaultLocale } from './features/settings/default-locale'
-import { routing } from './i18n/routing'
+import { siteDefaultLocale } from '@backend/features/settings/default-locale'
+import { routing } from '@backend/i18n/routing'
 import { buildCsp } from './lib/csp'
 
 const intlMiddleware = createMiddleware(routing)

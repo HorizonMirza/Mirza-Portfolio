@@ -25,17 +25,21 @@ import {
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { uploadAsset } from '@/features/assets/upload-client'
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { CLIENT_ICON_PATHS } from '@/features/skills/client-icon-paths'
-import type { SkillOptionGroup } from '@/features/skills/queries'
+import type { SkillOptionGroup } from '@backend/features/skills/queries'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
-import { slugify } from '@/lib/validation'
+import { slugify } from '@backend/lib/validation'
 
 import { imageRatio } from '../browser-address'
 
-import { saveProject } from '../actions'
-import { type ProjectInput, projectSchema, type ProjectValues } from '../schema'
+import { saveProject } from '@backend/features/projects/actions'
+import {
+  type ProjectInput,
+  projectSchema,
+  type ProjectValues,
+} from '@backend/features/projects/schema'
 
 // gambar yang dipilih untuk project baru dan baru diunggah setelah project tersimpan
 type PendingImage = { blob: Blob; name: string; preview: string }

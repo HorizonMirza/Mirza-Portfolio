@@ -11,12 +11,12 @@ import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
 import { PasswordInput } from '@/components/admin/password-input'
-import { MIN_PASSWORD_LENGTH, PASSWORD_RULES } from '@/lib/password-policy'
+import { MIN_PASSWORD_LENGTH, PASSWORD_RULES } from '@backend/lib/password-policy'
 import { cn } from '@/lib/utils'
 
-import { changePassword } from '../actions'
+import { changePassword } from '@backend/features/account/actions'
 import { passwordStrength } from '../password-strength'
-import { type ChangePasswordInput, changePasswordSchema } from '../schema'
+import { type ChangePasswordInput, changePasswordSchema } from '@backend/features/account/schema'
 
 const empty: ChangePasswordInput = { currentPassword: '', newPassword: '' }
 

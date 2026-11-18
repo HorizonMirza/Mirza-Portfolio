@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
-import { getSiteSettings } from '@/features/settings/public'
-import { getPrivacyEditedAt } from '@/features/site-text/public'
+import { getSiteSettings } from '@backend/features/settings/public'
+import { getPrivacyEditedAt } from '@backend/features/site-text/public'
 import { Link } from '@/i18n/navigation'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
-import { formatDateShort } from '@/lib/localized'
-import { pageMetadata } from '@/lib/seo'
+import { formatDateShort } from '@backend/lib/localized'
+import { pageMetadata } from '@backend/lib/seo'
 
 // Tanggal perubahan teks bawaan (messages/*.json); perbarui setiap kali isi bawaan kebijakan diubah
 // di kode. Suntingan lewat admin dihitung otomatis dari SiteText (getPrivacyEditedAt).

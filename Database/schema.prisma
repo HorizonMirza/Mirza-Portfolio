@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../Frontend/src/generated/prisma"
+  output   = "../Backend/generated/prisma"
 }
 
 datasource db {
@@ -58,7 +58,7 @@ enum MessageStatus {
   ARCHIVED
 }
 
-// Tabel autentikasi mengikuti skema Better Auth (lihat Frontend/src/lib/auth.ts).
+// Tabel autentikasi mengikuti skema Better Auth (lihat Backend/lib/auth.ts).
 // Hanya satu SUPER_ADMIN yang dibuat lewat seed. Pendaftaran publik dimatikan.
 model User {
   id            String       @id @default(uuid(7)) @db.Uuid
@@ -122,7 +122,7 @@ model Verification {
 }
 
 // Penghitung rate limit bersama untuk login (Better Auth customStorage) dan form publik.
-// `key` selalu berupa hash HMAC, tidak pernah memuat IP mentah (Frontend/src/lib/rate-limit.ts).
+// `key` selalu berupa hash HMAC, tidak pernah memuat IP mentah (Backend/lib/rate-limit.ts).
 // Jendela tetap: windowStart = awal jendela dalam epoch milidetik.
 model RateLimit {
   key         String @id

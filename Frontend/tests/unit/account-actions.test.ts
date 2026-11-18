@@ -2,19 +2,21 @@ import { APIError } from 'better-auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const changePasswordApi = vi.fn()
-vi.mock('@/lib/auth', () => ({ getAuth: () => ({ api: { changePassword: changePasswordApi } }) }))
-vi.mock('@/lib/auth-guard', () => ({
+vi.mock('@backend/lib/auth', () => ({
+  getAuth: () => ({ api: { changePassword: changePasswordApi } }),
+}))
+vi.mock('@backend/lib/auth-guard', () => ({
   requireSuperAdmin: async () => ({ userId: '01a0f218-0209-7656-a356-02d34f1c52c3' }),
 }))
-vi.mock('@/lib/rate-limit', () => ({
+vi.mock('@backend/lib/rate-limit', () => ({
   consumeRateLimit: async () => ({ allowed: true, retryAfter: null }),
   hashIdentifier: (v: string) => v,
 }))
-vi.mock('@/lib/audit', () => ({ writeAudit: vi.fn(async () => undefined) }))
-vi.mock('@/lib/db', () => ({ getDb: () => ({}) }))
+vi.mock('@backend/lib/audit', () => ({ writeAudit: vi.fn(async () => undefined) }))
+vi.mock('@backend/lib/db', () => ({ getDb: () => ({}) }))
 vi.mock('next/headers', () => ({ headers: async () => new Headers() }))
 
-const { changePassword } = await import('@/features/account/actions')
+const { changePassword } = await import('@backend/features/account/actions')
 
 const input = {
   currentPassword: 'password-lama-panjang',

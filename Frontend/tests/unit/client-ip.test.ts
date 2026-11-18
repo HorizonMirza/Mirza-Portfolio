@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { clientIp, trustedProxies } from '@/lib/client-ip'
+import { clientIp, trustedProxies } from '@backend/lib/client-ip'
 
 const h = (xff?: string, realIp?: string) => {
   const headers = new Headers()

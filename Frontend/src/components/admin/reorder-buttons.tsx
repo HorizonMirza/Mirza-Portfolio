@@ -6,8 +6,8 @@ import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
-import type { ActionResult } from '@/lib/action-result'
-import type { MoveDirection } from '@/lib/reorder'
+import type { ActionResult } from '@backend/lib/action-result'
+import type { MoveDirection } from '@backend/lib/reorder'
 
 // Urutan diubah dengan tombol naik/turun, bukan seret, agar bisa dipakai dengan keyboard dan pembaca layar.
 export function ReorderButtons({

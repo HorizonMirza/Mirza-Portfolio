@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { runSteps } from '@/lib/run-steps'
+import { runSteps } from '@backend/lib/run-steps'
 
 // audit 2026-11-17, ERR-01: satu langkah gagal tidak menghentikan langkah lain
 describe('runSteps', () => {

@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { getPublicProfile } from '@/features/profile/public'
+import { getPublicProfile } from '@backend/features/profile/public'
 import { SiteSettingsList } from '@/features/settings/components/site-settings-list'
-import { getSiteOptionsForEdit } from '@/features/settings/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { getSiteOptionsForEdit } from '@backend/features/settings/queries'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

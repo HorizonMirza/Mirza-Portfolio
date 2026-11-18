@@ -1,4 +1,4 @@
-import { logoColorFor, resolveIcon, resolveLogo } from '@/features/skills/skill-items'
+import { logoColorFor, resolveIcon, resolveLogo } from '@backend/features/skills/skill-items'
 
 import { type ChipData, TechChipsList } from './tech-chips-list'
 

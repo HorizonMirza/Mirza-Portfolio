@@ -8,11 +8,11 @@ import { PageHeader } from '@/components/admin/page-header'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { MessageActions } from '@/features/messages/components/message-actions'
-import { getMessage } from '@/features/messages/queries'
-import { messageStatusLabel } from '@/features/messages/schema'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { formatDateTime } from '@/lib/format'
+import { getMessage } from '@backend/features/messages/queries'
+import { messageStatusLabel } from '@backend/features/messages/schema'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { formatDateTime } from '@backend/lib/format'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

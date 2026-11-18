@@ -21,13 +21,18 @@ import { SiteFrame } from '@/components/admin/site-frame'
 import { Container } from '@/components/site/section-heading'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { uploadAsset } from '@/features/assets/upload-client'
 import type { PendingImage } from '@/features/experience/components/use-entries'
 import { cn } from '@/lib/utils'
 
-import { deleteSkill, deleteSkillCategory, saveSkill, saveSkillCategory } from '../actions'
-import type { SkillItem } from '../skill-items'
+import {
+  deleteSkill,
+  deleteSkillCategory,
+  saveSkill,
+  saveSkillCategory,
+} from '@backend/features/skills/actions'
+import type { SkillItem } from '@backend/features/skills/skill-items'
 import { SkillGlobe } from './skill-globe'
 
 type SkillRow = {

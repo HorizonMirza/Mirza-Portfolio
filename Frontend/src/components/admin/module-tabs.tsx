@@ -1,5 +1,5 @@
 import { FilterTabs } from '@/components/admin/filter-tabs'
-import { getAdminT } from '@/lib/admin-lang-server'
+import { getAdminT } from '@backend/lib/admin-lang-server'
 
 // Tiap modul situs publik punya satu menu; teks halamannya dan datanya (profil, skill, pengalaman,
 // project) dipisah sebagai tab di dalam modul itu, bukan menu kedua di sidebar.

@@ -1,0 +1,4 @@
+# symlink ke ../Frontend/node_modules (dibuat postinstall Frontend)
+/node_modules
+# Prisma client hasil generate (prisma generate, postinstall Frontend)
+/generated/

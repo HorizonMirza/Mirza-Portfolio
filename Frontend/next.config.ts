@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 
@@ -8,8 +10,15 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 // Optimasi gambar hanya untuk akun Cloudinary milik situs ini (bukan semua res.cloudinary.com).
 const cloudName = process.env.CLOUDINARY_CLOUD_NAME
 
+// Kode server ada di ../Backend (diimpor lewat alias @backend), jadi akar Turbopack dan pelacakan berkas
+// output adalah akar repo, bukan folder Frontend/. Paket npm Backend dipakai dari Frontend/node_modules
+// lewat symlink Backend/node_modules (dibuat postinstall).
+const repoRoot = path.join(__dirname, '..')
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  turbopack: { root: repoRoot },
+  outputFileTracingRoot: repoRoot,
   // Hanya untuk image Docker (Frontend/Dockerfile): server mandiri berisi dependency yang terpakai saja.
   // Vercel dan CI tidak memasangnya, jadi build mereka tidak berubah.
   output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined,

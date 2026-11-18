@@ -7,9 +7,9 @@ import {
   entriesOf,
   findModule,
   findTextEntry,
-} from '@/features/site-text/catalog'
-import { applyTextOverrides } from '@/features/site-text/merge'
-import { siteTextsSchema } from '@/features/site-text/schema'
+} from '@backend/features/site-text/catalog'
+import { applyTextOverrides } from '@backend/features/site-text/merge'
+import { siteTextsSchema } from '@backend/features/site-text/schema'
 
 import en from '../../messages/en.json'
 import id from '../../messages/id.json'

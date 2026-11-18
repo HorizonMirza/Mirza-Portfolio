@@ -1,6 +1,6 @@
 import type { Instrumentation } from 'next'
 
-import { reportServerError } from '@/lib/error-report'
+import { reportServerError } from '@backend/lib/error-report'
 
 // Error dari Server Components, Route Handlers, Server Actions, dan proxy dilaporkan ke Sentry
 // (bila SENTRY_DSN diisi). Hanya path, method, dan konteks route yang dikirim, tanpa header.

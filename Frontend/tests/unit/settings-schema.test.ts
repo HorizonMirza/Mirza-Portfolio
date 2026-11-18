@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { DEFAULT_SITE_OPTIONS, siteOptionSchema, toSiteOptions } from '@/features/settings/options'
-import { introSchema } from '@/features/settings/schema'
+import {
+  DEFAULT_SITE_OPTIONS,
+  siteOptionSchema,
+  toSiteOptions,
+} from '@backend/features/settings/options'
+import { introSchema } from '@backend/features/settings/schema'
 
 const intro = { introBody_id: 'Isi singkat.', introBody_en: 'Short text.' }
 

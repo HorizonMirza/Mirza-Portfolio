@@ -5,12 +5,12 @@ import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { GithubLive } from '@/features/github/components/github-live'
 import { skylineLabelsFrom } from '@/features/github/labels'
-import { getGithubPresetForEdit } from '@/features/github/queries'
+import { getGithubPresetForEdit } from '@backend/features/github/queries'
 import { sampleContributions } from '@/features/github/sample'
-import { getGithubContributions, githubLogin } from '@/features/profile/github-contributions'
-import { getPublicProfile } from '@/features/profile/public'
-import { getAdminLang, getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { getGithubContributions, githubLogin } from '@backend/features/profile/github-contributions'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { getAdminLang, getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

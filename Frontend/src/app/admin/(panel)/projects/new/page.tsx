@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { projectPreviewTexts } from '@/features/projects/admin-texts'
+import { projectPreviewTexts } from '@backend/features/projects/admin-texts'
 import { ProjectLive } from '@/features/projects/components/project-live'
-import { emptyProject } from '@/features/projects/schema'
-import { listSkillOptions } from '@/features/skills/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { siteHost } from '@/lib/env'
-import { isUploadConfigured } from '@/lib/uploads'
+import { emptyProject } from '@backend/features/projects/schema'
+import { listSkillOptions } from '@backend/features/skills/queries'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { siteHost } from '@backend/lib/env'
+import { isUploadConfigured } from '@backend/lib/uploads'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

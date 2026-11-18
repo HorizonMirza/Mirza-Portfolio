@@ -7,9 +7,9 @@ import { AdminSidebar } from '@/components/admin/sidebar'
 import { SIDEBAR_COOKIE } from '@/components/admin/sidebar-cookie'
 import { SidebarStateProvider } from '@/components/admin/sidebar-state'
 import { AdminTopBar } from '@/components/admin/top-bar'
-import { getPublicProfile } from '@/features/profile/public'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { getAdminLang } from '@/lib/admin-lang-server'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { getAdminLang } from '@backend/lib/admin-lang-server'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 
 // Semua halaman di (panel) wajib sesi SUPER_ADMIN yang valid (dicek di server).

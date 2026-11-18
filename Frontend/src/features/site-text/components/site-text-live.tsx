@@ -26,9 +26,14 @@ import {
 
 import { SiteFrame } from '@/components/admin/site-frame'
 
-import { saveSiteTexts } from '../actions'
-import { checkTextValue, entriesOf, findTextEntry, type ModuleId } from '../catalog'
-import type { SiteTextsInput } from '../schema'
+import { saveSiteTexts } from '@backend/features/site-text/actions'
+import {
+  checkTextValue,
+  entriesOf,
+  findTextEntry,
+  type ModuleId,
+} from '@backend/features/site-text/catalog'
+import type { SiteTextsInput } from '@backend/features/site-text/schema'
 
 type Values = SiteTextsInput['values']
 type Defaults = Record<string, Record<Lang, string>>

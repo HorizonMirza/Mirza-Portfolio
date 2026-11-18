@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { maxSideOf, UPLOAD_TARGET_KEYS, UPLOAD_TARGETS } from '@/features/assets/targets'
+import { maxSideOf, UPLOAD_TARGET_KEYS, UPLOAD_TARGETS } from '@backend/features/assets/targets'
 
 // audit 2026-11-17, EFF-05: ukuran gambar ditulis per tujuan, bukan ditebak dari batas berkas
 describe('maxSideOf', () => {

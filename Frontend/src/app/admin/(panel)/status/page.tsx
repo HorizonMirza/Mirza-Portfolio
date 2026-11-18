@@ -3,8 +3,8 @@ import { getTranslations } from 'next-intl/server'
 
 import { FilterTabs } from '@/components/admin/filter-tabs'
 import { StatusPage, STATUS_CODES, type StatusCode } from '@/components/ui/status-page'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { hashIdentifier, retryAfterSeconds } from '@/lib/rate-limit'
+import { hashIdentifier, retryAfterSeconds } from '@backend/lib/rate-limit'
 
 describe('hashIdentifier', () => {
   it('deterministik untuk secret yang sama dan tidak memuat IP mentah', () => {

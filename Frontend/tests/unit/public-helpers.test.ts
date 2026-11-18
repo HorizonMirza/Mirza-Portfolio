@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { getEmailConfig } from '@/lib/email'
+import { getEmailConfig } from '@backend/lib/email'
 import { browserAddress } from '@/features/projects/browser-address'
-import { siteHost, siteUrl } from '@/lib/env'
-import { formatDateShort, formatMonth, loc } from '@/lib/localized'
-import { safeImage } from '@/lib/public-image'
-import { isBot, isSameOrigin } from '@/lib/request'
-import { pageMetadata, whatsappUrl } from '@/lib/seo'
+import { siteHost, siteUrl } from '@backend/lib/env'
+import { formatDateShort, formatMonth, loc } from '@backend/lib/localized'
+import { safeImage } from '@backend/lib/public-image'
+import { isBot, isSameOrigin } from '@backend/lib/request'
+import { pageMetadata, whatsappUrl } from '@backend/lib/seo'
 
 afterEach(() => vi.unstubAllEnvs())
 
@@ -167,7 +167,7 @@ describe('buildCsp', async () => {
 })
 
 describe('describeDevice', async () => {
-  const { describeDevice } = await import('@/lib/login-notice')
+  const { describeDevice } = await import('@backend/lib/login-notice')
   it('meringkas user-agent', () => {
     expect(
       describeDevice(

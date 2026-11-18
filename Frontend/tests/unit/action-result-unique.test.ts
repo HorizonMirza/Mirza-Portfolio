@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { Prisma } from '@/generated/prisma/client'
+import { Prisma } from '@backend/generated/prisma/client'
 
-vi.mock('@/lib/auth-guard', () => ({ UnauthorizedError: class extends Error {} }))
+vi.mock('@backend/lib/auth-guard', () => ({ UnauthorizedError: class extends Error {} }))
 
-const { toActionError } = await import('@/lib/action-result')
+const { toActionError } = await import('@backend/lib/action-result')
 
 // bentuk galat unik dari Prisma 7 dengan driver adapter: hanya nama indeks yang diketahui
 function uniqueError(index: string) {

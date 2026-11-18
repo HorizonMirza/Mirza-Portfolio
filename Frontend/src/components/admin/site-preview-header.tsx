@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 
 import { SiteHeader } from '@/components/site/site-header'
-import type { AppLocale } from '@/i18n/routing'
+import type { AppLocale } from '@backend/i18n/routing'
 
 // Navbar situs yang asli di dalam pratinjau 1:1 admin (SiteFrame, DESIGN.md bagian 141): teks dalam
 // bahasa yang sedang diubah, menu halaman yang ditiru menyala. Hanya tampilan: inert (tidak bisa

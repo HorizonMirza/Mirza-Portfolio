@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { maskEmail } from '@/features/account/mask-email'
+import { maskEmail } from '@backend/features/account/mask-email'
 import { passwordStrength } from '@/features/account/password-strength'
-import { deviceParts } from '@/lib/device'
+import { deviceParts } from '@backend/lib/device'
 
 describe('Admin → Akun', () => {
   it('email disamarkan tanpa menghilangkan domain', () => {
@@ -29,7 +29,7 @@ describe('Admin → Akun', () => {
 })
 
 describe('tempat masuk dari header Vercel', async () => {
-  const { locationFromHeaders } = await import('@/lib/login-events')
+  const { locationFromHeaders } = await import('@backend/lib/login-events')
   const h = new Headers({ 'x-vercel-ip-city': 'South%20Jakarta', 'x-vercel-ip-country': 'ID' })
 
   it('kota dan negara dibaca hanya di Vercel', () => {

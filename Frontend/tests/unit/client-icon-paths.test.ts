@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { BRAND_ICONS } from '@/features/skills/brand-icons'
+import { BRAND_ICONS } from '@backend/features/skills/brand-icons'
 import { CLIENT_ICON_PATHS } from '@/features/skills/client-icon-paths'
 
 describe('CLIENT_ICON_PATHS', () => {

@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { changePasswordSchema } from '@/features/account/schema'
+import { changePasswordSchema } from '@backend/features/account/schema'
 import {
   dateToMonth,
   emptyExperience,
   experienceSchema,
   monthToDate,
-} from '@/features/experience/schema'
-import { contactLinksSchema, emptyProfile, profileSchema } from '@/features/profile/schema'
-import { emptyProject, projectSchema } from '@/features/projects/schema'
-import { skillCategorySchema, skillSchema } from '@/features/skills/schema'
+} from '@backend/features/experience/schema'
+import { contactLinksSchema, emptyProfile, profileSchema } from '@backend/features/profile/schema'
+import { emptyProject, projectSchema } from '@backend/features/projects/schema'
+import { skillCategorySchema, skillSchema } from '@backend/features/skills/schema'
 
 const validProject = {
   ...emptyProject,

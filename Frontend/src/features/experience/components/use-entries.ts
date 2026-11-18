@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 
 import { uploadAsset } from '@/features/assets/upload-client'
 
-import { saveExperience } from '../actions'
-import { experienceSchema, type ExperienceInput } from '../schema'
+import { saveExperience } from '@backend/features/experience/actions'
+import { experienceSchema, type ExperienceInput } from '@backend/features/experience/schema'
 
 // Gambar yang sudah dipilih dan dipotong untuk entri baru yang belum tersimpan: diunggah setelah
 // entrinya tersimpan (butuh id entri). `preview` = alamat sementara untuk ditampilkan.

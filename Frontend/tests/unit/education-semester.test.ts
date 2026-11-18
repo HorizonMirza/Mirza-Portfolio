@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { initials, organizationName } from '@/features/experience/schema'
+import { initials, organizationName } from '@backend/features/experience/schema'
 
 describe('initials', () => {
   it('mengambil dua huruf awal tanpa "PT" dan tanpa bagian setelah koma', () => {

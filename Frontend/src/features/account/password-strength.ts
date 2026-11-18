@@ -1,4 +1,4 @@
-import { MIN_PASSWORD_LENGTH } from '@/lib/password-policy'
+import { MIN_PASSWORD_LENGTH } from '@backend/lib/password-policy'
 
 // Perkiraan kekuatan 0–4 untuk meter di bawah password baru. Panjang paling berpengaruh (frasa panjang
 // lebih kuat daripada simbol acak); hanya petunjuk, aturan yang wajib tetap di changePasswordSchema.

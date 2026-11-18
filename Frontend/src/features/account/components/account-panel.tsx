@@ -19,14 +19,14 @@ import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/spinner'
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
-import type { DeviceParts } from '@/lib/device'
-import { formatDateTime } from '@/lib/format'
+import type { DeviceParts } from '@backend/lib/device'
+import { formatDateTime } from '@backend/lib/format'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
-import type { AccountSession } from '../queries'
-import { revokeOtherSessions, revokeSession } from '../session-actions'
+import type { AccountSession } from '@backend/features/account/queries'
+import { revokeOtherSessions, revokeSession } from '@backend/features/account/session-actions'
 import { ChangeIdentityDialog, ChangePasswordDialog } from './account-dialogs'
 
 // form tampil sebagai dialog di atas halaman

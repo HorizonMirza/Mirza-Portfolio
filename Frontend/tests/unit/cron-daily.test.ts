@@ -13,13 +13,13 @@ const db = {
   session: { deleteMany: count(5) },
   verification: { deleteMany: count(6) },
 }
-vi.mock('@/lib/db', () => ({ getDb: () => db }))
-vi.mock('@/lib/orphan-uploads', () => ({ removeOrphanUploads: vi.fn(async () => 7) }))
+vi.mock('@backend/lib/db', () => ({ getDb: () => db }))
+vi.mock('@backend/lib/orphan-uploads', () => ({ removeOrphanUploads: vi.fn(async () => 7) }))
 const report = vi.fn(async () => undefined)
-vi.mock('@/lib/error-report', () => ({ reportServerError: report }))
+vi.mock('@backend/lib/error-report', () => ({ reportServerError: report }))
 
 process.env.CRON_SECRET = 'rahasia-cron-uji-1234567890'
-const { GET } = await import('@/app/api/cron/daily/route')
+const { GET } = await import('@backend/api/cron-daily')
 
 const call = (secret = process.env.CRON_SECRET) =>
   GET(new Request('http://x/api/cron/daily', { headers: { authorization: `Bearer ${secret}` } }))

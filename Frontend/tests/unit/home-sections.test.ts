@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { experienceSchema } from '@/features/experience/schema'
+import { experienceSchema } from '@backend/features/experience/schema'
 
 vi.mock('next/cache', () => ({ unstable_cache: (fn: unknown) => fn }))
 

@@ -1,7 +1,7 @@
-import type { ActionResult } from '@/lib/action-result'
+import type { ActionResult } from '@backend/lib/action-result'
 
-import { attachUploadedAsset, signAssetUpload } from './actions'
-import type { UploadTarget } from './targets'
+import { attachUploadedAsset, signAssetUpload } from '@backend/features/assets/actions'
+import type { UploadTarget } from '@backend/features/assets/targets'
 
 export type UploadStage = 'menyiapkan' | 'mengunggah' | 'menyimpan'
 

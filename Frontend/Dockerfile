@@ -11,8 +11,10 @@ FROM node:24-slim AS build
 ENV HUSKY=0 NEXT_TELEMETRY_DISABLED=1 DOCKER_BUILD=1
 RUN corepack enable
 WORKDIR /app
-# skema Prisma ada di Database/, dan `pnpm install` menjalankan prisma generate (postinstall)
+# skema Prisma ada di Database/, kode server di Backend/. `pnpm install` menjalankan prisma generate ke
+# Backend/generated dan membuat symlink Backend/node_modules -> Frontend/node_modules (postinstall).
 COPY Database ./Database
+COPY Backend ./Backend
 WORKDIR /app/Frontend
 COPY Frontend/package.json Frontend/pnpm-lock.yaml Frontend/pnpm-workspace.yaml Frontend/prisma.config.ts ./
 RUN pnpm install --frozen-lockfile
@@ -31,11 +33,13 @@ LABEL org.opencontainers.image.title="mirza-portfolio" \
       org.opencontainers.image.licenses="NOASSERTION"
 ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0 NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
+# Akar pelacakan output = akar repo (next.config.ts), jadi server mandiri ada di Frontend/server.js.
+# Kode Backend sudah dibundel ke dalam server, tidak perlu disalin.
 COPY --from=build --chown=node:node /app/Frontend/.next/standalone ./
-COPY --from=build --chown=node:node /app/Frontend/.next/static ./.next/static
-COPY --from=build --chown=node:node /app/Frontend/public ./public
+COPY --from=build --chown=node:node /app/Frontend/.next/static ./Frontend/.next/static
+COPY --from=build --chown=node:node /app/Frontend/public ./Frontend/public
 USER node
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["node", "server.js"]
+CMD ["node", "Frontend/server.js"]

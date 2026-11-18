@@ -4,9 +4,9 @@ import { getTranslations } from 'next-intl/server'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { ProjectRow } from '@/features/projects/components/public/project-row'
 import { ProjectSpotlight } from '@/features/projects/components/public/project-spotlight'
-import { getPublishedProjects } from '@/features/projects/public'
+import { getPublishedProjects } from '@backend/features/projects/public'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
-import { pageMetadata } from '@/lib/seo'
+import { pageMetadata } from '@backend/lib/seo'
 
 export async function generateMetadata({
   params,

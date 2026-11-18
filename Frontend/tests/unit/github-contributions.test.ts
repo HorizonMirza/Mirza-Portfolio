@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { githubLogin, toCalendar } from '@/features/profile/github-contributions'
+import { githubLogin, toCalendar } from '@backend/features/profile/github-contributions'
 
 vi.mock('next/cache', () => ({ unstable_cache: (fn: unknown) => fn }))
 
@@ -71,7 +71,8 @@ describe('github-contributions', () => {
   it('tanpa GITHUB_TOKEN tidak memanggil GitHub', async () => {
     vi.stubEnv('GITHUB_TOKEN', '')
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
-    const { getGithubContributions } = await import('@/features/profile/github-contributions')
+    const { getGithubContributions } =
+      await import('@backend/features/profile/github-contributions')
     expect(await getGithubContributions('HorizonMirza')).toBeNull()
     expect(fetchSpy).not.toHaveBeenCalled()
     fetchSpy.mockRestore()
@@ -96,7 +97,8 @@ describe('github-contributions', () => {
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
       .mockResolvedValue(new Response('down', { status: 502 }))
-    const { getGithubContributions } = await import('@/features/profile/github-contributions')
+    const { getGithubContributions } =
+      await import('@backend/features/profile/github-contributions')
     expect(await getGithubContributions('HorizonMirza')).toBeNull()
     expect(calls).toEqual([{ error: expect.any(Error) }])
     fetchSpy.mockRestore()

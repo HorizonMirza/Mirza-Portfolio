@@ -26,7 +26,7 @@ import { type ChipData, TechChipsList } from './public/tech-chips-list'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
-import { deleteProject, moveProject, saveProjectTexts } from '../actions'
+import { deleteProject, moveProject, saveProjectTexts } from '@backend/features/projects/actions'
 
 type Field = 'title' | 'role' | 'summary'
 

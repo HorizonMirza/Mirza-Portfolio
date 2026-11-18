@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import type { Lang } from '@/components/admin/live-edit'
-import { formatMonth } from '@/lib/localized'
+import { formatMonth } from '@backend/lib/localized'
 import { cn } from '@/lib/utils'
 
 const FIRST_YEAR = 1990

@@ -3,7 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 
 import { Link, usePathname } from '@/i18n/navigation'
-import { routing } from '@/i18n/routing'
+import { routing } from '@backend/i18n/routing'
 import { LANG_SCRAMBLE_KEY, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { Prisma } from '@/generated/prisma/client'
+import { Prisma } from '@backend/generated/prisma/client'
 
 // audit 2026-11-17, BUG-01: percobaan ulang setelah jawaban hilang tidak boleh menghapus berkas
 // yang sudah dicatat oleh permintaan pertama.
@@ -8,22 +8,24 @@ const destroyRemoteAsset = vi.fn(async () => undefined)
 const findUnique = vi.fn()
 const transaction = vi.fn()
 
-vi.mock('@/lib/auth-guard', () => ({
+vi.mock('@backend/lib/auth-guard', () => ({
   requireSuperAdmin: async () => ({ userId: 'admin-1' }),
   UnauthorizedError: class UnauthorizedError extends Error {},
 }))
-vi.mock('@/lib/cloudinary', () => ({
+vi.mock('@backend/lib/cloudinary', () => ({
   destroyRemoteAsset,
   getCloudinaryConfig: () => ({ cloudName: 'demo', apiKey: '1', apiSecret: 's' }),
   signParams: () => 'sig',
   verifyUploadSignature: () => true,
 }))
-vi.mock('@/lib/db', () => ({ getDb: () => ({ asset: { findUnique }, $transaction: transaction }) }))
-vi.mock('@/lib/audit', () => ({ writeAudit: vi.fn(async () => undefined) }))
-vi.mock('@/lib/order-lock', () => ({ lockOrderScope: vi.fn(async () => undefined) }))
-vi.mock('@/lib/revalidate', () => ({ revalidateContent: vi.fn() }))
+vi.mock('@backend/lib/db', () => ({
+  getDb: () => ({ asset: { findUnique }, $transaction: transaction }),
+}))
+vi.mock('@backend/lib/audit', () => ({ writeAudit: vi.fn(async () => undefined) }))
+vi.mock('@backend/lib/order-lock', () => ({ lockOrderScope: vi.fn(async () => undefined) }))
+vi.mock('@backend/lib/revalidate', () => ({ revalidateContent: vi.fn() }))
 
-const { attachUploadedAsset } = await import('@/features/assets/actions')
+const { attachUploadedAsset } = await import('@backend/features/assets/actions')
 
 const upload = {
   public_id: 'portfolio/skills/uji-ulang',

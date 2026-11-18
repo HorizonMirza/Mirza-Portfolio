@@ -9,8 +9,8 @@ import { applyResult } from '@/components/admin/apply-result'
 import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { Button } from '@/components/ui/button'
 
-import { deleteMessage, setMessageStatus } from '../actions'
-import type { MessageStatusValue } from '../schema'
+import { deleteMessage, setMessageStatus } from '@backend/features/messages/actions'
+import type { MessageStatusValue } from '@backend/features/messages/schema'
 
 export function MessageActions({ id, status }: { id: string; status: MessageStatusValue }) {
   const router = useRouter()

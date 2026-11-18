@@ -4,11 +4,11 @@ import { getTranslations } from 'next-intl/server'
 import { IdLanyard } from '@/components/site/id-lanyard'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { ContactForm } from '@/features/messages/components/public/contact-form'
-import { getPublicProfile } from '@/features/profile/public'
-import { getSiteSettings } from '@/features/settings/public'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { getSiteSettings } from '@backend/features/settings/public'
 import { HERO_CARD_CROP, HERO_PORTRAIT } from '@/lib/default-photo'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
-import { pageMetadata } from '@/lib/seo'
+import { pageMetadata } from '@backend/lib/seo'
 
 export async function generateMetadata({
   params,

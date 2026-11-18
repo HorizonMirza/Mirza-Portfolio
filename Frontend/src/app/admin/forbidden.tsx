@@ -2,7 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-button'
 import { StatusPage } from '@/components/ui/status-page'
-import { getAdminLang } from '@/lib/admin-lang-server'
+import { getAdminLang } from '@backend/lib/admin-lang-server'
 
 // 403: masuk dengan akun yang bukan Super Admin (lib/auth-guard.ts memanggil forbidden()). Teks
 // mengikuti bahasa admin (revisi pemilik 2026-11-16, halaman status bersama).

@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
 import { AccountPanel } from '@/features/account/components/account-panel'
-import { getAccountOverview } from '@/features/account/queries'
-import { getPublicProfile } from '@/features/profile/public'
+import { getAccountOverview } from '@backend/features/account/queries'
+import { getPublicProfile } from '@backend/features/profile/public'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
-import { isUploadConfigured } from '@/lib/uploads'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
+import { isUploadConfigured } from '@backend/lib/uploads'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

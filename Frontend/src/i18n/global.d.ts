@@ -1,5 +1,5 @@
 import type messages from '../../messages/id.json'
-import type { routing } from './routing'
+import type { routing } from '@backend/i18n/routing'
 
 // Kunci terjemahan dan bahasa diketik ketat (salah ketik kunci = error TypeScript).
 declare module 'next-intl' {

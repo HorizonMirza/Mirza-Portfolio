@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { diffSnapshots, writeAudit } from '@/lib/audit'
+import { diffSnapshots, writeAudit } from '@backend/lib/audit'
 
 // audit 2026-11-17, EFF-02 dan EFF-03
 const mix = { nav: 100, theme: 100, slide: 100, lanyard: 100 }

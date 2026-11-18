@@ -1,8 +1,8 @@
 import { getTranslations } from 'next-intl/server'
 
-import { getPublicProfile } from '@/features/profile/public'
-import { BRAND_ICONS } from '@/features/skills/brand-icons'
-import { whatsappUrl } from '@/lib/seo'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { BRAND_ICONS } from '@backend/features/skills/brand-icons'
+import { whatsappUrl } from '@backend/lib/seo'
 
 // Tombol WhatsApp melayang di pojok kanan bawah (Admin → Pengaturan, DESIGN.md bagian 119). Nomor dari
 // kartu kontak Footer; tanpa nomor tombol tidak dipasang. Di HP duduk di atas menu bawah.

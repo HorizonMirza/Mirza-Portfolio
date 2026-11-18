@@ -8,8 +8,8 @@ import { ConfirmDelete } from '@/components/admin/confirm-delete'
 import { InlineInput, LANG_NAME, type Lang, MarkdownInline } from '@/components/admin/live-edit'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
-import { deleteExperience } from '../actions'
-import { emptyEducation, initials } from '../schema'
+import { deleteExperience } from '@backend/features/experience/actions'
+import { emptyEducation, initials } from '@backend/features/experience/schema'
 import type { useEntries } from './use-entries'
 
 type Entries = ReturnType<typeof useEntries>

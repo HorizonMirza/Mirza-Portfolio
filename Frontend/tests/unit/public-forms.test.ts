@@ -8,7 +8,7 @@ const rate = { allowed: true }
 const sendEmail = vi.fn(async () => undefined)
 let emailConfig: unknown = null
 
-vi.mock('@/lib/db', () => ({ getDb: () => db }))
+vi.mock('@backend/lib/db', () => ({ getDb: () => db }))
 // after() menjalankan tugas setelah jawaban terkirim; di tes dikumpulkan lalu ditunggu
 const afterTasks: Promise<unknown>[] = []
 vi.mock('next/server', () => ({
@@ -21,8 +21,8 @@ vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9' }),
 }))
 vi.mock('next-intl/server', () => ({ getTranslations: async () => (key: string) => key }))
-vi.mock('@/lib/email', () => ({ getEmailConfig: () => emailConfig, sendEmail }))
-vi.mock('@/lib/rate-limit', () => ({
+vi.mock('@backend/lib/email', () => ({ getEmailConfig: () => emailConfig, sendEmail }))
+vi.mock('@backend/lib/rate-limit', () => ({
   consumePublicRateLimit: vi.fn(async () => ({
     allowed: rate.allowed,
     retryAfter: rate.allowed ? null : 60,
@@ -30,7 +30,7 @@ vi.mock('@/lib/rate-limit', () => ({
   hashIdentifier: (v: string) => `hash(${v.length})`,
 }))
 
-const { submitContact } = await import('@/features/messages/public-actions')
+const { submitContact } = await import('@backend/features/messages/public-actions')
 
 function form(values: Record<string, string>) {
   const fd = new FormData()

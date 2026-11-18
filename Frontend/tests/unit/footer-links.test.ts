@@ -6,7 +6,7 @@ import {
   footerLinks,
   footerValue,
   handleFromUrl,
-} from '@/components/site/footer-links'
+} from '@backend/features/profile/footer-links'
 
 const base = {
   email: null,

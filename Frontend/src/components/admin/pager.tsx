@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
-import { getAdminT } from '@/lib/admin-lang-server'
+import { getAdminT } from '@backend/lib/admin-lang-server'
 
 // Navigasi halaman daftar admin (pesan) lewat tautan ?page=, bekerja tanpa JavaScript.
 export async function Pager({

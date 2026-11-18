@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/admin/login-form'
 import { CommitGrid } from '@/components/shared/commit-grid'
-import { getAdminEmailDomain, getAdminSession } from '@/lib/auth-guard'
-import { safeAdminRedirect } from '@/lib/safe-redirect'
+import { getAdminEmailDomain, getAdminSession } from '@backend/lib/auth-guard'
+import { safeAdminRedirect } from '@backend/lib/safe-redirect'
 
 export const metadata: Metadata = { title: 'Login' }
 

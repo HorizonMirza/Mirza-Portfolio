@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 
 import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shapes'
 import { usePathname } from '@/i18n/navigation'
-import { routing } from '@/i18n/routing'
+import { routing } from '@backend/i18n/routing'
 
 // jeda sebelum skeleton tampil: halaman yang sudah diambil lebih dulu (prefetch) berganti tanpa kedip
 const SHOW_DELAY_MS = 150

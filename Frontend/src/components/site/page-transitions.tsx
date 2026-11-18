@@ -4,7 +4,7 @@ import { useLocale } from 'next-intl'
 import { useEffect, useLayoutEffect, useRef } from 'react'
 
 import { usePathname, useRouter } from '@/i18n/navigation'
-import { routing } from '@/i18n/routing'
+import { routing } from '@backend/i18n/routing'
 import { warmUpAudio } from '@/lib/ui-sounds'
 import { prefersReducedMotion, touchFirstDevice } from '@/lib/view-transition'
 

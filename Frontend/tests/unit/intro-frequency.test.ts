@@ -8,7 +8,7 @@ import {
   introSeen,
   markIntroSeen,
 } from '@/features/settings/intro-pending'
-import type { IntroFrequency } from '@/features/settings/options'
+import type { IntroFrequency } from '@backend/features/settings/options'
 
 function memoryStorage() {
   const map = new Map<string, string>()

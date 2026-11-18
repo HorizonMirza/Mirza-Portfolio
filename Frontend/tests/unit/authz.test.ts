@@ -5,15 +5,15 @@ const getDb = vi.fn(() => {
   throw new Error('database tidak boleh disentuh tanpa sesi admin')
 })
 
-vi.mock('@/lib/db', () => ({ getDb }))
+vi.mock('@backend/lib/db', () => ({ getDb }))
 vi.mock('next/cache', () => ({
   updateTag: vi.fn(),
   revalidatePath: vi.fn(),
   revalidateTag: vi.fn(),
 }))
 vi.mock('next/headers', () => ({ headers: vi.fn(async () => new Headers()) }))
-vi.mock('@/lib/auth', () => ({ getAuth: vi.fn() }))
-vi.mock('@/lib/auth-guard', () => {
+vi.mock('@backend/lib/auth', () => ({ getAuth: vi.fn() }))
+vi.mock('@backend/lib/auth-guard', () => {
   class UnauthorizedError extends Error {}
   return {
     UnauthorizedError,
@@ -29,16 +29,16 @@ const cases: [string, () => Promise<unknown>][] = []
 // semua fungsi yang diekspor modul Server Action admin, untuk memastikan tidak ada yang terlewat
 const exported: string[] = []
 async function load() {
-  const projects = await import('@/features/projects/actions')
-  const skills = await import('@/features/skills/actions')
-  const experience = await import('@/features/experience/actions')
-  const profile = await import('@/features/profile/actions')
-  const messages = await import('@/features/messages/actions')
-  const assets = await import('@/features/assets/actions')
-  const account = await import('@/features/account/actions')
-  const settings = await import('@/features/settings/actions')
-  const siteText = await import('@/features/site-text/actions')
-  const sessions = await import('@/features/account/session-actions')
+  const projects = await import('@backend/features/projects/actions')
+  const skills = await import('@backend/features/skills/actions')
+  const experience = await import('@backend/features/experience/actions')
+  const profile = await import('@backend/features/profile/actions')
+  const messages = await import('@backend/features/messages/actions')
+  const assets = await import('@backend/features/assets/actions')
+  const account = await import('@backend/features/account/actions')
+  const settings = await import('@backend/features/settings/actions')
+  const siteText = await import('@backend/features/site-text/actions')
+  const sessions = await import('@backend/features/account/session-actions')
   for (const mod of [
     projects,
     skills,

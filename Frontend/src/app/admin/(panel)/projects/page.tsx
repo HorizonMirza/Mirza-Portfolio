@@ -5,10 +5,10 @@ import { PageHeader } from '@/components/admin/page-header'
 import { browserAddress } from '@/features/projects/browser-address'
 import { ProjectListLive } from '@/features/projects/components/project-list-live'
 import { toChipData } from '@/features/projects/components/public/tech-chips'
-import { listProjectsAdmin } from '@/features/projects/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { siteHost } from '@/lib/env'
+import { listProjectsAdmin } from '@backend/features/projects/queries'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { siteHost } from '@backend/lib/env'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {

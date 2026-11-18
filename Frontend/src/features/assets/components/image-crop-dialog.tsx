@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
 import { clampOffset, coverScale, effectiveSize, exportSize, type Rotation } from '../crop-math'
-import { maxSideOf, UPLOAD_TARGETS, type UploadTarget } from '../targets'
+import { maxSideOf, UPLOAD_TARGETS, type UploadTarget } from '@backend/features/assets/targets'
 
 const FRAME_MAX_W = 440
 const FRAME_MAX_H = 340

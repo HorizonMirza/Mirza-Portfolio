@@ -8,10 +8,10 @@ import { Honeypot, PublicField } from '@/components/site/public-field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { usePathname } from '@/i18n/navigation'
-import { initialFormState, type PublicFormState } from '@/lib/form-state'
+import { initialFormState, type PublicFormState } from '@backend/lib/form-state'
 import { cn } from '@/lib/utils'
 
-import { submitContact } from '../../public-actions'
+import { submitContact } from '@backend/features/messages/public-actions'
 
 type ErrorKey =
   | 'nameRequired'

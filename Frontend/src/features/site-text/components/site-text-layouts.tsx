@@ -11,11 +11,11 @@ import { Container } from '@/components/site/section-heading'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import type { AssetView } from '@/features/assets/components/asset-panels'
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
-import type { ModuleId } from '../catalog'
+import type { ModuleId } from '@backend/features/site-text/catalog'
 
 import { EditText, ShownText, useShownText } from './site-text-live'
 

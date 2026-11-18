@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { ORPHAN_MAX_PER_RUN, pickOrphans } from '@/lib/orphan-uploads'
+import { ORPHAN_MAX_PER_RUN, pickOrphans } from '@backend/lib/orphan-uploads'
 
 const now = Date.UTC(2026, 10, 2, 12)
 const hoursAgo = (h: number) => new Date(now - h * 3600_000).toISOString()

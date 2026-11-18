@@ -12,13 +12,13 @@ import {
 
 import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
 import { CommitGrid } from '@/components/shared/commit-grid'
-import { routing } from '@/i18n/routing'
+import { routing } from '@backend/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
 import { INTRO_PENDING_ATTR, introSeen, markIntroSeen } from '../../intro-pending'
-import type { IntroFrequency } from '../../options'
+import type { IntroFrequency } from '@backend/features/settings/options'
 
 type Locale = (typeof routing.locales)[number]
 

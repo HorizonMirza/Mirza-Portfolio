@@ -9,10 +9,10 @@ import {
   getDailyStats,
   getRecentMessages,
   toDashboardRange,
-} from '@/features/dashboard/queries'
-import { getAdminT } from '@/lib/admin-lang-server'
-import { requireSuperAdminPage } from '@/lib/auth-guard'
-import { formatDateTime, formatDayKey, formatNumber } from '@/lib/format'
+} from '@backend/features/dashboard/queries'
+import { getAdminT } from '@backend/lib/admin-lang-server'
+import { requireSuperAdminPage } from '@backend/lib/auth-guard'
+import { formatDateTime, formatDayKey, formatNumber } from '@backend/lib/format'
 import { cn } from '@/lib/utils'
 
 // judul tab browser ikut bahasa admin

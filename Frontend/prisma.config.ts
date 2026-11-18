@@ -8,11 +8,11 @@ config({ path: ['.env.local', '.env'], quiet: true })
 // DATABASE_URL_UNPOOLED (diisi otomatis oleh integrasi Neon di Vercel).
 // `prisma generate` tidak butuh koneksi, jadi URL boleh kosong saat install/CI.
 export default defineConfig({
-  // skema, migrasi, dan data seed disimpan di folder Database/ di akar repo
+  // skema, migrasi, dan data seed disimpan di folder Database/ di akar repo; skrip seed di Backend/scripts
   schema: '../Database/schema.prisma',
   migrations: {
     path: '../Database/migrations',
-    seed: 'tsx scripts/seed.ts',
+    seed: 'tsx ../Backend/scripts/seed.ts',
   },
   datasource: {
     url: process.env.DIRECT_URL || process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL,

@@ -2,9 +2,9 @@ import { getTranslations } from 'next-intl/server'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
-import { getPublicProfile } from '@/features/profile/public'
+import { getPublicProfile } from '@backend/features/profile/public'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
-import type { AppLocale } from '@/i18n/routing'
+import type { AppLocale } from '@backend/i18n/routing'
 
 import { HomeAvatarLink } from './home-avatar-link'
 import { NavLinks } from './nav-links'

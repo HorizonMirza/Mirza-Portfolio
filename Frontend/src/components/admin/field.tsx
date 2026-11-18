@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 
 import { useAdminLang } from '@/components/admin/admin-lang'
-import { adminT } from '@/lib/admin-i18n'
+import { adminT } from '@backend/lib/admin-i18n'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 

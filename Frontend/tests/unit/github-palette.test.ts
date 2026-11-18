@@ -8,7 +8,7 @@ import {
   isDefaultPalette,
   presetOf,
   toPalette,
-} from '@/lib/github-palette'
+} from '@backend/lib/github-palette'
 
 describe('warna grafik GitHub', () => {
   it('lima pilihan, tiap pilihan empat warna hex per tema, dan biru adalah bawaan', () => {

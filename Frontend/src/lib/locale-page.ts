@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 
-import { type AppLocale, routing } from '@/i18n/routing'
+import { type AppLocale, routing } from '@backend/i18n/routing'
 
 // Validasi locale + setRequestLocale (wajib agar halaman tetap statis dengan next-intl).
 export async function resolveLocale(params: Promise<{ locale: string }>): Promise<AppLocale> {

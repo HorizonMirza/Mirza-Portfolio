@@ -23,9 +23,14 @@ import { Container, PageIntro } from '@/components/site/section-heading'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { cn } from '@/lib/utils'
 
-import { deleteExperience } from '../actions'
+import { deleteExperience } from '@backend/features/experience/actions'
 import { monthsBetween } from '../display'
-import { EMPLOYMENT_TYPES, emptyExperience, initials, sortByLatest } from '../schema'
+import {
+  EMPLOYMENT_TYPES,
+  emptyExperience,
+  initials,
+  sortByLatest,
+} from '@backend/features/experience/schema'
 import { thisMonth } from './education-cards-live'
 import { type EntryRow, useEntries } from './use-entries'
 

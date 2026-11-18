@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 
 import { describe, expect, it } from 'vitest'
 
-import { getCloudinaryConfig, signParams, verifyUploadSignature } from '@/lib/cloudinary'
+import { getCloudinaryConfig, signParams, verifyUploadSignature } from '@backend/lib/cloudinary'
 
 describe('signParams', () => {
   // Contoh resmi dari dokumentasi Cloudinary "Generating authentication signatures".

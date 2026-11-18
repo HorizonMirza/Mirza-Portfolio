@@ -7,8 +7,8 @@ import '@/app/globals.css'
 import { fontVariables } from '@/app/fonts'
 import { ThemeProvider } from '@/components/shared/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
-import { getSiteSettings } from '@/features/settings/public'
-import { ADMIN_LANG_COOKIE, parseAdminLang } from '@/lib/admin-i18n'
+import { getSiteSettings } from '@backend/features/settings/public'
+import { ADMIN_LANG_COOKIE, parseAdminLang } from '@backend/lib/admin-i18n'
 import { THEME_STORAGE_KEY } from '@/lib/theme'
 
 // Root layout kedua (tanpa awalan bahasa). Panel admin berbahasa Indonesia, bisa diganti ke Inggris

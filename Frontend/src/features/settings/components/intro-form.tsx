@@ -12,8 +12,8 @@ import { SiteFrame } from '@/components/admin/site-frame'
 import { CommitGrid } from '@/components/shared/commit-grid'
 import { cn } from '@/lib/utils'
 
-import { saveIntroNotice } from '../actions'
-import { type IntroInput, introSchema } from '../schema'
+import { saveIntroNotice } from '@backend/features/settings/actions'
+import { type IntroInput, introSchema } from '@backend/features/settings/schema'
 
 // Teks tetap kartu per bahasa (messages/*.json namespace Intro), disiapkan server
 export type IntroPreviewTexts = Record<

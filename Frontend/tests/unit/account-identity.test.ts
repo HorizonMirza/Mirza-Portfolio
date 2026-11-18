@@ -3,23 +3,25 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Ganti nama dan email di Admin → Akun meminta password akun (revisi pemilik 2026-11-16).
 const verifyPasswordApi = vi.fn()
-vi.mock('@/lib/auth', () => ({ getAuth: () => ({ api: { verifyPassword: verifyPasswordApi } }) }))
-vi.mock('@/lib/auth-guard', () => ({
+vi.mock('@backend/lib/auth', () => ({
+  getAuth: () => ({ api: { verifyPassword: verifyPasswordApi } }),
+}))
+vi.mock('@backend/lib/auth-guard', () => ({
   requireSuperAdmin: async () => ({
     userId: '01a0f218-0209-7656-a356-02d34f1c52c3',
     name: 'Nama Lama',
     email: 'lama@contoh.com',
   }),
 }))
-vi.mock('@/lib/rate-limit', () => ({
+vi.mock('@backend/lib/rate-limit', () => ({
   consumeRateLimit: async () => ({ allowed: true, retryAfter: null }),
   hashIdentifier: (v: string) => v,
 }))
 const writeAudit = vi.fn<(db: unknown, entry: unknown) => Promise<void>>(async () => undefined)
-vi.mock('@/lib/audit', () => ({ writeAudit }))
+vi.mock('@backend/lib/audit', () => ({ writeAudit }))
 const userUpdate = vi.fn(async () => ({}))
 const userFind = vi.fn(async (): Promise<{ id: string } | null> => null)
-vi.mock('@/lib/db', () => ({
+vi.mock('@backend/lib/db', () => ({
   getDb: () => ({
     user: { findUnique: userFind },
     $transaction: async (fn: (tx: unknown) => Promise<unknown>) =>
@@ -28,7 +30,7 @@ vi.mock('@/lib/db', () => ({
 }))
 vi.mock('next/headers', () => ({ headers: async () => new Headers() }))
 
-const { changeAccountEmail, renameAccount } = await import('@/features/account/actions')
+const { changeAccountEmail, renameAccount } = await import('@backend/features/account/actions')
 
 const wrongPassword = () =>
   APIError.from('BAD_REQUEST', { code: 'INVALID_PASSWORD', message: 'Invalid password' })
