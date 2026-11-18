@@ -8,9 +8,9 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** live di `mmirza.site` sejak 2026-10-01. Milestone 1–4 selesai, M5 selesai di sisi kode; tugas akun pemilik M5 (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda atas keputusan pemilik (2026-10-20). Pekerjaan sekarang berupa revisi dari Mirza (`Documentation/TODO.md`, log di `Documentation/DESIGN.md`). Audit menyeluruh 2026-11-17 sudah diperbaiki dan kode tak terpakai dibersihkan (DESIGN.md bagian 175–186); sisa yang menunggu akun pemilik ada di `TODO.md` bagian "Menunggu dari Pemilik".
+**Status:** live di `mmirza.site` sejak 2026-10-01. Semua milestone selesai di sisi kode; tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda pemilik dan tercatat di `Documentation/TODO.md` bagian "Menunggu dari Pemilik". Pekerjaan sekarang berupa revisi dari Mirza, dicatat di log `Documentation/DESIGN.md` dan `Documentation/TODO.md`.
 
-**Next.js 16:** API berbeda dari versi lama. Baca `Frontend/AGENTS.md` dan panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
+**Next.js 16:** API berbeda dari versi lama. Baca panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 
 ## Dokumen Acuan
 
@@ -25,7 +25,7 @@ Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) +
 | `Documentation/00-discovery.md` | Jawaban asli pemilik dan keputusan terbuka | Bila ada keraguan tentang maksud pemilik |
 | `Documentation/CONTENT.md` | Konten dari CV (pengalaman, pendidikan, skill, angka yang boleh dipakai) dan yang masih ditanyakan | Sebelum menulis atau mengisi teks/seed apa pun |
 | `Documentation/REFERENCES.md` | Arsip analisis referensi desain, prinsip yang diambil dan yang dilarang | Sebelum keputusan desain atau animasi |
-| `.agents/skill/SKILL.md` | Resep untuk tugas berulang (entitas baru, halaman baru). Tidak dimuat otomatis oleh Claude Code (bukan di `.claude/skills/`), jadi **baca manual** | Saat menambah entitas atau halaman |
+| `.agents/skill/SKILL.md` | Resep untuk tugas berulang: entitas baru, halaman publik, route API, konten dua bahasa, pemeriksaan sebelum selesai, menghapus kode tak terpakai. Tidak dimuat otomatis oleh Claude Code (bukan di `.claude/skills/`), jadi **baca manual** | Saat mengerjakan salah satu tugas itu |
 
 Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md` > `PRD.md` > dokumen lain. Jika Anda mengubah keputusan, perbarui dokumen terkait di commit yang sama.
 
@@ -78,7 +78,7 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `format:check`, `typecheck`, `te
 - Target Lighthouse mobile ≥ 90. Jangan menambah JavaScript klien tanpa alasan. Utamakan Server Components.
 - Gunakan token desain (CSS variables), bukan warna atau ukuran acak.
 - Waktu disimpan UTC (`timestamptz`) dan **selalu ditampilkan dalam zona `Asia/Jakarta`** lewat `Intl.DateTimeFormat` (termasuk email, PDF, export). Primary key UUID v7. Seed memakai `seedId()` agar idempoten.
-- Animasi: CSS dulu (scroll-driven, View Transitions, `@starting-style`), lalu canvas buatan sendiri. Tidak ada library animasi (Motion tidak terpasang). Animasi berat berhenti saat di luar layar dan saat digulir (`lib/scroll-idle.ts`); nilai yang berubah tiap bingkai ditulis langsung ke `transform`/`opacity`, bukan lewat variabel CSS yang diwariskan. Form publik memakai Server Action + `useActionState`, tanpa library form (`Documentation/DESIGN.md` bagian 2.4 dan 3).
+- Animasi: CSS dulu (scroll-driven, View Transitions, `@starting-style`), lalu canvas buatan sendiri. Tidak ada library animasi (Motion tidak terpasang). Animasi berat berhenti saat di luar layar dan saat digulir (`Frontend/src/lib/scroll-idle.ts`); nilai yang berubah tiap bingkai ditulis langsung ke `transform`/`opacity`, bukan lewat variabel CSS yang diwariskan. Form publik memakai Server Action + `useActionState`, tanpa library form (`Documentation/DESIGN.md` bagian 2.4 dan 3).
 
 **Proses**
 - Jangan menambah dependency, layanan, atau biaya tanpa persetujuan. Tuliskan alasannya.
