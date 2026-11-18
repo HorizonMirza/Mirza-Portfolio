@@ -2122,3 +2122,11 @@ Permintaan pemilik: rapikan dokumentasi.
 - **Hook pre-commit:** lint-staged ternyata hanya memproses berkas di folder tempat ia dijalankan, jadi berkas `Backend/` tidak pernah diperiksa sebelum commit (baru tertangkap di CI). Ditambah `Backend/.lintstagedrc.json` (aturan sama dengan Frontend), dan `.husky/pre-commit` kini menjalankan lint-staged di `Frontend/` lalu di `Backend/`. Diuji dengan baris berformat salah di `Backend/lib`: Prettier merapikannya saat commit.
 - **WORKFLOW.md, DEPLOYMENT.md, Backend/README.md:** hook pre-commit dua langkah dan apa yang disiapkan `pnpm install` untuk `Backend/` dicatat.
 
+## 190. Pembersihan dan perapian Frontend setelah pemindahan ke Backend/ (2026-11-18)
+
+Permintaan pemilik: hapus kode atau berkas yang tidak terpakai di Frontend, lalu rapikan Frontend. Analisis diulang dengan `Backend/` ikut dihitung: graf impor berkas (Frontend + Backend), referensi ekspor lewat TypeScript Language Service, `tsc --noUnusedLocals --noUnusedParameters`, kelas, variabel, token tema, dan `@keyframes` di `globals.css`, kunci `messages/*.json` dan kamus admin, serta aset `public/`.
+
+- **Tidak ada berkas, variabel lokal, kelas CSS, token, atau kunci terjemahan yang mati.** Pembersihan bagian 184 dan pemindahan bagian 188 sudah menyisakan Frontend yang bersih.
+- **Dirapikan:** kata `export` dihapus dari 49 simbol di 18 berkas Frontend yang hanya dipakai di berkasnya sendiri (paling banyak konstanta dan tipe internal `contribution-skyline.tsx`, juga `buttonVariants`, `SoundKind`, `SiteTheme`, `CspOptions`, dan font di `app/fonts.ts`). Enam komentar yang menunjuk ke berkas yang kini ada di `Backend/` ditulis lengkap (`Backend/lib/auth-guard.ts`, `Backend/features/site-text/catalog.ts`, `Backend/features/settings/options.ts`).
+- **Sengaja dipertahankan:** ekspor konvensi Next (`size`, `contentType`, `alt` di `opengraph-image.tsx`), `hasAdminTranslation` (dipakai tes kelengkapan kamus), lisensi font OFL, `favicon.ico`, dan sembilan gambar di `public/images/projects/`. Gambar-gambar itu tidak dirujuk kode, tetapi dimasukkan migrasi sebagai baris `Asset` sehingga dipakai data project di database.
+

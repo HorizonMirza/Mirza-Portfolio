@@ -343,3 +343,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-18 | CLAUDE.md, SKILL.md (Resep F baru: menghapus kode tak terpakai), dan catatan rilis v1.0.0 diperbarui sesuai keadaan sekarang (DESIGN.md bagian 187) |
 | 2026-11-18 | Kode server dipindah ke folder `Backend/` (Server Actions, query, lib server, email, skrip seed, logika route API; Prisma client di `Backend/generated`), tetap satu aplikasi Next.js dan satu deploy; tes batas impor baru (DESIGN.md bagian 188, ARCHITECTURE.md keputusan 22) |
 | 2026-11-18 | Perapian dokumentasi setelah pemindahan ke `Backend/`: path di ARCHITECTURE lengkap, DESIGN bagian 2.4 (gerak) sesuai kode, hook pre-commit ikut memeriksa `Backend/` (DESIGN.md bagian 189) |
+| 2026-11-18 | Pembersihan Frontend setelah pemindahan ke `Backend/`: tidak ada berkas atau kunci mati; `export` tak perlu dihapus dari 49 simbol, komentar menunjuk `Backend/` (DESIGN.md bagian 190) |
