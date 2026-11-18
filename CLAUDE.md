@@ -64,8 +64,8 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `format:check`, `typecheck`, `te
 - Jangan mencatat isi pesan, email, atau IP mentah di log.
 
 **Konten dan bahasa**
-- Semua teks publik ada dalam **ID dan EN**: teks UI di `Frontend/messages/*.json`, konten dinamis lewat kolom `*_id` dan `*_en`. Teks publik yang boleh diubah admin didaftarkan di `features/site-text/catalog.ts`.
-- Teks panel admin ditulis bahasa Indonesia lewat `useAdminT()`/`adminT()`, terjemahan Inggrisnya di `src/lib/admin-i18n-en.ts` (tes menolak teks admin tanpa terjemahan).
+- Semua teks publik ada dalam **ID dan EN**: teks UI di `Frontend/messages/*.json`, konten dinamis lewat kolom `*_id` dan `*_en`. Teks publik yang boleh diubah admin didaftarkan di `Backend/features/site-text/catalog.ts`.
+- Teks panel admin ditulis bahasa Indonesia lewat `useAdminT()`/`adminT()`, terjemahan Inggrisnya di `Backend/lib/admin-i18n-en.ts` (tes menolak teks admin tanpa terjemahan).
 - Komentar kode dan pesan commit **bahasa Indonesia**. Nama variabel, fungsi, dan berkas **bahasa Inggris**.
 - Commit dari Claude diawali `[CLAUDIA]` lalu Conventional Commits: `[CLAUDIA] feat(projects): tambah halaman detail` (pola repo GAAS). Permintaan pemilik: **jangan** menambah baris `Co-Authored-By`/`Claude-Session` di pesan commit.
 - Ikuti `DESIGN.md` bagian 1 dan 9: tanpa klise dan "AI slop", salinan spesifik dan personal.
@@ -91,22 +91,29 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `format:check`, `typecheck`, `te
 
 ## Struktur
 
-Akar repo hanya berisi berkas `.md`, ditambah `.github/` (wajib di akar) dan `.agents/skill/` (skill proyek).
+Akar repo hanya berisi berkas `.md`, ditambah `.github/` (wajib di akar), `.agents/skill/` (skill proyek), dan empat folder di bawah.
 
 ```
-Frontend/        aplikasi Next.js + Dockerfile. SEMUA perintah pnpm dijalankan dari sini (cd Frontend)
-  src/app/[locale]/  halaman publik     src/app/admin/  panel admin
-  src/app/api/       route handlers     src/features/   per domain (schema, queries, actions, components)
-  src/components/    ui/, shared/       src/lib/        db, auth, env, ...
-  messages/          id.json, en.json   scripts/seed.ts, tests/unit/, e2e/
+Frontend/        aplikasi Next.js (UI) + Dockerfile. SEMUA perintah pnpm dijalankan dari sini (cd Frontend)
+  src/app/[locale]/  halaman publik       src/app/admin/   panel admin
+  src/app/api/       rute API (tipis: re-export dari Backend/api + konfigurasi segmen)
+  src/components/    ui/, shared/, site/, admin/   src/features/  komponen per domain
+  src/lib/           utilitas UI (utils, ui-sounds, csp, ...)   src/i18n/  konfigurasi next-intl
+  messages/          id.json, en.json     tests/unit/, e2e/
+Backend/         kode server, diimpor Frontend lewat alias @backend/* (tanpa package.json sendiri)
+  features/          per domain: schema, queries, actions, public
+  lib/               db, auth, env, email, cloudinary, rate-limit, audit, admin-i18n, ...
+  api/               logika route handler   emails/   template React Email   i18n/routing.ts
+  scripts/           seed.ts, admin-reset-password.ts   generated/   Prisma client (tidak di-commit)
 Database/        schema.prisma, migrations/, seed/seed-data.ts
 Documentation/   dokumen perencanaan
 ```
 
-`lib/` tidak boleh mengimpor dari `features/`. Satu domain, satu folder di `features/`. Detail: `Documentation/ARCHITECTURE.md` bagian 4.
+Arah impor satu: `Frontend/` boleh mengimpor `Backend/` (`@backend/...`), `Backend/` tidak boleh mengimpor `Frontend/` (kecuali membaca teks bawaan `Frontend/messages/*.json`), dan `Backend/lib/` tidak boleh mengimpor `Backend/features/`. Dijaga `tests/unit/backend-boundary.test.ts`. Satu domain: logika di `Backend/features/<domain>/`, komponen di `Frontend/src/features/<domain>/components/`. Detail: `Documentation/ARCHITECTURE.md` bagian 4.
 
 ## Menjalankan di Sesi Cloud
 
+- `Backend/node_modules` adalah symlink ke `Frontend/node_modules` dan `Backend/generated/` berisi Prisma client; keduanya dibuat `pnpm install` (postinstall). Bila typecheck atau build gagal menemukan paket dari berkas Backend, jalankan ulang `pnpm install`.
 - Sandbox bawaan memakai Node 22, sedangkan proyek butuh Node 24 (`Frontend/.nvmrc`). Unduh Node 24 dari nodejs.org (cek SHASUMS256) ke scratchpad lalu taruh di awal `PATH`.
 - Proyek memakai PostgreSQL 17 (CI dan production). Sandbox hanya punya Postgres 16 di `/usr/lib/postgresql/16/bin` (jalankan sebagai user non-root, data di luar repo), cukup untuk uji lokal, tetapi hasil akhir dipastikan oleh CI.
 - Postgres lokal bisa berhenti sendiri saat sesi lama menganggur (galat `Can't reach database server`): jalankan lagi `pg_ctl ... start` sebagai user yang sama, dengan port dan folder socket yang sama (`-o '-p <port> -k <folder>'`). Bila menolak naik karena `postmaster.pid` basi, hapus berkas itu dan socket lamanya dulu. Jangan memakai `prisma migrate reset` untuk merapikan database uji (Prisma menolaknya tanpa persetujuan eksplisit pemilik); pulihkan dengan SQL atau `prisma migrate deploy`.

@@ -79,8 +79,8 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
 
 Catatan:
 - Migrasi dan pengisian awal hanya berjalan di **production** (`Frontend/scripts/vercel-build.sh`), jadi preview tidak pernah mengubah database production. Bila preview memakai branch database Neon sendiri (opsi di pengaturan integrasi Neon), tambahkan `MIGRATE_ON_BUILD=true` khusus Preview.
-- Pengisian awal (`scripts/seed.ts --bootstrap`) hanya mengisi konten bila belum ada profil, jadi data yang Anda hapus lewat admin tidak muncul lagi di deploy berikutnya.
-- Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama dan Redeploy commit yang sama (misalnya setelah mengubah Environment Variables) selalu di-build.
+- Pengisian awal (`Backend/scripts/seed.ts --bootstrap`) hanya mengisi konten bila belum ada profil, jadi data yang Anda hapus lewat admin tidak muncul lagi di deploy berikutnya.
+- Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build; perubahan di `Frontend/`, `Backend/`, atau `Database/` selalu di-build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama dan Redeploy commit yang sama (misalnya setelah mengubah Environment Variables) selalu di-build.
 - Menjalankan seed manual dari komputer sendiri tetap bisa: `pnpm db:seed` di `Frontend/` dengan `DATABASE_URL` production.
 
 Setelah deploy (pemilik akun):
@@ -107,7 +107,7 @@ docker run -d --name mirza-portfolio -p 3000:3000 \
 - Variabel lain (Cloudinary, Resend, `CRON_SECRET`, `ADMIN_EMAIL`, dst.) sama dengan tabel di bagian Deploy ke Vercel.
 - **Di balik reverse proxy (nginx, Caddy, Traefik, load balancer):** isi `TRUSTED_PROXIES` dengan IP atau CIDR IPv4 proxy tersebut, dipisah koma (mis. `TRUSTED_PROXIES=172.16.0.0/12`). IP klien lalu dibaca dari kanan `x-forwarded-for`, melewati proxy tepercaya, sehingga batas percobaan login dan form tidak bisa diakali dengan header palsu. Tanpa variabel ini, di luar Vercel situs memakai entri paling kanan (yang ditambahkan proxy terdekat) dan Better Auth hanya mempercayai header berisi satu IP. Image yang diakses langsung tanpa proxy tidak punya sumber IP tepercaya; letakkan di balik proxy untuk production. Di Vercel variabel ini tidak perlu.
 - Image berjalan sebagai user non-root, mendengarkan port 3000 (`PORT` bisa diganti), dan punya `HEALTHCHECK` ke `/api/health`.
-- Server mandiri (`output: 'standalone'`) hanya aktif saat build Docker (`DOCKER_BUILD=1`), jadi build Vercel dan CI tidak berubah.
+- Server mandiri (`output: 'standalone'`) hanya aktif saat build Docker (`DOCKER_BUILD=1`), jadi build Vercel dan CI tidak berubah. Karena akar pelacakan berkas adalah akar repo (kode server di `Backend/`), server di dalam image ada di `/app/Frontend/server.js`; kode Backend sudah dibundel ke dalamnya.
 - Isi halaman yang sudah dirender saat build berasal dari data seed; setelah itu halaman mengikuti database yang terhubung (revalidasi, paling lambat 10 menit). `NEXT_PUBLIC_SITE_URL` awal image adalah `https://mmirza.site`; ganti dengan `--build-arg NEXT_PUBLIC_SITE_URL=...` saat membangun sendiri.
 - Membangun lokal dari akar repo: `docker build --network=host -f Frontend/Dockerfile --build-arg DATABASE_URL=<postgres-yang-sudah-dimigrasi> -t mirza-portfolio .`
 - **Jangan pernah memakai URL database production sebagai `DATABASE_URL` saat `docker build`.** Nilai `--build-arg` tercatat di riwayat layer image (`docker history`) dan ikut terkirim bersama image ke GitHub Packages. Pakai database Postgres sementara yang sudah dimigrasi (seperti di `release.yml`); URL production hanya diberikan saat `docker run` lewat `-e`.

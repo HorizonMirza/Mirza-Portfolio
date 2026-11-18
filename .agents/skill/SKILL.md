@@ -12,9 +12,9 @@ Baca `CLAUDE.md` dan dokumen di `Documentation/` yang relevan sebelum memakai re
 Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
 
 1. **Model data** di `Database/schema.prisma`. Teks publik memakai pasangan `*_id` dan `*_en`. Tambahkan `createdAt`, `updatedAt`, dan `order` bila urutannya diatur admin (tidak ada status draf: admin mengubah langsung di pratinjau). Buat migrasi **kompatibel ke belakang**.
-2. **Skema Zod** di `Frontend/src/features/<domain>/schema.ts`. Wajibkan kedua bahasa, batasi panjang, validasi URL dan slug.
-3. **Query** di `Frontend/src/features/<domain>/queries.ts`. Baca hanya kolom yang dibutuhkan. Beri cache tag `<domain>` sesuai pola yang sudah ada. Next 16: baca `node_modules/next/dist/docs/` dulu, API cache berubah dari versi lama.
-4. **Actions** di `Frontend/src/features/<domain>/actions.ts` (`'use server'`, hanya ekspor fungsi async). Contoh lengkap: `features/projects/actions.ts`. Pola wajib:
+2. **Skema Zod** di `Backend/features/<domain>/schema.ts`. Wajibkan kedua bahasa, batasi panjang, validasi URL dan slug.
+3. **Query** di `Backend/features/<domain>/queries.ts`. Baca hanya kolom yang dibutuhkan. Beri cache tag `<domain>` sesuai pola yang sudah ada. Next 16: baca `node_modules/next/dist/docs/` dulu, API cache berubah dari versi lama.
+4. **Actions** di `Backend/features/<domain>/actions.ts` (`'use server'`, hanya ekspor fungsi async). Contoh lengkap: `Backend/features/projects/actions.ts`. Kode Backend mengimpor sesamanya lewat `@backend/...` dan tidak boleh mengimpor `Frontend/`. Pola wajib:
    ```ts
    export async function saveX(id: string | null, input: unknown): Promise<ActionResult<{ id: string }>> {
      try {
@@ -34,9 +34,9 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
    }
    ```
    Jangan memanggil `revalidatePath('/[locale]', 'layout')` (beranda jadi 404). Jangan mencatat isi pesan/email pengunjung di audit. Tambahkan action baru ke daftar di `tests/unit/authz.test.ts`.
-5. **UI admin** di `Frontend/src/app/admin/(panel)/<domain>/` (panggil `requireSuperAdminPage()`), komponen di `features/<domain>/components/`. Admin memakai pola "ubah langsung di pratinjau" (`Documentation/DESIGN.md` bagian 133–139): halaman tampil seperti di situs dan diketik di tempat. Pakai komponen bersama di `components/admin/`: `live-edit.tsx` (`LiveStage`, `InlineInput`, `InlineArea`, `LangRow` + `useEditLang`, `LiveErrors`, `SaveBar`), `ConfirmDelete`, `ReorderButtons` (urutan naik/turun, bukan seret), `applyResult` (toast + galat server ke field), dan `useAssetPicker` (pilih berkas lalu potong lewat `ImageCropDialog`) untuk berkas yang ditekan di pratinjau. `Field` hanya untuk form biasa (akun, dialog). Form: React Hook Form + `zodResolver` dengan skema yang sama dengan server. Teks admin ditulis bahasa Indonesia lewat `useAdminT()` (klien) atau `adminT()` (server), lalu terjemahan Inggrisnya ditambahkan ke `src/lib/admin-i18n-en.ts`; `tests/unit/admin-i18n.test.ts` menolak teks tanpa terjemahan.
+5. **UI admin** di `Frontend/src/app/admin/(panel)/<domain>/` (panggil `requireSuperAdminPage()`), komponen di `Frontend/src/features/<domain>/components/` (mengimpor schema dan action dari `@backend/features/<domain>/...`). Admin memakai pola "ubah langsung di pratinjau" (`Documentation/DESIGN.md` bagian 133–139): halaman tampil seperti di situs dan diketik di tempat. Pakai komponen bersama di `components/admin/`: `live-edit.tsx` (`LiveStage`, `InlineInput`, `InlineArea`, `LangRow` + `useEditLang`, `LiveErrors`, `SaveBar`), `ConfirmDelete`, `ReorderButtons` (urutan naik/turun, bukan seret), `applyResult` (toast + galat server ke field), dan `useAssetPicker` (pilih berkas lalu potong lewat `ImageCropDialog`) untuk berkas yang ditekan di pratinjau. `Field` hanya untuk form biasa (akun, dialog). Form: React Hook Form + `zodResolver` dengan skema yang sama dengan server. Teks admin ditulis bahasa Indonesia lewat `useAdminT()` (klien) atau `adminT()` (server), lalu terjemahan Inggrisnya ditambahkan ke `Backend/lib/admin-i18n-en.ts`; `tests/unit/admin-i18n.test.ts` menolak teks tanpa terjemahan.
 6. **Tampilan publik** di `Frontend/src/app/[locale]/...` memakai Server Components. Panggil `setRequestLocale(locale)` di layout/page agar tetap statis. Tambahkan ke sitemap bila punya halaman sendiri.
-7. **Teks UI** ditambahkan ke `Frontend/messages/id.json` **dan** `Frontend/messages/en.json`. Bila admin boleh mengubahnya, daftarkan kuncinya di `features/site-text/catalog.ts` pada modul yang sesuai.
+7. **Teks UI** ditambahkan ke `Frontend/messages/id.json` **dan** `Frontend/messages/en.json`. Bila admin boleh mengubahnya, daftarkan kuncinya di `Backend/features/site-text/catalog.ts` pada modul yang sesuai.
 8. **Tes:** unit untuk skema dan otorisasi, E2E untuk alur tambah → tampil di publik.
 9. **Dokumen:** perbarui `ARCHITECTURE.md` (model data, action), tambah bagian baru di akhir `DESIGN.md`, dan satu baris di log `TODO.md`.
 
@@ -46,18 +46,19 @@ Contoh: `Certificate`, `Testimonial`. Kerjakan berurutan, langsung di `main`.
 2. Ekspor `generateMetadata` (judul, deskripsi, Open Graph, `alternates.languages` untuk `hreflang`).
 3. Struktur semantik: satu `h1`, `main`, heading berurutan.
 4. Ambil data lewat query di `features/`, bukan langsung di halaman.
-5. Tambahkan ke navigasi (`components/site/nav-items.ts`, label `Nav.*` di `messages` dan di modul Navbar `features/site-text/catalog.ts`) dan ke sitemap.
+5. Tambahkan ke navigasi (`components/site/nav-items.ts`, label `Nav.*` di `messages` dan di modul Navbar `Backend/features/site-text/catalog.ts`) dan ke sitemap.
 6. Cek: 360 px, 768 px, desktop, terang/gelap, ID/EN, navigasi keyboard.
 7. Tambah E2E (halaman terbuka, tautan penting bekerja) dan jalankan axe.
 
 ## Resep C — Menambah route handler
 
-1. Tentukan akses: publik, publik + rate limit, atau admin.
-2. Validasi input dengan Zod. Untuk metode mutasi periksa `Origin`.
-3. Respons mengikuti kontrak di `ARCHITECTURE.md` bagian 6.4 (`{ data }` / `{ error: { code, message, fields } }`).
-4. Endpoint publik mutasi wajib rate limit dan tidak membocorkan detail internal pada galat.
-5. Jangan mencatat data pribadi di log.
-6. Tambahkan tes dan perbarui tabel endpoint di `ARCHITECTURE.md`.
+1. Tulis logikanya di `Backend/api/<nama>.ts` (ekspor `GET`/`POST`). Berkas rute Next `Frontend/src/app/api/<nama>/route.ts` hanya me-re-export (`export { GET } from '@backend/api/<nama>'`) dan menulis konfigurasi segmen seperti `export const dynamic = 'force-dynamic'` langsung di berkas rute.
+2. Tentukan akses: publik, publik + rate limit, atau admin.
+3. Validasi input dengan Zod. Untuk metode mutasi periksa `Origin`.
+4. Respons mengikuti kontrak di `ARCHITECTURE.md` bagian 6.4 (`{ data }` / `{ error: { code, message, fields } }`).
+5. Endpoint publik mutasi wajib rate limit dan tidak membocorkan detail internal pada galat.
+6. Jangan mencatat data pribadi di log.
+7. Tambahkan tes dan perbarui tabel endpoint di `ARCHITECTURE.md`.
 
 ## Resep D — Menulis konten dua bahasa
 
@@ -100,7 +101,7 @@ Jalankan `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm 
 
 ## Resep F — Menghapus fitur atau kode tak terpakai
 
-1. **Pastikan benar-benar mati.** Cari ke seluruh repo, termasuk impor dinamis, string path, `messages/*.json`, `features/site-text/catalog.ts`, `src/lib/admin-i18n-en.ts`, CSS (`globals.css`, token `@theme`), konfigurasi, workflow CI, dan dokumen. `pnpm exec tsc --noEmit --noUnusedLocals --noUnusedParameters` menemukan variabel lokal mati.
+1. **Pastikan benar-benar mati.** Cari ke seluruh repo, termasuk impor dinamis, string path, `messages/*.json`, `Backend/features/site-text/catalog.ts`, `Backend/lib/admin-i18n-en.ts`, CSS (`globals.css`, token `@theme`), konfigurasi, workflow CI, dan dokumen. `pnpm exec tsc --noEmit --noUnusedLocals --noUnusedParameters` menemukan variabel lokal mati.
 2. **Jangan hapus** berkas konvensi Next (`page`, `layout`, `route`, `error`, `not-found`, `forbidden`, `unauthorized`, `global-not-found`, `opengraph-image`, `proxy.ts`), migrasi lama, lisensi font, dan script yang dipanggil `package.json`, CI, atau Vercel.
 3. **Hapus semuanya sekaligus:** kode, tes, kunci terjemahan (ID, EN, kamus admin), token CSS, aset, variabel environment di `.env.example`, dan baris di dokumen keadaan sekarang (`PRD.md`, `ARCHITECTURE.md`). Log di `DESIGN.md` dan `TODO.md` tidak dihapus, hanya ditambah catatan baru.
 4. **Kolom atau tabel database** dihapus lewat migrasi baru (`DROP COLUMN`/`DROP TABLE`) hanya dengan persetujuan pemilik, karena push ke `main` menjalankannya di production dan tidak bisa dibatalkan. Pastikan `prisma migrate diff --from-config-datasource --to-schema ../Database/schema.prisma --exit-code` bersih.

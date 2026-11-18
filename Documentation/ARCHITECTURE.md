@@ -94,26 +94,33 @@ Catatan:
 ```
 .
 ├── README.md, CLAUDE.md      # di akar hanya berkas .md (plus folder .github/ dan .agents/)
-├── Frontend/                 # aplikasi Next.js (UI publik, panel admin, route handler sementara)
+├── Frontend/                 # aplikasi Next.js: halaman, komponen, rute (UI)
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── [locale]/     # halaman publik (id, en)
-│   │   │   ├── admin/        # panel Super Admin (tanpa locale, M2)
-│   │   │   ├── api/          # route handlers (health, dan lainnya)
+│   │   │   ├── admin/        # panel Super Admin (tanpa locale)
+│   │   │   ├── api/          # rute API tipis: re-export dari Backend/api + konfigurasi segmen
 │   │   │   └── global-not-found.tsx
-│   │   ├── components/       # ui/ (gaya shadcn), sections/, admin/, shared/
-│   │   ├── features/         # per domain: projects/, skills/, experience/, ...
-│   │   ├── lib/              # db, auth (Better Auth), env, github, cloudinary, email, rate-limit
-│   │   ├── i18n/             # konfigurasi next-intl
-│   │   ├── fonts/            # font self-host (OFL)
-│   │   └── generated/prisma/ # client Prisma hasil generate (tidak di-commit)
-│   ├── messages/             # id.json, en.json (teks UI)
-│   ├── scripts/seed.ts       # menjalankan data seed ke database
-│   ├── tests/unit/           # Vitest
+│   │   ├── components/       # ui/ (gaya shadcn), site/, admin/, shared/
+│   │   ├── features/         # komponen per domain: <domain>/components/
+│   │   ├── lib/              # utilitas UI: utils, ui-sounds, scroll-idle, csp, chart-geometry, ...
+│   │   ├── i18n/             # konfigurasi next-intl (request, navigation)
+│   │   └── fonts/            # font self-host (OFL)
+│   ├── messages/             # id.json, en.json (teks UI bawaan)
+│   ├── tests/unit/           # Vitest (termasuk tes kode Backend)
 │   ├── e2e/                  # Playwright + axe
 │   ├── Dockerfile            # image produksi (ghcr.io), dibangun dari akar repo; lihat DEPLOYMENT.md
-│   ├── prisma.config.ts      # menunjuk ke ../Database/
-│   └── package.json          # semua perintah pnpm dijalankan dari sini
+│   ├── prisma.config.ts      # menunjuk ke ../Database/ dan ../Backend/scripts/seed.ts
+│   └── package.json          # satu-satunya package.json; semua perintah pnpm dijalankan dari sini
+├── Backend/                  # kode server, diimpor Frontend lewat alias @backend/*
+│   ├── features/             # per domain: schema.ts, queries.ts, actions.ts, public.ts
+│   ├── lib/                  # db, auth (Better Auth), env, email, cloudinary, rate-limit, audit, admin-i18n, ...
+│   ├── api/                  # logika route handler (auth, cron-daily, cv, health, track, not-found)
+│   ├── emails/               # template React Email
+│   ├── i18n/routing.ts       # daftar bahasa (dipakai Backend dan Frontend)
+│   ├── scripts/              # seed.ts, seed-ids.ts, admin-reset-password.ts
+│   ├── generated/prisma/     # Prisma client hasil generate (tidak di-commit)
+│   └── node_modules          # symlink ke ../Frontend/node_modules (dibuat postinstall, tidak di-commit)
 ├── Database/
 │   ├── schema.prisma         # skema database
 │   ├── migrations/           # migrasi SQL
@@ -123,15 +130,17 @@ Catatan:
 └── .agents/skill/           # skill proyek untuk Claude Code
 ```
 
-Aturan: satu domain, satu folder di `features/`. Kode `lib/` tidak boleh mengimpor dari `features/`.
+Aturan: satu domain, satu folder: logika di `Backend/features/<domain>/`, komponen di `Frontend/src/features/<domain>/components/`. Arah impor satu: Frontend boleh mengimpor Backend, Backend tidak boleh mengimpor Frontend (kecuali membaca teks bawaan `Frontend/messages/*.json`), dan `Backend/lib/` tidak boleh mengimpor `Backend/features/`. Dijaga `tests/unit/backend-boundary.test.ts`.
+
+**Kenapa `Backend/` tanpa `package.json` sendiri (2026-11-18):** kode server memakai API Next (`revalidateTag`, `headers()`, Server Actions), jadi harus memakai salinan `next` yang sama dengan aplikasi. Dependency terpisah akan memasang `next` kedua dan memecah konteks itu. Karena itu Backend memakai `Frontend/node_modules` lewat symlink `Backend/node_modules` yang dibuat `postinstall`, alias `@backend/*` diatur di `Frontend/tsconfig.json` dan `vitest.config.mts`, dan `next.config.ts` memakai akar repo sebagai `turbopack.root` dan `outputFileTracingRoot`. `pnpm lint` dan `pnpm format:check` memeriksa `../Backend` juga; `Backend/eslint.config.mjs` dan `Backend/.prettierrc.mjs` memakai ulang aturan Frontend.
 
 ### Catatan implementasi (M1)
 
 - **Next 16:** `middleware.ts` diganti `Frontend/src/proxy.ts` (runtime Node.js), `params` selalu async, `revalidateTag(tag, profile)` butuh argumen kedua, dan `updateTag` dipakai di Server Action. Dokumentasi yang sesuai versi ada di `node_modules/next/dist/docs/` (lihat `AGENTS.md`).
 - **Root layout:** tidak ada `app/layout.tsx`. `app/[locale]/layout.tsx` adalah root layout situs publik (hanya `id`/`en` lewat `generateStaticParams` + `hasLocale`), dan `app/admin/layout.tsx` root layout kedua. URL yang tidak dikenal ditangani `app/global-not-found.tsx` (flag `experimental.globalNotFound`). Halaman 401 dan 403 admin lewat `unauthorized()`/`forbidden()` → `app/admin/unauthorized.tsx` dan `forbidden.tsx` (flag `experimental.authInterrupts`); semua halaman status memakai `components/ui/status-page.tsx` (DESIGN.md bagian 168).
 - **Font:** self-host lewat `next/font/local` dari berkas Fontsource di `Frontend/src/fonts/`, jadi build tidak mengakses Google Fonts.
-- **Prisma client** di-generate ke `Frontend/src/generated/prisma` (tidak di-commit, dibuat oleh `postinstall`). Skema dan migrasi ada di `Database/`, sedangkan Prisma CLI dijalankan dari `Frontend/` lewat `Frontend/prisma.config.ts`. CLI dan seed membaca `Frontend/.env.local` lalu `.env`, sama seperti Next.js.
-- **Vercel:** Root Directory = `Frontend`, dengan opsi "Include files outside the Root Directory" aktif (bawaan) agar `../Database/` ikut terbaca saat build.
+- **Prisma client** di-generate ke `Backend/generated/prisma` (tidak di-commit, dibuat oleh `postinstall`). Skema dan migrasi ada di `Database/`, sedangkan Prisma CLI dijalankan dari `Frontend/` lewat `Frontend/prisma.config.ts`. CLI dan seed membaca `Frontend/.env.local` lalu `.env`, sama seperti Next.js.
+- **Vercel:** Root Directory = `Frontend`, dengan opsi "Include files outside the Root Directory" aktif (bawaan) agar `../Database/` dan `../Backend/` ikut terbaca saat build. `Frontend/scripts/vercel-ignore-build.sh` menjalankan build bila `Frontend/`, `Backend/`, atau `Database/` berubah.
 - **Konfigurasi env** divalidasi saat pertama dipakai (`getServerEnv()`), bukan saat impor, supaya halaman statis bisa di-build tanpa database.
 
 ## 5. Model Data
@@ -331,7 +340,7 @@ Catatan:
 - `RateLimit` dipakai helper rate limit untuk form publik dan `/api/track`. Baris lama dibersihkan Vercel Cron.
 - `PageView.visitorHash` = hash(IP + user-agent + garam harian). Garam berganti tiap hari sehingga pengunjung tidak bisa dilacak lintas hari.
 - `PageView` mentah disimpan **90 hari**. Vercel Cron meringkasnya tiap hari ke `PageViewDaily` (disimpan permanen), lalu menghapus data mentah yang lewat 90 hari. Tujuannya menjaga kuota Neon gratis (0,5 GB).
-- **Primary key UUID v7** (`@default(uuid(7)) @db.Uuid`): tipe asli PostgreSQL dan urut waktu. Seed memakai UUID v5 deterministik (`Frontend/scripts/seed-ids.ts`) agar idempoten.
+- **Primary key UUID v7** (`@default(uuid(7)) @db.Uuid`): tipe asli PostgreSQL dan urut waktu. Seed memakai UUID v5 deterministik (`Backend/scripts/seed-ids.ts`) agar idempoten.
 - **Waktu:** semua `DateTime` bertipe `timestamptz(3)` dan disimpan UTC. Tampilan (halaman, email, PDF, export) selalu dikonversi ke `Asia/Jakarta`. Tanggal kalender tanpa jam (`startDate`, `endDate`, `PageViewDaily.date`) memakai `date`. Pelajaran dari audit GAAS F-01 (jam UTC tercetak sebagai WIB).
 
 ## 6. Rancangan API
@@ -343,7 +352,7 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 3. menulis ke database dan `AuditLog` dalam satu transaksi,
 4. memanggil `revalidateContent()` (`lib/revalidate.ts`): `updateTag` per domain lalu `revalidatePath` literal `/id` dan `/en`.
 
-Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tests/unit/authz.test.ts` (setiap action menolak tanpa sesi sebelum menyentuh database). Hasil action berbentuk `ActionResult` (`lib/action-result.ts`): pesan untuk toast dan `fieldErrors` untuk form. Catatan:
+Pola diterapkan di `Backend/features/<domain>/actions.ts` dan diuji di `tests/unit/authz.test.ts` (setiap action menolak tanpa sesi sebelum menyentuh database). Hasil action berbentuk `ActionResult` (`lib/action-result.ts`): pesan untuk toast dan `fieldErrors` untuk form. Catatan:
 
 - **Jangan** `revalidatePath('/[locale]', 'layout')` dan jangan `dynamicParams = false` di layout locale: keduanya membuat halaman publik 404 setelah revalidasi (lihat Strategi render).
 - Berkas `'use server'` hanya boleh mengekspor fungsi async. Konstanta dan skema ditaruh di `schema.ts`.
@@ -375,7 +384,7 @@ Form kontak memakai **Server Action** dengan `useActionState`, bukan route handl
 |---|---|
 | `submitContact` | Honeypot → validasi → rate limit 5/jam per IP-hash → simpan `Message` (IP hanya hash) → notifikasi ke `CONTACT_TO_EMAIL` lewat Resend bila diatur (gagal kirim tidak menggagalkan pengunjung) |
 
-Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). Template di `src/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
+Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). Template di `Backend/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
 
 ### 6.3 Route Handlers
 
@@ -426,7 +435,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Header | HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, CSP dengan `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. `upgrade-insecure-requests` hanya di Vercel |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=moderate` di CI (advisory tanpa perbaikan di alat dev diabaikan eksplisit lewat `auditConfig.ignoreGhsas` di `pnpm-workspace.yaml`), semua action GitHub dipin ke SHA, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
-| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Email login baru lewat hook Better Auth + Resend (`src/emails/login-notification.tsx`, ADR 17). Riwayat masuk 90 hari di Admin → Akun |
+| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Email login baru lewat hook Better Auth + Resend (`Backend/emails/login-notification.tsx`, ADR 17). Riwayat masuk 90 hari di Admin → Akun |
 | Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `lib/auth-guard.ts`) |
 
 Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
@@ -457,7 +466,7 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 
 **Rollback:** Vercel "Instant Rollback" ke deployment sebelumnya. Jika migrasi ikut berubah, pulihkan dari backup (bagian 11).
 
-**Deploy pertama tanpa langkah manual (2026-09-30):** `scripts/vercel-build.sh` di production menjalankan `prisma migrate deploy`, lalu `tsx scripts/seed.ts --bootstrap` (konten CV hanya bila belum ada profil; akun admin hanya bila belum ada Super Admin sama sekali), lalu `next build`. URL auth di Vercel tanpa `BETTER_AUTH_URL`: domain production proyek (`VERCEL_PROJECT_PRODUCTION_URL`), dan semua alamat Vercel deployment tersebut masuk `trustedOrigins`. Ignored Build Step selalu mem-build bila belum ada deploy sebelumnya.
+**Deploy pertama tanpa langkah manual (2026-09-30):** `scripts/vercel-build.sh` di production menjalankan `prisma migrate deploy`, lalu `tsx ../Backend/scripts/seed.ts --bootstrap` (konten CV hanya bila belum ada profil; akun admin hanya bila belum ada Super Admin sama sekali), lalu `next build`. URL auth di Vercel tanpa `BETTER_AUTH_URL`: domain production proyek (`VERCEL_PROJECT_PRODUCTION_URL`), dan semua alamat Vercel deployment tersebut masuk `trustedOrigins`. Ignored Build Step selalu mem-build bila belum ada deploy sebelumnya.
 
 ## 10. CI/CD (GitHub Actions)
 
@@ -503,3 +512,4 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 19 | Backup diuji pulih di setiap run | Backup yang tidak pernah dicoba pulih belum terbukti. Postgres sementara di runner gratis | Final (M5, 2026-10-01) |
 | 20 | ~~Keyboard skill 3D memakai `@splinetool/runtime` + scene Naresh Khatri (MIT), dan CSP publik mengizinkan `'unsafe-eval'`~~ | Diganti globe skill tanpa library (2026-10-18, DESIGN.md bagian 73): `@splinetool/runtime`, `public/spline/`, dan `'unsafe-eval'` di CSP publik dihapus (eval hanya di `next dev`) | Dibatalkan (2026-10-18) |
 | 21 | Kalender kontribusi GitHub di beranda diambil di server lewat GitHub GraphQL API dengan `GITHUB_TOKEN` yang sudah ada | GraphQL satu-satunya sumber resmi kalender kontribusi dan selalu butuh token. Token fine-grained tanpa izin tambahan cukup untuk data publik. Hasil disimpan 6 jam agar tidak membebani batas API; bila gagal, bagian disembunyikan, halaman tetap tampil | Final (2026-10-01) |
+| 22 | Kode server dipindah ke folder `Backend/` (permintaan pemilik 2026-11-18), tetap satu aplikasi Next.js | Pemisahan folder yang jelas antara UI dan server tanpa mengubah deploy: tetap satu deploy Vercel, tanpa server kedua yang "tidur", tanpa menulis ulang Server Actions. Server API terpisah (Node.js atau ASP.NET Core) ditawarkan dan tidak dipilih | Final (2026-11-18) |

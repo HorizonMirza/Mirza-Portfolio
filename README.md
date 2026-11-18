@@ -47,7 +47,8 @@ Every module comes in Indonesian and English, dark by default with a light theme
 
 | Path | Contents |
 |---|---|
-| `Frontend/` | The Next.js app: public site, `/admin`, API, tests |
+| `Frontend/` | The Next.js app: pages, components, API routes, tests |
+| `Backend/` | Server code: Server Actions, database queries, auth, email, uploads, API logic. Bundled into the Next.js app, one deploy |
 | `Database/` | Prisma schema, migrations, seed data |
 | `Documentation/` | [PRD](Documentation/PRD.md), [design](Documentation/DESIGN.md), [architecture](Documentation/ARCHITECTURE.md), [workflow](Documentation/WORKFLOW.md), [deployment & backup](Documentation/DEPLOYMENT.md), [TODO](Documentation/TODO.md) |
 | `.github/` | CI, release (Docker image), and backup workflows |
