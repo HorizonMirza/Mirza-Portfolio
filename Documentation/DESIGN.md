@@ -1998,3 +1998,16 @@ Lima temuan EFF dari audit diperiksa di aplikasi lokal, lalu diperbaiki.
 - **EFF-03 Log audit** (`lib/audit.ts`): `writeAudit` melewati aksi `update` yang tidak mengubah apa pun, dan `diffSnapshots` mencatat kolom JSON berupa objek per kunci (satu volume suara = satu angka, bukan sembilan). Satu baris per perubahan tetap ditulis: itu jejak audit. Dugaan awal bahwa tiap baris memuat seluruh pengaturan ternyata keliru; isinya memang sudah hanya kolom yang berubah.
 - **EFF-04 Pemformat tanggal** (`lib/localized.ts`): `formatDateShort` memakai pemformat per bahasa yang dibuat sekali. Dampak nyata kecil (hanya halaman Privasi).
 - **EFF-05 Ukuran gambar** (`features/assets/targets.ts`): tiap tujuan gambar punya `maxSide` sendiri (logo 512, foto 2000) menggantikan tebakan dari batas ukuran berkas. **Asumsi:** foto kartu ID Kontak naik dari 512 ke 1024 px (foto orang, layar retina); ubah satu angka bila Mirza ingin ukuran lain.
+
+## 177. Perbaikan salah tulis dari audit 17-11 (2026-11-17)
+
+Tujuh temuan TYPO diperiksa di aplikasi lokal; enam diperbaiki dan satu dicabut.
+
+- **TYPO-01 (dicabut):** kalimat catatan rilis v1.0.0 ternyata utuh.
+- **TYPO-02:** label unggah menjadi "Logo Chip Kartu", dengan padanan "Card Chip Logo" di kamus admin EN (toast sebelumnya "Logo chip kartu saved.").
+- **TYPO-03:** "Tandai Belum Dibaca" / "Mark as Unread", sejajar dengan "Tandai Dibaca" / "Mark as Read".
+- **TYPO-04:** label isian EN di skema Pengalaman memakai bahasa Indonesia ("Peran (EN)", "Uraian (EN)", "Jenis Pekerjaan (EN)") dengan padanan di kamus.
+- **TYPO-05:** ringkasan galat Profil memakai pesan skema ditambah bahasa isian ("Peran di Halaman Tentang maksimal 120 karakter (Indonesia)"), bukan nama kolom teknis.
+- **TYPO-06:** judul tab beranda menjadi "Muhammad Mirza · Fullstack Developer dan Pembangun Komunitas" (EN: "... Fullstack Developer and Community Builder") dan tombol galat global "Kembali ke Beranda". **Asumsi:** judul tab ikut Title Case seperti teks lain; ubah dua baris `Home.metaTitle` bila Mirza ingin bentuk lain.
+- **TYPO-07:** tujuh komentar kode yang usang dirapikan (pita tanpa tombol jeda, gelombang cahaya, rute education `[id]`, log audit, menu Teks situs, komentar kolom `photoId`).
+
