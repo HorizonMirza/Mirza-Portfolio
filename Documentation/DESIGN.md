@@ -1,6 +1,8 @@
 # DESIGN — Portofolio Muhammad Mirza
 
-Status: **draf v1**. Desain dibuat langsung di kode (jawaban 15.1), jadi dokumen ini adalah sumber kebenaran visual. Detail akan disesuaikan setelah CV, foto, dan logo diterima.
+Status: **v1 live, diselaraskan 2026-11-18**. Desain dibuat langsung di kode (jawaban 15.1), jadi dokumen ini adalah sumber kebenaran visual.
+
+**Cara membaca:** bagian 1–10 adalah rancangan awal (2026-09-30) dan sebagian sudah berubah. Bagian bernomor 11 ke atas adalah **log keputusan** berurutan waktu (satu bagian per revisi dari pemilik). Bila dua bagian bertentangan, **yang bernomor lebih besar berlaku**. Ringkasan per tanggal ada di `TODO.md` (Log Perubahan Rencana).
 
 ## 1. Arah Visual
 
@@ -2038,4 +2040,15 @@ ERR-01 dan DB-02, 03, 04 dikerjakan atas persetujuan "eksekusi semuanya". Yang *
 - **DB-02 Retensi:** cron kini juga menghapus `AuditLog` > 365 hari (**asumsi:** 365 hari; ubah konstanta `AUDIT_LOG_DAYS` bila Mirza ingin lain), `Session` dan `Verification` yang kedaluwarsa.
 - **DB-03 Simpan profil:** bila penyimpanan profil ditolak, pendidikan yang berubah tidak ikut disimpan dan toast menjelaskannya. Kebalikannya (profil tersimpan, pendidikan gagal) tetap memunculkan dua toast yang menjelaskan keadaan.
 - **DB-04 Ganti email:** galat unik pada `User.email` (balapan) ditandai di isian Email, bukan pesan umum.
+
+## 181. Perapian dokumentasi (2026-11-18)
+
+Seluruh dokumen acuan diperiksa terhadap kode dan diselaraskan. Keputusan pemilik di `00-discovery.md` dan catatan rilis `.github/release-notes/v1.0.0.md` (pernyataan saat rilis 1.0.0) sengaja tidak diubah.
+
+- **README:** daftar fitur admin tidak lagi menyebut impor GitHub dan draf; menyebut edit langsung di pratinjau, unggah dengan pemotong, dasbor, pengaturan, dan akun.
+- **PRD:** status v1 live; A3, A10, U4, dan keputusan sementara no. 7 dan 9 dicoret atau dijelaskan (impor GitHub dan draf dihapus 2026-11-16, alur PR tidak dipakai); risiko live chat ditandai tidak berlaku.
+- **ARCHITECTURE:** tabel stack (grafik SVG sendiri, GitHub hanya GraphQL, Lighthouse manual), diagram tanpa live chat, tabel aksi admin sesuai kode (tanpa `importFromGithub`, `saveSoundVolume`, rute `/new` dan `/[id]` Experience), UI admin dua bahasa, rate limit `/api/track` 120/jam, gitleaks hanya di CI, email login baru sudah ada, bagian lingkungan dan alur kode tanpa PR dan preview, ruleset `main`, UptimeRobot, dan Sentry ditandai belum dipasang, tabel CI sesuai workflow nyata (`ci.yml`, `backup.yml`, `buat-release.yml`, `release.yml`; tidak ada `e2e.yml` dan `lighthouse.yml`), dan status ADR 2 sampai 5.
+- **WORKFLOW:** status berlaku; Lighthouse manual, bukan CI; gitleaks hanya di CI; semua action dipin ke SHA; uptime dan Sentry ditandai belum aktif.
+- **DEPLOYMENT, `.env.example`, SKILL.md, CLAUDE.md:** keterangan `GITHUB_TOKEN`, format commit `[CLAUDIA]` di resep F, `format:check` di resep E, dan perintah `pnpm audit`.
+- **DESIGN dan TODO:** DESIGN diberi petunjuk cara membaca (bagian 11 ke atas adalah log, nomor lebih besar menang); log TODO diurutkan menurut tanggal (50 baris berpindah, isi tidak berubah).
 
