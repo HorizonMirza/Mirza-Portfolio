@@ -1,9 +1,9 @@
 name: CI
 
+# Semua pekerjaan langsung di main tanpa PR (CLAUDE.md), jadi CI hanya dipicu push ke main.
 on:
   push:
     branches: [main]
-  pull_request:
 
 concurrency:
   group: ci-${{ github.ref }}
