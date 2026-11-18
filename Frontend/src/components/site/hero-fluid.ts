@@ -21,7 +21,7 @@ const PEAK = 1.5
 // redaman kecepatan per detik: aliran cepat tenang agar jejak tidak meregang lalu menipis
 const VELOCITY_DISSIPATION = 2.5
 
-export type FluidOptions = {
+type FluidOptions = {
   // detik sampai satu percikan penuh hilang
   life: number
   // kekuatan pusaran (0 = tanpa pusaran)

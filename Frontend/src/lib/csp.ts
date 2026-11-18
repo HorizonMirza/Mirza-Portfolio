@@ -6,7 +6,7 @@
 
 // upgrade: tambahkan upgrade-insecure-requests (hanya di Vercel/HTTPS; di http://localhost tes lintas
 // browser bisa gagal karena permintaan dinaikkan ke https)
-export type CspOptions = { nonce?: string; dev: boolean; preview: boolean; upgrade?: boolean }
+type CspOptions = { nonce?: string; dev: boolean; preview: boolean; upgrade?: boolean }
 
 const CLOUDINARY_IMG = 'https://res.cloudinary.com'
 const CLOUDINARY_API = 'https://api.cloudinary.com'

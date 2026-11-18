@@ -27,7 +27,7 @@ function adminResponse(request: NextRequest) {
 }
 
 // Lapis pertama perlindungan /admin: tanpa cookie sesi langsung diarahkan ke login.
-// Validasi sesi dan peran yang sebenarnya dilakukan di server (lib/auth-guard.ts).
+// Validasi sesi dan peran yang sebenarnya dilakukan di server (Backend/lib/auth-guard.ts).
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 

@@ -45,14 +45,14 @@ type SkillRow = {
   shown: { src: string; invertDark: boolean } | null
 }
 
-export type SkillCategoryRow = {
+type SkillCategoryRow = {
   id: string
   name_id: string
   name_en: string
   skills: SkillRow[]
 }
 
-export type SkillsPreview = Record<
+type SkillsPreview = Record<
   Lang,
   {
     heading: string

@@ -7,7 +7,7 @@ import { imageRatio } from '@/features/projects/browser-address'
 import { playSlideSound } from '@/lib/ui-sounds'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
-export type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
+type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
 
 // Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08, DESIGN.md bagian 47): satu
 // foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan

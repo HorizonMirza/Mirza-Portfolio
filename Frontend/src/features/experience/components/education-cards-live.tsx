@@ -20,7 +20,7 @@ export function thisMonth() {
 }
 
 // ganti tahun pada "YYYY-MM", bulan tetap
-export function withYear(month: string, year: string, fallbackMonth = '01') {
+function withYear(month: string, year: string, fallbackMonth = '01') {
   const mm = month.slice(5, 7) || fallbackMonth
   return `${year}-${mm}`
 }

@@ -16,7 +16,7 @@ const randomGlyph = () => GLYPHS[Math.floor(Math.random() * GLYPHS.length)]
 // dari server tiba) agar teks acak di tengah animasi tidak dianggap teks akhir.
 const active = new WeakSet<object>()
 
-export type ScrambleOptions = {
+type ScrambleOptions = {
   // ikut mengacak nilai dan placeholder kolom teks yang terlihat (panel admin)
   fields?: boolean
   max?: number

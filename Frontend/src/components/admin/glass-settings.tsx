@@ -22,8 +22,8 @@ import { cn } from '@/lib/utils'
 // tanpa GSAP (aturan proyek: tanpa library animasi) dan tanpa gambar dari luar (CSP).
 // Tersimpan di browser pemilik; nilai di luar batas dikembalikan ke bawaan.
 
-export type GlassBackground = 'gradient' | 'dots' | 'plain'
-export type GlassSettings = { blur: number; opacity: number; edge: number; bg: GlassBackground }
+type GlassBackground = 'gradient' | 'dots' | 'plain'
+type GlassSettings = { blur: number; opacity: number; edge: number; bg: GlassBackground }
 
 export const GLASS_DEFAULT: GlassSettings = { blur: 22, opacity: 0.42, edge: 0.6, bg: 'gradient' }
 const PRESETS: Record<string, Omit<GlassSettings, 'bg'>> = {

@@ -4,7 +4,7 @@
 // Admin → Pengaturan (gelap, terang, atau ikuti perangkat).
 export const THEME_STORAGE_KEY = 'mmirza-theme'
 
-export type SiteTheme = 'light' | 'dark'
+type SiteTheme = 'light' | 'dark'
 
 // Atribut <html> berisi tema awal dari Admin → Pengaturan (dark | light | system) untuk pengunjung
 // yang belum pernah memilih. Tanpa atribut (panel admin): gelap.

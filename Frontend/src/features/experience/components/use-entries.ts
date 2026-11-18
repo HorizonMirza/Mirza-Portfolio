@@ -13,7 +13,7 @@ import { experienceSchema, type ExperienceInput } from '@backend/features/experi
 // Gambar yang sudah dipilih dan dipotong untuk entri baru yang belum tersimpan: diunggah setelah
 // entrinya tersimpan (butuh id entri). `preview` = alamat sementara untuk ditampilkan.
 export type PendingImage = { blob: Blob; name: string; preview: string }
-export type PendingSlot = 'logo' | 'photo'
+type PendingSlot = 'logo' | 'photo'
 
 export type EntryRow = {
   // id untuk entri tersimpan, "new-n" untuk entri baru yang belum disimpan
@@ -25,7 +25,7 @@ export type EntryRow = {
   pending?: Partial<Record<PendingSlot, PendingImage>>
 }
 
-export type EntryErrors = Record<string, string>
+type EntryErrors = Record<string, string>
 
 const snap = (v: ExperienceInput) => JSON.stringify(v)
 

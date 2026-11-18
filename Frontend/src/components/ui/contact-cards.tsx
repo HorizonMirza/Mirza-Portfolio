@@ -172,7 +172,7 @@ export function ContactCards({
   )
 }
 
-export type ContributionDay = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }
+type ContributionDay = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }
 
 // Satu tahun aktivitas dalam grid 7 baris (warna --gh-* sama dengan kalender di beranda), dengan
 // keterangan yang tetap di dalam kartu.

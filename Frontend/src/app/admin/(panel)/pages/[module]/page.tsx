@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: t(found?.label ?? 'Halaman Situs') }
 }
 
-// Satu halaman admin per modul situs publik. Teks dua bahasa dari daftar di features/site-text/catalog.ts;
+// Satu halaman admin per modul situs publik. Teks dua bahasa dari daftar di Backend/features/site-text/catalog.ts;
 // Bagian Awal (isi kartu pembuka) memakai form khusus dan tampil sebagai tab di Home (revisi pemilik
 // 2026-11-11). Tab Foto beranda dihapus 2026-11-12: alamat lamanya diarahkan ke tab Peran, tempat
 // foto utama kini diganti.

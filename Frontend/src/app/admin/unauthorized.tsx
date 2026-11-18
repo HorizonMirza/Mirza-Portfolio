@@ -5,7 +5,7 @@ import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-but
 import { StatusPage } from '@/components/ui/status-page'
 import { getAdminLang } from '@backend/lib/admin-lang-server'
 
-// 401: ada cookie sesi tetapi sesinya tidak sah atau sudah berakhir (lib/auth-guard.ts memanggil
+// 401: ada cookie sesi tetapi sesinya tidak sah atau sudah berakhir (Backend/lib/auth-guard.ts memanggil
 // unauthorized()). Tanpa cookie sama sekali, proxy langsung mengarahkan ke login. Teks mengikuti
 // bahasa admin (revisi pemilik 2026-11-16, halaman status bersama).
 export default async function AdminUnauthorized() {

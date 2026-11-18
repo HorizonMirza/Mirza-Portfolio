@@ -15,7 +15,7 @@ const TABS = {
   ],
 } as const
 
-export type TabbedModule = keyof typeof TABS
+type TabbedModule = keyof typeof TABS
 
 export function isTabbedModule(id: string): id is TabbedModule {
   return id in TABS

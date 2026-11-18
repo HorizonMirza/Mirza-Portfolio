@@ -3,8 +3,8 @@
 // Volume tiap suara (0–100) diatur Super Admin di /admin/settings, dikirim lewat atribut
 // data-sound-mix di <html>. 0 berarti suara itu mati; suara yang belum diatur berbunyi penuh.
 
-// sama dengan SOUND_KINDS di features/settings/options.ts (lib tidak boleh mengimpor features)
-export type SoundKind =
+// sama dengan SOUND_KINDS di Backend/features/settings/options.ts (lib tidak boleh mengimpor features)
+type SoundKind =
   | 'nav'
   | 'theme'
   | 'language'

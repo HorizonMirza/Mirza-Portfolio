@@ -30,7 +30,7 @@ import { deleteProject, moveProject, saveProjectTexts } from '@backend/features/
 
 type Field = 'title' | 'role' | 'summary'
 
-export type ProjectListRow = {
+type ProjectListRow = {
   id: string
   // judul, peran, dan ringkasan per bahasa (diketik langsung di daftar)
   texts: Record<Lang, Record<Field, string>>

@@ -5,7 +5,7 @@ import localFont from 'next/font/local'
 // unicode-range ikut dimuat di setiap halaman dan memperlambat LCP.
 // Pilihan pemilik 2026-10-01: Oswald untuk judul, Inter untuk teks, JetBrains Mono untuk label.
 
-export const inter = localFont({
+const inter = localFont({
   src: [{ path: '../fonts/inter-latin-wght-normal.woff2', weight: '100 900', style: 'normal' }],
   variable: '--font-inter',
   display: 'swap',
@@ -14,7 +14,7 @@ export const inter = localFont({
 })
 
 // judul (termasuk elemen LCP di beranda), jadi tetap di-preload
-export const oswald = localFont({
+const oswald = localFont({
   src: [{ path: '../fonts/oswald-latin-wght-normal.woff2', weight: '200 700', style: 'normal' }],
   variable: '--font-oswald',
   display: 'swap',
@@ -22,7 +22,7 @@ export const oswald = localFont({
   fallback: ['Arial Narrow', 'Roboto Condensed', 'sans-serif'],
 })
 
-export const jetbrains = localFont({
+const jetbrains = localFont({
   src: [
     { path: '../fonts/jetbrains-mono-latin-wght-normal.woff2', weight: '100 800', style: 'normal' },
   ],

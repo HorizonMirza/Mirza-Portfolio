@@ -22,9 +22,9 @@ import { GITHUB_PALETTE, type Palette } from '@backend/lib/github-palette'
 // Murni: tanggal, grid, statistik, level, kamera, dan warna. Diuji di tests/unit.
 
 export type ContributionDay = { date: string; count: number }
-export type Cell = { date: string; count: number; level: number; week: number; day: number }
-export type Streak = { days: number; start: string | null; end: string | null }
-export type ContributionStats = {
+type Cell = { date: string; count: number; level: number; week: number; day: number }
+type Streak = { days: number; start: string | null; end: string | null }
+type ContributionStats = {
   total: number
   first: string | null
   last: string | null
@@ -32,24 +32,24 @@ export type ContributionStats = {
   longest: Streak
   current: Streak
 }
-export type RGB = [number, number, number]
+type RGB = [number, number, number]
 
-export const DAY_MS = 86400000
+const DAY_MS = 86400000
 
-export const clamp01 = (v: number): number => (v > 0 ? (v < 1 ? v : 1) : 0)
-export const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
-export const easeInOutCubic = (x: number): number => {
+const clamp01 = (v: number): number => (v > 0 ? (v < 1 ? v : 1) : 0)
+const lerp = (a: number, b: number, t: number): number => a + (b - a) * t
+const easeInOutCubic = (x: number): number => {
   const t = clamp01(x)
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 }
-export const easeOutCubic = (x: number): number => 1 - Math.pow(1 - clamp01(x), 3)
-export const smoothstep = (a: number, b: number, x: number): number => {
+const easeOutCubic = (x: number): number => 1 - Math.pow(1 - clamp01(x), 3)
+const smoothstep = (a: number, b: number, x: number): number => {
   const t = clamp01((x - a) / (b - a))
   return t * t * (3 - 2 * t)
 }
 
 /** Tengah malam UTC -> "YYYY-MM-DD". */
-export const toKey = (ms: number): string => new Date(ms).toISOString().slice(0, 10)
+const toKey = (ms: number): string => new Date(ms).toISOString().slice(0, 10)
 
 /**
  * Nilai tanggal apa pun -> tengah malam UTC hari kalendernya. String "YYYY-MM-DD" dibaca apa
@@ -171,7 +171,7 @@ export const barHeight = (count: number, max: number, scale = 1): number =>
   count > 0 && max > 0 ? 0.4 + Math.pow(count / max, 0.85) * 7.2 * scale : 0.2
 
 /** Porsi morph yang dipakai tiap batang untuk menunggu: gelombang dari minggu terlama ke terbaru. */
-export const WAVE = 0.42
+const WAVE = 0.42
 
 /** 0 -> 1 saat batang naik selama morph. Semua datar di t=0 dan penuh di t=1. */
 export const riseAt = (t: number, week: number, weeks: number, day: number): number => {
@@ -179,24 +179,24 @@ export const riseAt = (t: number, week: number, weeks: number, day: number): num
   return easeOutCubic((t - d) / (1 - WAVE))
 }
 
-export const YAW_3D = Math.PI / 4
-export const ELEV_3D = (34 * Math.PI) / 180
+const YAW_3D = Math.PI / 4
+const ELEV_3D = (34 * Math.PI) / 180
 /**
  * Di layar sempit (HP) setahun minggu dilihat lebih memanjang ke bawah agar batang tampil lebih
  * besar; dengan yaw 45° skalanya dibatasi lebar layar (revisi pemilik 2026-10-16).
  */
-export const NARROW_WIDTH = 640
-export const YAW_3D_NARROW = (66 * Math.PI) / 180
+const NARROW_WIDTH = 640
+const YAW_3D_NARROW = (66 * Math.PI) / 180
 /**
  * Di layar sempit tampilan 2D tidak dipaksa muat selebar layar: lebar per minggu tetap, grafik
  * bisa digeser ke samping seperti di profil GitHub dan dibuka di minggu terbaru (revisi pemilik
  * 2026-10-16).
  */
-export const WEEK_PX_NARROW = 13
-export const YAW_RANGE: [number, number] = [(8 * Math.PI) / 180, (82 * Math.PI) / 180]
-export const ELEV_RANGE: [number, number] = [(18 * Math.PI) / 180, (62 * Math.PI) / 180]
+const WEEK_PX_NARROW = 13
+const YAW_RANGE: [number, number] = [(8 * Math.PI) / 180, (82 * Math.PI) / 180]
+const ELEV_RANGE: [number, number] = [(18 * Math.PI) / 180, (62 * Math.PI) / 180]
 
-export type Cam = { cs: number; sn: number; se: number; ce: number }
+type Cam = { cs: number; sn: number; se: number; ce: number }
 
 /**
  * e=0 melihat lurus ke bawah (yaw 0, elevasi 90°): peta panas biasa. e=1 adalah sudut isometrik.
@@ -213,19 +213,19 @@ export const camera = (e: number, dYaw = 0, dElev = 0): Cam => {
 }
 
 /** Dunia (x = minggu, y = hari, z = atas) -> layar, sebelum skala/geser. */
-export const project = (c: Cam, x: number, y: number, z: number): [number, number] => [
+const project = (c: Cam, x: number, y: number, z: number): [number, number] => [
   x * c.cs - y * c.sn,
   (x * c.sn + y * c.cs) * c.se - z * c.ce,
 ]
 
-export const mixRGB = (a: RGB, b: RGB, t: number): RGB => [
+const mixRGB = (a: RGB, b: RGB, t: number): RGB => [
   a[0] + (b[0] - a[0]) * t,
   a[1] + (b[1] - a[1]) * t,
   a[2] + (b[2] - a[2]) * t,
 ]
-export const luminance = (c: RGB): number => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255
+const luminance = (c: RGB): number => (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255
 
-export const resolvePalette = (p: Palette | undefined, dark: boolean): string[] => {
+const resolvePalette = (p: Palette | undefined, dark: boolean): string[] => {
   const base = GITHUB_PALETTE[dark ? 'dark' : 'light']
   const pick = p ? (dark ? p.dark : p.light) : base
   return [0, 1, 2, 3].map((i) => pick[i] ?? pick[pick.length - 1] ?? base[i])
@@ -255,7 +255,7 @@ export type SkylineLabels = {
   keys: string
 }
 
-export const DEFAULT_SKYLINE_LABELS: SkylineLabels = {
+const DEFAULT_SKYLINE_LABELS: SkylineLabels = {
   unit: 'contribution',
   unitPlural: 'contributions',
   none: 'No contributions',
@@ -274,7 +274,7 @@ export const DEFAULT_SKYLINE_LABELS: SkylineLabels = {
   keys: 'Use the arrow keys to read individual days.',
 }
 
-export interface ContributionSkylineProps {
+interface ContributionSkylineProps {
   /** Satu entri per hari, `YYYY-MM-DD`. Tanggal berulang dijumlahkan. */
   data: ContributionDay[]
   /** Hari terakhir yang tampil. Bawaan: tanggal terbaru di `data`, atau hari ini. */

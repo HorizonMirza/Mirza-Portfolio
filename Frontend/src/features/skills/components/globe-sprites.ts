@@ -42,7 +42,7 @@ export function releaseSprites(list: readonly (ItemSprite | undefined)[]) {
   }
 }
 
-export type ItemState = {
+type ItemState = {
   cx: number
   cy: number
   scale: number
@@ -67,7 +67,7 @@ const SPRITE_SCALE = 2.5
 const probe =
   typeof document === 'undefined' ? null : document.createElement('canvas').getContext('2d')
 const alphaCache = new Map<string, string>()
-export function withAlpha(color: string, alpha: number) {
+function withAlpha(color: string, alpha: number) {
   const key = `${color}|${alpha}`
   const hit = alphaCache.get(key)
   if (hit) return hit
