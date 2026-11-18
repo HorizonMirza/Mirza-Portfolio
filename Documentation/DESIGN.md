@@ -2011,3 +2011,13 @@ Tujuh temuan TYPO diperiksa di aplikasi lokal; enam diperbaiki dan satu dicabut.
 - **TYPO-06:** judul tab beranda menjadi "Muhammad Mirza · Fullstack Developer dan Pembangun Komunitas" (EN: "... Fullstack Developer and Community Builder") dan tombol galat global "Kembali ke Beranda". **Asumsi:** judul tab ikut Title Case seperti teks lain; ubah dua baris `Home.metaTitle` bila Mirza ingin bentuk lain.
 - **TYPO-07:** tujuh komentar kode yang usang dirapikan (pita tanpa tombol jeda, gelombang cahaya, rute education `[id]`, log audit, menu Teks situs, komentar kolom `photoId`).
 
+## 178. Perbaikan keamanan dari audit 17-11 (2026-11-18)
+
+Lima temuan SEC dari audit diperiksa, lalu dikerjakan.
+
+- **SEC-01 Next.js:** naik 16.4.3 ke 16.4.5 (dua advisory sedang pada `use cache`, tidak dipakai proyek ini).
+- **SEC-02 Gerbang audit:** `pnpm audit --audit-level=moderate` di CI. Advisory `picomatch` (GHSA-fc5q-39xc-vjpf, belum ada versi aman, hanya alat dev) diabaikan di `pnpm-workspace.yaml` bersama `braces`. **Asumsi:** persetujuan "eksekusi semuanya" dari Mirza dianggap mencakup pengabaian ini; hapus barisnya bila patch sudah ada.
+- **SEC-03 Pin action:** `actions/checkout` (v7.0.1), `actions/setup-node` (v7.1.0), dan `actions/upload-artifact` (v7.0.2) dipin ke SHA.
+- **SEC-04 docker login:** `GITHUB_TOKEN` dan `github.actor` lewat `env`, bukan interpolasi di perintah shell.
+- **SEC-05 Dockerfile:** tidak diubah caranya (perubahan ke `--mount=type=secret` tidak bisa diuji di sini); ditambah komentar di Dockerfile dan peringatan di DEPLOYMENT.md agar URL production tidak pernah dipakai saat `docker build`.
+

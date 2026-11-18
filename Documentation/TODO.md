@@ -331,3 +331,5 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-17 | Perbaikan inefisiensi audit: cuplikan isi pesan di daftar, Simpan profil tanpa perubahan, log audit tanpa baris kosong dan diff JSON per kunci, pemformat tanggal per bahasa, maxSide eksplisit per tujuan gambar (foto kartu ID 512 menjadi 1024, asumsi; DESIGN.md bagian 176) |
 | 2026-11-17 | Pembaruan Next.js 16.4.3 menjadi 16.4.5 (patch, atas izin pemilik) bersama `eslint-config-next`; hanya paket Next di lockfile yang berubah. Lint, format, typecheck, 315 tes unit, build, dan E2E (chromium + mobile) hijau |
 | 2026-11-17 | Perbaikan salah tulis audit: label Logo Chip Kartu, Tandai Belum Dibaca, label galat EN Pengalaman, ringkasan galat Profil tanpa nama kolom, Title Case judul tab beranda dan tombol galat global, tujuh komentar usang (DESIGN.md bagian 177) |
+| 2026-11-18 | Perbaikan keamanan audit: Next.js 16.4.5, audit CI mulai moderate dengan pengabaian picomatch, action GitHub dipin SHA, docker login lewat env, peringatan DATABASE_URL build Docker (DESIGN.md bagian 178) |
+

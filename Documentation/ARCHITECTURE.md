@@ -428,7 +428,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Kebocoran secret | Hanya `Frontend/.env.example` di repo. Secret di Vercel. `gitleaks` di CI dan pre-commit |
 | Header | HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, CSP dengan `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. `upgrade-insecure-requests` hanya di Vercel |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
-| Rantai pasok | `pnpm audit --audit-level=high` di CI, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
+| Rantai pasok | `pnpm audit --audit-level=moderate` di CI (advisory tanpa perbaikan di alat dev diabaikan eksplisit lewat `auditConfig.ignoreGhsas` di `pnpm-workspace.yaml`), semua action GitHub dipin ke SHA, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
 | Akses admin | Satu akun, log audit, ganti password dengan rate limit. Notifikasi login baru via email menyusul bersama Resend (M4) |
 | Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `lib/auth-guard.ts`) |
 

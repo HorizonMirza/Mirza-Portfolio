@@ -133,7 +133,7 @@ Update dikerjakan Claude **sebulan sekali**, atau **segera** bila ada peringatan
 4. Celah di dependency tidak langsung yang belum diperbaiki induknya: pakai `overrides` di `Frontend/pnpm-workspace.yaml`, lengkap dengan alasan dan kapan dihapus.
 5. Jalankan pemeriksaan lengkap (lint, typecheck, test, build, E2E), lalu commit `[CLAUDIA] chore(deps): ...` atas nama Horizon Mirza.
 
-CI menjalankan `pnpm audit --audit-level=high` di setiap push dan PR, sehingga celah baru yang tinggi langsung membuat CI merah.
+CI menjalankan `pnpm audit --audit-level=moderate` di setiap push dan PR, sehingga celah baru tingkat sedang ke atas langsung membuat CI merah. Advisory tanpa versi perbaikan yang hanya ada di alat pengembangan boleh diabaikan lewat `auditConfig.ignoreGhsas` di `Frontend/pnpm-workspace.yaml`, dengan komentar alasan dan catatan untuk dihapus kembali bila patch sudah ada. Action GitHub dipin ke SHA (tag di komentar); naikkan manual saat update bulanan.
 
 ## 11. Umpan Balik
 
