@@ -6,7 +6,7 @@ Portfolio of Muhammad Mirza with a Super Admin Panel
 
 **Live:** [mmirza.site](https://mmirza.site)
 
-![Home page of mmirza.site: the name behind the photo, with an armor layer revealed under the cursor](Documentation/screenshots/home.webp)
+![Home page of mmirza.site: the name behind the photo, with an armor mask revealed under the cursor](Documentation/screenshots/home.webp)
 
 ## Modules
 
@@ -42,20 +42,6 @@ Every module comes in Indonesian and English, dark by default with a light theme
 | **Services** | Cloudinary, Resend, Vercel (region `sin1`, daily cron) |
 | **Testing** | Vitest, Playwright, axe (WCAG 2.2 AA) |
 | **Delivery** | GitHub Actions CI (lint, format, typecheck, tests, `pnpm audit`, gitleaks, E2E on Chromium, Firefox, and WebKit), Docker image on GitHub Packages, daily encrypted database backup workflow (runs once its secrets are set) |
-
-## Run Locally
-
-Needs Node.js 24, pnpm 10, and PostgreSQL 17. Everything runs from `Frontend/`:
-
-```bash
-cd Frontend
-pnpm install
-cp .env.example .env.local    # fill in the values
-pnpm db:migrate && pnpm db:seed
-pnpm dev                      # http://localhost:3000
-```
-
-Before handing work over, run `pnpm lint`, `pnpm typecheck`, `pnpm test`, and `pnpm build`. Details, environment variables, the Docker image, and backup and restore are in [Documentation/DEPLOYMENT.md](Documentation/DEPLOYMENT.md).
 
 ## Repository
 
