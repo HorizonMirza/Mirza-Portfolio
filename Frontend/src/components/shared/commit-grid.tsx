@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
+import { isScrolling } from '@/lib/scroll-idle'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
 // Latar kartu pembuka dan halaman login Super Admin: kotak-kotak seperti grafik kontribusi GitHub dalam
@@ -14,7 +15,9 @@ import { prefersReducedMotion } from '@/lib/view-transition'
 // memudar dengan kurva smoothstep, bukan garis lurus.
 // Hemat: pola dasar digambar sekali ke kanvas cadangan; tiap bingkai hanya menyalin pola itu lalu
 // menggambar ulang kotak di pita gelombang. Di dalam dialog (kartu pembuka) hanya bekerja selama
-// dialog terbuka dan berhenti total saat ditutup; rAF berhenti sendiri saat tab tersembunyi.
+// dialog terbuka dan berhenti total saat ditutup. Loop juga berhenti saat kanvas di luar layar
+// (IntersectionObserver) dan melewatkan bingkai selama halaman digulir (lib/scroll-idle.ts); rAF
+// berhenti sendiri saat tab tersembunyi (audit 2026-11-17, PERF-02).
 // Reduced-motion: pola diam tanpa gelombang. Murni hiasan (aria-hidden).
 
 const NOTE = [77, 163, 255] as const
@@ -50,6 +53,7 @@ export function CommitGrid({ className = 'intro-wave' }: { className?: string })
     let rows = 0
     let levels: Uint8Array = new Uint8Array(0)
     let frame = 0
+    let visible = true
     const start = performance.now()
 
     function cell(c: CanvasRenderingContext2D, i: number, j: number, boost: number) {
@@ -117,8 +121,16 @@ export function CommitGrid({ className = 'intro-wave' }: { className?: string })
     }
 
     function loop(now: number) {
+      frame = 0
+      if (!visible) return
       frame = requestAnimationFrame(loop)
-      draw(now)
+      if (!isScrolling()) draw(now)
+    }
+
+    // mulai loop bila belum berjalan, kanvas terlihat, dan (di dialog) dialognya terbuka
+    function startLoop() {
+      if (frame || still || !visible || (dialog && !dialog.open)) return
+      frame = requestAnimationFrame(loop)
     }
 
     // Di dalam dialog (kartu pembuka): dialog dibuka oleh efek IntroNotice yang berjalan setelah efek
@@ -126,15 +138,27 @@ export function CommitGrid({ className = 'intro-wave' }: { className?: string })
     // Di luar dialog (halaman login) langsung berjalan.
     const dialog = canvas.closest('dialog')
     const observer = new ResizeObserver(layout)
+    const viewObserver = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) startLoop()
+      else {
+        cancelAnimationFrame(frame)
+        frame = 0
+      }
+    })
     const stop = () => {
       cancelAnimationFrame(frame)
+      frame = 0
       observer.disconnect()
+      viewObserver.disconnect()
     }
     frame = requestAnimationFrame(() => {
+      frame = 0
       if (dialog && !dialog.open) return
       layout()
       observer.observe(canvas)
-      if (!still) frame = requestAnimationFrame(loop)
+      viewObserver.observe(canvas)
+      startLoop()
     })
     dialog?.addEventListener('close', stop)
     return () => {
