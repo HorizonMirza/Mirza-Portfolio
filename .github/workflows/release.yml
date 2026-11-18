@@ -118,7 +118,11 @@ jobs:
 
       - name: Masuk ke GitHub Packages
         working-directory: .
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        # nilai GitHub lewat env, bukan diselipkan ke teks perintah (hindari template injection)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACTOR: ${{ github.actor }}
+        run: echo "${GH_TOKEN}" | docker login ghcr.io -u "${GH_ACTOR}" --password-stdin
 
       - name: Kirim image
         working-directory: .
