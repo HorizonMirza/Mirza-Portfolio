@@ -27,9 +27,12 @@ overrides:
 
 # Advisory tanpa versi perbaikan (patched: <0.0.0) yang hanya ada di alat pengembangan:
 # braces lewat eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch
-# (GHSA-vfj7-8cjw-p6xm, DoS pola glob bersarang). Hanya dipakai ESLint dengan pola dari config
-# repo sendiri, tidak ikut ke production dan tidak menerima input pengguna. Hapus bila sudah ada
-# versi aman (cek: pnpm audit).
+# (GHSA-vfj7-8cjw-p6xm, DoS pola glob bersarang), dan picomatch lewat vite (Vitest) dan
+# glob > micromatch (GHSA-fc5q-39xc-vjpf, ReDoS pada extglob berulang; versi terbaru 4.0.7 masih
+# rentan; ditambahkan 2026-11-18 atas persetujuan pemilik). Hanya dipakai alat lint dan tes dengan
+# pola dari repo sendiri, tidak ikut ke production dan tidak menerima input pengguna. Hapus bila
+# sudah ada versi aman (cek: pnpm audit).
 auditConfig:
   ignoreGhsas:
     - GHSA-vfj7-8cjw-p6xm
+    - GHSA-fc5q-39xc-vjpf

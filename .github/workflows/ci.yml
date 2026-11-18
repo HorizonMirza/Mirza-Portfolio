@@ -40,7 +40,8 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - name: Audit keamanan dependency
-        run: pnpm audit --audit-level=high
+        # moderate ke atas menggagalkan CI (sebelumnya hanya high; SEC-02 audit 17-11)
+        run: pnpm audit --audit-level=moderate
 
   build-e2e:
     name: Migrasi, seed, build, E2E
