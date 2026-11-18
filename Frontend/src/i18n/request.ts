@@ -13,7 +13,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    // teks bawaan, lalu ditimpa suntingan admin (Admin → Teks situs)
+    // teks bawaan, lalu ditimpa suntingan admin (diubah langsung di pratinjau admin)
     messages: applyTextOverrides(defaults, await getTextOverrides(), locale),
   }
 })

@@ -2619,7 +2619,7 @@ html[data-intro='pending'] .intro {
 .intro::backdrop {
   background: #000;
 }
-/* latar kotak commit (components/shared/commit-grid.tsx, pilihan pemilik 2026-11-06 demo A42, tanpa gelombang cahaya):
+/* latar kotak commit (components/shared/commit-grid.tsx, pilihan pemilik 2026-11-06 demo A42, dengan gelombang cahaya):
    selebar layar di belakang kartu; klik tembus ke dialog sehingga klik di luar kartu tetap menutup */
 .intro-wave {
   position: fixed;

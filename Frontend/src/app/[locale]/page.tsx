@@ -273,9 +273,9 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           {/* Pita sampul berjalan (pilihan pemilik 2026-10-15): tiap sampul kini tautan ke halaman
               detail project dan pita tidak berhenti saat disorot (revisi 2026-10-16). Deret diulang
               dua kali agar putaran tidak terputus; salinan kedua disembunyikan dari pembaca layar
-              dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih,
-              dan tombol jeda di bawahnya menghentikannya kapan saja (WCAG 2.2.2; audit 2026-10-31,
-              GAP-02). Tombol berupa checkbox + CSS sehingga bekerja tanpa JavaScript. */}
+              dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih
+              dan saat di luar layar. Tombol jeda dihapus 2026-11-06 atas keputusan pemilik
+              (DESIGN.md bagian 106). */}
           <div className="home-marquee-wrap">
             <div className="home-marquee">
               <ul
