@@ -1,1 +1,4 @@
 cd Frontend && pnpm exec lint-staged
+# Backend/ punya konfigurasi lint-staged sendiri; dijalankan dari foldernya agar ESLint, Prettier, dan
+# plugin Tailwind ditemukan lewat symlink Backend/node_modules
+cd ../Backend && ./node_modules/.bin/lint-staged
