@@ -2079,3 +2079,18 @@ Sengaja dipertahankan: berkas konvensi Next (`forbidden`, `unauthorized`, `globa
 Atas persetujuan pemilik, empat kolom `SiteSetting` yang sudah tidak dibaca kode sejak revisi 2026-11-16 dihapus lewat migrasi `20261118160000_drop_unused_site_setting_columns`: `soundVolume` (volume utama, kini hanya `soundMix` per suara), `emailOnMessage`, `loginNotify` (email pesan baru dan login baru selalu dikirim bila Resend diatur), dan `allowIndexing` (situs selalu boleh diindeks, hanya mode perawatan yang menutupnya). Migrasi ini tidak bisa dibatalkan, tetapi nilai terakhir keempat kolom tidak dipakai di mana pun. Skema Prisma dan `ARCHITECTURE.md` ikut dirapikan.
 
 Dependency ikut diperiksa ulang secara ketat (impor, config, hook Git, dan CI). Tidak ada yang tidak terpakai: `@prisma/client` diimpor kode hasil generate, `@testing-library/dom` adalah peer `@testing-library/react`, `@types/*` dibutuhkan TypeScript, `husky` dan `lint-staged` dipakai hook pre-commit, dan `jsdom` dipakai tes lewat Vitest. Semua `overrides` di `pnpm-workspace.yaml` masih menarget paket yang ada di lockfile.
+
+## 186. Pemeriksaan seluruh repo: isi yang tidak terpakai dan tidak berfungsi (2026-11-18)
+
+Permintaan pemilik: periksa `.agents/skill`, `.github`, `Database`, `Documentation`, `Frontend`, `CLAUDE.md`, dan `README.md`, lalu hapus isi yang tidak terpakai atau tidak berfungsi. Rujukan berkas di semua dokumen dan komentar kode diperiksa otomatis terhadap isi repo; yang tampak hilang ternyata catatan sejarah penghapusan, bukan rujukan rusak.
+
+Dihapus atau dibetulkan:
+- **`.github/release-notes/v1.0.0.md`:** belum ada release di GitHub, jadi catatan ini akan dipakai saat release pertama. Klaim fitur yang sudah dihapus dibuang: API publik `/api/v1`, impor GitHub, draf/terbit, dan pelanggan newsletter.
+- **`.github/workflows/ci.yml`:** pemicu `pull_request` dihapus, karena semua pekerjaan langsung di `main` tanpa PR.
+- **`.agents/skill/SKILL.md`:** `AssetEditDialog` sudah tidak ada; diganti `useAssetPicker` + `ImageCropDialog` yang benar-benar dipakai.
+- **`Frontend/.gitignore` dan `eslint.config.mjs`:** sisa templat create-next-app untuk Yarn/PnP, npm/yarn debug log, `coverage`, `out`, `build`, `blob-report`, dan `playwright/.cache` dihapus; tidak ada alat di proyek ini yang menghasilkan berkas itu.
+- **`PRD.md`:** baris fitur yang sudah dihapus (F13, F16, F17, A8, A10, U7) diringkas menjadi satu keterangan "dihapus" (nomornya masih dirujuk log), sisa riwayat di F12, A2, A3, U4 dibuang.
+- **`ARCHITECTURE.md`:** baris pilihan teknologi "Live chat" dan keputusan 4 (live chat) serta 14 (newsletter) yang tidak berlaku dihapus; keterangan sejarah di baris grafik, GitHub, action Project, dan `/api/v1` diringkas ke keadaan sekarang.
+
+Sengaja dipertahankan: log keputusan di `DESIGN.md`, `TODO.md`, riwayat di `CONTENT.md`, arsip `REFERENCES.md`, dan jawaban asli pemilik di `00-discovery.md` (catatan sejarah, bukan isi yang dipakai kode); migrasi database; lisensi font OFL di `src/fonts/` (wajib menyertai font); `components.json` (konfigurasi CLI shadcn); `Frontend/AGENTS.md` (ditulis ulang otomatis oleh `next dev`).
+

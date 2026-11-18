@@ -31,15 +31,14 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Form publik (kontak) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
 | Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
 | Daftar admin | Tampil seperti daftar di situs, diubah langsung di pratinjau (DESIGN.md bagian 133–140); TanStack Table dipakai sampai 2026-11-12 lalu dihapus | Admin melihat hasil persis seperti pengunjung; tanpa dependency tabel | TanStack Table, AG Grid (berat) |
-| Grafik dashboard admin | **SVG buatan sendiri** (`components/admin/visits-chart.tsx`, geometri di `lib/chart-geometry.ts`), hanya dimuat di `/admin`. Sebelumnya Recharts (dihapus 2026-11-18, DESIGN.md bagian 179) | Tanpa library grafik: 102 KB gzip lebih ringan untuk satu grafik area | Recharts, Chart.js |
+| Grafik dashboard admin | **SVG buatan sendiri** (`components/admin/visits-chart.tsx`, geometri di `lib/chart-geometry.ts`), hanya dimuat di `/admin`. | Tanpa library grafik: 102 KB gzip lebih ringan untuk satu grafik area | Recharts, Chart.js |
 | Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
 | Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
-| GitHub | **`fetch` biasa** ke GraphQL API untuk kalender kontribusi beranda dan footer (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil). Impor repo dan metadata project dari REST API sudah dihapus (2026-11-16) | Hanya satu endpoint, tidak perlu library | Octokit, scraping |
+| GitHub | **`fetch` biasa** ke GraphQL API untuk kalender kontribusi beranda dan footer (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil). | Hanya satu endpoint, tidak perlu library | Octokit, scraping |
 | Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (`PageView`, `LoginEvent`, `RateLimit`, `AuditLog`, sesi dan verifikasi kedaluwarsa), ringkas statistik ke `PageViewDaily`, hapus berkas unggahan yatim | GitHub Actions cron (tetap dipakai untuk backup) |
 | Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Web Analytics** + **Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
-| Live chat | ~~Widget pihak ketiga~~ **Tidak dipakai** (PRD 11 no. 3): WhatsApp lewat footer | Tanpa skrip pihak ketiga dan tanpa banner cookie | Tawk.to |
 | Error tracking | **Sentry tanpa SDK**, hanya error server (`src/instrumentation.ts`, keputusan 18) | Tier gratis, tanpa JS klien tambahan | `@sentry/nextjs`, LogRocket |
 | Uptime | **UptimeRobot** (gratis) ke `/api/health`, dipasang pemilik (ditunda 2026-10-20) | Notifikasi email dan Telegram | Better Stack |
 | Unit test | **Vitest** + Testing Library | Cepat, cocok TypeScript | Jest |
@@ -355,7 +354,7 @@ Pola diterapkan di `Frontend/src/features/<domain>/actions.ts` dan diuji di `tes
 | Modul | Halaman | Action |
 |---|---|---|
 | Profil (tab modul About) | `/admin/profile` | `saveProfile` |
-| Project (modul Projects, tanpa tab sejak 2026-11-15) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `saveProjectTexts`, `deleteProject`, `moveProject` (impor GitHub dan status Draf/Terbit dihapus 2026-11-16) |
+| Project (modul Projects, tanpa tab sejak 2026-11-15) | `/admin/projects`, `/new`, `/[id]` | `saveProject`, `saveProjectTexts`, `deleteProject`, `moveProject` |
 | Peran beranda (tab modul Home, sejak 2026-11-11) | `/admin/roles` | `saveHeroRoles` |
 | GitHub (tab modul Home, sejak 2026-11-15) | `/admin/github` | `saveGithubPalette` (satu dari lima warna grafik kontribusi, disimpan di `SiteSetting.githubPalette`) |
 | Skill (tab modul Home) | `/admin/skills` | `saveSkillCategory`, `deleteSkillCategory`, `moveSkillCategory`, `saveSkill`, `deleteSkill`, `moveSkill`; logo skill lewat `signAssetUpload`/`attachUploadedAsset` (target `skill-logo`, 2026-11-12) |
@@ -392,7 +391,7 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 - Respons JSON, `Content-Type: application/json`.
 - Sukses: `{ "data": ..., "meta": { ... } }`. Galat: `{ "error": { "code": "VALIDATION_ERROR", "message": "...", "fields": { ... } } }`.
 - Kode HTTP: 200/201, 400 (validasi), 401, 403, 404, 429 (rate limit), 500.
-- API publik `/api/v1` (project, skill, profil) dihapus 2026-11-06 karena tidak dipakai; alamat `/api/*` yang tidak ada dijawab JSON 404 `{ error }`.
+- Alamat `/api/*` yang tidak ada (termasuk `/api/v1` lama) dijawab JSON 404 `{ error }`.
 
 
 Contoh state yang dikembalikan Server Action form kontak (bagian 6.2):
@@ -488,7 +487,6 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 1a | Tidak memakai ASP.NET Core + Next.js (stack GAAS) atau FastAPI | Dipertimbangkan 2026-09-30. Ditolak karena: (1) recruiter menilai project, bukan arsitektur situs portofolio, dan kemampuan C#/.NET sudah terbukti lewat project GAAS; (2) backend .NET di hosting gratis "tidur" 30–50 detik saat sepi; (3) dua deploy dan dua layanan untuk satu orang; (4) M1 sudah jadi dan teruji. Bisa ditinjau lagi bila target kerja spesifik .NET | Final |
 | 2 | Konten di DB dengan kolom `_id`/`_en` | Sederhana, mudah dicari dan divalidasi, cukup untuk dua bahasa | Final (diterapkan) |
 | 3 | Analitik sendiri tanpa cookie | Tidak perlu banner cookie, data untuk dashboard admin | Final (diterapkan) |
-| 4 | ~~Live chat lewat widget lazy~~ | Vercel tidak menjalankan WebSocket permanen | Tidak berlaku: tombol WhatsApp (2026-09-30), lalu dihapus dan WhatsApp cukup di footer (2026-10-03) |
 | 5 | Rate limit + honeypot di form publik | Mencegah spam dan kuota email habis | Final (dikonfirmasi 2026-09-30) |
 | 6 | Better Auth untuk login admin (menggantikan Auth.js) | Stabil, sesi di database, rate limit bawaan | Final (2026-09-30) |
 | 7 | Rate limit di PostgreSQL, tanpa Upstash | Trafik kecil, satu layanan lebih sedikit | Final (2026-09-30) |
@@ -498,7 +496,6 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
 | 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
 | 13 | ~~Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()`~~ **Diganti:** menu HP kini menu bawah tetap (tautan biasa, tanpa `popover`) dan filter pengalaman dihapus 2026-10-03 | Hampir tanpa JavaScript klien | Diganti (revisi pemilik, DESIGN.md) |
-| 14 | Konfirmasi dan berhenti newsletter lewat tombol (POST) di halaman, bukan GET di tautan email | Pemindai tautan email tidak ikut mengonfirmasi atau memberhentikan langganan | Tidak berlaku lagi: newsletter dihapus 2026-11-06 |
 | 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
 | 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
 | 17 | Notifikasi login baru ke email admin lewat hook Better Auth + `after()` Next.js | Tidak menunda login dan tetap terkirim di serverless | Final (M4, 2026-09-30) |

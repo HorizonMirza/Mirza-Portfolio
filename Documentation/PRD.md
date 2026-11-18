@@ -55,12 +55,12 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F9 | **Tema terang/gelap**: selalu mulai gelap (tidak lagi ikut sistem sejak 2026-10-21), bisa diganti manual dan tersimpan | P0 |
 | F10 | **Animasi**: hero, transisi halaman, reveal saat scroll. Menghormati `prefers-reduced-motion` | P0 |
 | F11 | **Statistik pengunjung**: pencatatan tanpa cookie, ditampilkan di dashboard admin | P0 |
-| F12 | **Kontak cepat**: ~~tombol WhatsApp melayang~~ dihapus pemilik 2026-10-03; WhatsApp lewat kartu di footer dan halaman kontak | P0 |
-| F13 | ~~**Newsletter**~~ **Dihapus seluruhnya 2026-11-06** (permintaan pemilik: fitur yang tidak dipakai dihapus; halaman konfirmasi/berhenti, menu Pelanggan, dan kartu dashboard ikut dihapus, DESIGN.md bagian 107). Riwayat: form berlangganan dengan konfirmasi email (double opt-in) dan tautan berhenti. **2026-10-08:** form dihapus dari beranda atas permintaan pemilik; halaman konfirmasi/berhenti dan admin tetap ada, saat ini tidak ada tempat mendaftar (DESIGN.md bagian 45) | P0 |
+| F12 | **Kontak cepat**: WhatsApp lewat kartu di footer dan halaman kontak | P0 |
+| F13 | Newsletter: **dihapus 2026-11-06** (tidak dipakai, DESIGN.md bagian 107) | — |
 | F14 | **SEO & berbagi**: metadata per halaman, Open Graph, sitemap, robots.txt, data terstruktur `Person` | P0 |
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
-| F16 | ~~**API publik** read-only (project, skill, profil)~~ **Dihapus 2026-11-06** (tidak dipakai, permintaan pemilik; `/api/v1/*` kini JSON 404) | — |
-| F17 | ~~**Pelat status di hero**~~ **Dihapus dari hero 2026-10-18** (DESIGN.md bagian 83). Kota dan posisi sekarang tetap ada di admin, dipakai di data terstruktur `Person` dan gambar pratinjau tautan. Status dan catatan ketersediaan dihapus 2026-11-06 karena hanya dikirim lewat API publik yang ikut dihapus | — |
+| F16 | API publik: **dihapus 2026-11-06** (tidak dipakai; `/api/v1/*` kini JSON 404) | — |
+| F17 | Pelat status di hero: **dihapus 2026-10-18** (DESIGN.md bagian 83). Kota dan posisi tetap diisi di admin untuk data terstruktur `Person` dan gambar pratinjau tautan | — |
 | F19 | **Pemberitahuan pembuka**: kartu "Informasi Penting" sekali per sesi browser (tab baru), teks dua bahasa dari Admin → Halaman situs → Bagian Awal, tombol Resume CV dan Beranda. Resume CV membuka CV di tab baru dan kartu tetap terbuka; pengunjung masuk situs lewat tombol Beranda (revisi akhir pemilik 2026-10-16). ID/EN mengganti bahasa kartu di tempat; bahasa situs ikut setelah kartu ditutup. Latar neural vortex seperti login Super Admin, selalu gelap (keputusan pemilik 2026-10-12 s.d. 2026-10-15, DESIGN.md bagian 53) | P0 |
 | F18 | **Kategori project**: Software dan Komunitas & Bisnis **[USULAN, dari CV]** | P0 |
 
@@ -69,15 +69,15 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | ID | Fitur | Prioritas |
 |---|---|---|
 | A1 | Login/logout, sesi aman, ganti password | P0 |
-| A2 | Dashboard: pesan baru, statistik pengunjung, unduhan CV, jumlah project/pengalaman/skill (tiap angka menuju halamannya); kartu pelanggan newsletter dihapus 2026-11-06 | P0 |
-| A3 | CRUD Project (dua bahasa, galeri, urutan; diubah langsung di pratinjau). ~~Terbitkan/draf dan impor dari GitHub~~ dihapus 2026-11-16 | P0 |
+| A2 | Dashboard: pesan baru, statistik pengunjung, unduhan CV, jumlah project/pengalaman/skill (tiap angka menuju halamannya) | P0 |
+| A3 | CRUD Project (dua bahasa, galeri, urutan; diubah langsung di pratinjau). | P0 |
 | A4 | CRUD Skill dan kategori | P0 |
 | A5 | CRUD Pengalaman dan Pendidikan | P0 |
 | A6 | Edit Profil dan teks hero, link sosial, upload foto dan CV | P0 |
 | A7 | Kotak masuk pesan (baru/dibaca/arsip) | P0 |
-| A8 | ~~Newsletter: daftar pelanggan dan kirim broadcast~~ **Dihapus 2026-11-06** (F13) | — |
+| A8 | Newsletter: **dihapus 2026-11-06** (F13) | — |
 | A9 | Log audit (siapa mengubah apa, kapan) | P0 · halaman panel **dihapus 2026-11-11** atas keputusan pemilik; pencatatan `AuditLog` di database tetap berjalan |
-| A10 | ~~Pratinjau perubahan sebelum diterbitkan (draf)~~ Digantikan edit langsung di pratinjau situs (2026-11-12, DESIGN.md bagian 133–140); tidak ada status draf di panel | — |
+| A10 | Pratinjau draf: digantikan edit langsung di pratinjau situs (2026-11-12, DESIGN.md bagian 133–140) | — |
 
 ## 6. User Stories dan Kriteria Penerimaan
 
@@ -86,10 +86,10 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | U1 | Sebagai **recruiter**, saya ingin mengunduh CV dari halaman utama, agar bisa menilai kandidat dengan cepat. | Tombol "Resume CV" terlihat tanpa scroll di HP 360 px. File PDF terbuka/terunduh dalam ≤ 2 detik. |
 | U2 | Sebagai **recruiter**, saya ingin melihat pengalaman dan pendidikan berurutan waktu, agar tahu latar belakangnya. | Timeline terurut dari terbaru. Tiap entri memuat instansi, peran, periode, uraian. |
 | U3 | Sebagai **klien**, saya ingin melihat project beserta hasilnya, agar yakin pada kemampuannya. | Halaman detail memuat deskripsi, tech stack, galeri, dan tautan demo/repo bila ada. |
-| U4 | Sebagai **developer**, saya ingin membuka repo project, agar bisa menilai kode. | Halaman detail memuat tautan repo bila ada. Statistik GitHub (bahasa, bintang) tidak ditampilkan sejak impor GitHub dihapus. |
+| U4 | Sebagai **developer**, saya ingin membuka repo project, agar bisa menilai kode. | Halaman detail memuat tautan repo bila ada. |
 | U5 | Sebagai **pengunjung**, saya ingin mengganti bahasa dan tema, agar nyaman membaca. | Pilihan tersimpan. Semua teks (UI dan konten) berganti tanpa kehilangan halaman. |
 | U6 | Sebagai **pengunjung**, saya ingin mengirim pesan, agar bisa menghubungi Mirza. | Form memvalidasi input, menampilkan status berhasil/gagal yang jelas, dan pesan masuk di admin. |
-| U7 | ~~Sebagai **pengunjung**, saya ingin berlangganan newsletter dan berhenti kapan saja. | Email konfirmasi terkirim. Tautan berhenti berfungsi tanpa login. **2026-10-08:** form berlangganan dihapus dari beranda (F13); alur konfirmasi dan berhenti tetap berfungsi, tetapi saat ini tidak ada tempat mendaftar.~~ **Dihapus 2026-11-06** (F13). |
+| U7 | Berlangganan newsletter: **dihapus 2026-11-06** (F13) | — |
 | U8 | Sebagai **Super Admin**, saya ingin menambah project baru dalam dua bahasa, agar konten cepat diperbarui. | Project baru tampil di situs dalam ≤ 1 menit setelah disimpan (revalidate). |
 | U9 | Sebagai **Super Admin**, saya ingin mengganti file CV, agar semua orang mendapat versi terbaru. | Tautan unduh selalu mengarah ke CV terbaru. |
 | U10 | Sebagai **Super Admin**, saya ingin melihat log perubahan, agar tahu riwayat konten dan mendeteksi akses tak wajar. | Setiap tulis/ubah/hapus tercatat dengan waktu dan aktor. |

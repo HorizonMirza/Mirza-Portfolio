@@ -339,3 +339,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-18 | Revisi pemilik: keterangan "(Total Harian)" dan "(Daily Totals)" dihapus dari label kotak Pengunjung di Dashboard (DESIGN.md bagian 183) |
 | 2026-11-18 | Pembersihan kode tak terpakai: dua tipe, dua ekspor UI, enam kunci kamus admin, token CSS (`--accent`, `--chart-1`, alias shadcn, `--radius-sm`); teks tutup panel geser admin ikut bahasa (DESIGN.md bagian 184)
 | 2026-11-18 | Migrasi menghapus kolom SiteSetting `soundVolume`, `emailOnMessage`, `loginNotify`, `allowIndexing` atas persetujuan pemilik; dependency diperiksa ulang, tidak ada yang bisa dihapus (DESIGN.md bagian 185) |
+| 2026-11-18 | Pemeriksaan seluruh repo: catatan rilis v1.0.0 tanpa fitur yang dihapus, pemicu `pull_request` CI dihapus, SKILL.md memakai `useAssetPicker`, sisa templat di `.gitignore`/ESLint dihapus, baris fitur dan keputusan usang di PRD dan ARCHITECTURE diringkas (DESIGN.md bagian 186) |
