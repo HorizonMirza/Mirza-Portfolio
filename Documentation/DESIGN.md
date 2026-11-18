@@ -105,7 +105,7 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`).
 | Easing | `cubic-bezier(0.22, 1, 0.36, 1)` (keluar halus) |
 | Reveal saat scroll | fade + geser 12 px, 400 ms, sekali saja. Hanya elemen yang berada di bawah layar saat halaman dibuka |
 | Transisi halaman | fade 150 ms |
-| Hero | grid perspektif menuju garis horizon, pita cahaya naik sangat pelan |
+| Hero | potret dengan nama di belakangnya; lapisan zirah terbuka di bawah kursor lewat masker cairan, kursor titik + cincin (bagian 83–89) |
 
 **Teknologi gerak (urutan prioritas):**
 
@@ -115,14 +115,15 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`).
 | Lampu menu aktif bergeser antar halaman | Desktop: React `<ViewTransition name>` (View Transitions bawaan browser). Nav bawah HP: satu elemen lampu yang digeser per kolom lewat `transform`. Mati pada reduced-motion | 0 KB library |
 | Transisi antarhalaman | Desktop/laptop (pointer halus): View Transitions (CSS + dukungan Next.js/React). HP/tablet (`(hover: none) and (pointer: coarse)`): View Transitions dimatikan untuk pindah halaman, halaman baru masuk dengan animasi `transform` + `opacity` 320 ms searah urutan menu (`components/site/page-transitions.tsx`). Alasan dan hasil ukur di bagian 40 | < 1 KB |
 | Muncul/hilang elemen, hover, fokus | CSS `transition` + `@starting-style` | 0 KB |
-| Hero "Horizon" | Canvas 2D buatan sendiri (`components/site/horizon-canvas.tsx`) di atas latar CSS statis yang tampil lebih dulu | ±3 KB |
-| Menu HP, modal, daftar yang berubah urutan | **Motion**, hanya di komponen tersebut (`'use client'`) | seperlunya |
+| Masker cairan hero | Simulasi cairan WebGL2 buatan sendiri (`components/site/hero-fluid.ts`, `liquid-mask-portrait.tsx`), cadangan canvas 2D "Kabut" bila WebGL2 tidak tersedia | tanpa library |
+| Globe skill, grafik kontribusi GitHub, kotak commit | Canvas 2D buatan sendiri, berhenti saat di luar layar dan saat digulir (`lib/scroll-idle.ts`) | tanpa library |
+| Menu HP, modal, daftar yang berubah urutan | CSS `transition` + `@starting-style`; dialog dan panel memakai Radix (shadcn/ui) | 0 KB library animasi |
 
-Aturan: jangan memakai Motion untuk efek yang bisa dibuat dengan CSS. Browser yang belum mendukung scroll-driven animation atau View Transitions tetap menampilkan konten dengan benar, hanya tanpa animasi. GSAP, WebGL, dan smooth scroll (Lenis) tidak dipakai.
+Aturan: tidak ada library animasi (Motion tidak terpasang, GSAP dan smooth scroll Lenis tidak dipakai); CSS dulu, lalu canvas buatan sendiri. WebGL hanya dipakai untuk masker cairan hero. Browser yang belum mendukung scroll-driven animation atau View Transitions tetap menampilkan konten dengan benar, hanya tanpa animasi.
 
 `prefers-reduced-motion: reduce` → semua gerak dimatikan atau diganti perubahan opasitas instan. Hero menampilkan bingkai statis.
 
-**Anggaran animasi hero ("Horizon"):** canvas 2D, garis grid 24 (HP, bingkai statis bila hemat data/energi) / 48 (desktop), DPR maksimal 2 (1 di HP), berhenti saat tab tidak terlihat atau hero keluar layar, diinisialisasi setelah LCP (`requestIdleCallback`), tanpa library tambahan (< 4 KB). Teks dan pelat status tampil sebagai HTML biasa, jadi LCP tidak menunggu canvas. Tanpa WebGL, tanpa loader layar penuh.
+**Anggaran animasi hero:** potret dan nama tampil sebagai gambar dan HTML biasa, jadi LCP tidak menunggu kanvas. Gambar zirah dimuat setelah halaman tenang (±1,2 detik) atau saat pertama disentuh. Masker jejak memakai DPR maksimal 2, simulasi cairan paling besar 1× piksel CSS. Animasi berhenti saat hero di luar layar, tab tidak terlihat, kartu pembuka terbuka, atau halaman sedang digulir. Pada `prefers-reduced-motion` jejak lebih singkat tanpa pusaran. Efek bisa dimatikan di Admin → Pengaturan (`heroAnimation`). Tanpa library.
 
 **Tingkat perangkat** (prinsip dari referensi utama): `mobile` (< 768 px atau layar sentuh): bingkai statis atau gerak minimal. `tablet`: gerak ringan. `desktop`: gerak penuh dan miring mengikuti kursor. `prefers-reduced-motion` dan mode hemat data selalu membekukan gerak.
 
@@ -2111,4 +2112,13 @@ Permintaan pemilik: kode server dipindah ke folder `Backend/`. Dari tiga pilihan
 - **Cara kerjanya:** Backend tanpa `package.json` sendiri, supaya tidak ada salinan `next` kedua. `postinstall` membuat symlink `Backend/node_modules` → `Frontend/node_modules`. Alias `@backend/*` diatur di `tsconfig.json` dan `vitest.config.mts`. `next.config.ts` memakai akar repo sebagai `turbopack.root` dan `outputFileTracingRoot`, sehingga server image Docker kini di `Frontend/server.js` (Dockerfile disesuaikan). `vercel-ignore-build.sh` ikut memantau `Backend/`. ESLint dan Prettier memeriksa `../Backend` dengan aturan yang sama (`Backend/eslint.config.mjs`, `Backend/.prettierrc.mjs`).
 - **Batas arah impor** dijaga tes baru `backend-boundary.test.ts`: Backend tidak mengimpor Frontend (pengecualian: teks bawaan `Frontend/messages/*.json`), dan `Backend/lib` tidak mengimpor `Backend/features`. Tes kelengkapan kamus admin kini ikut memindai `Backend/features`.
 - **Pemeriksaan:** typecheck, lint, format, tes unit, dan build lolos, juga dari salinan repo yang bersih (tanpa `node_modules`, Prisma client, dan symlink), seperti di CI dan Vercel. Build standalone untuk Docker dijalankan dengan susunan image baru: `/api/health`, enam halaman, CSS, dan aset publik menjawab 200. CSS hasil build sama; satu-satunya selisih adalah kelas `lowercase` yang dulu ikut terbuat dari kalimat Inggris di kamus admin, bukan dari UI.
+
+## 189. Perapian dokumentasi setelah pemindahan ke Backend/ (2026-11-18)
+
+Permintaan pemilik: rapikan dokumentasi.
+
+- **ARCHITECTURE.md:** sebelas rujukan `lib/…` dan `features/…` yang kini ada di `Backend/` ditulis lengkap (`Backend/lib/rate-limit.ts`, `Backend/lib/email.ts`, dan seterusnya). Ditambah konvensi: path tanpa awalan merujuk ke `Frontend/src/`, kode server selalu berawalan `Backend/`.
+- **DESIGN.md bagian 2.4 (Gerak):** bagian ini dirujuk CLAUDE.md sebagai aturan animasi, jadi diselaraskan dengan kode. Baris hero "Horizon" (kanvas grid, sudah dihapus) diganti masker cairan WebGL2 buatan sendiri dengan cadangan kanvas 2D. Baris library Motion (tidak terpasang) diganti CSS + Radix. Ditambah baris globe skill, grafik kontribusi, dan kotak commit (canvas 2D yang berhenti saat di luar layar dan saat digulir). Anggaran animasi hero ditulis ulang sesuai kode. Bagian 1–10 lainnya tetap rancangan awal, sesuai petunjuk "Cara membaca".
+- **Hook pre-commit:** lint-staged ternyata hanya memproses berkas di folder tempat ia dijalankan, jadi berkas `Backend/` tidak pernah diperiksa sebelum commit (baru tertangkap di CI). Ditambah `Backend/.lintstagedrc.json` (aturan sama dengan Frontend), dan `.husky/pre-commit` kini menjalankan lint-staged di `Frontend/` lalu di `Backend/`. Diuji dengan baris berformat salah di `Backend/lib`: Prettier merapikannya saat commit.
+- **WORKFLOW.md, DEPLOYMENT.md, Backend/README.md:** hook pre-commit dua langkah dan apa yang disiapkan `pnpm install` untuk `Backend/` dicatat.
 

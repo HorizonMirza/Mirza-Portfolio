@@ -12,6 +12,6 @@ Kode server portofolio: Server Actions, query database (Prisma), autentikasi (Be
 | `scripts/` | `seed.ts` (`pnpm db:seed`), `seed-ids.ts`, `admin-reset-password.ts` |
 | `generated/prisma/` | Prisma client hasil `prisma generate` (tidak di-commit) |
 
-Tidak ada `package.json` di sini. Semua perintah dijalankan dari `Frontend/` (`pnpm install`, `pnpm lint`, `pnpm test`, ...). `pnpm install` membuat symlink `Backend/node_modules` ke `Frontend/node_modules` dan meng-generate Prisma client ke `generated/`.
+Tidak ada `package.json` di sini. Semua perintah dijalankan dari `Frontend/` (`pnpm install`, `pnpm lint`, `pnpm test`, ...). `pnpm install` membuat symlink `Backend/node_modules` ke `Frontend/node_modules` dan meng-generate Prisma client ke `generated/`. Konfigurasi `eslint.config.mjs`, `.prettierrc.mjs`, dan `.lintstagedrc.json` di sini memakai aturan yang sama dengan Frontend; hook pre-commit menjalankan lint-staged di folder ini juga.
 
 Aturan impor: Backend tidak mengimpor `Frontend/` (kecuali membaca teks bawaan `Frontend/messages/*.json`), dan `lib/` tidak mengimpor `features/`. Dijaga `Frontend/tests/unit/backend-boundary.test.ts`. Penjelasan lengkap: `Documentation/ARCHITECTURE.md` bagian 4.

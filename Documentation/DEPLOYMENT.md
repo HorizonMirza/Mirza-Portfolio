@@ -10,7 +10,7 @@ Prasyarat: Node.js 24 LTS (lihat `Frontend/.nvmrc`), pnpm 10 (`corepack enable`)
 
 ```bash
 cd Frontend
-pnpm install                  # sekaligus menjalankan prisma generate dari ../Database/schema.prisma
+pnpm install                  # juga: prisma generate ke ../Backend/generated, symlink ../Backend/node_modules
 cp .env.example .env.local    # isi DATABASE_URL, BETTER_AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD
 pnpm db:migrate               # terapkan migrasi di ../Database/migrations
 pnpm db:seed                  # isi data awal dari ../Database/seed + akun admin (aman dijalankan berulang)

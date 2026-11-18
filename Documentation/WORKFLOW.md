@@ -110,7 +110,7 @@ Perubahan desain, fitur, atau struktur data dikerjakan Claude di kode lalu di-pu
 - Semua secret ada di Vercel Environment Variables dan GitHub Actions Secrets.
 - Lokal memakai `.env.local` (tidak di-commit). Repo hanya berisi `Frontend/.env.example` tanpa nilai asli.
 - Bila secret terlanjur ter-commit: anggap bocor, **cabut dan buat ulang secretnya**, baru bersihkan repo.
-- `gitleaks` berjalan di CI (job "Scan secret"). Hook pre-commit hanya menjalankan lint-staged (ESLint dan Prettier).
+- `gitleaks` berjalan di CI (job "Scan secret"). Hook pre-commit (`Frontend/.husky/pre-commit`) hanya menjalankan lint-staged (ESLint dan Prettier), dua kali: di `Frontend/` (konfigurasi di `package.json`) dan di `Backend/` (`Backend/.lintstagedrc.json`), karena lint-staged hanya memproses berkas di folder tempat ia dijalankan.
 
 ## 10. Pemeliharaan
 

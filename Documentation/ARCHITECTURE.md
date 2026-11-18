@@ -35,7 +35,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
-| Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
+| Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `Backend/lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
 | GitHub | **`fetch` biasa** ke GraphQL API untuk kalender kontribusi beranda dan footer (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil). | Hanya satu endpoint, tidak perlu library | Octokit, scraping |
 | Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (`PageView`, `LoginEvent`, `RateLimit`, `AuditLog`, sesi dan verifikasi kedaluwarsa), ringkas statistik ke `PageViewDaily`, hapus berkas unggahan yatim | GitHub Actions cron (tetap dipakai untuk backup) |
 | Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Web Analytics** + **Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
@@ -74,7 +74,7 @@ flowchart LR
 
 | Halaman | Render | Cache |
 |---|---|---|
-| Home, About, Experience, Skills, Projects, detail Project | Static (SSG) + ISR. Data lewat `unstable_cache` bertag (`features/*/public.ts`); aksi admin memanggil `updateTag` + `revalidatePath` literal `/id` dan `/en` sehingga perubahan langsung tampil | Tag per entitas (`lib/cache-tags.ts`) |
+| Home, About, Experience, Skills, Projects, detail Project | Static (SSG) + ISR. Data lewat `unstable_cache` bertag (`features/*/public.ts`); aksi admin memanggil `updateTag` + `revalidatePath` literal `/id` dan `/en` sehingga perubahan langsung tampil | Tag per entitas (`Backend/lib/cache-tags.ts`) |
 | Detail project yang terbit setelah build | Dirender saat pertama diminta (`dynamicParams = true` di `[slug]`) lalu di-cache | Tag `projects` |
 | Kontak, Privasi, 404 | Static | — |
 | `/admin/*` | Dinamis, tanpa cache, `noindex` | — |
@@ -87,7 +87,7 @@ Catatan:
 - **Jangan** `export const dynamicParams = false` di `app/[locale]/layout.tsx`: render ulang ISR setelah revalidasi gagal (`NoFallbackError`) dan semua halaman publik menjadi 404. Locale asing ditolak lewat `hasLocale()`.
 - **404 untuk URL tak dikenal:** tanpa titik → proxy mengalihkan ke `/id/...` atau `/en/...` lalu `[locale]/[...rest]` menampilkan 404 bahasa itu. Dengan titik (mis. `/x.txt`, `/wp-login.php`) → proxy melewatinya (matcher mengecualikan berkas), lalu rewrite `afterFiles` di `next.config.ts` menyajikan 404 bahasa Indonesia dengan URL tetap dan status 404. `afterFiles` diperiksa setelah berkas `public/`, `_next/static`, dan halaman non-dinamis, jadi berkas dan `robots.txt`/`sitemap.xml` tidak terpengaruh. `/api/*` yang tidak ada dijawab JSON 404 (`app/api/[...rest]`).
 - Halaman publik tanpa filter: filter Pengalaman dihapus 2026-10-03 dan filter Project dihapus 2026-10-08 (revisi pemilik, DESIGN.md). Filter kategori yang tersisa hanya di globe skill beranda (komponen klien).
-- Gambar publik hanya dari akun Cloudinary di `CLOUDINARY_CLOUD_NAME` (`lib/public-image.ts`); gambar lain dilewati agar halaman tidak gagal render.
+- Gambar publik hanya dari akun Cloudinary di `CLOUDINARY_CLOUD_NAME` (`Backend/lib/public-image.ts`); gambar lain dilewati agar halaman tidak gagal render.
 
 ## 4. Struktur Folder
 
@@ -129,6 +129,8 @@ Catatan:
 ├── .github/                  # workflows CI
 └── .agents/skill/           # skill proyek untuk Claude Code
 ```
+
+Path di dokumen ini tanpa awalan (mis. `lib/scroll-idle.ts`, `components/admin/visits-chart.tsx`) merujuk ke `Frontend/src/`; kode server selalu ditulis dengan awalan `Backend/`.
 
 Aturan: satu domain, satu folder: logika di `Backend/features/<domain>/`, komponen di `Frontend/src/features/<domain>/components/`. Arah impor satu: Frontend boleh mengimpor Backend, Backend tidak boleh mengimpor Frontend (kecuali membaca teks bawaan `Frontend/messages/*.json`), dan `Backend/lib/` tidak boleh mengimpor `Backend/features/`. Dijaga `tests/unit/backend-boundary.test.ts`.
 
@@ -327,7 +329,7 @@ erDiagram
       datetime createdAt "dihapus cron setelah 90 hari"
     }
     SiteText {
-      string key PK "Namespace.nama, dibatasi daftar di features/site-text/catalog.ts"
+      string key PK "Namespace.nama, dibatasi daftar di Backend/features/site-text/catalog.ts"
       string value_id "kosong = teks bawaan"
       string value_en "kosong = teks bawaan"
     }
@@ -335,7 +337,7 @@ erDiagram
 
 Catatan:
 - `User`, `Session`, `Account`, dan `Verification` mengikuti skema Better Auth (dibuat di M2 dengan `@better-auth/cli generate`, lalu disesuaikan). Hash password disimpan di `Account.password`, bukan di `User`. Kolom `passwordHash` di skema M1 dihapus lewat migrasi M2 (tabelnya masih kosong).
-- `SiteSetting` (Admin → Pengaturan, DESIGN.md bagian 119) disimpan per kolom lewat `saveSiteOption` (`features/settings/options.ts` membatasi kolom dan nilai). `LoginEvent` (Admin → Akun, bagian 120) diisi hook `hooks.after` Better Auth untuk `/sign-in/email`: login berhasil (dengan id sesinya) dan password salah. Tanpa IP dan tanpa email yang diketik. Keluarkan perangkat menghapus baris `Session` dan menulis `AuditLog` berjenis `signout`.
+- `SiteSetting` (Admin → Pengaturan, DESIGN.md bagian 119) disimpan per kolom lewat `saveSiteOption` (`Backend/features/settings/options.ts` membatasi kolom dan nilai). `LoginEvent` (Admin → Akun, bagian 120) diisi hook `hooks.after` Better Auth untuk `/sign-in/email`: login berhasil (dengan id sesinya) dan password salah. Tanpa IP dan tanpa email yang diketik. Keluarkan perangkat menghapus baris `Session` dan menulis `AuditLog` berjenis `signout`.
 - `User.role` ditambahkan sebagai additional field Better Auth: `USER` atau `SUPER_ADMIN`. Hanya satu `SUPER_ADMIN` yang dibuat lewat seed. Tidak ada registrasi publik.
 - `RateLimit` dipakai helper rate limit untuk form publik dan `/api/track`. Baris lama dibersihkan Vercel Cron.
 - `PageView.visitorHash` = hash(IP + user-agent + garam harian). Garam berganti tiap hari sehingga pengunjung tidak bisa dilacak lintas hari.
@@ -350,15 +352,15 @@ Mutasi memakai **Server Actions**, bukan REST. Setiap action:
 1. memeriksa sesi dan role `SUPER_ADMIN` di sisi server,
 2. memvalidasi input dengan Zod,
 3. menulis ke database dan `AuditLog` dalam satu transaksi,
-4. memanggil `revalidateContent()` (`lib/revalidate.ts`): `updateTag` per domain lalu `revalidatePath` literal `/id` dan `/en`.
+4. memanggil `revalidateContent()` (`Backend/lib/revalidate.ts`): `updateTag` per domain lalu `revalidatePath` literal `/id` dan `/en`.
 
-Pola diterapkan di `Backend/features/<domain>/actions.ts` dan diuji di `tests/unit/authz.test.ts` (setiap action menolak tanpa sesi sebelum menyentuh database). Hasil action berbentuk `ActionResult` (`lib/action-result.ts`): pesan untuk toast dan `fieldErrors` untuk form. Catatan:
+Pola diterapkan di `Backend/features/<domain>/actions.ts` dan diuji di `tests/unit/authz.test.ts` (setiap action menolak tanpa sesi sebelum menyentuh database). Hasil action berbentuk `ActionResult` (`Backend/lib/action-result.ts`): pesan untuk toast dan `fieldErrors` untuk form. Catatan:
 
 - **Jangan** `revalidatePath('/[locale]', 'layout')` dan jangan `dynamicParams = false` di layout locale: keduanya membuat halaman publik 404 setelah revalidasi (lihat Strategi render).
 - Berkas `'use server'` hanya boleh mengekspor fungsi async. Konstanta dan skema ditaruh di `schema.ts`.
 - Urutan project, kategori, dan skill diubah dengan tombol naik/turun (aksesibel untuk keyboard), urutan ditulis ulang 0..n dalam transaksi. Pengalaman diurutkan dari tanggal mulai.
 - Log audit tidak memuat isi pesan, nama, atau email pengunjung. Email dan WhatsApp profil disamarkan.
-- UI admin dua bahasa (ID/EN, cookie `mmirza-admin-lang`; kamus di `lib/admin-i18n-en.ts`). Konten yang dikelola tetap dua bahasa.
+- UI admin dua bahasa (ID/EN, cookie `mmirza-admin-lang`; kamus di `Backend/lib/admin-i18n-en.ts`). Konten yang dikelola tetap dua bahasa.
 
 | Modul | Halaman | Action |
 |---|---|---|
@@ -371,7 +373,7 @@ Pola diterapkan di `Backend/features/<domain>/actions.ts` dan diuji di `tests/un
 | Halaman situs (8 modul: Bagian Awal sebagai tab "Kartu pembuka" di Home sejak 2026-11-11, Home, About, Experience, Projects, Contact, Navbar, Footer; Privasi dan Halaman lain dihapus 2026-11-11) | `/admin/pages/[module]` | `saveSiteTexts` (teks dua bahasa per modul, menimpa `messages/*.json`; tidak untuk Bagian Awal dan Home sejak 2026-11-10), `saveIntroNotice` (Bagian Awal: hanya isi kartu pembuka), `saveHeroRoles` (Home: peran di bawah foto); foto utama beranda tidak diganti dari admin sejak 2026-11-13 (target `hero-portrait` tetap ada di server; tab Foto beranda dihapus 2026-11-12, foto profil di Akun) |
 | Berkas | di Profil, Project, Pengalaman (logo + foto kegiatan), Skill (logo), dan kartu ID Kontak (`contact-photo`, 2026-11-15) | `signAssetUpload`, `attachUploadedAsset`, `removeAsset` (alt dua bahasa diturunkan otomatis dari konteks, sejak 2026-11-15 tanpa isian alt; target `about-chip-logo` untuk logo chip kartu About) |
 | Pesan | `/admin/messages`, `/[id]` | `setMessageStatus`, `deleteMessage` |
-| Pengaturan | `/admin/settings` | `saveSiteOption` (satu opsi per panggilan, kolom dan nilai dibatasi `features/settings/options.ts`) |
+| Pengaturan | `/admin/settings` | `saveSiteOption` (satu opsi per panggilan, kolom dan nilai dibatasi `Backend/features/settings/options.ts`) |
 | Akun | `/admin/account` | `changePassword`, `renameAccount`, `changeAccountEmail` (nama dan email meminta password lagi) |
 
 **Unggah Cloudinary** (tanpa SDK): `signAssetUpload` membuat tanda tangan SHA-1 di server (secret tidak ke browser) → browser mengunggah langsung ke `api.cloudinary.com` → `attachUploadedAsset` memverifikasi tanda tangan respons (`public_id` + `version`), memeriksa ulang folder, tipe, format, ukuran, dan asal URL, lalu mencatat `Asset`. Berkas yang ditolak atau diganti dihapus dari Cloudinary. Tanpa kunci `CLOUDINARY_*`, form unggah diganti pesan "belum aktif". `next/image` hanya mengizinkan `res.cloudinary.com/<CLOUDINARY_CLOUD_NAME>/`.
@@ -384,7 +386,7 @@ Form kontak memakai **Server Action** dengan `useActionState`, bukan route handl
 |---|---|
 | `submitContact` | Honeypot → validasi → rate limit 5/jam per IP-hash → simpan `Message` (IP hanya hash) → notifikasi ke `CONTACT_TO_EMAIL` lewat Resend bila diatur (gagal kirim tidak menggagalkan pengunjung) |
 
-Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). Template di `Backend/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
+Email dikirim lewat REST API Resend dengan `fetch` (`Backend/lib/email.ts`, tanpa SDK). Template di `Backend/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
 
 ### 6.3 Route Handlers
 
@@ -392,7 +394,7 @@ Email dikirim lewat REST API Resend dengan `fetch` (`lib/email.ts`, tanpa SDK). 
 |---|---|---|---|
 | POST | `/api/track` | Publik, same-origin, rate limit 120/jam per IP | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
 | GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
-| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` sesuai masa simpan, `LoginEvent` > 90 hari, `RateLimit` > 1 hari, `AuditLog` > 365 hari, serta `Session` dan `Verification` yang sudah kedaluwarsa, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Tiap langkah berdiri sendiri (`lib/run-steps.ts`): satu yang gagal tidak menghentikan yang lain, dicatat, dikirim ke Sentry bila aktif, dan respons 500 menyebut langkahnya (ERR-01 audit 17-11). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
+| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` sesuai masa simpan, `LoginEvent` > 90 hari, `RateLimit` > 1 hari, `AuditLog` > 365 hari, serta `Session` dan `Verification` yang sudah kedaluwarsa, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Tiap langkah berdiri sendiri (`Backend/lib/run-steps.ts`): satu yang gagal tidak menghentikan yang lain, dicatat, dikirim ke Sentry bila aktif, dan respons 500 menyebut langkahnya (ERR-01 audit 17-11). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
 | GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
 
 ### 6.4 Kontrak
@@ -427,7 +429,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | XSS | React escape default. Markdown lewat `rehype-sanitize`. CSP (`lib/csp.ts`): halaman publik statis tanpa nonce (`script-src 'self' 'unsafe-inline'`, arahan lain ketat), panel admin dinamis dengan nonce per permintaan + `'strict-dynamic'` (`src/proxy.ts`). Satu-satunya `dangerouslySetInnerHTML` adalah JSON-LD dengan `<` di-escape (`lib/json-ld.tsx`) |
 | Injeksi SQL | Hanya lewat Prisma (parameterisasi). Tidak ada `$queryRawUnsafe` |
 | CSRF | Server Actions memeriksa Origin. Route handler mutasi memeriksa `Origin`/`Sec-Fetch-Site` |
-| Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik. IP klien hanya dibaca dari sumber tepercaya (`lib/client-ip.ts`, `advanced.ipAddress.trustedProxies`): di Vercel entri pertama `x-forwarded-for`, di luar Vercel entri paling kanan atau melewati `TRUSTED_PROXIES` (audit 2026-11-01, SEC-02) |
+| Brute force | Rate limit login bawaan Better Auth dan tabel `RateLimit` untuk form publik. IP klien hanya dibaca dari sumber tepercaya (`Backend/lib/client-ip.ts`, `advanced.ipAddress.trustedProxies`): di Vercel entri pertama `x-forwarded-for`, di luar Vercel entri paling kanan atau melewati `TRUSTED_PROXIES` (audit 2026-11-01, SEC-02) |
 | Banjir data publik | Beacon `/api/track`: 120 per jam per IP dan batas global 5.000 baris per hari, karena cek asal bisa dipalsukan klien non-browser (SEC-01). Unduhan CV tercatat paling banyak 3 kali per jam per IP (SEC-03). Nama dan subjek pesan dijadikan satu baris sebelum masuk subjek email notifikasi (SEC-04) |
 | Spam form | Honeypot + rate limit + validasi panjang. CAPTCHA hanya jika masih ada spam |
 | Upload berbahaya | Unggah bertanda tangan langsung ke Cloudinary. Respons diverifikasi di server, tipe (gambar, PDF) dan ukuran (5 MB) dicek ulang, berkas ditolak dihapus |
@@ -436,7 +438,7 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=moderate` di CI (advisory tanpa perbaikan di alat dev diabaikan eksplisit lewat `auditConfig.ignoreGhsas` di `pnpm-workspace.yaml`), semua action GitHub dipin ke SHA, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
 | Akses admin | Satu akun, log audit, ganti password dengan rate limit. Email login baru lewat hook Better Auth + Resend (`Backend/emails/login-notification.tsx`, ADR 17). Riwayat masuk 90 hari di Admin → Akun |
-| Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `lib/auth-guard.ts`) |
+| Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `Backend/lib/auth-guard.ts`) |
 
 Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
 
