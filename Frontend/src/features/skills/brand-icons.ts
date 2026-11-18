@@ -4,7 +4,8 @@
 // Ikon dari sumber lain ditandai di bagian bawah; logo Java dari Devicon (MIT, lisensinya di
 // scripts/skill-logos/SOURCES.md). Semua logo tetap merek dagang pemiliknya dan hanya dipakai untuk
 // menunjukkan alat yang dikuasai.
-// Hanya diimpor di server: klien hanya menerima path skill yang tampil.
+// Hanya diimpor di server: klien hanya menerima path skill yang tampil. Komponen klien admin yang
+// butuh beberapa ikon memakai client-icon-paths.ts, bukan tabel ini (PERF-01).
 
 // viewBox bawaan 0 0 24 24 (Simple Icons); evenOdd untuk logo yang lubangnya dibentuk path dalam
 export type BrandIcon = {

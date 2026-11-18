@@ -26,7 +26,7 @@ import { RemoveAssetButton } from '@/features/assets/components/remove-asset-but
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { uploadAsset } from '@/features/assets/upload-client'
 import type { AssetView } from '@/features/assets/components/asset-panels'
-import { BRAND_ICONS } from '@/features/skills/brand-icons'
+import { CLIENT_ICON_PATHS } from '@/features/skills/client-icon-paths'
 import type { SkillOptionGroup } from '@/features/skills/queries'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
@@ -283,7 +283,7 @@ export function ProjectLive({
                             fill="currentColor"
                             aria-hidden="true"
                           >
-                            <path d={BRAND_ICONS.github.path} />
+                            <path d={CLIENT_ICON_PATHS.github} />
                           </svg>
                         )}
                         {tx[key]}

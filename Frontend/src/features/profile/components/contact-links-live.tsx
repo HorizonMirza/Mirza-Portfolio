@@ -13,7 +13,7 @@ import { InlineInput, LiveErrors } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import type { AssetView } from '@/features/assets/components/asset-panels'
 import { useRegisterExtraSave } from '@/features/site-text/components/site-text-live'
-import { BRAND_ICONS } from '@/features/skills/brand-icons'
+import { CLIENT_ICON_PATHS, type ClientIconSlug } from '@/features/skills/client-icon-paths'
 import { cn } from '@/lib/utils'
 
 import { saveContactLinks } from '../actions'
@@ -24,10 +24,10 @@ type SocialKey = 'linkedin' | 'github' | 'instagram'
 type FieldName =
   'whatsapp' | 'email' | 'cvUrl' | 'socials.linkedin' | 'socials.github' | 'socials.instagram'
 
-function Brand({ slug }: { slug: string }) {
+function Brand({ slug }: { slug: ClientIconSlug }) {
   return (
     <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
-      <path d={BRAND_ICONS[slug].path} />
+      <path d={CLIENT_ICON_PATHS[slug]} />
     </svg>
   )
 }
