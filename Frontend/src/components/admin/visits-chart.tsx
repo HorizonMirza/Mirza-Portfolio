@@ -1,27 +1,19 @@
 'use client'
 
-import { useId } from 'react'
-import {
-  Area,
-  CartesianGrid,
-  ComposedChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
+import {
+  areaPath,
+  monotonePath,
+  niceTicks,
+  pickTickIndexes,
+  segments,
+  type XY,
+} from '@/lib/chart-geometry'
 import { formatDayKey, formatNumber } from '@/lib/format'
 
 type Point = { day: string; views: number; visitors: number | null }
-
-type TooltipProps = { active?: boolean; payload?: ReadonlyArray<{ payload?: unknown }> }
-
-function ChartTooltip({ active, payload }: TooltipProps) {
-  if (!active || !payload?.length) return null
-  return <TooltipBody point={payload[0]?.payload as Point | undefined} />
-}
 
 function TooltipBody({ point }: { point?: Point }) {
   const { lang } = useAdminLang()
@@ -61,17 +53,58 @@ function TooltipBody({ point }: { point?: Point }) {
 // putus-putus, titik bercincin saat disorot, dan tooltip berisi hari, tanggal, serta dua angka.
 // Warna mengikuti teks tema (hitam-putih seperti panel admin). Grafik hanya visual (aria-hidden);
 // datanya ada di tabel Rincian per hari.
+// Grafik SVG buatan sendiri (pengganti recharts, audit 2026-11-17 PERF-04: library itu 102 KB gzip
+// untuk satu grafik). Ukuran mengikuti lebar kotak; geometri ada di lib/chart-geometry.ts.
+const HEIGHT = 288
+const PAD = { top: 12, right: 12, bottom: 30, left: 36 }
+const FONT = 12
+
 export function VisitsChart({ data }: { data: Point[] }) {
   const { lang } = useAdminLang()
   const id = useId().replace(/:/g, '')
+  const box = useRef<HTMLDivElement>(null)
+  const [width, setWidth] = useState(0)
+  const [hover, setHover] = useState<number | null>(null)
+
+  useEffect(() => {
+    const el = box.current
+    if (!el) return
+    const update = () => setWidth(Math.round(el.getBoundingClientRect().width))
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  const n = data.length
+  const plotW = Math.max(0, width - PAD.left - PAD.right)
+  const plotH = HEIGHT - PAD.top - PAD.bottom
+  const bottom = PAD.top + plotH
+  const maxValue = data.reduce((m, d) => Math.max(m, d.views, d.visitors ?? 0), 0)
+  const ticks = niceTicks(maxValue)
+  const top = ticks[ticks.length - 1]
+  const x = (i: number) => PAD.left + (n <= 1 ? plotW / 2 : (i * plotW) / (n - 1))
+  const y = (v: number) => PAD.top + plotH * (1 - v / top)
+  const viewPoints: XY[] = data.map((d, i) => ({ x: x(i), y: y(d.views) }))
+  const visitorRuns = segments(
+    data.map((d, i) => (d.visitors === null ? null : { x: x(i), y: y(d.visitors) })),
+  )
+  const labelIdx = pickTickIndexes(n, plotW, 78)
+
+  function onMove(event: React.PointerEvent<SVGRectElement>) {
+    if (n === 0 || plotW === 0) return
+    const rect = event.currentTarget.getBoundingClientRect()
+    const ratio = (event.clientX - rect.left) / rect.width
+    setHover(Math.min(n - 1, Math.max(0, Math.round(ratio * (n - 1)))))
+  }
+
+  const point = hover === null ? undefined : data[hover]
+  const flip = hover !== null && x(hover) > width / 2
+
   return (
-    <div className="h-72 w-full" aria-hidden="true">
-      <ResponsiveContainer width="100%" height="100%">
-        <ComposedChart
-          data={data}
-          margin={{ top: 12, right: 12, bottom: 0, left: -12 }}
-          accessibilityLayer={false}
-        >
+    <div ref={box} className="relative h-72 w-full" aria-hidden="true">
+      {width > 0 && n > 0 ? (
+        <svg width={width} height={HEIGHT} className="block overflow-visible">
           <defs>
             <linearGradient id={`${id}-views`} x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="var(--text)" stopOpacity={0.32} />
@@ -82,60 +115,122 @@ export function VisitsChart({ data }: { data: Point[] }) {
               <stop offset="100%" stopColor="var(--text-muted)" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="3 6" />
-          <XAxis
-            dataKey="day"
-            tickFormatter={(day: string) => formatDayKey(day, lang)}
-            tickLine={false}
-            axisLine={{ stroke: 'var(--border-strong)' }}
-            tickMargin={10}
-            minTickGap={32}
-            interval="preserveStartEnd"
-            tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
+          {ticks.map((tick) => (
+            <g key={tick}>
+              <line
+                x1={PAD.left}
+                x2={PAD.left + plotW}
+                y1={y(tick)}
+                y2={y(tick)}
+                stroke="var(--border)"
+                strokeDasharray="3 6"
+              />
+              <text
+                x={PAD.left - 8}
+                y={y(tick)}
+                dy="0.35em"
+                textAnchor="end"
+                fill="var(--text-muted)"
+                fontSize={FONT}
+              >
+                {formatNumber(tick, lang)}
+              </text>
+            </g>
+          ))}
+          <line
+            x1={PAD.left}
+            x2={PAD.left + plotW}
+            y1={bottom}
+            y2={bottom}
+            stroke="var(--border-strong)"
           />
-          <YAxis
-            allowDecimals={false}
-            tickLine={false}
-            axisLine={false}
-            tickCount={5}
-            width={48}
-            tickMargin={6}
-            tick={{ fill: 'var(--text-muted)', fontSize: 12 }}
-          />
-          <Tooltip
-            content={(props) => <ChartTooltip active={props.active} payload={props.payload} />}
-            cursor={{ stroke: 'var(--text-muted)', strokeWidth: 1, strokeDasharray: '4 4' }}
-          />
-          <Area
-            type="monotone"
-            dataKey="visitors"
-            stroke="var(--text-muted)"
-            strokeWidth={1.5}
-            strokeDasharray="5 4"
-            fill={`url(#${id}-visitors)`}
-            dot={false}
-            activeDot={{
-              r: 4,
-              fill: 'var(--surface)',
-              stroke: 'var(--text-muted)',
-              strokeWidth: 2,
-            }}
-            connectNulls={false}
-            isAnimationActive={false}
-          />
-          <Area
-            type="monotone"
-            dataKey="views"
+          {labelIdx.map((i) => (
+            <text
+              key={data[i].day}
+              x={x(i)}
+              y={bottom + 10 + FONT}
+              textAnchor={i === 0 && n > 1 ? 'start' : i === n - 1 && n > 1 ? 'end' : 'middle'}
+              fill="var(--text-muted)"
+              fontSize={FONT}
+            >
+              {formatDayKey(data[i].day, lang)}
+            </text>
+          ))}
+          {visitorRuns.map((run) => (
+            <g key={run.start}>
+              <path d={areaPath(run.items, bottom)} fill={`url(#${id}-visitors)`} />
+              <path
+                d={monotonePath(run.items)}
+                fill="none"
+                stroke="var(--text-muted)"
+                strokeWidth={1.5}
+                strokeDasharray="5 4"
+              />
+            </g>
+          ))}
+          <path d={areaPath(viewPoints, bottom)} fill={`url(#${id}-views)`} />
+          <path
+            d={monotonePath(viewPoints)}
+            fill="none"
             stroke="var(--text)"
             strokeWidth={2.25}
             strokeLinecap="round"
-            fill={`url(#${id}-views)`}
-            dot={false}
-            activeDot={{ r: 5, fill: 'var(--surface)', stroke: 'var(--text)', strokeWidth: 2.5 }}
-            isAnimationActive={false}
           />
-        </ComposedChart>
-      </ResponsiveContainer>
+          {hover !== null ? (
+            <g>
+              <line
+                x1={x(hover)}
+                x2={x(hover)}
+                y1={PAD.top}
+                y2={bottom}
+                stroke="var(--text-muted)"
+                strokeDasharray="4 4"
+              />
+              {data[hover].visitors !== null ? (
+                <circle
+                  cx={x(hover)}
+                  cy={y(data[hover].visitors ?? 0)}
+                  r={4}
+                  fill="var(--surface)"
+                  stroke="var(--text-muted)"
+                  strokeWidth={2}
+                />
+              ) : null}
+              <circle
+                cx={x(hover)}
+                cy={y(data[hover].views)}
+                r={5}
+                fill="var(--surface)"
+                stroke="var(--text)"
+                strokeWidth={2.5}
+              />
+            </g>
+          ) : null}
+          <rect
+            x={PAD.left}
+            y={PAD.top}
+            width={plotW}
+            height={plotH}
+            fill="transparent"
+            style={{ touchAction: 'pan-y' }}
+            onPointerMove={onMove}
+            onPointerDown={onMove}
+            onPointerLeave={() => setHover(null)}
+          />
+        </svg>
+      ) : null}
+      {point && hover !== null ? (
+        <div
+          className="pointer-events-none absolute z-10"
+          style={{
+            top: PAD.top,
+            left: x(hover),
+            transform: flip ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)',
+          }}
+        >
+          <TooltipBody point={point} />
+        </div>
+      ) : null}
     </div>
   )
 }
