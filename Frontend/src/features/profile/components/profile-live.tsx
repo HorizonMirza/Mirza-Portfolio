@@ -141,12 +141,17 @@ export function ProfileLive({
     </button>
   )
 
-  const messages = Object.entries(errors).map(([key, e]) => ({
-    id: `${key}-error`,
-    text: `${key.replace(/_(id|en)$/, (m) => ` (${t(LANG_NAME[m.slice(1) as Lang])})`)}: ${t(
-      (e as { message?: string })?.message ?? '',
-    )}`,
-  }))
+  // pesan dari skema sudah menyebut nama isiannya ("Bio wajib diisi"); yang ditambahkan hanya
+  // bahasanya, bukan nama kolom teknis seperti aboutBandRoles (TYPO-05 audit 17-11)
+  const messages = Object.entries(errors).map(([key, e]) => {
+    const keyLang = key.match(/_(id|en)$/)?.[1] as Lang | undefined
+    return {
+      id: `${key}-error`,
+      text: `${t((e as { message?: string })?.message ?? '')}${
+        keyLang ? ` (${t(LANG_NAME[keyLang])})` : ''
+      }`,
+    }
+  })
 
   return (
     <>
