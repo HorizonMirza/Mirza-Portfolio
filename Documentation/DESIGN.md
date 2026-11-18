@@ -1887,7 +1887,7 @@ Garis atas panel isi (`<main>`) dulu berupa bayangan inset (`.admin-glass-panel`
 Pemilik memilih desain 01 dari 10 demo Dashboard (data contoh di artifact demo).
 - **Empat kotak angka** (tautan): Pengunjung (`#kunjungan`), Tayangan Halaman (`#kunjungan`), Unduhan CV (Kaki Halaman), Pesan Masuk (Pesan). Tiap kotak: jumlah periode, naik/turun dibanding periode sebelumnya yang sama panjang (hijau ▲ / merah ▼, "—" bila belum ada pembanding; keterangan untuk pembaca layar), dan grafik kecil per hari.
 - **Periode 7 / 30 / 90 hari** lewat tautan `?range=` (tetap server component, tanpa JavaScript tambahan; nilai lain kembali ke 30). Periode mengubah kotak angka, grafik, dan tabel.
-- **Kunjungan harian** (recharts): tayangan garis tebal dengan arsiran, pengunjung unik garis putus, warna teks tema (hitam-putih); tooltip tanggal + dua angka; "Lihat sebagai tabel" berisi Tanggal, Tayangan, Pengunjung.
+- **Kunjungan harian** (SVG buatan sendiri sejak 2026-11-18, bagian 179; sebelumnya recharts): tayangan garis tebal dengan arsiran, pengunjung unik garis putus, warna teks tema (hitam-putih); tooltip tanggal + dua angka; "Lihat sebagai tabel" berisi Tanggal, Tayangan, Pengunjung.
 - **Sumber data** (`features/dashboard/queries.ts` `getDailyStats`): kunjungan mentah (`PageView`) untuk hari di dalam masa simpan (Pengaturan: 30/90/365 hari), ringkasan harian `PageViewDaily` untuk tayangan yang lebih lama; pengunjung unik hanya dari data mentah, jadi hari di luar masa simpan ditandai "—" dan naik/turun pengunjung tidak dihitung. Unduhan CV dari `CvDownload`, pesan dari `Message`, semua per hari WIB.
 - **Pesan terbaru** (4): nama, subjek, status Baru/Dibaca/Arsip, waktu WIB; tiap baris membuka pesannya. **Konten di situs**: Project terbit (+ draf), Pengalaman (kerja dan organisasi), Pendidikan, Skill (+ jumlah kategori), tiap baris tautan ke halaman pengelolanya.
 
@@ -2020,4 +2020,13 @@ Lima temuan SEC dari audit diperiksa, lalu dikerjakan.
 - **SEC-03 Pin action:** `actions/checkout` (v7.0.1), `actions/setup-node` (v7.1.0), dan `actions/upload-artifact` (v7.0.2) dipin ke SHA.
 - **SEC-04 docker login:** `GITHUB_TOKEN` dan `github.actor` lewat `env`, bukan interpolasi di perintah shell.
 - **SEC-05 Dockerfile:** tidak diubah caranya (perubahan ke `--mount=type=secret` tidak bisa diuji di sini); ditambah komentar di Dockerfile dan peringatan di DEPLOYMENT.md agar URL production tidak pernah dipakai saat `docker build`.
+
+## 179. Perbaikan kinerja dari audit 17-11 (2026-11-18)
+
+Empat temuan PERF diukur di build production lokal, lalu dikerjakan (atas persetujuan "eksekusi semuanya", termasuk menghapus dependency `recharts`).
+
+- **PERF-01 Tabel ikon:** komponen klien admin (editor project, kartu kontak Footer) memakai `features/skills/client-icon-paths.ts` (4 ikon), bukan seluruh `BRAND_ICONS`. Tes menjaga path-nya sama. Chunk 67 KB (29,5 KB gzip) tidak lagi dimuat di dua halaman itu.
+- **PERF-02 Kotak commit:** `components/shared/commit-grid.tsx` menghentikan `requestAnimationFrame` saat kanvas tidak terlihat (`IntersectionObserver`) dan melewatkan bingkai selama gulir (`lib/scroll-idle.ts`). Terukur: 60 panggilan per detik saat terlihat, 0 saat disembunyikan, 60 lagi saat terlihat.
+- **PERF-03 Kalender GitHub:** footer mengirim kalender kontribusi ke komponen klien dalam bentuk ringkas (`lib/contributions-pack.ts`, tanggal pertama + satu angka per hari), sekitar 1 KB dibanding 12 KB objek per hari. Data yang tidak berurutan berarti grafik tidak ditampilkan.
+- **PERF-04 Grafik Dashboard:** `components/admin/visits-chart.tsx` digambar dengan SVG buatan sendiri (kurva monoton, grid, hover, tooltip); geometri di `lib/chart-geometry.ts` dengan tes. `recharts` dan dependensi turunannya dihapus dari `package.json`. JS Dashboard turun dari 345 KB menjadi 239 KB gzip. Tampilan mengikuti Desain 01 pilihan pemilik; tinggi grafik diukur dari kotaknya.
 
