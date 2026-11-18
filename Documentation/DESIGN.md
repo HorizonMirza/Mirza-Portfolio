@@ -49,7 +49,6 @@ Diimplementasikan sebagai CSS variables di `Frontend/src/app/globals.css` dan di
 | `--border-strong` | `#64748B` | `#6B7A99` | Batas input (butuh ≥ 3:1) |
 | `--danger` | `#B42318` | `#FF8A80` | Galat |
 | `--success` | `#0B7A3E` | `#5FD394` | Berhasil |
-| `--accent` | `#0EA5E9` | `#38BDF8` | Dekoratif saja (grid, garis), bukan teks |
 
 **Kontras terhitung:**
 
@@ -64,7 +63,7 @@ Diimplementasikan sebagai CSS variables di `Frontend/src/app/globals.css` dan di
 | Danger / permukaan | 6,6 : 1 | 7,6 : 1 | ≥ 4,5 |
 | Success / permukaan | 5,4 : 1 | 9,3 : 1 | ≥ 4,5 |
 
-`--border` sengaja lembut (1,4 sampai 1,9 : 1) hanya untuk pemisah dekoratif. Elemen interaktif memakai `--border-strong`. `--accent` tidak boleh dipakai untuk teks.
+`--border` sengaja lembut (1,4 sampai 1,9 : 1) hanya untuk pemisah dekoratif. Elemen interaktif memakai `--border-strong`.
 
 Aturan: **satu warna primer**, aksen sekunder hanya untuk dekorasi. Warna tidak boleh menjadi satu-satunya penanda status (selalu ditambah ikon atau teks).
 
@@ -2061,3 +2060,16 @@ Seluruh dokumen acuan diperiksa terhadap kode dan diselaraskan. Keputusan pemili
 
 Keterangan "(Total Harian)" dan "(Daily Totals)" dihapus atas permintaan pemilik: kotak angka pertama di Dashboard berlabel "Pengunjung" / "Visitors". Angkanya tetap penjumlahan pengunjung unik per hari (alasan di bagian 175, BUG-03); keterangan itu tidak lagi ditulis di label.
 
+
+## 184. Pembersihan kode tak terpakai (2026-11-18)
+
+Permintaan pemilik: hapus kode, berkas, dan folder yang sudah tidak terpakai. Penelusuran memakai graf impor berkas, referensi simbol lewat TypeScript Language Service, `tsc --noUnusedLocals --noUnusedParameters`, pencocokan kunci terjemahan, aset publik, variabel CSS dan token tema, dependency, script, dan variabel environment.
+
+Dihapus:
+- Tipe `ProjectRow` (`features/projects/queries.ts`) dan `SkillInput` (`features/skills/schema.ts`), ekspor `DialogClose` dan `SheetTrigger` di `components/ui`.
+- Enam kunci kamus admin yang teksnya sudah tidak ada di kode: "Utama", "Halaman Lain", "Log Audit", "Lihat sebagai tabel", "Situs Lain", "Foto Beranda".
+- Token warna dan variabel CSS yang tidak dipakai komponen mana pun: `--accent`, `--chart-1` (sisa grafik lama), alias shadcn `--color-background`, `--color-foreground`, `--color-ring`, `--color-input`, dan `--radius-sm`. Baris `--accent` di tabel token bagian 2 ikut dihapus.
+
+Satu perbaikan kecil yang muncul dari penelusuran: kunci kamus "Tutup Menu" ternyata tidak pernah terpakai karena tombol tutup di panel geser admin memakai teks Indonesia tetap. `SheetContent` kini menerima `closeLabel`, diisi dari kamus admin, sehingga teks pembaca layar ikut berganti bahasa.
+
+Sengaja dipertahankan: berkas konvensi Next (`forbidden`, `unauthorized`, `global-not-found`, `opengraph-image`), `i18n/global.d.ts`, `hasAdminTranslation` (dipakai tes kelengkapan terjemahan), seluruh aset di `public/`, `scripts/skill-logos`, dan script `db:*`/`test:watch` untuk pengembangan. Kolom database `soundVolume`, `emailOnMessage`, `loginNotify`, dan `allowIndexing` sudah tidak dibaca kode tetapi baru bisa dihapus lewat migrasi `DROP COLUMN`, jadi menunggu persetujuan pemilik (audit DB-05/06/07).

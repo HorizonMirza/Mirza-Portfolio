@@ -337,4 +337,4 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-18 | Perapian dokumentasi: README, PRD, ARCHITECTURE, WORKFLOW, DEPLOYMENT, SKILL.md, CLAUDE.md, dan `.env.example` diselaraskan dengan kode; log TODO diurutkan menurut tanggal (DESIGN.md bagian 181) |
 | 2026-11-18 | Perapian CONTENT.md (keadaan project sekarang, pertanyaan terjawab dicoret, riwayat dipindah ke bagian 11) dan REFERENCES.md (ditandai arsip, jawaban dicatat) (DESIGN.md bagian 182) |
 | 2026-11-18 | Revisi pemilik: keterangan "(Total Harian)" dan "(Daily Totals)" dihapus dari label kotak Pengunjung di Dashboard (DESIGN.md bagian 183) |
-
+| 2026-11-18 | Pembersihan kode tak terpakai: dua tipe, dua ekspor UI, enam kunci kamus admin, token CSS (`--accent`, `--chart-1`, alias shadcn, `--radius-sm`); teks tutup panel geser admin ikut bahasa (DESIGN.md bagian 184)
