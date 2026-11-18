@@ -30,7 +30,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Validasi | **Zod** | Satu skema untuk server dan form | Yup |
 | Form publik (kontak) | **Server Actions + `useActionState` (React 19) + Zod**, tanpa library form | JS lebih sedikit untuk pengunjung, tetap berfungsi sebelum JS selesai dimuat, pemeriksaan Origin bawaan Server Actions | React Hook Form |
 | Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
-| Daftar admin | Tampil seperti daftar di situs, diubah langsung di pratinjau (DESIGN.md bagian 133–140); TanStack Table dipakai sampai 2026-11-12 lalu dihapus | Admin melihat hasil persis seperti pengunjung; tanpa dependency tabel | TanStack Table, AG Grid (berat) |
+| Daftar admin | Tampil seperti daftar di situs, diubah langsung di pratinjau; TanStack Table dipakai sampai 2026-11-12 lalu dihapus | Admin melihat hasil persis seperti pengunjung; tanpa dependency tabel | TanStack Table, AG Grid (berat) |
 | Grafik dashboard admin | **SVG buatan sendiri** (`components/admin/visits-chart.tsx`, geometri di `lib/chart-geometry.ts`), hanya dimuat di `/admin`. | Tanpa library grafik: 102 KB gzip lebih ringan untuk satu grafik area | Recharts, Chart.js |
 | Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
@@ -125,7 +125,7 @@ Catatan:
 │   ├── schema.prisma         # skema database
 │   ├── migrations/           # migrasi SQL
 │   └── seed/seed-data.ts     # data awal dari CV
-├── Documentation/            # PRD, DESIGN, ARCHITECTURE, WORKFLOW, TODO, CONTENT, REFERENCES
+├── Documentation/            # PRD, DESIGN, ARCHITECTURE, DEPLOYMENT, WORKFLOW, TODO, CONTENT, 00-discovery
 ├── .github/                  # workflows CI
 └── .agents/skill/           # skill proyek untuk Claude Code
 ```
@@ -139,7 +139,7 @@ Aturan: satu domain, satu folder: logika di `Backend/features/<domain>/`, kompon
 ### Catatan implementasi (M1)
 
 - **Next 16:** `middleware.ts` diganti `Frontend/src/proxy.ts` (runtime Node.js), `params` selalu async, `revalidateTag(tag, profile)` butuh argumen kedua, dan `updateTag` dipakai di Server Action. Dokumentasi yang sesuai versi ada di `node_modules/next/dist/docs/` (lihat `AGENTS.md`).
-- **Root layout:** tidak ada `app/layout.tsx`. `app/[locale]/layout.tsx` adalah root layout situs publik (hanya `id`/`en` lewat `generateStaticParams` + `hasLocale`), dan `app/admin/layout.tsx` root layout kedua. URL yang tidak dikenal ditangani `app/global-not-found.tsx` (flag `experimental.globalNotFound`). Halaman 401 dan 403 admin lewat `unauthorized()`/`forbidden()` → `app/admin/unauthorized.tsx` dan `forbidden.tsx` (flag `experimental.authInterrupts`); semua halaman status memakai `components/ui/status-page.tsx` (DESIGN.md bagian 168).
+- **Root layout:** tidak ada `app/layout.tsx`. `app/[locale]/layout.tsx` adalah root layout situs publik (hanya `id`/`en` lewat `generateStaticParams` + `hasLocale`), dan `app/admin/layout.tsx` root layout kedua. URL yang tidak dikenal ditangani `app/global-not-found.tsx` (flag `experimental.globalNotFound`). Halaman 401 dan 403 admin lewat `unauthorized()`/`forbidden()` → `app/admin/unauthorized.tsx` dan `forbidden.tsx` (flag `experimental.authInterrupts`); semua halaman status memakai `components/ui/status-page.tsx` (revisi 2026-11-16).
 - **Font:** self-host lewat `next/font/local` dari berkas Fontsource di `Frontend/src/fonts/`, jadi build tidak mengakses Google Fonts.
 - **Prisma client** di-generate ke `Backend/generated/prisma` (tidak di-commit, dibuat oleh `postinstall`). Skema dan migrasi ada di `Database/`, sedangkan Prisma CLI dijalankan dari `Frontend/` lewat `Frontend/prisma.config.ts`. CLI dan seed membaca `Frontend/.env.local` lalu `.env`, sama seperti Next.js.
 - **Vercel:** Root Directory = `Frontend`, dengan opsi "Include files outside the Root Directory" aktif (bawaan) agar `../Database/` dan `../Backend/` ikut terbaca saat build. `Frontend/scripts/vercel-ignore-build.sh` menjalankan build bila `Frontend/`, `Backend/`, atau `Database/` berubah.
@@ -337,7 +337,7 @@ erDiagram
 
 Catatan:
 - `User`, `Session`, `Account`, dan `Verification` mengikuti skema Better Auth (dibuat di M2 dengan `@better-auth/cli generate`, lalu disesuaikan). Hash password disimpan di `Account.password`, bukan di `User`. Kolom `passwordHash` di skema M1 dihapus lewat migrasi M2 (tabelnya masih kosong).
-- `SiteSetting` (Admin → Pengaturan, DESIGN.md bagian 119) disimpan per kolom lewat `saveSiteOption` (`Backend/features/settings/options.ts` membatasi kolom dan nilai). `LoginEvent` (Admin → Akun, bagian 120) diisi hook `hooks.after` Better Auth untuk `/sign-in/email`: login berhasil (dengan id sesinya) dan password salah. Tanpa IP dan tanpa email yang diketik. Keluarkan perangkat menghapus baris `Session` dan menulis `AuditLog` berjenis `signout`.
+- `SiteSetting` (Admin → Pengaturan, revisi 2026-11-11) disimpan per kolom lewat `saveSiteOption` (`Backend/features/settings/options.ts` membatasi kolom dan nilai). `LoginEvent` (Admin → Akun, revisi 2026-11-11) diisi hook `hooks.after` Better Auth untuk `/sign-in/email`: login berhasil (dengan id sesinya) dan password salah. Tanpa IP dan tanpa email yang diketik. Keluarkan perangkat menghapus baris `Session` dan menulis `AuditLog` berjenis `signout`.
 - `User.role` ditambahkan sebagai additional field Better Auth: `USER` atau `SUPER_ADMIN`. Hanya satu `SUPER_ADMIN` yang dibuat lewat seed. Tidak ada registrasi publik.
 - `RateLimit` dipakai helper rate limit untuk form publik dan `/api/track`. Baris lama dibersihkan Vercel Cron.
 - `PageView.visitorHash` = hash(IP + user-agent + garam harian). Garam berganti tiap hari sehingga pengunjung tidak bisa dilacak lintas hari.
@@ -506,12 +506,10 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 10 | Mutasi admin (termasuk tanda tangan unggah) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
 | 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
-| 13 | ~~Menu HP memakai atribut `popover` bawaan browser, filter pengalaman memakai CSS `:has()`~~ **Diganti:** menu HP kini menu bawah tetap (tautan biasa, tanpa `popover`) dan filter pengalaman dihapus 2026-10-03 | Hampir tanpa JavaScript klien | Diganti (revisi pemilik, DESIGN.md) |
 | 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
 | 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
 | 17 | Notifikasi login baru ke email admin lewat hook Better Auth + `after()` Next.js | Tidak menunda login dan tetap terkirim di serverless | Final (M4, 2026-09-30) |
 | 18 | Sentry tanpa SDK, hanya error server | `@sentry/nextjs` menambah puluhan KB JavaScript klien dan OpenTelemetry di server, bertentangan dengan target Lighthouse dan aturan "jangan menambah JS klien tanpa alasan". Error klien bisa ditambah nanti bila perlu | Final (M5, 2026-10-01) |
 | 19 | Backup diuji pulih di setiap run | Backup yang tidak pernah dicoba pulih belum terbukti. Postgres sementara di runner gratis | Final (M5, 2026-10-01) |
-| 20 | ~~Keyboard skill 3D memakai `@splinetool/runtime` + scene Naresh Khatri (MIT), dan CSP publik mengizinkan `'unsafe-eval'`~~ | Diganti globe skill tanpa library (2026-10-18, DESIGN.md bagian 73): `@splinetool/runtime`, `public/spline/`, dan `'unsafe-eval'` di CSP publik dihapus (eval hanya di `next dev`) | Dibatalkan (2026-10-18) |
 | 21 | Kalender kontribusi GitHub di beranda diambil di server lewat GitHub GraphQL API dengan `GITHUB_TOKEN` yang sudah ada | GraphQL satu-satunya sumber resmi kalender kontribusi dan selalu butuh token. Token fine-grained tanpa izin tambahan cukup untuk data publik. Hasil disimpan 6 jam agar tidak membebani batas API; bila gagal, bagian disembunyikan, halaman tetap tampil | Final (2026-10-01) |
 | 22 | Kode server dipindah ke folder `Backend/` (permintaan pemilik 2026-11-18), tetap satu aplikasi Next.js | Pemisahan folder yang jelas antara UI dan server tanpa mengubah deploy: tetap satu deploy Vercel, tanpa server kedua yang "tidur", tanpa menulis ulang Server Actions. Server API terpisah (Node.js atau ASP.NET Core) ditawarkan dan tidak dipilih | Final (2026-11-18) |

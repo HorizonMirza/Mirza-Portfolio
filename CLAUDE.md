@@ -8,7 +8,7 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** live di `mmirza.site` sejak 2026-10-01. Semua milestone selesai di sisi kode; tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda pemilik dan tercatat di `Documentation/TODO.md` bagian "Menunggu dari Pemilik". Pekerjaan sekarang berupa revisi dari Mirza, dicatat di log `Documentation/DESIGN.md` dan `Documentation/TODO.md`.
+**Status:** live di `mmirza.site` sejak 2026-10-01. Semua milestone selesai di sisi kode; tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda pemilik dan tercatat di `Documentation/TODO.md` bagian "Menunggu dari Pemilik". Pekerjaan sekarang berupa revisi dari Mirza: `DESIGN.md` diperbarui sesuai keadaan terbaru, riwayatnya dicatat di log `Documentation/TODO.md`.
 
 **Next.js 16:** API berbeda dari versi lama. Baca panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 
@@ -17,14 +17,13 @@ Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) +
 | Berkas | Isi | Kapan dibaca |
 |---|---|---|
 | `Documentation/PRD.md` | Tujuan, fitur, user story, kriteria penerimaan, keputusan sementara | Sebelum mengerjakan fitur apa pun |
-| `Documentation/DESIGN.md` | Token, tipografi, komponen, wireframe, aksesibilitas, pedoman tulisan | Sebelum mengerjakan UI |
+| `Documentation/DESIGN.md` | Arah visual dan prinsip referensi, token, tipografi, komponen, peta situs, halaman, aksesibilitas, pedoman tulisan (keadaan sekarang) | Sebelum mengerjakan UI, desain, atau animasi |
 | `Documentation/ARCHITECTURE.md` | Tech stack, model data, API, keamanan, deployment | Sebelum mengubah struktur, data, atau API |
 | `Documentation/DEPLOYMENT.md` | Menjalankan lokal, deploy Vercel, image Docker (GitHub Packages), pemantauan, backup dan pemulihan | Sebelum mengubah deploy, Dockerfile, atau workflow release/backup |
 | `Documentation/WORKFLOW.md` | Commit, Definition of Done, rilis | Sebelum commit atau push |
-| `Documentation/TODO.md` | Milestone dan tugas | Untuk menentukan pekerjaan berikutnya |
+| `Documentation/TODO.md` | Tugas yang menunggu pemilik, backlog, dan log perubahan | Untuk menentukan pekerjaan berikutnya dan mencatat revisi |
 | `Documentation/00-discovery.md` | Jawaban asli pemilik dan keputusan terbuka | Bila ada keraguan tentang maksud pemilik |
 | `Documentation/CONTENT.md` | Konten dari CV (pengalaman, pendidikan, skill, angka yang boleh dipakai) dan yang masih ditanyakan | Sebelum menulis atau mengisi teks/seed apa pun |
-| `Documentation/REFERENCES.md` | Arsip analisis referensi desain, prinsip yang diambil dan yang dilarang | Sebelum keputusan desain atau animasi |
 | `.agents/skill/SKILL.md` | Resep untuk tugas berulang: entitas baru, halaman publik, route API, konten dua bahasa, pemeriksaan sebelum selesai, menghapus kode tak terpakai. Tidak dimuat otomatis oleh Claude Code (bukan di `.claude/skills/`), jadi **baca manual** | Saat mengerjakan salah satu tugas itu |
 
 Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md` > `PRD.md` > dokumen lain. Jika Anda mengubah keputusan, perbarui dokumen terkait di commit yang sama.

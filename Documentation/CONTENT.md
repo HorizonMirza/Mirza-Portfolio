@@ -1,6 +1,6 @@
 # CONTENT — Inventaris Konten dari CV
 
-Status: **diselaraskan dengan situs 2026-11-18**. **Cara membaca:** bagian 1–7 adalah data dari CV beserta keputusan pemilik yang mengubahnya; bagian 8 memuat keadaan project sekarang; bagian 9–10 daftar hal yang bukan fakta CV dan pertanyaan (yang sudah terjawab dicoret dengan hasilnya); bagian 11 adalah riwayat keputusan project dan konten menurut tanggal. Tanda **[TANYA]** berarti belum dijawab pemilik.
+Status: **diselaraskan dengan situs 2026-11-18**. **Cara membaca:** bagian 1–7 adalah data dari CV beserta keputusan pemilik yang mengubahnya; bagian 8 memuat keadaan project sekarang; bagian 9–10 daftar hal yang bukan fakta CV dan pertanyaan yang masih terbuka. Riwayat keputusan konten sampai 2026-11-17 bisa dilihat dengan `git show 7b46546:Documentation/CONTENT.md` (bagian 11). Tanda **[TANYA]** berarti belum dijawab pemilik.
 
 Sumber: `CV ATS - Muhammad Mirza Wirya.pdf` (2 halaman), dibaca 2026-09-30.
 LinkedIn tidak dapat dibaca otomatis (halaman masuk wajib). GitHub `HorizonMirza` tidak dapat dibaca dari sesi ini (akses dibatasi ke repo portofolio). Jadi **hanya isi CV yang dianggap fakta**. Yang bukan dari CV ditandai **[TANYA]**.
@@ -44,7 +44,7 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 - ID: Berkontribusi pada SMART, aplikasi manajemen aset dan inventaris.
 - ID: Membantu tim Asset Management dalam audit dan stocktaking inventaris gudang.
 - EN: Developed GAAS, an internal application for General Affair operations. / Contributed to SMART, an asset and inventory management application. / Assisted the Asset Management team with warehouse inventory audits and stocktaking.
-- **[TANYA]** Aplikasi internal: apa yang boleh ditampilkan (nama, screenshot, teknologi)? Perlu izin perusahaan?
+- **[TANYA]** Aplikasi internal: apa yang boleh ditampilkan (nama, screenshot, teknologi)? Lihat pertanyaan 1 di bagian 10.
 
 ### Ace Padel Club, Tangerang · Founder & Community Leader · Mei 2025 – April 2026
 - ID: Mencapai 300+ anggota aktif di WhatsApp. / Rating 5,0/5,0 di platform Ayo. / Mencapai 1.000+ anggota di Reclub.
@@ -99,7 +99,7 @@ Urutan terbaru dulu. Terjemahan ID adalah draf dari teks CV.
 
 Project Management, Community Management, dan Digital Marketing tidak lagi tampil di Keahlian Teknis (tidak dipilih); MS Office diganti Word, Excel, PowerPoint. NestJS, MongoDB, dan Docker dihapus pemilik beberapa saat kemudian (migrasi `20261018130000_skills_remove_three`), sehingga totalnya 31 skill.
 
-**Skill yang terlihat di GAAS tetapi belum ada di CV:** C#, ASP.NET Core, Entity Framework Core, SignalR, Tailwind CSS, Playwright, GitHub Actions, dan REST API. Jika Mirza benar-benar mengerjakannya, sebaiknya ditambahkan (ke CV dan ke halaman Skills) **[TANYA]**.
+**Skill yang terlihat di GAAS tetapi belum ada di CV:** C#, ASP.NET Core, Entity Framework Core, SignalR, Tailwind CSS, Playwright, GitHub Actions, dan REST API. Pemilik memilih daftar skill sendiri (2026-10-18): Tailwind CSS masuk, yang lain tidak.
 
 Catatan: stack rencana situs ini (Next.js, TypeScript, PostgreSQL) sesuai dengan skill di CV, sehingga situsnya sendiri bisa menjadi bukti kemampuan. Tools yang belum ada di CV (Prisma, Tailwind, Vercel, dan lain-lain) baru ditambahkan bila Mirza memang menguasainya.
 
@@ -135,8 +135,6 @@ Enam project tampil (semua terbit). Pemilik menyunting isinya lewat Admin → Pr
 
 Kategori semua project di database adalah `Software`; kategori `Komunitas & Bisnis` ada tetapi belum dipakai (lihat usulan di bawah). Teknologi lima project PDF: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Foto GAAS dan tangkapan layar lima project lain ada di `Frontend/public/images/projects/`.
 
-Riwayat keputusan (kapan dan mengapa project berubah) ada di bagian 11.
-
 ### GAAS: fakta dari repo (snapshot 2026-09-30)
 
 Sumber: dokumen di repo GAAS (publik), laporan alur kerja di sesi Claude Code GAAS, dan CV. Angka di bawah **dihitung ulang dari kode** (snapshot 2026-09-30), bukan disalin dari laporan audit (angka audit berbeda, misalnya 194 endpoint vs 261 yang saya hitung, jadi tidak dipakai).
@@ -158,33 +156,7 @@ Sumber: dokumen di repo GAAS (publik), laporan alur kerja di sesi Claude Code GA
 
 ### Catatan kerahasiaan GAAS
 
-**Yang tidak boleh masuk portofolio tanpa izin:** README repo menyatakan *"Proyek internal PGN Solution, tidak untuk didistribusikan di luar organisasi"*, padahal repo GitHub-nya **publik**. Isi laporan audit (temuan bug, keamanan, dan jumlah akun) juga tidak boleh dipublikasikan. Lihat pertanyaan 5 di bagian 10.
-
-#### Draf studi kasus (arsip, ditulis sebelum GAAS terbit)
-
-> Arsip: tabel dan daftar di bawah ditulis sebelum GAAS diterbitkan. Keadaan sekarang: foto ada sejak 2026-10-08, tombol repo menyala, tidak ada tautan demo, dan teks yang tampil di situs disusun dari README repo (lihat bagian 11). Pertanyaan yang masih terbuka tetap bertanda **[TANYA]**.
-
-
-| | ID | EN |
-|---|---|---|
-| Ringkasan | Platform internal multi-modul untuk operasional General Affair: pengiriman barang, pemesanan ruang dan kendaraan, permintaan ATK, perbaikan sarana, dan pemindahan arsip, dengan persetujuan berjenjang dan chat real-time di tiap pengajuan. | An internal multi-module platform for General Affair operations: shipments, room and vehicle booking, office-supply requests, facility repairs, and archive relocation, with tiered approvals and per-request real-time chat. |
-| Masalah | Proses pengiriman barang dan permintaan kantor berjalan manual atau berbasis kertas (PRD repo), sulit dilacak dan tidak seragam. | Shipping and office requests ran on manual, paper-based processes (per the repo's PRD), hard to track and inconsistent. |
-| Peran saya | Mengembangkan aplikasi ini (backend, frontend, basis data) bersama asisten AI coding. **[TANYA: porsi nyata dan apakah boleh menyebut AI]** | Built the application (backend, frontend, database) with AI coding assistants. |
-| Hasil | **[TANYA]** Jangan diisi angka dampak sebelum ada datanya (jumlah pengguna, waktu proses yang berkurang, dan lain-lain). | **[ASK]** |
-
-Ide visual untuk halaman detail (tanpa screenshot data asli): **diagram alur status** tiap modul (Draft → Submitted → Approved L1 → Approved GA → Approved GA Approval → Completed) digambar ulang sebagai SVG atau Mermaid, ditambah tabel peran dan peta 6 modul. Aman secara kerahasiaan dan langsung memperlihatkan kemampuan merancang sistem.
-
-Data GAAS yang masih dibutuhkan:
-
-| Kolom | Status |
-|---|---|
-| Nama dan slug | `gaas` |
-| Kategori | `Software` |
-| Tahun | 2026 (CV: mulai Juli 2026) |
-| Tautan repo | Ada (publik). Tombol GitHub menyala sejak 2026-10-08 |
-| Tautan demo | Tidak ada (internal) |
-| Screenshot | Tidak ada. Gunakan diagram alur dan mockup tanpa data nyata, atau screenshot dengan data anonim jika diizinkan |
-| Boleh dipublikasikan? | **[TANYA]** |
+**Yang tidak boleh masuk portofolio tanpa izin:** README repo menyatakan *"Proyek internal PGN Solution, tidak untuk didistribusikan di luar organisasi"*, padahal repo GitHub-nya **publik**. Isi laporan audit (temuan bug, keamanan, dan jumlah akun) juga tidak boleh dipublikasikan. Lihat pertanyaan 1 di bagian 10.
 
 ### Untuk project berikutnya (dibuat lewat admin)
 
@@ -209,58 +181,14 @@ Usulan: project non-kode (Ace Padel Club, Horizon Organizer, Warnet Mobile) dita
 | "Aktif menjelajahi ekosistem kripto" (ringkasan CV) | Ditampilkan lewat bio halaman Tentang (2026-10-07). Project pendukung: Crypto Pedia (bagian 8) |
 | Sertifikat, penghargaan | Tidak ada di CV. Tidak dibuat di v1 |
 | Testimoni | Tidak ada |
-| Foto, logo | Menunggu dari Mirza |
+| Foto, logo | Foto profil dari pemilik (2026-10-19); logo instansi dan foto kegiatan diunggah lewat admin |
 
 ## 10. Daftar Pertanyaan Konten
 
-1. ~~Nama tampilan di hero~~ Situs memakai "Muhammad Mirza" di hero dan judul tab, nama lengkap di profil dan admin (kondisi nyata; belum ada catatan keputusan eksplisit).
-2. ~~Jenis pekerjaan yang dicari dan tanggal tersedia (untuk pelat status)~~ Tidak berlaku lagi: pelat status dihapus dari hero (2026-10-18) dan catatan ketersediaan dihapus (2026-11-06).
-3. ~~Pilih atau ubah kalimat hero~~ Tidak berlaku lagi: hero kini hanya nama dan peran (bagian 2).
-4. ~~Data GAAS~~ GAAS diterbitkan 2026-10-08; project lain lewat admin (bagian 8 dan 11).
-5. **Izin publikasi GAAS.** README repo GAAS menyatakan proyek internal yang tidak untuk didistribusikan di luar organisasi, tetapi repo GitHub-nya publik. Sudah ada izin dari perusahaan untuk menampilkan GAAS di portofolio dan menautkan repo-nya? Jika belum, usul: tampilkan hanya ringkasan dan diagram alur (tanpa tautan repo), dan pertimbangkan menjadikan repo privat. SMART tidak dimasukkan untuk sekarang (tetap tampil di daftar pengalaman sesuai CV). **Masih terbuka:** pemilik menerbitkan GAAS dan menyalakan tombol GitHub (2026-10-08), tetapi izin perusahaan tidak tercatat di dokumen ini.
-6. ~~"Voucher game digital": tampilkan atau tidak?~~ Ditampilkan lewat bio halaman Tentang yang memakai teks SUMMARY CV lengkap (2026-10-07).
-7. ~~Kripto: tampilkan atau tidak?~~ Ditampilkan lewat bio yang sama (2026-10-07).
-8. ~~IPK: tampilkan atau tidak?~~ Ditampilkan, 3,5/4,0 (pemilik 2026-10-19)
-9. ~~Instagram dan nomor WhatsApp yang dipublikasikan.~~ Diisi pemilik lewat admin (TODO.md); nilainya tidak ditulis di repo.
-10. ~~Foto profil~~ Selesai (foto jas, 2026-10-19). Logo atau inisial instansi diunggah lewat admin bila ada.
-11. ~~Nama perusahaan yang benar: PT PGAS Solution (CV) atau PGN Solution (README GAAS)?~~ **PT PGAS Solution** (pemilik 2026-11-04)
-12. ~~Nama lengkap GAAS~~ Dipakai **"General Affair Application Support"** sesuai pemilik (2026-10-08).
-13. Boleh menulis bahwa GAAS dikembangkan dengan bantuan AI coding assistant (Claude Code, Antigravity, Codex)? Dan porsi pekerjaan Anda sendiri?
-14. Status pemakaian GAAS: sudah dipakai pengguna nyata, masih uji coba, atau prototipe? (Untuk bagian "hasil", tanpa angka karangan.)
-15. ~~Tambahkan C#/ASP.NET Core, EF Core, SignalR, Tailwind, Playwright, dan GitHub Actions ke halaman Skills (dan CV)?~~ Pemilik memilih daftar skill sendiri (2026-10-18, bagian 6); C#/.NET, EF Core, SignalR, Playwright, dan GitHub Actions tidak masuk (Tailwind CSS dan GitHub masuk).
+Pertanyaan yang sudah terjawab dihapus 2026-11-18; jawabannya tertuang di bagian 1–9. Yang masih terbuka:
 
-## 11. Riwayat Keputusan Project dan Konten (kronologis)
-
-Catatan keputusan yang dulu tersebar di bagian lain. Urutan menurut tanggal; keadaan sekarang ada di bagian 8.
-
-**Keputusan 2026-09-30:** saat peluncuran, hanya **GAAS** yang dimasukkan sebagai project. Project lain ditambahkan sendiri oleh Mirza lewat admin nanti (jawaban sebelumnya menyebut ada 6, tetapi CV tidak memuat satu pun dan GitHub tidak dapat dibaca dari sesi ini).
-
-**Diterbitkan 2026-10-08 (permintaan pemilik: "publish GAAS (General Affair Aplication Support), cek di github saya untuk penjelasannya"):** migrasi `20261008180000_publish_gaas`. Nama dipakai sesuai pemilik: **GAAS: General Affair Application Support**. Peran "Fullstack Developer" (judul magang di CV). Ringkasan dan uraian dua bahasa disusun dari README dan `Documentation/PRD.md` repo: modul, alur persetujuan, fitur, teknologi; tanpa angka dampak, isi audit, nama klien di README, atau penyebutan asisten AI. Unggulan, urutan 0. Tautan repo diisi tetapi **tombol GitHub dimatikan** karena README repo menyebut "tidak untuk didistribusikan di luar organisasi"; pemilik bisa menyalakannya di admin. Tidak ada demo. Foto menyusul dari pemilik.
-
-**Tombol GitHub GAAS dinyalakan (2026-10-08, permintaan pemilik):** migrasi `20261008200000_gaas_show_repo`.
-
-**Foto GAAS (2026-10-08, dari pemilik):** lima tangkapan layar berdata uji ("Uji Coba") di `Frontend/public/images/projects/gaas-*.jpg`, migrasi `20261008190000_gaas_photos`: Dashboard (sampul), Expedition, Room Booking, kalender ruang, dan profil tema gelap. **Nomor telepon dan email pribadi di foto profil disamarkan** sebelum disimpan (aturan: data pribadi tidak masuk repo). Logo perusahaan di sidebar tetap seperti kiriman pemilik.
-
-**Project contoh (2026-10-08, permintaan pemilik):** migrasi `20261008120000_sample_projects` menambahkan 6 project berjudul "Contoh Project 1–6" / "Sample Project 1–6" (terbit, 3 pertama unggulan) agar pemilik bisa melihat tampilan halaman Project dan beranda. Isinya kerangka, bukan fakta; pemilik mengganti judul, ringkasan, uraian, foto, dan tautan lewat Admin → Project, atau menghapusnya. Tidak ditambahkan ke seed.
-
-**Project contoh dilengkapi (2026-10-08, "buat lengkap demonya"):** migrasi `20261008130000_sample_projects_media` menambahkan untuk tiap project contoh: gambar sampul dan 2 gambar galeri (mockup buatan sendiri bertanda "CONTOH · SAMPLE" di `Frontend/public/demo/projects/`, bukan foto orang lain), studi kasus kerangka dua bahasa, tautan demo (`https://mmirza.site`) dan GitHub (profil pemilik), serta metadata repo GitHub di project 1 (`HorizonMirza/Mirza-Portfolio`; fitur metadata repo GitHub dihapus 2026-11-16). Kolom yang sudah diisi pemilik tidak ditimpa. Gambar contoh memakai publicId berawalan `local-demo/` sehingga tidak pernah dikirim ke Cloudinary saat diganti/dihapus; begitu pemilik mengunggah gambar sendiri, yang dipakai gambar Cloudinary. Folder `public/demo/projects` boleh dihapus setelah semua project contoh diganti. **Dihapus 2026-10-09** (audit pembersihan): baris Asset-nya sudah terhapus oleh migrasi `20261008170000_delete_all_projects`, dan upload admin selalu membuat Asset baru sehingga tidak ada baris lain yang bisa merujuknya.
-
-**Project dari PDF portofolio (2026-10-08, permintaan pemilik):** migrasi `20261008150000_projects_from_portfolio_pdf` menghapus project contoh yang belum diubah (judul masih "Contoh Project") dan menambahkan lima project dari PDF "Portofolio - Muhammad Mirza Wirya" (Canva, 12 halaman). Isi hanya dari teks PDF; tangkapan layar diambil dari PDF ke `Frontend/public/images/projects`. Tahun dikonfirmasi pemilik.
-
-| Urutan | Project | Tahun | Peran (PDF) | Tautan |
-|---|---|---|---|---|
-| 1 (unggulan, "best project") | CatFin-R: Catering Finance (project kelompok Software Engineering) | 2026 | Front-End Developer | catering-finance-report-se.vercel.app |
-| 2 | RIPE.AI (project kelompok Computer Vision) | 2026 | Front-End Developer | fruit-classifier-mu.vercel.app |
-| 3 | Crypto Pedia | 2026 | Frontend Developer | huggingface.co/spaces/donut12345/ML_LSTM_BTC |
-| 4 | MR Coffee (project pribadi) | 2025 | — | — |
-| 5 | Swarna Creation (project pribadi untuk usaha EO teman) | 2026 | — | — |
-
-**Semua project dihapus (2026-10-08, permintaan pemilik "untuk semua project di hapus dulu", dikonfirmasi: hapus semua data):** migrasi `20261008170000_delete_all_projects` menghapus semua project (termasuk draf GAAS bila ada), galeri, kaitan skill, dan gambar bawaan repo `local-demo/projects/*`. Isi kelima project di atas tetap tercatat di tabel ini dan tangkapan layarnya tetap ada di `Frontend/public/images/projects` bila ingin dipakai lagi. Project baru ditambahkan lewat Admin → Project. Catatan (dikoreksi 2026-11-18): `pnpm db:seed` memakai upsert tanpa mengubah project yang sudah ada, dan di database yang dimigrasi semua project sudah terbit lewat migrasi, jadi tidak ada project draf yang tertinggal.
-
-**Lima project PDF ditambahkan lagi (2026-10-08, "tambahkan project dari pdf saya tadi nanti saya edit sendiri"):** migrasi `20261008210000_restore_pdf_projects`, isi sama dengan tabel di atas, terbit, urutan 1–5 di bawah GAAS; hanya GAAS yang unggulan. Pemilik menyunting sendiri lewat admin.
-
-Peran ditampilkan di atas judul (kolom `role_id`/`role_en`, migrasi `20261008160000_project_role_buttons`): CatFin-R dan RIPE.AI "Front-End Developer", Crypto Pedia "Frontend Developer" (sesuai ejaan PDF). **[TANYA]** peran untuk MR Coffee dan Swarna Creation.
-
-Teknologi semua project: HTML, CSS, JavaScript (Crypto Pedia juga Chart.js, ditulis di uraian karena bukan skill di admin). Angka di tangkapan layar (akurasi model, jumlah event klien) tidak dikutip di teks. Catatan: PDF mencantumkan IPK 3,5/4,0 (CV: 3,41); sejak 2026-10-19 situs memakai 3,5 atas keputusan pemilik.
-
-**Catatan ketersediaan di beranda (2026-10-15, audit Home nomor 2, permintaan pemilik "eksekusi 1 dan 2"):** migrasi `20261015100000_availability_note` mengisi `availabilityNote_id` "Mencari peluang Fullstack Developer" dan `availabilityNote_en` "Looking for Fullstack Developer opportunities", diambil dari kalimat pemilik di pemberitahuan pembuka. Tampil di pelat status: "Terbuka untuk kerja · Mencari peluang Fullstack Developer". Hanya mengisi kolom yang masih kosong. **Dihapus 2026-11-06** bersama fitur status ketersediaan (DESIGN.md bagian 107).
+1. **Izin publikasi GAAS.** README repo GAAS menyatakan proyek internal yang tidak untuk didistribusikan di luar organisasi, tetapi repo GitHub-nya publik. Pemilik menerbitkan GAAS dan menyalakan tombol GitHub (2026-10-08), tetapi izin perusahaan belum tercatat. Jika belum ada izin, usul: tampilkan hanya ringkasan dan diagram alur (tanpa tautan repo), dan pertimbangkan menjadikan repo privat. SMART tidak dimasukkan sebagai project (tetap tampil di daftar pengalaman sesuai CV).
+2. Boleh menulis bahwa GAAS dikembangkan dengan bantuan AI coding assistant (Claude Code, Antigravity, Codex)? Dan porsi pekerjaan Anda sendiri?
+3. Status pemakaian GAAS: sudah dipakai pengguna nyata, masih uji coba, atau prototipe? (Untuk bagian "hasil", tanpa angka karangan.)
+4. "Bisnis voucher game digital" di ringkasan CV: bagian dari Warnet Mobile atau usaha lain? (bagian 3)
+5. Peran Anda di MR Coffee dan Swarna Creation (bagian 8).

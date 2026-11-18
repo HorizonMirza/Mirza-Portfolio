@@ -1,142 +1,26 @@
 # TODO — Rencana Pengerjaan
 
-Status: **live di `mmirza.site` sejak 2026-10-01**; M1–M4 selesai, M5 selesai di sisi kode, tugas akun pemilik ditunda (keputusan pemilik 2026-10-20). Pekerjaan sekarang berupa revisi dari pemilik, dicatat di log di bawah dan di `DESIGN.md`. Urutan = prioritas. Tanda `[?]` = bergantung pada keputusan terbuka (lihat `PRD.md` bagian 11). Estimasi memakai patokan Anda: 1 hari per milestone, di luar waktu review.
+Status: **live di `mmirza.site` sejak 2026-10-01.** Milestone M0–M5 (setup, auth + admin, halaman publik, polish, deploy) selesai di sisi kode; checklist-nya dihapus 2026-11-18 dan riwayatnya ada di log di bawah. Pekerjaan sekarang berupa revisi dari pemilik, dicatat di log. Keputusan yang masih terbuka: `PRD.md` bagian 11.
 
 ## Menunggu dari Pemilik
 
-- [x] **CV** (diterima 2026-09-30, ringkasan di `Documentation/CONTENT.md`)
-- [ ] Jawaban 10 pertanyaan konten (`Documentation/CONTENT.md` bagian 10) dan pertanyaan referensi (`Documentation/REFERENCES.md` bagian 6)
-- [x] ~~Persetujuan konsep "Horizon"~~ disetujui 2026-09-30, lalu hero diganti potret + armor (2026-10-18/19, `DESIGN.md` bagian 83–89)
-- [x] Foto profil (foto jas baru 2026-10-19, `DESIGN.md` bagian 84)
-- [x] **Data GAAS** (project awal, lihat `Documentation/CONTENT.md` bagian 8). Project lain ditambahkan Mirza lewat admin setelah rilis
-- [x] Teks halaman error dan 404 (404 "hantu")
-- [x] Tautan sosial (LinkedIn, GitHub, email, WhatsApp, Instagram), diisi lewat admin
-- [ ] Jawaban untuk 15 keputusan terbuka (`Documentation/00-discovery.md` bagian 6, ringkasan di `PRD.md` bagian 11)
-- [ ] Akun layanan: Neon dan Vercel aktif; Resend, Sentry, dan uptime monitor ditunda pemilik (2026-10-20). Upstash tidak diperlukan
-- [x] Domain `mmirza.site` (2026-10-01)
+Tugas akun pemilik ditunda sejak 2026-10-20 (keputusan pemilik). Langkah setiap layanan ada di `Documentation/DEPLOYMENT.md`.
 
-## M0 — Pra-Perencanaan dan Dokumen
-
-- [x] Discovery dan keputusan awal (`Documentation/00-discovery.md`)
-- [x] PRD, DESIGN, ARCHITECTURE, WORKFLOW, TODO, CLAUDE.md, SKILL.md
-- [ ] Review dokumen oleh Mirza, jawab keputusan terbuka
-- [ ] Pelajari referensi tambahan (menunggu akses `mnizwa.com` atau screenshot)
-
-## M1 — Setup (≈ 1 hari) — selesai 2026-09-30, kecuali Vercel
-
-- [x] Inisialisasi Next.js 16 (App Router, Turbopack, TypeScript strict), pnpm, `.editorconfig`, `.gitignore`, `.nvmrc`
-- [x] Tailwind 4, token desain dari `DESIGN.md` (terang/gelap), font self-host via `next/font/local` (Plus Jakarta Sans, JetBrains Mono)
-- [x] Primitif gaya shadcn/ui: Button, Input, Textarea, Label, `components.json`
-- [ ] Dialog, Sheet, Toast, DropdownMenu, Tabs → dipindah ke M2 (ditambah saat pertama dipakai, agar tidak ada dependency Radix yang menganggur)
-- [x] `next-intl` dengan rute `/id` dan `/en`, deteksi bahasa browser, berkas `Frontend/messages/`, tipe kunci terjemahan ketat
-- [x] `next-themes` (terang/gelap/sistem), tersimpan di browser
-- [x] ESLint, Prettier, Husky + lint-staged, `tsc --noEmit`, gitleaks (di CI)
-- [x] Vitest + Testing Library, Playwright (+ axe) di Chromium desktop dan emulasi HP
-- [x] Prisma 7 + PostgreSQL: skema sesuai `ARCHITECTURE.md` bagian 5, migrasi awal, seed idempoten dari CV (GAAS berstatus DRAFT)
-- [x] `Frontend/src/lib/env.ts` (validasi Zod), `Frontend/.env.example`
-- [x] GitHub Actions `ci.yml` (lint, format, typecheck, unit, audit keamanan, migrasi + cek drift, seed, build, E2E, gitleaks), templat PR. Dependabot update otomatis dimatikan (lihat `WORKFLOW.md` bagian 10a)
-- [x] Konfigurasi hosting di repo: `Frontend/vercel.json` (region `sin1`), migrasi hanya di production, Ignored Build Step
-- [ ] Koneksi repo ke Vercel dan database Neon Singapura (butuh akun pemilik, langkah di `Documentation/DEPLOYMENT.md` bagian "Deploy ke Vercel")
-- [x] `/api/health`
-- [x] README (ringkas, bahasa Inggris) dan `Documentation/DEPLOYMENT.md` (cara menjalankan lokal, deploy, backup)
-- [x] 404 global dua bahasa (`app/global-not-found.tsx`) dan 404 per bahasa untuk `notFound()`
-
-**Selesai bila:** situs kosong tampil di preview Vercel, CI hijau, migrasi dan seed berjalan.
-Status: migrasi, seed, build, 13 tes unit, dan 32 tes E2E lulus di sandbox. CI dan preview Vercel belum terverifikasi (CI berjalan setelah push, Vercel menunggu akun).
-
-## M2 — Auth dan Super Admin (≈ 1 hari)
-
-- [x] Better Auth (email + password, `disableSignUp`, adapter Prisma, sesi di database, hash bawaan), halaman `/admin/login`
-- [x] Migrasi skema: tabel Better Auth (`User`, `Session`, `Account`, `Verification`) + `role`, hapus `User.passwordHash`
-- [x] Middleware/proxy melindungi `/admin/*` dan pemeriksaan ulang di setiap action
-- [x] Rate limit login bawaan Better Auth (penyimpanan database)
-- [x] Tabel `RateLimit` + helper `lib/rate-limit.ts` untuk form publik
-- [x] Seed akun admin dari environment, skrip `admin:reset-password`
-- [x] Komponen UI: Dialog, Sheet, Toast, DropdownMenu, Tabs (dari M1). DropdownMenu dan `@radix-ui/react-dropdown-menu` dihapus 2026-10-09 karena tidak pernah dipakai
-- [x] Layout admin (sidebar, responsif) dan dashboard awal. `app/admin/layout.tsx` menjadi root layout kedua (merender `<html>` sendiri)
-- [x] Modul CRUD (pola di `SKILL.md`): Project, Skill + kategori, Experience, Profile/hero
-- [x] Unggah bertanda tangan ke Cloudinary (gambar, foto, CV) dengan alt text dua bahasa. Diuji dengan respons Cloudinary tiruan; uji dengan akun asli menunggu kunci dari pemilik
-- [x] Form dua bahasa (tab ID/EN) dengan React Hook Form + Zod, status draf/terbit, urutan lewat tombol naik/turun (bukan seret, agar bisa dengan keyboard). Pengalaman diurutkan otomatis dari tanggal mulai
-- [x] Tabel admin dengan TanStack Table (cari, urut, paginasi, jadi kartu di HP)
-- [x] Editor studi kasus: textarea Markdown + pratinjau (`react-markdown` + `rehype-sanitize`)
-- [x] Grafik kunjungan di dashboard dengan Recharts (shadcn charts), hanya dimuat di `/admin`
-- [x] Impor dari GitHub (`fetch` ke REST API, cache 1 jam) → mengisi form project. Diuji dengan `fetch` tiruan (API GitHub dibatasi di sandbox)
-- [x] Kotak masuk pesan (baru/dibaca/arsip)
-- [x] Log audit (tulis pada setiap mutasi) dan halaman peninjau
-- [x] Newsletter di admin: daftar pelanggan dan hapus
-- [ ] Kirim broadcast newsletter `[?]` (menunggu keputusan PRD bagian 11, butuh Resend)
-- [x] Halaman akun: ganti password (rate limit, sesi lain dicabut)
-- [ ] Notifikasi email saat ada login baru (butuh Resend, dikerjakan bersama form kontak di M4)
-- [x] Tes: unit skema dan otorisasi, E2E login dan CRUD project
-
-**Selesai bila:** Mirza bisa login dan mengelola semua konten, semua aksi tercatat di audit.
-
-## M3 — Halaman Publik (≈ 1 hari)
-
-Status: selesai 2026-09-30. 146 tes unit dan 88 tes E2E (Chromium + emulasi HP, axe di semua halaman publik dan admin, terang/gelap, ID/EN) lulus di sandbox.
-
-- [x] Navbar (padat saat digulir, tanpa JS), menu HP (`popover` bawaan browser), footer, toggle bahasa dan tema, tautan lewati konten
-- [x] Home: hero + pelat status (status, lokasi, kampus, posisi sekarang dari admin), project pilihan, perjalanan terbaru, skill, ajakan kontak, newsletter. Latar "Horizon" versi CSS statis (canvas di M4)
-- [x] About: bio Markdown, foto, kontak, CV
-- [x] Experience & Education: satu halaman, timeline + filter tanpa JS (keputusan 2026-09-30)
-- [x] Skills: dikelompokkan, tanpa persen, tautan ke project yang memakai skill
-- [x] Projects: daftar, kartu lebar untuk 1 project, filter kategori/teknologi baru muncul bila ≥ 3 project atau ≥ 2 kategori, keadaan kosong, halaman detail (studi kasus Markdown, galeri, teknologi, metadata GitHub, sebelumnya/berikutnya)
-- [x] Kontak: Server Action `submitContact` + `useActionState` (jalan tanpa JS) + honeypot + rate limit 5/jam + notifikasi Resend opsional (keputusan 2026-09-30)
-- [x] Unduh CV: `/api/cv` dengan penghitung unduhan
-- [x] Newsletter publik: double opt-in, halaman konfirmasi dan berhenti (tombol POST), email React Email ID/EN (keputusan 2026-09-30). Aktif setelah `RESEND_API_KEY` + `EMAIL_FROM` diisi
-- [x] Kebijakan Privasi, 404, error
-- [x] Revalidate berbasis tag dari aksi admin (perubahan langsung tampil, diuji E2E)
-- [x] Statistik pengunjung: `/api/track` tanpa cookie + Vercel Cron harian (ringkasan `PageViewDaily`, hapus data > 90 hari)
-- [x] API publik `/api/v1/*` (keputusan 2026-09-30)
-- [x] Seluruh konten dua bahasa, isi awal dari CV. Seed project hanya GAAS (masih **draf** sampai izin publikasi dikonfirmasi)
-- [ ] Uji email sungguhan (butuh domain terverifikasi di Resend) dan unggah Cloudinary sungguhan (butuh kunci)
-
-**Selesai bila:** semua halaman publik tampil dari data database dalam ID dan EN, terang dan gelap.
-
-## M4 — Polish (≈ 1 hari)
-
-Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. Keputusan pemilik: desain tetap, hero canvas, WhatsApp, tema awal gelap.
-
-- [x] Hero "Horizon" canvas 2D (tingkat perangkat, idle init, berhenti saat tidak terlihat, statis pada reduced-motion/hemat data) di atas latar CSS statis. Pelat status sudah ada sejak M3
-- [x] Reveal sekali jalan (IntersectionObserver, < 1 KB) dan transisi halaman (`<ViewTransition>`), header padat saat digulir (CSS). Menu HP memakai `popover` bawaan, tanpa Motion. Semua menghormati `prefers-reduced-motion`
-- [x] Tombol WhatsApp melayang menggantikan live chat (keputusan 2026-09-30)
-- [x] Tema awal gelap (keputusan 2026-09-30)
-- [x] SEO: metadata + canonical + hreflang per halaman, Open Graph dinamis (umum dan per project), sitemap, robots (preview tidak diindeks), JSON-LD `Person`
-- [x] Aksesibilitas: axe bersih di semua halaman publik dan admin (terang/gelap, ID/EN, desktop/HP), Lighthouse Accessibility 100
-- [ ] Uji manual keyboard dan pembaca layar (VoiceOver/TalkBack) di perangkat nyata, dilakukan pemilik setelah deploy
-- [x] Performa: subset font latin saja (−22 KB) dan font mono tidak di-preload. Lighthouse mobile (lokal, throttling simulasi): Performance 94–99, Accessibility 100, Best Practices 100, SEO 100 di 5 halaman. LCP terukur 0,2 s; LCP simulasi 2,1–3,1 s karena JS kerangka Next/React (±190 KB). Web Vitals lapangan dicek dengan Speed Insights setelah deploy
-- [x] Header keamanan dan CSP (tanpa nonce untuk publik, nonce untuk admin), notifikasi email login baru
-- [x] Tes E2E Chromium + emulasi HP lokal (96 lulus); Firefox, WebKit, dan iPhone di CI (`E2E_ALL_BROWSERS=1`) hijau sejak commit 452c1ce
-- [x] Review kode dan keamanan mandiri (temuan diperbaiki: notifikasi login di serverless memakai `after()`, CSP `upgrade-insecure-requests` hanya di Vercel)
-
-**Selesai bila:** Lighthouse mobile ≥ 90 di semua kategori, axe bersih, semua tes lulus.
-
-## M5 — Deploy (≈ 1 hari)
-
-- [x] Domain `mmirza.site` (Hostinger): A `@` dan CNAME `www` ke Vercel, `www` dialihkan 308 ke `mmirza.site`, HTTPS aktif, `NEXT_PUBLIC_SITE_URL` dan `BETTER_AUTH_URL` diisi (2026-10-01)
-- [ ] (Ditunda pemilik 2026-10-20) Verifikasi domain di Resend (SPF/DKIM)
-- [x] Variabel lingkungan production, Neon Singapura, migrasi production, seed admin (deploy pertama 2026-10-01)
-- [x] Vercel Cron (`Frontend/vercel.json`): ringkas `PageView` ke `PageViewDaily`, hapus `PageView` > 90 hari dan `RateLimit` lama, ganti garam hash harian, dilindungi `CRON_SECRET` (dibuat di M3)
-- [x] Kode: laporan error server ke Sentry tanpa SDK (`src/instrumentation.ts`), Vercel Analytics + Speed Insights (hanya di Vercel, tanpa query string)
-- [ ] (Ditunda pemilik 2026-10-20) Pemilik: aktifkan Analytics dan Speed Insights di Vercel, buat project Sentry lalu isi `SENTRY_DSN`, UptimeRobot (monitor `/api/health` tiap 5 menit, notifikasi email + Telegram)
-- [ ] (Ditunda pemilik 2026-10-20) GitHub ruleset untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
-- [x] Backup harian terenkripsi (`backup.yml`) dengan uji pemulihan otomatis di setiap run (diuji lokal: dump → gpg → pulih → cek isi)
-- [ ] (Ditunda pemilik 2026-10-20) Pemilik: isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan Backup sekali lewat Actions
-- [ ] Uji rollback Vercel
-- [ ] Dokumentasi: panduan admin, catatan arsitektur final. README, CLAUDE.md, PRD, ARCHITECTURE, dan CONTENT diselaraskan dengan situs 2026-10-20 (tangkapan layar baru, daftar fitur, petunjuk admin); panduan setup ada di README
-- [ ] Daftar periksa rilis (`WORKFLOW.md` bagian 7), uji di HP nyata
-- [ ] (Ditunda pemilik 2026-10-20) Kirim situs ke Search Console, cek preview link di WhatsApp dan LinkedIn
-
-**Selesai bila:** situs live di domain `.site`, monitoring aktif, backup teruji.
+- [ ] **Resend:** verifikasi domain (SPF/DKIM), lalu uji email sungguhan (notifikasi pesan kontak dan login baru)
+- [ ] **Pemantauan:** aktifkan Analytics dan Speed Insights di Vercel, buat project Sentry lalu isi `SENTRY_DSN`, pasang UptimeRobot (monitor `/api/health` tiap 5 menit)
+- [ ] **GitHub ruleset** untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
+- [ ] **Backup:** isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan workflow Backup sekali lewat Actions
+- [ ] **Search Console:** kirim situs, cek pratinjau tautan di WhatsApp dan LinkedIn
+- [ ] **Uji rollback Vercel** sekali (Instant Rollback ke deployment sebelumnya)
+- [ ] **Uji manual** keyboard dan pembaca layar (VoiceOver/TalkBack) di HP nyata
+- [ ] **Pertanyaan konten** yang masih terbuka (`Documentation/CONTENT.md` bagian 10) dan keputusan sementara (`PRD.md` bagian 11)
 
 ## Backlog (v2 dan sesudah)
 
 - [ ] **Update dependency bulanan.** Putaran pertama dimajukan pemilik ke 2026-11-06 (lihat log); berikutnya sekitar 2026-12-06. Aturan tambahan sejak putaran ini: hanya versi yang sudah rilis **minimal 7 hari** (jaga rantai pasok), termasuk SHA action pihak ketiga. Sisa advisori:
   - `minimatch` GHSA-g3hv-75wg-m249 (moderate, DoS pola glob), hanya alat lint: lewat `eslint` (minimatch 10) dan `eslint-config-next` → `eslint-plugin-import`/`jsx-a11y`/`react` (minimatch 3). Perbaikan hanya di minimatch 11 (rilis 2026-10-27). **Selesai 2026-11-10:** override `"minimatch@>=10 <11.0.1": 11.0.4` (+ `@isaacs/nonrecursive-glob-match` 1.0.3) di `pnpm-workspace.yaml`; versi terbaru 11.0.5/1.1.0 belum berumur 7 hari. ESLint dan `@eslint/config-array` hanya memakai `Minimatch`, `match`, dan `pattern` yang tetap ada di 11; daftar berkas yang di-lint sama (285) dan `pnpm audit` bersih. Jalur minimatch 3 tidak bisa dinaikkan ke 11 (API CommonJS berbeda): tunggu `eslint-config-next` memperbarui plugin, atau terima risikonya karena hanya memproses pola dari konfigurasi repo sendiri dan tidak ikut ke production.
-  - ~~`deepmerge` GHSA-gcqx-w48m-w2h4~~ selesai 2026-11-06: `@react-email/render` 2.2.0 memakai `html-to-text` 10 yang tidak lagi bergantung pada `deepmerge`.
 - [ ] Blog dan artikel
 - [ ] Sertifikat, testimoni
-- [ ] Pratinjau draf sebelum terbit (A10 di PRD)
 - [ ] Terjemahan otomatis sebagai bantuan (bukan pengganti)
 - [ ] Studi kasus dengan komponen interaktif (MDX)
 - [ ] Pencarian dalam situs
@@ -162,50 +46,50 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-09-30 | M3 selesai: halaman publik dari database, kontak, newsletter double opt-in, CV, statistik tanpa cookie + cron, API v1. Keputusan PRD 11 no. 1, 4 (opt-in), 5, 10 dikonfirmasi. Ditemukan dan diperbaiki: `dynamicParams = false` di layout locale membuat halaman publik 404 setelah revalidasi |
 | 2026-09-30 | M4 selesai: hero canvas, reveal, transisi, WhatsApp, tema gelap, SEO, CSP + header keamanan, notifikasi login, tes lintas browser di CI. PRD 11 no. 3 dan 14 dikonfirmasi |
 | 2026-10-01 | Font diganti: Oswald (judul) + Inter (isi) + JetBrains Mono (label), pilihan pemilik dari demo |
-| 2026-10-15 | Audit Home: catatan ketersediaan berisi posisi yang dicari (migrasi `20261015100000`), Project pilihan kembali sebagai pita sampul datar berjalan (pita 3D sempat dipasang lalu diganti karena berat), nomor bagian beranda otomatis, PRD F1/F17/U7 diperbarui dan F19 (pemberitahuan pembuka) ditambah. Masih menunggu: Vercel Web Analytics diaktifkan pemilik (skrip 404). Sisi kanan hero diisi foto potret (demo 1, DESIGN.md bagian 55) |
-| 2026-10-16 | Nama tombol CV seragam: "Resume CV" (ID dan EN) di hero, kartu pembuka, dan footer; ikon hero menjadi ikon dokumen (DESIGN.md bagian 56) |
-| 2026-10-16 | Revisi beranda: Resume CV di kartu pembuka langsung menutup kartu dan pindah ke Beranda; Dalam angka dan Dari komunitas ke software dihapus (DESIGN.md bagian 57). Pengalaman masuk beranda sebagai akordion (demo E3); About tidak ditambahkan |
-| 2026-10-16 | Project di beranda: tanpa nomor, judul di tengah, tanpa "Semua project" dan deretan nama, sampul pita bisa diklik ke detail dan tidak berhenti saat disorot, letak di bawah Pengalaman (DESIGN.md bagian 58) |
-| 2026-10-16 | Pengalaman di beranda: tanpa nomor dan tautan "Semua pengalaman", judul di tengah, semua tertutup, tanpa ikon +/× dan garis bawah (DESIGN.md bagian 58) |
-| 2026-10-16 | Pengalaman di beranda: logo berbingkai "bayangan lembut" (B5) dan suara blip digital saat baris dibuka dan ditutup (S9) (DESIGN.md bagian 58) |
-| 2026-10-16 | Project di beranda: nama project muncul di tengah sampul saat disorot, di layar sentuh di bawah sampul (demo N5, DESIGN.md bagian 58) |
-| 2026-10-16 | Pengalaman beranda: animasi buka/tutup di semua browser termasuk HP, detail sejajar judul di HP, huruf sama dengan halaman Pengalaman. Chip teknologi project langsung berwarna di layar sentuh (DESIGN.md bagian 58) |
-| 2026-10-16 | Resume CV kartu pembuka hanya membuka Drive (kartu tetap terbuka); semua nomor bagian beranda dihapus; Keahlian Teknis dan GitHub di tengah, tanpa kredit (dipindah ke Privasi), tanpa tautan profil dan ticker GitHub (DESIGN.md bagian 59). |
-| 2026-10-16 | Transisi antarbagian beranda T3 "judul tirai": judul naik dari balik batasnya, isi menyusul memudar (DESIGN.md bagian 60) |
-| 2026-10-16 | Grafik kontribusi GitHub: statistik mode 3D pindah ke baris di bawah grafik seperti mode 2D, tanpa garis kotak (DESIGN.md bagian 61) |
-| 2026-10-16 | Grafik kontribusi GitHub: font mengikuti situs, 3D lebih besar di HP, legenda Less/More rapat, petunjuk hover/orbit dihapus (DESIGN.md bagian 62) |
-| 2026-10-16 | Grafik kontribusi GitHub memakai biru situs (W1) menggantikan hijau (DESIGN.md bagian 63) |
-| 2026-10-16 | Grafik kontribusi GitHub: default 2D, kotak bergaris seperti GitHub di sekitar grafik dan legenda, judul jumlah kontribusi lebih besar, label statistik Inter (DESIGN.md bagian 64) |
-| 2026-10-16 | Grafik kontribusi GitHub: label statistik huruf besar, statistik menjadi pita bersekat di dalam kotak grafik (demo S5, DESIGN.md bagian 65) |
-| 2026-10-16 | Grafik kontribusi GitHub: total setahun dihapus dari statistik (tinggal 3), judul satu baris di HP, 2D bisa digeser di HP dan dibuka di minggu terbaru (DESIGN.md bagian 66). |
-| 2026-10-16 | Grafik kontribusi GitHub: format statistik F10 minimal (label, angka besar, tanggal ringkas), angka sejajar di HP (DESIGN.md bagian 67) |
-| 2026-10-16 | Grafik kontribusi GitHub: tanggal statistik dengan nama bulan lengkap di layar lebar, singkat di HP, pemisah " - " berspasi (DESIGN.md bagian 68) |
-| 2026-10-16 | Grafik kontribusi GitHub di HP: scrollbar disembunyikan, morph 2D/3D tidak patah (kanvas tetap lebar selama morph, DESIGN.md bagian 69) |
-| 2026-10-18 | Halaman 404: sesuai bahasa URL (catch-all `[locale]/[...rest]`), tanpa terjemahan dan penjelasan 404, satu tombol Beranda/Home, kalimat satu baris di layar lebar, isi di tengah (DESIGN.md bagian 70) |
-| 2026-10-18 | Pengalaman: entri teratas aktif saat halaman dibuka (garis baca). Grafik GitHub: suara B2 "gelombang klik" saat berpindah 2D/3D (DESIGN.md bagian 71) |
-| 2026-10-18 | Grafik GitHub: suara morph dihapus; judul jumlah kontribusi dan label statistik satu baris di HP (DESIGN.md bagian 72) |
-| 2026-10-18 | Keahlian Teknis: keyboard Spline diganti globe skill (S4 Globe + warna kategori S7) tanpa library; `@splinetool/runtime`, aset `public/spline/`, dan `'unsafe-eval'` CSP publik dihapus; kredit Naresh Khatri dihapus (DESIGN.md bagian 73) |
-| 2026-10-18 | Keahlian Teknis: 34 skill pilihan pemilik dalam 5 kategori (migrasi `20261018120000_skills_owner_list`), semua dengan logo; logo mengecil sesuai jumlah, logo tertutup dibuat inert (DESIGN.md bagian 74) |
-| 2026-10-18 | Globe skill: semua logo memakai logo asli berwarna penuh (`public/skills`, Devicon + sumber resmi), logo hitam dibalik di tema gelap (DESIGN.md bagian 75) |
-| 2026-10-18 | Chip teknologi di halaman Project memakai logo asli berwarna penuh yang sama dengan globe skill (DESIGN.md bagian 75) |
-| 2026-10-18 | Keahlian Teknis: NestJS, MongoDB, Docker dihapus, total 31 skill (migrasi `20261018130000_skills_remove_three`, DESIGN.md bagian 76) |
-| 2026-10-18 | Globe skill: teks ajakan dihapus; setelah logo dipilih, scroll, tekan ulang, tekan di mana saja, atau Esc membuat bola berputar lagi (DESIGN.md bagian 77) |
-| 2026-10-18 | Globe skill: semua lingkaran dan garis biru situs (B7 seragam); fokus tidak lagi memilih logo dan semua logo inert sampai hydration (perbaikan CI WebKit, DESIGN.md bagian 78) |
-| 2026-10-18 | Globe skill: tombol kategori diganti menu "Kategori: Semua" (pilihan C5, DESIGN.md bagian 79) |
-| 2026-10-18 | Globe skill: menu kategori ke bawah, kategori terpilih menonjol dan lainnya hampir hilang, tekan apa saja kembali ke Semua, "Dipakai di" dihapus (DESIGN.md bagian 80) |
-| 2026-10-18 | Globe skill: filter kategori tetap sampai Semua dipilih; setelah logo dilepas atau Semua dipilih, kemiringan bola kembali ke posisi awal (DESIGN.md bagian 81) |
-| 2026-10-18 | Globe skill: menu kategori lebih kecil dan tidak melewati garis bagian, angka jumlah skill huruf Oswald; pengaman geser untuk WebKit (DESIGN.md bagian 82) |
-| 2026-10-18 | Menu kategori globe: angka jumlah skill memakai huruf yang sama dengan nama kategori (DESIGN.md bagian 82) |
-| 2026-10-18 | Hero beranda dirombak: nama besar, potret dengan liquid mask (canvas 2D sendiri), panel status dan angka portofolio, baris CV dan sosial; latar Horizon dihapus (DESIGN.md bagian 83). Menunggu foto jas dan lapisan kedua dari pemilik |
-| 2026-10-19 | Foto jas baru di seluruh situs; hero tanpa bingkai dengan nama di belakang foto dan peran di bawah foto; pemberitahuan pembuka tanpa kedipan; hover membuka armor (gaya Kabut, intip berkala di rahang, latar neural vortex, efek sampai navbar) (DESIGN.md bagian 84–89) |
-| 2026-10-20 | Performa beranda (kanvas berhenti saat digulir, globe 30 fps, vortex lebih ringan), foto HP tajam, jarak Keahlian–GitHub, IPK 3,5 (DESIGN.md bagian 90) |
-| 2026-10-20 | Menu bawah HP hilang: penyebab asli ditemukan (halaman sesaat lebih lebar dari layar saat transisi, tampilan diperkecil Chrome HP), diperbaiki `overflow-x: clip` + tes E2E; bola skill tanpa raster ulang tiap bingkai dan logo WebP (DESIGN.md bagian 91 dan 93) |
-| 2026-10-20 | Audit kebersihan: `ClickSound`, `getPublicHighlights`, dependency `pg`/`@types/pg`, `inStory` di query publik, dan `THIRD_PARTY_NOTICES.md` dihapus (lisensi logo pindah ke `Frontend/scripts/skill-logos/SOURCES.md`); dokumen dan petunjuk admin diselaraskan; tugas akun pemilik M5 ditunda (DESIGN.md bagian 92 dan 94) |
-| 2026-10-20 | Revisi final pemilik: intip pindah dari rahang ke dua medali dada (3 detik setelah beranda terlihat, lalu tiap 8 detik), hover jadi simulasi cairan WebGL2 seperti Crazy Hover Mask Reveal, sudut bawah kotak GitHub bersambung, logo teknologi project abu-abu kecuali baris yang difokus, transisi pesan terkirim "Kartu berbalik" (demo 6) (DESIGN.md bagian 95) |
-| 2026-10-21 | Intip armor jadi "visor mata" (demo 3); tema selalu mulai gelap (kunci penyimpanan baru, tanpa ikut sistem); kedipan tema saat ganti bahasa diperbaiki + tes E2E; latar ungu vortex mati di HP/tablet; logo globe digambar di canvas (beban utas utama HP ±separuh) (DESIGN.md bagian 96) |
-| 2026-10-25 | README ditulis ulang ringkas dalam bahasa Inggris dengan satu tangkapan layar; panduan lokal/deploy/pemantauan/backup pindah ke `Documentation/DEPLOYMENT.md`. Folder `Backend/` (hanya peta placeholder) dan dua tangkapan layar lama dihapus. About repo diisi (mmirza.site), release v1.0.0 dibuat, dan image Docker dikirim ke GitHub Packages lewat `.github/workflows/release.yml` (DESIGN.md bagian 97) |
-| 2026-10-25 | Pembaruan keamanan dependency: Next.js 16.4.3, Zod 4.6.7, jsdom 30.1.3 (advisori kritis/tinggi baru, DESIGN.md bagian 97) |
-| 2026-10-26 | Revisi Super Admin: menu Angka (Highlight) dihapus total; teks situs dua bahasa menimpa `messages/*.json` dan dipecah per modul (Admin → Halaman situs: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain); potret dan armor hero bisa diunggah dari modul Home; kunci pesan tak terpakai dibuang; grup menu Konten digabung ke modulnya sebagai tab agar tiap topik hanya punya satu menu; gaya admin diselaraskan dengan situs publik (dock melayang, lampu menu aktif, tombol dan kartu pil, kapsul menu bawah di HP) (DESIGN.md bagian 98) |
+| 2026-10-15 | Audit Home: catatan ketersediaan berisi posisi yang dicari (migrasi `20261015100000`), Project pilihan kembali sebagai pita sampul datar berjalan (pita 3D sempat dipasang lalu diganti karena berat), nomor bagian beranda otomatis, PRD F1/F17/U7 diperbarui dan F19 (pemberitahuan pembuka) ditambah. Masih menunggu: Vercel Web Analytics diaktifkan pemilik (skrip 404). Sisi kanan hero diisi foto potret (demo 1) |
+| 2026-10-16 | Nama tombol CV seragam: "Resume CV" (ID dan EN) di hero, kartu pembuka, dan footer; ikon hero menjadi ikon dokumen |
+| 2026-10-16 | Revisi beranda: Resume CV di kartu pembuka langsung menutup kartu dan pindah ke Beranda; Dalam angka dan Dari komunitas ke software dihapus. Pengalaman masuk beranda sebagai akordion (demo E3); About tidak ditambahkan |
+| 2026-10-16 | Project di beranda: tanpa nomor, judul di tengah, tanpa "Semua project" dan deretan nama, sampul pita bisa diklik ke detail dan tidak berhenti saat disorot, letak di bawah Pengalaman |
+| 2026-10-16 | Pengalaman di beranda: tanpa nomor dan tautan "Semua pengalaman", judul di tengah, semua tertutup, tanpa ikon +/× dan garis bawah |
+| 2026-10-16 | Pengalaman di beranda: logo berbingkai "bayangan lembut" (B5) dan suara blip digital saat baris dibuka dan ditutup (S9) |
+| 2026-10-16 | Project di beranda: nama project muncul di tengah sampul saat disorot, di layar sentuh di bawah sampul (demo N5) |
+| 2026-10-16 | Pengalaman beranda: animasi buka/tutup di semua browser termasuk HP, detail sejajar judul di HP, huruf sama dengan halaman Pengalaman. Chip teknologi project langsung berwarna di layar sentuh |
+| 2026-10-16 | Resume CV kartu pembuka hanya membuka Drive (kartu tetap terbuka); semua nomor bagian beranda dihapus; Keahlian Teknis dan GitHub di tengah, tanpa kredit (dipindah ke Privasi), tanpa tautan profil dan ticker GitHub. |
+| 2026-10-16 | Transisi antarbagian beranda T3 "judul tirai": judul naik dari balik batasnya, isi menyusul memudar |
+| 2026-10-16 | Grafik kontribusi GitHub: statistik mode 3D pindah ke baris di bawah grafik seperti mode 2D, tanpa garis kotak |
+| 2026-10-16 | Grafik kontribusi GitHub: font mengikuti situs, 3D lebih besar di HP, legenda Less/More rapat, petunjuk hover/orbit dihapus |
+| 2026-10-16 | Grafik kontribusi GitHub memakai biru situs (W1) menggantikan hijau |
+| 2026-10-16 | Grafik kontribusi GitHub: default 2D, kotak bergaris seperti GitHub di sekitar grafik dan legenda, judul jumlah kontribusi lebih besar, label statistik Inter |
+| 2026-10-16 | Grafik kontribusi GitHub: label statistik huruf besar, statistik menjadi pita bersekat di dalam kotak grafik (demo S5) |
+| 2026-10-16 | Grafik kontribusi GitHub: total setahun dihapus dari statistik (tinggal 3), judul satu baris di HP, 2D bisa digeser di HP dan dibuka di minggu terbaru. |
+| 2026-10-16 | Grafik kontribusi GitHub: format statistik F10 minimal (label, angka besar, tanggal ringkas), angka sejajar di HP |
+| 2026-10-16 | Grafik kontribusi GitHub: tanggal statistik dengan nama bulan lengkap di layar lebar, singkat di HP, pemisah " - " berspasi |
+| 2026-10-16 | Grafik kontribusi GitHub di HP: scrollbar disembunyikan, morph 2D/3D tidak patah (kanvas tetap lebar selama morph) |
+| 2026-10-18 | Halaman 404: sesuai bahasa URL (catch-all `[locale]/[...rest]`), tanpa terjemahan dan penjelasan 404, satu tombol Beranda/Home, kalimat satu baris di layar lebar, isi di tengah |
+| 2026-10-18 | Pengalaman: entri teratas aktif saat halaman dibuka (garis baca). Grafik GitHub: suara B2 "gelombang klik" saat berpindah 2D/3D |
+| 2026-10-18 | Grafik GitHub: suara morph dihapus; judul jumlah kontribusi dan label statistik satu baris di HP |
+| 2026-10-18 | Keahlian Teknis: keyboard Spline diganti globe skill (S4 Globe + warna kategori S7) tanpa library; `@splinetool/runtime`, aset `public/spline/`, dan `'unsafe-eval'` CSP publik dihapus; kredit Naresh Khatri dihapus |
+| 2026-10-18 | Keahlian Teknis: 34 skill pilihan pemilik dalam 5 kategori (migrasi `20261018120000_skills_owner_list`), semua dengan logo; logo mengecil sesuai jumlah, logo tertutup dibuat inert |
+| 2026-10-18 | Globe skill: semua logo memakai logo asli berwarna penuh (`public/skills`, Devicon + sumber resmi), logo hitam dibalik di tema gelap |
+| 2026-10-18 | Chip teknologi di halaman Project memakai logo asli berwarna penuh yang sama dengan globe skill |
+| 2026-10-18 | Keahlian Teknis: NestJS, MongoDB, Docker dihapus, total 31 skill (migrasi `20261018130000_skills_remove_three`) |
+| 2026-10-18 | Globe skill: teks ajakan dihapus; setelah logo dipilih, scroll, tekan ulang, tekan di mana saja, atau Esc membuat bola berputar lagi |
+| 2026-10-18 | Globe skill: semua lingkaran dan garis biru situs (B7 seragam); fokus tidak lagi memilih logo dan semua logo inert sampai hydration (perbaikan CI WebKit) |
+| 2026-10-18 | Globe skill: tombol kategori diganti menu "Kategori: Semua" (pilihan C5) |
+| 2026-10-18 | Globe skill: menu kategori ke bawah, kategori terpilih menonjol dan lainnya hampir hilang, tekan apa saja kembali ke Semua, "Dipakai di" dihapus |
+| 2026-10-18 | Globe skill: filter kategori tetap sampai Semua dipilih; setelah logo dilepas atau Semua dipilih, kemiringan bola kembali ke posisi awal |
+| 2026-10-18 | Globe skill: menu kategori lebih kecil dan tidak melewati garis bagian, angka jumlah skill huruf Oswald; pengaman geser untuk WebKit |
+| 2026-10-18 | Menu kategori globe: angka jumlah skill memakai huruf yang sama dengan nama kategori |
+| 2026-10-18 | Hero beranda dirombak: nama besar, potret dengan liquid mask (canvas 2D sendiri), panel status dan angka portofolio, baris CV dan sosial; latar Horizon dihapus. Menunggu foto jas dan lapisan kedua dari pemilik |
+| 2026-10-19 | Foto jas baru di seluruh situs; hero tanpa bingkai dengan nama di belakang foto dan peran di bawah foto; pemberitahuan pembuka tanpa kedipan; hover membuka armor (gaya Kabut, intip berkala di rahang, latar neural vortex, efek sampai navbar) |
+| 2026-10-20 | Performa beranda (kanvas berhenti saat digulir, globe 30 fps, vortex lebih ringan), foto HP tajam, jarak Keahlian–GitHub, IPK 3,5 |
+| 2026-10-20 | Menu bawah HP hilang: penyebab asli ditemukan (halaman sesaat lebih lebar dari layar saat transisi, tampilan diperkecil Chrome HP), diperbaiki `overflow-x: clip` + tes E2E; bola skill tanpa raster ulang tiap bingkai dan logo WebP |
+| 2026-10-20 | Audit kebersihan: `ClickSound`, `getPublicHighlights`, dependency `pg`/`@types/pg`, `inStory` di query publik, dan `THIRD_PARTY_NOTICES.md` dihapus (lisensi logo pindah ke `Frontend/scripts/skill-logos/SOURCES.md`); dokumen dan petunjuk admin diselaraskan; tugas akun pemilik M5 ditunda |
+| 2026-10-20 | Revisi final pemilik: intip pindah dari rahang ke dua medali dada (3 detik setelah beranda terlihat, lalu tiap 8 detik), hover jadi simulasi cairan WebGL2 seperti Crazy Hover Mask Reveal, sudut bawah kotak GitHub bersambung, logo teknologi project abu-abu kecuali baris yang difokus, transisi pesan terkirim "Kartu berbalik" (demo 6) |
+| 2026-10-21 | Intip armor jadi "visor mata" (demo 3); tema selalu mulai gelap (kunci penyimpanan baru, tanpa ikut sistem); kedipan tema saat ganti bahasa diperbaiki + tes E2E; latar ungu vortex mati di HP/tablet; logo globe digambar di canvas (beban utas utama HP ±separuh) |
+| 2026-10-25 | README ditulis ulang ringkas dalam bahasa Inggris dengan satu tangkapan layar; panduan lokal/deploy/pemantauan/backup pindah ke `Documentation/DEPLOYMENT.md`. Folder `Backend/` (hanya peta placeholder) dan dua tangkapan layar lama dihapus. About repo diisi (mmirza.site), release v1.0.0 dibuat, dan image Docker dikirim ke GitHub Packages lewat `.github/workflows/release.yml` |
+| 2026-10-25 | Pembaruan keamanan dependency: Next.js 16.4.3, Zod 4.6.7, jsdom 30.1.3 (advisori kritis/tinggi baru) |
+| 2026-10-26 | Revisi Super Admin: menu Angka (Highlight) dihapus total; teks situs dua bahasa menimpa `messages/*.json` dan dipecah per modul (Admin → Halaman situs: Bagian Awal, Home, About, Experience, Projects, Contact, Navbar, Footer, Privasi, Halaman lain); potret dan armor hero bisa diunggah dari modul Home; kunci pesan tak terpakai dibuang; grup menu Konten digabung ke modulnya sebagai tab agar tiap topik hanya punya satu menu; gaya admin diselaraskan dengan situs publik (dock melayang, lampu menu aktif, tombol dan kartu pil, kapsul menu bawah di HP) |
 | 2026-10-27 | Foto bulat bawaan memakai wajah potret hero (latar putih di mode gelap, hitam di mode terang); riwayat commit dibersihkan dari atribusi Claude; kerentanan dependensi (6 advisori: `@vitest/mocker` dan `fast-uri`) diperbaiki dengan memperbarui vitest ke 5.0.5 dan `fast-uri` ke 3.1.9, `pnpm audit` bersih |
 | 2026-10-27 | README ditulis ulang lebih ringkas (tabel halaman, panel admin, dan tech stack); workflow manual `Buat release` dan catatan rilis `v1.0.0` ditambahkan, label image Docker diberi title dan url. Teks About dan Release diberikan ke pemilik untuk diisi lewat GitHub karena pengaturan repo tidak bisa ditulis dari sesi kerja (DEPLOYMENT.md bagian membuat release) |
 | 2026-10-30 | Pembaruan keamanan: `better-auth` 1.7.6 → 1.7.14 menutup 5 advisori baru (1 kritis OAuth state sebagai magic link, 1 tinggi OAuth proxy, 3 rendah); aplikasi hanya memakai login email dan password untuk satu admin, tanpa OAuth atau magic link. Audit tingkat high lulus lagi (tersisa 1 advisori rendah `deepmerge` lewat `@react-email/render`); tes login dan konten admin lulus di Chromium |
@@ -216,7 +100,7 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-10-31 | Celah audit 01–15: run Backup tanpa secret kini memberi peringatan + ringkasan "Backup TIDAK berjalan" (backup production tetap belum aktif sampai pemilik mengisi secret); tombol jeda pita project tanpa JavaScript (WCAG 2.2.2); aturan usia di CONTENT.md diselaraskan dengan keputusan 2026-10-07 (bio tidak diubah); tes otorisasi mencakup semua Server Action admin dan gagal bila ada yang baru terlewat; deskripsi project opsional; `global-error.tsx` dan galat panel admin; 404 global memakai teks next-intl (ikut suntingan admin); tanggal Privasi mengikuti suntingan admin terakhir; teks Privasi disesuaikan (newsletter tidak aktif, Resend/Analytics/Sentry hanya bila diaktifkan) dan kredit logo dilengkapi; blur timeline mati saat reduced-motion dan saat entri difokus; token konfirmasi newsletter berlaku 7 hari; tipe `PublicImage` pindah ke `lib/`; jeda tetap E2E diganti menunggu animasi/jaringan; aturan konten tidak lewat migrasi di WORKFLOW.md |
 | 2026-10-31 | Typo dan teks usang audit 01–09: tombol EN "View app"/"Send message" (sentence case, permintaan pemilik), `Locale.id` "Bahasa Indonesia" di kedua bahasa, README dan catatan rilis v1.0.0 tanpa "with filters"/"strict CSP", teks dasbor admin tanpa "Milestone 3"/"setelah diluncurkan", deskripsi halaman Profil/Sampul/Pengalaman sesuai perilaku sekarang, dialog kategori skill menyebut globe, komentar usang (menu, logo WebP, tiga kolom, env), ARCHITECTURE/PRD tanpa filter pengalaman dan `popover`, komentar seed nama/headline. `TODO(konten)` nama perusahaan (PT PGAS Solution vs PGN Solution) tetap karena masih pertanyaan terbuka di CONTENT.md |
 | 2026-11-01 | Keamanan audit SEC-01–08: beacon `/api/track` 120/jam per IP + batas global 5.000/hari; IP klien hanya dari sumber tepercaya (`TRUSTED_PROXIES`, juga untuk Better Auth); unduhan CV tercatat maks. 3/jam per IP; nama/subjek pesan satu baris sebelum masuk subjek email; email/WA tetap di footer, API/JSON-LD tetap tanpa keduanya (keputusan pemilik); action pihak ketiga dikunci SHA; advisori minimatch/deepmerge dijadwalkan ke update 2026-11-15 (minimatch 11 baru rilis 2026-10-27); domain email di halaman login diterima sebagai risiko |
-| 2026-11-01 | Latar ungu (shader neural vortex) dihapus dari hero beranda, kartu pembuka, dan login admin karena lag (permintaan pemilik); komponen dan CSS-nya dihapus (DESIGN.md bagian 100) |
+| 2026-11-01 | Latar ungu (shader neural vortex) dihapus dari hero beranda, kartu pembuka, dan login admin karena lag (permintaan pemilik); komponen dan CSS-nya dihapus |
 | 2026-11-02 | Integritas data audit DB-01–07: hapus project/pengalaman ikut menghapus aset (sampul, galeri, logo, foto) yang tidak dipakai lagi dalam transaksi yang sama, lalu berkasnya di Cloudinary; kartu pembuka dan teks Bagian Awal satu aksi satu transaksi (`saveIntroNotice` digabung ke `saveSiteTexts`); audit ganti password dicoba ulang dan dicatat ke log bila gagal (Better Auth tidak bisa satu transaksi); pendaftaran newsletter memakai upsert; urutan baru project/kategori/skill/galeri memakai kunci advisori Postgres; cron meringkas sejak ringkasan terakhir; unggahan yang gagal disimpan dicoba ulang sekali dan berkas yatim dibersihkan cron (> 48 jam, maks. 50/hari) |
 | 2026-11-02 | Kinerja audit PERF-01–06: semua kilau berputar (login, kolom dan tombol kontak) memakai steps() 30 fps dan kilau kontak dijeda di luar layar; kartu pembuka langsung tampil dari HTML sebelum JavaScript (dulu body disembunyikan sampai JS selesai), dibuka sebagai modal tanpa animasi ulang; tombol globe tanpa will-change di mode canvas; PhotoTilt menulis transform langsung ke elemen sasaran; email notifikasi kontak lewat after(); tombol Keluar admin nonaktif selama proses |
 | 2026-11-03 | Penanganan error audit ERR-01–06: nilai cadangan saat database gagal tidak lagi tersimpan di cache (teks situs, pengaturan, tanggal Privasi); kegagalan GitHub tidak di-cache 6 jam; beacon kunjungan tidak menjadi 500 saat database gangguan; fetch cadangan beacon tanpa galat di console; galat ganti password dibedakan (salah password, sesi berakhir, galat lain); efek cairan hero pulih setelah konteks WebGL hilang. Alamat `/api/*` yang tidak ada kini JSON 404. **Masih terbuka:** URL tak dikenal ber-titik (mis. `/x.txt`) tetap 404 bawaan Next, karena `[locale]` menangkapnya dan `global-not-found.tsx` hanya dipakai untuk URL yang tidak cocok rute mana pun; perbaikan lewat `dynamicParams = false` pernah membuat seluruh halaman publik 404 (ARCHITECTURE.md bagian 3), jadi belum diubah |
@@ -224,79 +108,79 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-05 | 404 global selesai: URL tak dikenal yang mengandung titik (mis. `/x.txt`, `/wp-login.php`, `/a/b.php`) kini menampilkan 404 situs bahasa Indonesia (status 404, URL tetap) lewat rewrite `afterFiles` di `next.config.ts`, bukan 404 bawaan Next berbahasa Inggris. Berkas `public/`, `robots.txt`, `sitemap.xml`, `favicon.ico`, dan API tidak terpengaruh. Menutup catatan "masih terbuka" 2026-11-03 |
 | 2026-11-05 | CI run #257 dan #259 merah: tes WebKit "satu tombol tema membalik gelap dan terang". Trace #259 menunjukkan klik diproses ±5 detik terlambat karena di WebKit CI tanpa GPU efek cairan dan globe beranda menyita thread utama (tes globe WebKit ikut tidak stabil dengan gejala sama). Tes tombol tema dipindah ke halaman ringan (Privasi), karena tombolnya ada di header setiap halaman. Dugaan awal (callback View Transition tidak dijalankan) tidak terbukti; pengaman 400 ms di tombol tema tetap dipertahankan karena tidak merugikan dan punya tes sendiri. WebKit tidak bisa dijalankan di sandbox, kepastian di CI |
 | 2026-11-06 | Usulan asisten AI "Tanya tentang Mirza" dihapus dari backlog atas permintaan pemilik: tidak dibuat. Live chat tetap lewat WhatsApp di footer dan halaman kontak (PRD bagian 11 nomor 3) |
-| 2026-11-06 | Revisi pemilik (6 poin): foto kartu ID di Kontak diganti wajah beranda dan titik di dahi foto profil dihapus (DESIGN.md bagian 103). Tiga set demo dikirim untuk dipilih: latar kartu pembuka, gerak kartu ID, dan foto Pengalaman diperbesar. Bagian GitHub beranda hilang karena situs tidak lagi menerima data dari GitHub (HTML live tanpa bagian itu, URL GitHub di profil masih ada); dugaan kuat `GITHUB_TOKEN` di Vercel kedaluwarsa (token fine-grained bawaan 30 hari, dipasang 2026-10-01). Perlu token baru dari pemilik |
-| 2026-11-06 | Pilihan pemilik dari demo: B1 (gerak kartu ID tetap) dan C1 (lightbox klasik, dipasang di halaman Pengalaman, DESIGN.md bagian 103). Latar kartu pembuka: A1–A10 belum cocok, set kedua A11–A20 dikirim |
-| 2026-11-06 | Latar kartu pembuka: pemilik memilih A42 "Gelombang commit" dari 50 demo (lima set). Dipasang sebagai kanvas ringan di belakang kartu (DESIGN.md bagian 104). CI #261 merah di WebKit (Playwright 1.64.1 membawa WebKit 27.2): klik sampul project di beranda sudah memuat halaman detail tetapi URL belum berganti dalam 5 detik; tes yang sama lulus 5/5 di WebKit 27.2 lokal, dan CI #263 (commit berikutnya) hijau di semua browser termasuk WebKit, jadi penyebabnya runner CI yang lambat tanpa GPU, bukan bug situs |
-| 2026-11-06 | Revisi pemilik (5 poin): gelombang cahaya di kotak biru latar kartu pembuka dihapus (sempat salah tafsir sebagai kilau tepi kartu; kilau tepi dikembalikan), area tarik kartu ID diperluas ke kiri, kanan, dan bawah (sempat salah tafsir sebagai ukuran kartu; ukuran kartu dikembalikan) dan foto kartu tidak terlalu zoom, foto Pengalaman mendapat efek yang sama dengan Project (miring, kilau, terbang ke tampilan besar), DESIGN.md bagian 105. Bagian GitHub di bawah Technical Skills sudah ada di kode dan letaknya memang di sana; tidak tampil karena data kontribusi tidak bisa diambil (dugaan kuat `GITHUB_TOKEN` di Vercel kedaluwarsa). Menunggu token baru dari pemilik |
+| 2026-11-06 | Revisi pemilik (6 poin): foto kartu ID di Kontak diganti wajah beranda dan titik di dahi foto profil dihapus. Tiga set demo dikirim untuk dipilih: latar kartu pembuka, gerak kartu ID, dan foto Pengalaman diperbesar. Bagian GitHub beranda hilang karena situs tidak lagi menerima data dari GitHub (HTML live tanpa bagian itu, URL GitHub di profil masih ada); dugaan kuat `GITHUB_TOKEN` di Vercel kedaluwarsa (token fine-grained bawaan 30 hari, dipasang 2026-10-01). Perlu token baru dari pemilik |
+| 2026-11-06 | Pilihan pemilik dari demo: B1 (gerak kartu ID tetap) dan C1 (lightbox klasik, dipasang di halaman Pengalaman). Latar kartu pembuka: A1–A10 belum cocok, set kedua A11–A20 dikirim |
+| 2026-11-06 | Latar kartu pembuka: pemilik memilih A42 "Gelombang commit" dari 50 demo (lima set). Dipasang sebagai kanvas ringan di belakang kartu. CI #261 merah di WebKit (Playwright 1.64.1 membawa WebKit 27.2): klik sampul project di beranda sudah memuat halaman detail tetapi URL belum berganti dalam 5 detik; tes yang sama lulus 5/5 di WebKit 27.2 lokal, dan CI #263 (commit berikutnya) hijau di semua browser termasuk WebKit, jadi penyebabnya runner CI yang lambat tanpa GPU, bukan bug situs |
+| 2026-11-06 | Revisi pemilik (5 poin): gelombang cahaya di kotak biru latar kartu pembuka dihapus (sempat salah tafsir sebagai kilau tepi kartu; kilau tepi dikembalikan), area tarik kartu ID diperluas ke kiri, kanan, dan bawah (sempat salah tafsir sebagai ukuran kartu; ukuran kartu dikembalikan) dan foto kartu tidak terlalu zoom, foto Pengalaman mendapat efek yang sama dengan Project (miring, kilau, terbang ke tampilan besar). Bagian GitHub di bawah Technical Skills sudah ada di kode dan letaknya memang di sana; tidak tampil karena data kontribusi tidak bisa diambil (dugaan kuat `GITHUB_TOKEN` di Vercel kedaluwarsa). Menunggu token baru dari pemilik |
 | 2026-11-06 | CI #266 merah lagi di WebKit dengan gejala sama seperti #261 (halaman tujuan tampil, alamat baru berganti > 5 detik kemudian), kali ini juga di tes tombol bahasa. Karena terulang, pengecekan alamat setelah navigasi klien di dua tes itu diberi batas `CLIENT_NAV_TIMEOUT` 15 detik (`e2e/wait.ts`); isi halaman tetap dicek dengan batas biasa. Lokal WebKit 27.2 dan Chromium lulus |
-| 2026-11-06 | Revisi pemilik (7 poin): batas bawah kartu ID = garis footer, tombol "Semua pengalaman" dan foto lebih kecil di lightbox, tombol jeda pita project dihapus (risiko WCAG 2.2.2 diterima), hover hero diringankan (percikan garis, kanvas 1×, iterasi 12), login admin berlatar kotak commit (DESIGN.md bagian 106). 20 ide kursor beranda dikirim sebagai demo; pemilik memilih K3 (titik + cincin), dipasang |
+| 2026-11-06 | Revisi pemilik (7 poin): batas bawah kartu ID = garis footer, tombol "Semua pengalaman" dan foto lebih kecil di lightbox, tombol jeda pita project dihapus (risiko WCAG 2.2.2 diterima), hover hero diringankan (percikan garis, kanvas 1×, iterasi 12), login admin berlatar kotak commit. 20 ide kursor beranda dikirim sebagai demo; pemilik memilih K3 (titik + cincin), dipasang |
 | 2026-11-06 | Perbaikan globe skill (CI #273 merah di WebKit): di mode kanvas tombol HTML (target klik) hanya dipindah tiap bingkai ke-4, sehingga saat bola berhenti (mis. kembali ke awal, seketika dengan reduced-motion) tombol bisa tertinggal di posisi lama dan klik hilang. Bingkai terakhir sebelum diam kini selalu sinkron penuh; globe menandai `data-idle` dan tes menunggu tanda itu sebelum mengklik logo. Direproduksi 4/20 di WebKit paralel, setelah perbaikan 30/30 |
 | 2026-11-06 | Migrasi `20261106120000_remove_unused_features` (disetujui pemilik): tabel `Subscriber` dan `Broadcast`, enum `SubscriberStatus`/`Availability`, kolom ketersediaan Profil, dan teks situs lama (Newsletter.*, Privacy.newsletter*, About.present) dihapus; di-push setelah CI #271/#272 hijau dan kode tanpa fitur itu sudah live |
-| 2026-11-06 | Top bar admin: nama halaman besar, sapaan Dashboard dihapus, tombol bahasa isian satu tombol bulat dengan suara dan efek acak seperti situs, volume suara admin dari Pengaturan, sorotan menu profil lancip (DESIGN.md bagian 108) |
-| 2026-11-06 | Panel admin dirapikan: newsletter, status ketersediaan, dan API `/api/v1` dihapus (dikonfirmasi pemilik); satu pengalih bahasa isian di top bar, satu label per isian, judul halaman tidak dobel atau berganti antar-tab, isian "Sekarang" digabung, kartu dashboard jadi tautan, Pesan berhalaman, filter audit manusiawi, tabel Project tanpa urut kolom (DESIGN.md bagian 107). Migrasi hapus tabel/kolom menyusul setelah deploy (sudah, lihat baris migrasi di atas) |
-| 2026-11-06 | Lightbox Pengalaman: tombol "← Semua pengalaman" dan foto turun ke posisi yang sama dengan detail project; kolom email login langsung terfokus (DESIGN.md bagian 106) |
-| 2026-11-06 | Gelombang cahaya kotak commit dikembalikan (kartu pembuka dan login) dengan akhir sapuan yang halus, kartu tulisan hitam pekat tanpa transparansi (DESIGN.md bagian 106) |
+| 2026-11-06 | Top bar admin: nama halaman besar, sapaan Dashboard dihapus, tombol bahasa isian satu tombol bulat dengan suara dan efek acak seperti situs, volume suara admin dari Pengaturan, sorotan menu profil lancip |
+| 2026-11-06 | Panel admin dirapikan: newsletter, status ketersediaan, dan API `/api/v1` dihapus (dikonfirmasi pemilik); satu pengalih bahasa isian di top bar, satu label per isian, judul halaman tidak dobel atau berganti antar-tab, isian "Sekarang" digabung, kartu dashboard jadi tautan, Pesan berhalaman, filter audit manusiawi, tabel Project tanpa urut kolom. Migrasi hapus tabel/kolom menyusul setelah deploy (sudah, lihat baris migrasi di atas) |
+| 2026-11-06 | Lightbox Pengalaman: tombol "← Semua pengalaman" dan foto turun ke posisi yang sama dengan detail project; kolom email login langsung terfokus |
+| 2026-11-06 | Gelombang cahaya kotak commit dikembalikan (kartu pembuka dan login) dengan akhir sapuan yang halus, kartu tulisan hitam pekat tanpa transparansi |
 | 2026-11-06 | Update dependency bulanan (dimajukan pemilik dari 2026-11-15). Patch/minor: Prisma 7.10.1, React 19.3.1, `@react-email/render` 2.2.0, Radix, TanStack Table, lucide-react 1.65.0, next-intl 4.14.9, react-hook-form 7.91.0, Playwright 1.64.1, axe 4.14.0, ESLint 10.14.0, Prettier 3.9.10, dotenv 18.0.9, `@vitejs/plugin-react` 6.1.2, `@types/node` 24.19.2; major: `@hookform/resolvers` 6.0.2 (resolver zod identik dengan 5.9.2, major hanya karena Effect 4 dan typeschema dihapus); `pnpm/action-setup` v6.1.0 (dikunci SHA). Hanya versi yang sudah rilis minimal 7 hari, sehingga Next 16.4.5, better-auth 1.7.18, Tailwind 4.3.4, vitest 5.1.0, jsdom 31, dan action-setup v6.1.1 menunggu putaran berikutnya. Sengaja tidak dinaikkan: TypeScript 7 (ganti kompiler, perlu keputusan sendiri) dan `@types/node` 26 (runtime tetap Node 24). Advisori `deepmerge` hilang; tinggal `minimatch` (alat lint) |
-| 2026-11-06 | Uji situs live (baca-saja, `/api/track` diblokir agar statistik tidak tercemar): 24 halaman (6 halaman × ID/EN × terang/gelap) status 200, tanpa geser horizontal di 360/768/1280 px, link "Lewati ke konten utama" menjadi fokus pertama, fokus kartu project terlihat. Satu temuan axe 4.14 diperbaiki: nama tombol bahasa kini diawali kode yang terlihat (DESIGN.md bagian 102). Backup run #36 hijau tetapi tanpa artifact: secret backup memang belum diisi |
-| 2026-11-10 | Admin Bagian Awal hanya isi kartu pembuka; Home hanya foto profil, foto utama, dan peran (+ tab Skill); armor, judul bagian, dan SEO beranda tidak bisa diubah lagi (DESIGN.md bagian 109). Kolom DB yang tidak dipakai lagi menunggu persetujuan migrasi |
-| 2026-11-10 | Admin per halaman (DESIGN.md bagian 110): kontak footer dan Resume CV di menu Footer; jabatan dan alamat situs kartu ID di menu Contact (migrasi salin `Profile.cardRole` ke teks situs); About mendapat foto kartu sendiri, peran sendiri, saklar chip kampus dan bendera (migrasi menambah kolom), dan tab Pendidikan (grade/GPA); menu Experience hanya kerja dan organisasi. Kolom `Profile.cardRole_id/en` ikut menunggu persetujuan migrasi hapus |
-| 2026-11-10 | Audit efek: animasi tombol dan hover kartu sudah ada di sebagian besar tempat, skeleton belum ada. Pilihan pemilik: B3 (animasi tautan "Semua project") dan skeleton shimmer di semua halaman (DESIGN.md bagian 111); B1, B2, C1–C3 tidak dipakai. Terpasang: skeleton semua halaman admin dan kilau di semua gambar konten. Skeleton halaman publik dicabut setelah diuji: tanpa JavaScript hanya skeleton yang tampil, 404 menjadi 200, dan pita beranda kadang tidak dijeda |
+| 2026-11-06 | Uji situs live (baca-saja, `/api/track` diblokir agar statistik tidak tercemar): 24 halaman (6 halaman × ID/EN × terang/gelap) status 200, tanpa geser horizontal di 360/768/1280 px, link "Lewati ke konten utama" menjadi fokus pertama, fokus kartu project terlihat. Satu temuan axe 4.14 diperbaiki: nama tombol bahasa kini diawali kode yang terlihat. Backup run #36 hijau tetapi tanpa artifact: secret backup memang belum diisi |
+| 2026-11-10 | Admin Bagian Awal hanya isi kartu pembuka; Home hanya foto profil, foto utama, dan peran (+ tab Skill); armor, judul bagian, dan SEO beranda tidak bisa diubah lagi. Kolom DB yang tidak dipakai lagi menunggu persetujuan migrasi |
+| 2026-11-10 | Admin per halaman: kontak footer dan Resume CV di menu Footer; jabatan dan alamat situs kartu ID di menu Contact (migrasi salin `Profile.cardRole` ke teks situs); About mendapat foto kartu sendiri, peran sendiri, saklar chip kampus dan bendera (migrasi menambah kolom), dan tab Pendidikan (grade/GPA); menu Experience hanya kerja dan organisasi. Kolom `Profile.cardRole_id/en` ikut menunggu persetujuan migrasi hapus |
+| 2026-11-10 | Audit efek: animasi tombol dan hover kartu sudah ada di sebagian besar tempat, skeleton belum ada. Pilihan pemilik: B3 (animasi tautan "Semua project") dan skeleton shimmer di semua halaman; B1, B2, C1–C3 tidak dipakai. Terpasang: skeleton semua halaman admin dan kilau di semua gambar konten. Skeleton halaman publik dicabut setelah diuji: tanpa JavaScript hanya skeleton yang tampil, 404 menjadi 200, dan pita beranda kadang tidak dijeda |
 | 2026-11-10 | Atas persetujuan pemilik ("hapus kolom lama"), migrasi `20261110150000_drop_unused_intro_armor_card_role` menghapus `SiteSetting.introEnabled`, `introTitle_id/en`, `heroArmorId`, dan `Profile.cardRole_id/en`; seed tidak lagi mengisi `cardRole` |
 | 2026-11-10 | `minimatch` 10 → 11.0.4 lewat override pnpm (GHSA-g3hv-75wg-m249, hanya alat lint); `pnpm audit` kini tanpa temuan. Lint, typecheck, 249 unit test, build, dan 139 E2E hijau |
-| 2026-11-11 | Desain ulang panel admin: dari 10 demo pemilik memilih 5 (kaca) + top bar dan sidebar, hitam-putih. Diterapkan ke semua halaman admin (DESIGN.md bagian 112): kaca buram, Atur kaca (blur, kepekatan, cahaya tepi, latar gradasi/kotak commit/polos), sidebar rel ikon di tablet, laci + dock di HP, animasi muncul dengan CSS. Tanpa GSAP dan gambar dari luar |
-| 2026-11-11 | Top bar admin dirapikan (DESIGN.md bagian 113): sidebar penuh dari atas, logo "Super Admin" di sidebar, semua huruf admin Inter biasa tanpa kapital, tombol kanan top bar di tengah, Akun hanya di menu profil, menu profil Lihat situs, Akun, Keluar merah. Tombol ID/EN mengganti bahasa tampilan admin (cookie, tahap 1: menu, top bar, judul, dashboard, tab, tombol form; label kolom form menyusul) |
-| 2026-11-11 | Revisi admin (DESIGN.md bagian 114): top bar dan sidebar tetap, isi digulir di dalam panel; Atur kaca tanpa judul/keterangan/contoh, tombol bersudut lancip, latar Titik menggantikan Kotak commit; Log audit dan Pengaturan pindah ke menu profil, diurutkan dari tulisan terpendek |
-| 2026-11-11 | Tombol ID/EN mengganti seluruh tampilan admin (DESIGN.md bagian 115): semua label, tombol, notifikasi, validasi, tabel, dialog, teks situs, log audit, judul tab, tanggal, dan angka. Isi data tampil versi Inggrisnya bila ada. Menu profil: Akun, Pengaturan, Log audit, Lihat situs |
-| 2026-11-11 | Tombol "Atur kaca" / "Glass" diganti "Tampilan" / "Appearance" (pilihan pemilik, DESIGN.md bagian 115) |
-| 2026-11-11 | Efek acak huruf saat ganti bahasa admin mengenai seluruh teks: teks dari server (putaran kedua setelah refresh) dan isi kolom form. Nama menu halaman situs berbahasa Indonesia di mode ID (Beranda, Tentang, Pengalaman, Project, Kontak, Navigasi, Kaki Halaman). DESIGN.md bagian 116 |
-| 2026-11-11 | Efek acak huruf ganti bahasa admin selesai bersamaan: semua teks ditahan acak sampai teks dari server tiba, lalu terurai serempak (DESIGN.md bagian 117) |
-| 2026-11-11 | Sidebar admin dirombak: 20rem, Privasi dan Halaman lain dihapus, identitas hanya di sidebar (sekaligus menu profil), dock HP dihapus, tombol hamburger menciutkan sidebar jadi ikon di desktop / membuka laci di HP (DESIGN.md bagian 126) |
+| 2026-11-11 | Desain ulang panel admin: dari 10 demo pemilik memilih 5 (kaca) + top bar dan sidebar, hitam-putih. Diterapkan ke semua halaman admin: kaca buram, Atur kaca (blur, kepekatan, cahaya tepi, latar gradasi/kotak commit/polos), sidebar rel ikon di tablet, laci + dock di HP, animasi muncul dengan CSS. Tanpa GSAP dan gambar dari luar |
+| 2026-11-11 | Top bar admin dirapikan: sidebar penuh dari atas, logo "Super Admin" di sidebar, semua huruf admin Inter biasa tanpa kapital, tombol kanan top bar di tengah, Akun hanya di menu profil, menu profil Lihat situs, Akun, Keluar merah. Tombol ID/EN mengganti bahasa tampilan admin (cookie, tahap 1: menu, top bar, judul, dashboard, tab, tombol form; label kolom form menyusul) |
+| 2026-11-11 | Revisi admin: top bar dan sidebar tetap, isi digulir di dalam panel; Atur kaca tanpa judul/keterangan/contoh, tombol bersudut lancip, latar Titik menggantikan Kotak commit; Log audit dan Pengaturan pindah ke menu profil, diurutkan dari tulisan terpendek |
+| 2026-11-11 | Tombol ID/EN mengganti seluruh tampilan admin: semua label, tombol, notifikasi, validasi, tabel, dialog, teks situs, log audit, judul tab, tanggal, dan angka. Isi data tampil versi Inggrisnya bila ada. Menu profil: Akun, Pengaturan, Log audit, Lihat situs |
+| 2026-11-11 | Tombol "Atur kaca" / "Glass" diganti "Tampilan" / "Appearance" (pilihan pemilik) |
+| 2026-11-11 | Efek acak huruf saat ganti bahasa admin mengenai seluruh teks: teks dari server (putaran kedua setelah refresh) dan isi kolom form. Nama menu halaman situs berbahasa Indonesia di mode ID (Beranda, Tentang, Pengalaman, Project, Kontak, Navigasi, Kaki Halaman). |
+| 2026-11-11 | Efek acak huruf ganti bahasa admin selesai bersamaan: semua teks ditahan acak sampai teks dari server tiba, lalu terurai serempak |
+| 2026-11-11 | Sidebar admin dirombak: 20rem, Privasi dan Halaman lain dihapus, identitas hanya di sidebar (sekaligus menu profil), dock HP dihapus, tombol hamburger menciutkan sidebar jadi ikon di desktop / membuka laci di HP |
 | 2026-11-11 | CI #298 merah: tes E2E "login gagal tercatat" di WebKit memberi 1 detik per klik sementara halaman masih beranimasi masuk; kini tiap putaran membuka halaman ulang dengan batas waktu normal (lulus 80/80 di WebKit/iPhone paralel) |
-| 2026-11-11 | Skeleton shimmer saat pindah halaman di situs publik, hanya di browser (HTML statis, 404, dan tanpa-JavaScript tidak berubah); admin dan gambar sudah sejak bagian 111 (DESIGN.md bagian 125) |
-| 2026-11-11 | Akun desain 1 "Profil ala WhatsApp" lengkap: foto besar dengan tombol kamera (unggah langsung), Info/Keamanan/Perangkat tertaut/Aktivitas terbaru, halaman kedua untuk foto, nama, password, dan semua aktivitas; fitur baru ganti nama akun (DESIGN.md bagian 124) |
-| 2026-11-11 | Sidebar admin: foto, nama, dan Super Admin menggantikan logo MM; label kelompok menu dihapus. 5 demo Akun (semua bagian terlihat) menunggu pilihan pemilik (DESIGN.md bagian 123) |
-| 2026-11-11 | Lampu tepi kiri menu aktif sidebar dikembalikan (permintaan pemilik), sorotan tetap bersudut kecil (DESIGN.md bagian 122) |
-| 2026-11-11 | Sorotan menu sidebar admin bersudut kecil seperti menu profil, lampu tepi kiri dihapus (DESIGN.md bagian 122). Tes E2E baru diperketat setelah CI #294 merah (teks "Perangkat ini" cocok ganda, teks kosong Log audit dobel, isian angka WebKit sebelum hidrasi) |
-| 2026-11-11 | Pilihan pemilik dari 30 demo, "buat paling lengkap": Pengaturan desain 1 dengan 13 pengaturan situs yang bekerja (tema awal, animasi hero, bahasa awal, kartu pembuka dan frekuensinya, tombol WhatsApp, buka/tutup form kontak, batas pesan per jam, email pesan baru, hitung kunjungan, masa simpan, indeks mesin pencari, mode perawatan), Akun desain 6 (riwayat masuk berhasil/gagal, perangkat aktif dan keluarkan, meter kekuatan password, saklar email login), Log audit desain 1 (umpan kalimat per hari, rincian kolom, cari, saring aksi dan data, muat lagi). Migrasi tambah kolom/tabel `20261111120000_site_settings_login_events`. DESIGN.md bagian 119–121 |
-| 2026-11-11 | Judul besar di panel isi admin dihapus (tetap untuk pembaca layar), deskripsi Log audit dihapus, huruf terakhir efek acak terkunci di akhir (DESIGN.md bagian 118). Menunggu pilihan desain Akun, Pengaturan, Log audit dari 30 demo |
-| 2026-11-11 | Revisi sidebar: transisi menciut 500 ms dengan kurva halus dan ikon tidak melompat, Pengaturan kembali ke sidebar, menu profil hanya Akun dan Lihat situs, halaman Log audit dihapus (pencatatan tetap; dikonfirmasi pemilik), Bagian Awal menjadi tab Kartu pembuka di Home (DESIGN.md bagian 127) |
-| 2026-11-11 | Satu wajah admin (pilihan pemilik demo 3 dari 5): foto dan nama di puncak sidebar menjadi tautan kembali ke Dashboard, menu profil menjadi tombol titik tiga di samping tombol tema berisi Akun, Lihat situs, dan Keluar tanpa foto (DESIGN.md bagian 128) |
-| 2026-11-11 | Menu profil tanpa keterangan, sidebar desktop 17rem (nama tetap utuh), Home tanpa deskripsi dengan empat tab satu baris: Kartu pembuka, Foto beranda, Peran beranda (halaman baru `/admin/roles`), Skill teknis (DESIGN.md bagian 129) |
-| 2026-11-12 | Akun → Foto profil: tombol hapus foto unggahan untuk kembali ke foto bawaan (DESIGN.md bagian 130) |
-| 2026-11-12 | Home: tab selebar panel sampai tepi kiri-kanan; Kartu pembuka diubah langsung di pratinjau kartu seperti di situs, Simpan di bawah (DESIGN.md bagian 131) |
-| 2026-11-12 | Kartu pembuka: petunjuk dan ikon pensil dihapus, isi diketik langsung di kartu (hanya kursor), panggung dan Simpan selebar panel bersudut kecil (DESIGN.md bagian 132) |
-| 2026-11-12 | Ubah langsung di pratinjau, modul Home: Peran beranda diketik langsung di pratinjau hero, Foto beranda ditekan untuk diganti; alat bersama live-edit (DESIGN.md bagian 133). Berikutnya: Skill teknis, lalu modul teks dan data |
-| 2026-11-12 | Ubah langsung di pratinjau: Skill teknis (globe asli, nama kategori dan skill diketik langsung dan tersimpan sendiri; DESIGN.md bagian 134) |
-| 2026-11-12 | Ubah langsung di pratinjau: teks halaman About, Experience, Projects, Contact, Navbar, Footer (tiruan halaman, SEO sebagai cuplikan mesin pencari); tab selebar panel dan tanpa deskripsi di semua modul (DESIGN.md bagian 135) |
-| 2026-11-12 | Ubah langsung di pratinjau: About → Profil (pita Tentang, bio, pratinjau tautan; foto kartu lewat jendela bersama AssetEditDialog; DESIGN.md bagian 136) |
-| 2026-11-12 | Ubah langsung di pratinjau: Pengalaman dan Pendidikan (daftar seperti timeline situs, entri diketik langsung, logo/foto ditekan untuk diganti; DESIGN.md bagian 137) |
-| 2026-11-12 | Ubah langsung di pratinjau: Projects (daftar seperti halaman Project situs, satu project seperti halaman detail: peran, judul, tombol, dan sampul diketik/ditekan langsung; DESIGN.md bagian 138) |
-| 2026-11-12 | Ubah langsung di pratinjau: kartu kontak dan Resume CV di Footer (kartu seperti footer situs, nilai diketik di kartu, ikon CV membuka jendela PDF; DESIGN.md bagian 139) |
-| 2026-11-12 | Hapus komponen admin lama yang tidak terpakai (`DataTable`, `StatusBadge`, `BilingualTabs`, `MarkdownEditor`, `FormFooter`, `LangChip`, `ui/tabs`) beserta dependency `@tanstack/react-table` dan `@radix-ui/react-tabs` (DESIGN.md bagian 140) |
-| 2026-11-12 | Home 1:1 seperti situs: Kartu pembuka dan Peran memakai markup situs di bingkai layar yang diperkecil (huruf Oswald, latar kotak commit, navbar asli), tombol ID/EN di panggung Peran dihapus, tab Foto beranda dihapus (foto utama ditekan di tab Peran; DESIGN.md bagian 141) |
-| 2026-11-12 | About tanpa tab Teks halaman: menu About langsung ke Profil, `/admin/pages/about` diarahkan ke Profil, teks halaman Tentang tetap tampil di situs (DESIGN.md bagian 142) |
-| 2026-11-12 | Skill teknis tanpa globe: nama kategori ID dan EN berdampingan, logo skill bisa diunggah (kolom `Skill.logoId`, target `skill-logo`), logo unggahan dipakai globe beranda dan chip teknologi project (DESIGN.md bagian 143) |
-| 2026-11-12 | Penanda bagian yang bisa diubah di pratinjau admin: garis putus-putus berkedip pelan di teks yang bisa diketik dan foto/logo yang bisa diganti, diam bila gerak dikurangi (DESIGN.md bagian 144) |
-| 2026-11-12 | Penanda bagian yang bisa diubah tanpa kedip: garis putus-putus diam (revisi pemilik, DESIGN.md bagian 144) |
-| 2026-11-13 | Revisi pemilik: garis penanda di isi kartu pembuka, tab Peran hanya peran (foto tidak bisa ditekan), About satu halaman (profil + pendidikan, nama tetap, Chip kampus/bendera satu baris di atas Simpan, garis foto pas di bingkai), tab Teks halaman Experience dihapus, daftar pengalaman admin 1:1 dengan situs termasuk uraian (DESIGN.md bagian 145-146) |
-| 2026-11-13 | Revisi malam: pendidikan dan pengalaman diubah, ditambah, dan dihapus di halaman About/Experience sendiri (tanpa pindah halaman, garis penanda), peran About seperti Home, kotak pratinjau tautan dihapus, ID/EN di atas Simpan satu bentuk dengan Chip kampus/bendera (DESIGN.md bagian 147) |
-| 2026-11-15 | Unggah gambar langsung dengan pemotong (ukuran bingkai, geser, zoom, putar), alt otomatis, tombol Draf dan Hapus dirapikan, chip kartu About umum dan bisa diedit (DESIGN.md bagian 148) |
-| 2026-11-15 | Revisi sore: ID/EN kartu pembuka di atas Simpan, tab GitHub di Home (warna grafik terang/gelap), label Logo Chip/Flag Chip, jarak garis penanda, pendidikan satu hapus + tahun selesai teks, Projects tanpa Teks halaman (DESIGN.md bagian 149) |
-| 2026-11-15 | Revisi malam: tab GitHub lima warna (merah, kuning, hijau, biru, ungu) tanpa terpotong, ID/EN kembali di kartu pembuka, garis putus-putus logo terlihat di tema gelap (DESIGN.md bagian 150) |
-| 2026-11-15 | Revisi malam (2): Navbar, Contact, dan Footer 1:1 seperti situs (satu Simpan untuk teks dan kartu kontak Footer), garis kartu pendidikan rapat dan bersudut tajam (DESIGN.md bagian 151) |
-| 2026-11-15 | Revisi malam (3): Footer hanya kartu kontak (2x3, tanpa bahasa/keterangan/Situs lain), Navbar tanpa nama menu pembaca layar, Contact hanya foto kartu ID, jabatan, judul, dan pengantar yang bisa diubah (foto kartu ID punya kolom sendiri) (DESIGN.md bagian 152) |
-| 2026-11-15 | Revisi malam (4): Skill teknis 1:1 dengan pratinjau globe + bagian ubah/tambah + ID/EN dan Simpan di bawah, kotak pilihan tidak lagi putus-putus, dialog Atur gambar dan hapus disederhanakan (satu ukuran, tanpa Batal, tombol satu baris), kartu pendidikan/pengalaman baru bisa diberi logo dan foto sebelum disimpan (DESIGN.md bagian 153) |
-| 2026-11-16 | Revisi: globe Skill teknis bisa diputar dan ditekan, dialog Edit skill dihapus, garis daftar skill rapat, judul dialog hapus umum, kartu ID Contact memakai kanvas asli (bisa ditarik, foto dan jabatan ditekan), lampu menu aktif Navbar dihapus di pratinjau (DESIGN.md bagian 154) |
-| 2026-11-16 | Revisi malam: Skill teknis tanpa panah dan hapus berupa ikon, bingkai pratinjau lebih panjang, kartu ID Contact diam dengan jabatan diketik di kartu, garis kartu pendidikan baru sama dengan yang tersimpan, catatan data contoh di tab GitHub (DESIGN.md bagian 155) |
-| 2026-11-16 | Revisi pagi: GitHub tanpa catatan dan sorotan sesuai tetikus, Navbar tanpa penanda aktif, link Footer tampil seperti situs lalu diubah saat ditekan, Experience: jenis pekerjaan teks bebas per bahasa (migrasi employment_label), garis rapi, foto sisi benar (DESIGN.md bagian 156) |
-| 2026-11-16 | Revisi siang: Experience garis tajam, dropdown tanggal dan tombol Masih berlangsung di baris tanggal, satu tombol hapus, tanpa Kerja/Organisasi; Projects: tanpa Unggulan, teks diketik di daftar (saveProjectTexts), kotak Di daftar project/Belum tampil/Impor GitHub dihapus (DESIGN.md bagian 157) |
-| 2026-11-16 | Revisi sore: Footer dua baris (nama + tautan), Projects ubah tanpa pilihan status/kategori/tahun dan tanpa ID/EN di atas, alamat dan tombol URL rapi, ringkasan satu baris, galeri seperti situs dengan tombol + (DESIGN.md bagian 158) |
-| 2026-11-16 | Revisi sore (2): halaman ubah Project dengan logo GitHub asli, garis foto rapi dan hapus untuk semua foto, ringkasan hanya di daftar, pilihan teknologi berlogo seperti Skill teknis (DESIGN.md bagian 159) |
-| 2026-11-16 | Skeleton shimmer dilengkapi: halaman masuk admin, kanvas (globe, grafik GitHub, kartu ID), tombol Simpan, unggahan galeri, pemotong gambar (DESIGN.md bagian 160) |
-| 2026-11-16 | Footer: judul dan teks kecil tiap kartu bisa diganti admin bersama tautan tujuan (kolom contactLabels, DESIGN.md bagian 161) |
-| 2026-11-16 | Akun: foto penuh dan kamera langsung ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog buram dengan password (aksi changeAccountEmail, DESIGN.md bagian 162) |
-| 2026-11-16 | Garis tepi atas panel isi admin tidak lagi terpotong isi yang digulir (border sungguhan, DESIGN.md bagian 163) |
-| 2026-11-16 | Footer: judul tetap, WhatsApp/Email satu isian, CV hanya link, jarak antar isian; Project: foto sebelum disimpan, tanpa Draf, slug di bilah alamat, daftar admin seperti situs (DESIGN.md bagian 164) |
+| 2026-11-11 | Skeleton shimmer saat pindah halaman di situs publik, hanya di browser (HTML statis, 404, dan tanpa-JavaScript tidak berubah); admin dan gambar sudah sejak 2026-11-10 |
+| 2026-11-11 | Akun desain 1 "Profil ala WhatsApp" lengkap: foto besar dengan tombol kamera (unggah langsung), Info/Keamanan/Perangkat tertaut/Aktivitas terbaru, halaman kedua untuk foto, nama, password, dan semua aktivitas; fitur baru ganti nama akun |
+| 2026-11-11 | Sidebar admin: foto, nama, dan Super Admin menggantikan logo MM; label kelompok menu dihapus. 5 demo Akun (semua bagian terlihat) menunggu pilihan pemilik |
+| 2026-11-11 | Lampu tepi kiri menu aktif sidebar dikembalikan (permintaan pemilik), sorotan tetap bersudut kecil |
+| 2026-11-11 | Sorotan menu sidebar admin bersudut kecil seperti menu profil, lampu tepi kiri dihapus. Tes E2E baru diperketat setelah CI #294 merah (teks "Perangkat ini" cocok ganda, teks kosong Log audit dobel, isian angka WebKit sebelum hidrasi) |
+| 2026-11-11 | Pilihan pemilik dari 30 demo, "buat paling lengkap": Pengaturan desain 1 dengan 13 pengaturan situs yang bekerja (tema awal, animasi hero, bahasa awal, kartu pembuka dan frekuensinya, tombol WhatsApp, buka/tutup form kontak, batas pesan per jam, email pesan baru, hitung kunjungan, masa simpan, indeks mesin pencari, mode perawatan), Akun desain 6 (riwayat masuk berhasil/gagal, perangkat aktif dan keluarkan, meter kekuatan password, saklar email login), Log audit desain 1 (umpan kalimat per hari, rincian kolom, cari, saring aksi dan data, muat lagi). Migrasi tambah kolom/tabel `20261111120000_site_settings_login_events`. |
+| 2026-11-11 | Judul besar di panel isi admin dihapus (tetap untuk pembaca layar), deskripsi Log audit dihapus, huruf terakhir efek acak terkunci di akhir. Menunggu pilihan desain Akun, Pengaturan, Log audit dari 30 demo |
+| 2026-11-11 | Revisi sidebar: transisi menciut 500 ms dengan kurva halus dan ikon tidak melompat, Pengaturan kembali ke sidebar, menu profil hanya Akun dan Lihat situs, halaman Log audit dihapus (pencatatan tetap; dikonfirmasi pemilik), Bagian Awal menjadi tab Kartu pembuka di Home |
+| 2026-11-11 | Satu wajah admin (pilihan pemilik demo 3 dari 5): foto dan nama di puncak sidebar menjadi tautan kembali ke Dashboard, menu profil menjadi tombol titik tiga di samping tombol tema berisi Akun, Lihat situs, dan Keluar tanpa foto |
+| 2026-11-11 | Menu profil tanpa keterangan, sidebar desktop 17rem (nama tetap utuh), Home tanpa deskripsi dengan empat tab satu baris: Kartu pembuka, Foto beranda, Peran beranda (halaman baru `/admin/roles`), Skill teknis |
+| 2026-11-12 | Akun → Foto profil: tombol hapus foto unggahan untuk kembali ke foto bawaan |
+| 2026-11-12 | Home: tab selebar panel sampai tepi kiri-kanan; Kartu pembuka diubah langsung di pratinjau kartu seperti di situs, Simpan di bawah |
+| 2026-11-12 | Kartu pembuka: petunjuk dan ikon pensil dihapus, isi diketik langsung di kartu (hanya kursor), panggung dan Simpan selebar panel bersudut kecil |
+| 2026-11-12 | Ubah langsung di pratinjau, modul Home: Peran beranda diketik langsung di pratinjau hero, Foto beranda ditekan untuk diganti; alat bersama live-edit. Berikutnya: Skill teknis, lalu modul teks dan data |
+| 2026-11-12 | Ubah langsung di pratinjau: Skill teknis (globe asli, nama kategori dan skill diketik langsung dan tersimpan sendiri) |
+| 2026-11-12 | Ubah langsung di pratinjau: teks halaman About, Experience, Projects, Contact, Navbar, Footer (tiruan halaman, SEO sebagai cuplikan mesin pencari); tab selebar panel dan tanpa deskripsi di semua modul |
+| 2026-11-12 | Ubah langsung di pratinjau: About → Profil (pita Tentang, bio, pratinjau tautan; foto kartu lewat jendela bersama AssetEditDialog) |
+| 2026-11-12 | Ubah langsung di pratinjau: Pengalaman dan Pendidikan (daftar seperti timeline situs, entri diketik langsung, logo/foto ditekan untuk diganti) |
+| 2026-11-12 | Ubah langsung di pratinjau: Projects (daftar seperti halaman Project situs, satu project seperti halaman detail: peran, judul, tombol, dan sampul diketik/ditekan langsung) |
+| 2026-11-12 | Ubah langsung di pratinjau: kartu kontak dan Resume CV di Footer (kartu seperti footer situs, nilai diketik di kartu, ikon CV membuka jendela PDF) |
+| 2026-11-12 | Hapus komponen admin lama yang tidak terpakai (`DataTable`, `StatusBadge`, `BilingualTabs`, `MarkdownEditor`, `FormFooter`, `LangChip`, `ui/tabs`) beserta dependency `@tanstack/react-table` dan `@radix-ui/react-tabs` |
+| 2026-11-12 | Home 1:1 seperti situs: Kartu pembuka dan Peran memakai markup situs di bingkai layar yang diperkecil (huruf Oswald, latar kotak commit, navbar asli), tombol ID/EN di panggung Peran dihapus, tab Foto beranda dihapus (foto utama ditekan di tab Peran) |
+| 2026-11-12 | About tanpa tab Teks halaman: menu About langsung ke Profil, `/admin/pages/about` diarahkan ke Profil, teks halaman Tentang tetap tampil di situs |
+| 2026-11-12 | Skill teknis tanpa globe: nama kategori ID dan EN berdampingan, logo skill bisa diunggah (kolom `Skill.logoId`, target `skill-logo`), logo unggahan dipakai globe beranda dan chip teknologi project |
+| 2026-11-12 | Penanda bagian yang bisa diubah di pratinjau admin: garis putus-putus berkedip pelan di teks yang bisa diketik dan foto/logo yang bisa diganti, diam bila gerak dikurangi |
+| 2026-11-12 | Penanda bagian yang bisa diubah tanpa kedip: garis putus-putus diam (revisi pemilik) |
+| 2026-11-13 | Revisi pemilik: garis penanda di isi kartu pembuka, tab Peran hanya peran (foto tidak bisa ditekan), About satu halaman (profil + pendidikan, nama tetap, Chip kampus/bendera satu baris di atas Simpan, garis foto pas di bingkai), tab Teks halaman Experience dihapus, daftar pengalaman admin 1:1 dengan situs termasuk uraian |
+| 2026-11-13 | Revisi malam: pendidikan dan pengalaman diubah, ditambah, dan dihapus di halaman About/Experience sendiri (tanpa pindah halaman, garis penanda), peran About seperti Home, kotak pratinjau tautan dihapus, ID/EN di atas Simpan satu bentuk dengan Chip kampus/bendera |
+| 2026-11-15 | Unggah gambar langsung dengan pemotong (ukuran bingkai, geser, zoom, putar), alt otomatis, tombol Draf dan Hapus dirapikan, chip kartu About umum dan bisa diedit |
+| 2026-11-15 | Revisi sore: ID/EN kartu pembuka di atas Simpan, tab GitHub di Home (warna grafik terang/gelap), label Logo Chip/Flag Chip, jarak garis penanda, pendidikan satu hapus + tahun selesai teks, Projects tanpa Teks halaman |
+| 2026-11-15 | Revisi malam: tab GitHub lima warna (merah, kuning, hijau, biru, ungu) tanpa terpotong, ID/EN kembali di kartu pembuka, garis putus-putus logo terlihat di tema gelap |
+| 2026-11-15 | Revisi malam (2): Navbar, Contact, dan Footer 1:1 seperti situs (satu Simpan untuk teks dan kartu kontak Footer), garis kartu pendidikan rapat dan bersudut tajam |
+| 2026-11-15 | Revisi malam (3): Footer hanya kartu kontak (2x3, tanpa bahasa/keterangan/Situs lain), Navbar tanpa nama menu pembaca layar, Contact hanya foto kartu ID, jabatan, judul, dan pengantar yang bisa diubah (foto kartu ID punya kolom sendiri) |
+| 2026-11-15 | Revisi malam (4): Skill teknis 1:1 dengan pratinjau globe + bagian ubah/tambah + ID/EN dan Simpan di bawah, kotak pilihan tidak lagi putus-putus, dialog Atur gambar dan hapus disederhanakan (satu ukuran, tanpa Batal, tombol satu baris), kartu pendidikan/pengalaman baru bisa diberi logo dan foto sebelum disimpan |
+| 2026-11-16 | Revisi: globe Skill teknis bisa diputar dan ditekan, dialog Edit skill dihapus, garis daftar skill rapat, judul dialog hapus umum, kartu ID Contact memakai kanvas asli (bisa ditarik, foto dan jabatan ditekan), lampu menu aktif Navbar dihapus di pratinjau |
+| 2026-11-16 | Revisi malam: Skill teknis tanpa panah dan hapus berupa ikon, bingkai pratinjau lebih panjang, kartu ID Contact diam dengan jabatan diketik di kartu, garis kartu pendidikan baru sama dengan yang tersimpan, catatan data contoh di tab GitHub |
+| 2026-11-16 | Revisi pagi: GitHub tanpa catatan dan sorotan sesuai tetikus, Navbar tanpa penanda aktif, link Footer tampil seperti situs lalu diubah saat ditekan, Experience: jenis pekerjaan teks bebas per bahasa (migrasi employment_label), garis rapi, foto sisi benar |
+| 2026-11-16 | Revisi siang: Experience garis tajam, dropdown tanggal dan tombol Masih berlangsung di baris tanggal, satu tombol hapus, tanpa Kerja/Organisasi; Projects: tanpa Unggulan, teks diketik di daftar (saveProjectTexts), kotak Di daftar project/Belum tampil/Impor GitHub dihapus |
+| 2026-11-16 | Revisi sore: Footer dua baris (nama + tautan), Projects ubah tanpa pilihan status/kategori/tahun dan tanpa ID/EN di atas, alamat dan tombol URL rapi, ringkasan satu baris, galeri seperti situs dengan tombol + |
+| 2026-11-16 | Revisi sore (2): halaman ubah Project dengan logo GitHub asli, garis foto rapi dan hapus untuk semua foto, ringkasan hanya di daftar, pilihan teknologi berlogo seperti Skill teknis |
+| 2026-11-16 | Skeleton shimmer dilengkapi: halaman masuk admin, kanvas (globe, grafik GitHub, kartu ID), tombol Simpan, unggahan galeri, pemotong gambar |
+| 2026-11-16 | Footer: judul dan teks kecil tiap kartu bisa diganti admin bersama tautan tujuan (kolom contactLabels) |
+| 2026-11-16 | Akun: foto penuh dan kamera langsung ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog buram dengan password (aksi changeAccountEmail) |
+| 2026-11-16 | Garis tepi atas panel isi admin tidak lagi terpotong isi yang digulir (border sungguhan) |
+| 2026-11-16 | Footer: judul tetap, WhatsApp/Email satu isian, CV hanya link, jarak antar isian; Project: foto sebelum disimpan, tanpa Draf, slug di bilah alamat, daftar admin seperti situs |
 | 2026-11-16 | Footer admin tanpa keterangan "Google Drive"; judul daftar Project admin bergaris putus-putus; tombol "Simpan" di project baru; Experience: kalender bulan/tahun bergaya aplikasi (components/admin/month-picker.tsx) menggantikan dropdown bawaan, jarak tombol "Masih berlangsung" |
 | 2026-11-16 | Daftar Project admin: garis putus-putus judul dan ringkasan sama panjang (ringkasan tidak dibatasi 40ch di admin) |
 | 2026-11-16 | Daftar Project admin: tautan sampul disembunyikan dari pembaca layar dan urutan Tab (ikon pensil tetap jalan ke halaman ubah), memperbaiki pelanggaran axe link-name di CI #347 |
@@ -315,32 +199,33 @@ Status: selesai 2026-09-30 kecuali uji manual pembaca layar di perangkat nyata. 
 | 2026-11-16 | Akun: dialog Ganti nama, email, dan password berganti tata letak seperti acuan pemilik: kartu "lama" bergaris dengan ikon bulat, isian berikon di kiri, satu garis kekuatan + "Syarat password:", Simpan di kanan bawah. Kolom Ulangi password baru tetap |
 | 2026-11-16 | Akun: syarat password jadi lima baris (angka, 8 karakter, huruf kecil, huruf besar, karakter spesial), kolom password berisi contoh "Min. 8 Karakter", panjang minimal 12 → 8 (`MIN_PASSWORD_LENGTH`), kartu nama/email lama bersudut lebih kecil. Ulangi password baru dipertahankan |
 | 2026-11-16 | Akun: kolom Ulangi password baru dihapus (schema tanpa confirmPassword), Simpan kembali satu baris penuh di tiga dialog, contoh isian "nama@gmail.com" dan "Masukkan Password" (ID/EN) |
-| 2026-11-16 | Dashboard desain 01 "Ringkas": 4 angka dengan naik/turun dan grafik kecil, periode 7/30/90 hari (`?range=`), grafik tayangan + pengunjung, tabel, pesan terbaru, konten di situs (DESIGN.md bagian 165) |
-| 2026-11-16 | Revisi Dashboard: selebar panel, tanpa persen, tanpa "Hari menurut WIB", "Daily Visits"/"Visitors (Dashed Lines)", kotak periode lancip bergaris, tabel langsung tampil, Konten di situs dihapus, Pesan terbaru satu baris penuh (DESIGN.md bagian 166) |
-| 2026-11-16 | Revisi Dashboard kedua: label kotak tanpa periode, grafik dipercantik, Rincian per hari jadi kotak sendiri di samping Pesan terbaru, tanpa Semua pesan, "Latest Messages", kepala tabel tidak tembus saat digulir (DESIGN.md bagian 167) |
+| 2026-11-16 | Dashboard desain 01 "Ringkas": 4 angka dengan naik/turun dan grafik kecil, periode 7/30/90 hari (`?range=`), grafik tayangan + pengunjung, tabel, pesan terbaru, konten di situs |
+| 2026-11-16 | Revisi Dashboard: selebar panel, tanpa persen, tanpa "Hari menurut WIB", "Daily Visits"/"Visitors (Dashed Lines)", kotak periode lancip bergaris, tabel langsung tampil, Konten di situs dihapus, Pesan terbaru satu baris penuh |
+| 2026-11-16 | Revisi Dashboard kedua: label kotak tanpa periode, grafik dipercantik, Rincian per hari jadi kotak sendiri di samping Pesan terbaru, tanpa Semua pesan, "Latest Messages", kepala tabel tidak tembus saat digulir |
 | 2026-11-16 | Dashboard: tabel Rincian per hari tanpa bingkai sendiri, status dan waktu Pesan terbaru sejajar seperti tabel tak bergaris (subgrid) |
 | 2026-11-16 | Dashboard: bingkai tabel Rincian per hari dikembalikan, Pesan terbaru di kiri dan Rincian per hari di kanan |
-| 2026-11-16 | Halaman status 11 kode HTTP (desain hantu bersama, ID/EN): 404, 500, 503 (perawatan), 401 dan 403 admin (authInterrupts), 418 easter egg dengan status HTTP 418; 200, 301, 400, 429, 502 sebagai pratinjau di /admin/status (DESIGN.md bagian 168) |
-| 2026-11-16 | Efek loading menyeluruh: pemutar (loading biasa) untuk aksi yang menunggu server dan skeleton shimmer berbentuk halaman tujuan untuk perpindahan halaman situs dan admin, bentuk dari satu sumber `page-shapes.tsx`, `loading.tsx` GitHub baru (DESIGN.md bagian 169) |
-| 2026-11-17 | Responsif menyeluruh: tab admin turun baris (tanpa geser), sidebar penuh mulai 1280 px, isian panjang turun baris (`InlineInput wrap`), halaman Tentang memakai container query, grafik GitHub dipaskan selebar kotak, galeri dan teks tidak lagi dipotong (DESIGN.md bagian 170) |
-| 2026-11-17 | Revisi: hero Home sampai tangan di tablet kecil, animasi laci menu admin, Halaman Status di sidebar, keterangan kode di pojok kiri bawah pratinjau, "Pesan Terbaru" dan "Rincian Perhari" (DESIGN.md bagian 171) |
-| 2026-11-17 | Revisi sore: hero rata bawah di tablet kecil, Halaman Status di atas Pesan, sidebar penuh kembali mulai 1024 px, Title Case label/judul/tombol seluruh aplikasi ID dan EN (DESIGN.md bagian 172) |
-| 2026-11-17 | Revisi malam: wajah hero lebih besar di tablet (tata letak tablet mulai 480 px, landscape memakai susunan desktop), sidebar menciut tanpa bergeser, tombol periode Dashboard dan pilihan warna GitHub lebih kecil di HP (DESIGN.md bagian 173) |
-| 2026-11-17 | Revisi malam 2: tab admin minimal dua per baris dan sisa baris penuh, Navbar admin satu baris di HP, isian Batas Pesan per Jam tanpa panah (DESIGN.md bagian 174) |
-| 2026-11-17 | Perbaikan bug audit: simpan foto aman diulang, isian angka yang dibatalkan, label Dashboard, retry() di galat publik, Lihat Situs mengikuti bahasa admin, kunci skill baru, logo globe (CORS, gambar rusak), berkas bertipe kosong (DESIGN.md bagian 175) |
-| 2026-11-17 | Perbaikan inefisiensi audit: cuplikan isi pesan di daftar, Simpan profil tanpa perubahan, log audit tanpa baris kosong dan diff JSON per kunci, pemformat tanggal per bahasa, maxSide eksplisit per tujuan gambar (foto kartu ID 512 menjadi 1024, asumsi; DESIGN.md bagian 176) |
+| 2026-11-16 | Halaman status 11 kode HTTP (desain hantu bersama, ID/EN): 404, 500, 503 (perawatan), 401 dan 403 admin (authInterrupts), 418 easter egg dengan status HTTP 418; 200, 301, 400, 429, 502 sebagai pratinjau di /admin/status |
+| 2026-11-16 | Efek loading menyeluruh: pemutar (loading biasa) untuk aksi yang menunggu server dan skeleton shimmer berbentuk halaman tujuan untuk perpindahan halaman situs dan admin, bentuk dari satu sumber `page-shapes.tsx`, `loading.tsx` GitHub baru |
+| 2026-11-17 | Responsif menyeluruh: tab admin turun baris (tanpa geser), sidebar penuh mulai 1280 px, isian panjang turun baris (`InlineInput wrap`), halaman Tentang memakai container query, grafik GitHub dipaskan selebar kotak, galeri dan teks tidak lagi dipotong |
+| 2026-11-17 | Revisi: hero Home sampai tangan di tablet kecil, animasi laci menu admin, Halaman Status di sidebar, keterangan kode di pojok kiri bawah pratinjau, "Pesan Terbaru" dan "Rincian Perhari" |
+| 2026-11-17 | Revisi sore: hero rata bawah di tablet kecil, Halaman Status di atas Pesan, sidebar penuh kembali mulai 1024 px, Title Case label/judul/tombol seluruh aplikasi ID dan EN |
+| 2026-11-17 | Revisi malam: wajah hero lebih besar di tablet (tata letak tablet mulai 480 px, landscape memakai susunan desktop), sidebar menciut tanpa bergeser, tombol periode Dashboard dan pilihan warna GitHub lebih kecil di HP |
+| 2026-11-17 | Revisi malam 2: tab admin minimal dua per baris dan sisa baris penuh, Navbar admin satu baris di HP, isian Batas Pesan per Jam tanpa panah |
+| 2026-11-17 | Perbaikan bug audit: simpan foto aman diulang, isian angka yang dibatalkan, label Dashboard, retry di galat publik, Lihat Situs mengikuti bahasa admin, kunci skill baru, logo globe (CORS, gambar rusak), berkas bertipe kosong |
+| 2026-11-17 | Perbaikan inefisiensi audit: cuplikan isi pesan di daftar, Simpan profil tanpa perubahan, log audit tanpa baris kosong dan diff JSON per kunci, pemformat tanggal per bahasa, maxSide eksplisit per tujuan gambar (foto kartu ID 512 menjadi 1024, asumsi) |
 | 2026-11-17 | Pembaruan Next.js 16.4.3 menjadi 16.4.5 (patch, atas izin pemilik) bersama `eslint-config-next`; hanya paket Next di lockfile yang berubah. Lint, format, typecheck, 315 tes unit, build, dan E2E (chromium + mobile) hijau |
-| 2026-11-17 | Perbaikan salah tulis audit: label Logo Chip Kartu, Tandai Belum Dibaca, label galat EN Pengalaman, ringkasan galat Profil tanpa nama kolom, Title Case judul tab beranda dan tombol galat global, tujuh komentar usang (DESIGN.md bagian 177) |
-| 2026-11-18 | Perbaikan keamanan audit: Next.js 16.4.5, audit CI mulai moderate dengan pengabaian picomatch, action GitHub dipin SHA, docker login lewat env, peringatan DATABASE_URL build Docker (DESIGN.md bagian 178) |
-| 2026-11-18 | Perbaikan kinerja audit: path ikon kecil untuk klien admin, kotak commit berhenti di luar layar, kalender GitHub footer ringkas, grafik Dashboard SVG sendiri dan `recharts` dihapus (DESIGN.md bagian 179) |
-| 2026-11-18 | Perbaikan audit ERR-01 dan DB-02, 03, 04: langkah cron berdiri sendiri, retensi log audit 365 hari dan sesi/verifikasi kedaluwarsa, simpan profil berhenti bila ditolak, galat bentrok email di isian (DESIGN.md bagian 180) |
-| 2026-11-18 | Perapian dokumentasi: README, PRD, ARCHITECTURE, WORKFLOW, DEPLOYMENT, SKILL.md, CLAUDE.md, dan `.env.example` diselaraskan dengan kode; log TODO diurutkan menurut tanggal (DESIGN.md bagian 181) |
-| 2026-11-18 | Perapian CONTENT.md (keadaan project sekarang, pertanyaan terjawab dicoret, riwayat dipindah ke bagian 11) dan REFERENCES.md (ditandai arsip, jawaban dicatat) (DESIGN.md bagian 182) |
-| 2026-11-18 | Revisi pemilik: keterangan "(Total Harian)" dan "(Daily Totals)" dihapus dari label kotak Pengunjung di Dashboard (DESIGN.md bagian 183) |
-| 2026-11-18 | Pembersihan kode tak terpakai: dua tipe, dua ekspor UI, enam kunci kamus admin, token CSS (`--accent`, `--chart-1`, alias shadcn, `--radius-sm`); teks tutup panel geser admin ikut bahasa (DESIGN.md bagian 184)
-| 2026-11-18 | Migrasi menghapus kolom SiteSetting `soundVolume`, `emailOnMessage`, `loginNotify`, `allowIndexing` atas persetujuan pemilik; dependency diperiksa ulang, tidak ada yang bisa dihapus (DESIGN.md bagian 185) |
-| 2026-11-18 | Pemeriksaan seluruh repo: catatan rilis v1.0.0 tanpa fitur yang dihapus, pemicu `pull_request` CI dihapus, SKILL.md memakai `useAssetPicker`, sisa templat di `.gitignore`/ESLint dihapus, baris fitur dan keputusan usang di PRD dan ARCHITECTURE diringkas (DESIGN.md bagian 186) |
-| 2026-11-18 | CLAUDE.md, SKILL.md (Resep F baru: menghapus kode tak terpakai), dan catatan rilis v1.0.0 diperbarui sesuai keadaan sekarang (DESIGN.md bagian 187) |
-| 2026-11-18 | Kode server dipindah ke folder `Backend/` (Server Actions, query, lib server, email, skrip seed, logika route API; Prisma client di `Backend/generated`), tetap satu aplikasi Next.js dan satu deploy; tes batas impor baru (DESIGN.md bagian 188, ARCHITECTURE.md keputusan 22) |
-| 2026-11-18 | Perapian dokumentasi setelah pemindahan ke `Backend/`: path di ARCHITECTURE lengkap, DESIGN bagian 2.4 (gerak) sesuai kode, hook pre-commit ikut memeriksa `Backend/` (DESIGN.md bagian 189) |
-| 2026-11-18 | Pembersihan Frontend setelah pemindahan ke `Backend/`: tidak ada berkas atau kunci mati; `export` tak perlu dihapus dari 49 simbol, komentar menunjuk `Backend/` (DESIGN.md bagian 190) |
+| 2026-11-17 | Perbaikan salah tulis audit: label Logo Chip Kartu, Tandai Belum Dibaca, label galat EN Pengalaman, ringkasan galat Profil tanpa nama kolom, Title Case judul tab beranda dan tombol galat global, tujuh komentar usang |
+| 2026-11-18 | Perbaikan keamanan audit: Next.js 16.4.5, audit CI mulai moderate dengan pengabaian picomatch, action GitHub dipin SHA, docker login lewat env, peringatan DATABASE_URL build Docker |
+| 2026-11-18 | Perbaikan kinerja audit: path ikon kecil untuk klien admin, kotak commit berhenti di luar layar, kalender GitHub footer ringkas, grafik Dashboard SVG sendiri dan `recharts` dihapus |
+| 2026-11-18 | Perbaikan audit ERR-01 dan DB-02, 03, 04: langkah cron berdiri sendiri, retensi log audit 365 hari dan sesi/verifikasi kedaluwarsa, simpan profil berhenti bila ditolak, galat bentrok email di isian |
+| 2026-11-18 | Perapian dokumentasi: README, PRD, ARCHITECTURE, WORKFLOW, DEPLOYMENT, SKILL.md, CLAUDE.md, dan `.env.example` diselaraskan dengan kode; log TODO diurutkan menurut tanggal |
+| 2026-11-18 | Perapian CONTENT.md (keadaan project sekarang, pertanyaan terjawab dicoret, riwayat dipindah ke bagian 11) dan REFERENCES.md (ditandai arsip, jawaban dicatat) |
+| 2026-11-18 | Revisi pemilik: keterangan "(Total Harian)" dan "(Daily Totals)" dihapus dari label kotak Pengunjung di Dashboard |
+| 2026-11-18 | Pembersihan kode tak terpakai: dua tipe, dua ekspor UI, enam kunci kamus admin, token CSS (`--accent`, `--chart-1`, alias shadcn, `--radius-sm`); teks tutup panel geser admin ikut bahasa 
+| 2026-11-18 | Migrasi menghapus kolom SiteSetting `soundVolume`, `emailOnMessage`, `loginNotify`, `allowIndexing` atas persetujuan pemilik; dependency diperiksa ulang, tidak ada yang bisa dihapus |
+| 2026-11-18 | Pemeriksaan seluruh repo: catatan rilis v1.0.0 tanpa fitur yang dihapus, pemicu `pull_request` CI dihapus, SKILL.md memakai `useAssetPicker`, sisa templat di `.gitignore`/ESLint dihapus, baris fitur dan keputusan usang di PRD dan ARCHITECTURE diringkas |
+| 2026-11-18 | CLAUDE.md, SKILL.md (Resep F baru: menghapus kode tak terpakai), dan catatan rilis v1.0.0 diperbarui sesuai keadaan sekarang |
+| 2026-11-18 | Kode server dipindah ke folder `Backend/` (Server Actions, query, lib server, email, skrip seed, logika route API; Prisma client di `Backend/generated`), tetap satu aplikasi Next.js dan satu deploy; tes batas impor baru (ARCHITECTURE.md keputusan 22) |
+| 2026-11-18 | Perapian dokumentasi setelah pemindahan ke `Backend/`: path di ARCHITECTURE lengkap, DESIGN bagian 2.4 (gerak) sesuai kode, hook pre-commit ikut memeriksa `Backend/` |
+| 2026-11-18 | Pembersihan Frontend setelah pemindahan ke `Backend/`: tidak ada berkas atau kunci mati; `export` tak perlu dihapus dari 49 simbol, komentar menunjuk `Backend/` |
+| 2026-11-18 | Perapian `Documentation/`: DESIGN.md ditulis ulang sebagai keadaan sekarang (log revisi lama ada di riwayat git, rujukan "DESIGN.md bagian N" di kode dan dokumen diganti tanggal revisinya), REFERENCES.md dihapus (prinsipnya masuk DESIGN bagian 1), checklist milestone M0–M5 dihapus (tugas yang masih terbuka pindah ke "Menunggu dari Pemilik"), keputusan dan pertanyaan yang sudah terjawab dihapus dari PRD bagian 5 dan 11 serta CONTENT bagian 10–11, ADR usang dan WORKFLOW bagian 13 dihapus |

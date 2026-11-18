@@ -11,20 +11,20 @@ Status: **berlaku, diselaraskan dengan kode 2026-11-18**. Berlaku untuk pengemba
 
 Claude tidak mengambil keputusan yang tercatat sebagai "terbuka" tanpa konfirmasi, tidak menambah layanan atau dependency besar tanpa persetujuan, dan tidak menyimpan secret di repo.
 
-## 2. Urutan Kerja per Milestone
+## 2. Urutan Kerja
 
 ```
 Rencana (TODO.md) → Kerjakan di main → Cek lokal lengkap → Push ke main → CI → Deploy otomatis → Review Mirza → Catat
 ```
 
-1. **Rencana:** ambil tugas dari `Documentation/TODO.md` berurutan. Satu commit = satu tujuan yang jelas.
+1. **Rencana:** ambil revisi dari pemilik atau tugas dari `Documentation/TODO.md`. Satu commit = satu tujuan yang jelas.
 2. **Kerjakan:** langsung di `main`, kerja kecil dan sering commit.
 3. **Cek lokal lengkap sebelum push:** `pnpm lint`, `pnpm format:check`, `pnpm typecheck`, `pnpm test`, `pnpm build`, dan `pnpm test:e2e`. Karena push ke `main` langsung menjadi versi live di Vercel, semua harus hijau dulu.
 4. **Push ke `main`:** CI berjalan di setiap push. Bila CI merah, perbaikan langsung jadi prioritas pertama (atau kembalikan dengan Vercel Instant Rollback).
 5. **Review:** Mirza membuka situs di HP dan laptop, membaca riwayat commit, memberi komentar. Claude menindaklanjuti dengan commit baru.
-6. **Catat:** centang tugas di `TODO.md`, perbarui dokumen bila keputusan berubah.
+6. **Catat:** tambah baris di log `TODO.md`, perbarui dokumen bila keputusan berubah.
 
-> **Keputusan (2026-09-30, diperbarui):** **semua pekerjaan langsung di `main`, tidak ada branch lain** (permintaan pemilik, sama seperti pola GAAS). Tidak ada PR. Branch lama sudah disatukan ke `main` dengan fast-forward, sehingga semua commit tetap atas nama pemilik.
+> **Keputusan (2026-09-30, diperbarui):** **semua pekerjaan langsung di `main`, tidak ada branch lain** (permintaan pemilik, sama seperti pola GAAS). Tidak ada PR.
 
 ## 3. Branch dan Commit
 
@@ -144,19 +144,3 @@ Masukan masuk lewat form kontak dan tautan yang tercantum (jawaban 34.1). Catat 
 - Tulis tujuan dan batasan singkat, sebut bagian dokumen yang relevan.
 - Claude menyebut asumsi yang ia ambil, hasil pengujian yang sebenarnya (termasuk yang gagal), dan hal yang belum bisa diverifikasi.
 - Perubahan yang berdampak besar (arsitektur, data, biaya, keamanan) selalu ditanyakan dulu.
-
-## 13. Perbandingan dengan Alur Repo GAAS
-
-Repo GAAS (`HorizonMirza/gaas-generalaffairapplicationsupport`) sudah punya alur kerja sendiri. Ringkasnya dan bedanya dengan rencana di atas:
-
-| Hal | GAAS | Rencana portofolio (di atas) |
-|---|---|---|
-| Kontributor | Pemilik + 3 asisten AI (Claude Code, Antigravity, Codex) dalam sandbox terpisah | Pemilik + Claude |
-| Awalan commit | `[CLAUDIA]`, `[AGY]`, `[NOVA]` per asisten | Sama: `[CLAUDIA]` + Conventional Commits (`[CLAUDIA] feat(...)`) |
-| Branch | Push langsung ke `main` setelah verifikasi | Sama: langsung ke `main` setelah pemeriksaan lokal lengkap (keputusan pemilik 2026-09-30) |
-| Verifikasi | `dotnet build`, `tsc --noEmit`, Playwright untuk UI, `resetdb` bila skema berubah | `lint`, `typecheck`, `test`, `build`, Playwright + axe, Lighthouse manual |
-| Bahasa | UI Indonesia, dokumen Indonesia | Konten ID/EN, komentar dan commit Indonesia |
-| Dokumen | `CLAUDE.md`, `AGENTS.md`, `Documentation/Prd.md`, `skill.md`, `workflow.md`, `TODO.md` | `CLAUDE.md`, `Documentation/PRD.md`, `ARCHITECTURE.md`, `DESIGN.md`, `WORKFLOW.md`, `TODO.md`, `SKILL.md` |
-| Klarifikasi | Bertanya dulu bila permintaan ambigu, konfirmasi sebelum aksi sulit dibalik | Sama (lihat bagian 12) |
-
-**Diputuskan (2026-09-30):** ikut pola GAAS, push langsung ke `main` dengan awalan `[CLAUDIA]`. Karena setiap push ke `main` langsung live di Vercel, pemeriksaan lokal lengkap (termasuk E2E) wajib sebelum push.

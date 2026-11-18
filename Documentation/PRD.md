@@ -44,24 +44,21 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 
 | ID | Fitur | Prioritas |
 |---|---|---|
-| F1 | **Home**: hero layar penuh dengan animasi, nama, posisi yang dicari, CTA Unduh CV + GitHub, ringkasan project unggulan. **Susunan sekarang (2026-10-19):** pembuka satu layar berisi foto besar tanpa bingkai dan nama dua baris sebagai h1 yang memudar ke bawah, terbaca di depan foto kecuali di area wajah, dengan liquid mask di seluruh hero (status, angka, CV, sosial, posisi sekarang, dan tombol Lihat project dihapus dari hero; DESIGN.md bagian 83, 85, dan 86), Pengalaman tanpa nomor dengan judul di tengah (akordion kerja dan organisasi, semua tertutup di awal, tanpa ikon +/× dan tanpa tautan ke halaman Pengalaman), Project tanpa nomor dengan judul di tengah (pita sampul berjalan yang tiap sampulnya menuju detail project), Keahlian Teknis/Technical Skills (globe skill, DESIGN.md bagian 73), GitHub (grafik kontribusi saja). **Tambahan 2026-10-19/20:** hover atau sentuhan membuka lapisan armor di bawah foto (sejak 2026-10-20 simulasi cairan bertepi tajam seperti Crazy Hover Mask Reveal; tanpa WebGL2 tetap gaya Kabut), intip berkala "visor mata" (sapuan mendatar di kacamata, pilihan pemilik 2026-10-21) setiap 8 detik dan pertama kali 3 detik setelah beranda terlihat, latar neural vortex, dan peran "Fullstack Developer | Community Manager" tepat di bawah foto (DESIGN.md bagian 84–90). Semua bagian tanpa nomor dengan judul di tengah (revisi 2026-10-16); kredit logo ada di halaman Privasi (keyboard 3D sudah diganti globe skill 2026-10-18). Dalam angka dan Dari komunitas ke software dihapus 2026-10-16; About tidak ditambahkan ke beranda (keputusan pemilik 2026-10-16). Project pilihan sempat dihapus 2026-10-08 dan dikembalikan 2026-10-15; Perjalanan terbaru dan ajakan kontak + newsletter tetap dihapus (DESIGN.md bagian 45, 46, 54, 55, 57, 58, 59, 60) | P0 |
-| F2 | **About**: bio personal, kartu foto, pendidikan (SMA dan kuliah, dari entri Pengalaman bertipe Pendidikan). Tombol CV dihapus 2026-10-07 (CV ada di footer dan kartu pembuka). Kontak tidak ditampilkan di sini sejak 2026-10-05 (keputusan pemilik) | P0 |
-| F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan logo instansi dan foto kegiatan (filter dihapus 2026-10-03, keputusan pemilik). Pendidikan tidak ditampilkan di sini sejak 2026-10-03 (keputusan pemilik); data pendidikan tetap dipakai halaman About | P0 |
-| F4 | **Skills**: dikelompokkan per kategori dari admin, tanpa progress bar persen. Sejak 2026-10-01 tidak ada halaman sendiri (`/skills` dialihkan ke `/#skills`); tampil di beranda sebagai globe logo yang bisa diputar dan difilter per kategori (DESIGN.md bagian 73, 93) | P0 |
-| F5 | **Projects**: daftar + halaman detail (galeri, tech stack, demo, repo, tahun, studi kasus) + tautan demo dan repo (impor dan metadata repo GitHub otomatis dihapus 2026-11-16) | P0 |
+| F1 | **Home**: hero satu layar (nama besar di belakang potret, peran di bawah foto, lapisan zirah terbuka di bawah kursor dengan masker cairan, intip "visor mata" berkala, latar neural vortex), lalu Pengalaman (akordeon), Project (pita sampul berjalan), Keahlian Teknis (globe skill, `#skills`), dan GitHub (kalender kontribusi). Semua bagian tanpa nomor dengan judul di tengah | P0 |
+| F2 | **About**: kartu foto, nama dan peran, bio, kartu pendidikan (SMA dan kuliah). Tanpa tombol CV dan kontak (keduanya di footer) | P0 |
+| F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan logo instansi dan foto kegiatan, tanpa filter. Pendidikan tampil di About | P0 |
+| F4 | **Skills**: dikelompokkan per kategori dari admin, tanpa persen. Tidak punya halaman sendiri (`/skills` dialihkan ke `/#skills`); tampil di beranda sebagai globe logo yang bisa diputar dan difilter per kategori | P0 |
+| F5 | **Projects**: daftar + halaman detail (galeri, tech stack, tahun, studi kasus) + tautan demo dan repo | P0 |
 | F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
-| F7 | **Resume CV** (sebelumnya "Unduh CV"): satu klik, file terbaru dari admin, dihitung jumlah unduhannya. Nama tombol seragam di kartu pembuka dan footer: "Resume CV" di ID dan EN (DESIGN.md bagian 56). Tombol di hero dihapus 2026-10-18 | P0 |
+| F7 | **Resume CV**: satu klik di kartu pembuka dan footer, file terbaru dari admin, dihitung jumlah unduhannya | P0 |
 | F8 | **Dua bahasa** ID/EN dengan toggle, URL `/id` dan `/en` | P0 |
-| F9 | **Tema terang/gelap**: selalu mulai gelap (tidak lagi ikut sistem sejak 2026-10-21), bisa diganti manual dan tersimpan | P0 |
+| F9 | **Tema terang/gelap**: selalu mulai gelap, bisa diganti manual dan tersimpan | P0 |
 | F10 | **Animasi**: hero, transisi halaman, reveal saat scroll. Menghormati `prefers-reduced-motion` | P0 |
 | F11 | **Statistik pengunjung**: pencatatan tanpa cookie, ditampilkan di dashboard admin | P0 |
 | F12 | **Kontak cepat**: WhatsApp lewat kartu di footer dan halaman kontak | P0 |
-| F13 | Newsletter: **dihapus 2026-11-06** (tidak dipakai, DESIGN.md bagian 107) | — |
 | F14 | **SEO & berbagi**: metadata per halaman, Open Graph, sitemap, robots.txt, data terstruktur `Person` | P0 |
 | F15 | **Kebijakan Privasi**, halaman **404** dan **error** | P0 |
-| F16 | API publik: **dihapus 2026-11-06** (tidak dipakai; `/api/v1/*` kini JSON 404) | — |
-| F17 | Pelat status di hero: **dihapus 2026-10-18** (DESIGN.md bagian 83). Kota dan posisi tetap diisi di admin untuk data terstruktur `Person` dan gambar pratinjau tautan | — |
-| F19 | **Pemberitahuan pembuka**: kartu "Informasi Penting" sekali per sesi browser (tab baru), teks dua bahasa dari Admin → Halaman situs → Bagian Awal, tombol Resume CV dan Beranda. Resume CV membuka CV di tab baru dan kartu tetap terbuka; pengunjung masuk situs lewat tombol Beranda (revisi akhir pemilik 2026-10-16). ID/EN mengganti bahasa kartu di tempat; bahasa situs ikut setelah kartu ditutup. Latar neural vortex seperti login Super Admin, selalu gelap (keputusan pemilik 2026-10-12 s.d. 2026-10-15, DESIGN.md bagian 53) | P0 |
+| F19 | **Pemberitahuan pembuka**: kartu "Informasi Penting" sekali per sesi browser, teks dua bahasa dari admin, tombol Resume CV (tab baru, kartu tetap terbuka) dan Beranda. ID/EN mengganti bahasa kartu di tempat; latar neural vortex selalu gelap | P0 |
 | F18 | **Kategori project**: Software dan Komunitas & Bisnis **[USULAN, dari CV]** | P0 |
 
 ### 5.2 Super Admin (satu akun, email + password)
@@ -69,15 +66,13 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | ID | Fitur | Prioritas |
 |---|---|---|
 | A1 | Login/logout, sesi aman, ganti password | P0 |
-| A2 | Dashboard: pesan baru, statistik pengunjung, unduhan CV, jumlah project/pengalaman/skill (tiap angka menuju halamannya) | P0 |
-| A3 | CRUD Project (dua bahasa, galeri, urutan; diubah langsung di pratinjau). | P0 |
+| A2 | Dashboard: pengunjung, tayangan halaman, unduhan CV, pesan masuk, grafik kunjungan harian, pesan terbaru, dan rincian per hari | P0 |
+| A3 | CRUD Project (dua bahasa, galeri, urutan), diubah langsung di pratinjau | P0 |
 | A4 | CRUD Skill dan kategori | P0 |
 | A5 | CRUD Pengalaman dan Pendidikan | P0 |
-| A6 | Edit Profil dan teks hero, link sosial, upload foto dan CV | P0 |
+| A6 | Profil, teks halaman, link sosial, foto, dan CV, semuanya diubah langsung di pratinjau situs | P0 |
 | A7 | Kotak masuk pesan (baru/dibaca/arsip) | P0 |
-| A8 | Newsletter: **dihapus 2026-11-06** (F13) | — |
-| A9 | Log audit (siapa mengubah apa, kapan) | P0 · halaman panel **dihapus 2026-11-11** atas keputusan pemilik; pencatatan `AuditLog` di database tetap berjalan |
-| A10 | Pratinjau draf: digantikan edit langsung di pratinjau situs (2026-11-12, DESIGN.md bagian 133–140) | — |
+| A9 | Log audit: setiap tulis/ubah/hapus tercatat di tabel `AuditLog` (tanpa halaman panel sejak 2026-11-11) | P0 |
 
 ## 6. User Stories dan Kriteria Penerimaan
 
@@ -89,10 +84,9 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | U4 | Sebagai **developer**, saya ingin membuka repo project, agar bisa menilai kode. | Halaman detail memuat tautan repo bila ada. |
 | U5 | Sebagai **pengunjung**, saya ingin mengganti bahasa dan tema, agar nyaman membaca. | Pilihan tersimpan. Semua teks (UI dan konten) berganti tanpa kehilangan halaman. |
 | U6 | Sebagai **pengunjung**, saya ingin mengirim pesan, agar bisa menghubungi Mirza. | Form memvalidasi input, menampilkan status berhasil/gagal yang jelas, dan pesan masuk di admin. |
-| U7 | Berlangganan newsletter: **dihapus 2026-11-06** (F13) | — |
 | U8 | Sebagai **Super Admin**, saya ingin menambah project baru dalam dua bahasa, agar konten cepat diperbarui. | Project baru tampil di situs dalam ≤ 1 menit setelah disimpan (revalidate). |
 | U9 | Sebagai **Super Admin**, saya ingin mengganti file CV, agar semua orang mendapat versi terbaru. | Tautan unduh selalu mengarah ke CV terbaru. |
-| U10 | Sebagai **Super Admin**, saya ingin melihat log perubahan, agar tahu riwayat konten dan mendeteksi akses tak wajar. | Setiap tulis/ubah/hapus tercatat dengan waktu dan aktor. |
+| U10 | Sebagai **Super Admin**, saya ingin setiap perubahan tercatat, agar ada riwayat konten dan akses tak wajar bisa dilacak. | Setiap tulis/ubah/hapus tercatat di `AuditLog` dengan waktu dan aktor. |
 
 ## 7. Metrik Keberhasilan
 
@@ -118,37 +112,25 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 
 ## 9. Lingkup dan Milestone
 
-Lihat `Documentation/TODO.md`. Ringkas: M1 Setup → M2 Auth + Admin → M3 Halaman publik → M4 Polish → M5 Deploy. Estimasi 1 hari per milestone, total target 1 bulan dengan waktu review.
+v1 dikerjakan dalam lima milestone (Setup, Auth + Admin, Halaman publik, Polish, Deploy) dan live sejak 2026-10-01. Pekerjaan sekarang berupa revisi pemilik; sisa tugas dan backlog ada di `Documentation/TODO.md`.
 
 ## 10. Risiko
 
 | Risiko | Dampak | Mitigasi |
 |---|---|---|
-| Semua fitur masuk v1 dalam 5 milestone | Jadwal molor | Tiap milestone punya batas jelas. Fitur P1 boleh mundur tanpa menunda rilis |
 | Animasi layar penuh menurunkan skor di HP | Lighthouse < 90 | Anggaran performa, kepadatan partikel turun di HP, lazy init |
-| Form kontak tanpa proteksi | Spam, kuota email habis | Honeypot + rate limit (lihat 11) |
+| Form kontak tanpa proteksi | Spam, kuota email habis | Honeypot + rate limit 5 pesan per jam per IP (IP di-hash) |
 | Data gratis (Neon, Vercel Hobby) berbatas | Pembatasan atau kehilangan data | Backup terjadwal terenkripsi, rollback Vercel |
-| Konten belum siap (CV, foto, project) | Halaman kosong | Gunakan data seed sementara, ganti saat aset tiba |
-| ~~Widget live chat pihak ketiga~~ (tidak dipakai, bagian 11 no. 3) | Performa dan privasi | Diganti kartu WhatsApp di footer |
 
 ## 11. Keputusan Sementara **[ASUMSI]** yang Menunggu Konfirmasi
 
-Nomor merujuk ke `Documentation/00-discovery.md` bagian 6.
+Nomor merujuk ke `Documentation/00-discovery.md` bagian 6. Keputusan yang sudah dikonfirmasi atau selesai dihapus dari tabel; hasilnya tertuang di bagian 5 dan di `ARCHITECTURE.md`.
 
 | # | Keputusan sementara | Alternatif |
 |---|---|---|
-| 1 | ~~Halaman `/experience` berisi timeline kerja dan pendidikan~~ **Dikonfirmasi 2026-09-30:** satu halaman dengan filter Semua/Kerja/Organisasi/Pendidikan | Pisahkan menjadi dua halaman |
 | 2 | Blog dan sertifikat ditunda ke v2 | Masukkan ke v1 |
-| 3 | ~~Live chat: widget gratis~~ **Dikonfirmasi 2026-09-30:** tombol WhatsApp melayang, tanpa widget pihak ketiga. **Revisi 2026-10-03:** tombol melayang dihapus, WhatsApp cukup di footer dan halaman kontak | Hanya tombol WhatsApp |
-| 4 | ~~Newsletter: double opt-in, kirim broadcast dari admin lewat Resend.~~ **Selesai 2026-11-06: newsletter dihapus seluruhnya** (keputusan pemilik), broadcast tidak dibuat | — |
-| 5 | ~~Form kontak: honeypot + rate limit~~ **Dikonfirmasi 2026-09-30:** honeypot + rate limit 5 pesan per jam per IP (IP di-hash) | Tanpa proteksi, sesuai jawaban awal |
 | 6 | Secret tidak pernah di-commit, hanya `Frontend/.env.example` | — |
-| 7 | ~~Alur PR ke `main` (Vercel preview otomatis)~~ **Diputuskan 2026-09-30:** push langsung ke `main` setelah pemeriksaan lokal lengkap (WORKFLOW.md) | Alur PR |
 | 8 | Resend untuk email, Cloudinary untuk gambar dan CV | Cloudflare R2 |
-| 9 | ~~GitHub API untuk metadata kartu project dan tombol "Impor dari GitHub" di admin~~ **Dihapus 2026-11-16.** GitHub kini hanya untuk kalender kontribusi di beranda dan footer (GraphQL, butuh `GITHUB_TOKEN`) | Daftar repo otomatis penuh |
-| 10 | ~~API publik read-only~~ Dibuat di M3 (2026-09-30), **dihapus 2026-11-06** karena tidak dipakai (keputusan pemilik) | Tanpa API publik |
 | 11 | Skill dikelompokkan tanpa level angka | Tampilkan level |
 | 12 | Tampilkan kota dan tombol WhatsApp. Alamat lengkap tidak ditampilkan | Tampilkan alamat penuh |
 | 13 | Semua konten diisi manual dalam dua bahasa | Terjemahan otomatis |
-| 14 | ~~Animasi hero: canvas ringan~~ **Dikonfirmasi 2026-09-30:** canvas 2D ringan "Horizon". **Diganti 2026-10-18:** potret dengan liquid mask canvas 2D (DESIGN.md bagian 83), ditambah latar neural vortex WebGL beresolusi rendah 24 fps yang berhenti di luar layar dan saat digulir (pilihan pemilik 2026-10-19, DESIGN.md bagian 89–90) | WebGL penuh |
-| 15 | ~~Domain `.site` (dibimbing saat deploy)~~ **Selesai:** `mmirza.site` (Hostinger, terhubung ke Vercel sejak 2026-10-01) | Domain lain |
