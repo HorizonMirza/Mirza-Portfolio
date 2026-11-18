@@ -2072,4 +2072,10 @@ Dihapus:
 
 Satu perbaikan kecil yang muncul dari penelusuran: kunci kamus "Tutup Menu" ternyata tidak pernah terpakai karena tombol tutup di panel geser admin memakai teks Indonesia tetap. `SheetContent` kini menerima `closeLabel`, diisi dari kamus admin, sehingga teks pembaca layar ikut berganti bahasa.
 
-Sengaja dipertahankan: berkas konvensi Next (`forbidden`, `unauthorized`, `global-not-found`, `opengraph-image`), `i18n/global.d.ts`, `hasAdminTranslation` (dipakai tes kelengkapan terjemahan), seluruh aset di `public/`, `scripts/skill-logos`, dan script `db:*`/`test:watch` untuk pengembangan. Kolom database `soundVolume`, `emailOnMessage`, `loginNotify`, dan `allowIndexing` sudah tidak dibaca kode tetapi baru bisa dihapus lewat migrasi `DROP COLUMN`, jadi menunggu persetujuan pemilik (audit DB-05/06/07).
+Sengaja dipertahankan: berkas konvensi Next (`forbidden`, `unauthorized`, `global-not-found`, `opengraph-image`), `i18n/global.d.ts`, `hasAdminTranslation` (dipakai tes kelengkapan terjemahan), seluruh aset di `public/`, `scripts/skill-logos`, dan script `db:*`/`test:watch` untuk pengembangan.
+
+## 185. Kolom SiteSetting tak terpakai dihapus (2026-11-18)
+
+Atas persetujuan pemilik, empat kolom `SiteSetting` yang sudah tidak dibaca kode sejak revisi 2026-11-16 dihapus lewat migrasi `20261118160000_drop_unused_site_setting_columns`: `soundVolume` (volume utama, kini hanya `soundMix` per suara), `emailOnMessage`, `loginNotify` (email pesan baru dan login baru selalu dikirim bila Resend diatur), dan `allowIndexing` (situs selalu boleh diindeks, hanya mode perawatan yang menutupnya). Migrasi ini tidak bisa dibatalkan, tetapi nilai terakhir keempat kolom tidak dipakai di mana pun. Skema Prisma dan `ARCHITECTURE.md` ikut dirapikan.
+
+Dependency ikut diperiksa ulang secara ketat (impor, config, hook Git, dan CI). Tidak ada yang tidak terpakai: `@prisma/client` diimpor kode hasil generate, `@testing-library/dom` adalah peer `@testing-library/react`, `@types/*` dibutuhkan TypeScript, `husky` dan `lint-staged` dipakai hook pre-commit, dan `jsdom` dipakai tes lewat Vitest. Semua `overrides` di `pnpm-workspace.yaml` masih menarget paket yang ada di lockfile.

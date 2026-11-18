@@ -299,15 +299,14 @@ erDiagram
     SiteSetting {
       int id PK "singleton"
       json soundMix "volume tiap suara 0-100, atribut data-sound-mix"
-      int soundVolume "tidak dipakai lagi (2026-11-16)"
       string heroPortraitId FK "foto hero dari admin, kosong = foto bawaan repo"
       string defaultTheme "dark | light | system"
       string defaultLocale "browser | id | en, dibaca proxy.ts"
       string introFrequency "once | visit | weekly"
       bool introEnabled_heroAnimation_whatsappButton "saklar tampilan"
-      bool contactOpen "form kontak; emailOnMessage dan loginNotify tidak dipakai lagi"
+      bool contactOpen "form kontak"
       int contactPerHour "1-50"
-      bool trackVisits_maintenanceMode "privasi dan lanjutan; allowIndexing tidak dipakai lagi"
+      bool trackVisits_maintenanceMode "privasi dan lanjutan"
       int visitRetentionDays "30 | 90 | 365"
     }
     LoginEvent {
