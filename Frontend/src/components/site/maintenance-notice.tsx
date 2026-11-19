@@ -1,5 +1,5 @@
 // Pengganti seluruh isi situs publik saat Mode perawatan dinyalakan di Admin → Pengaturan (DESIGN.md
-// bagian 119), tampil sebagai halaman status 503. Panel admin tidak
+// bagian 5.8 dan 6), tampil sebagai halaman status 503. Panel admin tidak
 // terpengaruh. Halaman diberi noindex lewat metadata layout.
 
 import { getTranslations } from 'next-intl/server'

@@ -78,7 +78,7 @@ export function ProfileLive({
   const router = useRouter()
   const [pending, startTransition] = useTransition()
   const [lang, setLang] = useEditLang()
-  // foto dan logo chip ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md 148)
+  // foto dan logo chip ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (DESIGN.md bagian 5.8)
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const entries = useEntries(education)
   const form = useForm<ProfileInput>({ resolver: zodResolver(profileSchema), defaultValues })

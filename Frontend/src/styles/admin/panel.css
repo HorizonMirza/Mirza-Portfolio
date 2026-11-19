@@ -188,7 +188,7 @@
    (pengganti GSAP di komponen rujukan; tanpa library). fill-mode backwards: setelah selesai tidak
    ada transform/filter tersisa yang mengubah posisi elemen fixed di dalamnya. */
 /* keluar dari batas max-w-6xl isi halaman sampai tepi kiri-kanan panel isi (tab Home, DESIGN.md
-   bagian 131). 100cqw = lebar isi <main> (@container/main di layout panel); di layar yang lebih
+   bagian 5.8). 100cqw = lebar isi <main> (@container/main di layout panel); di layar yang lebih
    sempit dari max-w-6xl hasilnya sama dengan 100%. */
 .admin-bleed {
   width: 100cqw;

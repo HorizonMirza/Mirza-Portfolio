@@ -1,7 +1,7 @@
 'use client'
 
 // Pemotong gambar untuk semua unggahan gambar di admin (DESIGN.md
-// bagian 148): gambar yang dipilih dari folder ditampilkan di bingkai; digeser, diperbesar atau
+// bagian 5.8): gambar yang dipilih dari folder ditampilkan di bingkai; digeser, diperbesar atau
 // diperkecil, diputar, dan perbandingan bingkainya bisa dipilih. Hasilnya dipotong di browser lalu
 // dikirim ke Cloudinary; tanpa teks alternatif (diisi otomatis di server). Tanpa library: kanvas 2D.
 
