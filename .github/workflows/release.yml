@@ -4,6 +4,7 @@ name: Release image
 # singkat, lalu kirim ke GitHub Packages: ghcr.io/horizonmirza/mirza-portfolio.
 # `next build` merender halaman dari database, jadi build memakai Postgres sementara yang sudah
 # dimigrasi dan diisi seed (sama seperti job build di ci.yml). Database itu tidak ikut ke image.
+
 on:
   release:
     types: [published]
@@ -37,7 +38,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: portfolio
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s
@@ -45,6 +46,7 @@ jobs:
           --health-retries 10
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/portfolio
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag || 'manual' }}
       # nilai khusus database sementara ini, bukan secret production
       BETTER_AUTH_URL: http://localhost:3200
       BETTER_AUTH_SECRET: image-smoke-test-bukan-rahasia-1a2b3c4d5e6f
@@ -65,8 +67,6 @@ jobs:
       - name: Tentukan nama dan tag image
         id: meta
         working-directory: .
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name || github.event.inputs.tag || 'manual' }}
         run: |
           owner="${GITHUB_REPOSITORY_OWNER,,}"
           image="ghcr.io/${owner}/mirza-portfolio"
@@ -93,7 +93,6 @@ jobs:
         working-directory: .
         env:
           IMAGE: ${{ steps.meta.outputs.image }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || github.event.inputs.tag || 'manual' }}
         run: |
           docker run -d --name smoke --network=host -e PORT=3200 \
             -e DATABASE_URL="${DATABASE_URL}" \

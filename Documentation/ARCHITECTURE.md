@@ -471,7 +471,7 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 
 | Workflow | Pemicu | Isi |
 |---|---|---|
-| `ci.yml` | push ke `main` dan PR (run lama dibatalkan oleh push berikutnya) | Tiga job paralel: **Lint, typecheck, unit test** (`prisma validate`, `lint`, `format:check`, `typecheck`, `test`, `pnpm audit --audit-level=moderate`); **Migrasi, seed, build, E2E** (Postgres 17 sementara, migrasi + cek drift skema, seed 2× untuk uji idempoten, `build`, Playwright + axe di Chromium, Firefox, WebKit, dan emulasi HP); **Scan secret (gitleaks)**. Semua action dipin ke SHA |
+| `ci.yml` | push ke `main` (run lama dibatalkan oleh push berikutnya) | Tiga job paralel: **Lint, typecheck, unit test** (`prisma validate`, `lint`, `format:check`, `typecheck`, `test`, `pnpm audit --audit-level=moderate`); **Migrasi, seed, build, E2E** (Postgres 17 sementara, migrasi + cek drift skema, seed 2× untuk uji idempoten, `build`, Playwright + axe di Chromium, Firefox, WebKit, dan emulasi HP); **Scan secret (gitleaks)**. Semua action dipin ke SHA |
 | `backup.yml` | Cron harian 02.30 WIB (+ manual) | `pg_dump`, enkripsi gpg, uji pulih otomatis, simpan sebagai artifact 30 hari. Tanpa secret backup, run tetap hijau tetapi **tidak membuat backup** (DEPLOYMENT.md) |
 | `buat-release.yml` | Manual (Run workflow) | Membuat tag dan GitHub Release dari `main`; catatan rilis dari `.github/release-notes/<tag>.md` bila ada |
 | `release.yml` | Release dipublikasikan (+ manual) | Membangun image Docker, uji singkat, kirim ke GitHub Packages (`ghcr.io/horizonmirza/mirza-portfolio`) |

@@ -1,6 +1,8 @@
 name: CI
 
-# Semua pekerjaan langsung di main tanpa PR (CLAUDE.md), jadi CI hanya dipicu push ke main.
+# Pemeriksaan setiap push ke main: kualitas kode, build + E2E dengan database sementara, dan scan
+# secret. Semua pekerjaan langsung di main tanpa PR (CLAUDE.md), jadi CI hanya dipicu push ke main.
+
 on:
   push:
     branches: [main]
@@ -40,7 +42,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - name: Audit keamanan dependency
-        # celah tingkat moderate ke atas menggagalkan CI (audit 2026-11-17, SEC-02)
+        # celah tingkat moderate ke atas menggagalkan CI (pengecualian alat dev di pnpm-workspace.yaml)
         run: pnpm audit --audit-level=moderate
 
   build-e2e:
@@ -53,7 +55,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: portfolio
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U postgres"
           --health-interval 5s
@@ -88,7 +90,7 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm test:e2e
         env:
-          E2E_ALL_BROWSERS: '1'
+          E2E_ALL_BROWSERS: "1"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:

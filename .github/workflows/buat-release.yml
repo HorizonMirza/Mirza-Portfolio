@@ -4,6 +4,7 @@ name: Buat release
 # memakai token bawaan GitHub, lalu memicu workflow "Release image" agar image Docker untuk tag itu
 # dibangun ulang dan dikirim ke GitHub Packages. Catatan rilis diambil dari
 # .github/release-notes/<tag>.md bila ada, jika tidak dibuat otomatis dari commit.
+
 on:
   workflow_dispatch:
     inputs:
@@ -20,12 +21,12 @@ jobs:
   release:
     name: Buat tag dan release
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG: ${{ inputs.tag }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Buat release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ inputs.tag }}
         run: |
           if [[ ! "${TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Tag harus berbentuk vX.Y.Z, bukan: ${TAG}"
@@ -42,8 +43,5 @@ jobs:
             fi
           fi
       - name: Bangun dan kirim image
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ inputs.tag }}
         # release yang dibuat dengan token bawaan tidak memicu workflow lain, jadi dipicu manual
         run: gh workflow run release.yml -f tag="${TAG}"

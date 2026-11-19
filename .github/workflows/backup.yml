@@ -30,10 +30,12 @@ jobs:
           POSTGRES_USER: restore
           POSTGRES_PASSWORD: restore-only-bukan-rahasia
           POSTGRES_DB: restore
-        ports:
-          - 5432:5432
+        ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U restore" --health-interval 5s --health-timeout 5s --health-retries 10
+          --health-cmd "pg_isready -U restore"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
       BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
@@ -44,7 +46,7 @@ jobs:
         run: |
           if [ -z "$DATABASE_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
             # Peringatan (bukan sekadar notice) dan ringkasan run: run hijau tanpa secret berarti TIDAK
-            # ada backup yang dibuat, jadi harus mudah terlihat di tab Actions (audit 2026-10-31, GAP-01)
+            # ada backup yang dibuat, jadi harus mudah terlihat di tab Actions
             echo "::warning::BACKUP_DATABASE_URL atau BACKUP_PASSPHRASE belum diisi: TIDAK ada backup production yang dibuat."
             {
               echo "### Backup TIDAK berjalan"
