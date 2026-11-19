@@ -1,8 +1,12 @@
+// Ubah urutan daftar dengan tombol naik/turun di admin. Tanpa impor server.
+
+export type MoveDirection = 'up' | 'down'
+
 // Pindahkan satu id satu langkah ke atas/bawah. null bila tidak bisa dipindah.
 export function moveItem(
   ids: readonly string[],
   id: string,
-  direction: 'up' | 'down',
+  direction: MoveDirection,
 ): string[] | null {
   const index = ids.indexOf(id)
   if (index === -1) return null
@@ -12,5 +16,3 @@ export function moveItem(
   ;[next[index], next[target]] = [next[target]!, next[index]!]
   return next
 }
-
-export type MoveDirection = 'up' | 'down'

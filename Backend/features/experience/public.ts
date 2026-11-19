@@ -1,3 +1,5 @@
+// Data pendidikan dan pengalaman untuk halaman publik, di-cache per tag 'experience' (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'
@@ -30,7 +32,7 @@ export type PublicExperience = {
 
 const imageSelect = { url: true, alt_id: true, alt_en: true, width: true, height: true } as const
 
-// Terbaru di atas (PRD U2).
+// Hanya entri terbit, terbaru di atas (PRD U2).
 export const getPublicExperiences = cache(
   unstable_cache(
     async (): Promise<PublicExperience[]> => {

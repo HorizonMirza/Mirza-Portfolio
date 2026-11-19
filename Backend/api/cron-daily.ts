@@ -1,3 +1,6 @@
+// Logika rute /api/cron/daily: perawatan harian yang dipanggil Vercel Cron (ringkasan kunjungan,
+// hapus data lewat masa simpan, sesi kedaluwarsa, dan berkas unggahan yatim).
+
 import { timingSafeEqual } from 'node:crypto'
 
 import { getDb } from '@backend/lib/db'
@@ -10,7 +13,7 @@ import { toSiteOptions } from '@backend/features/settings/options'
 const DAY_MS = 24 * 60 * 60 * 1000
 // masa simpan riwayat masuk panel admin (Admin → Akun)
 const LOGIN_EVENT_DAYS = 90
-// masa simpan log audit (jejak perubahan admin); lebih lama dari itu dihapus (audit 2026-11-17, DB-02)
+// masa simpan log audit (jejak perubahan admin); lebih lama dari itu dihapus
 const AUDIT_LOG_DAYS = 365
 
 // Dipanggil Vercel Cron sekali sehari (vercel.json). Vercel mengirim "Authorization: Bearer <CRON_SECRET>".
@@ -29,7 +32,7 @@ export async function GET(request: Request) {
   const daysAgo = (days: number) => new Date(Date.now() - days * DAY_MS)
 
   // Tiap langkah berdiri sendiri: satu yang gagal tidak menghentikan yang lain, dan respons 500 menyebut
-  // langkah mana yang gagal agar Vercel Cron menandai run itu gagal (audit 2026-11-17, ERR-01).
+  // langkah mana yang gagal agar Vercel Cron menandai run itu gagal.
   const { data, failed } = await runSteps(
     {
       // 1) Ringkas hari WIB yang sudah lewat sejak ringkasan terakhir ke PageViewDaily. Idempoten.
@@ -64,7 +67,7 @@ export async function GET(request: Request) {
         })
         return { removedPageViews: removed.count }
       },
-      // 3) Riwayat masuk admin > 90 hari.
+      // 3) Riwayat masuk admin lebih tua dari LOGIN_EVENT_DAYS.
       'riwayat-masuk': async () => {
         const removed = await db.loginEvent.deleteMany({
           where: { createdAt: { lt: daysAgo(LOGIN_EVENT_DAYS) } },
@@ -78,14 +81,14 @@ export async function GET(request: Request) {
         })
         return { removedRateLimits: removed.count }
       },
-      // 5) Log audit lebih tua dari AUDIT_LOG_DAYS (DB-02).
+      // 5) Log audit lebih tua dari AUDIT_LOG_DAYS.
       'log-audit': async () => {
         const removed = await db.auditLog.deleteMany({
           where: { createdAt: { lt: daysAgo(AUDIT_LOG_DAYS) } },
         })
         return { removedAuditLogs: removed.count }
       },
-      // 6) Sesi login dan token verifikasi yang sudah kedaluwarsa (DB-02).
+      // 6) Sesi login dan token verifikasi yang sudah kedaluwarsa.
       sesi: async () => {
         const removed = await db.session.deleteMany({ where: { expiresAt: { lt: new Date() } } })
         return { removedSessions: removed.count }
@@ -96,7 +99,7 @@ export async function GET(request: Request) {
         })
         return { removedVerifications: removed.count }
       },
-      // 7) Berkas unggahan Cloudinary tanpa baris Asset, lebih tua dari 48 jam (DB-07 audit 11-02).
+      // 7) Berkas unggahan Cloudinary tanpa baris Asset, lebih tua dari 48 jam.
       'berkas-yatim': async () => ({ removedOrphanUploads: await removeOrphanUploads(db) }),
     },
     async (name, error) => {

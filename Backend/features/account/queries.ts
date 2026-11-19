@@ -1,3 +1,5 @@
+// Query halaman Admin → Akun (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'
@@ -13,7 +15,7 @@ export type AccountSession = {
   current: boolean
 }
 
-// Data Admin → Akun (revisi 2026-11-11): identitas, sesi aktif, dan ganti password terakhir.
+// Identitas, sesi aktif beserta tempat masuknya, dan waktu ganti password terakhir.
 export async function getAccountOverview(userId: string, currentSessionId: string) {
   const db = getDb()
   const now = new Date()

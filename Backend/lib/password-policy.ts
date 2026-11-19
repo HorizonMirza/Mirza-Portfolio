@@ -1,9 +1,9 @@
-// Panjang minimal password Super Admin, satu sumber untuk Better Auth, form ganti password, seed, dan
-// skrip reset password (audit 2026-10-31, EFF-08). Diturunkan dari 12 ke 8 atas permintaan pemilik
-// (2026-11-16); aturan isi (besar, kecil, angka, simbol) tetap wajib. Tanpa impor lain agar aman dipakai di klien.
+// Aturan password Super Admin, satu sumber untuk Better Auth, form ganti password, seed, dan skrip
+// reset password. Tanpa impor lain agar aman dipakai di klien.
+
 export const MIN_PASSWORD_LENGTH = 8
 
-// Aturan isi password baru (revisi pemilik 2026-11-16): selain panjang, wajib ada huruf besar, huruf
+// Aturan isi password baru: selain panjang, wajib ada huruf besar, huruf
 // kecil, angka, dan simbol. Satu sumber untuk form (daftar syarat) dan schema server.
 export const PASSWORD_RULES = {
   upper: (value: string) => /\p{Lu}/u.test(value),
@@ -12,6 +12,7 @@ export const PASSWORD_RULES = {
   symbol: (value: string) => /[^\p{L}\p{N}\s]/u.test(value),
 }
 
+// Password memenuhi semua aturan isi di atas.
 export function meetsPasswordRules(value: string) {
   return Object.values(PASSWORD_RULES).every((rule) => rule(value))
 }

@@ -1,5 +1,7 @@
 'use server'
 
+// Server Action skill teknis (Admin → Home → Skill teknis): simpan dan hapus kategori serta skill.
+
 import { z } from 'zod'
 
 import { deleteUnusedAssets, destroyRemoteAssets } from '@backend/features/assets/cleanup'
@@ -29,6 +31,7 @@ function revalidate() {
 
 // ---------- Kategori ----------
 
+// Simpan kategori baru (categoryId null, ditaruh di akhir urutan) atau ubah kategori yang ada.
 export async function saveSkillCategory(
   categoryId: string | null,
   input: unknown,
@@ -77,6 +80,7 @@ export async function saveSkillCategory(
   }
 }
 
+// Hapus kategori; ditolak selama masih berisi skill.
 export async function deleteSkillCategory(categoryId: string): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
@@ -111,6 +115,7 @@ export async function deleteSkillCategory(categoryId: string): Promise<ActionRes
 
 // ---------- Skill ----------
 
+// Simpan skill baru (skillId null, ditaruh di akhir kategorinya) atau ubah skill yang ada.
 export async function saveSkill(
   skillId: string | null,
   input: unknown,
@@ -163,6 +168,7 @@ export async function saveSkill(
   }
 }
 
+// Hapus skill beserta logo unggahannya.
 export async function deleteSkill(skillId: string): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

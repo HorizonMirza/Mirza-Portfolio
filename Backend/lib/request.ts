@@ -1,8 +1,11 @@
+// Pemeriksaan permintaan publik: bot dan asal yang sama (hanya server).
+
 import 'server-only'
 
 const BOT_PATTERN =
   /bot|crawl|spider|slurp|preview|facebookexternalhit|headless|lighthouse|pingdom|uptime/i
 
+// Permintaan tanpa user-agent atau dari bot, crawler, dan alat pemantau tidak dihitung.
 export function isBot(userAgent: string | null) {
   return !userAgent || BOT_PATTERN.test(userAgent)
 }

@@ -1,3 +1,5 @@
+// Metadata SEO halaman publik dan tautan WhatsApp.
+
 import type { Metadata } from 'next'
 
 import { type AppLocale, routing } from '@backend/i18n/routing'

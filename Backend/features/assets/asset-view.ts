@@ -1,3 +1,5 @@
+// Bentuk data berkas (foto, logo, PDF) untuk komponen admin. Tanpa impor server, aman dipakai di klien.
+
 export type AssetView = {
   id: string
   url: string

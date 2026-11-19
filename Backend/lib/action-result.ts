@@ -1,3 +1,6 @@
+// Hasil standar Server Action admin (ok/fail) dan penerjemahan galat Prisma/Zod menjadi pesan yang
+// aman ditampilkan.
+
 import { Prisma } from '@backend/generated/prisma/client'
 import { UnauthorizedError } from '@backend/lib/auth-guard'
 
@@ -6,10 +9,12 @@ export type ActionResult<T = undefined> =
   | { ok: true; message: string; data?: T }
   | { ok: false; message: string; fieldErrors?: Record<string, string> }
 
+// Hasil berhasil, opsional dengan data (mis. id baris baru).
 export function ok<T>(message: string, data?: T): ActionResult<T> {
   return { ok: true, message, data }
 }
 
+// Hasil gagal, opsional dengan galat per isian.
 export function fail(message: string, fieldErrors?: Record<string, string>): ActionResult<never> {
   return { ok: false, message, fieldErrors }
 }
@@ -34,8 +39,8 @@ export function toActionError(
   return fail('Terjadi kesalahan. Coba lagi.')
 }
 
-// Nama kolom dari galat unik. Prisma 7 dengan driver adapter hanya memberi nama indeks
-// ("Skill_name_key"), versi lama memberi meta.target.
+// Nama kolom dari galat unik: meta.target bila ada, selain itu dari driver adapter (Prisma 7), yang
+// kadang hanya memberi nama indeks ("Skill_name_key").
 export function uniqueViolationFields(meta: Record<string, unknown> | undefined): string[] {
   if (!meta) return []
   if (meta.target) return ([] as string[]).concat(meta.target as string[] | string)

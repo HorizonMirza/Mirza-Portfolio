@@ -1,10 +1,11 @@
-// Menimpa pesan bawaan (messages/*.json) dengan teks hasil suntingan admin.
-// Murni (tanpa database) supaya mudah diuji. Hanya namespace yang berubah yang disalin.
+// Menimpa pesan bawaan (messages/*.json) dengan teks hasil suntingan admin. Murni (tanpa database)
+// supaya mudah diuji. Hanya namespace yang berubah yang disalin.
 
 type Messages = Record<string, unknown>
 
 export type TextOverride = { key: string; value_id: string | null; value_en: string | null }
 
+// Pesan satu bahasa dengan suntingan admin; objek asli tidak diubah.
 export function applyTextOverrides(
   messages: Messages,
   overrides: readonly TextOverride[],

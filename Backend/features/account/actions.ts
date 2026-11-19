@@ -1,5 +1,8 @@
 'use server'
 
+// Server Action Admin → Akun: ganti password, nama, dan email login. Semuanya meminta password akun,
+// dibatasi rate limit, dan dicatat di log audit.
+
 import { APIError } from 'better-auth'
 import { headers } from 'next/headers'
 
@@ -23,8 +26,8 @@ const RULE = { window: 900, max: 5 }
 // Password diminta lagi untuk ganti nama atau email: sedikit lebih longgar karena salah ketik wajar
 const CONFIRM_RULE = { window: 900, max: 10 }
 
-// Galat Better Auth dibedakan menurut kodenya; dulu semuanya dianggap "password saat ini salah",
-// termasuk sesi yang berakhir atau galat server (audit 2026-11-03, ERR-05).
+// Galat Better Auth dibedakan menurut kodenya, agar sesi yang berakhir atau galat server tidak
+// dilaporkan sebagai "password saat ini salah".
 function changePasswordError(error: APIError): ActionResult {
   const code = (error.body as { code?: unknown } | undefined)?.code
   if (code === 'INVALID_PASSWORD')
@@ -67,8 +70,7 @@ export async function changePassword(input: unknown): Promise<ActionResult> {
     }
 
     // Ganti password dijalankan Better Auth lewat API-nya sendiri, jadi tidak bisa satu transaksi
-    // dengan audit (audit 2026-11-02, DB-03). Password sudah berganti di titik ini: audit dicoba dua
-    // kali, dan bila tetap gagal dicatat ke log server (tanpa data pribadi) agar tidak hilang diam-diam.
+    // dengan audit. Password sudah berganti di titik ini: audit dicoba dua kali, dan bila tetap gagal dicatat ke log server (tanpa data pribadi) agar tidak hilang diam-diam.
     // Pengguna tetap mendapat jawaban berhasil karena password memang sudah berganti.
     const entry = {
       actorId: admin.userId,
@@ -169,7 +171,7 @@ export async function changeAccountEmail(input: unknown): Promise<ActionResult> 
     return ok('Email disimpan.')
   } catch (error) {
     // dua permintaan berbarengan bisa sama-sama lolos pemeriksaan di atas; constraint unik di database
-    // menolak yang kedua, dan galatnya ditandai di isian Email (audit 2026-11-17, DB-04)
+    // menolak yang kedua, dan galatnya ditandai di isian Email
     return toActionError(error, { email: 'Email' })
   }
 }

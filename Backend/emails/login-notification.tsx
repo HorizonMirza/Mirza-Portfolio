@@ -1,6 +1,8 @@
+// Email notifikasi login baru ke panel admin, untuk pemilik (bahasa Indonesia). Tanpa IP: hanya waktu
+// dan perangkat.
+
 import { emailColors, EmailLayout } from './layout'
 
-// Notifikasi login baru ke pemilik (bahasa Indonesia). Tanpa IP: hanya waktu dan perangkat.
 export function LoginNotificationEmail({
   when,
   device,

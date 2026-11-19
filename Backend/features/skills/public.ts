@@ -1,3 +1,5 @@
+// Kategori dan skill untuk halaman publik, di-cache per tag 'skills' dan 'projects' (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'

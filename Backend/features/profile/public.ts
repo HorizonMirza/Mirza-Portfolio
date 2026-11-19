@@ -1,16 +1,19 @@
+// Data profil untuk halaman publik, di-cache per tag 'profile' dan 'experience', serta URL CV
+// terbaru untuk /api/cv (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
-import { CONTACT_LABEL_KEYS, type ContactLabels } from '@backend/features/profile/footer-links'
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@backend/lib/cache-tags'
 import { getDb } from '@backend/lib/db'
 import { type PublicImage, safeImage } from '@backend/lib/public-image'
 
+import { CONTACT_LABEL_KEYS, type ContactLabels } from './footer-links'
 import { SOCIAL_KEYS } from './schema'
 
-export type PublicProfile = {
+type PublicProfile = {
   name: string
   headline_id: string
   headline_en: string
@@ -20,7 +23,7 @@ export type PublicProfile = {
   currentRole_en: string | null
   aboutRoles_id: string | null
   aboutRoles_en: string | null
-  // kartu foto halaman Tentang: peran, foto, dan chip yang bisa dimatikan (2026-11-10)
+  // kartu foto halaman About: peran, foto, dan chip yang bisa dimatikan
   aboutBandRoles_id: string | null
   aboutBandRoles_en: string | null
   aboutPhoto: PublicImage | null
@@ -48,6 +51,7 @@ export type PublicProfile = {
   } | null
 }
 
+// Host link tanpa "www.", atau null bila bukan URL.
 function urlHost(url: string) {
   try {
     return new URL(url).hostname.replace(/^www\./, '')

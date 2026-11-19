@@ -1,3 +1,5 @@
+// Query admin pendidikan dan pengalaman (hanya server).
+
 import 'server-only'
 
 import { assetSelect } from '@backend/features/assets/queries'
@@ -5,9 +7,8 @@ import { getDb } from '@backend/lib/db'
 
 import { dateToMonth, type ExperienceInput, type ExperienceKind } from './schema'
 
-// Entri lengkap untuk diubah langsung di halaman Admin → About (pendidikan) dan Admin → Experience
-// (revisi pemilik 2026-11-13): nilai form dan berkas logo/foto per entri.
-// Pendidikan dikelola di About, kerja dan organisasi di Experience (2026-11-10).
+// Entri lengkap untuk diubah langsung di Admin → About (pendidikan) dan Admin → Experience (kerja
+// dan organisasi): nilai form dan berkas logo/foto per entri.
 export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
   const rows = await getDb().experience.findMany({
     where: kind === 'education' ? { type: 'EDUCATION' } : { type: { not: 'EDUCATION' } },
@@ -16,7 +17,7 @@ export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
   })
   return rows.map((e) => ({
     id: e.id,
-    // jenis pekerjaan lama (enum) untuk mengisi kolom teks bila belum ada
+    // jenis pekerjaan enum dari seed, untuk mengisi kolom teks bila belum ada
     legacyEmployment: e.employmentType,
     logo: e.logo,
     photo: e.photo,

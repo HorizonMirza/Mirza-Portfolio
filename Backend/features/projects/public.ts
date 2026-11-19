@@ -1,13 +1,14 @@
+// Data project untuk halaman publik (daftar dan detail), di-cache per tag 'projects' (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
-import type { PublicImage } from '@backend/lib/public-image'
 import type { Prisma } from '@backend/generated/prisma/client'
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@backend/lib/cache-tags'
 import { getDb } from '@backend/lib/db'
-import { safeImage } from '@backend/lib/public-image'
+import { type PublicImage, safeImage } from '@backend/lib/public-image'
 
 export type PublicProjectSummary = {
   slug: string
@@ -26,7 +27,7 @@ export type PublicProjectSummary = {
   skills: { id: string; name: string; icon: string | null; logo: { url: string } | null }[]
 }
 
-export type PublicProject = PublicProjectSummary & {
+type PublicProject = PublicProjectSummary & {
   images: PublicImage[]
   updatedAt: string
 }
@@ -38,6 +39,7 @@ const imageSelect = {
   alt_id: true,
   alt_en: true,
 } satisfies Prisma.AssetSelect
+
 const summarySelect = {
   slug: true,
   title_id: true,
@@ -60,7 +62,7 @@ const summarySelect = {
   },
 } satisfies Prisma.ProjectSelect
 
-// Tombol yang dimatikan Super Admin diperlakukan seperti tautan kosong di seluruh situs publik dan API.
+// Tombol yang dimatikan Super Admin diperlakukan seperti tautan kosong di seluruh situs publik.
 function withButtons<T extends { demoUrl: string | null; repoUrl: string | null }>({
   showDemo,
   showRepo,
@@ -85,6 +87,7 @@ export const getPublishedProjects = cache(
   ),
 )
 
+// Satu project terbit untuk halaman detail, beserta galerinya; null bila tidak ada atau draf.
 export const getPublishedProject = cache(
   unstable_cache(
     async (slug: string): Promise<PublicProject | null> => {

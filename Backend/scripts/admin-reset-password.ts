@@ -1,3 +1,7 @@
+// Ganti password Super Admin dari terminal bila lupa. Pemakaian (dari Frontend/):
+//   ADMIN_EMAIL=... ADMIN_NEW_PASSWORD=... pnpm admin:reset-password
+// Semua sesi dicabut, jadi login ulang diperlukan di semua perangkat.
+
 import { PrismaPg } from '@prisma/adapter-pg'
 import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
@@ -7,9 +11,6 @@ import { MIN_PASSWORD_LENGTH } from '../lib/password-policy'
 
 config({ path: ['.env.local', '.env'], quiet: true })
 
-// Ganti password Super Admin bila lupa. Pemakaian:
-//   ADMIN_EMAIL=... ADMIN_NEW_PASSWORD=... pnpm admin:reset-password
-// Semua sesi lama dicabut, jadi login ulang diperlukan di semua perangkat.
 async function main() {
   const connectionString = process.env.DATABASE_URL
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase()

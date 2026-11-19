@@ -1,3 +1,6 @@
+// Konfigurasi Better Auth: login email + password satu Super Admin, sesi 8 jam, rate limit login,
+// riwayat masuk, dan email notifikasi login (hanya server).
+
 import 'server-only'
 
 import { APIError, betterAuth } from 'better-auth'
@@ -15,8 +18,8 @@ import { MIN_PASSWORD_LENGTH } from '@backend/lib/password-policy'
 import { authRateLimitStorage, hashIdentifier } from '@backend/lib/rate-limit'
 
 // Batas percobaan login: 5 kali per 15 menit per IP (ARCHITECTURE.md bagian 7).
-export const LOGIN_RATE_LIMIT = { window: 15 * 60, max: 5 } as const
-export const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60
+const LOGIN_RATE_LIMIT = { window: 15 * 60, max: 5 } as const
+const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60
 
 function createAuth() {
   const env = getAuthEnv()
@@ -101,7 +104,7 @@ function createAuth() {
       cookiePrefix: 'mm',
       // Proxy tepercaya untuk membaca IP klien dari x-forwarded-for (batas percobaan login). Tanpa daftar
       // ini Better Auth hanya mempercayai header berisi satu IP (Vercel); di balik proxy lain isi
-      // TRUSTED_PROXIES agar batas login tidak bisa diakali dengan header palsu (audit 2026-11-01, SEC-02).
+      // TRUSTED_PROXIES agar batas login tidak bisa diakali dengan header palsu.
       ipAddress: { trustedProxies: trustedProxies() },
       // id dibuat Prisma (UUID v7 lewat @default(uuid(7)))
       database: { generateId: false },

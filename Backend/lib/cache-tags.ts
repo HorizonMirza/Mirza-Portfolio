@@ -1,4 +1,6 @@
-// Tag cache data publik. Aksi admin mengosongkannya lewat revalidateContent() (lib/revalidate.ts).
+// Tag cache data publik dan batas umurnya. Aksi admin mengosongkannya lewat revalidateContent()
+// (lib/revalidate.ts). Tanpa impor server.
+
 export const CACHE_TAGS = {
   profile: 'profile',
   projects: 'projects',

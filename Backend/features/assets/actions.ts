@@ -1,5 +1,9 @@
 'use server'
 
+// Server Action berkas di Cloudinary: tanda tangan unggah, catat berkas yang sudah terunggah ke
+// pemiliknya (profil, project, pengalaman, skill, pengaturan), dan hapus berkas. Berkas lama yang
+// tergantikan ikut dihapus dari database dan Cloudinary.
+
 import { z } from 'zod'
 
 import type { Prisma } from '@backend/generated/prisma/client'
@@ -57,6 +61,7 @@ const uploadResultSchema = z.object({
   height: z.number().int().optional(),
 })
 
+// Cache publik yang dibuang setelah berkas untuk tujuan ini disimpan.
 function revalidateFor(target: UploadTarget) {
   // logo skill juga tampil di chip teknologi project
   if (target === 'skill-logo') return revalidateContent('skills', 'projects')
@@ -91,6 +96,7 @@ function usageOf(asset: {
   return ['projects']
 }
 
+// Tanda tangan unggah langsung dari browser ke Cloudinary, terbatas pada folder dan format tujuan.
 export async function signAssetUpload(target: unknown): Promise<ActionResult<UploadSignature>> {
   try {
     await requireSuperAdmin()
@@ -118,6 +124,8 @@ export async function signAssetUpload(target: unknown): Promise<ActionResult<Upl
   }
 }
 
+// Catat berkas yang baru terunggah ke pemiliknya. Hasil Cloudinary diperiksa ulang di server; berkas
+// yang ditolak atau gagal dicatat dihapus lagi dari Cloudinary.
 export async function attachUploadedAsset(
   target: unknown,
   targetId: unknown,
@@ -141,7 +149,7 @@ export async function attachUploadedAsset(
 
     // Aman diulang: bila jawaban pertama hilang di jalan, browser mengirim ulang permintaan yang
     // sama. Berkas dengan public_id ini sudah tercatat oleh permintaan pertama, jadi cukup dijawab
-    // sukses dan berkasnya jangan dihapus (audit 2026-11-17, BUG-01).
+    // sukses dan berkasnya jangan dihapus.
     const already = await getDb().asset.findUnique({
       where: { publicId: result.public_id },
       select: { id: true },
@@ -186,8 +194,7 @@ export async function attachUploadedAsset(
     const skillId = t.data === 'skill-logo' ? idSchema.safeParse(targetId) : null
     if (skillId && !skillId.success) return reject('Skill tidak valid.')
 
-    // Teks alternatif tidak diisi admin lagi (revisi pemilik 2026-11-15): diturunkan dari data
-    // pemiliknya (nama, instansi, judul project) dalam dua bahasa. Isian alt yang dikirim (bila ada
+    // Teks alternatif tidak diisi admin: diturunkan dari data pemiliknya (nama, instansi, judul project) dalam dua bahasa. Isian alt yang dikirim (bila ada
     // dan valid) tetap dipakai.
     let altValues: { alt_id: string; alt_en: string } | null = null
     if (needsAlt(spec)) {
@@ -245,7 +252,7 @@ export async function attachUploadedAsset(
         old = profile.aboutChipLogo
         await tx.profile.update({ where: { id: 1 }, data: { aboutChipLogoId: asset.id } })
       } else if (t.data === 'hero-portrait') {
-        // armor hero tidak bisa diganti lagi sejak 2026-11-10 (selalu gambar bawaan repo)
+        // foto utama beranda; armor hero selalu gambar bawaan repo
         const current = await tx.siteSetting.findUnique({
           where: { id: 1 },
           select: { heroPortrait: { select: { id: true, publicId: true } } },
@@ -345,14 +352,16 @@ export async function attachUploadedAsset(
   }
 }
 
+// Baris profil belum ada (seed belum dijalankan), jadi berkas tidak punya pemilik.
 class ProfileMissingError extends Error {}
 
+// Galat constraint unik publicId: berkas yang sama sudah dicatat permintaan lain.
 function isDuplicatePublicId(error: unknown): boolean {
   const known = error as { code?: unknown; meta?: Record<string, unknown> }
   return known?.code === 'P2002' && uniqueViolationFields(known.meta).includes('publicId')
 }
 
-// Teks alternatif bawaan dari data pemilik berkas, dalam dua bahasa
+// Teks alternatif bawaan dari data pemilik berkas, dalam dua bahasa.
 async function defaultAlt(
   target: UploadTarget,
   ids: { projectId: string | null; experienceId: string | null },
@@ -384,6 +393,7 @@ async function defaultAlt(
   return { alt_id: `Foto ${name}`, alt_en: `Photo of ${name}` }
 }
 
+// Hapus satu berkas (tombol hapus foto, logo, atau CV di admin) dari database dan Cloudinary.
 export async function removeAsset(assetId: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

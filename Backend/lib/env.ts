@@ -1,8 +1,10 @@
+// Variabel lingkungan sisi server: validasi kunci wajib (database, auth) dan URL situs. Kunci layanan
+// tambahan (Resend, Sentry, Cloudinary, dan lainnya) opsional: bila kosong, fitur terkait mati sendiri.
+// Penjelasan tiap kunci: Documentation/ARCHITECTURE.md bagian 8.
+
 import { z } from 'zod'
 
-// Skema variabel lingkungan sisi server (Documentation/ARCHITECTURE.md bagian 8). Kunci layanan
-// tambahan (Resend, Sentry, Cloudinary, dan lainnya) opsional: bila kosong, fitur terkait mati sendiri.
-export const serverEnvSchema = z.object({
+const serverEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   DATABASE_URL: z
     .string()
@@ -16,7 +18,7 @@ export const serverEnvSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.url().optional(),
 })
 
-export type ServerEnv = z.infer<typeof serverEnvSchema>
+type ServerEnv = z.infer<typeof serverEnvSchema>
 
 // Nilai kosong ("") dianggap tidak diisi, supaya .env.example yang disalin apa adanya
 // dan env Vercel yang dikosongkan tidak menggagalkan validasi kunci opsional.
@@ -26,6 +28,7 @@ function withoutEmpty(source: Record<string, string | undefined>) {
   )
 }
 
+// Validasi kunci database; galat menyebut nama kunci yang salah, tidak pernah nilainya.
 export function parseServerEnv(source: Record<string, string | undefined>): ServerEnv {
   const result = serverEnvSchema.safeParse(withoutEmpty(source))
   if (!result.success) {
@@ -49,7 +52,7 @@ export function getServerEnv(): ServerEnv {
 
 // Kunci khusus autentikasi. Dipisah agar halaman publik tidak gagal hanya karena kunci auth
 // belum diisi, sedangkan panel admin menolak berjalan tanpa kunci yang layak.
-export const authEnvSchema = z.object({
+const authEnvSchema = z.object({
   BETTER_AUTH_SECRET: z
     .string({ error: 'BETTER_AUTH_SECRET wajib diisi' })
     .min(32, 'BETTER_AUTH_SECRET minimal 32 karakter (buat dengan: openssl rand -base64 32)'),
@@ -64,8 +67,9 @@ export const authEnvSchema = z.object({
   HASH_SALT_SECRET: z.string().min(32).optional(),
 })
 
-export type AuthEnv = z.infer<typeof authEnvSchema>
+type AuthEnv = z.infer<typeof authEnvSchema>
 
+// Validasi kunci autentikasi, dengan aturan galat yang sama seperti parseServerEnv.
 export function parseAuthEnv(source: Record<string, string | undefined>): AuthEnv {
   const result = authEnvSchema.safeParse(withoutEmpty(source))
   if (!result.success) {
@@ -79,6 +83,7 @@ export function parseAuthEnv(source: Record<string, string | undefined>): AuthEn
 
 let cachedAuth: AuthEnv | undefined
 
+// Divalidasi saat pertama dipakai, seperti getServerEnv.
 export function getAuthEnv(): AuthEnv {
   cachedAuth ??= parseAuthEnv(process.env)
   return cachedAuth

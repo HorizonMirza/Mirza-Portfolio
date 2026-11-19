@@ -1,14 +1,15 @@
-import { EN } from '@backend/lib/admin-i18n-en'
+// Bahasa tampilan panel admin: tombol ID/EN di top bar mengganti seluruh tampilan admin sekaligus
+// bahasa isian form dua bahasa. Pilihan disimpan di cookie agar halaman server langsung dirender dalam
+// bahasa itu. Kunci kamus adalah teks Indonesia persis seperti di kode; teks isian dari database
+// (mis. nama project) tidak diterjemahkan. Tanpa impor server, dipakai klien dan server.
 
-// Bahasa tampilan panel admin (permintaan pemilik 2026-11-11): tombol
-// ID/EN di top bar mengganti seluruh tampilan admin sekaligus bahasa isian form dua bahasa. Pilihan
-// disimpan di cookie agar halaman server langsung dirender dalam bahasa itu. Kunci kamus adalah teks
-// Indonesia persis seperti di kode; teks isian dari database (mis. nama project) tidak diterjemahkan.
+import { EN } from '@backend/lib/admin-i18n-en'
 
 export type AdminLang = 'id' | 'en'
 
 export const ADMIN_LANG_COOKIE = 'mmirza-admin-lang'
 
+// Nilai cookie → bahasa admin; selain 'en' dianggap 'id'.
 export function parseAdminLang(value: string | null | undefined): AdminLang {
   return value === 'en' ? 'en' : 'id'
 }
@@ -17,7 +18,7 @@ export type AdminVars = Record<string, string | number>
 
 // Nama halaman situs yang di kode ditulis dalam bahasa Inggris (sama dengan menu situs publik versi
 // Inggris). Dalam mode Indonesia memakai nama menu situs publik versi Indonesia (messages/id.json Nav)
-// agar tidak ada nama Inggris di tampilan Indonesia (permintaan pemilik 2026-11-11).
+// agar tidak ada nama Inggris di tampilan Indonesia.
 const ID: Record<string, string> = {
   Home: 'Beranda',
   About: 'Tentang',
@@ -86,6 +87,7 @@ function translate(text: string): string {
   return text
 }
 
+// Isi placeholder {nama} dengan nilai dari vars; placeholder tanpa nilai dibiarkan.
 function fill(text: string, vars?: AdminVars) {
   if (!vars) return text
   return text.replace(/\{(\w+)\}/g, (all, name: string) =>
@@ -100,7 +102,7 @@ export function adminT(lang: AdminLang, text: string, vars?: AdminVars): string 
 
 // Perkiraan apakah teks yang sedang tampil akan berganti saat bahasa admin diganti ke `next`. Dipakai
 // efek acak huruf agar teks dari server ikut diacak sejak tombol ditekan, sebelum teks barunya tiba
-// (revisi 2026-11-11). Hanya teks kamus; isian data (mis. judul project) ikut saat teksnya tiba.
+// Hanya teks kamus; isian data (mis. judul project) ikut saat teksnya tiba.
 let reverse: Map<string, string> | null = null
 export function adminTextWillChange(text: string, next: AdminLang): boolean {
   if (next === 'en') return translate(text) !== text || text in ID_REVERSE

@@ -1,8 +1,8 @@
-import { z } from 'zod'
-
 // Laporan error server ke Sentry lewat HTTP (envelope API), tanpa SDK: tidak menambah JavaScript
 // klien maupun beban cold start. Aktif hanya bila SENTRY_DSN diisi.
 // Data pribadi tidak dikirim: tanpa header, cookie, IP, body, dan query string.
+
+import { z } from 'zod'
 
 const MAX_MESSAGE = 1000
 const MAX_FRAMES = 50
@@ -14,10 +14,10 @@ const reportEnvSchema = z.object({
   NODE_ENV: z.string().optional(),
 })
 
-export type SentryTarget = { endpoint: string; publicKey: string; dsn: string }
+type SentryTarget = { endpoint: string; publicKey: string; dsn: string }
 
-export type RequestInfo = { path: string; method: string }
-export type ErrorContext = {
+type RequestInfo = { path: string; method: string }
+type ErrorContext = {
   routerKind?: string
   routePath?: string
   routeType?: string
@@ -65,6 +65,7 @@ export function parseStack(stack: string | undefined): Frame[] {
   return frames.reverse()
 }
 
+// Jenis, pesan (dipotong), stack, dan digest Next dari galat apa pun.
 function describe(error: unknown): {
   type: string
   value: string
@@ -86,6 +87,7 @@ function describe(error: unknown): {
   return { type: 'Error', value: String(error).slice(0, MAX_MESSAGE), digest }
 }
 
+// Satu event Sentry dalam format envelope (header, tipe item, isi), dipisah baris baru.
 export function buildEnvelope(
   error: unknown,
   request: RequestInfo,
@@ -132,6 +134,7 @@ export function buildEnvelope(
   return `${JSON.stringify(header)}\n${JSON.stringify({ type: 'event' })}\n${body}\n`
 }
 
+// Kirim satu galat server ke Sentry. Dipanggil instrumentation.ts (onRequestError) dan cron harian.
 export async function reportServerError(
   error: unknown,
   request: RequestInfo,

@@ -1,6 +1,7 @@
-// Jalankan langkah-langkah berurutan; satu langkah yang gagal dicatat dan tidak menghentikan yang
-// lain (audit 2026-11-17, ERR-01). Tiap langkah mengembalikan angka hasil yang digabung ke `data`.
-export type StepRunner = () => Promise<Record<string, number>>
+// Jalankan langkah-langkah berurutan (cron harian); satu langkah yang gagal dicatat dan tidak
+// menghentikan yang lain. Tiap langkah mengembalikan angka hasil yang digabung ke `data`.
+
+type StepRunner = () => Promise<Record<string, number>>
 
 export async function runSteps(
   steps: Record<string, StepRunner>,

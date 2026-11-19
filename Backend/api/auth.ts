@@ -1,3 +1,5 @@
+// Logika rute /api/auth/*: semua permintaan Better Auth (masuk, keluar, sesi) diteruskan ke handler-nya.
+
 import { toNextJsHandler } from 'better-auth/next-js'
 
 import { getAuth } from '@backend/lib/auth'

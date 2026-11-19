@@ -1,3 +1,5 @@
+// Logika rute /api/track: beacon kunjungan halaman tanpa cookie untuk statistik Dashboard.
+
 import { z } from 'zod'
 
 import { clientIp } from '@backend/lib/client-ip'
@@ -21,8 +23,8 @@ const bodySchema = z.object({
 const RULE = { window: 3600, max: 120 }
 // Batas global per hari. Cek asal (sec-fetch-site/origin) bisa dipalsukan klien di luar browser, jadi
 // batas ini yang menjamin tabel PageView tidak bisa dibanjiri sampai kuota database habis: paling
-// banyak ±1 MB per hari: ±90 MB untuk masa simpan 90 hari, ±365 MB bila dipilih 1 tahun di Admin → Pengaturan (audit 2026-11-01, SEC-01). Kunjungan di atas
-// batas tidak dicatat, halaman tetap jalan.
+// banyak ±1 MB per hari, yaitu ±90 MB untuk masa simpan 90 hari atau ±365 MB untuk 1 tahun (Admin →
+// Pengaturan). Kunjungan di atas batas tidak dicatat, halaman tetap jalan.
 const GLOBAL_RULE = { window: 86_400, max: 5_000 }
 
 function noContent() {
@@ -44,13 +46,13 @@ export async function POST(request: Request) {
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) return new Response(null, { status: 400 })
 
-  // "Hitung Kunjungan" mati di Admin → Pengaturan: tidak ada yang dicatat (pelacak juga tidak dipasang;
-  // ini pengaman untuk halaman lama yang masih terbuka)
+  // "Hitung Kunjungan" mati di Admin → Pengaturan: tidak ada yang dicatat. Pelacak juga tidak dipasang;
+  // ini pengaman untuk tab yang dibuka sebelum pengaturan diubah.
   if (!(await getSiteSettings()).trackVisits) return noContent()
 
   const ip = clientIp(request.headers)
   // Kunjungan hanya statistik: database gangguan tidak boleh menjadi 500 (dan laporan error) untuk
-  // setiap beacon pengunjung; cukup tidak dicatat (audit 2026-11-03, ERR-03).
+  // setiap beacon pengunjung; cukup tidak dicatat.
   try {
     await record(request, parsed.data, ip, ua)
   } catch {

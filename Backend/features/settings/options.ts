@@ -1,20 +1,21 @@
+// Pengaturan situs yang disimpan otomatis per baris (Admin → Pengaturan): pilihan yang sah, nilai
+// bawaan, dan pembacaan baris database. Dipakai bersama oleh form (klien) dan action (server), jadi
+// tanpa impor server.
+
 import { z } from 'zod'
 
-// Pengaturan situs yang disimpan otomatis per baris (Admin → Pengaturan, revisi 2026-11-11).
-// Dipakai bersama oleh form (klien) dan action (server), jadi tanpa import server.
-
-export const THEME_CHOICES = ['dark', 'light', 'system'] as const
-export const LOCALE_CHOICES = ['browser', 'id', 'en'] as const
-export const INTRO_FREQUENCIES = ['once', 'visit', 'weekly'] as const
-export const RETENTION_CHOICES = [30, 90, 365] as const
+const THEME_CHOICES = ['dark', 'light', 'system'] as const
+const LOCALE_CHOICES = ['browser', 'id', 'en'] as const
+const INTRO_FREQUENCIES = ['once', 'visit', 'weekly'] as const
+const RETENTION_CHOICES = [30, 90, 365] as const
 
 export type IntroFrequency = (typeof INTRO_FREQUENCIES)[number]
 
 export const CONTACT_PER_HOUR_MIN = 1
 export const CONTACT_PER_HOUR_MAX = 50
 
-// Semua suara di situs (lib/ui-sounds.ts), masing-masing punya volume sendiri 0–100 (revisi pemilik
-// 2026-11-16; volume utama "Semua suara" dihapus). Urutan = urutan baris di Admin → Pengaturan, Suara.
+// Semua suara di situs (Frontend/src/lib/ui-sounds.ts), masing-masing punya volume sendiri 0–100.
+// Urutan = urutan baris di Admin → Pengaturan, Suara.
 export const SOUND_KINDS = [
   'nav',
   'theme',
@@ -27,7 +28,7 @@ export const SOUND_KINDS = [
   'lanyard',
 ] as const
 export type SoundKind = (typeof SOUND_KINDS)[number]
-export type SoundMix = Record<SoundKind, number>
+type SoundMix = Record<SoundKind, number>
 
 const volume = z
   .number({ error: 'Volume harus berupa angka' })
@@ -70,10 +71,8 @@ export type SiteOptionInput = z.infer<typeof siteOptionSchema>
 export type SiteOptionKey = SiteOptionInput['key']
 export type SiteOptions = { [K in SiteOptionKey]: Extract<SiteOptionInput, { key: K }>['value'] }
 
-// Nilai bawaan = perilaku situs sebelum halaman ini ada (sama dengan @default di schema.prisma).
-export const DEFAULT_SOUND_MIX: SoundMix = Object.fromEntries(
-  SOUND_KINDS.map((k) => [k, 100]),
-) as SoundMix
+// Nilai bawaan, sama dengan @default di schema.prisma.
+const DEFAULT_SOUND_MIX: SoundMix = Object.fromEntries(SOUND_KINDS.map((k) => [k, 100])) as SoundMix
 
 export const DEFAULT_SITE_OPTIONS: SiteOptions = {
   soundMix: DEFAULT_SOUND_MIX,
@@ -90,6 +89,7 @@ export const DEFAULT_SITE_OPTIONS: SiteOptions = {
   maintenanceMode: false,
 }
 
+// Nilai bila termasuk pilihan yang sah, selain itu nilai bawaan.
 function pick<T extends string | number>(value: unknown, choices: readonly T[], fallback: T): T {
   return choices.includes(value as T) ? (value as T) : fallback
 }

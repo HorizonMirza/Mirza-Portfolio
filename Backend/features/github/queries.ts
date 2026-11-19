@@ -1,3 +1,5 @@
+// Query Admin → Home → GitHub (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'

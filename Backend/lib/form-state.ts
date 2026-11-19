@@ -1,4 +1,5 @@
 // State form publik (useActionState). Pesan berupa kunci terjemahan, diterjemahkan di klien.
+
 export type PublicFormState = {
   status: 'idle' | 'success' | 'error'
   message?: string

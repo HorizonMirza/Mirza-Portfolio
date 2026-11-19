@@ -1,3 +1,6 @@
+// Logika rute /api/cv (tombol Resume CV): catat jumlah unduhan tanpa data pribadi, lalu arahkan ke
+// berkas CV terbaru. Tanpa CV, pengunjung diarahkan ke halaman About.
+
 import { NextResponse } from 'next/server'
 
 import { getCvUrl } from '@backend/features/profile/public'
@@ -6,10 +9,10 @@ import { getDb } from '@backend/lib/db'
 import { consumePublicRateLimit } from '@backend/lib/rate-limit'
 import { isBot } from '@backend/lib/request'
 
-// Tombol Resume CV: catat jumlah unduhan (tanpa data pribadi), lalu arahkan ke berkas terbaru di Cloudinary.
 // Satu IP paling banyak tercatat 3 kali per jam agar angka unduhan tidak bisa digelembungkan dengan
-// memanggil URL ini berulang (audit 2026-11-01, SEC-03); pengalihan ke berkas tetap selalu jalan.
+// memanggil URL ini berulang; pengalihan ke berkas tetap selalu jalan.
 const COUNT_RULE = { window: 3600, max: 3 }
+
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const locale = url.searchParams.get('locale') === 'en' ? 'en' : 'id'

@@ -1,19 +1,18 @@
-// Warna grafik kontribusi GitHub di beranda (revisi 2026-11-15). Tanpa import klien atau server,
-// jadi dipakai bersama oleh komponen grafik (klien), form admin, dan pengaturan situs (server).
+// Warna grafik kontribusi GitHub di beranda. Tanpa impor klien atau server, jadi dipakai bersama oleh
+// komponen grafik (klien), form admin, dan pengaturan situs (server).
 
 /** Empat warna per tema, dari aktivitas paling ringan ke paling berat. */
 export type Palette = { light: string[]; dark: string[] }
 
 // Sama dengan token --gh-1 sampai --gh-4 di Frontend/src/styles/tokens.css (canvas tidak bisa membaca var()).
-// Biru situs, menggantikan hijau khas GitHub (pilihan pemilik 2026-10-16, demo W1); tingkat
-// terkuat sama dengan --note sehingga angka statistik memakai warna aksen situs.
+// Biru situs, bukan hijau khas GitHub; tingkat terkuat sama dengan --note sehingga angka statistik
+// memakai warna aksen situs.
 export const GITHUB_PALETTE: Palette = {
   light: ['#b9d2f8', '#6e9de8', '#2f6fd6', '#1b4c9c'],
   dark: ['#10294a', '#184a8a', '#2f78d6', '#4da3ff'],
 }
 
-// Lima pilihan warna di Admin → Home → GitHub (revisi pemilik 2026-11-15): merah, kuning, hijau, biru
-// (bawaan), dan ungu. Tiap pilihan punya empat tingkat untuk tema terang dan gelap.
+// Lima pilihan warna di Admin → Home → GitHub: merah, kuning, hijau, biru (bawaan), dan ungu. Tiap pilihan punya empat tingkat untuk tema terang dan gelap.
 export const GITHUB_PRESET_KEYS = ['red', 'yellow', 'green', 'blue', 'purple'] as const
 export type GithubPresetKey = (typeof GITHUB_PRESET_KEYS)[number]
 
@@ -37,7 +36,7 @@ export const GITHUB_PRESETS: Record<GithubPresetKey, Palette> = {
   },
 }
 
-export const PALETTE_LEVELS = 4
+const PALETTE_LEVELS = 4
 export const HEX_COLOR = /^#[0-9a-f]{6}$/i
 
 const validColors = (value: unknown): value is string[] =>
@@ -58,6 +57,7 @@ const samePalette = (a: Palette, b: Palette) =>
   a.light.every((c, i) => c.toLowerCase() === b.light[i]) &&
   a.dark.every((c, i) => c.toLowerCase() === b.dark[i])
 
+// Palet sama dengan biru bawaan (disimpan sebagai kolom kosong).
 export function isDefaultPalette(palette: Palette): boolean {
   return samePalette(palette, GITHUB_PALETTE)
 }

@@ -1,3 +1,5 @@
+// Email notifikasi ke pemilik setiap ada login baru ke panel admin (hanya server).
+
 import 'server-only'
 
 import { render } from '@react-email/render'

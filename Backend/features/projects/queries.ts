@@ -1,3 +1,5 @@
+// Query admin project: daftar Admin → Projects dan isian form satu project (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'

@@ -1,11 +1,12 @@
+// Gambar pratinjau tautan (Open Graph) bergaya "Horizon": latar gelap, grid perspektif, garis horizon
+// biru. Memakai font bawaan next/og (font situs berformat woff2 tidak didukung satori). Hanya server.
+
 import 'server-only'
 
 import { ImageResponse } from 'next/og'
 
 export const OG_SIZE = { width: 1200, height: 630 }
 
-// Kartu Open Graph bergaya "Horizon": latar gelap, grid perspektif, garis horizon biru.
-// Memakai font bawaan next/og (font situs berformat woff2 tidak didukung satori).
 export function horizonCard({
   eyebrow,
   title,

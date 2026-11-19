@@ -1,12 +1,11 @@
+// IP pengunjung dari header proxy. Hanya dipakai untuk di-hash (rate limit, pengunjung unik harian),
+// tidak pernah disimpan mentah (hanya server).
+
 import 'server-only'
 
 import { isIP } from 'node:net'
 
-// IP pengunjung dari header proxy. Hanya dipakai untuk di-hash (rate limit, pengunjung unik harian),
-// tidak pernah disimpan mentah.
-//
-// Entri paling kiri x-forwarded-for bisa diisi bebas oleh klien, jadi yang dipercaya (audit
-// 2026-11-01, SEC-02):
+// Entri paling kiri x-forwarded-for bisa diisi bebas oleh klien, jadi yang dipercaya:
 // - TRUSTED_PROXIES diisi (IP atau CIDR IPv4, dipisah koma; sama dengan yang dipakai Better Auth):
 //   rantai dibaca dari kanan, melewati proxy tepercaya, IP pertama yang bukan proxy = klien.
 // - Di Vercel (VERCEL terisi): Vercel menimpa x-forwarded-for dengan IP klien, entri pertama aman.
@@ -14,10 +13,12 @@ import { isIP } from 'node:net'
 //   kanan, yaitu yang ditambahkan proxy terdekat, bukan entri kiri yang bisa dipalsukan.
 type Env = Record<string, string | undefined>
 
+// "10.0.0.1" → bilangan 32-bit tak bertanda.
 function ipv4ToInt(ip: string) {
   return ip.split('.').reduce((n, octet) => (n << 8) + Number(octet), 0) >>> 0
 }
 
+// IP cocok dengan satu entri TRUSTED_PROXIES: IP persis atau rentang CIDR IPv4.
 function matchesProxy(ip: string, entry: string) {
   const [base, bitsRaw] = entry.split('/')
   if (!base) return false
@@ -29,6 +30,7 @@ function matchesProxy(ip: string, entry: string) {
   return (ipv4ToInt(ip) & mask) === (ipv4ToInt(base) & mask)
 }
 
+// Daftar proxy tepercaya dari TRUSTED_PROXIES (dipisah koma).
 export function trustedProxies(env: Env = process.env): string[] {
   return (env.TRUSTED_PROXIES ?? '')
     .split(',')
@@ -36,6 +38,7 @@ export function trustedProxies(env: Env = process.env): string[] {
     .filter(Boolean)
 }
 
+// IP klien menurut aturan di atas; 'unknown' bila tidak ada header sama sekali.
 export function clientIp(headers: Headers, env: Env = process.env): string {
   const chain = (headers.get('x-forwarded-for') ?? '')
     .split(',')

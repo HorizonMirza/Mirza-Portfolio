@@ -1,3 +1,5 @@
+// Validasi Zod kategori dan skill. Tanpa impor server, aman dipakai di klien.
+
 import { z } from 'zod'
 
 import { optionalText, requiredText } from '@backend/lib/validation'

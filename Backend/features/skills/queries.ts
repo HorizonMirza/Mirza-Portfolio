@@ -1,3 +1,5 @@
+// Query admin skill: daftar kategori dan skill, serta pilihan teknologi di form project (hanya server).
+
 import 'server-only'
 
 import { assetSelect } from '@backend/features/assets/queries'
@@ -29,6 +31,7 @@ export async function listSkillCategoriesAdmin() {
   })
 }
 
+// Pilihan teknologi per kategori untuk form project, dengan logo kecil.
 export async function listSkillOptions() {
   const categories = await listSkillCategoriesAdmin()
   return categories.map((c) => ({

@@ -1,5 +1,7 @@
 'use server'
 
+// Server Action project (Admin → Projects): simpan, ubah teks langsung di daftar, hapus, dan ubah urutan.
+
 import { z } from 'zod'
 
 import type { Prisma } from '@backend/generated/prisma/client'
@@ -25,6 +27,7 @@ const idSchema = z.uuid()
 const directionSchema = z.enum(['up', 'down'])
 const UNIQUE_LABELS = { slug: 'Slug' }
 
+// Nilai form → kolom Project (string kosong menjadi null).
 function toData(v: ProjectValues) {
   return {
     slug: v.slug,
@@ -47,11 +50,13 @@ function toData(v: ProjectValues) {
 
 type ProjectWithSkills = Prisma.ProjectGetPayload<{ include: { skills: { select: { id: true } } } }>
 
+// Isi project untuk log audit: relasi skill disingkat menjadi daftar id yang diurutkan.
 function snapshot(p: ProjectWithSkills) {
   const { skills, ...rest } = p
   return { ...rest, skillIds: skills.map((s) => s.id).sort() }
 }
 
+// Simpan project baru (projectId null, ditaruh di akhir urutan) atau ubah project yang ada.
 export async function saveProject(
   projectId: string | null,
   input: unknown,
@@ -186,7 +191,7 @@ export async function deleteProject(projectId: string): Promise<ActionResult> {
         select: { assetId: true },
       })
       await tx.project.delete({ where: { id: projectId } })
-      // sampul dan gambar galeri ikut dihapus bila tidak dipakai di tempat lain (DB-01)
+      // sampul dan gambar galeri ikut dihapus bila tidak dipakai di tempat lain
       const removed = await deleteUnusedAssets(tx, [
         before.coverId,
         ...images.map((i) => i.assetId),
@@ -208,6 +213,7 @@ export async function deleteProject(projectId: string): Promise<ActionResult> {
   }
 }
 
+// Geser project satu langkah ke atas atau ke bawah di daftar.
 export async function moveProject(projectId: string, direction: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()
@@ -222,7 +228,7 @@ export async function moveProject(projectId: string, direction: unknown): Promis
       const ids = rows.map((r) => r.id)
       const next = moveItem(ids, projectId, dir.data)
       if (!next) return false
-      // Tulis ulang urutan 0..n agar nilai ganda lama ikut rapi.
+      // Tulis ulang urutan 0..n agar nilai urutan yang kembar ikut rapi.
       for (const [order, id] of next.entries()) {
         if (rows.find((r) => r.id === id)?.order !== order) {
           await tx.project.update({ where: { id }, data: { order } })

@@ -1,3 +1,5 @@
+// Penulisan baris SiteSetting bersama log auditnya (hanya server).
+
 import 'server-only'
 
 import type { Prisma } from '@backend/generated/prisma/client'
@@ -5,9 +7,9 @@ import { writeAudit } from '@backend/lib/audit'
 
 import type { introSchema } from './schema'
 
-// Satu baris SiteSetting (id 1) dipakai bersama oleh volume suara, kartu pembuka, dan foto hero.
-// Menerima klien transaksi agar bisa disimpan bersama data lain dalam satu transaksi (mis. teks
-// Bagian Awal, audit 2026-11-02 DB-02). Pemanggil yang me-revalidate cache 'settings'.
+// Satu baris SiteSetting (id 1) dipakai bersama oleh semua pengaturan, kartu pembuka, foto, dan warna
+// GitHub. Menerima klien transaksi agar bisa disimpan bersama data lain dalam satu transaksi.
+// Pemanggil yang me-revalidate cache 'settings'.
 export async function writeSetting(
   tx: Prisma.TransactionClient,
   actorId: string,

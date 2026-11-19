@@ -1,14 +1,16 @@
+// Bersihkan berkas yang pemiliknya dihapus: baris Asset di dalam transaksi, berkas Cloudinary sesudahnya.
+
 import 'server-only'
 
 import type { Prisma } from '@backend/generated/prisma/client'
 import { destroyRemoteAsset } from '@backend/lib/cloudinary'
 
-export type RemovedAsset = { id: string; publicId: string; kind: string }
+type RemovedAsset = { id: string; publicId: string; kind: string }
 
 // Hapus baris Asset dari daftar id yang tidak lagi dipakai siapa pun (profil, project, galeri,
-// pengalaman, hero, logo skill). Dipanggil di dalam transaksi yang sama dengan penghapusan pemiliknya, setelah
-// pemilik dihapus, sehingga sampul/galeri/logo/foto tidak tertinggal sebagai baris yatim (audit
-// 2026-11-02, DB-01). Aset yang masih dipakai pemilik lain dibiarkan.
+// pengalaman, hero, logo skill). Dipanggil di dalam transaksi yang sama dengan penghapusan pemiliknya,
+// setelah pemilik dihapus, sehingga sampul, galeri, logo, dan foto tidak tertinggal sebagai baris
+// yatim. Aset yang masih dipakai pemilik lain dibiarkan.
 export async function deleteUnusedAssets(
   tx: Prisma.TransactionClient,
   ids: readonly (string | null | undefined)[],

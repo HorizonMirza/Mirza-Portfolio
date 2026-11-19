@@ -1,3 +1,5 @@
+// ID tetap untuk baris seed (UUID v5 dari kunci), agar seed idempoten.
+
 import { createHash } from 'node:crypto'
 
 // Namespace tetap untuk seed portofolio. Jangan diubah: mengubahnya membuat seed membuat

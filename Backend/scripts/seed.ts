@@ -1,18 +1,18 @@
+// Seed database dari Database/seed/seed-data.ts, dijalankan dengan `pnpm db:seed` dari Frontend/.
+// Idempoten: aman dijalankan berulang; hanya membuat baris yang belum ada, jadi data yang sudah
+// diubah lewat admin tidak ditimpa.
+
 import { PrismaPg } from '@prisma/adapter-pg'
 import { hashPassword } from 'better-auth/crypto'
 import { config } from 'dotenv'
 
+import { experiences, profile, projects, skillCategories } from '../../Database/seed/seed-data'
 import { PrismaClient } from '../generated/prisma/client'
 import { MIN_PASSWORD_LENGTH } from '../lib/password-policy'
-import { experiences, profile, projects, skillCategories } from '../../Database/seed/seed-data'
 import { seedId } from './seed-ids'
 
 config({ path: ['.env.local', '.env'], quiet: true })
 
-// Menjalankan data dari Database/seed/seed-data.ts. Dijalankan dengan `pnpm db:seed` dari Frontend/.
-// Seed bersifat idempoten: aman dijalankan berulang, data yang sudah diubah lewat admin
-// untuk profil TIDAK ditimpa (hanya dibuat bila belum ada).
-//
 // Mode `--bootstrap` (dipanggil build production Vercel): konten CV hanya diisi bila database
 // masih kosong (belum ada profil), supaya item yang dihapus lewat admin tidak muncul lagi di
 // deploy berikutnya. Akun admin tetap dibuat bila belum ada dan ADMIN_EMAIL/ADMIN_PASSWORD diisi.

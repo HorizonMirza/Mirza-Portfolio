@@ -1,6 +1,8 @@
+// Email notifikasi pesan baru dari form kontak, untuk pemilik (bahasa Indonesia). Teks pengunjung
+// dirender sebagai teks biasa oleh React.
+
 import { emailColors, EmailLayout } from './layout'
 
-// Notifikasi untuk pemilik (bahasa Indonesia). Teks pengunjung dirender sebagai teks biasa oleh React.
 export function ContactNotificationEmail({
   name,
   email,

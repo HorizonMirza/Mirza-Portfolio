@@ -1,6 +1,7 @@
+// Kerangka email bersama: tabel dan gaya inline agar tampil sama di klien email umum.
+
 import type { ReactNode } from 'react'
 
-// Kerangka email sederhana: tabel + gaya inline agar tampil sama di klien email umum.
 const colors = {
   text: '#0b1220',
   muted: '#475569',
@@ -83,4 +84,5 @@ export function EmailLayout({
   )
 }
 
+// Warna yang sama untuk isi email
 export const emailColors = colors

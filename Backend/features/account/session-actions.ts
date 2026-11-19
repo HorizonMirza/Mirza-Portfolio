@@ -1,5 +1,7 @@
 'use server'
 
+// Server Action perangkat masuk di Admin → Akun: keluarkan satu perangkat atau semua perangkat lain.
+
 import { z } from 'zod'
 
 import { type ActionResult, fail, ok, toActionError } from '@backend/lib/action-result'
@@ -10,6 +12,7 @@ import { deviceParts } from '@backend/lib/device'
 
 const idSchema = z.uuid()
 
+// Nama perangkat untuk log audit, mis. "Chrome · Windows".
 function label(userAgent: string | null) {
   const { browser, os } = deviceParts(userAgent)
   return [browser, os].filter(Boolean).join(' · ') || null

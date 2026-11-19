@@ -1,3 +1,5 @@
+// Potongan validasi Zod yang dipakai bersama form admin (pesan bahasa Indonesia). Tanpa impor server.
+
 import { z } from 'zod'
 
 // Teks wajib dengan batas panjang dan pesan bahasa Indonesia.
@@ -9,6 +11,7 @@ export function requiredText(label: string, max: number) {
     .max(max, `${label} maksimal ${max} karakter`)
 }
 
+// Teks opsional (boleh kosong) dengan batas panjang.
 export function optionalText(label: string, max: number) {
   return z.string().trim().max(max, `${label} maksimal ${max} karakter`)
 }
@@ -25,6 +28,7 @@ export function optionalUrl(label: string) {
     )
 }
 
+// Slug URL project: huruf kecil, angka, dan tanda hubung.
 export const slugSchema = z
   .string()
   .trim()
@@ -32,6 +36,7 @@ export const slugSchema = z
   .max(80, 'Slug maksimal 80 karakter')
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug hanya huruf kecil, angka, dan tanda hubung')
 
+// Teks kosong disimpan sebagai null di database.
 export function emptyToNull(value: string): string | null {
   return value.trim() === '' ? null : value.trim()
 }

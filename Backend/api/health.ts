@@ -1,6 +1,8 @@
+// Logika rute /api/health untuk uptime monitor: memeriksa koneksi database. Tidak mengembalikan detail
+// internal (versi, host, pesan galat).
+
 import { getDb } from '@backend/lib/db'
 
-// Dipakai uptime monitor. Tidak mengembalikan detail internal (versi, host, pesan galat).
 export async function GET() {
   const startedAt = Date.now()
   try {

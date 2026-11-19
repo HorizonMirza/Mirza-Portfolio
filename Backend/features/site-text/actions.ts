@@ -1,5 +1,8 @@
 'use server'
 
+// Server Action teks situs: simpan teks dua bahasa satu modul (Admin → halaman situs) yang menimpa
+// teks bawaan messages/*.json; isian kosong mengembalikan teks bawaan.
+
 import { type ActionResult, fail, ok, toActionError } from '@backend/lib/action-result'
 import { writeAudit } from '@backend/lib/audit'
 import { requireSuperAdmin } from '@backend/lib/auth-guard'
@@ -19,6 +22,7 @@ function snapshot(rows: { key: string; value_id: string | null; value_en: string
   return out
 }
 
+// Simpan teks satu modul. Hanya kunci milik modul itu yang diterima.
 export async function saveSiteTexts(moduleId: unknown, input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

@@ -1,13 +1,17 @@
+// Validasi Zod dan alat bantu pendidikan/pengalaman: format bulan, urutan tampil, nama instansi per
+// bahasa, dan inisial logo. Tanpa impor server, aman dipakai di klien.
+
 import { z } from 'zod'
 
 import { optionalText, requiredText } from '@backend/lib/validation'
 
-export const EXPERIENCE_TYPES = ['WORK', 'EDUCATION', 'ORGANIZATION'] as const
+const EXPERIENCE_TYPES = ['WORK', 'EDUCATION', 'ORGANIZATION'] as const
 
-// Admin: kerja dan organisasi di Experience, pendidikan di About (2026-11-10)
+// Halaman admin: 'experience' (kerja dan organisasi di Admin → Experience) atau 'education' (Admin → About)
 export type ExperienceKind = 'experience' | 'education'
 
-// Jenis pekerjaan seperti di LinkedIn ("PT PGAS Solution · Internship"); opsional.
+// Jenis pekerjaan enum seperti di LinkedIn ("PT PGAS Solution · Internship"), diisi seed; admin
+// memakai employmentLabel (teks bebas) yang didahulukan.
 export const EMPLOYMENT_TYPES = [
   'FULL_TIME',
   'PART_TIME',
@@ -47,6 +51,7 @@ export const experienceSchema = z
 
 export type ExperienceInput = z.input<typeof experienceSchema>
 
+// Nilai awal kartu baru di admin.
 export const emptyEducation = (): ExperienceInput => ({ ...emptyExperience, type: 'EDUCATION' })
 
 export const emptyExperience: ExperienceInput = {
@@ -65,7 +70,7 @@ export const emptyExperience: ExperienceInput = {
 }
 
 // Urutan tampil: yang masih berjalan paling atas, lalu yang paling akhir selesai menjabat;
-// bila bulan selesainya sama, yang mulai lebih akhir di atas (permintaan pemilik 2026-10-04).
+// bila bulan selesainya sama, yang mulai lebih akhir di atas.
 export function sortByLatest<T extends { start: string; end: string | null }>(items: T[]): T[] {
   return [...items].sort((a, b) => {
     const ea = a.end ?? '9999-12'
@@ -75,6 +80,7 @@ export function sortByLatest<T extends { start: string; end: string | null }>(it
   })
 }
 
+// "2025-07" → Date 2025-07-01 UTC, dan sebaliknya.
 export function monthToDate(month: string): Date {
   return new Date(`${month}-01T00:00:00.000Z`)
 }

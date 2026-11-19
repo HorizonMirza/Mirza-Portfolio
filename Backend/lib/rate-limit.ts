@@ -1,3 +1,6 @@
+// Rate limit di PostgreSQL untuk login (Better Auth), form kontak, dan beacon kunjungan; kunci yang
+// memuat IP selalu di-hash (hanya server).
+
 import 'server-only'
 
 import { createHmac } from 'node:crypto'
@@ -5,9 +8,11 @@ import { createHmac } from 'node:crypto'
 import { getDb } from '@backend/lib/db'
 import { getAuthEnv } from '@backend/lib/env'
 
-export type RateLimitRule = { window: number; max: number }
-export type RateLimitResult = { allowed: boolean; retryAfter: number | null }
+// window dalam detik, max = jumlah permintaan yang diizinkan per jendela
+type RateLimitRule = { window: number; max: number }
+type RateLimitResult = { allowed: boolean; retryAfter: number | null }
 
+// Kunci HMAC untuk hashIdentifier.
 function hashSecret(): string {
   const env = getAuthEnv()
   // kunci turunan agar hash IP tidak memakai secret auth secara langsung

@@ -1,5 +1,8 @@
 'use server'
 
+// Server Action profil: data profil (Admin → About), kontak dan Resume CV di footer (Admin → Footer),
+// dan peran di bawah foto beranda (Admin → Home).
+
 import {
   type ActionResult,
   fail,
@@ -13,10 +16,10 @@ import { getDb } from '@backend/lib/db'
 import { revalidateContent } from '@backend/lib/revalidate'
 import { emptyToNull } from '@backend/lib/validation'
 
-import { CONTACT_LABEL_KEYS, derivedCardValue } from '@backend/features/profile/footer-links'
-
+import { CONTACT_LABEL_KEYS, derivedCardValue } from './footer-links'
 import { contactLinksSchema, heroRolesSchema, profileSchema } from './schema'
 
+// Nama, headline, bio, dan isi kartu foto halaman About. Baris profil dibuat bila belum ada.
 export async function saveProfile(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

@@ -1,9 +1,13 @@
+// Query berkas untuk halaman admin: foto dan CV profil, foto kartu kontak, foto utama, dan gambar
+// project (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'
 
-import type { AssetView } from '@backend/features/assets/asset-view'
+import type { AssetView } from './asset-view'
 
+// Kolom Asset yang membentuk AssetView; dipakai juga query domain lain.
 export const assetSelect = {
   id: true,
   url: true,

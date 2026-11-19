@@ -14,4 +14,6 @@ Kode server portofolio: Server Actions, query database (Prisma), autentikasi (Be
 
 Tidak ada `package.json` di sini. Semua perintah dijalankan dari `Frontend/` (`pnpm install`, `pnpm lint`, `pnpm test`, ...). `pnpm install` membuat symlink `Backend/node_modules` ke `Frontend/node_modules` dan meng-generate Prisma client ke `generated/`. Konfigurasi `eslint.config.mjs`, `.prettierrc.mjs`, dan `.lintstagedrc.json` di sini memakai aturan yang sama dengan Frontend; hook pre-commit menjalankan lint-staged di folder ini juga.
 
+Kerapian: setiap berkas diawali komentar singkat tentang isinya ("hanya server" untuk berkas dengan `import 'server-only'`), komentar menjelaskan keadaan sekarang (riwayat ada di git dan log `Documentation/TODO.md`), impor dikelompokkan paket luar, `@backend/`, lalu relatif, dan hanya nama yang dipakai berkas lain yang diekspor.
+
 Aturan impor: Backend tidak mengimpor `Frontend/` (kecuali membaca teks bawaan `Frontend/messages/*.json`), dan `lib/` tidak mengimpor `features/`. Dijaga `Frontend/tests/unit/backend-boundary.test.ts`. Penjelasan lengkap: `Documentation/ARCHITECTURE.md` bagian 4.

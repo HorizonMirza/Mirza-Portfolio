@@ -1,4 +1,7 @@
 // Tujuan unggahan dan batasannya. Dipakai di klien (cek awal) dan server (cek ulang).
+// Tiap tujuan: label, aspect (rasio pemotong gambar), kind dan resourceType (gambar atau PDF), folder
+// Cloudinary, maxBytes, maxSide (sisi terpanjang hasil potong dalam piksel), formats, accept (input
+// berkas), decorative (hiasan tanpa teks alternatif), dan ratio (aturan bentuk yang diperiksa ketat).
 export const UPLOAD_TARGETS = {
   'profile-photo': {
     label: 'Foto Profil',
@@ -7,12 +10,11 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/profile',
     maxBytes: 5 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
-  // kartu foto halaman Tentang (2026-11-10); kosong = foto profil
+  // kartu foto halaman About; kosong = foto profil
   'about-photo': {
     label: 'Foto Kartu About',
     aspect: 4 / 5,
@@ -20,7 +22,6 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/profile',
     maxBytes: 5 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
@@ -41,7 +42,6 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/projects',
     maxBytes: 5 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
@@ -53,12 +53,11 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/projects',
     maxBytes: 5 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
-  // logo instansi di simpul timeline pengalaman (revisi 2026-10-03); PNG transparan paling rapi
+  // logo instansi di simpul timeline pengalaman; PNG transparan paling rapi
   'experience-logo': {
     label: 'Logo Instansi',
     aspect: 1,
@@ -66,7 +65,6 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/experience',
     maxBytes: 2 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 512,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
@@ -78,14 +76,13 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/experience',
     maxBytes: 5 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 2000,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
-  // logo skill di globe Keahlian Teknis dan chip teknologi project (Admin → Home → Skill teknis,
-  // 2026-11-12). Hiasan: nama skill selalu tertulis di sebelahnya, jadi tanpa teks alternatif.
-  // Persegi dengan latar transparan paling rapi.
+  // logo skill di globe Keahlian Teknis dan chip teknologi project (Admin → Home → Skill teknis).
+  // Hiasan: nama skill selalu tertulis di sebelahnya, jadi tanpa teks alternatif. Persegi dengan
+  // latar transparan paling rapi.
   'skill-logo': {
     label: 'Logo Skill',
     aspect: 1,
@@ -93,28 +90,26 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/skills',
     maxBytes: 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 512,
     formats: ['png', 'webp', 'avif', 'jpg', 'jpeg'],
     accept: 'image/png,image/webp,image/avif,image/jpeg',
     decorative: true,
   },
-  // logo chip di kartu foto halaman Tentang (2026-11-15): logo kampus, perusahaan, atau lainnya;
-  // hiasan karena nama chip selalu tertulis di sebelahnya
+  // logo chip di kartu foto halaman About (kampus, perusahaan, atau lainnya); hiasan karena nama chip
+  // selalu tertulis di sebelahnya
   'about-chip-logo': {
     label: 'Logo Chip Kartu',
     kind: 'IMAGE',
     resourceType: 'image',
     folder: 'portfolio/profile',
     maxBytes: 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 512,
     formats: ['png', 'webp', 'avif', 'jpg', 'jpeg'],
     accept: 'image/png,image/webp,image/avif,image/jpeg',
     aspect: 1,
     decorative: true,
   },
-  // foto di kartu ID bertali halaman Kontak (Admin → Contact, 2026-11-15); kosong = potret hero
+  // foto di kartu ID bertali halaman Contact (Admin → Contact); kosong = foto utama beranda
   'contact-photo': {
     label: 'Foto Kartu ID',
     aspect: 176 / 160,
@@ -122,14 +117,13 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/contact',
     maxBytes: 2 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 1024,
     formats: ['jpg', 'jpeg', 'png', 'webp', 'avif'],
     accept: 'image/jpeg,image/png,image/webp,image/avif',
   },
-  // Potret dan armor hero beranda (Admin → Pengaturan). Pembingkaian halaman (lubang wajah di nama,
-  // posisi kepala, intip visor) dihitung dari foto bawaan, jadi pengganti harus berukuran sebanding
-  // dan dibingkai sama. Latar transparan, maka tanpa JPG.
+  // Foto utama beranda (armor hero selalu gambar bawaan repo). Pembingkaian halaman (lubang wajah di
+  // nama, posisi kepala, intip visor) dihitung dari foto bawaan, jadi pengganti harus berukuran
+  // sebanding dan dibingkai sama. Latar transparan, maka tanpa JPG.
   'hero-portrait': {
     label: 'Potret Hero',
     aspect: 1120 / 1100,
@@ -137,7 +131,6 @@ export const UPLOAD_TARGETS = {
     resourceType: 'image',
     folder: 'portfolio/hero',
     maxBytes: 4 * 1024 * 1024,
-    // sisi terpanjang hasil potong (piksel), ditulis langsung per tujuan (audit 2026-11-17, EFF-05)
     maxSide: 2000,
     formats: ['png', 'webp', 'avif'],
     accept: 'image/png,image/webp,image/avif',
@@ -148,13 +141,12 @@ export const UPLOAD_TARGETS = {
 export type UploadTarget = keyof typeof UPLOAD_TARGETS
 
 // Sisi terpanjang gambar hasil potong (piksel), dari maxSide tiap tujuan: logo 512, foto 2000, foto
-// kartu ID 1024. Dulu ditebak dari batas ukuran berkas (<= 2 MB berarti 512), sehingga foto kartu ID
-// ikut 512 px hanya karena batas berkasnya 2 MB. Tujuan tanpa maxSide (PDF) tidak melewati pemotong
-// gambar.
+// kartu ID 1024. Tujuan tanpa maxSide (PDF) tidak melewati pemotong gambar.
 export function maxSideOf(target: UploadTarget): number {
   const spec = UPLOAD_TARGETS[target]
   return 'maxSide' in spec ? spec.maxSide : 2000
 }
+
 export const UPLOAD_TARGET_KEYS = Object.keys(UPLOAD_TARGETS) as UploadTarget[]
 
 export type UploadSignature = {

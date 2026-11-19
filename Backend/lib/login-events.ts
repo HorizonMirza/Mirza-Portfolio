@@ -1,3 +1,5 @@
+// Riwayat masuk panel admin (Admin → Akun): percobaan berhasil dan gagal, tanpa IP (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'
@@ -25,8 +27,7 @@ export function locationFromHeaders(
   return place || null
 }
 
-// Catat satu percobaan masuk panel admin (Admin → Akun, revisi 2026-11-11). Email yang diketik tidak
-// disimpan: hanya dipakai untuk mencari akun pemiliknya. Gagal mencatat tidak boleh menggagalkan login.
+// Catat satu percobaan masuk panel admin. Email yang diketik tidak disimpan: hanya dipakai untuk mencari akun pemiliknya. Gagal mencatat tidak boleh menggagalkan login.
 export async function recordLoginEvent(input: {
   kind: 'success' | 'failed'
   userId?: string | null

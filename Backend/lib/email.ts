@@ -1,3 +1,5 @@
+// Kirim email lewat REST API Resend tanpa SDK; mati sendiri bila kunci Resend belum diisi (hanya server).
+
 import 'server-only'
 
 import { z } from 'zod'
@@ -9,7 +11,7 @@ const emailEnvSchema = z.object({
   CONTACT_TO_EMAIL: z.email().optional(),
 })
 
-export type EmailConfig = z.infer<typeof emailEnvSchema>
+type EmailConfig = z.infer<typeof emailEnvSchema>
 
 // null bila Resend belum diatur: fitur email mati dengan pesan jelas, bukan error.
 export function getEmailConfig(
@@ -22,7 +24,8 @@ export function getEmailConfig(
   return parsed.success ? parsed.data : null
 }
 
-export class EmailError extends Error {}
+// Galat kirim email; pesannya tanpa isi email atau alamat penerima.
+class EmailError extends Error {}
 
 // Kirim lewat REST API Resend dengan fetch (tanpa SDK). Isi email tidak pernah dicatat di log.
 export async function sendEmail(input: {

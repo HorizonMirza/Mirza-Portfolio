@@ -1,3 +1,5 @@
+// Query admin teks situs: nilai tersimpan dan teks bawaan per modul (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'

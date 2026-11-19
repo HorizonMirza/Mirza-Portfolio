@@ -1,5 +1,8 @@
 'use server'
 
+// Server Action form kontak publik: validasi, honeypot, rate limit per IP, simpan pesan, lalu kirim
+// notifikasi email ke pemilik di latar belakang.
+
 import { render } from '@react-email/render'
 import { headers } from 'next/headers'
 import { after } from 'next/server'
@@ -15,6 +18,7 @@ import { getSiteSettings } from '@backend/features/settings/public'
 
 import { CONTACT_RATE_LIMIT, contactSchema, toSingleLine } from './public-schema'
 
+// Nilai teks satu isian form; isian yang tidak ada atau berupa berkas dianggap kosong.
 function field(formData: FormData, name: string) {
   const v = formData.get(name)
   return typeof v === 'string' ? v : ''
@@ -68,8 +72,8 @@ export async function submitContact(
     })
 
     // Pesan sudah tersimpan; notifikasi dikirim setelah jawaban sampai ke pengunjung (after), jadi
-    // pengunjung tidak ikut menunggu Resend (sampai 10 detik, audit 2026-11-02 PERF-05). Gagal kirim
-    // tidak menggagalkan pengunjung.
+    // pengunjung tidak ikut menunggu Resend (bisa sampai 10 detik). Gagal kirim tidak menggagalkan
+    // pengunjung.
     const config = getEmailConfig()
     const to = config?.CONTACT_TO_EMAIL
     if (to) {

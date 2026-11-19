@@ -1,3 +1,6 @@
+// Query Admin → Pesan: daftar per status dan halaman, jumlah per status, dan satu pesan utuh
+// (hanya server).
+
 import 'server-only'
 
 import type { MessageStatus } from '@backend/generated/prisma/client'
@@ -8,7 +11,7 @@ export const MESSAGES_PAGE_SIZE = 50
 // Panjang cuplikan isi pesan di daftar sebelum dipotong dengan "…"
 export const MESSAGE_PREVIEW_CHARS = 48
 
-export type MessageListRow = {
+type MessageListRow = {
   id: string
   name: string
   email: string
@@ -19,10 +22,9 @@ export type MessageListRow = {
   createdAt: Date
 }
 
-// Per halaman (dulu dipotong diam-diam di 500 pesan, sisanya tidak bisa dibuka). Isi pesan dipotong
-// di database: daftar hanya menampilkan cuplikan, sedangkan isi penuh (sampai 5.000 karakter) dulu ikut
-// diambil untuk 50 pesan sekaligus (259 KB lawan 11 KB; audit 2026-11-17, EFF-01). Isi lengkap
-// dibaca di getMessage. Query berparameter, tanpa menyambung teks.
+// Satu halaman pesan berstatus tertentu, terbaru di atas. Isi pesan dipotong di database karena
+// daftar hanya menampilkan cuplikan; isi lengkap dibaca di getMessage. Query berparameter, tanpa
+// menyambung teks.
 export async function listMessages(status: MessageStatus, page = 1) {
   const take = MESSAGES_PAGE_SIZE
   const skip = (page - 1) * MESSAGES_PAGE_SIZE

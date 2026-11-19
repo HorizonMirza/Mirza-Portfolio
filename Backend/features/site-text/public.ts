@@ -1,3 +1,5 @@
+// Teks hasil suntingan admin untuk halaman publik, di-cache per tag 'siteText' (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'
@@ -9,7 +11,7 @@ import type { TextOverride } from './merge'
 
 // Galat database dilempar dari dalam cache (unstable_cache tidak menyimpan galat) dan baru diganti
 // nilai cadangan di luar, agar gangguan sesaat tidak membuat teks bawaan ikut tersimpan di cache
-// sampai 10 menit (audit 2026-11-03, ERR-01).
+// sampai 10 menit.
 const loadTextOverrides = unstable_cache(
   async (): Promise<TextOverride[]> =>
     getDb().siteText.findMany({ select: { key: true, value_id: true, value_en: true } }),
@@ -27,8 +29,8 @@ export async function getTextOverrides(): Promise<TextOverride[]> {
   }
 }
 
-// Waktu suntingan admin terakhir pada teks halaman Privasi (ISO), untuk tanggal "Terakhir
-// diperbarui" (audit 2026-10-31, GAP-08). null bila belum ada suntingan atau database bermasalah.
+// Waktu suntingan terakhir pada teks halaman Privasi (ISO) yang tersimpan di SiteText, untuk tanggal
+// "Terakhir diperbarui". null bila tidak ada suntingan atau database bermasalah.
 const loadPrivacyEditedAt = unstable_cache(
   async (): Promise<string | null> => {
     const row = await getDb().siteText.aggregate({

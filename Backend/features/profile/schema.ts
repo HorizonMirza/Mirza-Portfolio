@@ -1,7 +1,10 @@
+// Validasi Zod form profil, kontak footer, dan peran beranda. Tanpa impor server, aman dipakai di klien.
+
 import { z } from 'zod'
 
-import { CONTACT_LABEL_KEYS } from '@backend/features/profile/footer-links'
 import { optionalText, optionalUrl, requiredText } from '@backend/lib/validation'
+
+import { CONTACT_LABEL_KEYS } from './footer-links'
 
 // Kunci link sosial yang didukung. Kolom socials (JSON) hanya menyimpan kunci ini.
 export const SOCIAL_KEYS = ['linkedin', 'github', 'instagram', 'website'] as const
@@ -14,7 +17,7 @@ export const profileSchema = z.object({
   bio_en: requiredText('Bio', 4000),
   currentRole_id: optionalText('Posisi Sekarang', 160),
   currentRole_en: optionalText('Current role', 160),
-  // kartu foto halaman Tentang (2026-11-10)
+  // kartu foto halaman About
   aboutBandRoles_id: optionalText('Peran di Halaman Tentang', 120).default(''),
   aboutBandRoles_en: optionalText('Roles on the About page', 120).default(''),
   // chip di kartu foto: teks dan logo bisa diganti (mis. logo perusahaan); kosong = ikut pendidikan terbaru
@@ -34,8 +37,8 @@ const emptyLabels = Object.fromEntries(CONTACT_LABEL_KEYS.map((k) => [k, { value
   { value: string }
 >
 
-// Kontak dan Resume CV di footer (Admin → Footer, dipindah dari form Profil 2026-11-10). Email dan
-// WhatsApp hanya disimpan di database, tidak di repo.
+// Kontak dan Resume CV di footer (Admin → Footer). Email dan WhatsApp hanya disimpan di database,
+// tidak di repo.
 export const contactLinksSchema = z.object({
   email: z
     .string()
@@ -56,7 +59,7 @@ export const contactLinksSchema = z.object({
     instagram: optionalUrl('Instagram'),
     website: optionalUrl('Situs'),
   }),
-  // nama akun yang tampil di kartu LinkedIn, GitHub, dan Instagram (2026-11-16)
+  // nama akun yang tampil di kartu LinkedIn, GitHub, dan Instagram
   labels: z
     .object(
       Object.fromEntries(CONTACT_LABEL_KEYS.map((k) => [k, contactLabelSchema])) as Record<
@@ -88,8 +91,7 @@ export const emptyProfile: ProfileInput = {
   city: '',
 }
 
-// Peran di bawah foto beranda (Admin → Home, sejak 2026-11-10 dipindah dari form Profil), juga dipakai
-// di pita halaman Tentang dan footer. Dipisah "|", mis. "Fullstack Developer | Community Manager".
+// Peran di bawah foto beranda (Admin → Home), juga dipakai di pita halaman About dan footer. Dipisah "|", mis. "Fullstack Developer | Community Manager".
 export const heroRolesSchema = z.object({
   aboutRoles_id: optionalText('Peran', 120),
   aboutRoles_en: optionalText('Roles', 120),

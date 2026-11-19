@@ -1,8 +1,10 @@
+// Validasi Zod form Admin → Akun: ganti password, nama, dan email login.
+
 import { z } from 'zod'
 
 import { meetsPasswordRules, MIN_PASSWORD_LENGTH } from '@backend/lib/password-policy'
 
-// Ganti password tanpa kolom ulangi (revisi pemilik 2026-11-16): password baru diperiksa panjang, isi,
+// Ganti password tanpa kolom ulangi: password baru diperiksa panjang, isi,
 // dan harus berbeda dari yang sekarang; tombol mata dipakai untuk memastikan ketikan.
 export const changePasswordSchema = z
   .object({
@@ -23,11 +25,11 @@ export const changePasswordSchema = z
 
 export type ChangePasswordInput = z.input<typeof changePasswordSchema>
 
-// Nama akun panel admin (Admin → Akun): tampil di menu profil, sidebar, dan log audit. Nama di situs
-// publik tetap dari Profil.
-// Ganti nama dan email meminta password akun (revisi pemilik 2026-11-16).
+// Password akun yang diminta sebelum nama atau email diganti.
 const confirmPassword = z.string().min(1, 'Password wajib diisi').max(128)
 
+// Nama akun panel admin: tampil di menu profil, sidebar, dan log audit. Nama di situs publik tetap
+// dari Profil.
 export const accountNameSchema = z.object({
   name: z.string().trim().min(2, 'Nama minimal 2 karakter').max(80, 'Nama maksimal 80 karakter'),
   password: confirmPassword,

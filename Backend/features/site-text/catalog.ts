@@ -6,7 +6,7 @@
 export type ModuleId =
   'intro' | 'home' | 'about' | 'experience' | 'projects' | 'contact' | 'navbar' | 'footer'
 
-export type TextEntry = {
+type TextEntry = {
   key: string
   module: ModuleId
   // judul kartu di halaman modul
@@ -19,15 +19,15 @@ export type TextEntry = {
   placeholders?: readonly string[]
 }
 
-export type SiteModule = { id: ModuleId; label: string; title: string; description: string }
+type SiteModule = { id: ModuleId; label: string; title: string; description: string }
 
 export const SITE_MODULES: readonly SiteModule[] = [
   {
     id: 'intro',
     label: 'Bagian Awal',
     title: 'Bagian Awal',
+    // tampil sebagai tab "Kartu Pembuka" di Home, bukan menu sendiri
     description:
-      // sejak 2026-11-11 tab "Kartu Pembuka" di Home, bukan menu sendiri
       'Kartu pemberitahuan yang muncul sekali saat situs dibuka. Hanya isinya yang bisa diubah; judul, label, dan tombol kartu tetap.',
   },
   {

@@ -1,3 +1,5 @@
+// Validasi Zod pilihan warna grafik kontribusi GitHub.
+
 import { z } from 'zod'
 
 import { GITHUB_PRESET_KEYS } from '@backend/lib/github-palette'

@@ -1,3 +1,5 @@
+// Validasi Zod teks situs dari admin, memakai aturan per kunci di catalog.ts. Aman dipakai di klien.
+
 import { z } from 'zod'
 
 import { checkTextValue, findTextEntry } from './catalog'

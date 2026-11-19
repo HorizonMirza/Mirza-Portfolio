@@ -1,4 +1,6 @@
-// Hanya izinkan pengalihan ke halaman admin di situs sendiri (cegah open redirect).
+// Tujuan pengalihan setelah login admin. Hanya halaman admin di situs sendiri yang diizinkan (cegah
+// open redirect); selain itu ke /admin.
+
 export function safeAdminRedirect(target: string | undefined): string {
   if (!target) return '/admin'
   if (!target.startsWith('/admin')) return '/admin'

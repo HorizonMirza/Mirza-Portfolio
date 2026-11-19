@@ -1,3 +1,6 @@
+// Log audit perubahan admin: hanya kolom yang berubah, ditulis di transaksi yang sama dengan datanya
+// (hanya server).
+
 import 'server-only'
 
 import type { Prisma } from '@backend/generated/prisma/client'
@@ -7,6 +10,7 @@ type Snapshot = Record<string, unknown>
 
 const MAX_TEXT = 300
 
+// Nilai yang aman disimpan sebagai JSON: teks panjang dipotong, Date dan bigint menjadi teks.
 function compact(value: unknown): unknown {
   if (typeof value === 'string' && value.length > MAX_TEXT) return `${value.slice(0, MAX_TEXT)}…`
   if (value instanceof Date) return value.toISOString()
@@ -19,7 +23,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 }
 
 // Kolom JSON berupa objek (mis. volume suara: sembilan angka) dibandingkan per kunci, supaya
-// perubahan satu kunci tidak menyalin seluruh objek ke log (audit 2026-11-17, EFF-03).
+// perubahan satu kunci tidak menyalin seluruh objek ke log.
 function changedKeys(a: Record<string, unknown>, b: Record<string, unknown>) {
   return [...new Set([...Object.keys(a), ...Object.keys(b)])].filter(
     (k) => JSON.stringify(a[k]) !== JSON.stringify(b[k]),
@@ -61,8 +65,7 @@ export async function writeAudit(
   },
 ) {
   const diff = diffSnapshots(input.before ?? null, input.after ?? null)
-  // Simpan tanpa perubahan tidak menulis baris (audit 2026-11-17, EFF-02 dan EFF-03): log audit tidak
-  // dibersihkan otomatis, jadi baris kosong hanya menumpuk.
+  // Simpan tanpa perubahan tidak menulis baris: baris kosong hanya menumpuk di log audit.
   if (input.action === 'update' && Object.keys(diff).length === 0) return
   await tx.auditLog.create({
     data: {

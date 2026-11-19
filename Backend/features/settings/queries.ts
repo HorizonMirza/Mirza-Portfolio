@@ -1,3 +1,6 @@
+// Query admin pengaturan: pilihan Admin → Pengaturan dan isi kartu pembuka, langsung dari database
+// (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'
@@ -11,6 +14,7 @@ export async function getSiteOptionsForEdit(): Promise<SiteOptions> {
   return toSiteOptions(row)
 }
 
+// Isi kartu pembuka untuk Admin → Home, tab Kartu Pembuka.
 export async function getIntroForEdit(): Promise<IntroInput> {
   const row = await getDb().siteSetting.findUnique({ where: { id: 1 } })
   return {

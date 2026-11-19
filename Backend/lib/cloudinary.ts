@@ -1,3 +1,6 @@
+// Cloudinary tanpa SDK: konfigurasi dari environment, tanda tangan unggah, hapus berkas, dan daftar
+// berkas lewat Admin API (hanya server).
+
 import 'server-only'
 
 import { createHash, timingSafeEqual } from 'node:crypto'
@@ -10,7 +13,7 @@ const cloudinaryEnvSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().min(1),
 })
 
-export type CloudinaryConfig = { cloudName: string; apiKey: string; apiSecret: string }
+type CloudinaryConfig = { cloudName: string; apiKey: string; apiSecret: string }
 
 // null bila kunci belum diisi: fitur unggah dimatikan dengan pesan yang jelas, bukan error.
 export function getCloudinaryConfig(
@@ -49,9 +52,9 @@ export function verifyUploadSignature(
 }
 
 // Hapus berkas di Cloudinary. Gagal tidak menggagalkan aksi admin, cukup dicatat tanpa detail.
-// Gambar bawaan repo (public/images/projects, publicId `local-demo/...`) tidak ada di Cloudinary,
-// jadi tidak pernah dikirim.
-export const LOCAL_DEMO_PUBLIC_ID_PREFIX = 'local-demo/'
+// Gambar bawaan repo (Frontend/public/images/projects, publicId `local-demo/...`) tidak ada di
+// Cloudinary, jadi tidak pernah dikirim.
+const LOCAL_DEMO_PUBLIC_ID_PREFIX = 'local-demo/'
 
 export async function destroyRemoteAsset(publicId: string, resourceType: 'image' | 'raw') {
   if (publicId.startsWith(LOCAL_DEMO_PUBLIC_ID_PREFIX)) return

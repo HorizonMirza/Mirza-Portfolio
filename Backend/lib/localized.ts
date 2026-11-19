@@ -1,3 +1,5 @@
+// Kolom dua bahasa (*_id/*_en) dan format tanggal sesuai bahasa situs. Tanpa impor server.
+
 import type { AppLocale } from '@backend/i18n/routing'
 
 type Localized<K extends string> = { [P in `${K}_id` | `${K}_en`]: string | null }
@@ -21,7 +23,7 @@ export function formatMonth(month: string, locale: AppLocale): string {
 }
 
 // Seperti monthFormatters: pemformat dibuat sekali per bahasa, bukan tiap panggilan (membuat
-// Intl.DateTimeFormat jauh lebih mahal daripada memakainya; audit 2026-11-17, EFF-04).
+// Intl.DateTimeFormat jauh lebih mahal daripada memakainya).
 const dateShortFormatters: Record<AppLocale, Intl.DateTimeFormat> = {
   id: shortDateFormatter(intlLocale.id),
   en: shortDateFormatter(intlLocale.en),
@@ -36,6 +38,7 @@ function shortDateFormatter(locale: string) {
   })
 }
 
+// "19 Nov 2026" dari waktu ISO, dalam zona Asia/Jakarta.
 export function formatDateShort(iso: string, locale: AppLocale): string {
   return dateShortFormatters[locale].format(new Date(iso))
 }

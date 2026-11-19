@@ -1,3 +1,5 @@
+// Pemeriksaan sesi Super Admin untuk halaman, Server Action, dan route handler admin (hanya server).
+
 import 'server-only'
 
 import { headers } from 'next/headers'
@@ -7,7 +9,7 @@ import { cache } from 'react'
 import { getAuth } from '@backend/lib/auth'
 import { getDb } from '@backend/lib/db'
 
-export type AdminSession = {
+type AdminSession = {
   userId: string
   name: string
   email: string
@@ -32,7 +34,7 @@ export const getAdminSession = cache(async (): Promise<AdminSession | null> => {
   }
 })
 
-// Untuk halaman dan layout admin (halaman status bersama, revisi pemilik 2026-11-16):
+// Untuk halaman dan layout admin (memakai halaman status bersama):
 // - tanpa cookie sesi: proxy sudah mengarahkan ke login sebelum sampai sini; tetap dijaga di sini.
 // - cookie ada tetapi sesinya tidak sah atau berakhir: halaman 401 (app/admin/unauthorized.tsx).
 // - sesi sah tetapi bukan Super Admin: halaman 403 (app/admin/forbidden.tsx).
@@ -49,6 +51,7 @@ export async function requireSuperAdminPage(): Promise<AdminSession> {
   return admin
 }
 
+// Dilempar requireSuperAdmin; toActionError menerjemahkannya menjadi "Sesi berakhir".
 export class UnauthorizedError extends Error {
   constructor() {
     super('Tidak diizinkan')

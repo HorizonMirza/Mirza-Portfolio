@@ -1,8 +1,10 @@
+// Query admin profil: isian form Profil, Peran beranda, dan kontak footer (hanya server).
+
 import 'server-only'
 
-import { CONTACT_LABEL_KEYS, derivedCardValue } from '@backend/features/profile/footer-links'
 import { getDb } from '@backend/lib/db'
 
+import { CONTACT_LABEL_KEYS, derivedCardValue } from './footer-links'
 import {
   type ContactLinksInput,
   emptyProfile,

@@ -1,12 +1,12 @@
-import { whatsappUrl } from '@backend/lib/seo'
+// Daftar kartu kontak di footer: urutan tetap, kartu yang datanya kosong di admin tidak ditampilkan.
+// Fungsi murni tanpa impor server, dipakai situs dan admin, dan mudah dites.
 
-// Daftar kartu kontak di footer (revisi 2026-10-03): urutan tetap, kartu yang datanya kosong
-// di admin tidak ditampilkan. Fungsi murni agar mudah dites.
+import { whatsappUrl } from '@backend/lib/seo'
 
 export type FooterLinkKey =
   'whatsapp' | 'email' | 'linkedin' | 'github' | 'instagram' | 'website' | 'cv'
 
-export type FooterLink = {
+type FooterLink = {
   key: FooterLinkKey
   href: string
   // teks kecil di bawah nama: nomor, alamat, atau nama akun (nama akun sosial bisa diganti admin)
@@ -18,7 +18,7 @@ export type FooterLink = {
 
 // Nama akun yang tampil di kartu LinkedIn, GitHub, dan Instagram, bila diganti admin (Admin → Footer)
 export const CONTACT_LABEL_KEYS = ['linkedin', 'github', 'instagram'] as const
-export type ContactLabelKey = (typeof CONTACT_LABEL_KEYS)[number]
+type ContactLabelKey = (typeof CONTACT_LABEL_KEYS)[number]
 export type ContactLabels = Partial<Record<ContactLabelKey, { value?: string }>>
 
 type ProfileLinks = {
@@ -41,9 +41,9 @@ export function handleFromUrl(url: string) {
   }
 }
 
-// Permintaan pemilik: kartu email langsung membuka jendela tulis pesan Gmail di web (bukan mailto:,
-// yang bergantung pada aplikasi email di perangkat pengunjung).
-export function gmailComposeUrl(email: string) {
+// Kartu email langsung membuka jendela tulis pesan Gmail di web (bukan mailto:, yang bergantung
+// pada aplikasi email di perangkat pengunjung).
+function gmailComposeUrl(email: string) {
   return `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`
 }
 
@@ -55,6 +55,7 @@ function hostOf(url: string) {
   }
 }
 
+// Link CV di Google Drive atau Google Docs.
 export function isDriveHost(host: string | null) {
   return host === 'drive.google.com' || host === 'docs.google.com'
 }
@@ -85,6 +86,7 @@ export function derivedCardValue(
   return footerValue(key, links.socials[key])
 }
 
+// Kartu kontak footer yang tampil, berurutan, dengan nama akun pengganti dari admin bila ada.
 export function footerLinks(
   profile: ProfileLinks,
   { locale, fileLabel }: { locale: string; fileLabel: string },

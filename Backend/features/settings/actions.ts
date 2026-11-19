@@ -1,5 +1,8 @@
 'use server'
 
+// Server Action pengaturan situs: satu pilihan Admin → Pengaturan, isi kartu pembuka, dan warna grafik
+// GitHub. Semuanya ditulis ke baris SiteSetting tunggal dan dicatat di log audit.
+
 import { Prisma } from '@backend/generated/prisma/client'
 import {
   type ActionResult,
@@ -12,7 +15,6 @@ import { requireSuperAdmin } from '@backend/lib/auth-guard'
 import { getDb } from '@backend/lib/db'
 import { GITHUB_PRESETS, isDefaultPalette } from '@backend/lib/github-palette'
 import { revalidateContent } from '@backend/lib/revalidate'
-
 import { githubPaletteSchema } from '@backend/features/github/schema'
 
 import { siteOptionSchema } from './options'
@@ -29,7 +31,7 @@ async function saveSetting(
 }
 
 // Satu pengaturan dari Admin → Pengaturan, disimpan otomatis setiap kontrol diubah (DESIGN.md
-// bagian 119). Hanya kolom di siteOptionSchema yang bisa ditulis; setiap perubahan masuk log audit.
+// bagian 5.8). Hanya kolom di siteOptionSchema yang bisa ditulis; setiap perubahan masuk log audit.
 export async function saveSiteOption(input: unknown): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

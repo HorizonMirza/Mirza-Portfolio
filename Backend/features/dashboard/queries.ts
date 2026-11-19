@@ -1,3 +1,6 @@
+// Query Admin → Dashboard: statistik harian (tayangan, pengunjung, unduhan CV, pesan) dan pesan
+// terbaru (hanya server).
+
 import 'server-only'
 
 import { getDb } from '@backend/lib/db'
@@ -6,9 +9,9 @@ import { toSiteOptions } from '@backend/features/settings/options'
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
-// Periode Dashboard (desain 01 "Ringkas", pilihan pemilik 2026-11-16)
+// Pilihan periode Dashboard (hari); nilai lain dari URL jatuh ke 30.
 export const DASHBOARD_RANGES = [7, 30, 90] as const
-export type DashboardRange = (typeof DASHBOARD_RANGES)[number]
+type DashboardRange = (typeof DASHBOARD_RANGES)[number]
 
 export function toDashboardRange(value: unknown): DashboardRange {
   const n = Number(Array.isArray(value) ? value[0] : value)
@@ -68,6 +71,7 @@ export async function getDailyStats(days: number): Promise<DayStat[]> {
   })
 }
 
+// Pesan masuk terbaru untuk kartu Pesan di Dashboard.
 export async function getRecentMessages(take = 4) {
   return getDb().message.findMany({
     orderBy: { createdAt: 'desc' },

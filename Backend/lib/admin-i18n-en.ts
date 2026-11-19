@@ -1,4 +1,4 @@
-// Kamus bahasa Inggris panel admin (revisi 2026-11-11). Kunci = teks Indonesia persis
+// Kamus bahasa Inggris panel admin. Kunci = teks Indonesia persis
 // seperti di kode; {nama} adalah tempat nilai yang diisi saat dipakai. Kalimat dengan bagian yang
 // berubah-ubah dari server (mis. "Judul wajib diisi") ditangani pola di admin-i18n.ts.
 export const EN: Record<string, string> = {
@@ -60,7 +60,7 @@ export const EN: Record<string, string> = {
   Keluar: 'Log out',
   'Keluar…': 'Logging out…',
   'Mode Gelap': 'Dark Mode',
-  // tombol Tampilan (dulu Atur kaca) dan panelnya
+  // tombol Tampilan dan panelnya
   Tampilan: 'Appearance',
   'Pengaturan Tampilan': 'Appearance Settings',
   'Preset Kaca': 'Glass Presets',
@@ -144,10 +144,10 @@ export const EN: Record<string, string> = {
   'Tulisan di menu navigasi atas dan bawah situs.':
     'Labels in the top and bottom navigation menus.',
   'Teks di bagian bawah setiap halaman.': 'Text at the bottom of every page.',
-  // seluruh panel admin (revisi 2026-11-11)
+  // seluruh panel admin
   'Hapus {item}': 'Delete {item}',
   Hapus: 'Delete',
-  // judul dialog hapus umum, tanpa nama butir (revisi 2026-11-16)
+  // judul dialog hapus umum, tanpa nama butir
   'Hapus Data': 'Delete Data',
   'Hapus Kategori': 'Delete Category',
   'Hapus Skill': 'Delete Skill',
@@ -357,7 +357,7 @@ export const EN: Record<string, string> = {
   'Peran disimpan.': 'Roles saved.',
   'Isi Kartu Pembuka': 'Introduction Card Text',
   Isi: 'Text',
-  // Admin → Pengaturan, kelompok Suara (revisi pemilik 2026-11-16)
+  // Admin → Pengaturan, kelompok Suara
   Suara: 'Sounds',
   'Tik kaca saat menu situs dan foto profil di navbar ditekan.':
     'A glass tick when the site menu or the navbar profile photo is pressed.',
@@ -477,7 +477,7 @@ export const EN: Record<string, string> = {
   Semua: 'All',
   menjadi: 'became',
   Dashboard: 'Dashboard',
-  // Pengaturan, Akun, dan Log audit (revisi 2026-11-11)
+  // Pengaturan, Akun, dan Log audit
   '(belum terpenuhi)': '(not met yet)',
   '(terpenuhi)': '(met)',
   '1 Tahun': '1 Year',
@@ -596,7 +596,7 @@ export const EN: Record<string, string> = {
   Ikon: 'Icon',
   Bio: 'Bio',
   Ukuran: 'Size',
-  // Akun desain 1 (revisi 2026-11-11)
+  // Akun
   'Admin Sejak': 'Admin Since',
   'Aktif Sekarang': 'Active Now',
   'Belum pernah diganti dari panel': 'Not changed from the panel yet',
@@ -613,7 +613,7 @@ export const EN: Record<string, string> = {
   'Nama disimpan.': 'Name saved.',
   'Nama minimal 2 karakter': 'Name must be at least 2 characters',
   'Nama maksimal 80 karakter': 'Name must be at most 80 characters',
-  // pemilih berkas + pemotong gambar, chip kartu About (revisi 2026-11-15)
+  // pemilih berkas + pemotong gambar, chip kartu About
   'Atur Gambar': 'Adjust Image',
   'Gambar tidak bisa dibaca. Coba berkas lain.': 'The image could not be read. Try another file.',
   'Bingkai potong. Panah menggeser, plus dan minus mengubah ukuran.':
@@ -630,7 +630,7 @@ export const EN: Record<string, string> = {
   'Logo Chip Kartu': 'Card Chip Logo',
   'Teks Chip': 'Chip Text',
   'Chip Logo': 'Logo Chip',
-  // Home → GitHub, warna grafik kontribusi (revisi 2026-11-15)
+  // Home → GitHub, warna grafik kontribusi
   'Warna Grafik': 'Chart Colors',
   'Warna GitHub disimpan.': 'GitHub colors saved.',
   Merah: 'Red',
@@ -642,7 +642,7 @@ export const EN: Record<string, string> = {
   'Bahasa Kartu': 'Card Language',
   'Ganti Foto Kartu ID': 'Change ID Card Photo',
   'Foto Kartu ID': 'ID Card Photo',
-  // Home → Skill teknis: pratinjau, butir baru, Simpan (revisi 2026-11-15)
+  // Home → Skill teknis: pratinjau, butir baru, Simpan
   'Belum ada skill, bagian ini belum tampil di situs.':
     'No skills yet, so this section is not shown on the site.',
   'Buang {item}': 'Discard {item}',

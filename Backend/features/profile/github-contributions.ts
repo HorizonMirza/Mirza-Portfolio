@@ -1,15 +1,15 @@
+// Kalender kontribusi GitHub untuk beranda dan footer. Data dari GitHub GraphQL API, yang selalu butuh
+// token: memakai GITHUB_TOKEN (fine-grained, tanpa izin tambahan cukup untuk data publik). Tanpa
+// token atau bila GitHub gagal, hasilnya null dan bagian ini tidak tampil (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'
 import { z } from 'zod'
 
-// Kalender kontribusi GitHub untuk beranda (revisi 2026-10-01 dan 2026-10-08). Data dari GitHub GraphQL API,
-// yang selalu butuh token: memakai GITHUB_TOKEN (fine-grained, tanpa izin tambahan cukup untuk data
-// publik). Tanpa token atau bila GitHub gagal, hasilnya null dan bagian ini tidak tampil.
-
-export type ContributionLevel = 0 | 1 | 2 | 3 | 4
+type ContributionLevel = 0 | 1 | 2 | 3 | 4
 export type ContributionDay = { date: string; count: number; level: ContributionLevel }
-export type ContributionCalendar = { total: number; weeks: ContributionDay[][] }
+type ContributionCalendar = { total: number; weeks: ContributionDay[][] }
 
 const REVALIDATE_SECONDS = 6 * 60 * 60
 
@@ -72,6 +72,7 @@ export function githubLogin(profileUrl: string | undefined) {
   }
 }
 
+// Jawaban GraphQL → kalender minggu per minggu; bentuk yang tidak sesuai menjadi null.
 export function toCalendar(json: unknown): ContributionCalendar | null {
   const parsed = responseSchema.safeParse(json)
   const calendar = parsed.success
@@ -91,8 +92,8 @@ export function toCalendar(json: unknown): ContributionCalendar | null {
 }
 
 // Gagal sementara (jaringan, status bukan 2xx) dilempar sebagai galat agar tidak ikut tersimpan di
-// cache 6 jam; getGithubContributions menggantinya dengan null (audit 2026-11-03, ERR-02). Tanpa
-// token atau pengguna tidak ada = null yang memang boleh di-cache.
+// cache 6 jam; getGithubContributions menggantinya dengan null. Tanpa token atau pengguna tidak ada
+// = null yang memang boleh di-cache.
 class GithubUnavailable extends Error {}
 
 async function fetchCalendar(login: string): Promise<ContributionCalendar | null> {
@@ -132,6 +133,7 @@ const loadCalendar = unstable_cache(fetchCalendar, ['github-contributions'], {
   revalidate: REVALIDATE_SECONDS,
 })
 
+// Kalender satu pengguna GitHub (cache 6 jam), atau null bila tidak tersedia.
 export async function getGithubContributions(login: string): Promise<ContributionCalendar | null> {
   try {
     return await loadCalendar(login)

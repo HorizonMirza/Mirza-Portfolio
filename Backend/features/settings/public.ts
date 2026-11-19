@@ -1,12 +1,14 @@
+// Pengaturan situs untuk halaman publik (pilihan Admin → Pengaturan, foto utama, foto kartu ID,
+// kartu pembuka, warna GitHub), di-cache per tag 'settings' (hanya server).
+
 import 'server-only'
 
 import { unstable_cache } from 'next/cache'
 
 import { CACHE_TAGS, PUBLIC_CACHE_SECONDS } from '@backend/lib/cache-tags'
-import type { PublicImage } from '@backend/lib/public-image'
 import { getDb } from '@backend/lib/db'
-import { safeImage } from '@backend/lib/public-image'
 import { type Palette, toPalette } from '@backend/lib/github-palette'
+import { type PublicImage, safeImage } from '@backend/lib/public-image'
 
 import {
   DEFAULT_SITE_OPTIONS,
@@ -15,7 +17,7 @@ import {
   toSiteOptions,
 } from './options'
 
-// hanya isi; judul kartu teks tetap (Intro.title di messages/*.json, 2026-11-10)
+// hanya isi; judul kartu teks tetap (Intro.title di messages/*.json)
 export type IntroNoticeContent = {
   body_id: string
   body_en: string
@@ -24,10 +26,10 @@ export type IntroNoticeContent = {
 }
 
 // Semua pilihan Admin → Pengaturan, ditambah foto hero dan kartu pembuka.
-export type SiteSettings = SiteOptions & {
-  // foto hero dari admin; null = foto bawaan di repo
+type SiteSettings = SiteOptions & {
+  // foto utama beranda dari admin; null = foto bawaan di repo
   heroPortrait: PublicImage | null
-  // foto kartu ID halaman Kontak; null = potret hero
+  // foto kartu ID halaman Contact; null = foto utama beranda
   contactPhoto: PublicImage | null
   // null: pemberitahuan pembuka dimatikan atau belum lengkap
   intro: IntroNoticeContent | null
@@ -35,7 +37,7 @@ export type SiteSettings = SiteOptions & {
   githubPalette: Palette | null
 }
 
-// Foto hero hanya dipakai bila ukurannya diketahui dan asalnya akun Cloudinary situs ini.
+// Foto dari admin hanya dipakai bila ukurannya diketahui dan asalnya akun Cloudinary situs ini.
 function heroImage(
   asset:
     | {
@@ -59,8 +61,7 @@ function heroImage(
 }
 
 // Galat database dilempar dari dalam cache dan baru diganti nilai bawaan di luar (getSiteSettings),
-// agar gangguan sesaat tidak menyimpan foto hero bawaan dan kartu pembuka mati di cache sampai
-// 10 menit (audit 2026-11-03, ERR-01).
+// agar gangguan sesaat tidak menyimpan foto bawaan dan kartu pembuka mati di cache sampai 10 menit.
 const loadSiteSettings = unstable_cache(
   async (): Promise<SiteSettings> => {
     const row = await getDb().siteSetting.findUnique({

@@ -1,7 +1,9 @@
-// Semua waktu disimpan UTC dan ditampilkan dalam zona Asia/Jakarta (CLAUDE.md, pelajaran GAAS F-01).
-export const DISPLAY_TIME_ZONE = 'Asia/Jakarta'
+// Format waktu dan angka untuk panel admin, email, dan statistik. Semua waktu disimpan UTC dan
+// ditampilkan dalam zona Asia/Jakarta (CLAUDE.md). Tanpa impor server.
 
-// Bahasa tampilan: 'id' (bawaan) atau 'en' untuk panel admin berbahasa Inggris (revisi 2026-11-11).
+const DISPLAY_TIME_ZONE = 'Asia/Jakarta'
+
+// Bahasa tampilan: 'id' (bawaan) atau 'en' untuk panel admin berbahasa Inggris.
 type DisplayLang = 'id' | 'en'
 const LOCALE: Record<DisplayLang, string> = { id: 'id-ID', en: 'en-US' }
 
@@ -23,12 +25,13 @@ const shortDayFormatters = {
   en: new Intl.DateTimeFormat(LOCALE.en, { timeZone: 'UTC', day: 'numeric', month: 'short' }),
 }
 
+// "19 Nov 2026, 14.05 WIB" (en: "Nov 19, 2026, 2:05 PM WIB").
 export function formatDateTime(date: Date, lang: DisplayLang = 'id'): string {
   return `${dateTimeFormatters[lang].format(date)} WIB`
 }
 
-// en-CA menghasilkan format YYYY-MM-DD. Formatter dibuat sekali, bukan tiap panggilan
-// (dipanggil per baris kunjungan di dasbor; audit 2026-10-31, EFF-05).
+// en-CA menghasilkan format YYYY-MM-DD. Formatter dibuat sekali, bukan tiap panggilan, karena
+// dipanggil per baris kunjungan di dasbor.
 const dayKeyFormatter = new Intl.DateTimeFormat('en-CA', { timeZone: DISPLAY_TIME_ZONE })
 
 // Kunci hari kalender (YYYY-MM-DD) menurut Asia/Jakarta.

@@ -1,3 +1,5 @@
+// Pembersih berkas unggahan Cloudinary yang tidak tercatat di database, untuk cron harian (hanya server).
+
 import 'server-only'
 
 import type { PrismaClient } from '@backend/generated/prisma/client'
@@ -8,10 +10,10 @@ import {
 } from '@backend/lib/cloudinary'
 
 // Berkas di folder unggahan situs (semua target unggah memakai awalan ini, features/assets/targets.ts)
-export const UPLOAD_PREFIX = 'portfolio/'
+const UPLOAD_PREFIX = 'portfolio/'
 // Unggahan yang lebih muda dari ini dibiarkan: bisa jadi admin masih menyimpan atau baru gagal
 // menyimpan dan akan mencoba lagi.
-export const ORPHAN_MIN_AGE_MS = 48 * 60 * 60 * 1000
+const ORPHAN_MIN_AGE_MS = 48 * 60 * 60 * 1000
 // Batas hapus per hari, agar kesalahan logika tidak pernah menghapus banyak berkas sekaligus.
 export const ORPHAN_MAX_PER_RUN = 50
 
@@ -32,8 +34,7 @@ export function pickOrphans(
 }
 
 // Unggahan ke Cloudinary yang berhasil tetapi tidak pernah tersimpan di database (mis. koneksi
-// putus sebelum attachUploadedAsset) menjadi berkas tanpa pemilik. Cron harian menghapusnya
-// (audit 2026-11-02, DB-07). Tanpa kunci Cloudinary atau bila API gagal: tidak melakukan apa pun.
+// putus sebelum attachUploadedAsset) menjadi berkas tanpa pemilik. Cron harian menghapusnya. Tanpa kunci Cloudinary atau bila API gagal: tidak melakukan apa pun.
 export async function removeOrphanUploads(db: PrismaClient): Promise<number> {
   const remote = [
     ...(await listRemoteResources(UPLOAD_PREFIX, 'image')),

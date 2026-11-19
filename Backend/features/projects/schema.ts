@@ -1,12 +1,14 @@
+// Validasi Zod form project. Tanpa impor server, aman dipakai di klien.
+
 import { z } from 'zod'
 
 import { optionalText, optionalUrl, requiredText, slugSchema } from '@backend/lib/validation'
 
-export const PROJECT_CATEGORIES = ['SOFTWARE', 'COMMUNITY_BUSINESS'] as const
-export const CONTENT_STATUSES = ['DRAFT', 'PUBLISHED'] as const
+const PROJECT_CATEGORIES = ['SOFTWARE', 'COMMUNITY_BUSINESS'] as const
+const CONTENT_STATUSES = ['DRAFT', 'PUBLISHED'] as const
 
 // Batas atas tahun dihitung saat validasi, bukan saat modul dimuat: server yang hidup melewati
-// pergantian tahun tetap menerima tahun baru (audit 2026-10-31, BUG-04).
+// pergantian tahun tetap menerima tahun baru.
 function maxProjectYear() {
   return new Date().getFullYear() + 1
 }
@@ -57,7 +59,7 @@ export const emptyProject: ProjectInput = {
   showDemo: true,
   showRepo: true,
   featured: false,
-  // project baru langsung terbit: tanpa pilihan Draf di admin (revisi pemilik 2026-11-16)
+  // project baru langsung terbit: tidak ada pilihan Draf di admin
   status: 'PUBLISHED',
   skillIds: [],
 }

@@ -1,5 +1,6 @@
 // Nama browser dan sistem dari user-agent, tanpa menyimpan string lengkapnya di tampilan. null = tidak
-// dikenal. Dipakai email login (Indonesia) dan Admin → Akun (ikut bahasa admin).
+// dikenal. Dipakai email login (Indonesia) dan Admin → Akun (ikut bahasa admin). Tanpa impor server.
+
 export type DeviceParts = { browser: string | null; os: string | null; mobile: boolean }
 
 export function deviceParts(userAgent: string | null | undefined): DeviceParts {

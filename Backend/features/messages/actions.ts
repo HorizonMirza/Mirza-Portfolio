@@ -1,5 +1,7 @@
 'use server'
 
+// Server Action pesan masuk (Admin → Pesan): ubah status (baru, dibaca, arsip) dan hapus pesan.
+
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -55,6 +57,7 @@ export async function setMessageStatus(messageId: string, status: unknown): Prom
   }
 }
 
+// Hapus pesan permanen; log audit hanya mencatat status dan waktu kirimnya.
 export async function deleteMessage(messageId: string): Promise<ActionResult> {
   try {
     const admin = await requireSuperAdmin()

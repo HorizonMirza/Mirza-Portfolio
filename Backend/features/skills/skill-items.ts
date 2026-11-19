@@ -1,7 +1,10 @@
+// Skill → butir globe beranda: memilih logo unggahan, logo asli, ikon brand, ikon umum, atau
+// monogram untuk tiap skill (hanya server).
+
 import 'server-only'
 
-import { loc } from '@backend/lib/localized'
 import type { AppLocale } from '@backend/i18n/routing'
+import { loc } from '@backend/lib/localized'
 
 import { BRAND_ICONS } from './brand-icons'
 import type { PublicSkillCategory } from './public'
@@ -69,6 +72,7 @@ export function iconSlug(name: string) {
     .replace(/[^a-z0-9]/g, '')
 }
 
+// Luminans relatif warna hex (WCAG), 0 = hitam.
 function luminance(hex: string) {
   const channels = [0, 2, 4].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
   const [r, g, b] = channels.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
@@ -80,6 +84,7 @@ export function logoColorFor(hex: string) {
   return luminance(hex.replace('#', '')) < 0.02 ? null : `#${hex.replace('#', '')}`
 }
 
+// Teks pengganti logo: nama pendek apa adanya, selain itu inisial ("Project Management" → "PM").
 function monogram(name: string) {
   if (name.length <= 4) return name
   const words = name.split(/\s+/).filter(Boolean)
@@ -93,7 +98,7 @@ function monogram(name: string) {
 }
 
 // Logo unggahan Super Admin (Cloudinary) didahulukan; lalu logo asli berwarna (public/skills) bila
-// ada, dicari dengan aturan slug yang sama dengan resolveIcon
+// ada, dicari dengan aturan slug yang sama dengan resolveIcon.
 export function resolveLogo(name: string, icon: string | null, uploaded?: { url: string } | null) {
   if (uploaded) return { src: uploaded.url, invertDark: false }
   const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
@@ -105,6 +110,7 @@ export function resolveLogo(name: string, icon: string | null, uploaded?: { url:
   return null
 }
 
+// Ikon brand (path SVG) dari nama ikon atau nama skill, atau null.
 export function resolveIcon(name: string, icon: string | null) {
   const candidates = [icon, iconSlug(name)].filter((s): s is string => Boolean(s))
   for (const slug of candidates) {
@@ -114,6 +120,7 @@ export function resolveIcon(name: string, icon: string | null) {
   return null
 }
 
+// Semua skill per kategori → butir globe, dengan nama kategori sesuai bahasa.
 export function toSkillItems(categories: PublicSkillCategory[], locale: AppLocale): SkillItem[] {
   return categories.flatMap((c, categoryIndex) =>
     c.skills.map((s) => {
