@@ -26,14 +26,14 @@ export async function uploadAsset(
   body.set('timestamp', String(s.timestamp))
   body.set('signature', s.signature)
   body.set('folder', s.folder)
-  if (s.allowedFormats) body.set('allowed_formats', s.allowedFormats)
+  body.set('allowed_formats', s.allowedFormats)
   onStage?.('mengunggah')
   let uploaded: unknown
   try {
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${s.cloudName}/${s.resourceType}/upload`,
-      { method: 'POST', body },
-    )
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${s.cloudName}/image/upload`, {
+      method: 'POST',
+      body,
+    })
     uploaded = await res.json()
     if (!res.ok) throw new Error('upload')
   } catch {

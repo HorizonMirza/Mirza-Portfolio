@@ -8,7 +8,6 @@ const MIME_BY_EXTENSION: Record<string, string> = {
   avif: 'image/avif',
   jpg: 'image/jpeg',
   jpeg: 'image/jpeg',
-  pdf: 'application/pdf',
 }
 
 export function resolveMime(name: string, type: string): string {

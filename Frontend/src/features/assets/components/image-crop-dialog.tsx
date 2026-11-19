@@ -2,7 +2,7 @@
 
 // Pemotong gambar untuk semua unggahan gambar di admin (DESIGN.md
 // bagian 5.8): gambar yang dipilih dari folder ditampilkan di bingkai; digeser, diperbesar atau
-// diperkecil, diputar, dan perbandingan bingkainya bisa dipilih. Hasilnya dipotong di browser lalu
+// diperkecil, dan diputar; perbandingan bingkai mengikuti tempat gambar di situs. Hasilnya dipotong di browser lalu
 // dikirim ke Cloudinary; tanpa teks alternatif (diisi otomatis di server). Tanpa library: kanvas 2D.
 
 import { Minus, Plus, RotateCw } from 'lucide-react'
@@ -59,8 +59,6 @@ export function ImageCropDialog({
 }) {
   const t = useAdminT()
   const spec = UPLOAD_TARGETS[target]
-  // satu ukuran saja: perbandingan yang dipakai di situs untuk gambar ini
-  const targetRatio = 'aspect' in spec ? spec.aspect : undefined
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [bitmap, setBitmap] = useState<ImageBitmap | null>(null)
   const [failed, setFailed] = useState(false)
@@ -87,7 +85,8 @@ export function ImageCropDialog({
   }, [file])
 
   const eff = bitmap ? effectiveSize(bitmap.width, bitmap.height, rotation) : { w: 1, h: 1 }
-  const ratio = targetRatio ?? eff.w / eff.h
+  // satu ukuran saja: perbandingan yang dipakai di situs untuk gambar ini
+  const ratio: number = spec.aspect
   const frameW = Math.round(Math.min(FRAME_MAX_W, FRAME_MAX_H * ratio))
   const frameH = Math.round(frameW / ratio)
   const base = coverScale(eff.w, eff.h, frameW, frameH)

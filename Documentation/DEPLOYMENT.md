@@ -19,7 +19,7 @@ pnpm dev                      # http://localhost:3000 -> diarahkan ke /id atau /
 
 **Panel admin:** buka `http://localhost:3000/admin` lalu masuk dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD`. Buat `BETTER_AUTH_SECRET` dengan `openssl rand -base64 32`. Password yang lupa bisa diganti dari terminal: `ADMIN_NEW_PASSWORD=... pnpm admin:reset-password` (semua sesi ikut dicabut). Login dibatasi 5 percobaan per 15 menit per IP.
 
-Variabel lain ada di `Frontend/.env.example` (tanpa nilai). Unggah foto, CV, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (token *fine-grained* tanpa izin tambahan) **wajib** untuk kalender kontribusi GitHub di beranda dan footer (tanpa token bagian itu tidak tampil). Tidak ada lagi impor repo dari GitHub.
+Variabel lain ada di `Frontend/.env.example` (tanpa nilai). Unggah foto, logo, dan gambar project butuh `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (akun gratis di cloudinary.com). Tanpa kunci ini, bagian unggah menampilkan pesan "belum aktif" dan fitur lain tetap berjalan. `GITHUB_TOKEN` (token *fine-grained* tanpa izin tambahan) **wajib** untuk kalender kontribusi GitHub di beranda dan footer (tanpa token bagian itu tidak tampil). Tidak ada lagi impor repo dari GitHub.
 
 Contoh Postgres lokal dengan Docker:
 
@@ -68,7 +68,7 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
    | `ADMIN_EMAIL` | Production | email untuk login admin |
    | `ADMIN_PASSWORD` | Production | password admin, minimal 8 karakter |
    | `CRON_SECRET` | Production | teks acak minimal 16 karakter |
-   | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Production, Preview | dari dashboard Cloudinary (opsional, untuk unggah foto/CV/gambar) |
+   | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Production, Preview | dari dashboard Cloudinary (opsional, untuk unggah foto dan gambar) |
    | `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL` | Production | opsional, untuk notifikasi email pesan kontak (newsletter dihapus 2026-11-06). `EMAIL_FROM` harus di domain yang terverifikasi di Resend |
 
    `BETTER_AUTH_URL` dan `NEXT_PUBLIC_SITE_URL` **dikosongkan dulu**: situs otomatis memakai domain `*.vercel.app` proyek. Isi keduanya (`https://domainanda.site`) setelah domain sendiri terpasang.

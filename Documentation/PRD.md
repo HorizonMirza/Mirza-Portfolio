@@ -34,7 +34,7 @@ Mahasiswa BINUS (Computer Science, Artificial Intelligence, semester 5), sedang 
 | **Calon klien** | Contoh project, kemampuan, cara menghubungi | Kirim pesan, WhatsApp |
 | **Sesama developer** | Kode dan kualitas teknis | Buka GitHub, lihat detail project |
 | **Pengunjung umum** | Siapa Mirza dan apa yang ia kerjakan | Jelajah, bagikan link |
-| **Super Admin** (Mirza) | Mengubah konten cepat dan aman | CRUD, baca pesan, upload CV |
+| **Super Admin** (Mirza) | Mengubah konten cepat dan aman | CRUD, baca pesan, ganti link CV |
 
 ## 5. Fitur
 
@@ -50,7 +50,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F4 | **Skills**: dikelompokkan per kategori dari admin, tanpa persen. Tidak punya halaman sendiri (`/skills` dialihkan ke `/#skills`); tampil di beranda sebagai globe logo yang bisa diputar dan difilter per kategori | P0 |
 | F5 | **Projects**: daftar + halaman detail (peran, judul, tombol demo dan repo, galeri foto) + tautan demo dan repo | P0 |
 | F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
-| F7 | **Resume CV**: satu klik di kartu pembuka dan footer, file terbaru dari admin, dihitung jumlah unduhannya | P0 |
+| F7 | **Resume CV**: satu klik di kartu pembuka dan footer, link CV terbaru dari admin (mis. Google Drive), dihitung jumlah unduhannya | P0 |
 | F8 | **Dua bahasa** ID/EN dengan toggle, URL `/id` dan `/en` | P0 |
 | F9 | **Tema terang/gelap**: selalu mulai gelap, bisa diganti manual dan tersimpan | P0 |
 | F10 | **Animasi**: hero, transisi halaman, reveal saat scroll. Menghormati `prefers-reduced-motion` | P0 |
@@ -85,7 +85,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | U5 | Sebagai **pengunjung**, saya ingin mengganti bahasa dan tema, agar nyaman membaca. | Pilihan tersimpan. Semua teks (UI dan konten) berganti tanpa kehilangan halaman. |
 | U6 | Sebagai **pengunjung**, saya ingin mengirim pesan, agar bisa menghubungi Mirza. | Form memvalidasi input, menampilkan status berhasil/gagal yang jelas, dan pesan masuk di admin. |
 | U8 | Sebagai **Super Admin**, saya ingin menambah project baru dalam dua bahasa, agar konten cepat diperbarui. | Project baru tampil di situs dalam ≤ 1 menit setelah disimpan (revalidate). |
-| U9 | Sebagai **Super Admin**, saya ingin mengganti file CV, agar semua orang mendapat versi terbaru. | Tautan unduh selalu mengarah ke CV terbaru. |
+| U9 | Sebagai **Super Admin**, saya ingin mengganti link CV, agar semua orang mendapat versi terbaru. | Tautan unduh selalu mengarah ke CV terbaru. |
 | U10 | Sebagai **Super Admin**, saya ingin setiap perubahan tercatat, agar ada riwayat konten dan akses tak wajar bisa dilacak. | Setiap tulis/ubah/hapus tercatat di `AuditLog` dengan waktu dan aktor. |
 
 ## 7. Metrik Keberhasilan
@@ -130,7 +130,7 @@ Nomor merujuk ke `Documentation/00-discovery.md` bagian 6. Keputusan yang sudah 
 |---|---|---|
 | 2 | Blog dan sertifikat ditunda ke v2 | Masukkan ke v1 |
 | 6 | Secret tidak pernah di-commit, hanya `Frontend/.env.example` | — |
-| 8 | Resend untuk email, Cloudinary untuk gambar dan CV | Cloudflare R2 |
+| 8 | Resend untuk email, Cloudinary untuk gambar (CV berupa link, keputusan pemilik 2026-11-19) | Cloudflare R2 |
 | 11 | Skill dikelompokkan tanpa level angka | Tampilkan level |
 | 12 | Tampilkan kota dan tombol WhatsApp. Alamat lengkap tidak ditampilkan | Tampilkan alamat penuh |
 | 13 | Semua konten diisi manual dalam dua bahasa | Terjemahan otomatis |

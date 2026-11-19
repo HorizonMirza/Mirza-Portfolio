@@ -233,13 +233,10 @@ export const EN: Record<string, string> = {
   'Memproses…': 'Processing…',
   'Foto Profil': 'Profile Photo',
   'Foto Kartu About': 'About Card Photo',
-  'CV (PDF)': 'CV (PDF)',
   'Sampul Project': 'Project Cover',
   'Logo Instansi': 'Organization Logo',
   'Logo Skill': 'Skill Logo',
   'Foto Kegiatan': 'Activity Photo',
-  'Potret Hero': 'Hero Portrait',
-  'Ukuran gambar tidak terbaca.': 'The image size could not be read.',
   'Unggah belum aktif: isi CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, dan CLOUDINARY_API_SECRET.':
     'Uploads are not active: set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.',
   'Tujuan unggahan tidak valid.': 'Invalid upload target.',

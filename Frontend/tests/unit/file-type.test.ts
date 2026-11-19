@@ -14,7 +14,6 @@ describe('resolveMime', () => {
     expect(resolveMime('logo.avif', '')).toBe('image/avif')
     expect(resolveMime('LOGO.AVIF', '')).toBe('image/avif')
     expect(resolveMime('a.b.jpeg', '')).toBe('image/jpeg')
-    expect(resolveMime('cv.pdf', '')).toBe('application/pdf')
   })
   it('ekstensi tidak dikenal atau tanpa ekstensi tetap kosong (ditolak)', () => {
     expect(resolveMime('skrip.exe', '')).toBe('')

@@ -1,9 +1,9 @@
 'use client'
 
-// Pemilih berkas untuk semua gambar dan PDF yang bisa diganti di pratinjau admin: menekan gambar langsung membuka pemilih berkas (folder) tanpa
-// formulir. Gambar lalu masuk ke pemotong (geser, ukuran bingkai, perbesar/perkecil, putar) dan
-// tersimpan saat Simpan ditekan; PDF langsung diunggah. Satu pemilih bisa dipakai untuk banyak tujuan
-// lewat pick(target, id). `element` harus dirender sekali di komponen pemakai.
+// Pemilih berkas untuk semua gambar yang bisa diganti di pratinjau admin: menekan gambar langsung
+// membuka pemilih berkas (folder) tanpa formulir. Gambar lalu masuk ke pemotong (geser, ukuran
+// bingkai, perbesar/perkecil, putar) dan tersimpan saat Simpan ditekan. Satu pemilih bisa dipakai
+// untuk banyak tujuan lewat pick(target, id). `element` harus dirender sekali di komponen pemakai.
 
 import { type ReactNode, useRef, useState } from 'react'
 import { toast } from 'sonner'
@@ -81,21 +81,17 @@ export function useAssetPicker({
       return
     }
     setBusy(true)
-    // PDF diunggah tanpa dialog pemotong, jadi tahapnya tampil sebagai toast berpemutar yang lalu
-    // diganti hasilnya (id sama). Gambar menampilkan tahap di dialog pemotong.
-    const toastId = UPLOAD_TARGETS[job.target].kind === 'DOCUMENT' ? 'asset-upload' : undefined
-    if (toastId) toast.loading(stageText.menyiapkan, { id: toastId })
-    const result = await uploadAsset(job.target, job.targetId, blob, name, (s) => {
-      setStage(stageText[s])
-      if (toastId) toast.loading(stageText[s], { id: toastId })
-    })
+    // tahap unggah tampil di dialog pemotong
+    const result = await uploadAsset(job.target, job.targetId, blob, name, (s) =>
+      setStage(stageText[s]),
+    )
     setStage(null)
     setBusy(false)
     if (!result.ok) {
-      toast.error(t(result.message), { id: toastId })
+      toast.error(t(result.message))
       return
     }
-    toast.success(t(result.message), { id: toastId })
+    toast.success(t(result.message))
     setPending(null)
     onDone()
   }
@@ -110,14 +106,6 @@ export function useAssetPicker({
       toast.error(
         t('Tipe tidak didukung. Gunakan {formats}.', { formats: spec.formats.join(', ') }),
       )
-      return
-    }
-    if (spec.kind === 'DOCUMENT') {
-      if (file.size > spec.maxBytes) {
-        toast.error(t('Ukuran maksimal {size}.', { size: `${spec.maxBytes / 1024 / 1024} MB` }))
-        return
-      }
-      void send({ file, ...job }, file, file.name)
       return
     }
     if (file.size > MAX_SOURCE_BYTES) {

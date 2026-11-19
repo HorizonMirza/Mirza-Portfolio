@@ -29,7 +29,6 @@ import { revalidateContent } from '@backend/lib/revalidate'
 import { requiredText } from '@backend/lib/validation'
 
 import {
-  checkImageShape,
   needsAlt,
   UPLOAD_TARGET_KEYS,
   UPLOAD_TARGETS,
@@ -53,7 +52,7 @@ const uploadResultSchema = z.object({
   public_id: z.string().min(1).max(255),
   version: z.union([z.number(), z.string()]),
   signature: z.string().regex(/^[0-9a-f]{40}$/),
-  resource_type: z.enum(['image', 'raw']),
+  resource_type: z.literal('image'),
   secure_url: z.url(),
   bytes: z.number().int().nonnegative(),
   format: z.string().optional(),
@@ -61,19 +60,22 @@ const uploadResultSchema = z.object({
   height: z.number().int().optional(),
 })
 
-// Cache publik yang dibuang setelah berkas untuk tujuan ini disimpan.
+// Cache publik yang dibuang setelah berkas untuk tujuan ini disimpan. Logo skill juga tampil di chip
+// teknologi project.
+const CACHE_BY_TARGET: Record<UploadTarget, CacheTag[]> = {
+  'profile-photo': ['profile'],
+  'about-photo': ['profile'],
+  'about-chip-logo': ['profile'],
+  'project-cover': ['projects'],
+  'project-gallery': ['projects'],
+  'experience-logo': ['experience'],
+  'experience-photo': ['experience'],
+  'skill-logo': ['skills', 'projects'],
+  'contact-photo': ['settings'],
+}
+
 function revalidateFor(target: UploadTarget) {
-  // logo skill juga tampil di chip teknologi project
-  if (target === 'skill-logo') return revalidateContent('skills', 'projects')
-  revalidateContent(
-    target.startsWith('profile')
-      ? 'profile'
-      : target.startsWith('experience')
-        ? 'experience'
-        : target.startsWith('hero') || target.startsWith('contact')
-          ? 'settings'
-          : 'projects',
-  )
+  revalidateContent(...CACHE_BY_TARGET[target])
 }
 
 // Asal berkas menentukan cache publik mana yang perlu dibuang setelah berkas diubah atau dihapus.
@@ -106,17 +108,14 @@ export async function signAssetUpload(target: unknown): Promise<ActionResult<Upl
     if (!config) return fail(NOT_CONFIGURED)
     const spec = UPLOAD_TARGETS[parsed.data]
     const timestamp = Math.floor(Date.now() / 1000)
-    // allowed_formats hanya berlaku untuk gambar; PDF diperiksa ulang saat disimpan.
-    const allowedFormats = spec.resourceType === 'image' ? spec.formats.join(',') : null
-    const params: Record<string, string | number> = { folder: spec.folder, timestamp }
-    if (allowedFormats) params.allowed_formats = allowedFormats
+    const allowedFormats = spec.formats.join(',')
+    const params = { folder: spec.folder, timestamp, allowed_formats: allowedFormats }
     return ok('', {
       cloudName: config.cloudName,
       apiKey: config.apiKey,
       timestamp,
       signature: signParams(params, config.apiSecret),
       folder: spec.folder,
-      resourceType: spec.resourceType,
       allowedFormats,
     })
   } catch (error) {
@@ -133,7 +132,6 @@ export async function attachUploadedAsset(
   alt: unknown,
 ): Promise<ActionResult> {
   let uploadedPublicId: string | null = null
-  let uploadedType: 'image' | 'raw' = 'image'
   try {
     const admin = await requireSuperAdmin()
     const config = getCloudinaryConfig()
@@ -160,31 +158,26 @@ export async function attachUploadedAsset(
     }
 
     uploadedPublicId = result.public_id
-    uploadedType = result.resource_type
     // Setelah titik ini berkas sudah ada di Cloudinary: setiap penolakan juga menghapusnya.
     const reject = async (message: string, fieldErrors?: Record<string, string>) => {
-      await destroyRemoteAsset(result.public_id, result.resource_type)
+      await destroyRemoteAsset(result.public_id, 'image')
       uploadedPublicId = null
       return fail(message, fieldErrors)
     }
 
-    // Pemeriksaan ulang di server: folder, tipe, format, ukuran, dan asal URL.
+    // Pemeriksaan ulang di server: folder, format, ukuran, dan asal URL (tipe gambar sudah dari skema).
     const format = (result.format ?? result.public_id.split('.').pop() ?? '').toLowerCase()
     const validOrigin = result.secure_url.startsWith(
       `https://res.cloudinary.com/${config.cloudName}/`,
     )
     if (
       !result.public_id.startsWith(`${spec.folder}/`) ||
-      result.resource_type !== spec.resourceType ||
       !(spec.formats as readonly string[]).includes(format) ||
       result.bytes > spec.maxBytes ||
       !validOrigin
     ) {
       return reject('Berkas ditolak: tipe atau ukuran tidak sesuai.')
     }
-    const shapeError = checkImageShape(spec, result.width, result.height)
-    if (shapeError) return reject(shapeError, { file: shapeError })
-
     const needsProject = t.data === 'project-cover' || t.data === 'project-gallery'
     const projectId = needsProject ? idSchema.safeParse(targetId) : null
     if (projectId && !projectId.success) return reject('Project tidak valid.')
@@ -212,7 +205,7 @@ export async function attachUploadedAsset(
         data: {
           publicId: result.public_id,
           url: result.secure_url,
-          kind: spec.kind,
+          kind: 'IMAGE',
           format,
           bytes: result.bytes,
           width: result.width ?? null,
@@ -223,26 +216,21 @@ export async function attachUploadedAsset(
       })
       let old: { id: string; publicId: string } | null = null
 
-      if (t.data === 'profile-photo' || t.data === 'profile-cv' || t.data === 'about-photo') {
-        const field =
-          t.data === 'profile-photo' ? 'photo' : t.data === 'about-photo' ? 'aboutPhoto' : 'cv'
+      if (t.data === 'profile-photo' || t.data === 'about-photo') {
+        const isAbout = t.data === 'about-photo'
         const profile = await tx.profile.findUnique({
           where: { id: 1 },
           select: {
             photo: { select: { id: true, publicId: true } },
-            cv: { select: { id: true, publicId: true } },
             aboutPhoto: { select: { id: true, publicId: true } },
           },
         })
         if (!profile) throw new ProfileMissingError()
-        old = profile[field]
-        const data: Prisma.ProfileUncheckedUpdateInput =
-          field === 'photo'
-            ? { photoId: asset.id }
-            : field === 'aboutPhoto'
-              ? { aboutPhotoId: asset.id }
-              : { cvId: asset.id }
-        await tx.profile.update({ where: { id: 1 }, data })
+        old = isAbout ? profile.aboutPhoto : profile.photo
+        await tx.profile.update({
+          where: { id: 1 },
+          data: isAbout ? { aboutPhotoId: asset.id } : { photoId: asset.id },
+        })
       } else if (t.data === 'about-chip-logo') {
         const profile = await tx.profile.findUnique({
           where: { id: 1 },
@@ -251,19 +239,6 @@ export async function attachUploadedAsset(
         if (!profile) throw new ProfileMissingError()
         old = profile.aboutChipLogo
         await tx.profile.update({ where: { id: 1 }, data: { aboutChipLogoId: asset.id } })
-      } else if (t.data === 'hero-portrait') {
-        // foto utama beranda; armor hero selalu gambar bawaan repo
-        const current = await tx.siteSetting.findUnique({
-          where: { id: 1 },
-          select: { heroPortrait: { select: { id: true, publicId: true } } },
-        })
-        old = current?.heroPortrait ?? null
-        const data: Prisma.SiteSettingUncheckedUpdateInput = { heroPortraitId: asset.id }
-        await tx.siteSetting.upsert({
-          where: { id: 1 },
-          create: { id: 1, ...data } as Prisma.SiteSettingUncheckedCreateInput,
-          update: data,
-        })
       } else if (t.data === 'contact-photo') {
         const current = await tx.siteSetting.findUnique({
           where: { id: 1 },
@@ -338,7 +313,7 @@ export async function attachUploadedAsset(
     })
 
     uploadedPublicId = null
-    if (replaced) await destroyRemoteAsset(replaced.publicId, spec.resourceType)
+    if (replaced) await destroyRemoteAsset(replaced.publicId, 'image')
     revalidateFor(t.data)
     return ok(`${spec.label} tersimpan.`)
   } catch (error) {
@@ -346,7 +321,7 @@ export async function attachUploadedAsset(
     // "public_id sudah ada": permintaan lain (balapan dengan percobaan ulang) sudah mencatatnya,
     // dan menghapus berkasnya merusak catatan itu.
     if (uploadedPublicId && !isDuplicatePublicId(error))
-      await destroyRemoteAsset(uploadedPublicId, uploadedType)
+      await destroyRemoteAsset(uploadedPublicId, 'image')
     if (error instanceof ProfileMissingError) return fail('Simpan profil dulu sebelum mengunggah.')
     return toActionError(error)
   }
