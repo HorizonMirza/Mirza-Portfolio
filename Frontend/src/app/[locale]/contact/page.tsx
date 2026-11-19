@@ -51,7 +51,7 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
           photoCrop={settings.contactPhoto ? undefined : HERO_CARD_CROP}
           site={t('cardSite')}
         />
-        {/* contact-col: setelah terkirim, kotak tiket selebar kalimat pengantar (globals.css) */}
+        {/* contact-col: setelah terkirim, kotak tiket selebar kalimat pengantar (styles/site/contact.css) */}
         <div className="contact-col">
           <PageIntro title={t('title')} intro={t('intro')} />
           {/* form bisa ditutup di Admin → Pengaturan; action juga menolak pesan saat ditutup */}

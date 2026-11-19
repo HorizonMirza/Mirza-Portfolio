@@ -79,7 +79,7 @@ export function NavLinks({
   const editLabel = useNavEdit()
   const routePath = usePathname()
   const pathname = currentPath ?? routePath
-  // arah geser halaman mengikuti urutan menu: ke kanan = maju, ke kiri = mundur (globals.css .nav-*)
+  // arah geser halaman mengikuti urutan menu: ke kanan = maju, ke kiri = mundur (styles/site/motion.css .nav-*)
   const currentIndex = siteNav.findIndex((item) => isSiteNavActive(pathname, item.href))
   return (
     <ul

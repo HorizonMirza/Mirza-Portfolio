@@ -198,7 +198,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           className="home-curtain reveal border-t border-border py-16 md:py-24"
         >
           {/* Transisi antarbagian "judul tirai" (pilihan pemilik 2026-10-16, demo T3): judul naik dari
-              balik batasnya, isi bagian menyusul memudar. Diatur .home-curtain di globals.css. */}
+              balik batasnya, isi bagian menyusul memudar. Diatur .home-curtain di styles/site/motion.css. */}
           {/* Revisi pemilik 2026-10-16: tanpa nomor bagian dan tanpa tautan "Semua Pengalaman",
               judul di tengah seperti bagian Project */}
           <Container>

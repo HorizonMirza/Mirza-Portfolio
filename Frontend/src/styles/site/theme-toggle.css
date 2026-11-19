@@ -1,0 +1,34 @@
+/* Tombol tema: ikon matahari dan bulan yang berganti. */
+
+/* Tombol tema: ikon matahari (terang) dan bulan (gelap) digambar ulang sambil membesar/mengecil,
+   meniru komponen AnimatedThemeToggle tanpa framer-motion. */
+.theme-icon path {
+  stroke-dasharray: 1;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  transition:
+    transform 700ms var(--ease-out-soft),
+    stroke-dashoffset 700ms var(--ease-out-soft);
+}
+.theme-sun path {
+  transform: scale(1);
+  stroke-dashoffset: 0;
+}
+.theme-moon {
+  transform: scale(0);
+  stroke-dashoffset: 1;
+}
+.dark .theme-sun path {
+  transform: scale(0);
+  stroke-dashoffset: 1;
+}
+.dark .theme-moon {
+  transform: scale(1);
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon path {
+    transition: none;
+  }
+}

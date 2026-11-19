@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils'
 // yang baru hanya saat kursor berada di atas sebuah kartu: kartu detailnya muncul di atasnya, dan
 // berpindah antarkartu menggeser isinya searah gerakan sementara wadahnya berubah ukuran dan
 // posisi, sehingga terasa satu benda, bukan beberapa popup. Hanya untuk perangkat dengan hover
-// (HP tidak berubah). Warna memakai token tema situs, animasi di globals.css (.cc-*).
+// (HP tidak berubah). Warna memakai token tema situs, animasi di styles/site/contact.css (.cc-*).
 
 export type ContactCardLink = {
   key: string

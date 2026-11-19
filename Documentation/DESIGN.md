@@ -25,7 +25,7 @@ Daftar larangan (jawaban 2.2 dan 14.2):
 
 ## 2. Token Desain
 
-Diimplementasikan sebagai CSS variables di `Frontend/src/app/globals.css` dan dipetakan ke Tailwind (`@theme`). Ubah di sana, jangan menaruh warna atau ukuran acak di komponen.
+Diimplementasikan sebagai CSS variables di `Frontend/src/styles/tokens.css` dan dipetakan ke Tailwind (`@theme`); gaya per area ada di `Frontend/src/styles/`, dirangkai `src/app/globals.css`. Ubah di sana, jangan menaruh warna atau ukuran acak di komponen.
 
 ### 2.1 Warna
 

@@ -13,7 +13,7 @@ export function RevealObserver() {
 
   // Animasi berulang (pita project, kilau kolom dan tombol kirim kontak) dijeda saat di luar layar
   // agar tidak terus dirender (laporan lag pemilik 2026-10-20, audit PERF-01); ditandai
-  // data-offscreen, dibaca globals.css
+  // data-offscreen, dibaca CSS di src/styles/
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return
     const io = new IntersectionObserver((entries) => {

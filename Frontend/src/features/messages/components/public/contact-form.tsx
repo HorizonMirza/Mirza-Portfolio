@@ -149,7 +149,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
   if (!sent) return form
 
   // Terkirim (pilihan pemilik 2026-10-03, demo nomor 3): form memudar dan menyusut, lalu tiket
-  // ringkasan terbuka. Urutannya murni CSS (.contact-sent di globals.css) agar sama dengan atau
+  // ringkasan terbuka. Urutannya murni CSS (.contact-sent di styles/site/contact.css) agar sama dengan atau
   // tanpa JavaScript. Waktu memakai WIB (zona Mirza) agar server dan browser menulis hal yang sama.
   const sentAt = v.sentAt
     ? new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'id-ID', {

@@ -1,0 +1,302 @@
+/* Hero beranda: foto, nama besar, lubang wajah, kursor titik + cincin, dan ukuran per layar. */
+
+/* Hero beranda (revisi pemilik 2026-10-19): foto besar tanpa bingkai rata
+   bawah di tengah, nama dua baris memudar ke bawah di belakang foto dan sebagai salinan di depan foto
+   yang dilubangi di area wajah. Liquid mask di seluruh hero. Tinggi tetap satu layar agar ukuran
+   memakai cqw/cqh. */
+.hero {
+  /* posisi wajah dalam foto (dihitung dari potongan hero-portrait.webp) untuk lubang di salinan depan
+     nama; jarak antarkata baris kedua agar huruf di kiri dan kanan wajah tetap terlihat */
+  /* HP (revisi pemilik 2026-10-19): nama di tengah atas, foto 140cqw tepat di bawahnya tanpa saling menutup,
+     jadi tanpa lubang wajah; sisi lengan hanya terpotong sedikit */
+  --name-size: min(15cqw, 12cqh);
+  --name-top: 4cqh;
+  /* ruang kosong di atas rambut dalam foto (±6,6% tinggi) dikurangi agar kepala tepat di bawah nama */
+  --photo-top: calc(var(--name-top) + 1.8 * var(--name-size) + 2cqh - 7cqw);
+  --face-x: 50%;
+  /* foto 140cqw, tetapi tidak lebih tinggi dari sisa hero di bawah nama: di layar HP/tablet kecil yang
+     lebar dan pendek (mis. 575x767) foto terlihat sampai tangan dan rata ke tepi bawah seperti desktop,
+     bukan wajah saja (revisi pemilik 2026-11-17) */
+  --photo-w: min(140cqw, calc((100cqh - var(--photo-top)) / 0.982));
+  --face-y: calc(var(--photo-top) + 0.28 * 0.982 * var(--photo-w));
+  --face-rx: 0px;
+  --face-ry: 0px;
+  --face-gap: 0px;
+  /* geser nama agar tengahnya tepat di tengah wajah; ruang suku tengah kata pertama (HP: tanpa) */
+  --face-dx: 0px;
+  --face-zone: 0px;
+  container-type: size;
+  /* isi hero tepat di bawah navbar, di dalam .hero-shell */
+  position: absolute;
+  inset: var(--hero-head) 0 0;
+}
+/* Pembungkus hero: satu layar penuh dari atas halaman, ditarik ke belakang navbar (tinggi navbar
+   --hero-head, diukur 58–59 px) agar efek hover sampai ke navbar. lvh agar bagian
+   berikutnya tidak mengintip saat bilah browser HP menyusut. Teks dan foto tidak bisa diseleksi atau
+   diseret, supaya menarik kursor tidak memunculkan blok seleksi biru (laporan pemilik 2026-10-19). */
+.hero-shell {
+  --hero-head: 59px;
+  /* halo lembut dan panjang gradasi bawah foto; tema terang lebih tipis */
+  /* biru dari token --note, bukan warna mentah (audit 2026-10-31, EFF-10) */
+  --hero-glow: color-mix(in srgb, var(--note) 16%, transparent);
+  --hero-fade: 14%;
+  /* jejak hover di luar tubuh (bentuk cair tipis, seperti referensi HoverMaskReveal) */
+  --hero-trail: rgb(10 10 10 / 0.07);
+  position: relative;
+  margin-top: calc(-1 * var(--hero-head));
+  height: 100vh;
+  height: 100lvh;
+  min-height: calc(34rem + var(--hero-head));
+  max-height: calc(64rem + var(--hero-head));
+  overflow: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.hero-shell img {
+  -webkit-user-drag: none;
+}
+.hero-mask {
+  position: absolute;
+  inset: 0;
+  touch-action: pan-y;
+  /* tanpa JavaScript tetap crosshair; HeroCursor menggantinya dengan titik + cincin */
+  cursor: crosshair;
+}
+/* Kursor titik + cincin di foto beranda (pilihan pemilik 2026-11-06, demo K3, hero-cursor.tsx).
+   Hanya mouse/touchpad; warna mengikuti tema dengan garis tipis warna latar agar tetap terlihat di
+   atas jas maupun kemeja. Posisi ditulis lewat transform oleh skrip. */
+@media (hover: hover) and (pointer: fine) {
+  .hero-mask[data-cursor] {
+    cursor: none;
+  }
+}
+.hero-cursor > div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.hero-cursor[data-on] > div {
+  opacity: 1;
+}
+/* elemen luar hanya posisi (transform dari skrip); bentuk dan efek tekan di ::before, karena properti
+   scale diterapkan sebelum transform dan akan ikut mengecilkan posisi */
+.hero-cursor > div::before {
+  content: '';
+  position: absolute;
+  border-radius: 9999px;
+  transition:
+    scale 200ms,
+    background-color 200ms;
+}
+.hero-cursor-dot::before {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  background: var(--text);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--bg) 55%, transparent);
+}
+.hero-cursor-ring::before {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1.5px solid var(--text);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--bg) 35%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--bg) 35%, transparent);
+}
+.hero-cursor[data-pressed] .hero-cursor-dot::before {
+  scale: 0.75;
+}
+.hero-cursor[data-pressed] .hero-cursor-ring::before {
+  scale: 0.7;
+  background: color-mix(in srgb, var(--text) 15%, transparent);
+}
+.hero-name {
+  position: absolute;
+  inset: var(--name-top) 0 auto;
+  /* ruang bawah agar masker pudar juga menutupi bagian huruf di luar kotak baris */
+  padding-bottom: 0.18em;
+  font-family: var(--font-display);
+  font-size: var(--name-size);
+  font-weight: 700;
+  line-height: 0.9;
+  text-align: center;
+  text-transform: uppercase;
+  -webkit-mask-image: linear-gradient(#000 30%, transparent 95%);
+  mask-image: linear-gradient(#000 30%, transparent 95%);
+}
+.hero-name > span {
+  display: block;
+}
+.hero-name {
+  translate: var(--face-dx) 0;
+}
+.hero-name > span + span {
+  white-space: nowrap;
+  word-spacing: var(--face-gap);
+}
+/* suku tengah kata pertama (mis. AM) mengisi lebar lubang wajah; lebar huruf diukur dari Oswald 700 */
+.hero-name .hero-name-mid {
+  display: inline;
+  margin-inline: max(0px, calc((var(--face-zone) - 1.25em) / 2));
+}
+.hero-roles {
+  position: absolute;
+  /* HP: tepat di bawah foto, tetapi tidak lebih rendah dari batas di atas menu ikon bawah */
+  inset: min(
+      calc(var(--photo-top) + 0.982 * var(--photo-w) + 1cqh),
+      calc(100cqh - 5.5rem - env(safe-area-inset-bottom, 0px) - 1.5em)
+    )
+    1rem auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text);
+  /* huruf utama situs (Inter, seperti menu), permintaan pemilik 2026-10-19 */
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /* tetap terbaca di atas jas dan kemeja */
+  text-shadow:
+    0 0 6px var(--bg),
+    0 0 14px var(--bg);
+  pointer-events: none;
+}
+.hero-roles li:last-child:not(:first-child) {
+  text-align: right;
+}
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% var(--face-y), var(--hero-glow), transparent 42cqh);
+  -webkit-mask-image: linear-gradient(transparent, #000 14%);
+  mask-image: linear-gradient(transparent, #000 14%);
+  pointer-events: none;
+}
+/* salinan nama di depan foto, kosong di area wajah (demo 5 pilihan pemilik) */
+.hero-name-front {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    var(--face-rx) var(--face-ry) at var(--face-x) var(--face-y),
+    transparent 88%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    var(--face-rx) var(--face-ry) at var(--face-x) var(--face-y),
+    transparent 88%,
+    #000 100%
+  );
+}
+/* HP: mulai tepat di bawah nama, sedikit lebih lebar dari layar */
+.hero-portrait {
+  position: absolute;
+  top: var(--photo-top);
+  left: 50%;
+  width: var(--photo-w);
+  aspect-ratio: 1120 / 1100;
+  margin: 0;
+  /* HP: wajah di foto ada di 48% lebar gambar, digeser agar wajah tepat di tengah layar */
+  translate: calc(-50% + 0.02 * var(--photo-w)) 0;
+}
+.hero-portrait-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* bawah foto memudar ke transparan (masker pada foto sendiri, bukan lapisan warna latar, agar latar
+     di sisi foto tidak tertutup); sama dengan gradasi armor di liquid-mask-portrait.tsx */
+  -webkit-mask-image: linear-gradient(
+    #000 calc(100% - var(--hero-fade)),
+    rgb(0 0 0 / 0.45) calc(100% - var(--hero-fade) / 2),
+    transparent calc(100% - var(--hero-fade) * 0.08)
+  );
+  mask-image: linear-gradient(
+    #000 calc(100% - var(--hero-fade)),
+    rgb(0 0 0 / 0.45) calc(100% - var(--hero-fade) / 2),
+    transparent calc(100% - var(--hero-fade) * 0.08)
+  );
+}
+.hero-mask-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+/* tablet: foto 84cqh rata bawah, nama di 12% dan sedikit menutupi kepala dengan lubang wajah. Mulai
+   480 px (dulu 768 px) agar tablet kecil seperti 575x767 juga mendapat wajah besar (revisi pemilik
+   2026-11-17) */
+@media (min-width: 30rem) {
+  .hero {
+    --name-size: min(13cqw, 11cqh);
+    --name-top: 12cqh;
+    --face-x: calc(50% - 1.7cqh);
+    --face-y: 39.5cqh;
+    --face-rx: 12cqh;
+    --face-ry: 18.5cqh;
+    --face-dx: -1.7cqh;
+  }
+  .hero-name {
+    line-height: 0.86;
+  }
+  .hero-portrait {
+    top: auto;
+    bottom: 0;
+    width: auto;
+    height: 84cqh;
+    translate: -50% 0;
+  }
+  .hero-roles {
+    inset: auto 1rem calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+/* layar lebar, juga tablet/HP yang melebar (landscape): foto setinggi hero, nama lebih besar */
+@media (min-width: 64rem), (min-width: 30rem) and (min-aspect-ratio: 1/1) {
+  .hero-shell {
+    --hero-head: 58px;
+  }
+  .hero {
+    --face-x: calc(50% - 2cqh);
+    --face-y: 28cqh;
+    --face-rx: 19.3cqh;
+    --face-ry: 25cqh;
+    --face-gap: min(21cqh, 18cqw);
+    --face-dx: -2cqh;
+    --face-zone: 24cqh;
+  }
+  .hero-roles {
+    inset: auto clamp(1.5rem, 3.2cqw, 4rem) 5cqh;
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
+  }
+  .hero-name {
+    top: 16%;
+    font-size: min(13cqw, 21cqh);
+  }
+  .hero-portrait {
+    height: 100cqh;
+  }
+}
+
+.dark .hero-shell {
+  --hero-glow: rgb(255 255 255 / 0.18);
+  --hero-fade: 24%;
+  --hero-trail: rgb(255 255 255 / 0.1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) .hero-shell {
+    --hero-glow: rgb(255 255 255 / 0.18);
+    --hero-fade: 24%;
+    --hero-trail: rgb(255 255 255 / 0.1);
+  }
+}

@@ -29,7 +29,7 @@ export function markIntroSeen(frequency: IntroFrequency, now: number = Date.now(
 }
 
 // Atribut di <html> yang dipasang skrip di bawah sebelum halaman tampil. Selama atribut ada,
-// kartu pemberitahuan (sudah ada di HTML) langsung ditampilkan menutupi layar lewat CSS (globals.css),
+// kartu pemberitahuan (sudah ada di HTML) langsung ditampilkan menutupi layar lewat CSS (styles/site/intro-notice.css),
 // agar beranda tidak sempat terlihat sebelum kartu terbuka (permintaan pemilik 2026-10-19) dan
 // pengunjung tidak menunggu JavaScript untuk melihat isi (PERF-02). IntroNotice melepasnya tepat
 // sebelum kartu dibuka sebagai modal, atau bila kartu tidak dibuka.

@@ -4,7 +4,7 @@
 // tombol HTML tetap ada (tak terlihat) untuk sentuhan, keyboard, dan pembaca layar, dan posisinya
 // cukup diperbarui beberapa kali per detik.
 // Ukuran dan jarak diambil dari tata letak tombol HTML (diukur sekali), warna dari token tema, dan
-// keadaan (terpilih, kategori menonjol/redup, disorot) sama dengan aturan .globe-* di globals.css.
+// keadaan (terpilih, kategori menonjol/redup, disorot) sama dengan aturan .globe-* di styles/site/skill-globe.css.
 
 import { isCrossOrigin } from '../image-origin'
 

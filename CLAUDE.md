@@ -98,6 +98,7 @@ Frontend/        aplikasi Next.js (UI) + Dockerfile. SEMUA perintah pnpm dijalan
   src/app/api/       rute API (tipis: re-export dari Backend/api + konfigurasi segmen)
   src/components/    ui/, shared/, site/, admin/   src/features/  komponen per domain
   src/lib/           utilitas UI (utils, ui-sounds, csp, ...)   src/i18n/  konfigurasi next-intl
+  src/styles/        CSS per area (tokens, base, site/, admin/, shared/), dirangkai src/app/globals.css
   messages/          id.json, en.json     tests/unit/, e2e/
 Backend/         kode server, diimpor Frontend lewat alias @backend/* (tanpa package.json sendiri)
   features/          per domain: schema, queries, actions, public

@@ -1,0 +1,80 @@
+/* Gaya dasar elemen HTML (lapisan base) dan sampul pengganti project tanpa gambar. */
+
+@layer base {
+  html {
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-text-size-adjust: 100%;
+    /* HP: menu ikon menempel di bawah layar. Elemen yang digulir ke layar (fokus keyboard, tautan
+       #anchor) berhenti di atas menu, tidak tertutup olehnya (WCAG 2.4.11). */
+    scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-bottom: 0;
+    }
+  }
+  /* Desktop lebih rapat (permintaan pemilik 2026-10-01): ukuran dasar 87,5% (14 px bila browser
+     16 px), jadi semua teks, jarak, dan tombol berbasis rem ikut mengecil seragam. Persen, bukan px,
+     agar pengaturan ukuran huruf pengguna tetap dihormati. HP tetap 100%: teks terbaca dan isian
+     form tidak membuat iOS memperbesar layar. */
+  @media (min-width: 1024px) {
+    html {
+      font-size: 87.5%;
+    }
+  }
+
+  /* Judul: Oswald. h1 dan h2 huruf kapital (hanya tampilan, pembaca layar tetap membaca teks asli). */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+
+  h1,
+  h2 {
+    text-transform: uppercase;
+    letter-spacing: 0;
+  }
+
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* cincin fokus jelas untuk navigasi keyboard (DESIGN.md bagian 8) */
+  :focus-visible {
+    outline: 2px solid var(--note);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Sampul pengganti untuk project tanpa gambar. */
+.project-cover-fallback {
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklab, var(--border) 60%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--border) 60%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 32px 32px;
+}

@@ -34,7 +34,7 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
       data-sound-mix={JSON.stringify(settings.soundMix)}
       suppressHydrationWarning
     >
-      {/* admin-ui: seluruh panel admin memakai Inter biasa tanpa huruf kapital (globals.css, revisi 2026-11-11) */}
+      {/* admin-ui: seluruh panel admin memakai Inter biasa tanpa huruf kapital (styles/admin/panel.css) */}
       <body className="admin-ui bg-bg text-text">
         <a
           href="#main"

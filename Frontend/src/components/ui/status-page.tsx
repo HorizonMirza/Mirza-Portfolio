@@ -16,7 +16,7 @@ import type { CSSProperties, ReactNode } from 'react'
 
 // Halaman status untuk 11 kode HTTP (permintaan pemilik 2026-11-16), turunan desain "hantu" 404 yang
 // dipilih pemilik (dulu ghost-404-page): angka depan, ikon melayang di tengah, angka belakang, judul
-// Oswald huruf besar, satu kalimat, lalu tombol. Animasi CSS (globals.css .g404-*), tanpa JavaScript
+// Oswald huruf besar, satu kalimat, lalu tombol. Animasi CSS (styles/site/not-found.css .g404-*), tanpa JavaScript
 // klien; prefers-reduced-motion mematikan semua gerak. Warna dari token situs, ikut terang/gelap.
 // Teks dan tombol dari pemanggil, jadi dua bahasa dan bisa dipakai di situs publik maupun admin.
 export const STATUS_CODES = [200, 301, 400, 401, 403, 404, 418, 429, 500, 502, 503] as const

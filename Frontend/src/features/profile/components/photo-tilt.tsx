@@ -23,7 +23,7 @@ function reducedMotion() {
 // Nilai per gerakan ditulis langsung lewat requestAnimationFrame: `transform` ke elemen bertanda
 // data-tilt-target dan posisi/opacity kilau ke elemen data-tilt-glare itu sendiri, bukan lewat
 // variabel CSS di pembungkus yang diwariskan ke seluruh isi kartu (CLAUDE.md, audit 2026-11-02
-// PERF-04). Transisi tetap dari globals.css (.ab-pc, .pj-tilt-in). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
+// PERF-04). Transisi tetap dari styles/site/about.css (.ab-pc) dan projects.css (.pj-tilt-in). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
 // demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
 // Dipakai juga untuk gambar di daftar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan
 // kelas pembungkus sendiri; di sana tanpa suara (`sound={false}`, revisi pemilik 2026-10-09).

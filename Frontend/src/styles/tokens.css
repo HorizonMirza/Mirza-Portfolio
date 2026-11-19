@@ -1,0 +1,123 @@
+/* Token desain: warna terang/gelap, huruf, ukuran teks, kurva gerak. Dipakai Tailwind (@theme) dan CSS lain lewat var(). */
+
+/*
+ * Token desain. Sumber: Documentation/DESIGN.md bagian 2.
+ * Rasio kontras sudah dihitung di DESIGN.md. Ubah di sini saja, jangan menaruh warna acak di komponen.
+ */
+:root {
+  /* Hitam-putih (pilihan pemilik 2026-10-01). Biru Azure (--note) hanya untuk catatan kecil:
+     label, nomor bagian, tanggal, titik status, lampu menu, cincin fokus, grafik. */
+  --bg: #ffffff;
+  --surface: #f5f5f5;
+  --surface-2: #ebebeb;
+  --text: #0a0a0a;
+  --text-muted: #525252;
+  /* tombol utama dan tautan: hitam di tema terang, putih di tema gelap */
+  --primary: #0a0a0a;
+  --primary-fg: #ffffff;
+  /* --border hanya untuk pemisah dekoratif, elemen interaktif pakai --border-strong (>= 3:1) */
+  --border: #e5e5e5;
+  --border-strong: #8a8a8a;
+  --danger: #b42318;
+  --success: #0b7a3e;
+  /* Azure versi gelap untuk latar putih: 5,8:1 di putih, 5,3:1 di --surface */
+  --note: #1d5fd0;
+  /* kalender kontribusi GitHub (level 1-4, biru situs pilihan pemilik 2026-10-16, demo W1;
+     level 0 memakai --surface-2) */
+  --gh-1: #b9d2f8;
+  --gh-2: #6e9de8;
+  --gh-3: #2f6fd6;
+  --gh-4: #1b4c9c;
+
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0a0a0a;
+  --surface: #141414;
+  --surface-2: #1f1f1f;
+  --text: #f5f5f5;
+  --text-muted: #a3a3a3;
+  --primary: #f5f5f5;
+  --primary-fg: #0a0a0a;
+  --border: #2a2a2a;
+  --border-strong: #6b6b6b;
+  --danger: #ff8a80;
+  --success: #5fd394;
+  /* Azure terang untuk latar hitam: 7,5:1 di hitam, 7:1 di --surface */
+  --note: #4da3ff;
+  --gh-1: #10294a;
+  --gh-2: #184a8a;
+  --gh-3: #2f78d6;
+  --gh-4: #4da3ff;
+
+  color-scheme: dark;
+}
+
+/* Halaman tanpa next-themes (global-not-found) mengikuti preferensi sistem. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --surface-2: #1f1f1f;
+    --text: #f5f5f5;
+    --text-muted: #a3a3a3;
+    --primary: #f5f5f5;
+    --primary-fg: #0a0a0a;
+    --border: #2a2a2a;
+    --border-strong: #6b6b6b;
+    --danger: #ff8a80;
+    --success: #5fd394;
+    /* Azure terang untuk latar hitam: 7,5:1 di hitam, 7:1 di --surface */
+    --note: #4da3ff;
+    --gh-1: #10294a;
+    --gh-2: #184a8a;
+    --gh-3: #2f78d6;
+    --gh-4: #4da3ff;
+
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-fg: var(--primary-fg);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-note: var(--note);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-oswald), 'Arial Narrow', sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, 'SFMono-Regular', monospace;
+}
+
+@theme {
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* skala tipografi fluid (mobile -> desktop) */
+  /* judul memakai Oswald (condensed): ukuran dinaikkan sekitar 15-20% agar bobot visualnya setara */
+  --text-display: clamp(3rem, 1.9rem + 5vw, 5rem);
+  --text-display--line-height: 1;
+  --text-h1: clamp(2.3rem, 1.85rem + 2.3vw, 3.45rem);
+  --text-h1--line-height: 1.05;
+  --text-h2: clamp(1.75rem, 1.5rem + 1.15vw, 2.3rem);
+  --text-h2--line-height: 1.1;
+  --text-h3: clamp(1.125rem, 1.05rem + 0.4vw, 1.375rem);
+  --text-h3--line-height: 1.3;
+  --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-body--line-height: 1.65;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  /* pelan di awal dan akhir: sidebar admin menciut/melebar (revisi 2026-11-11) */
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}

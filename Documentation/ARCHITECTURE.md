@@ -100,10 +100,12 @@ Catatan:
 │   │   │   ├── [locale]/     # halaman publik (id, en)
 │   │   │   ├── admin/        # panel Super Admin (tanpa locale)
 │   │   │   ├── api/          # rute API tipis: re-export dari Backend/api + konfigurasi segmen
-│   │   │   └── global-not-found.tsx
+│   │   │   ├── global-not-found.tsx
+│   │   │   └── globals.css   # pintu masuk CSS: Tailwind + @import berkas di src/styles/
 │   │   ├── components/       # ui/ (gaya shadcn), site/, admin/, shared/
 │   │   ├── features/         # komponen per domain: <domain>/components/
 │   │   ├── lib/              # utilitas UI: utils, ui-sounds, scroll-idle, csp, chart-geometry, ...
+│   │   ├── styles/           # CSS per area: tokens.css, base.css, site/, admin/, shared/
 │   │   ├── i18n/             # konfigurasi next-intl (request, navigation)
 │   │   └── fonts/            # font self-host (OFL)
 │   ├── messages/             # id.json, en.json (teks UI bawaan)

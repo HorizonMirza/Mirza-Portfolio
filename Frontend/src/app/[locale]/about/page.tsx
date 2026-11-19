@@ -109,7 +109,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
           <h2 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
             {profile?.name ?? 'Muhammad Mirza'}
           </h2>
-          {/* tiap peran dipisah "|"; di HP peran tampil per baris tanpa garis pemisah (globals.css) */}
+          {/* tiap peran dipisah "|"; di HP peran tampil per baris tanpa garis pemisah (styles/site/about.css) */}
           <p className="ab-roles text-lg tracking-wide uppercase opacity-80">
             {roles.map((role, i) => (
               <Fragment key={i}>

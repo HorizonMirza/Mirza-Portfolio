@@ -33,7 +33,7 @@ export type IntroNoticeVersion = {
 function clearPending() {
   document.documentElement.removeAttribute(INTRO_PENDING_ATTR)
 }
-// sama dengan durasi animasi .intro[data-leaving] di globals.css
+// sama dengan durasi animasi .intro[data-leaving] di styles/site/intro-notice.css
 const LEAVE_MS = 320
 // sama dengan durasi animasi .intro[data-leaving='home'] (memudar dan buram)
 const HOME_LEAVE_MS = 450
@@ -78,7 +78,7 @@ export function IntroNotice({
       clearPending()
       return
     }
-    // Kartu sudah tampil sejak sebelum JavaScript (globals.css, html[data-intro]): buka tanpa animasi
+    // Kartu sudah tampil sejak sebelum JavaScript (styles/site/intro-notice.css, html[data-intro]): buka tanpa animasi
     // masuk agar tidak berkedip (PERF-02)
     if (document.documentElement.hasAttribute(INTRO_PENDING_ATTR)) dialog.dataset.instant = ''
     clearPending()

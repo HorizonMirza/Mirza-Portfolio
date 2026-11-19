@@ -1,0 +1,322 @@
+/* Halaman Contact (form, tombol kirim, kartu berbalik) dan kartu kontak di footer. */
+
+/* Form kontak (revisi 2026-10-03): kilau berjalan mengelilingi kotak seperti di login admin,
+   tetapi warnanya ikut tema (gelap di tema terang, terang di tema gelap). Bingkai tipis bermask
+   di atas border kolom sehingga mengikuti sudut kotak; diam pada reduced-motion. */
+.field-shine {
+  position: relative;
+}
+/* textarea bawaan inline-block menyisakan celah di bawah kotak; block agar bingkai pas */
+.field-shine > input,
+.field-shine > textarea {
+  display: block;
+}
+.field-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 240deg,
+    color-mix(in srgb, var(--text) 80%, transparent) 300deg,
+    transparent 345deg 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: login-shine 4s steps(120) var(--shine-delay, 0s) infinite;
+}
+.field-shine[data-offscreen]::after,
+.send-btn[data-offscreen]::before {
+  animation-play-state: paused;
+}
+.field-shine:focus-within::after {
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 220deg,
+    var(--text) 300deg,
+    transparent 345deg 360deg
+  );
+}
+.field-shine.field-shine-bad {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 14%, transparent);
+}
+.field-shine.field-shine-bad::after {
+  background: conic-gradient(
+    from var(--shine-angle),
+    transparent 0deg 240deg,
+    var(--danger) 300deg,
+    transparent 345deg 360deg
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-shine::after {
+    animation: none;
+  }
+}
+
+/* Tombol kirim form kontak (revisi 2026-10-03, pilihan pemilik demo nomor 5): bergaris dengan
+   kilau berputar seperti kolom, warna ikut tema. Menyusut jadi lingkaran saat mengirim, lalu
+   hijau terang mengkilap saat terkirim. */
+.send-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 3rem;
+  width: auto;
+  padding-inline: 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  background: transparent;
+  overflow: hidden;
+  cursor: pointer;
+  interpolate-size: allow-keywords;
+  transition:
+    width 0.35s ease,
+    padding 0.35s ease,
+    background-color 0.25s,
+    color 0.25s,
+    box-shadow 0.3s;
+}
+.send-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--shine-angle),
+    color-mix(in srgb, var(--text) 25%, transparent) 0deg 250deg,
+    var(--text) 320deg,
+    color-mix(in srgb, var(--text) 25%, transparent) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: login-shine 3s steps(90) infinite;
+}
+.send-btn[data-state='idle']:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+.send-btn:disabled {
+  cursor: default;
+}
+.send-btn[data-state='pending'],
+.send-btn[data-state='sent'] {
+  width: 3rem;
+  padding-inline: 0;
+}
+.send-btn[data-state='pending']::before,
+.send-btn[data-state='sent']::before {
+  animation-duration: 0.7s;
+}
+.send-btn-spin {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: send-spin 0.7s linear infinite;
+}
+@keyframes send-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+/* Setelah terkirim: "Kartu berbalik" (pilihan pemilik 2026-10-20, demo 6, menggantikan susut + buka
+   dari revisi 2026-10-03 yang terasa kasar). Form dan tiket menumpuk di sel grid yang sama; form
+   berputar ke belakang dan tiket (sisi belakang kartu) berputar ke depan dalam 760 ms. Setelah itu
+   tinggi sisi form dilipat ke 0 dalam 360 ms, sehingga kotak menyusut halus ke tinggi tiket tanpa
+   melompat. Murni CSS agar urutannya sama dengan atau tanpa JavaScript. */
+@media (min-width: 1024px) {
+  .contact-col:has(.contact-sent) {
+    width: fit-content;
+    max-width: 100%;
+  }
+  .contact-sent {
+    contain: inline-size;
+  }
+  .contact-col .contact-ticket {
+    max-width: none;
+  }
+}
+.contact-sent {
+  display: grid;
+  perspective: 1400px;
+}
+/* saat kotak menyusut ke tinggi tiket, browser tidak boleh menggeser halaman untuk menjaga posisi
+   footer (scroll anchoring); tanpa ini tiket terlihat melompat turun */
+html:has(.contact-sent) {
+  overflow-anchor: none;
+}
+.contact-sent > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+  backface-visibility: hidden;
+}
+.contact-sent-form {
+  display: grid;
+  grid-template-rows: 1fr;
+  align-self: start;
+  animation:
+    contact-flip-out 760ms cubic-bezier(0.65, 0, 0.35, 1) both,
+    contact-collapse 360ms var(--ease-out-soft) 760ms forwards;
+}
+.contact-sent-form > div {
+  overflow: hidden;
+}
+@keyframes contact-flip-out {
+  to {
+    transform: rotateY(-180deg);
+  }
+}
+@keyframes contact-collapse {
+  to {
+    grid-template-rows: 0fr;
+    visibility: hidden;
+  }
+}
+@keyframes contact-flip-in {
+  from {
+    transform: rotateY(180deg);
+  }
+}
+.contact-ticket {
+  position: relative;
+  max-width: 36rem;
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  background: var(--surface);
+  padding: 1.125rem 1.25rem 0.75rem;
+  align-self: start;
+  animation: contact-flip-in 760ms cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+/* lekukan tiket di kedua sisi, sejajar garis putus-putus */
+.contact-ticket::before,
+.contact-ticket::after {
+  content: '';
+  position: absolute;
+  top: 3.6rem;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 9999px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.contact-ticket::before {
+  left: -0.6rem;
+}
+.contact-ticket::after {
+  right: -0.6rem;
+}
+.contact-ticket-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.875rem;
+  margin-bottom: 0.875rem;
+  border-bottom: 1.5px dashed var(--border);
+}
+.contact-ticket-rows {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.375rem 1rem;
+  margin: 0 0 0.25rem;
+  font-size: 0.9375rem;
+}
+.contact-ticket-rows > div {
+  display: contents;
+}
+.contact-ticket-rows dt {
+  padding-top: 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.contact-ticket-rows dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: reduce) {
+  .send-btn,
+  .send-btn::before,
+  .send-btn::after,
+  .send-btn-spin {
+    animation: none;
+    transition: none;
+  }
+  .contact-sent-form {
+    display: none;
+  }
+  .contact-ticket {
+    animation: none;
+  }
+}
+
+/* Kartu kontak footer (components/ui/contact-cards.tsx, permintaan pemilik 2026-10-08): kartu masuk
+   dan keluar searah gerakan kursor (--cc-dir), dan kotak kontribusi GitHub memakai warna kalender
+   beranda. */
+@keyframes cc-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--cc-dir, 1) * 64px)) scale(0.97);
+    filter: blur(6px);
+  }
+}
+@keyframes cc-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--cc-dir, 1) * -64px)) scale(0.97);
+    filter: blur(6px);
+  }
+}
+.cc-in {
+  animation: cc-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) backwards;
+}
+.cc-out {
+  animation: cc-out 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cc-in,
+  .cc-out {
+    animation: none;
+  }
+}
+.cc-day {
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+.cc-day[data-level='1'] {
+  background: var(--gh-1);
+}
+.cc-day[data-level='2'] {
+  background: var(--gh-2);
+}
+.cc-day[data-level='3'] {
+  background: var(--gh-3);
+}
+.cc-day[data-level='4'] {
+  background: var(--gh-4);
+}

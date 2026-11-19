@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 // 404 untuk URL yang tidak cocok dengan rute mana pun (di luar /id dan /en). Memakai bahasa default
 // situs, Indonesia (revisi pemilik 2026-10-18: tidak lagi dua bahasa sekaligus).
-// Halaman ini tidak melewati layout, jadi tema mengikuti preferensi sistem (lihat globals.css). Teks
+// Halaman ini tidak melewati layout, jadi tema mengikuti preferensi sistem (lihat styles/tokens.css). Teks
 // diambil lewat next-intl dengan locale eksplisit, sehingga suntingan admin (Halaman lain → Halaman
 // 404) ikut berlaku seperti di 404 dalam situs (audit 2026-10-31, GAP-07).
 export default async function GlobalNotFound() {

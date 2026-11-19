@@ -11,7 +11,7 @@ type Box = { width: number; height: number; scale: number }
 // di perangkat ini), memakai markup dan kelas situs yang sama, lalu diperkecil (transform) agar pas
 // selebar panel. Media query tetap membaca layar sungguhan dan container query membaca isi bingkai,
 // jadi hasilnya sama persis dengan situs, hanya lebih kecil. Huruf situs (Oswald) dipulihkan lewat
-// .site-ui (globals.css).
+// .site-ui (styles/admin/panel.css).
 export function SiteFrame({
   children,
   className,

@@ -16,12 +16,12 @@ import { playProjectSpotlightSound } from '@/lib/ui-sounds'
 
 // Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo efek gulir nomor 7, tanpa cahaya
 // biru): baris yang paling dekat dengan tengah layar diberi data-active dan tampil penuh, baris lain
-// hampir gelap dan sedikit mengecil (globals.css .pj-spot). Logika sama dengan timeline Experience.
+// hampir gelap dan sedikit mengecil (styles/site/projects.css .pj-spot). Logika sama dengan timeline Experience.
 // Saat baris aktif berganti karena digulir, berbunyi "blup" gelembung (pilihan pemilik 2026-10-09,
 // demo suara A7, lib/ui-sounds.ts); browser baru mengizinkan suara setelah pengunjung menekan atau
 // menyentuh halaman. Isi daftar tetap dirender server, sudah dengan keadaan awal (baris pertama
 // menyala, sisanya redup) agar baris di bawah tidak sempat menyala saat halaman dibuka (revisi
-// pemilik 2026-10-10); tanpa JavaScript semua baris tampil penuh (globals.css @media scripting).
+// pemilik 2026-10-10); tanpa JavaScript semua baris tampil penuh (styles/site/projects.css, @media scripting).
 export function ProjectSpotlight({
   className,
   children,

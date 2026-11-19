@@ -80,9 +80,9 @@ Jalankan `pnpm lint && pnpm format:check && pnpm typecheck && pnpm test && pnpm 
 
 ## Resep F — Menghapus fitur atau kode tak terpakai
 
-1. **Pastikan benar-benar mati.** Cari ke seluruh repo, termasuk impor dinamis, string path, `messages/*.json`, `Backend/features/site-text/catalog.ts`, `Backend/lib/admin-i18n-en.ts`, CSS (`globals.css`, token `@theme`), konfigurasi, workflow CI, dan dokumen. `pnpm exec tsc --noEmit --noUnusedLocals --noUnusedParameters` menemukan variabel lokal mati.
+1. **Pastikan benar-benar mati.** Cari ke seluruh repo, termasuk impor dinamis, string path, `messages/*.json`, `Backend/features/site-text/catalog.ts`, `Backend/lib/admin-i18n-en.ts`, CSS (`src/styles/`, token `@theme` di `tokens.css`), konfigurasi, workflow CI, dan dokumen. `pnpm exec tsc --noEmit --noUnusedLocals --noUnusedParameters` menemukan variabel lokal mati.
 2. **Jangan hapus** berkas konvensi Next (`page`, `layout`, `route`, `error`, `not-found`, `forbidden`, `unauthorized`, `global-not-found`, `opengraph-image`, `proxy.ts`), migrasi lama, lisensi font, dan script yang dipanggil `package.json`, CI, atau Vercel.
-3. **Hapus semuanya sekaligus:** kode, tes, kunci terjemahan (ID, EN, kamus admin), token CSS, aset, variabel environment di `.env.example`, dan baris di dokumen keadaan sekarang (`PRD.md`, `ARCHITECTURE.md`). Log di `DESIGN.md` dan `TODO.md` tidak dihapus, hanya ditambah catatan baru.
+3. **Hapus semuanya sekaligus:** kode, tes, kunci terjemahan (ID, EN, kamus admin), token CSS, aset, variabel environment di `.env.example`, dan baris di dokumen keadaan sekarang (`PRD.md`, `ARCHITECTURE.md`, `DESIGN.md`). Log di `TODO.md` tidak dihapus, hanya ditambah catatan baru.
 4. **Kolom atau tabel database** dihapus lewat migrasi baru (`DROP COLUMN`/`DROP TABLE`) hanya dengan persetujuan pemilik, karena push ke `main` menjalankannya di production dan tidak bisa dibatalkan. Pastikan `prisma migrate diff --from-config-datasource --to-schema ../Database/schema.prisma --exit-code` bersih.
 5. **Dependency** tidak dihapus langsung: daftarkan dulu dan minta persetujuan. Periksa juga pemakaian tidak langsung (peer dependency, kode hasil generate, hook Git, `overrides`).
 6. Jalankan Resep E, lalu commit per tujuan.

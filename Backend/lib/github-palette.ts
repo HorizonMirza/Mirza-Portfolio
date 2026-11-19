@@ -4,7 +4,7 @@
 /** Empat warna per tema, dari aktivitas paling ringan ke paling berat. */
 export type Palette = { light: string[]; dark: string[] }
 
-// Sama dengan token --gh-1 sampai --gh-4 di globals.css (canvas tidak bisa membaca var()).
+// Sama dengan token --gh-1 sampai --gh-4 di Frontend/src/styles/tokens.css (canvas tidak bisa membaca var()).
 // Biru situs, menggantikan hijau khas GitHub (pilihan pemilik 2026-10-16, demo W1); tingkat
 // terkuat sama dengan --note sehingga angka statistik memakai warna aksen situs.
 export const GITHUB_PALETTE: Palette = {

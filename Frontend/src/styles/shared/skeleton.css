@@ -1,0 +1,103 @@
+/* Skeleton shimmer saat memuat (situs dan admin), termasuk kanvas dan tombol Simpan. */
+
+/* Skeleton shimmer (permintaan pemilik 2026-11-10): blok di loading.tsx
+   selama halaman berikutnya dimuat. Kilau bergerak lewat transform pada ::after (dikomposisi GPU),
+   bukan background-position, agar tidak menggambar ulang blok tiap bingkai. Reduced motion: blok
+   diam tanpa kilau. */
+/* Di lapisan components agar kelas Tailwind pada blok (absolute, rounded-full, rounded-none,
+   hidden) tetap berlaku; tanpa lapisan, aturan ini selalu menang atas utilitas. */
+@layer components {
+  .skeleton {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--text) 8%, var(--bg));
+  }
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--text) 9%, transparent),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  }
+}
+@keyframes skeleton-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    display: none;
+  }
+}
+
+/* Skeleton shimmer untuk kanvas (grafik kontribusi GitHub dan kartu ID): selama kanvas belum
+   menggambar bingkai pertama, blok abu-abu berkilau menutupi area dan tidak menghalangi sentuhan.
+   Komponen memasang data-ready begitu gambar pertama selesai (atau setelah 4 detik sebagai pengaman).
+   Kilau berjalan lewat transform (compositor), bukan background-position, supaya tidak memperlambat
+   loop kanvas di mesin yang sibuk. Diam saat prefers-reduced-motion. */
+.contrib-stage:not([data-ready])::before,
+.lanyard-box:not([data-ready])::before,
+.contrib-stage:not([data-ready])::after,
+.lanyard-box:not([data-ready])::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 8px;
+}
+.contrib-stage:not([data-ready])::before,
+.lanyard-box:not([data-ready])::before {
+  z-index: 5;
+  background: color-mix(in srgb, var(--text) 8%, var(--bg));
+}
+.contrib-stage:not([data-ready])::after,
+.lanyard-box:not([data-ready])::after {
+  z-index: 6;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--text) 9%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
+}
+/* kotak kartu ID tidak memotong isinya; selama belum siap kilau dipotong di tepinya */
+.lanyard-box:not([data-ready]) {
+  clip-path: inset(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .contrib-stage:not([data-ready])::after,
+  .lanyard-box:not([data-ready])::after {
+    display: none;
+  }
+}
+
+/* Tombol Simpan yang sedang menyimpan: kilau berjalan di atas tombol (kelas dipasang SaveBar). */
+.save-bar[data-pending]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--bg) 45%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .save-bar[data-pending]::after {
+    display: none;
+  }
+}

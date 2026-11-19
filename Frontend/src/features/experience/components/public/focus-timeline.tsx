@@ -5,7 +5,7 @@ import { type ReactNode, useEffect, useRef } from 'react'
 import { playTimelineStepSound } from '@/lib/ui-sounds'
 
 // Timeline "fokus aktif" (pilihan pemilik 2026-10-03, demo nomor 9): entri yang sedang dibaca
-// (lihat "garis baca" di update()) diberi data-active, entri lain meredup (gaya di globals.css
+// (lihat "garis baca" di update()) diberi data-active, entri lain meredup (gaya di styles/site/experience.css
 // .xp-tl). Isi daftar tetap dirender server; tanpa JavaScript semua entri tampil penuh karena
 // data-focus tidak dipasang.
 // Saat entri aktif berganti karena digulir, berbunyi bip pendek (lib/ui-sounds.ts). Browser baru
@@ -43,7 +43,7 @@ export function FocusTimeline({ label, children }: { label: string; children: Re
       }
       if (fromScroll && best && current && best !== current) playTimelineStepSound()
       current = best
-      // posisi tengah logo entri aktif, untuk cahaya di garis (globals.css .xp-tl::after)
+      // posisi tengah logo entri aktif, untuk cahaya di garis (styles/site/experience.css .xp-tl::after)
       const node = best?.querySelector<HTMLElement>('.xp-node')
       if (node) {
         const top = ol!.getBoundingClientRect().top

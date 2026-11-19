@@ -11,7 +11,7 @@ import { playThemeSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 
 const subscribe = () => () => {}
-// sama dengan durasi transisi .theme-icon di globals.css
+// sama dengan durasi transisi .theme-icon di styles/site/theme-toggle.css
 const ICON_ANIMATION_MS = 750
 // batas tunggu callback View Transition sebelum tema diganti langsung (lihat toggle)
 const CALLBACK_GRACE_MS = 400
@@ -27,7 +27,7 @@ const SUN_RAYS = [
   'M18.7656 6.40248L20.1856 4.98248',
 ]
 
-// Ikon matahari/bulan dari komponen AnimatedThemeToggle, digerakkan CSS (globals.css .theme-icon):
+// Ikon matahari/bulan dari komponen AnimatedThemeToggle, digerakkan CSS (styles/site/theme-toggle.css):
 // garis digambar ulang (stroke-dashoffset) sambil membesar/mengecil. Keadaan dibaca dari kelas
 // .dark di <html>, jadi benar sejak HTML pertama tanpa hydration mismatch.
 function SolarSwitch() {

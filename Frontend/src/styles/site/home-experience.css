@@ -1,0 +1,96 @@
+/* Bagian Pengalaman di beranda: akordeon dan logo instansi. */
+
+/* Pengalaman di beranda: akordion <details> (revisi pemilik 2026-10-16, demo E3). Baris berisi
+   logo, peran, instansi, dan periode (tanpa ikon +/×, tanpa garis bawah saat disorot); isi
+   deskripsi terbuka di bawahnya. Animasi tinggi saat membuka dan menutup dikerjakan
+   ExperienceAccordion (Web Animations) agar sama di semua browser, termasuk Safari HP. */
+.home-xp {
+  border-top: 1px solid var(--border);
+}
+.home-xp:last-child {
+  border-bottom: 1px solid var(--border);
+}
+.home-xp summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.125rem 0.25rem;
+  cursor: pointer;
+  list-style: none;
+}
+.home-xp summary::-webkit-details-marker {
+  display: none;
+}
+.home-xp-logo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  overflow: hidden;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+/* bingkai "bayangan lembut" (pilihan pemilik 2026-10-16, demo B5): bayangan halus di bawah dan
+   cincin warna latar sehingga logo tampak sedikit terangkat. Hanya di mode terang; di mode gelap
+   efeknya dihapus (revisi pemilik 2026-10-16) */
+:root:not(.dark) .home-xp-logo {
+  box-shadow:
+    0 6px 16px -6px rgb(0 0 0 / 0.55),
+    0 0 0 4px var(--surface);
+}
+/* logo berlatar putih agar logo berwarna gelap maupun terang terbaca; inisial tetap di latar abu */
+.home-xp-logo:has(img) {
+  background: #fff;
+}
+.home-xp-head {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+.home-xp-role {
+  /* huruf peran dan instansi sama dengan halaman Pengalaman (revisi pemilik 2026-10-16): peran
+     Oswald kapital ukuran h3, instansi Inter warna teks */
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: var(--text-h3--line-height);
+  text-transform: uppercase;
+}
+.home-xp-org {
+  color: var(--text);
+}
+.home-xp-when {
+  /* huruf sama dengan tanggal di halaman Pengalaman (revisi pemilik 2026-10-16) */
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.home-xp-when-side {
+  display: none;
+}
+.home-xp-body {
+  /* detail dimulai sejajar judul peran, bukan dari tepi logo (revisi pemilik 2026-10-16):
+     0,25rem jarak + 2,75rem logo + 1rem celah */
+  padding: 0 0.25rem 1.25rem 4rem;
+}
+@media (min-width: 40rem) {
+  .home-xp summary {
+    gap: 1.25rem;
+  }
+  .home-xp-when-inline {
+    display: none;
+  }
+  .home-xp-when-side {
+    display: block;
+  }
+  .home-xp-body {
+    padding-left: 4.25rem;
+  }
+}

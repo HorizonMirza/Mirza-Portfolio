@@ -7,7 +7,7 @@ import type { ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 
 // Panel geser dari samping (menu admin di HP). Dibangun di atas Radix Dialog. Masuk dan keluar dengan
-// animasi CSS halus (.sheet-panel/.sheet-overlay di globals.css, revisi pemilik 2026-11-17); Radix
+// animasi CSS halus (.sheet-panel/.sheet-overlay di styles/admin/panel.css, revisi pemilik 2026-11-17); Radix
 // menunggu animasi keluar selesai sebelum melepas panel.
 export const Sheet = DialogPrimitive.Root
 export const SheetTitle = DialogPrimitive.Title

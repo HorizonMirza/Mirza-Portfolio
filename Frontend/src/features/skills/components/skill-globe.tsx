@@ -287,7 +287,7 @@ export function SkillGlobe({
       canvas.width = Math.round(width * dpr)
       canvas.height = Math.round(height * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      // sama dengan nilai awal --r di globals.css (.globe-stage)
+      // sama dengan nilai awal --r di styles/site/skill-globe.css (.globe-stage)
       const wide = window.matchMedia('(min-width: 1024px)').matches
       radius = wide
         ? Math.min(width * 0.4, height * 0.42, 280)
@@ -396,7 +396,7 @@ export function SkillGlobe({
         // Tiap bingkai: transform ditulis langsung (bukan lewat --x/--y/--s di tombol) dan --o hanya di
         // lingkaran logo. Variabel CSS di tombol diwariskan ke seluruh isinya sehingga setiap bingkai
         // menghitung ulang gaya 31 logo beserta isinya (diukur 2026-10-20: ±25 ms per bingkai di HP
-        // dengan CPU 4x lebih lambat). Nilai awal dari server tetap lewat variabel (globals.css).
+        // dengan CPU 4x lebih lambat). Nilai awal dari server tetap lewat variabel (styles/site/skill-globe.css).
         const scale = Number(style['--s'])
         const dx = Number(style['--x']) * radius
         const dy = Number(style['--y']) * radius
