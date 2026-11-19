@@ -1,3 +1,6 @@
+// Konfigurasi Next.js: akar repo untuk Turbopack, next-intl, gambar Cloudinary, header keamanan dan
+// CSP, serta output standalone untuk image Docker.
+
 import path from 'node:path'
 
 import type { NextConfig } from 'next'

@@ -1,3 +1,6 @@
+# Pengaturan pnpm: paket yang boleh menjalankan skrip install, versi paksa untuk dependency yang
+# rentan, dan advisory yang sengaja diabaikan oleh pnpm audit.
+
 onlyBuiltDependencies:
   - '@prisma/engines'
   - esbuild
@@ -29,7 +32,7 @@ overrides:
 # braces lewat eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch
 # (GHSA-vfj7-8cjw-p6xm, DoS pola glob bersarang), dan picomatch lewat vite (Vitest) dan
 # glob > micromatch (GHSA-fc5q-39xc-vjpf, ReDoS pada extglob berulang; versi terbaru 4.0.7 masih
-# rentan; ditambahkan 2026-11-18 atas persetujuan pemilik). Hanya dipakai alat lint dan tes dengan
+# rentan; diabaikan atas persetujuan pemilik). Hanya dipakai alat lint dan tes dengan
 # pola dari repo sendiri, tidak ikut ke production dan tidak menerima input pengguna. Hapus bila
 # sudah ada versi aman (cek: pnpm audit).
 auditConfig:

@@ -1,3 +1,6 @@
+// Konfigurasi Prisma CLI: skema dan migrasi di Database/, seed di Backend/scripts, dan URL koneksi
+// migrasi dari environment.
+
 import { config } from 'dotenv'
 import { defineConfig } from 'prisma/config'
 

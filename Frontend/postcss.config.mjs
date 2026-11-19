@@ -1,3 +1,5 @@
+// PostCSS hanya untuk Tailwind CSS 4.
+
 const config = {
   plugins: {
     '@tailwindcss/postcss': {},

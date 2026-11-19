@@ -1,3 +1,6 @@
+// Konfigurasi Playwright untuk tes E2E + axe: server next start di port 3100, proyek per browser, dan
+// login admin sekali lewat proyek setup.
+
 import { defineConfig, devices } from '@playwright/test'
 
 const PORT = Number(process.env.E2E_PORT ?? 3100)

@@ -25,8 +25,8 @@ Every module comes in Indonesian and English, dark by default with a light theme
 
 `/admin` is a single owner account (email and password).
 
-- **Edit in place:** each module is edited directly on a live preview of the public page, in both languages (texts, hero photos, profile, projects, skills, experience, education, footer, navbar)
-- **Uploads:** photos, logos, and the CV through Cloudinary, with an in-browser crop dialog
+- **Edit in place:** each module is edited directly on a live preview of the public page, in both languages (texts, hero roles, profile, projects, skills, experience, education, footer, navbar)
+- **Uploads:** photos and logos through Cloudinary, with an in-browser crop dialog; the CV is a link
 - **Inbox and dashboard:** contact messages, a visitor chart (hand-drawn SVG, no chart library), and CV downloads
 - **Settings and account:** site options, password, name, and email, plus the login history
 - **Safe by default:** server-side Zod validation, `SUPER_ADMIN` role check, and an audit log on every action
