@@ -1,8 +1,7 @@
 'use client'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ExternalLink, ImagePlus, Plus, Trash2 } from 'lucide-react'
-import Image from 'next/image'
+import { ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition } from 'react'
@@ -22,17 +21,13 @@ import {
   SaveBar,
   useEditLang,
 } from '@/components/admin/live-edit'
-import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { uploadAsset } from '@/features/assets/upload-client'
 import type { AssetView } from '@backend/features/assets/asset-view'
 import { CLIENT_ICON_PATHS } from '@/features/skills/client-icon-paths'
 import type { SkillOptionGroup } from '@backend/features/skills/queries'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 import { slugify } from '@backend/lib/validation'
-
-import { imageRatio } from '../browser-address'
 
 import { saveProject } from '@backend/features/projects/actions'
 import {
@@ -41,16 +36,11 @@ import {
   type ProjectValues,
 } from '@backend/features/projects/schema'
 
+import { type ImageTarget, ProjectGalleryEdit, type StageItem } from './project-gallery-edit'
+import { ProjectStackPick } from './project-stack-pick'
+
 // gambar yang dipilih untuk project baru dan baru diunggah setelah project tersimpan
 type PendingImage = { blob: Blob; name: string; preview: string }
-// satu foto di galeri: gambar tersimpan (assetId) atau gambar baru yang belum diunggah
-type StageItem = {
-  key: string
-  url: string
-  width: number | null
-  height: number | null
-  assetId?: string
-}
 
 type ButtonTexts = Record<Lang, { demo: string; repo: string; back: string; stack: string }>
 
@@ -185,14 +175,9 @@ export function ProjectLive({
     : pendingImages.map((p) => ({ key: p.preview, url: p.preview, width: null, height: null }))
   const hasCover = items.length > 0 && (projectId ? Boolean(cover) : true)
   const current = Math.min(active, Math.max(0, items.length - 1))
-  const shown = items[current] ?? null
-  const shownIsCover = hasCover && current === 0
-  const galleryNumber = (i: number) => i - (hasCover ? 1 : 0) + 1
-  const slotLabel = (i: number) =>
-    hasCover && i === 0 ? t('Sampul') : t('gambar galeri {n}', { n: galleryNumber(i) })
 
   // memilih gambar: project tersimpan langsung diunggah, project baru ditahan sampai tersimpan
-  function pickImage(target: 'project-cover' | 'project-gallery', replaceCover = false) {
+  function pickImage(target: ImageTarget, replaceCover = false) {
     if (projectId) {
       picker.pick(target, projectId)
       return
@@ -308,163 +293,28 @@ export function ProjectLive({
               </header>
             </div>
 
-            {/* galeri seperti di situs: bingkai jendela browser, foto besar, deretan gambar kecil */}
-            <div>
-              <div className="pj-browser">
-                <div className="pj-browser-bar">
-                  <span className="pj-browser-dots" aria-hidden="true">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  {/* alamat halaman project: bagian akhirnya (slug) diketik di sini seperti kolom alamat */}
-                  {/* di bilah sempit slug turun ke baris berikutnya utuh, alamat tidak dipatah */}
-                  <span className="pj-browser-url admin-tight flex flex-wrap items-center">
-                    <span aria-hidden="true" className="whitespace-nowrap">
-                      {host}/projects/
-                    </span>
-                    <InlineInput
-                      wrap
-                      label={t('Slug')}
-                      {...register('slug')}
-                      placeholder="nama-project"
-                      size={Math.max(12, (v.slug || '').length + 1)}
-                      invalid={Boolean(err('slug'))}
-                      className="text-text"
-                    />
-                  </span>
-                </div>
-                <div className="group/cover relative">
-                  {shown ? (
-                    <div className="pd-stage" style={{ aspectRatio: imageRatio(items[0] ?? null) }}>
-                      {shown.assetId ? (
-                        <Image
-                          key={shown.key}
-                          placeholder={SHIMMER_PLACEHOLDER}
-                          src={shown.url}
-                          alt=""
-                          fill
-                          sizes="(min-width: 1024px) 1100px, 90vw"
-                          className="object-contain"
-                        />
-                      ) : (
-                        // gambar yang baru dipilih (project baru): alamat sementara dari berkas
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          key={shown.key}
-                          src={shown.url}
-                          alt=""
-                          className="absolute inset-0 size-full object-contain"
-                        />
-                      )}
-                      {/* garis putus-putus 6 px di dalam tepi foto, sama untuk sampul dan gambar galeri;
-                          sampul ditekan untuk diganti (membuka pemilih berkas) */}
-                      {shownIsCover ? (
-                        <button
-                          type="button"
-                          onClick={() => pickImage('project-cover', true)}
-                          className="admin-editable absolute inset-1.5 cursor-pointer rounded-none [--editable-offset:0px] focus-visible:outline-2 focus-visible:outline-current"
-                        >
-                          <span className="sr-only">{t('Ganti Sampul')}</span>
-                        </button>
-                      ) : (
-                        <div
-                          aria-hidden="true"
-                          className="admin-editable pointer-events-none absolute inset-1.5 rounded-none [--editable-offset:0px]"
-                        />
-                      )}
-                    </div>
-                  ) : picker.busy ? (
-                    <span
-                      aria-hidden="true"
-                      className="skeleton block aspect-video w-full rounded-none"
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => pickImage('project-cover')}
-                      className="admin-editable relative block aspect-video w-full cursor-pointer bg-surface-2 outline-offset-[-6px] [--editable-offset:-6px] focus-visible:outline-2 focus-visible:outline-current"
-                    >
-                      <span className="flex size-full flex-col items-center justify-center gap-2 text-sm text-muted">
-                        <ImagePlus className="size-6" aria-hidden="true" />
-                        {t('Sampul')}
-                      </span>
-                    </button>
-                  )}
-                  {shown ? (
-                    <span className="absolute top-3 right-3 rounded-md bg-bg/80">
-                      {shown.assetId ? (
-                        <RemoveAssetButton
-                          assetId={shown.assetId}
-                          label={slotLabel(current)}
-                          onDone={() => router.refresh()}
-                        />
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => removePending(current)}
-                          aria-label={t('Hapus {item}', { item: slotLabel(current) })}
-                          className="inline-flex size-8 items-center justify-center rounded-md text-muted hover:text-danger"
-                        >
-                          <Trash2 className="size-4" aria-hidden="true" />
-                        </button>
-                      )}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              <div className="pd-thumbs">
-                {items.map((img, i) => (
-                  <button
-                    key={img.key}
-                    type="button"
-                    aria-label={slotLabel(i)}
-                    aria-pressed={i === current}
-                    onClick={() => setActive(i)}
-                  >
-                    {img.assetId ? (
-                      <Image
-                        placeholder={SHIMMER_PLACEHOLDER}
-                        src={img.url}
-                        alt=""
-                        fill
-                        sizes="76px"
-                        className="object-cover object-top"
-                      />
-                    ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={img.url}
-                        alt=""
-                        className="absolute inset-0 size-full object-cover object-top"
-                      />
-                    )}
-                  </button>
-                ))}
-                {/* gambar yang sedang diunggah */}
-                {picker.busy ? (
-                  <span
-                    aria-hidden="true"
-                    className="skeleton shrink-0 rounded-lg"
-                    style={{ flex: '0 1 4.75rem', minWidth: '2.75rem', aspectRatio: '16 / 10' }}
-                  />
-                ) : null}
-                {/* + menambah gambar; tanpa sampul, gambar pertama menjadi sampul seperti di situs */}
-                <button
-                  type="button"
-                  className="pd-add admin-editable"
-                  onClick={() => pickImage(hasCover ? 'project-gallery' : 'project-cover')}
-                >
-                  <Plus className="size-5" aria-hidden="true" />
-                  <span className="sr-only">{hasCover ? t('Tambah ke Galeri') : t('Sampul')}</span>
-                </button>
-              </div>
-              {items.length > 1 ? (
-                <p className="mt-3 text-center font-display text-base font-medium tracking-wide text-muted">
-                  {current + 1} / {items.length}
-                </p>
-              ) : null}
-            </div>
+            <ProjectGalleryEdit
+              items={items}
+              current={current}
+              hasCover={hasCover}
+              busy={picker.busy}
+              host={host}
+              slugField={
+                <InlineInput
+                  wrap
+                  label={t('Slug')}
+                  {...register('slug')}
+                  placeholder="nama-project"
+                  size={Math.max(12, (v.slug || '').length + 1)}
+                  invalid={Boolean(err('slug'))}
+                  className="text-text"
+                />
+              }
+              onSelect={setActive}
+              onPick={pickImage}
+              onRemovePending={removePending}
+              onRefresh={() => router.refresh()}
+            />
 
             {/* Ringkasan tampil di daftar project dan diketik di sana; di sini hanya untuk project
                 baru karena wajib diisi sebelum bisa dibuat. */}
@@ -480,59 +330,13 @@ export function ProjectLive({
               />
             )}
 
-            {/* teknologi project: dipilih dari skill yang dimiliki, tampil seperti daftar Skill teknis */}
-            <div className="pj-pick admin-tight flex flex-col" role="group" aria-label={tx.stack}>
-              {skillGroups.length === 0 ? (
-                <p className="text-sm text-muted">
-                  {t('Belum ada skill. Tambahkan di menu Skill.')}
-                </p>
-              ) : (
-                skillGroups.map((group) => (
-                  <section
-                    key={group.id}
-                    className="border-b border-border py-5 first:pt-0 last:border-b-0 last:pb-0"
-                  >
-                    <p className="text-lg font-semibold">
-                      {lang === 'en' ? group.name_en : group.name}
-                    </p>
-                    <ul className="mt-3 flex flex-wrap gap-2">
-                      {group.skills.map((skill) => {
-                        const on = skills.includes(skill.id)
-                        return (
-                          <li key={skill.id}>
-                            <button
-                              type="button"
-                              aria-pressed={on}
-                              onClick={() => toggleSkill(skill.id)}
-                              className={cn(
-                                'inline-flex min-h-9 items-center gap-2 rounded-md border px-3 text-sm font-medium',
-                                on
-                                  ? 'border-text bg-surface ring-1 ring-text'
-                                  : 'border-dashed border-border text-muted hover:text-text',
-                              )}
-                            >
-                              {skill.logo ? (
-                                // logo kecil statis (unggahan atau public/skills), tanpa optimasi next/image
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={skill.logo.src}
-                                  alt=""
-                                  width={20}
-                                  height={20}
-                                  className="size-5 object-contain"
-                                  data-invert-dark={skill.logo.invertDark ? '' : undefined}
-                                />
-                              ) : null}
-                              {skill.name}
-                            </button>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </section>
-                ))
-              )}
-            </div>
+            <ProjectStackPick
+              groups={skillGroups}
+              lang={lang}
+              label={tx.stack}
+              selected={skills}
+              onToggle={toggleSkill}
+            />
           </article>
         </LiveStage>
         <LiveErrors messages={messages} />

@@ -6,7 +6,7 @@
 // Ukuran dan jarak diambil dari tata letak tombol HTML (diukur sekali), warna dari token tema, dan
 // keadaan (terpilih, kategori menonjol/redup, disorot) sama dengan aturan .globe-* di styles/site/skill-globe.css.
 
-import { isCrossOrigin } from '../image-origin'
+import { isCrossOrigin } from '../../image-origin'
 
 export type ItemGeometry = {
   // ukuran tombol tanpa transform

@@ -9,7 +9,7 @@ import {
   levelOf,
   monthLabels,
   riseAt,
-} from '@/components/ui/contribution-skyline'
+} from '@/components/ui/contribution-skyline/model'
 
 describe('contribution-skyline', () => {
   it('tanggal "YYYY-MM-DD" dibaca tanpa geser zona waktu', () => {
