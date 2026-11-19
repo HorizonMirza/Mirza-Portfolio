@@ -1,8 +1,8 @@
-// Tes unit Backend/lib/validation: slugify, slugSchema, githubRepoSchema, optionalUrl.
+// Tes unit Backend/lib/validation: slugify, slugSchema, optionalUrl.
 
 import { describe, expect, it } from 'vitest'
 
-import { githubRepoSchema, optionalUrl, slugify, slugSchema } from '@backend/lib/validation'
+import { optionalUrl, slugify, slugSchema } from '@backend/lib/validation'
 
 describe('slugify', () => {
   it('mengubah judul menjadi slug huruf kecil', () => {
@@ -26,22 +26,6 @@ describe('slugSchema', () => {
       expect(slugSchema.safeParse(v).success).toBe(false)
     },
   )
-})
-
-describe('githubRepoSchema', () => {
-  it.each(['', 'HorizonMirza/mirza-portfolio', 'vercel/next.js'])('menerima "%s"', (v) => {
-    expect(githubRepoSchema.safeParse(v).success).toBe(true)
-  })
-  it.each([
-    'mirza-portfolio',
-    'a/b/c',
-    'owner/..',
-    'owner/.',
-    'https://github.com/a/b',
-    'own er/repo',
-  ])('menolak "%s"', (v) => {
-    expect(githubRepoSchema.safeParse(v).success).toBe(false)
-  })
 })
 
 describe('optionalUrl', () => {

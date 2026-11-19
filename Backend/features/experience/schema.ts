@@ -34,11 +34,9 @@ export const experienceSchema = z
     description_en: requiredText('Uraian (EN)', 3000),
     startMonth: z.string().regex(MONTH, 'Bulan mulai wajib diisi'),
     endMonth: z.string().refine((v) => v === '' || MONTH.test(v), 'Bulan selesai tidak valid'),
-    location: optionalText('Lokasi', 120),
     // jenis pekerjaan teks bebas per bahasa, mis. "Internship" / "Magang" (opsional)
     employmentLabel_id: optionalText('Jenis Pekerjaan', 60).default(''),
     employmentLabel_en: optionalText('Jenis Pekerjaan (EN)', 60).default(''),
-    inStory: z.boolean().default(false),
     status: z.enum(['DRAFT', 'PUBLISHED']),
   })
   // Format YYYY-MM bisa dibandingkan sebagai teks.
@@ -61,10 +59,8 @@ export const emptyExperience: ExperienceInput = {
   description_en: '',
   startMonth: '',
   endMonth: '',
-  location: '',
   employmentLabel_id: '',
   employmentLabel_en: '',
-  inStory: false,
   status: 'PUBLISHED',
 }
 

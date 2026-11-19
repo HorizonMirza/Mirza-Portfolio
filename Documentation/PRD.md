@@ -48,7 +48,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F2 | **About**: kartu foto, nama dan peran, bio, kartu pendidikan (SMA dan kuliah). Tanpa tombol CV dan kontak (keduanya di footer) | P0 |
 | F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan logo instansi dan foto kegiatan, tanpa filter. Pendidikan tampil di About | P0 |
 | F4 | **Skills**: dikelompokkan per kategori dari admin, tanpa persen. Tidak punya halaman sendiri (`/skills` dialihkan ke `/#skills`); tampil di beranda sebagai globe logo yang bisa diputar dan difilter per kategori | P0 |
-| F5 | **Projects**: daftar + halaman detail (galeri, tech stack, tahun, studi kasus) + tautan demo dan repo | P0 |
+| F5 | **Projects**: daftar + halaman detail (peran, judul, tombol demo dan repo, galeri foto) + tautan demo dan repo | P0 |
 | F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
 | F7 | **Resume CV**: satu klik di kartu pembuka dan footer, file terbaru dari admin, dihitung jumlah unduhannya | P0 |
 | F8 | **Dua bahasa** ID/EN dengan toggle, URL `/id` dan `/en` | P0 |

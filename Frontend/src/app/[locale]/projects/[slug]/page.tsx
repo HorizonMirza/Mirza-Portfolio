@@ -71,8 +71,8 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         <BackToProjects slug={project.slug} label={t('back')} />
       </nav>
 
-      {/* Hanya peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
-          uraian, dan studi kasus tidak ditampilkan di sini. */}
+      {/* Hanya peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan dan
+          teknologi tidak ditampilkan di sini. */}
       <header className="pd-head pj-title-box mt-2 md:mt-6">
         {role ? <p className="pj-role">{role}</p> : null}
         {/* selalu satu baris di HP dan laptop: ukuran mengikuti lebar kolom */}

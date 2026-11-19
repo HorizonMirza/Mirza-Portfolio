@@ -27,10 +27,6 @@ export type PublicProjectSummary = {
 }
 
 export type PublicProject = PublicProjectSummary & {
-  description_id: string
-  description_en: string
-  caseStudy_id: string | null
-  caseStudy_en: string | null
   images: PublicImage[]
   updatedAt: string
 }
@@ -96,10 +92,6 @@ export const getPublishedProject = cache(
         where: { slug, status: 'PUBLISHED' },
         select: {
           ...summarySelect,
-          description_id: true,
-          description_en: true,
-          caseStudy_id: true,
-          caseStudy_en: true,
           updatedAt: true,
           images: { orderBy: { order: 'asc' }, select: { asset: { select: imageSelect } } },
         },

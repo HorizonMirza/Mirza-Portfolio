@@ -1,5 +1,5 @@
-// Skema database portofolio. Acuan: Documentation/ARCHITECTURE.md bagian 5.
-// Prisma CLI dijalankan dari folder Frontend/ (lihat Frontend/prisma.config.ts).
+// Skema database portofolio (PostgreSQL 17). Penjelasan tiap tabel: Documentation/ARCHITECTURE.md
+// bagian 5. Prisma CLI dijalankan dari folder Frontend/ (lihat Frontend/prisma.config.ts).
 // Konten publik dua bahasa memakai pasangan kolom `*_id` (Indonesia) dan `*_en` (Inggris).
 // Primary key memakai UUID v7 (urut waktu). Semua waktu disimpan sebagai timestamptz (UTC),
 // ditampilkan dalam zona Asia/Jakarta. Tanggal kalender (startDate/endDate) memakai @db.Date.
@@ -153,14 +153,14 @@ model Profile {
   // foto profil
   photoId           String?  @unique @db.Uuid
   photo             Asset?   @relation("ProfilePhoto", fields: [photoId], references: [id], onDelete: SetNull)
-  // foto kartu halaman Tentang (Admin → About → Profil, 2026-11-10); kosong = foto profil
+  // foto kartu halaman Tentang (Admin → About); kosong = foto profil
   aboutPhotoId      String?  @unique @db.Uuid
   aboutPhoto        Asset?   @relation("ProfileAboutPhoto", fields: [aboutPhotoId], references: [id], onDelete: SetNull)
   // peran di pita halaman Tentang; kosong = peran beranda (aboutRoles)
   aboutBandRoles_id String?
   aboutBandRoles_en String?
-  // chip (kampus/perusahaan) dan chip bendera di kartu foto halaman Tentang; showCampusChip nama lama
-  // kolom chip umum (2026-11-15)
+  // chip umum (teks + logo) dan chip bendera di kartu foto halaman Tentang; nama kolom showCampusChip
+  // berasal dari saat chip itu khusus untuk kampus
   showCampusChip    Boolean  @default(true)
   showFlag          Boolean  @default(true)
   // isi chip umum yang diubah admin: teks dan logo; kosong = pendidikan terbaru (nama dan logonya)
@@ -176,39 +176,33 @@ model Profile {
 }
 
 model Project {
-  id             String          @id @default(uuid(7)) @db.Uuid
-  slug           String          @unique
-  title_id       String
-  title_en       String
-  summary_id     String
-  summary_en     String
+  id          String          @id @default(uuid(7)) @db.Uuid
+  slug        String          @unique
+  title_id    String
+  title_en    String
+  summary_id  String
+  summary_en  String
   // peran pemilik di project, tampil di atas judul pada daftar dan detail (opsional)
-  role_id        String?
-  role_en        String?
-  description_id String          @db.Text
-  description_en String          @db.Text
-  caseStudy_id   String?         @db.Text
-  caseStudy_en   String?         @db.Text
-  year           Int
-  category       ProjectCategory @default(SOFTWARE)
-  demoUrl        String?
-  repoUrl        String?
+  role_id     String?
+  role_en     String?
+  year        Int
+  category    ProjectCategory @default(SOFTWARE)
+  demoUrl     String?
+  repoUrl     String?
   // Super Admin memilih tombol yang tampil di detail: keduanya, salah satu, atau tidak ada.
   // Tombol hanya muncul bila tautannya juga diisi.
-  showDemo       Boolean         @default(true)
-  showRepo       Boolean         @default(true)
-  // format "owner/repo" untuk metadata GitHub otomatis
-  githubRepo     String?
-  featured       Boolean         @default(false)
-  order          Int             @default(0)
-  status         ContentStatus   @default(DRAFT)
-  publishedAt    DateTime?       @db.Timestamptz(3)
-  coverId        String?         @db.Uuid
-  cover          Asset?          @relation("ProjectCover", fields: [coverId], references: [id], onDelete: SetNull)
-  images         ProjectImage[]
-  skills         Skill[]
-  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
-  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
+  showDemo    Boolean         @default(true)
+  showRepo    Boolean         @default(true)
+  featured    Boolean         @default(false)
+  order       Int             @default(0)
+  status      ContentStatus   @default(DRAFT)
+  publishedAt DateTime?       @db.Timestamptz(3)
+  coverId     String?         @db.Uuid
+  cover       Asset?          @relation("ProjectCover", fields: [coverId], references: [id], onDelete: SetNull)
+  images      ProjectImage[]
+  skills      Skill[]
+  createdAt   DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime        @updatedAt @db.Timestamptz(3)
 
   @@index([status, order])
 }
@@ -236,7 +230,7 @@ model Skill {
   id         String        @id @default(uuid(7)) @db.Uuid
   name       String        @unique
   icon       String?
-  // logo unggahan Admin → Home → Skill teknis (2026-11-12); kosong = logo bawaan (public/skills) atau ikon
+  // logo unggahan Admin → Home → Skill teknis; kosong = logo bawaan (public/skills) atau ikon
   logoId     String?       @db.Uuid
   logo       Asset?        @relation("SkillLogo", fields: [logoId], references: [id], onDelete: SetNull)
   order      Int           @default(0)
@@ -259,20 +253,18 @@ model Experience {
   startDate          DateTime        @db.Date
   // null = masih berlangsung
   endDate            DateTime?       @db.Date
-  location           String?
   employmentType     EmploymentType?
-  // jenis pekerjaan teks bebas per bahasa (mis. "Internship"); didahulukan dari employmentType (2026-11-16)
+  // jenis pekerjaan teks bebas per bahasa (mis. "Internship"); didahulukan dari employmentType,
+  // yang tinggal dipakai entri lama dari seed
   employmentLabel_id String?         @db.VarChar(60)
   employmentLabel_en String?         @db.VarChar(60)
   order              Int             @default(0)
   status             ContentStatus   @default(PUBLISHED)
   logoId             String?         @db.Uuid
   logo               Asset?          @relation("ExperienceLogo", fields: [logoId], references: [id], onDelete: SetNull)
-  // foto kegiatan di sisi seberang timeline (revisi 2026-10-03)
+  // foto kegiatan di sisi seberang timeline
   photoId            String?         @db.Uuid
   photo              Asset?          @relation("ExperiencePhoto", fields: [photoId], references: [id], onDelete: SetNull)
-  // titik di garis cerita "Dari komunitas ke software" di beranda (revisi 2026-10-08)
-  inStory            Boolean         @default(false)
   createdAt          DateTime        @default(now()) @db.Timestamptz(3)
   updatedAt          DateTime        @updatedAt @db.Timestamptz(3)
 
@@ -376,9 +368,9 @@ model CvDownload {
 model SiteSetting {
   id                 Int      @id @default(1)
   // volume tiap suara situs 0–100, mis. { "nav": 100, "theme": 60 }; suara yang
-  // tidak ada di sini memakai volume penuh (features/settings/options.ts, SOUND_KINDS)
+  // tidak ada di sini memakai volume penuh (Backend/features/settings/options.ts, SOUND_KINDS)
   soundMix           Json     @default("{}")
-  // pemberitahuan pembuka: kartu sebelum masuk situs, sekali setiap situs dibuka (per sesi browser)
+  // isi pemberitahuan pembuka (kartu sebelum masuk situs); seberapa sering tampil: introFrequency
   introBody_id       String?  @db.Text
   introBody_en       String?  @db.Text
   // foto hero beranda yang diunggah admin; kosong = foto bawaan di repo (Frontend/src/assets/hero-*.webp)
@@ -389,7 +381,7 @@ model SiteSetting {
   contactPhoto       Asset?   @relation("ContactCardPhoto", fields: [contactPhotoId], references: [id], onDelete: SetNull)
   // warna grafik kontribusi GitHub di beranda: { light: [4 hex], dark: [4 hex] }; kosong = biru bawaan
   githubPalette      Json?
-  // Admin → Pengaturan (revisi 2026-11-11). Pilihan teks divalidasi Zod (features/settings/options.ts).
+  // Admin → Pengaturan. Pilihan teks divalidasi Zod (Backend/features/settings/options.ts).
   // tema awal pengunjung yang belum memilih: dark | light | system
   defaultTheme       String   @default("dark")
   // efek cairan dan kursor titik+cincin di foto beranda
@@ -412,7 +404,7 @@ model SiteSetting {
   updatedAt          DateTime @updatedAt @db.Timestamptz(3)
 }
 
-// Riwayat masuk panel admin (Admin → Akun, revisi 2026-11-11): berhasil dan gagal. Tanpa IP dan
+// Riwayat masuk panel admin (Admin → Akun): berhasil dan gagal. Tanpa IP dan
 // tanpa email yang diketik; hanya user-agent (diringkas saat ditampilkan) dan kota/negara dari header
 // Vercel. Dihapus setelah 90 hari oleh cron harian.
 model LoginEvent {
@@ -434,7 +426,7 @@ model LoginEvent {
 }
 
 // Teks situs yang diubah admin (judul bagian, SEO, kebijakan privasi, ...). Menimpa teks bawaan di
-// messages/*.json. Kunci "Namespace.nama" dibatasi daftar di features/site-text/catalog.ts. Kolom
+// messages/*.json. Kunci "Namespace.nama" dibatasi daftar di Backend/features/site-text/catalog.ts. Kolom
 // kosong berarti memakai teks bawaan bahasa itu.
 model SiteText {
   key       String   @id

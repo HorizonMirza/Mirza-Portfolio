@@ -33,7 +33,6 @@ export async function saveExperience(
     const {
       startMonth,
       endMonth,
-      location,
       employmentLabel_id,
       employmentLabel_en,
       organization_en,
@@ -42,7 +41,6 @@ export async function saveExperience(
     const data = {
       ...rest,
       organization_en: emptyToNull(organization_en),
-      location: emptyToNull(location),
       // jenis pekerjaan kini teks bebas; kolom enum lama dikosongkan setelah disimpan dari admin
       employmentType: null,
       employmentLabel_id: emptyToNull(employmentLabel_id),

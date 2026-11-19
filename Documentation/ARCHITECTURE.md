@@ -32,7 +32,7 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Form admin (project, galeri, profil) | **React Hook Form** + Zod, dikirim ke Server Actions | Nyaman untuk form panjang dua bahasa dan field dinamis | Formik, TanStack Form |
 | Daftar admin | Tampil seperti daftar di situs, diubah langsung di pratinjau; TanStack Table dipakai sampai 2026-11-12 lalu dihapus | Admin melihat hasil persis seperti pengunjung; tanpa dependency tabel | TanStack Table, AG Grid (berat) |
 | Grafik dashboard admin | **SVG buatan sendiri** (`components/admin/visits-chart.tsx`, geometri di `lib/chart-geometry.ts`), hanya dimuat di `/admin`. | Tanpa library grafik: 102 KB gzip lebih ringan untuk satu grafik area | Recharts, Chart.js |
-| Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Studi kasus project ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
+| Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Bio dan uraian pengalaman ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
 | Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
 | Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `Backend/lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
@@ -215,17 +215,12 @@ erDiagram
       string summary_en
       string role_id "opsional"
       string role_en "opsional"
-      text description_id
-      text description_en
-      text caseStudy_id
-      text caseStudy_en
       int year
       enum category "SOFTWARE | COMMUNITY_BUSINESS"
       string demoUrl
       string repoUrl
       bool showDemo "tombol Lihat aplikasi"
       bool showRepo "tombol GitHub"
-      string githubRepo "owner/repo"
       bool featured
       int order
       enum status "DRAFT | PUBLISHED"
@@ -253,10 +248,8 @@ erDiagram
       text description_en
       date startDate
       date endDate "null = sekarang"
-      string location
       enum employmentType "FULL_TIME | ... | INTERNSHIP | VOLUNTEER, opsional"
       int order
-      bool inStory "titik garis cerita (bagian beranda dihapus 2026-10-16, kolom disimpan)"
       string logoId FK
       string photoId FK
     }

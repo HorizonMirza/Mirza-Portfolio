@@ -30,10 +30,8 @@ export async function listExperienceEntriesAdmin(kind: ExperienceKind) {
       description_en: e.description_en,
       startMonth: dateToMonth(e.startDate),
       endMonth: e.endDate ? dateToMonth(e.endDate) : '',
-      location: e.location ?? '',
       employmentLabel_id: e.employmentLabel_id ?? '',
       employmentLabel_en: e.employmentLabel_en ?? '',
-      inStory: e.inStory,
       status: e.status,
     } satisfies ExperienceInput,
   }))

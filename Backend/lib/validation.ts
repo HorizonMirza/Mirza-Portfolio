@@ -32,15 +32,6 @@ export const slugSchema = z
   .max(80, 'Slug maksimal 80 karakter')
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug hanya huruf kecil, angka, dan tanda hubung')
 
-export const githubRepoSchema = z
-  .string()
-  .trim()
-  .refine(
-    (v) =>
-      v === '' || (/^[A-Za-z0-9-]{1,39}\/[A-Za-z0-9._-]{1,100}$/.test(v) && !/\/\.{1,2}$/.test(v)),
-    'Format: pemilik/nama-repo',
-  )
-
 export function emptyToNull(value: string): string | null {
   return value.trim() === '' ? null : value.trim()
 }

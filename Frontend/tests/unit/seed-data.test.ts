@@ -24,7 +24,6 @@ describe('data seed', () => {
     for (const p of projects) {
       expectBilingual(p.title, `${p.slug}.title`)
       expectBilingual(p.summary, `${p.slug}.summary`)
-      expectBilingual(p.description, `${p.slug}.description`)
     }
   })
 

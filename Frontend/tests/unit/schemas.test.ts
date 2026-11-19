@@ -21,8 +21,6 @@ const validProject = {
   title_en: 'GAAS',
   summary_id: 'Ringkasan',
   summary_en: 'Summary',
-  description_id: 'Deskripsi',
-  description_en: 'Description',
   year: 2026,
 }
 
@@ -37,10 +35,6 @@ describe('projectSchema', () => {
   it('wajib dua bahasa', () => {
     const r = projectSchema.safeParse({ ...validProject, title_en: '', summary_en: '   ' })
     expect(fieldsOf(r)).toEqual(expect.arrayContaining(['title_en', 'summary_en']))
-  })
-  it('deskripsi boleh kosong karena tidak tampil di situs', () => {
-    const r = projectSchema.safeParse({ ...validProject, description_id: '', description_en: '' })
-    expect(r.success).toBe(true)
   })
   it('menolak tahun di luar rentang dan kategori asing', () => {
     const r = projectSchema.safeParse({ ...validProject, year: 1999, category: 'LAINNYA' })
