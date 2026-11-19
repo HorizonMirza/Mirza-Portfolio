@@ -1,7 +1,9 @@
+// Tes unit: renameAccount, changeAccountEmail.
+
 import { APIError } from 'better-auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Ganti nama dan email di Admin → Akun meminta password akun (revisi pemilik 2026-11-16).
+// Ganti nama dan email di Admin → Akun meminta password akun.
 const verifyPasswordApi = vi.fn()
 vi.mock('@backend/lib/auth', () => ({
   getAuth: () => ({ api: { verifyPassword: verifyPasswordApi } }),

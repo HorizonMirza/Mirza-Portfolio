@@ -1,3 +1,5 @@
+// Membaca dan memvalidasi bahasa dari params halaman [locale], untuk halaman dan metadata.
+
 import { notFound } from 'next/navigation'
 import { hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'

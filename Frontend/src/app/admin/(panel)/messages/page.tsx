@@ -1,3 +1,5 @@
+// Admin → Pesan: kotak masuk dengan filter status dan halaman.
+
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
@@ -6,6 +8,7 @@ import { PageHeader } from '@/components/admin/page-header'
 import { Pager, parsePage } from '@/components/admin/pager'
 import { Badge } from '@/components/ui/badge'
 import { DeleteMessageButton } from '@/features/messages/components/message-actions'
+
 import {
   countMessagesByStatus,
   listMessages,
@@ -76,7 +79,7 @@ export default async function MessagesPage({ searchParams }: PageProps<'/admin/m
                   <span className="font-medium [overflow-wrap:anywhere]">{m.name}</span>
                 </span>
                 {/* cuplikan isi (dipendekkan di server); turun baris bila tidak muat, tidak dipotong
-                    lagi oleh lebar layar (revisi pemilik 2026-11-17) */}
+                    lagi oleh lebar layar */}
                 <span className="min-w-0 flex-1 text-sm [overflow-wrap:anywhere]">
                   {m.subject ? <span className="font-medium">{m.subject} · </span> : null}
                   <span className="text-muted">

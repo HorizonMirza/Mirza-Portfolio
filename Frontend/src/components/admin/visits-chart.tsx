@@ -1,5 +1,7 @@
 'use client'
 
+// Grafik kunjungan harian di Dashboard (SVG buatan sendiri).
+
 import { useEffect, useId, useRef, useState } from 'react'
 
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
@@ -11,6 +13,7 @@ import {
   segments,
   type XY,
 } from '@/lib/chart-geometry'
+
 import { formatDayKey, formatNumber } from '@backend/lib/format'
 
 type Point = { day: string; views: number; visitors: number | null }
@@ -48,13 +51,12 @@ function TooltipBody({ point }: { point?: Point }) {
   )
 }
 
-// Desain 01 "Ringkas" (pilihan pemilik 2026-11-16, dipercantik di revisi malam): tayangan sebagai garis
+// Tayangan sebagai garis
 // tebal dengan arsiran bergradasi, pengunjung unik sebagai garis putus dengan arsiran tipis, garis bantu
 // putus-putus, titik bercincin saat disorot, dan tooltip berisi hari, tanggal, serta dua angka.
 // Warna mengikuti teks tema (hitam-putih seperti panel admin). Grafik hanya visual (aria-hidden);
 // datanya ada di tabel Rincian per hari.
-// Grafik SVG buatan sendiri (pengganti recharts, audit 2026-11-17 PERF-04: library itu 102 KB gzip
-// untuk satu grafik). Ukuran mengikuti lebar kotak; geometri ada di lib/chart-geometry.ts.
+// Grafik SVG buatan sendiri, tanpa library grafik (recharts 102 KB gzip untuk satu grafik). Ukuran mengikuti lebar kotak; geometri ada di lib/chart-geometry.ts.
 const PAD = { top: 12, right: 12, bottom: 30, left: 36 }
 const FONT = 12
 

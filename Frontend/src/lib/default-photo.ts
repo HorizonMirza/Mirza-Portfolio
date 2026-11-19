@@ -1,22 +1,23 @@
+// Foto bawaan situs: foto profil, avatar, potret hero, potongan kartu ID, dan gambar armor.
+
 import armor from '@/assets/hero-armor.webp'
 import hero from '@/assets/hero-portrait.webp'
 import avatar from '@/assets/profile-avatar.webp'
 import photo from '@/assets/profile-photo.jpg'
 
-// Foto profil bawaan (dari pemilik, diganti 2026-10-19). Dipakai selama belum ada foto yang diunggah
+// Foto profil bawaan. Dipakai selama belum ada foto yang diunggah
 // lewat admin (Cloudinary); foto dari admin selalu didahulukan. Metadata kamera sudah dibuang.
 export const DEFAULT_PROFILE_PHOTO = photo
-// potongan wajah untuk lingkaran kecil (topbar, footer, login, panel admin): wajah yang sama dengan potret hero
-// (revisi pemilik 2026-10-27), 320×320 berlatar transparan; lingkaran di sekitarnya berlatar putih di mode gelap dan hitam di mode terang (bg-text)
+// potongan wajah untuk lingkaran kecil (topbar, footer, login, panel admin): wajah yang sama dengan
+// potret hero, 320×320 berlatar transparan; lingkaran di sekitarnya berlatar putih di mode gelap dan hitam di mode terang (bg-text)
 export const DEFAULT_PROFILE_AVATAR = avatar
-// potret hero beranda (permintaan pemilik 2026-10-19): selalu foto ini, tangan bersilang, latar
+// potret hero beranda: selalu foto ini, tangan bersilang, latar
 // transparan, 4:5 dengan subjek rata bawah. Tidak diganti oleh foto dari admin.
 export const HERO_PORTRAIT = hero
-// potongan kepala dan bahu dari potret hero untuk foto kartu ID di halaman Kontak (revisi pemilik
-// 2026-11-06: wajah kartu sama dengan beranda, lalu diperkecil karena terlalu zoom: bahu dan saku jas
+// potongan kepala dan bahu dari potret hero untuk foto kartu ID di halaman Kontak (bahu dan saku jas
 // ikut terlihat), dalam pecahan ukuran foto 1120×1100; rasio sama dengan bidang foto kartu (176×160)
 export const HERO_CARD_CROP = { x: 0.08, y: 0, w: 0.82, h: 0.759 } as const
-// Gambar kedua liquid mask di hero (pemilik 2026-10-19): armor dengan pose yang sama, diskalakan 1,3× dan
+// Gambar kedua liquid mask di hero: armor dengan pose yang sama, diskalakan 1,3× dan
 // diselaraskan ke HERO_PORTRAIT (mata dan lebar kepala sejajar); dari leher ke bawah (y 560) diregangkan
 // vertikal 1,17× agar tangan bersilang jatuh di tangan foto. Bingkainya lebih besar
 // 80 px di kiri-kanan dan 200 px di atas (dalam ukuran 1120×1100), agar jambul helm menjulang di atas foto.

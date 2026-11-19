@@ -1,5 +1,5 @@
 // Simulasi cairan kecil (WebGL2) untuk masker hover hero, seperti komponen "Crazy Hover Mask Reveal"
-// (Framer University/OFF+BRAND) yang diminta pemilik 2026-10-20: kursor meninggalkan "percikan" zat
+// (Framer University/OFF+BRAND): kursor meninggalkan "percikan" zat
 // warna yang ikut terbawa aliran, berpusar (vortisitas), lalu memudar. Zat warna itu dipakai sebagai
 // masker bertepi tajam (ambang + sedikit butiran) untuk membuka lapisan armor.
 // Algoritma "stable fluids" (Jos Stam): advection, curl/vorticity, divergence, tekanan (Jacobi),
@@ -23,7 +23,7 @@ import {
 const SIM_SHORT = 128
 const DYE_SCALE = 0.5
 const DYE_LONG_MAX = 1024
-// 18 → 12 (revisi lag hover 2026-11-06): sisa galat tekanan tidak terlihat pada masker bertepi tajam
+// 18 → 12: sisa galat tekanan tidak terlihat pada masker bertepi tajam
 const PRESSURE_ITERATIONS = 12
 // ambang tepi masker dan lebar peralihan (dalam satuan kepekatan zat warna)
 const EDGE = 0.3

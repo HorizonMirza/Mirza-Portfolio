@@ -1,9 +1,10 @@
-import { cn } from '@/lib/utils'
-
-// Loading biasa (permintaan pemilik 2026-11-16): lingkaran berputar untuk aksi yang menunggu server
+// Loading biasa: lingkaran berputar untuk aksi yang menunggu server
 // (simpan, hapus, unggah, keluar). Perpindahan halaman memakai skeleton shimmer sesuai bentuk halaman.
 // Warna mengikuti teks tombolnya (currentColor). Dengan prefers-reduced-motion putarannya diperlambat,
 // bukan dihentikan, karena putaran inilah satu-satunya tanda bahwa aksi masih berjalan.
+
+import { cn } from '@/lib/utils'
+
 export function Spinner({ className }: { className?: string }) {
   return (
     <svg

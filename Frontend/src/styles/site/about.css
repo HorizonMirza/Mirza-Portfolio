@@ -1,6 +1,6 @@
 /* Halaman About: pita judul, kartu foto miring, bio, dan kartu pendidikan. */
 
-/* Halaman Tentang, rancangan C (revisi 2026-10-05): pita hitam, kartu foto menggantung, bio dan
+/* Halaman Tentang, rancangan C: pita hitam, kartu foto menggantung, bio dan
    kartu pendidikan. Pita memakai warna teks sebagai latar sehingga otomatis terbalik di tema gelap. */
 .ab-band {
   display: grid;
@@ -16,7 +16,7 @@
 .ab-band-text {
   display: grid;
   gap: 14px;
-  /* tanpa tombol CV: nama dan peran di tengah tinggi pita, rata kiri (revisi pemilik 2026-10-08) */
+  /* tanpa tombol CV: nama dan peran di tengah tinggi pita, rata kiri */
   align-self: center;
   justify-items: start;
   padding-bottom: 24px;
@@ -33,7 +33,7 @@
   border-radius: 0 0 12px 12px;
 }
 /* bio dan pendidikan sama-sama mulai di bawah kartu foto yang menggantung dari pita, jadi
-   judul "Tentang saya" dan "Pendidikan" sejajar satu baris (revisi pemilik 2026-10-05) */
+   judul "Tentang saya" dan "Pendidikan" sejajar satu baris */
 .ab-body > section {
   display: grid;
   gap: 14px;
@@ -50,8 +50,7 @@
   line-height: 1.1;
   text-transform: uppercase;
 }
-/* teks tentang saya dan ringkasan di daftar project rata kiri-kanan supaya tepi kanan rapi (revisi
-   pemilik; ringkasan project 2026-10-08 "seperti About me rapihnya") */
+/* teks tentang saya dan ringkasan di daftar project rata kiri-kanan supaya tepi kanan rapi */
 .ab-bio p,
 .pj-summary {
   text-align: justify;
@@ -66,7 +65,7 @@
   gap: 16px;
 }
 /* satu kartu per baris, logo di kiri: jurusan dan IPK muat satu baris, dan jenjang baru (mis. S2)
-   otomatis tampil di bawah (revisi pemilik 2026-10-07 malam) */
+   otomatis tampil di bawah */
 .ab-edu-card {
   display: flex;
   align-items: center;
@@ -90,12 +89,12 @@
   font-size: 1.25rem;
   font-weight: 700;
 }
-/* admin: logo dan teks chip masing-masing bergaris putus-putus, jadi diberi jarak (revisi 2026-11-15) */
+/* admin: logo dan teks chip masing-masing bergaris putus-putus, jadi diberi jarak */
 .admin-photo-edit .ab-pc-chip {
   gap: 16px;
   padding: 10px 18px 10px 10px;
 }
-/* kartu foto bisa dimiringkan (PhotoTilt, revisi pemilik 2026-10-07 malam): .ab-tilt memberi
+/* kartu foto bisa dimiringkan (PhotoTilt): .ab-tilt memberi
    perspektif dan menerima kursor, .ab-pc yang miring. Hanya transform (GPU). */
 .ab-tilt {
   position: relative;
@@ -136,8 +135,7 @@
   pointer-events: none;
   transition: opacity 400ms var(--ease-out-soft);
 }
-/* bingkai tebal dan cincin dihapus (revisi pemilik 2026-10-08); tersisa tepi tipis samar seperti
-   contoh pemilik dan bayangan lembut. Warna tepi = warna halaman, jadi terang di atas pita gelap
+/* tepi tipis samar dan bayangan lembut. Warna tepi = warna halaman, jadi terang di atas pita gelap
    (tema terang) dan gelap di atas pita terang (tema gelap). */
 .ab-pc-frame {
   position: relative;
@@ -174,8 +172,7 @@
   padding: 7px 14px 7px 7px;
   border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   border-radius: 14px;
-  /* kaca 82% (revisi pemilik 2026-10-08: kurang bening, warna ikut tema, font aplikasi):
-     gelap di tema gelap, terang di tema terang */
+  /* kaca 82%, warna ikut tema: gelap di tema gelap, terang di tema terang */
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   color: var(--text);
   font-size: 0.875rem;
@@ -224,9 +221,9 @@
   border-radius: 50%;
   background: linear-gradient(180deg, #d9323f 50%, #fff 50%);
 }
-/* tema terang (pilihan B pemilik, 2026-10-06): kotak Tentang berbingkai hitam 3 px, sama tebal dengan
-   bingkai foto, supaya bagian bawah yang putih tidak menyatu dengan halaman. Tema gelap tetap seperti
-   semula (garis tipis), atas permintaan pemilik. */
+/* tema terang: kotak Tentang berbingkai hitam 3 px, sama tebal dengan
+   bingkai foto, supaya bagian bawah yang putih tidak menyatu dengan halaman. Tema gelap tetap bergaris
+   tipis. */
 :root:not(.dark) .ab-band {
   border-width: 3px;
 }
@@ -235,7 +232,7 @@
   border-top: 0;
 }
 /* Tata letak HP halaman Tentang mengikuti lebar wadahnya (.ab-wrap), bukan lebar layar, agar panggung
-   pratinjau admin yang lebih sempit dari layar ikut berganti ke satu kolom (revisi pemilik 2026-11-17).
+   pratinjau admin yang lebih sempit dari layar ikut berganti ke satu kolom.
    812 px = isi Container saat layar 860 px (px-6 kiri-kanan), jadi situs publik berganti di titik yang
    sama seperti dulu. */
 .ab-wrap {
@@ -251,7 +248,7 @@
     width: min(100%, 300px);
     margin: 0 auto;
   }
-  /* jarak kiri-kanan kartu sama agar foto tepat di tengah (revisi pemilik 2026-10-08); chip kampus
+  /* jarak kiri-kanan kartu sama agar foto tepat di tengah; chip kampus
      dan bendera menonjol sama jauh di kanan dan kiri */
   .ab-band .ab-pc {
     padding: 14px;
@@ -278,8 +275,8 @@
   .ab-body > section {
     padding-top: 0;
   }
-  /* HP (revisi pemilik 2026-10-08, "kurang rapih"): logo tidak ikut menyempit, judul lebih kecil
-     (bio tetap rata kiri-kanan seperti desktop, revisi pemilik 2026-10-08) */
+  /* HP ("kurang rapih"): logo tidak ikut menyempit, judul lebih kecil
+     (bio tetap rata kiri-kanan seperti desktop) */
   .ab-edu-card {
     align-items: flex-start;
     gap: 16px;

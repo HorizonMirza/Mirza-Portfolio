@@ -1,5 +1,12 @@
 'use client'
 
+// Daftar project persis seperti halaman Project situs: judul halaman,
+// baris zig-zag dengan sampul di bingkai browser miring, peran, judul huruf besar, ringkasan, chip
+// teknologi, dan nomor besar, dirender dengan markup dan kelas situs di dalam bingkai layar yang
+// diperkecil (SiteFrame). Peran, judul, dan ringkasan diketik langsung di tempatnya (bergaris
+// putus-putus) dan disimpan lewat Simpan, dengan pilihan ID/EN di atasnya. Sampul dan ikon pensil
+// membuka halaman ubah project; urutan dan hapus muncul saat baris disorot atau difokus.
+
 import { Pencil, Plus } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -21,12 +28,13 @@ import {
 import { ReorderButtons } from '@/components/admin/reorder-buttons'
 import { SiteFrame } from '@/components/admin/site-frame'
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
-import { imageRatio } from '../browser-address'
-import { type ChipData, TechChipsList } from './public/tech-chips-list'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
 import { deleteProject, moveProject, saveProjectTexts } from '@backend/features/projects/actions'
+
+import { imageRatio } from '../browser-address'
+import { type ChipData, TechChipsList } from './public/tech-chips-list'
 
 type Field = 'title' | 'role' | 'summary'
 
@@ -41,12 +49,6 @@ type ProjectListRow = {
   chips: ChipData[]
 }
 
-// Daftar project persis seperti halaman Project situs (revisi 2026-11-12 dan 2026-11-16): judul halaman,
-// baris zig-zag dengan sampul di bingkai browser miring, peran, judul huruf besar, ringkasan, chip
-// teknologi, dan nomor besar, dirender dengan markup dan kelas situs di dalam bingkai layar yang
-// diperkecil (SiteFrame). Peran, judul, dan ringkasan diketik langsung di tempatnya (bergaris
-// putus-putus) dan disimpan lewat Simpan, dengan pilihan ID/EN di atasnya. Sampul dan ikon pensil
-// membuka halaman ubah project; urutan dan hapus muncul saat baris disorot atau difokus.
 export function ProjectListLive({
   rows,
   copy,

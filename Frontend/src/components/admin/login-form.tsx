@@ -1,5 +1,7 @@
 'use client'
 
+// Form login Super Admin: email dan password dengan kilau kolom, pesan galat, dan batas percobaan.
+
 import { Check, CircleAlert, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -15,8 +17,8 @@ import { emailIssue } from './login-validation'
 // Kartu login kaca (gaya sign-in-card-2) tanpa efek miring/geser: kartu diam, hanya garis cahaya
 // di tepi yang berputar mengikuti sudut kartu (CSS, diam pada reduced-motion). Halaman login selalu
 // gelap, jadi warna ditulis langsung (putih di atas hitam), tidak memakai token tema. Teks login
-// berbahasa Inggris (permintaan pemilik), panel admin di baliknya tetap berbahasa Indonesia.
-// Tanda salah (pilihan pemilik, demo nomor 1): bingkai kolom merah dan pesan tepat di bawah kolom.
+// berbahasa Inggris, panel admin di baliknya tetap berbahasa Indonesia.
+// Tanda salah: bingkai kolom merah dan pesan tepat di bawah kolom.
 
 // Kolom berada di dalam bingkai .login-field yang memberi kilau berjalan mengelilingi kotak.
 const inputClass =
@@ -93,7 +95,7 @@ export function LoginForm({
 
   return (
     <div lang="en" className="login-card relative w-full max-w-sm rounded-2xl">
-      {/* kartu hitam pekat tanpa transparansi dan blur (revisi pemilik 2026-11-06), di atas latar kotak commit */}
+      {/* kartu hitam pekat tanpa transparansi dan blur, di atas latar kotak commit */}
       <div className="relative overflow-hidden rounded-2xl bg-black p-6 shadow-2xl sm:p-8">
         <div
           aria-hidden="true"
@@ -145,7 +147,6 @@ export function LoginForm({
                   type="email"
                   autoComplete="username"
                   // halaman login hanya berisi form ini: kursor langsung siap di kolom email
-                  // (permintaan pemilik 2026-11-06)
                   autoFocus
                   required
                   placeholder="mirzaganteng@gmail.com"

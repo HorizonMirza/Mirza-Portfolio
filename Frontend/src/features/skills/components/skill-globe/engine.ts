@@ -74,7 +74,7 @@ export function createGlobeEngine({
   let visible = false
   let drag: { x: number; y: number; id: number; moved: boolean } | null = null
 
-  // tampilan logo digambar di canvas (globe-sprites.ts) setelah semua sprite siap; sebelum itu (dan
+  // tampilan logo digambar di canvas (sprites.ts) setelah semua sprite siap; sebelum itu (dan
   // tanpa JavaScript) logo HTML yang terlihat
   let disposed = false
   let painted = false
@@ -150,7 +150,7 @@ export function createGlobeEngine({
     ctx.strokeStyle = lineColor
     ctx.lineWidth = 1
     // Ruas garis dikelompokkan per tingkat kedalaman (DEPTH_BANDS), lalu tiap kelompok digambar dengan
-    // satu stroke: ±10 panggilan gambar per bingkai, bukan ±800 (penyebab lag, laporan pemilik 2026-10-20)
+    // satu stroke: ±10 panggilan gambar per bingkai, bukan ±800 (penyebab lag)
     const bands: Path2D[][] = [[], []]
     const ring = (point: (a: number) => Vec, set: number) => {
       let prev: Vec | null = null
@@ -215,7 +215,7 @@ export function createGlobeEngine({
 
   // full: semua tombol HTML dipindah ke posisi logonya. Loop animasi hanya mengirim false selama bola
   // masih bergerak; pemanggil lain (hover, resize, tema) dan bingkai terakhir sebelum bola diam selalu
-  // sinkron penuh, agar target klik tidak tertinggal di posisi lama (klik hilang, CI #273).
+  // sinkron penuh, agar target klik tidak tertinggal di posisi lama (klik bisa hilang).
   const draw = (full = true) => {
     drawSphere()
     if (sizes.length !== pointsRef.current.length) measure()
@@ -239,8 +239,8 @@ export function createGlobeEngine({
       const sync = syncAll || i === hovered || i === activeRef.current || el === focused
       // Tiap bingkai: transform ditulis langsung (bukan lewat --x/--y/--s di tombol) dan --o hanya di
       // lingkaran logo. Variabel CSS di tombol diwariskan ke seluruh isinya sehingga setiap bingkai
-      // menghitung ulang gaya 31 logo beserta isinya (diukur 2026-10-20: ±25 ms per bingkai di HP
-      // dengan CPU 4x lebih lambat). Nilai awal dari server tetap lewat variabel (styles/site/skill-globe.css).
+      // menghitung ulang gaya 31 logo beserta isinya (±25 ms per bingkai di HP dengan
+      // CPU 4x lebih lambat). Nilai awal dari server tetap lewat variabel (styles/site/skill-globe.css).
       const scale = Number(style['--s'])
       const dx = Number(style['--x']) * radius
       const dy = Number(style['--y']) * radius
@@ -332,7 +332,7 @@ export function createGlobeEngine({
   }
 
   // Putaran otomatis cukup 30 fps (pelan, tetap halus); seret dan arah ke logo tetap tiap bingkai.
-  // Selama halaman digulir loop berhenti dan lanjut setelahnya (laporan lag pemilik 2026-10-20).
+  // Selama halaman digulir loop berhenti dan lanjut setelahnya.
   let lastDraw = 0
   let cancelResume = () => {}
   const loop = (time: number) => {
@@ -354,12 +354,12 @@ export function createGlobeEngine({
     for (let k = 0; k < steps; k++) moving = step() || moving
     draw(!moving)
     // tanda bola diam (tidak berputar ke logo, tidak kembali ke awal, tidak diseret), dipakai tes E2E
-    // agar tidak mengklik logo yang masih bergerak (CI #273); ditulis hanya bila berubah
+    // agar tidak mengklik logo yang masih bergerak; ditulis hanya bila berubah
     const idle = !moving && !drag
     if (stage.hasAttribute('data-idle') !== idle) stage.toggleAttribute('data-idle', idle)
     if (visible && moving) frame = requestAnimationFrame(loop)
   }
-  // tidak pernah menjadwalkan bingkai setelah globe dibongkar (audit 2026-10-31, BUG-02)
+  // tidak pernah menjadwalkan bingkai setelah globe dibongkar
   const wake = () => {
     if (!disposed && !frame && visible) frame = requestAnimationFrame(loop)
   }

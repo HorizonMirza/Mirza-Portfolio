@@ -1,9 +1,9 @@
+// Isi hero beranda: halo, nama dua baris di
+// belakang foto, foto rata bawah, salinan nama di depan foto yang dilubangi di area wajah, lalu peran
+// di pojok bawah. Dipakai beranda dan pratinjau Admin → Home → Peran agar keduanya sama persis.
+
 import type { ReactNode } from 'react'
 
-// Isi hero beranda (revisi pemilik 2026-10-19): halo, nama dua baris di
-// belakang foto, foto rata bawah, salinan nama di depan foto yang dilubangi di area wajah, lalu peran
-// di pojok bawah. Dipakai beranda dan pratinjau Admin → Home → Peran agar keduanya sama persis
-// (revisi 2026-11-12).
 export function HeroContent({
   name,
   portrait,
@@ -20,7 +20,7 @@ export function HeroContent({
   const nameWords = name.split(/\s+/)
   // Baris pertama kata pertama, sisanya baris kedua; spasi agar pembaca layar membaca nama utuh.
   // Kata pertama dibagi tiga (mis. MUH·AM·MAD): bagian tengah diberi ruang selebar wajah agar sisi
-  // kiri dan kanannya sejajar dan utuh di kiri-kanan wajah (revisi pemilik 2026-10-19).
+  // kiri dan kanannya sejajar dan utuh di kiri-kanan wajah.
   const first = nameWords[0] ?? ''
   const edge = Math.max(0, Math.floor((first.length - 2) / 2))
   const nameLines = (
@@ -35,7 +35,7 @@ export function HeroContent({
   )
   return (
     <div className="hero">
-      {/* halo lembut di belakang kepala (demo cahaya 1 pilihan pemilik) */}
+      {/* halo lembut di belakang kepala  */}
       <div aria-hidden="true" className="hero-glow" />
       <Title id={Title === 'h1' ? 'hero-title' : undefined} className="hero-name">
         {nameLines}

@@ -1,3 +1,6 @@
+// Tes unit Backend/features/settings/options dan Backend/features/settings/schema: siteOptionSchema,
+// toSiteOptions, introSchema.
+
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -75,7 +78,7 @@ describe('toSiteOptions', () => {
 })
 
 describe('introSchema', () => {
-  // sejak 2026-11-10 hanya isi kartu pembuka yang bisa diubah; judul dan saklar tampil dihapus
+  // hanya isi kartu pembuka yang bisa diubah, tanpa judul dan saklar tampil
   it('isi dua bahasa wajib diisi', () => {
     expect(introSchema.safeParse(intro).success).toBe(true)
     expect(introSchema.safeParse({ ...intro, introBody_en: '' }).success).toBe(false)

@@ -1,10 +1,13 @@
+// Admin → Akun: identitas, keamanan, dan perangkat yang sedang masuk.
+
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
 import { AccountPanel } from '@/features/account/components/account-panel'
+import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
+
 import { getAccountOverview } from '@backend/features/account/queries'
 import { getPublicProfile } from '@backend/features/profile/public'
-import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import { isUploadConfigured } from '@backend/lib/uploads'
 import { getAdminT } from '@backend/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'

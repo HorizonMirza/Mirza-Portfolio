@@ -1,5 +1,10 @@
 'use client'
 
+// Pemotong gambar untuk semua unggahan gambar di admin (DESIGN.md
+// bagian 148): gambar yang dipilih dari folder ditampilkan di bingkai; digeser, diperbesar atau
+// diperkecil, diputar, dan perbandingan bingkainya bisa dipilih. Hasilnya dipotong di browser lalu
+// dikirim ke Cloudinary; tanpa teks alternatif (diisi otomatis di server). Tanpa library: kanvas 2D.
+
 import { Minus, Plus, RotateCw } from 'lucide-react'
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
@@ -8,8 +13,9 @@ import { useAdminT } from '@/components/admin/admin-lang'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 
-import { clampOffset, coverScale, effectiveSize, exportSize, type Rotation } from '../crop-math'
 import { maxSideOf, UPLOAD_TARGETS, type UploadTarget } from '@backend/features/assets/targets'
+
+import { clampOffset, coverScale, effectiveSize, exportSize, type Rotation } from '../crop-math'
 
 const FRAME_MAX_W = 440
 const FRAME_MAX_H = 340
@@ -37,10 +43,6 @@ function toBlob(canvas: HTMLCanvasElement, type: string, quality: number) {
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality))
 }
 
-// Pemotong gambar untuk semua unggahan gambar di admin (permintaan pemilik 2026-11-15, DESIGN.md
-// bagian 148): gambar yang dipilih dari folder ditampilkan di bingkai; digeser, diperbesar atau
-// diperkecil, diputar, dan perbandingan bingkainya bisa dipilih. Hasilnya dipotong di browser lalu
-// dikirim ke Cloudinary; tanpa teks alternatif (diisi otomatis di server). Tanpa library: kanvas 2D.
 export function ImageCropDialog({
   file,
   target,
@@ -57,7 +59,7 @@ export function ImageCropDialog({
 }) {
   const t = useAdminT()
   const spec = UPLOAD_TARGETS[target]
-  // satu ukuran saja: perbandingan yang dipakai di situs untuk gambar ini (revisi 2026-11-15 malam)
+  // satu ukuran saja: perbandingan yang dipakai di situs untuk gambar ini
   const targetRatio = 'aspect' in spec ? spec.aspect : undefined
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [bitmap, setBitmap] = useState<ImageBitmap | null>(null)

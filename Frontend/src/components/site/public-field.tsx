@@ -1,3 +1,5 @@
+// Isian form publik (label, galat dua bahasa, kilau kolom) dan honeypot anti-spam.
+
 import { CircleAlert } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 

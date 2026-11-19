@@ -1,5 +1,13 @@
 'use client'
 
+// Globe skill di beranda: logo skill
+// di permukaan bola bergaris lintang-bujur. Bola berputar pelan, bisa digeser (mouse atau jari ke
+// samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Menu kategori
+// meredupkan kategori lain. Logo adalah tombol toggle biasa (Enter/Spasi, panah kiri/kanan); hanya
+// garis bola yang digambar di canvas. Posisi awal sudah dihitung di server, jadi tanpa JavaScript bola
+// tetap tampil.
+// Reduced-motion: tanpa putaran otomatis dan tanpa animasi saat berpindah logo.
+
 import {
   type CSSProperties,
   type KeyboardEvent,
@@ -25,16 +33,9 @@ import {
   START_YAW,
 } from './math'
 
-// satu warna untuk semua kategori: biru situs (pilihan pemilik 2026-10-18, demo B7 dengan warna seragam)
+// satu warna untuk semua kategori: biru situs
 const RING_COLOR = 'var(--note)'
 
-// Globe skill di beranda (revisi 2026-10-18, pilihan pemilik demo S4 + warna kategori S7): logo skill
-// di permukaan bola bergaris lintang-bujur. Bola berputar pelan, bisa digeser (mouse atau jari ke
-// samping), dan logo yang ditekan diputar ke depan lalu rinciannya tampil di bawah. Menu kategori
-// meredupkan kategori lain. Logo adalah tombol toggle biasa (Enter/Spasi, panah kiri/kanan); hanya
-// garis bola yang digambar di canvas. Posisi awal sudah dihitung di server, jadi tanpa JavaScript bola
-// tetap tampil.
-// Reduced-motion: tanpa putaran otomatis dan tanpa animasi saat berpindah logo.
 export function SkillGlobe({
   items,
   categories,
@@ -98,7 +99,7 @@ export function SkillGlobe({
     controls.current?.face(index)
   }
 
-  // lepas pilihan: bola kembali ke kemiringan awal lalu berputar lagi (revisi pemilik 2026-10-18)
+  // lepas pilihan: bola kembali ke kemiringan awal lalu berputar lagi
   function release() {
     activeRef.current = null
     setActiveIndex(null)
@@ -158,7 +159,7 @@ export function SkillGlobe({
     if (first >= 0) controls.current?.face(first)
   }
 
-  // Menu kategori (pilihan pemilik dari 10 demo gaya tombol: C5 "menu tarik"): tutup saat menekan di
+  // Menu kategori (menu tarik): tutup saat menekan di
   // luar menu atau Esc (fokus kembali ke tombolnya)
   useEffect(() => {
     if (!menuOpen) return

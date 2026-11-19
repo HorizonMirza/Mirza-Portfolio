@@ -132,6 +132,8 @@ Catatan:
 └── .agents/skill/           # skill proyek untuk Claude Code
 ```
 
+Kerapian berkas: setiap berkas diawali 1–3 baris komentar tentang isinya; komentar menjelaskan keadaan sekarang (riwayat ada di git dan log `TODO.md`). Impor dikelompokkan: paket luar, `@/`, `@backend/`, lalu relatif. Komponen kanvas yang besar dipecah menjadi folder: `index.tsx` (komponen React), `engine.ts` (gambar dan interaksi, dibuat sekali per mount), dan berkas murni seperti `model.ts`/`math.ts`/`physics.ts` yang bisa diuji (contoh: `components/ui/contribution-skyline/`, `features/skills/components/skill-globe/`, `components/site/id-lanyard/`). CSS per area di `src/styles/`.
+
 Path di dokumen ini tanpa awalan (mis. `lib/scroll-idle.ts`, `components/admin/visits-chart.tsx`) merujuk ke `Frontend/src/`; kode server selalu ditulis dengan awalan `Backend/`.
 
 Aturan: satu domain, satu folder: logika di `Backend/features/<domain>/`, komponen di `Frontend/src/features/<domain>/components/`. Arah impor satu: Frontend boleh mengimpor Backend, Backend tidak boleh mengimpor Frontend (kecuali membaca teks bawaan `Frontend/messages/*.json`), dan `Backend/lib/` tidak boleh mengimpor `Backend/features/`. Dijaga `tests/unit/backend-boundary.test.ts`.

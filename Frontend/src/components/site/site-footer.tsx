@@ -1,3 +1,11 @@
+// Footer: kartu tautan berisi ikon,
+// nama, dan alamat untuk WhatsApp, Email, LinkedIn, GitHub, Instagram, dan Resume CV (kartu CV
+// disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta.
+// Saat sebuah kartu disorot,
+// kartu detailnya muncul di atasnya dan bergeser mengikuti kartu yang disorot
+// (components/ui/contact-cards.tsx). Kartu GitHub memuat kalender kontribusi yang sama dengan
+// beranda. HP tidak punya hover, jadi tidak berubah.
+
 import { ArrowUpRight, FileText, Globe, Mail } from 'lucide-react'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
@@ -8,21 +16,21 @@ import {
   ContactCards,
   ContributionGraph,
 } from '@/components/ui/contact-cards'
+import { packContributions } from '@/lib/contributions-pack'
+import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
+import { cn } from '@/lib/utils'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
+
 import { getGithubContributions, githubLogin } from '@backend/features/profile/github-contributions'
 import { getPublicProfile } from '@backend/features/profile/public'
 import { BRAND_ICONS } from '@backend/features/skills/brand-icons'
 import type { AppLocale } from '@backend/i18n/routing'
-import { packContributions } from '@/lib/contributions-pack'
-import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 import { loc } from '@backend/lib/localized'
-import { cn } from '@/lib/utils'
-
 import {
   type FooterLinkKey,
   footerLinks,
   isDriveHost,
 } from '@backend/features/profile/footer-links'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 function BrandIcon({ slug, className = 'size-5' }: { slug: string; className?: string }) {
   return (
@@ -86,13 +94,6 @@ function SimpleCard({
   )
 }
 
-// Footer (pilihan pemilik 2026-10-03, demo nomor 2): kartu tautan berisi ikon,
-// nama, dan alamat untuk WhatsApp, Email, LinkedIn, GitHub, Instagram, dan Resume CV (kartu CV
-// disorot). Data dari admin; kartu yang kosong tidak tampil. Di bawahnya hak cipta.
-// Revisi pemilik 2026-10-08: daftar kartu tetap seperti sebelumnya; saat sebuah kartu disorot,
-// kartu detailnya muncul di atasnya dan bergeser mengikuti kartu yang disorot
-// (components/ui/contact-cards.tsx). Kartu GitHub memuat kalender kontribusi yang sama dengan
-// beranda. HP tidak punya hover, jadi tidak berubah.
 export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const [t, tSocial, tCommon, profile] = await Promise.all([
     getTranslations({ locale, namespace: 'Footer' }),
@@ -105,7 +106,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const drive = isDriveHost(profile?.cvHost ?? null)
   const login = githubLogin(profile?.socials.github)
   const contributions = login ? await getGithubContributions(login) : null
-  // ke komponen klien hanya bentuk ringkas (PERF-03); null bila data tidak berurutan: tanpa grafik
+  // ke komponen klien hanya bentuk ringkas; null bila data tidak berurutan: tanpa grafik
   const packedContributions = contributions ? packContributions(contributions.weeks) : null
   const avatar = profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR
   const roles = profile

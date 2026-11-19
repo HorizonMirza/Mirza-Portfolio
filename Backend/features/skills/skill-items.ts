@@ -10,7 +10,7 @@ import { SKILL_LOGOS } from './skill-logos'
 // Ikon umum (lucide) untuk skill non-teknis yang tidak punya logo brand. Nama dipetakan di klien.
 export type GenericGlyph = 'kanban' | 'users' | 'megaphone' | 'sheet'
 
-// Satu skill di globe beranda (components/skill-globe.tsx)
+// Satu skill di globe beranda (Frontend/src/features/skills/components/skill-globe/)
 export type SkillItem = {
   id: string
   name: string

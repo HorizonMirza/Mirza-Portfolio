@@ -1,15 +1,16 @@
 'use client'
 
+// Pilihan bergaya aplikasi (Admin → Pengaturan): tombol seperti isian,
+// daftar pilihan muncul di bawahnya dengan kotak, sudut, dan sorotan admin, bukan daftar bawaan
+// browser. Pola ARIA "select-only combobox": fokus tetap di tombol, pilihan yang disorot diumumkan
+// lewat aria-activedescendant. Keyboard: panah atas/bawah, Home/End, Enter/Spasi memilih, Escape
+// menutup.
+
 import { Check, ChevronDown } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// Pilihan bergaya aplikasi (revisi pemilik 2026-11-16, Admin → Pengaturan): tombol seperti isian,
-// daftar pilihan muncul di bawahnya dengan kotak, sudut, dan sorotan admin, bukan daftar bawaan
-// browser. Pola ARIA "select-only combobox": fokus tetap di tombol, pilihan yang disorot diumumkan
-// lewat aria-activedescendant. Keyboard: panah atas/bawah, Home/End, Enter/Spasi memilih, Escape
-// menutup.
 export function ChoiceSelect<V extends string>({
   value,
   options,

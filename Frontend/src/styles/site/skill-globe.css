@@ -1,6 +1,6 @@
 /* Globe skill di beranda: tata letak, menu kategori, dan mode canvas. */
 
-/* Globe skill (features/skills/components/skill-globe.tsx, revisi 2026-10-18). Logo diletakkan
+/* Globe skill (features/skills/components/skill-globe/). Logo diletakkan
    dari tengah panggung dengan --x/--y (satuan jari-jari --r), --s skala, --o keburaman logo, --lo
    tampil tidaknya nama (hanya sisi depan, agar teks yang tampil selalu kontras penuh). Nilai awal
    dihitung di server; JavaScript memperbaruinya tiap frame. --cat warna kategori, --logo warna brand. */
@@ -64,8 +64,7 @@
   box-shadow: 0 0 0 1.5px color-mix(in oklab, var(--cat) 60%, transparent);
   opacity: var(--o);
   /* lapisan sendiri: opacity yang berubah tiap bingkai saat bola berputar cukup dikerjakan compositor.
-     Tanpa ini logo SVG digambar ulang setiap bingkai (diukur 2026-10-20: ±1.000 tugas raster per
-     4 detik, bingkai 111 ms di HP dengan CPU 4x lebih lambat) */
+     Tanpa ini logo SVG digambar ulang setiap bingkai (±1.000 tugas raster per 4 detik, bingkai 111 ms di HP dengan CPU 4x lebih lambat) */
   will-change: opacity;
   transition:
     box-shadow 0.2s,
@@ -163,16 +162,15 @@
   outline: 2px solid var(--note);
   outline-offset: 2px;
 }
-/* Setelah JavaScript siap, logo dan nama digambar di canvas (globe-sprites.ts, 2026-10-21, globe lag di
-   HP); tombol HTML tetap di tempatnya untuk sentuhan, keyboard, dan pembaca layar, tetapi isinya tidak
+/* Setelah JavaScript siap, logo dan nama digambar di canvas (skill-globe/sprites.ts) agar
+   ringan di HP; tombol HTML tetap di tempatnya untuk sentuhan, keyboard, dan pembaca layar, tetapi isinya tidak
    terlihat. Garis fokus keyboard tetap milik tombol. */
 .globe-stage[data-canvas] .globe-item > * {
   opacity: 0 !important;
   will-change: auto;
 }
 /* Di mode canvas tombol hanya target sentuh/fokus tak terlihat, posisinya diperbarui jarang
-   (domTick di skill-globe.tsx): tanpa lapisan GPU sendiri, hemat ±31 lapisan (audit 2026-11-02,
-   PERF-03). */
+   (domTick di skill-globe/engine.ts): tanpa lapisan GPU sendiri, hemat ±31 lapisan. */
 .globe-stage[data-canvas] .globe-item {
   will-change: auto;
 }
@@ -206,7 +204,7 @@
 .globe-filter[data-open] .globe-filter-toggle svg {
   rotate: 180deg;
 }
-/* menu terbuka ke bawah (revisi pemilik 2026-10-18) */
+/* menu terbuka ke bawah */
 .globe-filter-menu {
   position: absolute;
   top: calc(100% + 0.375rem);
@@ -246,7 +244,7 @@
   color: var(--note);
   font-weight: 600;
 }
-/* jumlah skill: huruf sama dengan nama kategori (revisi pemilik 2026-10-18), angka tabular */
+/* jumlah skill: huruf sama dengan nama kategori, angka tabular */
 .globe-filter-count {
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);

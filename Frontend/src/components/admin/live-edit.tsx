@@ -1,5 +1,8 @@
 'use client'
 
+// Alat "ubah langsung di pratinjau": bahasa isi, panggung, isian dalam teks, baris ID/EN, dan tombol
+// Simpan.
+
 import {
   type ChangeEvent,
   type ComponentPropsWithoutRef,
@@ -16,7 +19,7 @@ import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { cn } from '@/lib/utils'
 
-// Alat bersama "ubah langsung di pratinjau" (revisi 2026-11-12): halaman admin tampil seperti di
+// Alat bersama "ubah langsung di pratinjau": halaman admin tampil seperti di
 // situs dan teksnya diketik langsung di tempatnya, tanpa kotak isian, hanya kursor berkedip.
 
 export type Lang = 'id' | 'en'
@@ -40,7 +43,7 @@ export function LiveStage({ children, className }: { children: ReactNode; classN
   return <div className={cn('admin-bleed overflow-hidden rounded-md', className)}>{children}</div>
 }
 
-// tombol Simpan satu baris penuh selebar panel, sudut kecil (revisi pemilik 2026-11-12)
+// tombol Simpan satu baris penuh selebar panel, sudut kecil
 export function SaveBar({ pending, label = 'Simpan' }: { pending: boolean; label?: string }) {
   const t = useAdminT()
   return (
@@ -70,7 +73,7 @@ type InlineBase = { label: string; invalid?: boolean; describedBy?: string }
 
 // Teks satu baris yang diketik langsung: huruf, warna, dan ukuran ikut teks di sekitarnya.
 // wrap: teks yang bisa panjang (nama instansi, jurusan, URL) boleh turun baris bila tidak muat, tidak
-// terpotong (revisi pemilik 2026-11-17). Tetap satu baris data: Enter tidak membuat baris baru.
+// terpotong. Tetap satu baris data: Enter tidak membuat baris baru.
 export function InlineInput({
   label,
   invalid,
@@ -242,7 +245,7 @@ export function Note({ children, className }: { children: ReactNode; className?:
 }
 
 // Pilihan bahasa isi dalam satu baris selebar Simpan, tepat di atasnya; bentuknya sama dengan tombol
-// Chip kampus/Chip bendera (revisi pemilik 2026-11-13)
+// Chip kampus/Chip bendera
 export function LangRow({
   lang,
   onChange,
@@ -285,7 +288,7 @@ export function LangRow({
 }
 
 // Teks Markdown (uraian, grade): tampil seperti di situs, ditekan untuk diketik; saat kolom
-// ditinggalkan tampil lagi seperti di situs (revisi 2026-11-13)
+// ditinggalkan tampil lagi seperti di situs
 export function MarkdownInline({
   value,
   onChange,

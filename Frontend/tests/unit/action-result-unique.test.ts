@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/action-result: toActionError untuk bentrok email.
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { Prisma } from '@backend/generated/prisma/client'
@@ -15,7 +17,7 @@ function uniqueError(index: string) {
   })
 }
 
-// audit 2026-11-17, DB-04: ganti email yang bentrok ditandai di isian Email, bukan pesan umum
+// ganti email yang bentrok ditandai di isian Email, bukan pesan umum
 describe('toActionError untuk bentrok email', () => {
   it('menandai isian Email bila label diberikan', () => {
     expect(toActionError(uniqueError('User_email_key'), { email: 'Email' })).toEqual({

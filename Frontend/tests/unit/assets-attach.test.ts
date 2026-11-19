@@ -1,8 +1,10 @@
+// Tes unit Backend/features/assets (attachUploadedAsset): percobaan ulang tidak menghapus berkas.
+
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Prisma } from '@backend/generated/prisma/client'
 
-// audit 2026-11-17, BUG-01: percobaan ulang setelah jawaban hilang tidak boleh menghapus berkas
+// percobaan ulang setelah jawaban hilang tidak boleh menghapus berkas
 // yang sudah dicatat oleh permintaan pertama.
 const destroyRemoteAsset = vi.fn(async () => undefined)
 const findUnique = vi.fn()

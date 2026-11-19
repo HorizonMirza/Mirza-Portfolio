@@ -1,5 +1,11 @@
 'use client'
 
+// Admin → Akun, seperti profil di aplikasi pesan:
+// foto besar di tengah, nama dan peran, lalu daftar berkelompok Info, Keamanan, dan Perangkat tertaut.
+// Tombol kamera langsung membuka pemilih berkas lalu pengaturan ukuran (foto sendiri tidak bisa
+// ditekan); email tampil apa adanya; ganti nama, email, dan password berupa dialog dengan latar buram
+// tipis (nama atau email lama, yang baru, dan password).
+
 import {
   CalendarDays,
   Camera,
@@ -19,14 +25,15 @@ import { toast } from 'sonner'
 import { Spinner } from '@/components/ui/spinner'
 import { useAdminLang, useAdminT } from '@/components/admin/admin-lang'
 import { Button } from '@/components/ui/button'
-import type { DeviceParts } from '@backend/lib/device'
-import { formatDateTime } from '@backend/lib/format'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
+import type { DeviceParts } from '@backend/lib/device'
+import { formatDateTime } from '@backend/lib/format'
 import type { AccountSession } from '@backend/features/account/queries'
 import { revokeOtherSessions, revokeSession } from '@backend/features/account/session-actions'
+
 import { ChangeIdentityDialog, ChangePasswordDialog } from './account-dialogs'
 
 // form tampil sebagai dialog di atas halaman
@@ -48,12 +55,6 @@ function shortDate(iso: string, lang: 'id' | 'en') {
   }).format(new Date(iso))
 }
 
-// Admin → Akun, desain 1 "Profil ala WhatsApp" (pilihan pemilik 2026-11-11):
-// foto besar di tengah, nama dan peran, lalu daftar berkelompok Info, Keamanan, dan Perangkat tertaut.
-// Revisi pemilik 2026-11-16: tombol kamera langsung membuka pemilih berkas lalu pengaturan ukuran
-// (foto sendiri tidak bisa ditekan); email tampil apa adanya; ganti nama, email, dan password berupa
-// dialog dengan latar buram tipis (nama atau email lama, yang baru, dan password); daftar Aktivitas
-// terbaru dihapus.
 export function AccountPanel({
   name,
   email,
@@ -76,7 +77,7 @@ export function AccountPanel({
   const { lang } = useAdminLang()
   const router = useRouter()
   const [dialog, setDialog] = useState<Dialog | null>(null)
-  // kamera: langsung ke pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
+  // kamera: langsung ke pemilih berkas, lalu pemotong gambar
   const picker = useAssetPicker({ configured: uploadReady, onDone: () => router.refresh() })
   const setDialogOpen = (name: Dialog) => (open: boolean) => setDialog(open ? name : null)
   // pembuka dialog, tempat fokus kembali saat dialog ditutup

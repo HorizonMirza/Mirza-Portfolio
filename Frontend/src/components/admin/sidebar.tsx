@@ -1,5 +1,7 @@
 'use client'
 
+// Sidebar panel admin: daftar menu kaca, mode ikon saja (rail), dan lampu menu aktif.
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -10,7 +12,6 @@ import { fadeLabel, useSidebarState } from '@/components/admin/sidebar-state'
 import { cn } from '@/lib/utils'
 
 // Lampu hitam/putih (ikut warna teks tema) di tepi kiri menu aktif, seperti topbar situs publik.
-// Dikembalikan atas permintaan pemilik 2026-11-11 (sempat dihapus di).
 function Lamp() {
   return (
     <span
@@ -23,8 +24,7 @@ function Lamp() {
 }
 
 // rail: sidebar kaca hanya ikon (label tetap ada untuk pembaca layar). Di tablet selalu; di desktop
-// (mulai 1024 px, dikembalikan atas permintaan pemilik 2026-11-17)
-// saat diciutkan lewat tombol hamburger (compact).
+// (mulai 1024 px) saat diciutkan lewat tombol hamburger (compact).
 function NavLinks({
   onNavigate,
   rail = false,
@@ -40,7 +40,7 @@ function NavLinks({
   return (
     <nav
       aria-label={t('Menu Admin')}
-      // satu daftar menyambung tanpa label dan jarak kelompok (revisi pemilik 2026-11-11)
+      // satu daftar menyambung tanpa label dan jarak kelompok
       className="flex flex-col gap-0.5"
     >
       <ul className="flex flex-col gap-0.5">
@@ -83,7 +83,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   return <NavLinks onNavigate={onNavigate} />
 }
 
-// Sidebar kaca (revisi 2026-11-11): penuh dari atas sampai bawah layar di kiri top bar
+// Sidebar kaca: penuh dari atas sampai bawah layar di kiri top bar
 // dan panel isi, tidak ikut bergulir. Puncaknya foto, nama, dan Super Admin sekaligus tombol kembali ke
 // Dashboard (satu-satunya wajah admin di panel), lalu menu (digulir sendiri tanpa batang
 // gulir). Tablet (768-1023 px): rel ikon. Desktop: 17rem (238 px, rem desktop 14 px): nama lengkap butuh 222 px, sisa 16 px untuk huruf cadangan, atau rel
@@ -94,7 +94,7 @@ export function AdminSidebar(identity: AdminIdentity) {
     <aside
       data-collapsed={collapsed ? 'true' : 'false'}
       className={cn(
-        // lebar berganti pelan dan halus (revisi pemilik 2026-11-11: sebelumnya 300 ms terlalu cepat)
+        // lebar berganti pelan dan halus (300 ms terasa terlalu cepat)
         'admin-glass-panel relative z-40 hidden h-full w-[4.75rem] shrink-0 flex-col rounded-[23px] transition-[width] duration-500 ease-in-out-soft motion-reduce:transition-none md:flex',
         collapsed ? 'lg:w-[4.75rem]' : 'lg:w-[17rem]',
       )}

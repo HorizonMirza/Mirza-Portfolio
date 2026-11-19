@@ -1,5 +1,10 @@
 'use client'
 
+// Satu tombol bulat: menyala = mode gelap. Tema baru meluas melingkar dari tombol
+// (lib/circle-reveal.ts), diiringi suara desir angin (lib/ui-sounds.ts). Tanpa dukungan browser atau
+// dengan reduced-motion: langsung ganti.
+// label: nama tombol dari luar (panel admin memakai bahasa tampilan admin, bukan messages/*.json)
+
 import { useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
 import { type MouseEvent, useSyncExternalStore } from 'react'
@@ -55,10 +60,6 @@ function SolarSwitch() {
   )
 }
 
-// Satu tombol bulat: menyala = mode gelap. Tema baru meluas melingkar dari tombol
-// (lib/circle-reveal.ts), diiringi suara desir angin (lib/ui-sounds.ts). Tanpa dukungan browser atau
-// dengan reduced-motion: langsung ganti.
-// label: nama tombol dari luar (panel admin memakai bahasa tampilan admin, bukan messages/*.json)
 export function ThemeToggle({ className, label }: { className?: string; label?: string }) {
   const t = useTranslations('Theme')
   const name = label ?? t('darkMode')

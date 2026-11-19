@@ -1,3 +1,5 @@
+// Persiapan Vitest: matcher jest-dom dan paket server-only dikosongkan.
+
 import '@testing-library/jest-dom/vitest'
 import { vi } from 'vitest'
 

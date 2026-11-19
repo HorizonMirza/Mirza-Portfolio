@@ -1,8 +1,10 @@
+// Tes unit Backend/features/assets/targets: maxSideOf.
+
 import { describe, expect, it } from 'vitest'
 
 import { maxSideOf, UPLOAD_TARGET_KEYS, UPLOAD_TARGETS } from '@backend/features/assets/targets'
 
-// audit 2026-11-17, EFF-05: ukuran gambar ditulis per tujuan, bukan ditebak dari batas berkas
+// ukuran gambar ditulis per tujuan, bukan ditebak dari batas berkas
 describe('maxSideOf', () => {
   it('tiap tujuan gambar punya maxSide sendiri', () => {
     for (const key of UPLOAD_TARGET_KEYS) {

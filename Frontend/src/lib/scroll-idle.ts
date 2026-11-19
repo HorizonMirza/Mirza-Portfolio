@@ -1,6 +1,6 @@
 // Penanda "halaman sedang digulir" bersama untuk animasi kanvas (globe skill): selama
-// digulir dan sampai IDLE_MS sesudahnya, animasi dekoratif melewatkan bingkai agar gulir tetap mulus
-// (laporan lag pemilik 2026-10-20). Satu pendengar scroll pasif untuk seluruh halaman.
+// digulir dan sampai IDLE_MS sesudahnya, animasi dekoratif melewatkan bingkai agar gulir tetap mulus.
+// Satu pendengar scroll pasif untuk seluruh halaman.
 const IDLE_MS = 160
 
 let scrolling = false
@@ -32,7 +32,7 @@ export function isScrolling() {
 
 // jalankan `resume` sekali setelah gulir berhenti (mis. memulai lagi loop animasi). Mengembalikan
 // fungsi pembatal: komponen yang dibongkar saat halaman masih digulir wajib memanggilnya, agar
-// loop animasinya tidak hidup lagi setelah komponen hilang (audit 2026-10-31, BUG-01/02).
+// loop animasinya tidak hidup lagi setelah komponen hilang.
 export function onScrollEnd(resume: () => void): () => void {
   listen()
   if (!scrolling) {

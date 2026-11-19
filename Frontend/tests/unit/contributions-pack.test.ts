@@ -1,3 +1,5 @@
+// Tes unit src/features/github/sample dan src/lib/contributions-pack: contributions-pack.
+
 import { describe, expect, it } from 'vitest'
 
 import { sampleContributions } from '@/features/github/sample'

@@ -1,13 +1,16 @@
+// Halaman Kontak: kartu ID bertali di kiri, judul dan form kontak di kanan.
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { IdLanyard } from '@/components/site/id-lanyard'
 import { Container, PageIntro } from '@/components/site/section-heading'
 import { ContactForm } from '@/features/messages/components/public/contact-form'
-import { getPublicProfile } from '@backend/features/profile/public'
-import { getSiteSettings } from '@backend/features/settings/public'
 import { HERO_CARD_CROP, HERO_PORTRAIT } from '@/lib/default-photo'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
+
+import { getPublicProfile } from '@backend/features/profile/public'
+import { getSiteSettings } from '@backend/features/settings/public'
 import { pageMetadata } from '@backend/lib/seo'
 
 export async function generateMetadata({
@@ -32,8 +35,7 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
     getSiteSettings(),
   ])
 
-  // Pilihan pemilik 2026-10-03 (demo nomor 1, tanpa tombol cepat): kartu ID bertali di kiri,
-  // judul, pengantar, dan form di kanan. Kontak langsung (email, WhatsApp, sosial, CV) ada di footer.
+  // Kartu ID bertali di kiri; judul, pengantar, dan form di kanan. Kontak langsung (email, WhatsApp, sosial, CV) ada di footer.
   return (
     <Container className="pb-12">
       <div className="grid lg:grid-cols-[15rem_1fr] lg:gap-16">
@@ -42,9 +44,9 @@ export default async function ContactPage({ params }: PageProps<'/[locale]/conta
         <IdLanyard
           className="hidden lg:mt-[calc(5.75rem+0.2*var(--text-h1))] lg:block"
           name={profile?.name ?? 'Muhammad Mirza'}
-          // jabatan dan alamat situs di kartu diatur di Admin → Contact, bagian Kartu ID (2026-11-10)
+          // jabatan dan alamat situs di kartu diatur di Admin → Contact, bagian Kartu ID
           role={t('cardRole')}
-          // wajah sama dengan beranda (revisi pemilik 2026-11-06): potret hero, termasuk unggahan
+          // wajah sama dengan beranda: potret hero, termasuk unggahan
           // dari Admin → Pengaturan bila ada, dipotong kepala dan bahu
           photo={settings.contactPhoto?.url ?? settings.heroPortrait?.url ?? HERO_PORTRAIT}
           // foto kartu dari admin dipakai utuh; potret hero dipotong kepala dan bahu

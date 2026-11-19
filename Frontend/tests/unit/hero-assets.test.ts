@@ -1,8 +1,10 @@
+// Tes unit Backend/features/assets/targets: bentuk foto utama beranda.
+
 import { describe, expect, it } from 'vitest'
 
 import { checkImageShape, needsAlt, UPLOAD_TARGETS } from '@backend/features/assets/targets'
 
-// Foto utama beranda; armor hero tidak bisa diunggah lagi sejak 2026-11-10 (selalu gambar bawaan).
+// Foto utama beranda; armor hero tidak bisa diunggah (selalu gambar bawaan).
 describe('bentuk foto utama beranda', () => {
   const portrait = UPLOAD_TARGETS['hero-portrait']
 

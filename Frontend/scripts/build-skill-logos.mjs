@@ -1,7 +1,7 @@
 // Membuat public/skills/<slug>.webp dari sumber SVG di scripts/skill-logos/ (jalankan: pnpm logos:build).
 // Globe skill memakai bitmap, bukan SVG: logo SVG harus digambar dari vektor saat pertama kali tampil
-// dan 31 logo sekaligus membuat beranda tersendat ketika bagian Keahlian masuk layar (diukur
-// 2026-10-20 di HP, CPU 4x lebih lambat: 70 ms -> 19 ms per bingkai dengan WebP). 144 px cukup tajam
+// dan 31 logo sekaligus membuat beranda tersendat ketika bagian Keahlian masuk layar (di HP
+// dengan CPU 4x lebih lambat: 70 ms -> 19 ms per bingkai dengan WebP). 144 px cukup tajam
 // untuk lingkaran logo terbesar (±44 px) di layar 3x. Memakai Chromium dari Playwright (sudah
 // devDependency), jadi tidak perlu pustaka gambar tambahan.
 import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'

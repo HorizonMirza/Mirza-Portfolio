@@ -1,3 +1,5 @@
+// Tes unit src/components/ui/contribution-skyline/model: contribution-skyline.
+
 import { describe, expect, it } from 'vitest'
 
 import {

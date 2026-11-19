@@ -1,3 +1,5 @@
+// Tes unit: changePassword.
+
 import { APIError } from 'better-auth'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -23,7 +25,7 @@ const input = {
   newPassword: 'Password-Baru-Yang-Panjang-1!',
 }
 
-// audit 2026-11-03, ERR-05: galat Better Auth dibedakan, tidak semuanya "password salah"
+// galat Better Auth dibedakan, tidak semuanya "password salah"
 describe('changePassword', () => {
   beforeEach(() => changePasswordApi.mockReset())
 

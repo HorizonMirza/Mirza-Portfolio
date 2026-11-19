@@ -1,3 +1,5 @@
+// Alat bantu tes admin: lokasi sesi login, cek kredensial admin, IP palsu per login, dan login.
+
 import type { Page } from '@playwright/test'
 
 export const ADMIN_STATE = 'e2e/.auth/admin.json'

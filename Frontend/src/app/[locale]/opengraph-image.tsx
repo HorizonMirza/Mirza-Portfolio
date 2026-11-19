@@ -1,3 +1,5 @@
+// Gambar pratinjau tautan (Open Graph) untuk halaman umum situs.
+
 import { hasLocale } from 'next-intl'
 
 import { getPublicProfile } from '@backend/features/profile/public'

@@ -1,5 +1,7 @@
 'use client'
 
+// Vercel Analytics dan Speed Insights (dipasang layout hanya di Vercel); query string dibuang dulu.
+
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 

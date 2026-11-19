@@ -1,3 +1,5 @@
+// Tes unit: data seed.
+
 import { describe, expect, it } from 'vitest'
 
 import { experiences, profile, projects, skillCategories } from '../../../Database/seed/seed-data'

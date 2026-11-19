@@ -1,3 +1,5 @@
+// Semua halaman di (panel) wajib sesi SUPER_ADMIN yang valid (dicek di server).
+
 import { cookies } from 'next/headers'
 import type { ReactNode } from 'react'
 
@@ -7,26 +9,26 @@ import { AdminSidebar } from '@/components/admin/sidebar'
 import { SIDEBAR_COOKIE } from '@/components/admin/sidebar-cookie'
 import { SidebarStateProvider } from '@/components/admin/sidebar-state'
 import { AdminTopBar } from '@/components/admin/top-bar'
+import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
+
 import { getPublicProfile } from '@backend/features/profile/public'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 import { getAdminLang } from '@backend/lib/admin-lang-server'
-import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
 
-// Semua halaman di (panel) wajib sesi SUPER_ADMIN yang valid (dicek di server).
 export default async function PanelLayout({ children }: { children: ReactNode }) {
   const admin = await requireSuperAdminPage()
   // foto bulat yang sama dengan topbar situs publik (foto dari admin didahulukan)
   const profile = await getPublicProfile()
   const identity = { adminName: admin.name, photo: profile?.photo?.url ?? DEFAULT_PROFILE_AVATAR }
   const lang = await getAdminLang()
-  // sidebar desktop diciutkan lewat hamburger (revisi 2026-11-11), dibaca server agar tidak melompat
+  // sidebar desktop diciutkan lewat hamburger, dibaca server agar tidak melompat
   const collapsed = (await cookies()).get(SIDEBAR_COOKIE)?.value === 'collapsed'
   return (
     <AdminLangProvider initial={lang}>
-      {/* Desain 5+ (pilihan pemilik 2026-11-11): top bar, sidebar, dan panel isi
+      {/* Desain 5+: top bar, sidebar, dan panel isi
           dari kaca buram hitam-putih di atas latar yang bisa diatur lewat tombol Tampilan */}
       <AdminGlassShell>
-        {/* Kerangka tetap setinggi layar (revisi pemilik 2026-11-11): sidebar
+        {/* Kerangka tetap setinggi layar: sidebar
             penuh dari atas sampai bawah, top bar selebar panel isi, keduanya tidak ikut bergulir. Hanya
             isi di dalam panel besar yang digulir (batang gulir disembunyikan). */}
         <SidebarStateProvider initialCollapsed={collapsed}>

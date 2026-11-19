@@ -1,8 +1,9 @@
+// Bentuk skeleton tiap halaman situs, dipakai situs publik dan pratinjau admin.
+
 import { Skeleton, SkeletonLines } from '@/components/shared/skeleton'
 import { cn } from '@/lib/utils'
 
-// Bentuk skeleton shimmer tiap halaman situs (permintaan pemilik 2026-11-16: skeleton harus sesuai
-// layout halaman yang sedang dimuat). Dipakai di dua tempat dengan bentuk yang sama:
+// Bentuk skeleton shimmer tiap halaman situs, sesuai layout halaman yang sedang dimuat. Dipakai di dua tempat dengan bentuk yang sama:
 // - situs publik: NavigationSkeleton saat pindah halaman;
 // - panel admin: panggung pratinjau 1:1 di loading.tsx (components/admin/page-skeletons.tsx).
 // Tanpa hook, jadi aman untuk server maupun client component.

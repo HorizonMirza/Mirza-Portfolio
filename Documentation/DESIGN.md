@@ -109,7 +109,7 @@ Panjang baris isi maksimal ±68 karakter (`max-w-prose`). Mulai lebar 1024 px uk
 | Lampu menu aktif bergeser antar halaman | Desktop: React `<ViewTransition name>` (View Transitions bawaan browser). Nav bawah HP: satu elemen lampu yang digeser per kolom lewat `transform`. Mati pada reduced-motion | 0 KB library |
 | Transisi antarhalaman | Desktop/laptop (pointer halus): View Transitions (CSS + dukungan Next.js/React). HP/tablet (`(hover: none) and (pointer: coarse)`): View Transitions dimatikan untuk pindah halaman, halaman baru masuk dengan animasi `transform` + `opacity` 320 ms searah urutan menu (`components/site/page-transitions.tsx`). Alasan dan hasil ukur di bagian 40 | < 1 KB |
 | Muncul/hilang elemen, hover, fokus | CSS `transition` + `@starting-style` | 0 KB |
-| Masker cairan hero | Simulasi cairan WebGL2 buatan sendiri (`components/site/hero-fluid.ts`, `liquid-mask-portrait.tsx`), cadangan canvas 2D "Kabut" bila WebGL2 tidak tersedia | tanpa library |
+| Masker cairan hero | Simulasi cairan WebGL2 buatan sendiri (`components/site/hero-fluid.ts`, `liquid-mask-engine.ts`), cadangan canvas 2D "Kabut" bila WebGL2 tidak tersedia | tanpa library |
 | Globe skill, grafik kontribusi GitHub, kotak commit | Canvas 2D buatan sendiri, berhenti saat di luar layar dan saat digulir (`lib/scroll-idle.ts`) | tanpa library |
 | Menu HP, modal, daftar yang berubah urutan | CSS `transition` + `@starting-style`; dialog dan panel memakai Radix (shadcn/ui) | 0 KB library animasi |
 

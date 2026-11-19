@@ -1,6 +1,6 @@
-// Gambar logo globe skill di canvas (permintaan pemilik 2026-10-21: globe lag di HP). Tiap bingkai
-// putaran, 31 tombol logo HTML dulu dihitung ulang gayanya (±42 ms per bingkai di HP dengan CPU 6x
-// lebih lambat, bola ±12 fps). Kini tampilan logo digambar di canvas yang sama dengan garis bola;
+// Gambar logo globe skill di canvas. Menghitung ulang gaya 31 tombol logo HTML tiap bingkai terlalu
+// berat di HP (±42 ms per bingkai dengan CPU 6x lebih lambat), jadi tampilan logo digambar di canvas
+// yang sama dengan garis bola;
 // tombol HTML tetap ada (tak terlihat) untuk sentuhan, keyboard, dan pembaca layar, dan posisinya
 // cukup diperbarui beberapa kali per detik.
 // Ukuran dan jarak diambil dari tata letak tombol HTML (diukur sekali), warna dari token tema, dan
@@ -30,8 +30,7 @@ export type ItemGeometry = {
 // pikselnya pindah ke memori CPU dan harus diunggah setiap kali digambar)
 export type ItemSprite = { normal: CanvasImageSource; gray: CanvasImageSource }
 
-// Lepas memori GPU sprite yang tidak dipakai lagi (ganti tema membuat set baru, audit 2026-10-31
-// EFF-03). Kanvas cadangan (tanpa createImageBitmap) cukup dibiarkan ke pembersih memori.
+// Lepas memori GPU sprite yang tidak dipakai lagi (ganti tema membuat set baru). Kanvas cadangan (tanpa createImageBitmap) cukup dibiarkan ke pembersih memori.
 export function releaseSprites(list: readonly (ItemSprite | undefined)[]) {
   if (typeof ImageBitmap === 'undefined') return
   for (const sprite of list) {
@@ -131,10 +130,10 @@ export function measureItem(button: HTMLElement, ctx: CanvasRenderingContext2D):
 // Sprite isi logo: <img> (logo asli WebP), <svg> (logo satu warna atau ikon umum, warnanya dari CSS),
 // atau singkatan teks. Logo hitam (data-invert-dark) dibalik warnanya di tema gelap, sama dengan CSS.
 // Gambar logo yang boleh digambar ke kanvas dan dibaca pikselnya, atau null bila tidak bisa dipakai.
-// - Gagal dimuat (404, jaringan): null, sebab drawImage pada gambar rusak melempar galat (BUG-11).
+// - Gagal dimuat (404, jaringan): null, sebab drawImage pada gambar rusak melempar galat.
 // - Dari domain lain (logo unggahan di Cloudinary): dimuat ulang dengan CORS agar kanvas tidak
-//   tercemar dan versi abu-abunya bisa dibuat (BUG-09). Bila muat ulang gagal, gambar aslinya tetap
-//   dipakai: logo tampil berwarna, sama seperti sebelumnya.
+//   tercemar dan versi abu-abunya bisa dibuat. Bila muat ulang gagal, gambar aslinya tetap
+//   dipakai (logo tampil berwarna).
 async function drawableImage(img: HTMLImageElement): Promise<HTMLImageElement | null> {
   if (!img.naturalWidth) return null
   const src = img.currentSrc || img.src

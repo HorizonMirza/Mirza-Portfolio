@@ -32,10 +32,10 @@ const nextConfig: NextConfig = {
     // tertangkap [locale] dialihkan lewat rewrite afterFiles di bawah.
     globalNotFound: true,
     // halaman 401 dan 403 admin lewat unauthorized() dan forbidden() (app/admin/unauthorized.tsx dan
-    // forbidden.tsx, halaman status bersama, revisi pemilik 2026-11-16)
+    // forbidden.tsx, halaman status bersama)
     authInterrupts: true,
   },
-  // Halaman Skill digabung ke beranda (keputusan pemilik 2026-10-01); tautan lama diarahkan ke sana.
+  // Halaman Skill digabung ke beranda; tautan lama diarahkan ke sana.
   async redirects() {
     return [{ source: '/:locale(id|en)/skills', destination: '/:locale#skills', permanent: true }]
   },
@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
   // tampil 404 bawaan Next berbahasa Inggris. Rewrite afterFiles diperiksa SETELAH berkas public/,
   // _next/static, dan halaman non-dinamis (robots.txt, sitemap.xml, favicon.ico), tetapi SEBELUM rute
   // dinamis, jadi hanya URL yang memang tidak ada yang diarahkan ke 404 situs bahasa Indonesia; URL di
-  // browser tidak berubah dan statusnya tetap 404 (audit 2026-11-05, 404 global).
+  // browser tidak berubah dan statusnya tetap 404 (404 global).
   async rewrites() {
     return {
       beforeFiles: [],

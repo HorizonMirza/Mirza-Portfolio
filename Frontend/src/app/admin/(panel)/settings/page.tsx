@@ -1,8 +1,11 @@
+// Admin → Pengaturan: suara, tampilan, pesan, privasi, dan mode perawatan.
+
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { getPublicProfile } from '@backend/features/profile/public'
 import { SiteSettingsList } from '@/features/settings/components/site-settings-list'
+
+import { getPublicProfile } from '@backend/features/profile/public'
 import { getSiteOptionsForEdit } from '@backend/features/settings/queries'
 import { getAdminT } from '@backend/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'
@@ -13,8 +16,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Pengaturan') }
 }
 
-// Nama menu tetap "Pengaturan": sekarang berisi pengaturan seluruh situs, bukan hanya suara
-// (revisi pemilik 2026-11-11).
 export default async function SettingsPage() {
   await requireSuperAdminPage()
   const [options, profile] = await Promise.all([getSiteOptionsForEdit(), getPublicProfile()])

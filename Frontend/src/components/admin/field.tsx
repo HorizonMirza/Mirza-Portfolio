@@ -1,14 +1,16 @@
 'use client'
 
+// Label selalu terlihat, teks bantuan dan galat terhubung lewat aria-describedby. Label, bantuan, dan
+// galat diterjemahkan ke bahasa tampilan admin.
+
 import type { ReactNode } from 'react'
 
 import { useAdminLang } from '@/components/admin/admin-lang'
-import { adminT } from '@backend/lib/admin-i18n'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
-// Label selalu terlihat, teks bantuan dan galat terhubung lewat aria-describedby. Label, bantuan, dan
-// galat diterjemahkan ke bahasa tampilan admin.
+import { adminT } from '@backend/lib/admin-i18n'
+
 export function Field({
   id,
   label,

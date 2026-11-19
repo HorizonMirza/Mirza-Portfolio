@@ -1,8 +1,10 @@
+// Tes unit Backend/lib/run-steps: runSteps.
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { runSteps } from '@backend/lib/run-steps'
 
-// audit 2026-11-17, ERR-01: satu langkah gagal tidak menghentikan langkah lain
+// satu langkah gagal tidak menghentikan langkah lain
 describe('runSteps', () => {
   it('menjalankan semua langkah dan menggabungkan hasilnya', async () => {
     const r = await runSteps(

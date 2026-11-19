@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/orphan-uploads: pickOrphans.
+
 import { describe, expect, it } from 'vitest'
 
 import { ORPHAN_MAX_PER_RUN, pickOrphans } from '@backend/lib/orphan-uploads'
@@ -5,7 +7,7 @@ import { ORPHAN_MAX_PER_RUN, pickOrphans } from '@backend/lib/orphan-uploads'
 const now = Date.UTC(2026, 10, 2, 12)
 const hoursAgo = (h: number) => new Date(now - h * 3600_000).toISOString()
 
-// audit 2026-11-02, DB-07: hanya berkas lama tanpa baris Asset di folder situs yang dihapus
+// hanya berkas lama tanpa baris Asset di folder situs yang dihapus
 describe('pickOrphans', () => {
   it('memilih berkas di folder situs yang tidak tercatat dan lebih tua dari 48 jam', () => {
     const remote = [

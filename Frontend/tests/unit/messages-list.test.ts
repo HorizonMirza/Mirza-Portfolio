@@ -1,6 +1,8 @@
+// Tes unit: listMessages.
+
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// audit 2026-11-17, EFF-01: daftar pesan tidak lagi mengambil isi pesan penuh
+// daftar pesan tidak mengambil isi pesan penuh
 const queryRaw = vi.fn<(...args: unknown[]) => Promise<unknown[]>>(async () => [])
 vi.mock('server-only', () => ({}))
 vi.mock('@backend/lib/db', () => ({ getDb: () => ({ $queryRaw: queryRaw }) }))

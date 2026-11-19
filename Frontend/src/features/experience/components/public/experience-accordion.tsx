@@ -1,5 +1,12 @@
 'use client'
 
+// Pembungkus akordion Pengalaman di beranda: isinya tetap dirender server (<details> bawaan
+// browser), komponen ini menambah dua hal:
+// - suara saat satu baris dibuka atau ditutup;
+// - animasi tinggi saat membuka dan menutup di semua browser, termasuk Safari HP yang belum
+//   mendukung ::details-content.
+// Tanpa JavaScript atau dengan reduced-motion, <details> tetap membuka dan menutup seketika.
+
 import { type ReactNode, useEffect, useRef } from 'react'
 
 import { playExperienceToggleSound } from '@/lib/ui-sounds'
@@ -11,12 +18,6 @@ function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-// Pembungkus akordion Pengalaman di beranda: isinya tetap dirender server (<details> bawaan
-// browser), komponen ini menambah dua hal:
-// - suara saat satu baris dibuka atau ditutup (pilihan pemilik 2026-10-16, demo S9);
-// - animasi tinggi saat membuka dan menutup di semua browser, termasuk Safari HP yang belum
-//   mendukung ::details-content (revisi pemilik 2026-10-16: di HP detail langsung muncul).
-// Tanpa JavaScript atau dengan reduced-motion, <details> tetap membuka dan menutup seketika.
 export function ExperienceAccordion({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
 

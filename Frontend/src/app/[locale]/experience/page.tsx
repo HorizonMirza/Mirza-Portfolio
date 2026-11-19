@@ -1,3 +1,5 @@
+// Halaman Pengalaman: timeline kerja dan organisasi dengan fokus aktif dan foto kegiatan.
+
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
@@ -7,12 +9,13 @@ import { Container, PageIntro } from '@/components/site/section-heading'
 import { FocusTimeline } from '@/features/experience/components/public/focus-timeline'
 import { PhotoLightbox } from '@/features/experience/components/public/photo-lightbox'
 import { durationText, employmentText } from '@/features/experience/display'
+import { metadataLocale, resolveLocale } from '@/lib/locale-page'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
+
 import { getPublicExperiences, type PublicExperience } from '@backend/features/experience/public'
 import { initials, organizationName, sortByLatest } from '@backend/features/experience/schema'
-import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { formatMonth, loc } from '@backend/lib/localized'
 import { pageMetadata } from '@backend/lib/seo'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export async function generateMetadata({
   params,
@@ -28,12 +31,12 @@ export async function generateMetadata({
   })
 }
 
-// Halaman ini hanya pengalaman kerja dan organisasi; pendidikan tidak ditampilkan (pilihan
-// pemilik 2026-10-03). Data pendidikan tetap dipakai halaman Tentang.
+// Halaman ini hanya pengalaman kerja dan organisasi; pendidikan tampil di
+// halaman Tentang.
 const SHOWN = ['WORK', 'ORGANIZATION'] as const
 
-// Timeline tengah "fokus aktif" (pilihan pemilik 2026-10-03): hitam-putih,
-// tanpa kalimat pengantar dan tanpa filter (revisi pemilik).
+// Timeline tengah "fokus aktif": hitam-putih,
+// tanpa kalimat pengantar dan tanpa filter.
 export default async function ExperiencePage({ params }: PageProps<'/[locale]/experience'>) {
   const locale = await resolveLocale(params)
   const [t, all] = await Promise.all([
@@ -72,7 +75,7 @@ export default async function ExperiencePage({ params }: PageProps<'/[locale]/ex
                   )}
                 </div>
                 <div className="xp-main">
-                  {/* format seperti LinkedIn (permintaan pemilik 2026-10-04):
+                  {/* format seperti LinkedIn:
                       Peran / Instansi · Jenis pekerjaan / Mulai - Selesai · Durasi */}
                   <h2 className="text-h3 font-semibold">{loc(e, 'title', locale)}</h2>
                   <p className="mt-1">

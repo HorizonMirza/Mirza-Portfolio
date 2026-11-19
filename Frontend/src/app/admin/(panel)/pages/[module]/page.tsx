@@ -1,3 +1,5 @@
+// Admin: satu halaman per modul situs (Kartu Pembuka, About, Contact, Navbar, Footer, dll.).
+
 import type { Metadata } from 'next'
 import { notFound, redirect } from 'next/navigation'
 import { getTranslations } from 'next-intl/server'
@@ -5,22 +7,23 @@ import { getTranslations } from 'next-intl/server'
 import { isTabbedModule, ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { SitePreviewHeader } from '@/components/admin/site-preview-header'
-import { getContactPhotoAsset, getProfileAssets } from '@backend/features/assets/queries'
 import { ContactLinksLive } from '@/features/profile/components/contact-links-live'
-import { getPublicProfile } from '@backend/features/profile/public'
-import { getContactLinksForEdit } from '@backend/features/profile/queries'
 import { IntroForm, type IntroPreviewTexts } from '@/features/settings/components/intro-form'
-import { getIntroForEdit } from '@backend/features/settings/queries'
-import { findModule, type ModuleId } from '@backend/features/site-text/catalog'
 import {
   type LayoutExtras,
   SiteTextLayout,
 } from '@/features/site-text/components/site-text-layouts'
 import { ShownText, SiteTextLive } from '@/features/site-text/components/site-text-live'
+import { HERO_CARD_CROP, HERO_PORTRAIT } from '@/lib/default-photo'
+
+import { getContactPhotoAsset, getProfileAssets } from '@backend/features/assets/queries'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { getContactLinksForEdit } from '@backend/features/profile/queries'
+import { getIntroForEdit } from '@backend/features/settings/queries'
+import { findModule, type ModuleId } from '@backend/features/site-text/catalog'
 import { getDefaultTexts, getTextsForEdit } from '@backend/features/site-text/queries'
 import { getSiteSettings } from '@backend/features/settings/public'
 import { getAdminLang, getAdminT } from '@backend/lib/admin-lang-server'
-import { HERO_CARD_CROP, HERO_PORTRAIT } from '@/lib/default-photo'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 import { isUploadConfigured } from '@backend/lib/uploads'
 
@@ -34,42 +37,41 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 // Satu halaman admin per modul situs publik. Teks dua bahasa dari daftar di Backend/features/site-text/catalog.ts;
-// Bagian Awal (isi kartu pembuka) memakai form khusus dan tampil sebagai tab di Home (revisi pemilik
-// 2026-11-11). Tab Foto beranda dihapus 2026-11-12: alamat lamanya diarahkan ke tab Peran, tempat
-// foto utama kini diganti.
+// Bagian Awal (isi kartu pembuka) memakai form khusus dan tampil sebagai tab di Home.
+// Alamat lama tab Foto beranda diarahkan ke tab Peran, tempat foto utama diganti.
 export default async function SiteModulePage({ params }: Params) {
   await requireSuperAdminPage()
   const found = findModule((await params).module)
   if (!found) notFound()
   const moduleId: ModuleId = found.id
   if (moduleId === 'home') redirect('/admin/roles')
-  // About tanpa tab Teks halaman (revisi pemilik 2026-11-12): teksnya tetap
-  // tampil di situs (bawaan atau yang tersimpan sebelumnya), hanya tidak diubah dari admin lagi
+  // About tanpa tab Teks halaman: teksnya tetap
+  // tampil di situs (bawaan atau yang sudah tersimpan), tetapi tidak diubah dari admin
   if (moduleId === 'about') redirect('/admin/profile')
-  // Experience juga tanpa tab Teks halaman (revisi pemilik 2026-11-13)
+  // Experience juga tanpa tab Teks halaman
   if (moduleId === 'experience') redirect('/admin/experience')
-  // Projects juga (revisi pemilik 2026-11-15)
+  // Projects juga
   if (moduleId === 'projects') redirect('/admin/projects')
-  // Bagian Awal satu kelompok tab dengan Home, tanpa deskripsi (revisi pemilik 2026-11-11)
+  // Bagian Awal satu kelompok tab dengan Home, tanpa deskripsi
   const inHome = moduleId === 'intro'
   const tabsOf = inHome ? 'home' : moduleId
 
   return (
     <>
-      {/* tanpa deskripsi: tab dan pratinjau langsung di atas (revisi pemilik 2026-11-12) */}
+      {/* tanpa deskripsi: tab dan pratinjau langsung di atas */}
       <PageHeader title={inHome ? 'Home' : found.title} />
       {isTabbedModule(tabsOf) ? (
         <ModuleTabs moduleId={tabsOf} current={`/admin/pages/${moduleId}`} />
       ) : null}
       <div className="flex flex-col gap-6">
-        {/* Bagian Awal hanya mengelola isi kartu pembuka (permintaan pemilik 2026-11-10) */}
+        {/* Bagian Awal hanya mengelola isi kartu pembuka */}
         {moduleId === 'intro' ? <IntroEditor /> : <ModuleTexts moduleId={moduleId} />}
       </div>
     </>
   )
 }
 
-// Home → Kartu pembuka: kartu seperti di situs, isinya diubah di tempat (revisi 2026-11-12)
+// Home → Kartu pembuka: kartu seperti di situs, isinya diubah di tempat
 async function IntroEditor() {
   const [values, profile, tId, tEn] = await Promise.all([
     getIntroForEdit(),
@@ -108,7 +110,7 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
     moduleId === 'contact' ? getContactPhotoAsset() : null,
   ])
   const name = profile?.name ?? 'Muhammad Mirza'
-  // Navbar, Contact, dan Footer tampil 1:1 seperti situs di bingkai layar (revisi 2026-11-15)
+  // Navbar, Contact, dan Footer tampil 1:1 seperti situs di bingkai layar
   const extras: LayoutExtras = {
     name,
     photo: contactPhoto?.url ?? settings.heroPortrait?.url ?? HERO_PORTRAIT.src,
@@ -137,7 +139,7 @@ async function ModuleTexts({ moduleId }: { moduleId: ModuleId }) {
 }
 
 // Footer: kartu kontak dan Resume CV seperti di footer situs, diketik langsung di pratinjau dan
-// disimpan bersama teks footer (revisi 2026-11-12 dan 2026-11-15)
+// disimpan bersama teks footer
 async function footerContacts() {
   const [links, assets] = await Promise.all([getContactLinksForEdit(), getProfileAssets()])
   return (

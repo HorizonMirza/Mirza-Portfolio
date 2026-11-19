@@ -1,3 +1,6 @@
+// Tes unit Backend/lib (action-result, audit, auth-guard, reorder, safe-redirect): moveItem, diffSnapshots,
+// uniqueViolationFields, toActionError.
+
 import { describe, expect, it } from 'vitest'
 
 import { Prisma } from '@backend/generated/prisma/client'

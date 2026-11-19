@@ -1,3 +1,5 @@
+// Hook instrumentasi Next: galat server dilaporkan ke Sentry (bila SENTRY_DSN diisi).
+
 import type { Instrumentation } from 'next'
 
 import { reportServerError } from '@backend/lib/error-report'

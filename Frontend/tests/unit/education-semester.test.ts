@@ -1,3 +1,5 @@
+// Tes unit Backend/features/experience/schema: initials, organizationName.
+
 import { describe, expect, it } from 'vitest'
 
 import { initials, organizationName } from '@backend/features/experience/schema'

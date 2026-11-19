@@ -1,12 +1,12 @@
 /* Halaman Experience: timeline tengah dengan fokus aktif, bingkai foto kegiatan, dan lightbox foto. */
 
-/* Timeline tengah "fokus aktif" (revisi 2026-10-03). HP: garis di kiri, foto di bawah teks.
+/* Timeline tengah "fokus aktif". HP: garis di kiri, foto di bawah teks.
    >= 768 px: garis di tengah, isi bergantian kiri-kanan, foto atau tahun di sisi seberang. */
 .xp-tl {
   position: relative;
   display: grid;
   gap: 3rem;
-  /* warna mode gelap; mode terang hanya mengganti warna (pilihan pemilik A4, B1) */
+  /* warna mode gelap; mode terang hanya mengganti warna */
   --xp-silver: linear-gradient(135deg, #fafafa, #8f8f8f 30%, #e8e8e8 50%, #6b6b6b 70%, #d4d4d4);
   --xp-line-core: var(--text);
   --xp-line-glow: color-mix(in oklab, var(--text) 70%, transparent);
@@ -48,7 +48,7 @@
   height: 2.75rem;
   overflow: hidden;
   /* tepi digambar oleh ::before di atas gambar (bukan border) supaya tidak ada celah di tepi dan sudut */
-  /* persegi bersudut tumpul (demo nomor 9), bukan bulat */
+  /* persegi bersudut tumpul, bukan bulat */
   border-radius: 12px;
   background: var(--surface);
   font-family: var(--font-display);
@@ -72,7 +72,7 @@
   min-width: 0;
   text-align: var(--xp-side-align);
 }
-/* A5 (pilihan pemilik 2026-10-05): bingkai logam perak di sekeliling foto kegiatan */
+/* A5: bingkai logam perak di sekeliling foto kegiatan */
 .xp-frame {
   display: block;
   width: 100%;
@@ -93,7 +93,7 @@
     filter 450ms,
     opacity 450ms;
 }
-/* C1 "Lightbox klasik" (pilihan pemilik 2026-11-06): foto bisa ditekan untuk dilihat besar, dengan
+/* C1 "Lightbox klasik": foto bisa ditekan untuk dilihat besar, dengan
    efek yang sama seperti gambar di daftar project (miring + kilau dari .pj-tilt/.pj-glare, terbang
    lewat View Transition .morph). Lebar dan dorongan kiri pindah ke pembungkus miring agar poros
    kemiringan tepat di tengah foto. */
@@ -184,7 +184,7 @@ button.xp-frame {
   display: grid;
   gap: 0.75rem;
   justify-items: center;
-  /* tidak selebar layar (revisi pemilik 2026-11-06): foto sedikit lebih kecil */
+  /* tidak selebar layar: foto sedikit lebih kecil */
   max-width: min(84vw, 920px);
   transform: scale(0.92);
   transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -288,7 +288,7 @@ button.xp-frame {
     grid-row: 1;
     padding-top: 0.25rem;
   }
-  /* sisi foto: sisi atas foto sejajar tepat dengan sisi atas kotak logo (revisi pemilik) */
+  /* sisi foto: sisi atas foto sejajar tepat dengan sisi atas kotak logo */
   .xp-side:has(> .xp-tilt) {
     padding-top: 0;
   }
@@ -308,10 +308,9 @@ button.xp-frame {
     --xp-side-align: right;
     --xp-push: auto;
   }
-  /* poin tanpa penanda titik (revisi pemilik 2026-10-07): tiap poin dibatasi lebarnya dan dibagi
+  /* poin tanpa penanda titik: tiap poin dibatasi lebarnya dan dibagi
      seimbang (text-wrap: balance) sehingga umumnya dua baris dengan jumlah kata yang hampir sama.
-     Rata ke sisi garis tengah (bukan rata kiri-kanan) agar jarak antarkata tetap normal (revisi
-     pemilik 2026-10-07 malam: spasi rata kiri-kanan terlalu lebar). */
+     Rata ke sisi garis tengah (bukan rata kiri-kanan) agar jarak antarkata tetap normal. */
   .xp-tl .xp-desc ul {
     list-style: none;
   }
@@ -329,9 +328,8 @@ button.xp-frame {
     --xp-text-push: 0;
   }
 }
-/* Fokus aktif seperti demo nomor 9: hanya saat JavaScript memasang data-focus. Pilihan efek pemilik
-   2026-10-05: E4 entri tidak aktif buram lalu tajam saat aktif; D10 logo aktif hanya membesar;
-   B9 cahaya di garis mengikuti entri aktif. Judul tanpa efek (revisi pemilik). Teks redup memakai
+/* Fokus aktif, hanya saat JavaScript memasang data-focus: entri tidak aktif buram lalu tajam saat
+   aktif, logo aktif membesar, dan cahaya di garis mengikuti entri aktif. Judul tanpa efek. Teks redup memakai
    warna, bukan opacity, agar kontras tetap AA. Halaman ini tanpa Azure. */
 .xp-tl > li {
   /* entri di atas garis dasar dan cahaya garis, agar garis berhenti rapi di tepi kotak logo */
@@ -350,7 +348,7 @@ button.xp-frame {
   filter: blur(2px);
 }
 /* Teks buram tidak dipakai saat entri difokus keyboard atau pada reduced-motion: cukup warna redup
-   di bawah ini (audit 2026-10-31, GAP-11). Efek buram E4 tetap untuk pengunjung lain. */
+   di bawah ini. Efek buram E4 tetap untuk pengunjung lain. */
 .xp-tl[data-focus] > li:not([data-active]):focus-within .xp-main,
 .xp-tl[data-focus] > li:not([data-active]):focus-within .xp-side {
   filter: none;
@@ -381,7 +379,7 @@ button.xp-frame {
   /* pendar sama dengan pendar garis */
   box-shadow: 0 0 6px var(--xp-line-glow);
 }
-/* tepi logo: redup = garis dasar 1 px, aktif = inti cahaya garis 2 px (demo garis logo nomor 3) */
+/* tepi logo: redup = garis dasar 1 px, aktif = inti cahaya garis 2 px */
 .xp-node::before {
   content: '';
   position: absolute;

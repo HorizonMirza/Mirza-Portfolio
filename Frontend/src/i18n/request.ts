@@ -1,9 +1,10 @@
+// Konfigurasi next-intl per permintaan: bahasa dan pesan (bawaan digabung teks dari admin).
+
 import { hasLocale } from 'next-intl'
 import { getRequestConfig } from 'next-intl/server'
 
 import { applyTextOverrides } from '@backend/features/site-text/merge'
 import { getTextOverrides } from '@backend/features/site-text/public'
-
 import { routing } from '@backend/i18n/routing'
 
 export default getRequestConfig(async ({ requestLocale }) => {

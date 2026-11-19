@@ -1,11 +1,14 @@
+// Situs publik: beranda, menu HP, globe skill, halaman Pengalaman dan Project, form kontak, 404, dan
+// route handler.
+
 import { expect, type Locator, test } from '@playwright/test'
 
 import { uniqueIp } from './admin/helpers'
 import { CLIENT_NAV_TIMEOUT, waitForFiniteAnimations } from './wait'
 
-test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }) => {
+test('beranda: hero dan susunan bagian', async ({ page, isMobile }) => {
   await page.goto('/id')
-  // hero (revisi 2026-10-19): nama sebagai h1 terbaca utuh dengan spasi di
+  // hero: nama sebagai h1 terbaca utuh dengan spasi di
   // belakang foto tanpa bingkai yang memakai liquid mask; panel status, angka, CV, dan sosial dihapus
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(/^\S+( \S+)+$/)
   const portrait = page.locator('section[aria-labelledby="hero-title"] figure img')
@@ -13,18 +16,18 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   await expect(portrait).toHaveAttribute('alt', /.+/)
   // satu canvas aktif; bila shader WebGL gagal, canvas React disembunyikan dan cadangan 2D disisipkan
   await expect(page.locator('.hero-mask-canvas:not([hidden])')).toHaveCount(1)
-  // tanpa tombol Lihat project dan petunjuk hover (revisi 2026-10-19)
+  // tanpa tombol Lihat project dan petunjuk hover
   await expect(page.locator('section[aria-labelledby="hero-title"]').getByRole('link')).toHaveCount(
     0,
   )
   const hero = page.locator('section[aria-labelledby="hero-title"]')
-  // peran dari profil di pojok kiri dan kanan bawah (demo peran 3, 2026-10-19)
+  // peran dari profil di pojok kiri dan kanan bawah (demo peran 3)
   await expect(hero.locator('.hero-roles li')).toHaveCount(2)
   await expect(hero.locator('.hero-roles li').first()).toBeInViewport()
   for (const text of [/Terbuka untuk kerja/, /Resume CV/, /^Lokasi$/, /^Kampus$/, /^Sekarang$/]) {
     await expect(hero.getByText(text)).toHaveCount(0)
   }
-  // Keahlian Teknis dan GitHub (revisi pemilik 2026-10-16): judul di tengah tanpa nomor, tanpa
+  // Keahlian Teknis dan GitHub: judul di tengah tanpa nomor, tanpa
   // keterangan sumber keyboard, tanpa tautan profil dan baris aktivitas GitHub
   await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
   // bagian GitHub hanya tampil bila data kontribusi tersedia (lokal/CI bisa tanpa akses GitHub)
@@ -33,7 +36,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   for (const text of [/Naresh Khatri/, /Buka profil GitHub/, /Push ke /]) {
     await expect(page.getByRole('main').getByText(text)).toHaveCount(0)
   }
-  // Pengalaman (revisi pemilik 2026-10-16, akordion): tanpa nomor dan tanpa tautan "Semua
+  // Pengalaman (akordion): tanpa nomor dan tanpa tautan "Semua
   // pengalaman", semua tertutup di awal, satu baris bisa dibuka
   const xpHeading = page.getByRole('heading', { name: 'Pengalaman' })
   await expect(xpHeading).toBeVisible()
@@ -44,7 +47,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   await xp.nth(1).locator('summary').click()
   await expect(xp.nth(1)).toHaveAttribute('open', '')
   await expect(xp.nth(1).locator('.home-xp-body')).toBeVisible()
-  // Project (revisi pemilik 2026-10-16): judul tanpa nomor di bawah
+  // Project: judul tanpa nomor di bawah
   // Pengalaman, sampul di pita adalah tautan ke detail, pita tidak berhenti saat disorot
   const projectsHeading = page.getByRole('heading', { name: 'Project', exact: true })
   await expect(projectsHeading).toBeVisible()
@@ -58,14 +61,14 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   const covers = page.getByRole('list', { name: 'Daftar Project' }).getByRole('link')
   const firstCover = covers.first()
   await expect(firstCover).toHaveAttribute('href', /\/id\/projects\/.+/)
-  // nama project (demo N5): layar sentuh menampilkan nama di bawah sampul, layar dengan kursor
+  // nama project: layar sentuh menampilkan nama di bawah sampul, layar dengan kursor
   // menampilkannya di atas sampul saat disorot
   const caption = page.locator('.home-marquee-caption').first()
   if (isMobile) await expect(caption).toBeVisible()
   else await expect(caption).toBeHidden()
   await expect(firstCover).toHaveAccessibleName(/\S/)
   const track = page.locator('.home-marquee-track')
-  // pita dijeda selama di luar layar (performa, 2026-10-20) dan berjalan lagi saat terlihat
+  // pita dijeda selama di luar layar (performa) dan berjalan lagi saat terlihat
   await page.evaluate(() => window.scrollTo(0, 0))
   await expect(track).toHaveCSS('animation-play-state', 'paused')
   await page.locator('.home-marquee').evaluate((el) => el.scrollIntoView({ block: 'center' }))
@@ -76,8 +79,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
     await expect(track).toHaveCSS('animation-play-state', 'running')
   }
-  // dihapus atas permintaan pemilik: Perjalanan terbaru, ajakan + newsletter (2026-10-08), Dalam
-  // angka dan Dari komunitas ke software (2026-10-16)
+  // bagian lama yang tidak boleh muncul lagi
   for (const name of [
     'Perjalanan terbaru',
     'Ada yang ingin dibangun?',
@@ -86,7 +88,7 @@ test('beranda: hero dan susunan bagian sesuai revisi', async ({ page, isMobile }
   ]) {
     await expect(page.getByRole('heading', { name })).toHaveCount(0)
   }
-  // semua nomor bagian ("02 —" dst.) dihapus (revisi pemilik 2026-10-16)
+  // semua nomor bagian ("02 —" dst.) dihapus
   await expect(page.locator('main h2 > span[aria-hidden="true"]')).toHaveCount(0)
   // terakhir: klik sampul membuka detail project. Diletakkan di akhir agar tidak perlu kembali ke
   // beranda dengan goto (Firefox CI kehilangan halaman pada navigasi ulang, CI 245dde1)
@@ -101,7 +103,7 @@ test('menu bawah HP tetap di atas isi saat menggulir antarbagian beranda', async
   isMobile,
 }) => {
   test.skip(!isMobile, 'menu bawah hanya di HP')
-  // Laporan pemilik 2026-10-20: menu bawah kadang hilang saat pindah bagian. Isi halaman (logo globe,
+  // Menu bawah tidak boleh hilang saat pindah bagian. Isi halaman (logo globe,
   // menu kategori ber-z-index tinggi) tidak boleh menutupinya di bagian mana pun.
   await page.goto('/id')
   const nav = page.locator('nav.fixed')
@@ -123,7 +125,7 @@ test('menu bawah HP tetap di atas isi saat menggulir antarbagian beranda', async
 
 test('menu bawah HP tetap di dalam layar setelah pindah halaman', async ({ page, isMobile }) => {
   test.skip(!isMobile, 'menu bawah hanya di HP')
-  // Penyebab asli laporan pemilik 2026-10-20: halaman baru masuk bergeser 40 px, halaman sesaat lebih
+  // Halaman baru yang masuk bergeser 40 px, halaman sesaat lebih
   // lebar dari layar, Chrome HP memperkecil tampilan (innerHeight 844 -> 931) dan menu bawah terdorong
   // ke luar layar. Ketuk setiap menu (maju dan mundur), lalu pastikan tampilan tidak berubah ukuran.
   await page.goto('/id')
@@ -181,7 +183,7 @@ test('menu utama berpindah halaman dan menandai halaman aktif', async ({ page, i
   await expect(nav.getByRole('link', { name: 'Beranda' })).not.toHaveAttribute('aria-current')
 })
 
-// Halaman publik sengaja tanpa loading.tsx (revisi 2026-11-10): dengan skeleton, HTML statis
+// Halaman publik sengaja tanpa loading.tsx: dengan skeleton, HTML statis
 // dikirim berisi skeleton dan isi aslinya disembunyikan sampai ditukar skrip, sehingga tanpa
 // JavaScript yang tampil hanya skeleton, dan halaman bisa berubah menjadi dirender tiap permintaan.
 test('halaman publik tetap statis (ISR) dan terbaca tanpa JavaScript', async ({
@@ -204,7 +206,7 @@ test('halaman publik tetap statis (ISR) dan terbaca tanpa JavaScript', async ({
   await ctx.close()
 })
 
-// Skeleton shimmer saat pindah halaman (revisi 2026-11-11): hanya di browser, muncul bila halaman
+// Skeleton shimmer saat pindah halaman: hanya di browser, muncul bila halaman
 // tujuan belum siap dalam 150 ms, lalu hilang begitu halaman baru tampil. HTML statis tetap tanpa
 // skeleton (tes di atas). Permintaan data halaman (RSC) diperlambat 1,5 detik agar skeleton terlihat.
 test('skeleton shimmer tampil saat halaman tujuan lambat, lalu hilang', async ({ page }) => {
@@ -246,7 +248,7 @@ test.describe('globe skill', () => {
     const first = items.nth(index)
     // Bola memutar logo terpilih ke depan (dan kembali saat dilepas), juga dengan reduced-motion.
     // Klik pada logo yang masih bergerak meleset saat mesin CI sibuk: pointerdown di logo, pointerup
-    // sudah di kanvas (WebKit, CI #273). Klik baru dikirim setelah globe menandai dirinya diam.
+    // sudah di kanvas (WebKit). Klik baru dikirim setelah globe menandai dirinya diam.
     const clickSettled = async (item: Locator) => {
       await expect(globe).toHaveAttribute('data-idle', '', { timeout: 20_000 })
       await item.click()
@@ -320,7 +322,7 @@ test('halaman skill lama diarahkan ke bagian skill di beranda', async ({ page })
 
 test('halaman pengalaman: timeline tanpa filter dan tanpa pendidikan', async ({ page }) => {
   await page.goto('/id/experience')
-  // revisi pemilik 2026-10-03: tanpa filter, tanpa kalimat pengantar, pendidikan tidak tampil
+  // tanpa filter, tanpa kalimat pengantar, pendidikan tidak tampil
   await expect(page.locator('ol.xp-tl > li[data-type]').first()).toBeVisible()
   expect(await page.locator('ol.xp-tl > li[data-type]').count()).toBeGreaterThan(1)
   await expect(page.locator('li[data-type="EDUCATION"]')).toHaveCount(0)
@@ -355,7 +357,7 @@ test('URL tak dikenal yang mengandung titik memakai 404 situs, berkas yang ada t
   page,
   request,
 }) => {
-  // Dulu tampil 404 bawaan Next berbahasa Inggris tanpa gaya (rewrite afterFiles di next.config.ts)
+  // bukan 404 bawaan Next berbahasa Inggris tanpa gaya (rewrite afterFiles di next.config.ts)
   for (const path of ['/x.txt', '/wp-login.php', '/a/b.php']) {
     const response = await page.goto(path)
     expect(response?.status(), path).toBe(404)
@@ -424,7 +426,7 @@ test('rate limit kontak: pesan ke-6 dalam satu jam ditolak', async ({ browser, b
   await context.close()
 })
 
-test('halaman newsletter sudah dihapus (fitur tidak dipakai, 2026-11-06)', async ({ page }) => {
+test('halaman newsletter tidak ada', async ({ page }) => {
   const res = await page.goto('/id/newsletter/confirm?token=token-palsu-yang-cukup-panjang-12345')
   expect(res?.status()).toBe(404)
 })
@@ -446,7 +448,6 @@ test.describe('route handler publik', () => {
   })
 
   test('alamat API yang tidak ada dijawab JSON 404', async ({ request }) => {
-    // /api/v1 dihapus 2026-11-06 (tidak dipakai)
     for (const path of ['/api/tidak-ada', '/api/v1/projects', '/api/v2/apa/saja']) {
       const res = await request.get(path)
       expect(res.status(), path).toBe(404)
@@ -486,7 +487,7 @@ test('halaman Tentang menampilkan judul, nama, peran, bio, dan pendidikan', asyn
   await expect(page.getByText('Nilai: 88,3')).toBeVisible()
   await expect(page.getByText('2021 – 2024')).toBeVisible()
   await expect(page.getByText('2024 – Sekarang')).toBeVisible()
-  // label semester dihapus (revisi pemilik 2026-10-08)
+  // label semester dihapus
   await expect(page.getByText(/^Semester \d+$/)).toHaveCount(0)
   // tombol CV dihapus dari halaman ini (CV tetap ada di footer bila diisi)
   await expect(page.getByRole('main').getByRole('link', { name: /Resume CV/ })).toHaveCount(0)
@@ -553,7 +554,7 @@ test('tema awal gelap untuk pengunjung baru', async ({ page }) => {
 })
 
 test('halaman privasi memuat kredit logo', async ({ page }) => {
-  // dipindah dari beranda (revisi pemilik 2026-10-16) agar lisensi CC BY logo Git tetap dipenuhi
+  // dipindah dari beranda agar lisensi CC BY logo Git tetap dipenuhi
   await page.goto('/id/privacy')
   await expect(page.getByRole('heading', { name: 'Kredit' })).toBeVisible()
   await expect(page.getByText(/Simple Icons.*Jason Long, CC BY 3\.0/)).toBeVisible()

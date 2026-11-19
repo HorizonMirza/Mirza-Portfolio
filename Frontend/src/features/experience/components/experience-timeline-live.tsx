@@ -1,5 +1,12 @@
 'use client'
 
+// Admin → Experience: halaman Pengalaman sama
+// persis seperti di situs dan semuanya diubah di halaman ini (tanpa pindah halaman): peran, instansi,
+// jenis pekerjaan, bulan mulai dan selesai, uraian (tampil seperti di situs, ditekan untuk diketik),
+// logo dan foto (ditekan untuk diganti). "+ Tambah pengalaman" menambah entri di tempat. Jenis
+// (kerja/organisasi), draf, dan hapus muncul saat entri disorot. Pilihan bahasa ID/EN tepat di atas
+// Simpan; Simpan menyimpan semua entri yang berubah.
+
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
@@ -24,13 +31,14 @@ import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { cn } from '@/lib/utils'
 
 import { deleteExperience } from '@backend/features/experience/actions'
-import { monthsBetween } from '../display'
 import {
   EMPLOYMENT_TYPES,
   emptyExperience,
   initials,
   sortByLatest,
 } from '@backend/features/experience/schema'
+
+import { monthsBetween } from '../display'
 import { thisMonth } from './education-cards-live'
 import { type EntryRow, useEntries } from './use-entries'
 
@@ -62,12 +70,6 @@ function duration(start: string, end: string, lang: Lang, texts: ExperienceTexts
     .join(' ')
 }
 
-// Admin → Experience (revisi pemilik 2026-11-13): halaman Pengalaman sama
-// persis seperti di situs dan semuanya diubah di halaman ini (tanpa pindah halaman): peran, instansi,
-// jenis pekerjaan, bulan mulai dan selesai, uraian (tampil seperti di situs, ditekan untuk diketik),
-// logo dan foto (ditekan untuk diganti). "+ Tambah pengalaman" menambah entri di tempat. Jenis
-// (kerja/organisasi), draf, dan hapus muncul saat entri disorot. Pilihan bahasa ID/EN tepat di atas
-// Simpan; Simpan menyimpan semua entri yang berubah.
 export function ExperienceTimelineLive({
   initial,
   texts,
@@ -81,7 +83,7 @@ export function ExperienceTimelineLive({
   const router = useRouter()
   const [lang, setLang] = useEditLang()
   const [pending, startTransition] = useTransition()
-  // logo dan foto ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
+  // logo dan foto ditekan: langsung membuka pemilih berkas, lalu pemotong gambar
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const entries = useEntries(initial)
   const tx = texts[lang]

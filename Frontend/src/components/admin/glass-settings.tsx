@@ -1,5 +1,7 @@
 'use client'
 
+// Tampilan kaca panel admin (blur, kepekatan, cahaya tepi, latar) dan panel pengaturannya.
+
 import { RotateCcw, SlidersHorizontal } from 'lucide-react'
 import {
   createContext,
@@ -17,7 +19,7 @@ import {
 import { useAdminT } from '@/components/admin/admin-lang'
 import { cn } from '@/lib/utils'
 
-// Tampilan kaca panel admin (pilihan pemilik 2026-11-11, demo 5+): blur,
+// Tampilan kaca panel admin: blur,
 // kepekatan, cahaya tepi, dan latar. Diadaptasi dari komponen rujukan "Adjustable Glass Dashboard"
 // tanpa GSAP (aturan proyek: tanpa library animasi) dan tanpa gambar dari luar (CSP).
 // Tersimpan di browser pemilik; nilai di luar batas dikembalikan ke bawaan.
@@ -33,7 +35,6 @@ const PRESETS: Record<string, Omit<GlassSettings, 'bg'>> = {
 }
 const BACKGROUNDS: { id: GlassBackground; label: string }[] = [
   { id: 'gradient', label: 'Gradasi' },
-  // pola titik menggantikan kotak commit (revisi pemilik 2026-11-11)
   { id: 'dots', label: 'Titik' },
   { id: 'plain', label: 'Polos' },
 ]
@@ -152,13 +153,12 @@ function Range({
   )
 }
 
-// Pilihan preset dan latar: sudut kecil seperti sorotan menu profil (revisi pemilik 2026-11-11)
+// Pilihan preset dan latar: sudut kecil seperti sorotan menu profil
 const choiceClass =
   'min-h-9 rounded-md border border-border px-2 text-xs font-semibold transition-colors not-aria-pressed:hover:bg-surface-2 aria-pressed:border-transparent aria-pressed:bg-text aria-pressed:text-bg'
 
-// Tombol "Tampilan" (dulu "Atur kaca", nama dipilih pemilik 2026-11-11) di top bar beserta panelnya. Isi panel langsung pengaturan, tanpa judul,
-// keterangan, dan contoh material (revisi pemilik 2026-11-11); tutup dengan Esc, klik di luar, atau
-// tombol Tampilan lagi.
+// Tombol "Tampilan" di top bar beserta panelnya. Isi panel langsung pengaturan, tanpa judul,
+// keterangan, dan contoh material; tutup dengan Esc, klik di luar, atau tombol Tampilan lagi.
 export function GlassControl() {
   const t = useAdminT()
   const glass = useContext(Ctx)

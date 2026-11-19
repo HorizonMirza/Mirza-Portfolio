@@ -1,3 +1,5 @@
+// Label kecil (badge) bergaya shadcn dengan beberapa varian warna.
+
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ComponentProps } from 'react'
 

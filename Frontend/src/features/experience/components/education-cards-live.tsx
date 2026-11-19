@@ -1,5 +1,7 @@
 'use client'
 
+// Kartu pendidikan di Admin → About, diubah, ditambah, dan dihapus langsung di halaman.
+
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -10,6 +12,7 @@ import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
 import { deleteExperience } from '@backend/features/experience/actions'
 import { emptyEducation, initials } from '@backend/features/experience/schema'
+
 import type { useEntries } from './use-entries'
 
 type Entries = ReturnType<typeof useEntries>
@@ -25,7 +28,7 @@ function withYear(month: string, year: string, fallbackMonth = '01') {
   return `${year}-${mm}`
 }
 
-// Kartu Pendidikan halaman Tentang di Admin → About (revisi pemilik 2026-11-13):
+// Kartu Pendidikan halaman Tentang di Admin → About:
 // sama dengan kartu di situs (logo, kampus, jurusan, tahun, grade), semuanya diubah langsung di
 // halaman ini. Logo ditekan untuk diganti (entri tersimpan); "+ Tambah pendidikan" menambah kartu
 // baru di tempat. Status dan hapus muncul saat kartu disorot. Disimpan bersama tombol Simpan halaman.
@@ -44,7 +47,7 @@ export function EducationCardsLive({
 }) {
   const t = useAdminT()
   const router = useRouter()
-  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
+  // logo ditekan: langsung membuka pemilih berkas, lalu pemotong gambar
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const label = (text: string) => `${t(text)} (${t(LANG_NAME[lang])})`
   // dari yang paling lama ke terbaru, seperti halaman Tentang; kartu baru di akhir

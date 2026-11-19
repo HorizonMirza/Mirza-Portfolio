@@ -1,5 +1,6 @@
-import { createHash } from 'node:crypto'
+// Tes unit Backend/lib/cloudinary: signParams, verifyUploadSignature, getCloudinaryConfig.
 
+import { createHash } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
 import { getCloudinaryConfig, signParams, verifyUploadSignature } from '@backend/lib/cloudinary'

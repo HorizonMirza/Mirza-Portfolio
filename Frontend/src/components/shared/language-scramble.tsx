@@ -1,5 +1,8 @@
 'use client'
 
+// Memutar animasi "acak huruf" begitu halaman tampil dalam bahasa baru, bila perpindahan itu
+// berasal dari tombol bahasa (tanda di sessionStorage). Tidak merender apa pun.
+
 import { useLocale } from 'next-intl'
 import { useEffect } from 'react'
 
@@ -8,8 +11,6 @@ import { LANG_SCRAMBLE_KEY, scrambleVisibleText } from '@/lib/text-scramble'
 // tanda dari tombol bahasa dianggap basi setelah beberapa detik (mis. tab dibuka ulang)
 const MAX_AGE_MS = 5000
 
-// Memutar animasi "acak huruf" begitu halaman tampil dalam bahasa baru, bila perpindahan itu
-// berasal dari tombol bahasa (tanda di sessionStorage). Tidak merender apa pun.
 export function LanguageScramble() {
   const locale = useLocale()
 

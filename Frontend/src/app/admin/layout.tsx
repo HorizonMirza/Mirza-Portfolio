@@ -1,3 +1,5 @@
+// Root layout panel admin (tanpa awalan bahasa): font, tema, bahasa admin, kaca, dan notifikasi.
+
 import type { Metadata } from 'next'
 import { cookies, headers } from 'next/headers'
 import { NextIntlClientProvider } from 'next-intl'
@@ -12,7 +14,7 @@ import { ADMIN_LANG_COOKIE, parseAdminLang } from '@backend/lib/admin-i18n'
 import { THEME_STORAGE_KEY } from '@/lib/theme'
 
 // Root layout kedua (tanpa awalan bahasa). Panel admin berbahasa Indonesia, bisa diganti ke Inggris
-// lewat tombol ID/EN di top bar (cookie, revisi 2026-11-11).
+// lewat tombol ID/EN di top bar (cookie).
 export const metadata: Metadata = {
   title: { default: 'Admin', template: '%s · Admin' },
   robots: { index: false, follow: false },
@@ -23,12 +25,12 @@ export default async function AdminRootLayout({ children }: { children: ReactNod
   const [nonce, settings, lang] = await Promise.all([
     headers().then((h) => h.get('x-nonce') ?? undefined),
     getSiteSettings(),
-    // bahasa tampilan admin dari tombol ID/EN di top bar (revisi 2026-11-11)
+    // bahasa tampilan admin dari tombol ID/EN di top bar
     cookies().then((c) => parseAdminLang(c.get(ADMIN_LANG_COOKIE)?.value)),
   ])
   return (
     <html
-      lang={lang} // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan (revisi pemilik 2026-10-26)
+      lang={lang} // no-scrollbar: halaman tetap bisa digulir, batang gulirnya disembunyikan
       className={`${fontVariables} no-scrollbar`}
       // volume suara tombol tema dan bahasa sama dengan situs publik (diatur di Pengaturan)
       data-sound-mix={JSON.stringify(settings.soundMix)}

@@ -1,13 +1,13 @@
 /* Hero beranda: foto, nama besar, lubang wajah, kursor titik + cincin, dan ukuran per layar. */
 
-/* Hero beranda (revisi pemilik 2026-10-19): foto besar tanpa bingkai rata
+/* Hero beranda: foto besar tanpa bingkai rata
    bawah di tengah, nama dua baris memudar ke bawah di belakang foto dan sebagai salinan di depan foto
    yang dilubangi di area wajah. Liquid mask di seluruh hero. Tinggi tetap satu layar agar ukuran
    memakai cqw/cqh. */
 .hero {
   /* posisi wajah dalam foto (dihitung dari potongan hero-portrait.webp) untuk lubang di salinan depan
      nama; jarak antarkata baris kedua agar huruf di kiri dan kanan wajah tetap terlihat */
-  /* HP (revisi pemilik 2026-10-19): nama di tengah atas, foto 140cqw tepat di bawahnya tanpa saling menutup,
+  /* HP: nama di tengah atas, foto 140cqw tepat di bawahnya tanpa saling menutup,
      jadi tanpa lubang wajah; sisi lengan hanya terpotong sedikit */
   --name-size: min(15cqw, 12cqh);
   --name-top: 4cqh;
@@ -16,7 +16,7 @@
   --face-x: 50%;
   /* foto 140cqw, tetapi tidak lebih tinggi dari sisa hero di bawah nama: di layar HP/tablet kecil yang
      lebar dan pendek (mis. 575x767) foto terlihat sampai tangan dan rata ke tepi bawah seperti desktop,
-     bukan wajah saja (revisi pemilik 2026-11-17) */
+     bukan wajah saja */
   --photo-w: min(140cqw, calc((100cqh - var(--photo-top)) / 0.982));
   --face-y: calc(var(--photo-top) + 0.28 * 0.982 * var(--photo-w));
   --face-rx: 0px;
@@ -33,11 +33,11 @@
 /* Pembungkus hero: satu layar penuh dari atas halaman, ditarik ke belakang navbar (tinggi navbar
    --hero-head, diukur 58–59 px) agar efek hover sampai ke navbar. lvh agar bagian
    berikutnya tidak mengintip saat bilah browser HP menyusut. Teks dan foto tidak bisa diseleksi atau
-   diseret, supaya menarik kursor tidak memunculkan blok seleksi biru (laporan pemilik 2026-10-19). */
+   diseret, supaya menarik kursor tidak memunculkan blok seleksi biru. */
 .hero-shell {
   --hero-head: 59px;
   /* halo lembut dan panjang gradasi bawah foto; tema terang lebih tipis */
-  /* biru dari token --note, bukan warna mentah (audit 2026-10-31, EFF-10) */
+  /* biru dari token --note, bukan warna mentah */
   --hero-glow: color-mix(in srgb, var(--note) 16%, transparent);
   --hero-fade: 14%;
   /* jejak hover di luar tubuh (bentuk cair tipis, seperti referensi HoverMaskReveal) */
@@ -63,7 +63,7 @@
   /* tanpa JavaScript tetap crosshair; HeroCursor menggantinya dengan titik + cincin */
   cursor: crosshair;
 }
-/* Kursor titik + cincin di foto beranda (pilihan pemilik 2026-11-06, demo K3, hero-cursor.tsx).
+/* Kursor titik + cincin di foto beranda.
    Hanya mouse/touchpad; warna mengikuti tema dengan garis tipis warna latar agar tetap terlihat di
    atas jas maupun kemeja. Posisi ditulis lewat transform oleh skrip. */
 @media (hover: hover) and (pointer: fine) {
@@ -157,7 +157,7 @@
   justify-content: space-between;
   gap: 1rem;
   color: var(--text);
-  /* huruf utama situs (Inter, seperti menu), permintaan pemilik 2026-10-19 */
+  /* huruf utama situs (Inter, seperti menu) */
   font-family: var(--font-sans);
   font-size: 0.6875rem;
   font-weight: 600;
@@ -180,7 +180,7 @@
   mask-image: linear-gradient(transparent, #000 14%);
   pointer-events: none;
 }
-/* salinan nama di depan foto, kosong di area wajah (demo 5 pilihan pemilik) */
+/* salinan nama di depan foto, kosong di area wajah */
 .hero-name-front {
   position: absolute;
   inset: 0;
@@ -234,8 +234,7 @@
   pointer-events: none;
 }
 /* tablet: foto 84cqh rata bawah, nama di 12% dan sedikit menutupi kepala dengan lubang wajah. Mulai
-   480 px (dulu 768 px) agar tablet kecil seperti 575x767 juga mendapat wajah besar (revisi pemilik
-   2026-11-17) */
+   480 px agar tablet kecil seperti 575x767 juga mendapat wajah besar */
 @media (min-width: 30rem) {
   .hero {
     --name-size: min(13cqw, 11cqh);

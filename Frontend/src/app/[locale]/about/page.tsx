@@ -1,3 +1,5 @@
+// Halaman Tentang: pita nama dan peran, kartu foto miring, bio, dan kartu pendidikan.
+
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
@@ -5,16 +7,17 @@ import { Fragment } from 'react'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
 import { Container, PageIntro } from '@/components/site/section-heading'
-import { getPublicExperiences } from '@backend/features/experience/public'
-import { initials, organizationName } from '@backend/features/experience/schema'
 import { AboutPhotoCard, chipFrom } from '@/features/profile/components/about-photo-card'
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
-import { getPublicProfile } from '@backend/features/profile/public'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { DEFAULT_PHOTO_ALT, DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
+
+import { getPublicExperiences } from '@backend/features/experience/public'
+import { initials, organizationName } from '@backend/features/experience/schema'
+import { getPublicProfile } from '@backend/features/profile/public'
 import { loc } from '@backend/lib/localized'
 import { pageMetadata } from '@backend/lib/seo'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export async function generateMetadata({
   params,
@@ -30,13 +33,13 @@ export async function generateMetadata({
   })
 }
 
-// Halaman Tentang memakai rancangan C (pilihan pemilik 2026-10-05): pita
+// Halaman Tentang memakai rancangan C: pita
 // hitam dengan nama dan peran, kartu foto menggantung yang bisa dimiringkan, lalu bio di kiri dan
 // pendidikan di kanan. Semua isi diatur dari admin: nama, foto, bio, dan peran di Profil;
 // pendidikan sebagai entri Pengalaman berjenis Pendidikan. CV ada di footer.
 export default async function AboutPage({ params }: PageProps<'/[locale]/about'>) {
   const locale = await resolveLocale(params)
-  // "Sekarang" memakai satu teks bersama dengan halaman Pengalaman dan beranda (dulu dua isian admin)
+  // "Sekarang" memakai satu teks bersama dengan halaman Pengalaman dan beranda
   const [t, tExp, profile, experiences] = await Promise.all([
     getTranslations({ locale, namespace: 'About' }),
     getTranslations({ locale, namespace: 'Experience' }),
@@ -103,8 +106,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
             }
           />
         </PhotoTilt>
-        {/* tombol CV dihapus (revisi pemilik 2026-10-07 malam); nama dan peran rata kiri, di tengah
-            tinggi pita (revisi 2026-10-08) */}
+        {/* nama dan peran rata kiri, di tengah tinggi pita */}
         <div className="ab-band-text">
           <h2 className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
             {profile?.name ?? 'Muhammad Mirza'}
@@ -162,7 +164,7 @@ export default async function AboutPage({ params }: PageProps<'/[locale]/about'>
                     <h3 className="font-display text-2xl leading-[1.1] font-bold uppercase">
                       {organizationName(e, locale)}
                     </h3>
-                    {/* jurusan dan IPK masing-masing satu baris (revisi pemilik 2026-10-07 malam) */}
+                    {/* jurusan dan IPK masing-masing satu baris */}
                     <p className="mt-1 text-muted">{loc(e, 'title', locale)}</p>
                     <p className="text-sm text-muted tabular-nums">
                       {e.start.slice(0, 4)} – {e.end ? e.end.slice(0, 4) : tExp('present')}

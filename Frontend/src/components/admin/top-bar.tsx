@@ -1,5 +1,10 @@
 'use client'
 
+// Top bar kaca: di kiri tombol hamburger dan nama halaman; di kanan
+// Tampilan, bahasa tampilan ID/EN, tema, dan menu profil titik tiga. Hamburger di desktop
+// menciutkan sidebar menjadi ikon atau melebarkannya lagi; di HP dan tablet membuka laci berisi seluruh
+// menu. Foto admin hanya di puncak sidebar, tidak diulang di sini.
+
 import { Menu } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { useState, useSyncExternalStore } from 'react'
@@ -21,10 +26,6 @@ function subscribeDesktop(onChange: () => void) {
   return () => query.removeEventListener('change', onChange)
 }
 
-// Top bar kaca (revisi 2026-11-11): di kiri tombol hamburger dan nama halaman; di kanan
-// Tampilan, bahasa tampilan ID/EN, tema, dan menu profil titik tiga (revisi 2026-11-11). Hamburger di desktop
-// menciutkan sidebar menjadi ikon atau melebarkannya lagi; di HP dan tablet membuka laci berisi seluruh
-// menu. Foto admin hanya di puncak sidebar, tidak diulang di sini.
 export function AdminTopBar() {
   const pathname = usePathname()
   const t = useAdminT()
@@ -48,8 +49,8 @@ export function AdminTopBar() {
         >
           <Menu className="size-5" aria-hidden="true" />
         </button>
-        {/* nama halaman (revisi pemilik 2026-11-06), Inter biasa seperti layar utama (2026-11-11);
-            di HP sempit turun baris, tidak terpotong (revisi pemilik 2026-11-17) */}
+        {/* nama halaman, Inter biasa seperti layar utama;
+            di HP sempit turun baris, tidak terpotong */}
         <p className="min-w-0 flex-1 text-base leading-tight font-semibold tracking-tight sm:text-xl">
           {t(current?.label ?? 'Admin')}
         </p>

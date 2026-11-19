@@ -1,3 +1,6 @@
+// Tes unit Backend/features/account/schema dan Backend/features/experience/schema: projectSchema,
+// experienceSchema, profileSchema, contactLinksSchema.
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { changePasswordSchema } from '@backend/features/account/schema'
@@ -121,7 +124,7 @@ describe('profileSchema', () => {
   })
 })
 
-// kontak footer dipisah dari profil (Admin → Footer, 2026-11-10)
+// kontak footer dipisah dari profil (Admin → Footer)
 describe('contactLinksSchema', () => {
   const empty = {
     email: '',

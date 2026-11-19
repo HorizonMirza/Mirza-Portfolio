@@ -1,17 +1,17 @@
 /* Pemberitahuan pembuka (kartu "Informasi Penting") dan versi yang diketik di admin. */
 
-/* Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah").
-   Latar dan kartu sama dengan login Super Admin (pilihan pemilik 2026-10-15, demo latar 11): <dialog>
-   memenuhi layar di atas hitam, kartu kaca gelap di tengah (shader vortex dihapus 2026-11-01). Selalu
+/* Pemberitahuan pembuka.
+   Latar dan kartu sama dengan login Super Admin: <dialog>
+   memenuhi layar di atas hitam, kartu kaca gelap di tengah. Selalu
    gelap, jadi warna ditulis langsung seperti login, tidak memakai token tema. Halaman tidak bisa
    digulir selama terbuka. */
 html:has(.intro[open]) {
   overflow: hidden;
 }
 /* Sebelum JavaScript membuka pemberitahuan pembuka (features/settings/intro-pending.ts): kartu yang
-   sudah ada di HTML langsung ditampilkan menutupi layar, agar beranda tidak berkedip (permintaan
-   pemilik 2026-10-19). Dulu seluruh body disembunyikan sampai JavaScript selesai dimuat, sehingga di
-   jaringan lambat pengunjung melihat layar hitam kosong dan LCP tertunda (audit 2026-11-02, PERF-02). */
+   sudah ada di HTML langsung ditampilkan menutupi layar, agar beranda tidak berkedip. Body tidak
+   disembunyikan, jadi di jaringan lambat pengunjung tidak melihat layar hitam kosong dan LCP tidak
+   tertunda. */
 html[data-intro='pending'] {
   overflow: hidden;
   background: #000;
@@ -46,7 +46,7 @@ html[data-intro='pending'] .intro {
 .intro::backdrop {
   background: #000;
 }
-/* latar kotak commit (components/shared/commit-grid.tsx, pilihan pemilik 2026-11-06 demo A42, dengan gelombang cahaya):
+/* latar kotak commit dengan gelombang cahaya (components/shared/commit-grid.tsx):
    selebar layar di belakang kartu; klik tembus ke dialog sehingga klik di luar kartu tetap menutup */
 .intro-wave {
   position: fixed;
@@ -64,7 +64,7 @@ html[data-intro='pending'] .intro {
 .intro-card {
   position: relative;
   z-index: 1;
-  /* lebih ramping kiri-kanan (revisi pemilik 2026-10-15); margin auto: di tengah, tidak terpotong
+  /* lebih ramping kiri-kanan; margin auto: di tengah, tidak terpotong
      saat lebih tinggi dari layar */
   width: min(520px, 100%);
   margin: auto;
@@ -75,7 +75,7 @@ html[data-intro='pending'] .intro {
   overflow: hidden;
   padding: 2rem;
   border-radius: inherit;
-  /* hitam pekat tanpa transparansi dan tanpa blur (revisi pemilik 2026-11-06): kotak commit di
+  /* hitam pekat tanpa transparansi dan tanpa blur: kotak commit di
      belakang tidak tembus ke kartu */
   background: #000;
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
@@ -112,12 +112,12 @@ html[data-intro='pending'] .intro {
   }
 }
 .intro-title {
-  /* ukuran wajar, tidak sampai memenuhi lebar kartu (revisi pemilik 2026-10-15) */
+  /* ukuran wajar, tidak sampai memenuhi lebar kartu */
   margin: 1rem 0 0.875rem;
   font-family: var(--font-display);
   /* di HP kecil ikut mengecil agar "IMPORTANT INFORMATION" (judul terpanjang, ± 10,5 kali ukuran
-     huruf) tetap satu baris di dalam kartu; 100cqi = lebar isi .intro-box (cek HP 2026-10-16:
-     di 360 px judul butuh 295 px, ruangnya 288 px). Judul lebih panjang dari admin turun baris. */
+     huruf) tetap satu baris di dalam kartu; 100cqi = lebar isi .intro-box (di
+     360 px judul butuh 295 px, ruangnya 288 px). Judul lebih panjang dari admin turun baris. */
   font-size: min(clamp(1.75rem, 1.35rem + 1.2vw, 2.25rem), calc(100cqi / 10.8));
   font-weight: 700;
   line-height: 1.05;
@@ -127,19 +127,19 @@ html[data-intro='pending'] .intro {
 .intro-body {
   color: rgb(255 255 255 / 0.72);
   line-height: 1.65;
-  /* rata kiri-kanan seperti teks halaman Tentang (revisi pemilik 2026-10-15) */
+  /* rata kiri-kanan seperti teks halaman Tentang */
   text-align: justify;
   hyphens: auto;
 }
 
-/* Admin → Home, Kartu pembuka: isi kartu diketik langsung (revisi 2026-11-12). Tanpa bingkai
+/* Admin → Home, Kartu pembuka: isi kartu diketik langsung. Tanpa bingkai
    dan garis fokus; hanya kursor berkedip, huruf sama dengan teks kartu. */
 .intro-type {
   font: inherit;
   letter-spacing: inherit;
   caret-color: #fff;
 }
-/* garis penanda bagian yang bisa diubah (revisi 2026-11-12); hilang saat sedang diketik. Tidak
+/* garis penanda bagian yang bisa diubah; hilang saat sedang diketik. Tidak
    di dalam layer agar menang atas aturan kartu situs yang tidak ber-layer */
 .intro-type:not(:focus) {
   outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
@@ -191,7 +191,7 @@ html[data-intro='pending'] .intro {
   background: rgb(255 255 255 / 0.9);
 }
 .intro-btn-secondary {
-  /* bingkai tipis diam, tanpa kilau berjalan (revisi pemilik 2026-10-15) */
+  /* bingkai tipis diam, tanpa kilau berjalan */
   border: 1px solid rgb(255 255 255 / 0.15);
   background: #111117;
   color: #fff;
@@ -228,8 +228,7 @@ html[data-intro='pending'] .intro {
 }
 @media (prefers-reduced-motion: no-preference) {
   /* Dialog hanya memudar (tanpa geser). Mode isi "backwards", bukan "both": animasi opacity yang
-     terus menahan nilai akhirnya membuat Chrome menjadikan kartu batas latar (revisi pemilik
-     2026-10-15). */
+     terus menahan nilai akhirnya membuat Chrome menjadikan kartu batas latar. */
   .intro[open] {
     animation: intro-fade 400ms ease-out backwards;
   }
@@ -252,7 +251,7 @@ html[data-intro='pending'] .intro {
     animation: intro-fade 320ms ease-in reverse both;
   }
   /* Tombol Beranda: kartu dan latar memudar sambil makin buram, lalu pindah ke Home seperti
-     perpindahan halaman biasa (pilihan pemilik 2026-10-15, menggantikan transisi khusus) */
+     perpindahan halaman biasa (menggantikan transisi khusus) */
   .intro[data-leaving='home'] {
     animation: intro-blur-out 450ms ease-in both;
   }

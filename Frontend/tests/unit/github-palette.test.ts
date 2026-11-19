@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/github-palette: warna grafik GitHub.
+
 import { describe, expect, it } from 'vitest'
 
 import {

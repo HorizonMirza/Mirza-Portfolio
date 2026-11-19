@@ -1,3 +1,6 @@
+// Tes unit src/features/settings/intro-pending dan Backend/features/settings/options: frekuensi
+// kartu pembuka.
+
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import {
@@ -8,6 +11,7 @@ import {
   introSeen,
   markIntroSeen,
 } from '@/features/settings/intro-pending'
+
 import type { IntroFrequency } from '@backend/features/settings/options'
 
 function memoryStorage() {

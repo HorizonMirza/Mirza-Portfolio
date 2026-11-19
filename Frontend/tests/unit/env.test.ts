@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/env: parseServerEnv, parseAuthEnv, URL auth di Vercel.
+
 import { describe, expect, it } from 'vitest'
 
 import { parseAuthEnv, parseServerEnv, resolveBaseUrl, trustedAuthOrigins } from '@backend/lib/env'

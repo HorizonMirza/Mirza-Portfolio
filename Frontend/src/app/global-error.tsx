@@ -1,5 +1,9 @@
 'use client'
 
+// Galat di root layout (situs maupun admin). Halaman ini mengganti seluruh dokumen dan tidak
+// punya provider next-intl maupun akses database, jadi teksnya ditulis langsung sama dengan
+// messages/id.json → Error, dalam bahasa default situs. Tema gelap sesuai bawaan situs.
+
 import './globals.css'
 
 import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-button'
@@ -7,17 +11,13 @@ import { StatusPage } from '@/components/ui/status-page'
 
 import { fontVariables } from './fonts'
 
-// Galat di root layout (situs maupun admin), sebelumnya jatuh ke halaman bawaan Next berbahasa
-// Inggris tanpa gaya (audit 2026-10-31, GAP-06). Halaman ini mengganti seluruh dokumen dan tidak
-// punya provider next-intl maupun akses database, jadi teksnya ditulis langsung sama dengan
-// messages/id.json → Error, dalam bahasa default situs. Tema gelap sesuai bawaan situs.
 export default function GlobalError({ retry }: { error: unknown; retry: () => void }) {
   return (
     <html lang="id" className={`${fontVariables} dark`}>
       <body className="bg-bg text-text">
         <title>Terjadi kesalahan</title>
         <main>
-          {/* desain halaman status bersama (revisi pemilik 2026-11-16) */}
+          {/* desain halaman status bersama */}
           <StatusPage
             code={500}
             title="Terjadi kesalahan"

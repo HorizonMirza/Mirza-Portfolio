@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/client-ip: clientIp.
+
 import { describe, expect, it } from 'vitest'
 
 import { clientIp, trustedProxies } from '@backend/lib/client-ip'
@@ -9,7 +11,7 @@ const h = (xff?: string, realIp?: string) => {
   return headers
 }
 
-// audit 2026-11-01, SEC-02: entri kiri x-forwarded-for bisa dipalsukan klien
+// entri kiri x-forwarded-for bisa dipalsukan klien
 describe('clientIp', () => {
   it('di Vercel memakai entri pertama (Vercel menimpa header dengan IP klien)', () => {
     expect(clientIp(h('203.0.113.9'), { VERCEL: '1' })).toBe('203.0.113.9')

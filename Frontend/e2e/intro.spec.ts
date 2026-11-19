@@ -1,12 +1,15 @@
+// Pemberitahuan pembuka: tampil sekali, tombol Beranda dan Resume CV, ganti bahasa kartu, dan
+// aksesibilitasnya.
+
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 
 import { waitForFiniteAnimations } from './wait'
 
-// Pemberitahuan pembuka (revisi 2026-10-12). Situs menyembunyikannya untuk browser otomatis
+// Pemberitahuan pembuka. Situs menyembunyikannya untuk browser otomatis
 // (navigator.webdriver), jadi tes ini berpura-pura sebagai pengunjung biasa.
 // Tanpa animasi: kartu yang masih masuk (transparan dan bergeser) membuat cek kontras salah baca dan
-// klik di Firefox meleset (CI 2026-10-12).
+// klik di Firefox meleset.
 test.use({ contextOptions: { reducedMotion: 'reduce' } })
 
 test.beforeEach(async ({ page }) => {
@@ -18,7 +21,7 @@ test.beforeEach(async ({ page }) => {
 test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka beranda', async ({
   page,
 }) => {
-  // halaman sudah ditandai layar hitam sebelum tampil, agar beranda tidak berkedip (2026-10-19)
+  // halaman sudah ditandai layar hitam sebelum tampil, agar beranda tidak berkedip
   await page.addInitScript(() => {
     document.addEventListener('DOMContentLoaded', () => {
       ;(window as unknown as { introPending?: string | null }).introPending =
@@ -34,8 +37,7 @@ test('muncul sekali saat situs dibuka, tombol Beranda menutup dan membuka berand
   // dilepas begitu kartu terbuka
   await expect(page.locator('html')).not.toHaveAttribute('data-intro', /.*/)
   await expect(dialog.getByRole('button', { name: 'Beranda' })).toBeVisible()
-  // latar kotak commit (pilihan pemilik 2026-11-06, A42, tanpa gelombang cahaya): satu kanvas hiasan di belakang kartu,
-  // tersembunyi dari pembaca layar (vortex ungu lama dihapus 2026-11-01 karena lag)
+  // latar kotak commit: satu kanvas hiasan di belakang kartu, tersembunyi dari pembaca layar
   await expect(page.locator('dialog.intro canvas.intro-wave')).toHaveCount(1)
   await expect(page.locator('dialog.intro canvas')).toHaveAttribute('aria-hidden', 'true')
 
@@ -63,7 +65,7 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
 }) => {
   // Catatan kejadian browser, dicetak ke log CI bila tes gagal: tes ini berulang kali gagal hanya di
   // Firefox CI dengan halaman yang tidak terbaca lagi (URL kosong), dan artefak trace tidak bisa
-  // dibuka dari sesi kerja (2026-10-15).
+  // dibuka dari sesi kerja.
   const events: string[] = []
   page.on('crash', () => events.push('crash'))
   page.on('close', () => events.push('close'))
@@ -95,7 +97,7 @@ test('ID/EN mengganti bahasa kartu tanpa pindah halaman, bahasa situs ikut setel
     // Firefox CI: pindah bahasa adalah muat ulang penuh (layout akar per bahasa). Frame utama tercatat
     // sampai di /en/projects, lalu driver Playwright untuk Firefox kehilangan halaman itu dengan galat
     // internalnya sendiri (juggler FrameTree.js: "domWindow() is undefined") dan tidak melaporkan
-    // halaman pengganti (CI 2026-10-15, dua run). Tombol Bahasa di header lolos di Firefox; bedanya
+    // halaman pengganti. Tombol Bahasa di header lolos di Firefox; bedanya
     // tes ini memakai addInitScript. Jadi bukti tibanya di /en adalah navigasi frame utama yang tercatat
     // atau halaman mana pun di sesi browser.
     const enProjects = /\/en\/projects$/

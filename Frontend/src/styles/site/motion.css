@@ -21,8 +21,7 @@
   }
 }
 
-/* Transisi antarbagian beranda "judul tirai" (pilihan pemilik 2026-10-16, demo T3, DESIGN.md
-   bagian 60). Bagiannya sendiri tidak memudar sehingga garis pemisah tetap terlihat; judul naik
+/* Transisi antarbagian beranda "judul tirai". Bagiannya sendiri tidak memudar sehingga garis pemisah tetap terlihat; judul naik
    dari balik batas h2, lalu isi bagian menyusul memudar 250 ms kemudian. Tetap memakai
    reveal-observer: hanya bagian di bawah layar saat halaman dibuka yang dianimasikan. */
 .home-curtain.reveal[data-reveal] {
@@ -66,7 +65,7 @@
 
 /* Navbar atas dan menu bawah HP di lapisan GPU sendiri: browser HP (Chrome Android, Safari iOS) bisa
    menunda menggambar ulang elemen fixed/sticky saat halaman digulir di atas kanvas animasi dan lapisan
-   bermasker, sehingga navbar sempat kosong (laporan pemilik 2026-10-20). */
+   bermasker, sehingga navbar sempat kosong. */
 .site-bar {
   transform: translateZ(0);
   will-change: transform;
@@ -80,7 +79,7 @@
   animation-timing-function: var(--ease-out-soft);
 }
 
-/* Pindah halaman dari menu utama: geser searah urutan menu (pilihan pemilik 2026-10-01).
+/* Pindah halaman dari menu utama: geser searah urutan menu.
    Konten lama cepat keluar, konten baru masuk sedikit lebih lambat setelahnya. */
 ::view-transition-old(.nav-forward),
 ::view-transition-old(.nav-back) {

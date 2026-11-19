@@ -1,3 +1,6 @@
+// Panel admin: ubah langsung di pratinjau (project, pengalaman, skill, teks situs), kerangka admin,
+// dan bahasa admin.
+
 import AxeBuilder from '@axe-core/playwright'
 import { expect, type Page, test } from '@playwright/test'
 
@@ -86,8 +89,8 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   const editedSummary = `Ringkasan diubah di daftar ${suffix}`
   await page.goto('/admin/projects/new')
 
-  // Ubah langsung di pratinjau halaman detail (revisi 2026-11-12). Validasi: galat kedua bahasa
-  // tampil di bawah panggung (judul dan ringkasan; deskripsi opsional sejak audit 2026-10-31 GAP-05).
+  // Ubah langsung di pratinjau halaman detail. Validasi: galat kedua bahasa
+  // tampil di bawah panggung (judul dan ringkasan; deskripsi opsional).
   // Diulang sampai hidrasi selesai. getByRole: hanya yang terlihat (Next menyimpan salinan halaman
   // tersembunyi untuk navigasi kembali).
   await expect(async () => {
@@ -166,11 +169,11 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
   expect(publicFailures).toEqual([])
 
   // daftar admin seperti halaman Project situs: peran, judul, dan ringkasan diketik langsung di
-  // tempatnya (bahasa admin: Indonesia) dan disimpan lewat Simpan (revisi 2026-11-16)
+  // tempatnya (bahasa admin: Indonesia) dan disimpan lewat Simpan
   await page.goto('/admin/projects')
   const titleBox = page.locator('textarea[aria-label="Judul (Indonesia)"]', { hasText: titleId })
   await expect(titleBox).toHaveCount(1)
-  // peran memakai isian yang boleh turun baris (textarea, revisi 2026-11-17): isi ada di teksnya
+  // peran memakai isian yang boleh turun baris (textarea): isi ada di teksnya
   await expect(
     page
       .locator('textarea[aria-label="Peran Saya (Opsional) (Indonesia)"]', { hasText: roleText })
@@ -204,7 +207,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
 
   // Regresi: revalidasi setelah simpan tidak boleh membuat halaman publik menjadi 404. Dicek langsung
   // ke server (seperti status 404 di atas): navigasi Firefox bisa dijawab cache browser dengan 304
-  // atau tanpa respons sama sekali (CI 2026-10-20).
+  // atau tanpa respons sama sekali.
   for (const locale of ['id', 'en']) {
     const response = await page.request.get(`/${locale}`)
     expect(response.status(), `/${locale}`).toBe(200)
@@ -214,7 +217,7 @@ test('CRUD project: buat, tampil di daftar, ubah, dan hapus', async ({ page }, t
 test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => {
   await page.goto('/admin/skills')
   // bagian "Keahlian Teknis" tampil seperti di beranda; di bawahnya bagian untuk mengubah dan
-  // menambah, lalu ID/EN dan Simpan di paling bawah (revisi pemilik 2026-11-15)
+  // menambah, lalu ID/EN dan Simpan di paling bawah
   // globe berat digambar di WebKit CI (kanvas tanpa GPU): beri waktu lebih dari 5 detik
   await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible({
     timeout: 30_000,
@@ -227,8 +230,8 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
     page.getByRole('textbox', { name: 'Nama Kategori (Indonesia)' }).first(),
   ).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Kategori Baru' })).toBeVisible()
-  // logo skill ditekan: langsung membuka pemilih berkas, tanpa jendela dan tanpa teks alt (revisi
-  // 2026-11-15). Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif.
+  // logo skill ditekan: langsung membuka pemilih berkas, tanpa jendela dan tanpa teks alt.
+  // Cloudinary tidak diatur di tes, jadi muncul pesan belum aktif.
   await expect(async () => {
     await page
       .getByRole('button', { name: /^Logo / })
@@ -258,7 +261,7 @@ test('kategori skill yang masih berisi tidak bisa dihapus', async ({ page }) => 
 
 // Dua tes di bawah mengubah data global bersama (pengaturan situs dan teks Home), lalu
 // mengembalikannya. Bila dijalankan di semua proyek browser sekaligus, satu proyek bisa
-// mengembalikan nilai saat proyek lain masih memeriksanya (audit 2026-10-31, BUG-07). Karena itu
+// mengembalikan nilai saat proyek lain masih memeriksanya. Karena itu
 // keduanya hanya berjalan di proyek chromium; alur admin ini tidak bergantung pada mesin browser.
 const GLOBAL_MUTATION_PROJECT = 'chromium'
 const globalMutationReason = 'mengubah data global bersama; satu proyek saja agar tidak balapan'
@@ -308,7 +311,7 @@ test('skill: kategori dan skill baru tersimpan lewat Simpan, lalu dihapus', asyn
 
 test('volume tiap suara dari pengaturan dipakai situs publik', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
-  // Pengaturan disimpan otomatis setiap kontrol diubah (desain 1, revisi 2026-11-11)
+  // Pengaturan disimpan otomatis setiap kontrol diubah
   const setVolume = async (value: string, other: string) => {
     await page.goto('/admin/settings')
     const slider = page.getByRole('slider', { name: 'Menu', exact: true })
@@ -343,10 +346,10 @@ test('modul Home: peran di bawah foto diubah, tampil di situs, lalu dikembalikan
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== GLOBAL_MUTATION_PROJECT, globalMutationReason)
-  // sejak 2026-11-10 Home hanya mengelola foto profil, foto utama, dan peran (permintaan pemilik).
+  // Home hanya mengelola foto profil, foto utama, dan peran.
   // Yang diubah peran bahasa Inggris dan dicek di /en: tes halaman Tentang (/id/about) berjalan
   // bersamaan dan memeriksa peran bahasa Indonesia, jadi keduanya tidak saling mengganggu.
-  // peran diketik langsung di pratinjau beranda 1:1 (revisi 2026-11-12); bahasanya
+  // peran diketik langsung di pratinjau beranda 1:1; bahasanya
   // mengikuti bahasa admin (tanpa tombol ID/EN di panggung)
   // getByRole: hanya yang terlihat (Next menyimpan salinan halaman tersembunyi untuk navigasi kembali)
   const roles = page.getByRole('textbox', { name: /^Role \d+ \(English\)$/ })
@@ -388,7 +391,7 @@ test('modul Home: tab Kartu Pembuka, Peran, Skill; foto utama diganti di tab Per
   page,
   isMobile,
 }) => {
-  // tab Foto Beranda dihapus (revisi pemilik 2026-11-12): alamat lamanya
+  // tab Foto Beranda dihapus: alamat lamanya
   // diarahkan ke tab Peran
   await page.goto('/admin/pages/home')
   await expect(page).toHaveURL(/\/admin\/roles$/)
@@ -398,7 +401,7 @@ test('modul Home: tab Kartu Pembuka, Peran, Skill; foto utama diganti di tab Per
     'aria-current',
     'page',
   )
-  // satu baris di layar lebar; di HP turun jadi 2x2, tidak digeser menyamping (revisi 2026-11-17)
+  // satu baris di layar lebar; di HP turun jadi 2x2, tidak digeser menyamping
   const tops = await tabs.evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top))
   expect(new Set(tops).size).toBe(isMobile ? 2 : 1)
   const vw = page.viewportSize()!.width
@@ -409,23 +412,22 @@ test('modul Home: tab Kartu Pembuka, Peran, Skill; foto utama diganti di tab Per
   await expect(page.getByRole('textbox', { name: 'Peran ke-2 (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('textbox', { name: 'Peran ke-1 (Indonesia)' })).not.toHaveValue('')
   await expect(page.locator('.site-frame [inert] .site-bar').first()).toBeAttached()
-  // hanya peran yang bisa diubah: foto tidak bisa ditekan (revisi pemilik 2026-11-13)
+  // hanya peran yang bisa diubah: foto tidak bisa ditekan
   await expect(page.getByRole('button', { name: 'Ganti Foto Profil' })).toHaveCount(0)
   await expect(page.getByRole('button', { name: 'Ganti foto utama' })).toHaveCount(0)
-  // About satu halaman (tab Profil dan Pendidikan digabung 2026-11-13)
+  // About satu halaman berisi Profil dan Pendidikan
   await page.goto('/admin/profile')
   await expect(page.getByRole('navigation', { name: 'Bagian Halaman' })).toHaveCount(0)
   await expect(page.getByRole('heading', { name: 'Foto Profil' })).toHaveCount(0)
   await expect(page.getByLabel('Peran', { exact: true })).toHaveCount(0)
-  // nama tetap (tidak bisa diketik), bio dan peran diketik langsung (revisi 2026-11-12)
+  // nama tetap (tidak bisa diketik), bio dan peran diketik langsung
   await expect(page.getByRole('textbox', { name: 'Nama', exact: true })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: 'Bio (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Ganti Foto Kartu About$/ })).toBeVisible()
-  // chip kartu bersifat umum (revisi 2026-11-15): teks dan logo bisa diganti, bukan lagi chip kampus
+  // chip kartu bersifat umum: teks dan logo bisa diganti
   await expect(page.getByRole('textbox', { name: 'Teks Chip (Indonesia)' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Ganti Logo Chip' })).toBeVisible()
   // peran tampil sebagai teks biasa seperti di situs (bukan samar), pratinjau tautan dihapus
-  // (revisi pemilik 2026-11-13 malam)
   await expect(
     page.getByRole('textbox', { name: 'Peran di Halaman Tentang (Indonesia)' }),
   ).not.toHaveValue('')
@@ -510,7 +512,7 @@ test('Home: tab GitHub memilih warna grafik dari lima warna lalu mengembalikanny
 })
 
 test('Projects: tanpa tab Teks Halaman, menu langsung ke daftar project', async ({ page }) => {
-  // alamat lama diarahkan ke daftar project (revisi 2026-11-15)
+  // alamat lama diarahkan ke daftar project
   await page.goto('/admin/pages/projects')
   await expect(page).toHaveURL(/\/admin\/projects$/)
   await expect(page.getByRole('link', { name: 'Teks Halaman' })).toHaveCount(0)
@@ -541,7 +543,7 @@ test('About: kartu pendidikan hanya punya satu tombol hapus dan tahun selesai bi
 
 test('Bagian Awal: tab Kartu Pembuka di Home, hanya isinya yang bisa diubah', async ({ page }) => {
   await page.goto('/admin/pages/intro')
-  // bukan menu sendiri lagi: tab pertama Home, tujuan menu Home (revisi 2026-11-11)
+  // bukan menu sendiri lagi: tab pertama Home, tujuan menu Home
   await expect(page.getByRole('link', { name: 'Kartu Pembuka', exact: true })).toHaveAttribute(
     'aria-current',
     'page',
@@ -553,7 +555,7 @@ test('Bagian Awal: tab Kartu Pembuka di Home, hanya isinya yang bisa diubah', as
     'aria-current',
     'page',
   )
-  // tab selebar panel isi sampai tepi kiri-kanan (revisi 2026-11-12)
+  // tab selebar panel isi sampai tepi kiri-kanan
   const tabsNav = page.getByRole('navigation', { name: 'Bagian Halaman' })
   const widths = await tabsNav.evaluate((nav) => {
     const main = document.querySelector('main')!
@@ -564,12 +566,12 @@ test('Bagian Awal: tab Kartu Pembuka di Home, hanya isinya yang bisa diubah', as
   expect(Math.abs(widths.nav - widths.inner)).toBeLessThan(2)
 
   // kartu tampil seperti di situs dan isinya langsung bisa diketik, tanpa kotak isian, ikon pensil,
-  // atau petunjuk (revisi 2026-11-12); Simpan satu baris penuh
+  // atau petunjuk; Simpan satu baris penuh
   const save = page.getByRole('button', { name: 'Simpan' })
   await expect(save).toHaveCount(1)
   const saveWidth = (await save.boundingBox())!.width
   expect(Math.abs(saveWidth - widths.inner)).toBeLessThan(2)
-  // pilihan ID/EN satu baris tepat di atas Simpan, sama seperti About (revisi 2026-11-15)
+  // pilihan ID/EN satu baris tepat di atas Simpan, sama seperti About
   const introLangs = page.getByRole('group', { name: 'Bahasa yang Diubah' })
   const [lb, sbx] = await Promise.all([introLangs.boundingBox(), save.boundingBox()])
   expect(lb!.y).toBeLessThan(sbx!.y)
@@ -603,7 +605,7 @@ test('Bagian Awal: tab Kartu Pembuka di Home, hanya isinya yang bisa diubah', as
 test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu juga', async ({
   page,
 }, testInfo) => {
-  // revisi pemilik 2026-11-13 malam: tanpa pindah halaman
+  // pendidikan diubah tanpa pindah halaman
   // daftar pendidikan bagian halaman About: alamat lama diarahkan ke sana
   await page.goto('/admin/education')
   await expect(page).toHaveURL(/\/admin\/profile$/)
@@ -663,7 +665,7 @@ test('About dan Experience: entri diubah, ditambah, dan dihapus di halaman itu j
   // uraian tampil seperti di situs; ditekan baru bisa diketik
   await entry.getByRole('button', { name: /^Uraian \(Indonesia\)/ }).click()
   await entry.getByRole('textbox', { name: 'Uraian (Indonesia)' }).fill('Uraian **E2E**.')
-  // tombol Draf dihapus (revisi 2026-11-15): hanya entri yang masih draf menampilkannya
+  // tombol Draf dihapus: hanya entri yang masih draf menampilkannya
   await expect(entry.getByRole('button', { name: 'Draf', exact: true })).toHaveCount(0)
   await page.getByRole('button', { name: 'Simpan', exact: true }).click()
   await expect(page.getByText('Pengalaman disimpan.')).toBeVisible()
@@ -701,7 +703,7 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 Hari, tabel langsun
   await period.getByRole('link', { name: '7 hari' }).click()
   await expect(page).toHaveURL(/\/admin\?range=7$/)
   await expect(period.getByRole('link', { name: '7 hari' })).toHaveAttribute('aria-current', 'page')
-  // label kotak tanpa periode (revisi pemilik 2026-11-16)
+  // label kotak tanpa periode
   await expect(summary.getByText(/\d+ hari/)).toHaveCount(0)
   // tabel langsung tampil, tanpa tombol "Lihat sebagai tabel"
   await expect(page.getByText('Lihat sebagai tabel')).toHaveCount(0)
@@ -732,7 +734,7 @@ test('Dashboard desain Ringkas: empat angka, periode 7/30/90 Hari, tabel langsun
 })
 
 test('sidebar → Halaman Status: pratinjau 11 kode status', async ({ page, isMobile }) => {
-  // menu sendiri di sidebar (revisi pemilik 2026-11-17), bukan lagi baris di Pengaturan
+  // menu sendiri di sidebar
   await page.goto('/admin')
   if (isMobile) await page.getByRole('button', { name: 'Menu Samping' }).click()
   await page
@@ -750,7 +752,7 @@ test('sidebar → Halaman Status: pratinjau 11 kode status', async ({ page, isMo
   await tabs.getByRole('link', { name: '429' }).click()
   await expect(page).toHaveURL(/code=429$/)
   await expect(preview.getByRole('heading', { level: 1 })).toHaveText('Pelan-pelan dulu.')
-  // keterangan di pojok kiri bawah pratinjau (revisi pemilik 2026-11-17)
+  // keterangan di pojok kiri bawah pratinjau
   const note = preview.getByText('Hanya pratinjau: batas permintaan tampil sebagai pesan di form.')
   await expect(note).toBeVisible()
   const [n, box] = [(await note.boundingBox())!, (await preview.boundingBox())!]
@@ -785,8 +787,7 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
   isMobile,
 }) => {
   await page.goto('/admin/profile')
-  // About satu halaman tanpa tab (Teks Halaman dihapus 2026-11-12, Profil dan Pendidikan digabung
-  // 2026-11-13, revisi 2026-11-12 dan 2026-11-13)
+  // About satu halaman tanpa tab
   await expect(page.getByRole('link', { name: 'Teks Halaman' })).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Pendidikan', exact: true })).toHaveCount(0)
   if (!isMobile) {
@@ -798,11 +799,11 @@ test('tiap topik satu menu: data profil dan project ada sebagai tab modul, bukan
     )
     // halaman data (profil, project, skill, pengalaman) hanya lewat tab modul, bukan menu sendiri.
     // Dicek lewat alamat: nama menu Projects/Experience di mode Indonesia memang Project/Pengalaman.
-    // menu About langsung ke tab Profil sejak tab Teks Halaman About dihapus (2026-11-12)
+    // menu About langsung ke tab Profil sejak tab Teks Halaman About dihapus
     await expect(menu.locator('a[href="/admin/profile"]')).toHaveCount(1)
-    // Experience juga langsung ke timeline sejak tab Teks halamannya dihapus (2026-11-13)
+    // Experience juga langsung ke timeline sejak tab Teks halamannya dihapus
     await expect(menu.locator('a[href="/admin/experience"]')).toHaveCount(1)
-    // Projects juga langsung ke daftar project sejak tab Teks halamannya dihapus (2026-11-15)
+    // Projects juga langsung ke daftar project sejak tab Teks halamannya dihapus
     await expect(menu.locator('a[href="/admin/projects"]')).toHaveCount(1)
     for (const old of ['/admin/skills', '/admin/github'])
       await expect(menu.locator(`a[href="${old}"]`)).toHaveCount(0)
@@ -816,14 +817,14 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const toEnglish = bar.getByRole('button', { name: 'EN, ganti bahasa admin ke English' })
   await expect(toEnglish).toBeVisible()
   await expect(bar.getByRole('button', { name: 'Mode Gelap' })).toBeVisible()
-  // menu profil: tombol titik tiga di top bar di semua ukuran layar (demo 3, revisi 2026-11-11)
+  // menu profil: tombol titik tiga di top bar di semua ukuran layar
   await expect(bar.getByRole('button', { name: 'Menu Profil' })).toBeVisible()
-  // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital; revisi 2026-11-11)
+  // nama halaman di top bar, huruf Inter biasa (bukan Oswald kapital)
   const title = bar.getByText('Kontak', { exact: true })
   await expect(title).toHaveCSS('text-transform', 'none')
   expect(await title.evaluate((el) => getComputedStyle(el).fontFamily)).not.toMatch(/oswald/i)
-  // logo dan nama panel pindah ke sidebar; Akun hanya di menu profil, Pengaturan kembali ke sidebar,
-  // Log Audit dan menu Bagian Awal dihapus (revisi 2026-11-11)
+  // logo dan nama panel ada di sidebar; Akun hanya di menu profil, Pengaturan di sidebar, tanpa
+  // menu Log Audit dan Bagian Awal
   await expect(bar.getByText('Super Admin', { exact: true })).toHaveCount(0)
   const sidebar = page.getByRole('navigation', { name: 'Menu Admin' })
   for (const gone of ['Akun', 'Log Audit', 'Bagian Awal'])
@@ -831,7 +832,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // dicek lewat DOM: di HP sidebar tersembunyi (menunya di laci)
   await expect(page.locator('aside a[href="/admin/settings"]')).toHaveCount(1)
 
-  // bahasa admin menentukan bahasa isi yang diubah di pratinjau (revisi 2026-11-12)
+  // bahasa admin menentukan bahasa isi yang diubah di pratinjau
   // halaman Contact memuat kartu kanvas: WebKit CI butuh lebih dari 5 detik
   await expect(page.getByRole('textbox', { name: 'Judul (Indonesia)', exact: true })).toBeVisible({
     timeout: 30_000,
@@ -841,7 +842,7 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   // diklik ulang selama masih bertuliskan EN
   await expect(async () => {
     if (await toEnglish.count()) await toEnglish.click()
-    // label isian ikut berbahasa Inggris (seluruh tampilan admin, revisi 2026-11-11)
+    // label isian ikut berbahasa Inggris (seluruh tampilan admin)
     await expect(page.getByRole('textbox', { name: 'Title (English)', exact: true })).toBeVisible({
       timeout: 1000,
     })
@@ -864,11 +865,11 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   await expect(page.locator('aside a[href="/admin/messages"]')).toHaveText(/Messages/)
   const profileEn = page.getByRole('button', { name: /Profile Menu$/ })
   await profileEn.click()
-  // urutan tetap pilihan pemilik: Akun, Lihat Situs
+  // urutan tetap di kedua bahasa: Akun, Lihat Situs
   await expect(
     page.locator(`[id="${await profileEn.getAttribute('aria-controls')}"]`).locator('a'),
   ).toHaveText(['Account', /^View Site/])
-  // tautan situs mengikuti bahasa admin (audit 2026-11-17, BUG-05)
+  // tautan situs mengikuti bahasa admin
   await expect(page.getByRole('link', { name: /^View Site/ })).toHaveAttribute('href', '/en')
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible()
   await page.keyboard.press('Escape')
@@ -884,10 +885,10 @@ test('top bar: bahasa admin, tema, dan profil di pojok kanan atas', async ({ pag
   const profile = bar.getByRole('button', { name: 'Menu Profil' })
   await profile.click()
   const panel = page.locator(`[id="${await profile.getAttribute('aria-controls')}"]`)
-  // tanpa keterangan di bawah pilihan (revisi pemilik 2026-11-11)
+  // tanpa keterangan di bawah pilihan
   await expect(panel.locator('a, button')).toHaveText([/^Akun$/, /^Lihat Situs/, /^Keluar$/])
   await expect(panel.getByRole('link', { name: /^Lihat Situs/ })).toHaveAttribute('href', '/id')
-  // tanpa wajah kedua: foto dan nama admin hanya di puncak sidebar (revisi 2026-11-11)
+  // tanpa wajah kedua: foto dan nama admin hanya di puncak sidebar
   await expect(panel.locator('img')).toHaveCount(0)
   await expect(panel.getByText('Super Admin')).toHaveCount(0)
   // warna yang benar-benar tampil, bukan sekadar nama kelas: Keluar merah, beda dari Akun
@@ -913,7 +914,7 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   page,
   isMobile,
 }) => {
-  // revisi pemilik 2026-11-11; tanpa Privasi dan Halaman Lain
+  // tanpa Privasi dan Halaman Lain
   await page.goto('/admin')
   const hamburger = page.getByRole('button', { name: 'Menu Samping' })
   const menu = page.getByRole('navigation', { name: 'Menu Admin' }).locator('visible=true')
@@ -965,7 +966,7 @@ test('hamburger: sidebar desktop diciutkan jadi ikon dan diingat, di HP membuka 
   await expect(aside).toHaveAttribute('data-collapsed', 'false')
   await expect.poll(width).toBeGreaterThan(225)
 
-  // foto dan nama di puncak sidebar membawa kembali ke Dashboard (revisi 2026-11-11)
+  // foto dan nama di puncak sidebar membawa kembali ke Dashboard
   await page.goto('/admin/pages/about')
   await identity.click()
   await expect(page).toHaveURL(/\/admin$/)
@@ -976,9 +977,9 @@ test('kerangka admin tetap: hanya isi panel besar yang digulir', async ({
   browserName,
   isMobile,
 }) => {
-  // revisi pemilik 2026-11-11: top bar dan sidebar diam, isi digulir di dalam
+  // top bar dan sidebar diam, isi digulir di dalam
   // form Project Baru selalu lebih tinggi dari layar, tidak bergantung pada jumlah data di database
-  // (database CI baru dan hampir kosong, CI #287)
+  // (database CI baru dan hampir kosong)
   await page.goto('/admin/projects/new')
   const main = page.locator('main')
   const bar = page.getByRole('banner')
@@ -1058,9 +1059,9 @@ test.describe('animasi ganti bahasa admin', () => {
   test('judul dari server ikut efek acak huruf dan selesai bersamaan dengan top bar', async ({
     page,
   }) => {
-    // permintaan pemilik 2026-11-11: SELURUH teks yang berganti ikut efek,
+    // SELURUH teks yang berganti ikut efek,
     // termasuk judul halaman yang baru tiba setelah router.refresh(). Teks server yang terlihat di
-    // panel isi: tab aktif Home (halaman teks Projects dihapus 2026-11-15)
+    // panel isi: tab aktif Home
     await page.goto('/admin/pages/intro')
     const idTab = 'Kartu Pembuka'
     const enTab = 'Introduction Card'
@@ -1072,7 +1073,7 @@ test.describe('animasi ganti bahasa admin', () => {
     // judul dari server diacak setelah teksnya tiba, jadi ditunggu
     await expect.poll(() => between(page, 'title', [idTab, enTab])).toBeGreaterThan(0)
     await expect(h1).toHaveText(enTab)
-    // teks dari server dan dari browser selesai mengetik bersamaan (revisi 2026-11-11)
+    // teks dari server dan dari browser selesai mengetik bersamaan
     await expect(page.getByRole('banner').getByText('Home', { exact: true })).toBeVisible()
     const last = await page.evaluate(
       () => (window as unknown as { __last: Record<string, number> }).__last,
@@ -1137,11 +1138,11 @@ test('admin tanpa tulisan biru dan tanpa batang gulir', async ({ page }) => {
 })
 
 test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async ({ page }) => {
-  // kartu kontak seperti di footer situs (revisi 2026-11-12); hanya validasi agar data kontak
+  // kartu kontak seperti di footer situs; hanya validasi agar data kontak
   // yang dipakai tes situs publik tidak berubah
   await page.goto('/admin/pages/footer')
   const whatsapp = page.getByRole('textbox', { name: 'WhatsApp (opsional)' })
-  // dua baris per kartu: nama dan tautan tujuannya, tautan selalu bisa diketik (revisi 2026-11-16)
+  // dua baris per kartu: nama dan tautan tujuannya, tautan selalu bisa diketik
   const contacts = page
     .locator('form')
     .filter({ has: page.getByRole('button', { name: /^Simpan$/ }) })
@@ -1157,14 +1158,14 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   }).toPass()
   await expect(page.getByText('Kontak disimpan.')).toHaveCount(0)
   // WhatsApp dan Email satu isian; LinkedIn, GitHub, Instagram: nama yang tampil dan tautan; judul kartu
-  // dan keterangan CV tidak bisa diubah (revisi 2026-11-16)
+  // dan keterangan CV tidak bisa diubah
   for (const name of ['LinkedIn', 'GitHub', 'Instagram'])
     await expect(page.getByRole('textbox', { name: `Teks kartu ${name}` })).toBeVisible()
   for (const name of ['WhatsApp', 'Email'])
     await expect(page.getByRole('textbox', { name: `Teks kartu ${name}` })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: /^Judul Kartu/ })).toHaveCount(0)
   await expect(page.getByRole('textbox', { name: /^Teks kartu Resume CV/ })).toHaveCount(0)
-  // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak (revisi 2026-11-15)
+  // pratinjau 1:1 di bingkai layar, satu tombol Simpan untuk teks dan kartu kontak
   await expect(page.locator('.site-frame footer')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Simpan', exact: true })).toHaveCount(1)
   // enam kartu (2 baris x 3), tanpa Situs Lain, tanpa pilihan bahasa dan tanpa keterangan kartu;
@@ -1176,23 +1177,23 @@ test('Footer: kartu kontak diketik langsung, nilai salah tidak tersimpan', async
   await expect(
     page.locator('.site-frame footer h2 input, .site-frame footer h2 textarea'),
   ).toHaveCount(0)
-  // ikon kartu Resume CV tidak lagi tombol unggah: hanya link yang diketik
+  // ikon kartu Resume CV bukan tombol unggah: hanya link yang diketik
   await expect(contacts.getByRole('button', { name: 'Berkas Resume CV' })).toHaveCount(0)
-  // keterangan "Google Drive" tidak tampil di admin (revisi 2026-11-16)
+  // keterangan "Google Drive" tidak tampil di admin
   await expect(contacts.getByText('Google Drive')).toHaveCount(0)
 })
 
 test('Navbar dan Contact tampil 1:1 seperti situs dengan bagian yang bisa diketik', async ({
   page,
 }) => {
-  // revisi pemilik 2026-11-15 malam: bingkai layar dengan markup situs
+  // bingkai layar dengan markup situs
   await page.goto('/admin/pages/navbar')
   const bar = page.locator('.site-frame:visible header.site-bar')
   await expect(bar).toBeVisible()
   // lima nama menu bisa diketik langsung di kapsul menu situs; foto dan tombol bahasa/tema hanya tampilan
   await expect(bar.getByRole('textbox', { name: /\(Indonesia\)$/ })).toHaveCount(5)
   await expect(bar.locator('[inert]')).not.toHaveCount(0)
-  // nama menu untuk pembaca layar tidak diubah dari admin lagi (revisi 2026-11-15 malam)
+  // nama menu untuk pembaca layar tidak diubah dari admin lagi
   await expect(page.getByText(/Nama Menu untuk Pembaca Layar/)).toHaveCount(0)
 
   await page.goto('/admin/pages/contact')

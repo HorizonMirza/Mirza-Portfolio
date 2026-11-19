@@ -1,5 +1,7 @@
 'use client'
 
+// Identitas admin di sidebar dan menu profil titik tiga di top bar (Akun, Lihat Situs, Keluar).
+
 import { EllipsisVertical, ExternalLink, KeyRound, LogOut } from 'lucide-react'
 import Image, { type StaticImageData } from 'next/image'
 import Link from 'next/link'
@@ -15,21 +17,20 @@ import { cn } from '@/lib/utils'
 
 export type AdminIdentity = { adminName: string; photo: string | StaticImageData }
 
-// sudut kecil, bukan kapsul (revisi pemilik 2026-11-06: ujung sorotan lebih lancip). Warna dipisah
+// sorotan bersudut kecil, bukan kapsul. Warna dipisah
 // agar Keluar merah tidak bertabrakan dengan text-muted (urutan kelas di CSS tidak bisa diandalkan).
 const itemBase =
   'flex min-h-11 w-full items-center gap-3 rounded-md px-3.5 text-left text-sm font-semibold transition-colors'
 const itemClass = `${itemBase} text-muted hover:bg-surface-2 hover:text-text`
 
-// Isi menu: Akun dan Lihat situs, lalu Keluar; tanpa keterangan di bawahnya (revisi pemilik
-// 2026-11-11). Urutan tetap di kedua bahasa.
+// Isi menu: Akun dan Lihat situs, lalu Keluar; tanpa keterangan di bawahnya. Urutan tetap di kedua bahasa.
 const MENU_ITEMS = [
   { label: 'Akun', href: '/admin/account', icon: KeyRound, external: false },
-  // tautan situs mengikuti bahasa admin (audit 2026-11-17, BUG-05)
+  // tautan situs mengikuti bahasa admin
   { label: 'Lihat Situs', href: '/', icon: ExternalLink, external: true },
 ] as const
 
-// Identitas admin di puncak sidebar (revisi 2026-11-11): foto, nama, dan Super Admin sekaligus
+// Identitas admin di puncak sidebar: foto, nama, dan Super Admin sekaligus
 // tombol kembali ke Dashboard. Di Dashboard sendiri datanya dimuat ulang. Satu-satunya tempat wajah
 // admin di panel; menu profil di top bar sengaja tanpa foto.
 export function SidebarIdentity({
@@ -67,7 +68,7 @@ export function SidebarIdentity({
       </span>
       <span className={cn('min-w-0 flex-1', hideText)}>
         {/* satu baris: saat sidebar menciut teks hanya memudar, tidak boleh turun baris per huruf yang
-            mendorong foto dan menu ke bawah (revisi pemilik 2026-11-17) */}
+            mendorong foto dan menu ke bawah */}
         <span className="block truncate text-sm leading-snug font-semibold">{adminName}</span>
         <span className="block truncate text-xs text-muted">Super Admin</span>
       </span>
@@ -76,15 +77,15 @@ export function SidebarIdentity({
   )
 }
 
-// Menu profil di top bar, di samping tombol tema (demo 3 "Titik tiga", revisi 2026-11-11): tombol
+// Menu profil di top bar, di samping tombol tema: tombol
 // titik tiga bulat yang netral, bukan wajah kedua. Isi: Akun, Lihat situs, lalu Keluar merah.
 export function ProfileMenu() {
   const router = useRouter()
   const t = useAdminT()
   const { lang } = useAdminLang()
   const [open, setOpen] = useState(false)
-  // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan
-  // (audit 2026-11-02, PERF-06). Ref ikut dicek karena state baru berlaku di render berikutnya.
+  // Keluar sedang diproses: tombol nonaktif agar klik berulang tidak mengirim beberapa permintaan.
+  // Ref ikut dicek karena state baru berlaku di render berikutnya.
   const [signingOut, setSigningOut] = useState(false)
   const signingOutRef = useRef(false)
   const root = useRef<HTMLDivElement>(null)
@@ -158,7 +159,7 @@ export function ProfileMenu() {
             ),
           )}
           <div className="my-1 border-t border-border" />
-          {/* Keluar berwarna merah, terpisah garis (revisi pemilik 2026-11-11) */}
+          {/* Keluar berwarna merah, terpisah garis */}
           <button
             type="button"
             className={`${itemBase} text-danger hover:bg-danger/10 disabled:cursor-wait disabled:opacity-60`}

@@ -1,6 +1,6 @@
 /* Skeleton shimmer saat memuat (situs dan admin), termasuk kanvas dan tombol Simpan. */
 
-/* Skeleton shimmer (permintaan pemilik 2026-11-10): blok di loading.tsx
+/* Skeleton shimmer: blok di loading.tsx
    selama halaman berikutnya dimuat. Kilau bergerak lewat transform pada ::after (dikomposisi GPU),
    bukan background-position, agar tidak menggambar ulang blok tiap bingkai. Reduced motion: blok
    diam tanpa kilau. */

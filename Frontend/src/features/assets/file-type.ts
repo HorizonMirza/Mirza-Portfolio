@@ -1,5 +1,5 @@
 // Jenis berkas untuk pemeriksaan awal di pemilih foto. Sebagian browser memberi file.type kosong
-// untuk format yang baru (mis. AVIF), sehingga berkas yang sah ditolak (audit 2026-11-17, BUG-10).
+// untuk format yang baru (mis. AVIF), sehingga berkas yang sah ditolak.
 // Bila tipe kosong, jenisnya diturunkan dari ekstensi. Ini hanya kemudahan di klien: server tetap
 // memeriksa hasil unggahan di Cloudinary (format, ukuran, folder).
 const MIME_BY_EXTENSION: Record<string, string> = {

@@ -1,3 +1,5 @@
+// Tes unit src/components/admin/login-validation: emailIssue.
+
 import { describe, expect, it } from 'vitest'
 
 import { emailIssue } from '@/components/admin/login-validation'

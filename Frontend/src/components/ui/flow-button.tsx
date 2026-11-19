@@ -1,3 +1,5 @@
+// Tombol "flow" untuk tautan ajakan: lingkaran mengisi tombol dan panah bergeser saat disorot.
+
 import { ArrowRight } from 'lucide-react'
 
 // Tombol "flow" (komponen 21st.dev xubohuah/flow-button), disesuaikan: warna dari token tema

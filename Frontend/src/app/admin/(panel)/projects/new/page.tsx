@@ -1,8 +1,11 @@
+// Admin → Projects, project baru di pratinjau halaman detail yang masih kosong.
+
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/admin/page-header'
-import { projectPreviewTexts } from '@backend/features/projects/admin-texts'
 import { ProjectLive } from '@/features/projects/components/project-live'
+
+import { projectPreviewTexts } from '@backend/features/projects/admin-texts'
 import { emptyProject } from '@backend/features/projects/schema'
 import { listSkillOptions } from '@backend/features/skills/queries'
 import { getAdminT } from '@backend/lib/admin-lang-server'
@@ -16,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Project Baru') }
 }
 
-// project baru seperti halaman detail situs; sampul dan galeri setelah disimpan (revisi 2026-11-12)
+// project baru seperti halaman detail situs; sampul dan galeri setelah disimpan
 export default async function NewProjectPage() {
   await requireSuperAdminPage()
   const [skillGroups, texts] = await Promise.all([listSkillOptions(), projectPreviewTexts()])

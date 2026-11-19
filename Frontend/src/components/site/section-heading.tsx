@@ -1,3 +1,5 @@
+// Wadah lebar konten (Container) dan judul pembuka halaman (PageIntro).
+
 import type { ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -22,7 +24,7 @@ export function PageIntro({
   align?: 'start' | 'center'
 }) {
   return (
-    // center: rata tengah di semua ukuran layar (revisi pemilik 2026-10-07: HP juga di tengah)
+    // center: rata tengah di semua ukuran layar
     <header className={cn('pt-12 pb-10 md:pt-20', align === 'center' && 'text-center')}>
       {eyebrow ? (
         <p className="font-mono text-label tracking-widest text-note uppercase">{eyebrow}</p>

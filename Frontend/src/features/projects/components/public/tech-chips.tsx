@@ -1,11 +1,13 @@
+// Chip teknologi project dengan logo, di daftar dan detail project.
+
 import { logoColorFor, resolveIcon, resolveLogo } from '@backend/features/skills/skill-items'
 
 import { type ChipData, TechChipsList } from './tech-chips-list'
 
 type SkillInput = { id: string; name: string; icon: string | null; logo?: { url: string } | null }
 
-// Chip teknologi project dengan logo kecil (pilihan pemilik 2026-10-08, demo efek nomor 7). Logo asli
-// berwarna penuh sama dengan globe skill di beranda (public/skills, permintaan pemilik 2026-10-18);
+// Chip teknologi project dengan logo kecil. Logo asli
+// berwarna penuh sama dengan globe skill di beranda (public/skills);
 // skill tanpa logo asli memakai logo satu warna Simple Icons (abu-abu, berwarna brand saat disorot).
 // Logo brand yang sangat gelap memakai warna teks agar tetap terlihat di tema gelap.
 export function toChipData(skills: SkillInput[]): ChipData[] {

@@ -1,5 +1,12 @@
 'use client'
 
+// Admin → About (dan 147): halaman Tentang sama persis seperti di situs
+// (judul, pita berisi kartu foto yang menggantung, nama, peran, lalu bio dan kartu pendidikan
+// berdampingan), semuanya diubah di halaman ini. Peran tampil seperti di situs (peran bawaan sebagai
+// teks biasa, sama seperti Home → Peran) dan diketik langsung; nama tetap. Foto kartu ditekan untuk
+// diganti. Pendidikan diubah, ditambah, dan dihapus langsung di kartunya. Di bawah panggung: Chip
+// logo/Chip bendera, lalu pilihan bahasa ID/EN, lalu Simpan (menyimpan profil dan pendidikan).
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image, { type StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -21,7 +28,6 @@ import {
   useEditLang,
 } from '@/components/admin/live-edit'
 import { Container, PageIntro } from '@/components/site/section-heading'
-import type { AssetView } from '@backend/features/assets/asset-view'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { EducationCardsLive } from '@/features/experience/components/education-cards-live'
@@ -29,18 +35,14 @@ import { type EntryRow, useEntries } from '@/features/experience/components/use-
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 import { cn } from '@/lib/utils'
 
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { saveProfile } from '@backend/features/profile/actions'
 import { type ProfileInput, profileSchema } from '@backend/features/profile/schema'
+
 import { AboutPhotoCard, type PhotoCardChip } from './about-photo-card'
 
 type LangField = 'headline' | 'bio' | 'currentRole' | 'aboutBandRoles' | 'aboutChipLabel'
 
-// Admin → About (revisi 2026-11-12 dan 2026-11-13, dan 147): halaman Tentang sama persis seperti di situs
-// (judul, pita berisi kartu foto yang menggantung, nama, peran, lalu bio dan kartu pendidikan
-// berdampingan), semuanya diubah di halaman ini. Peran tampil seperti di situs (peran bawaan sebagai
-// teks biasa, sama seperti Home → Peran) dan diketik langsung; nama tetap. Foto kartu ditekan untuk
-// diganti. Pendidikan diubah, ditambah, dan dihapus langsung di kartunya. Di bawah panggung: Chip
-// logo/Chip bendera, lalu pilihan bahasa ID/EN, lalu Simpan (menyimpan profil dan pendidikan).
 export function ProfileLive({
   defaultValues,
   photo,
@@ -105,12 +107,12 @@ export function ProfileLive({
     (submitted) => {
       startTransition(async () => {
         // profil hanya disimpan bila ada isian yang berubah; tanpa itu Simpan menulis ulang profil
-        // dan satu baris log audit kosong (audit 2026-11-17, EFF-02)
+        // dan satu baris log audit kosong
         if (isDirty) {
           const result = await saveProfile(submitted)
           if (!applyResult(result, form.setError)) {
             // pendidikan tidak ikut disimpan bila profil ditolak, agar admin tidak mengira tidak ada
-            // yang tersimpan padahal sebagian sudah (audit 2026-11-17, DB-03)
+            // yang tersimpan padahal sebagian sudah
             if (entries.dirty) toast(t('Pendidikan belum disimpan karena profil belum tersimpan.'))
             return
           }
@@ -148,7 +150,7 @@ export function ProfileLive({
   )
 
   // pesan dari skema sudah menyebut nama isiannya ("Bio wajib diisi"); yang ditambahkan hanya
-  // bahasanya, bukan nama kolom teknis seperti aboutBandRoles (TYPO-05 audit 17-11)
+  // bahasanya, bukan nama kolom teknis seperti aboutBandRoles
   const messages = Object.entries(errors).map(([key, e]) => {
     const keyLang = key.match(/_(id|en)$/)?.[1] as Lang | undefined
     return {
@@ -262,7 +264,7 @@ export function ProfileLive({
                   />
                 </div>
                 <div className="ab-band-text">
-                  {/* nama tidak diubah dari sini (revisi pemilik 2026-11-13) */}
+                  {/* nama tidak diubah dari sini */}
                   <p className="font-display text-[clamp(2.5rem,6vw,4.75rem)] leading-[0.95] font-bold uppercase">
                     {values.name}
                   </p>
@@ -309,7 +311,7 @@ export function ProfileLive({
           </Container>
         </LiveStage>
         <LiveErrors messages={messages} />
-        {/* chip di kartu foto: satu baris selebar Simpan (revisi 2026-11-13) */}
+        {/* chip di kartu foto: satu baris selebar Simpan */}
         <div className="admin-bleed grid grid-cols-2 gap-2">
           {toggle('showCampusChip', values.showCampusChip ?? true, 'Chip Logo')}
           {toggle('showFlag', values.showFlag ?? true, 'Chip Bendera')}

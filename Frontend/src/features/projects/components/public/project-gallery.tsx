@@ -1,5 +1,15 @@
 'use client'
 
+// Galeri detail project "carousel + strip": satu
+// foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan
+// layar laptop maupun HP tidak terpotong. Foto besar yang dirender hanya foto aktif, dua tetangganya,
+// dan foto yang sudah pernah dilihat: semua foto bertumpuk di area terlihat sehingga lazy-load
+// browser tidak berlaku, dan tanpa pembatasan ini semua foto penuh diunduh di awal. Tanpa JavaScript foto pertama tetap tampil.
+// Ganti foto: klik separuh kiri/kanan foto besar, tekan gambar kecil, atau tombol panah keyboard,
+// dengan bunyi desir. Gambar dari
+// daftar "terbang" ke sini lewat View Transition bernama sama (`project-{slug}`). Foto sendiri gambar
+// biasa: tidak miring, tidak berkilau, dan tidak bisa difokus/ditekan.
+
 import Image from 'next/image'
 import { type KeyboardEvent, type MouseEvent, useState, ViewTransition } from 'react'
 
@@ -9,17 +19,6 @@ import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 type GalleryImage = { url: string; alt: string; width: number | null; height: number | null }
 
-// Galeri detail project "carousel + strip" (pilihan pemilik 2026-10-08): satu
-// foto besar 16:9 dan deretan gambar kecil di bawahnya. Foto tampil utuh (contain) agar tangkapan
-// layar laptop maupun HP tidak terpotong. Foto besar yang dirender hanya foto aktif, dua tetangganya,
-// dan foto yang sudah pernah dilihat: semua foto bertumpuk di area terlihat sehingga lazy-load
-// browser tidak berlaku, dan tanpa pembatasan ini semua foto penuh diunduh di awal (audit
-// 2026-10-31, EFF-02). Tanpa JavaScript foto pertama tetap tampil.
-// Ganti foto: klik separuh kiri/kanan foto besar, tekan gambar kecil, atau tombol panah keyboard,
-// dengan bunyi desir. Tombol panah di atas foto dihapus (revisi pemilik 2026-10-08), geser diganti
-// klik kiri/kanan (2026-10-09). Gambar dari
-// daftar "terbang" ke sini lewat View Transition bernama sama (`project-{slug}`). Foto sendiri gambar
-// biasa: tidak miring, tidak berkilau, dan tidak bisa difokus/ditekan.
 export function ProjectGallery({
   slug,
   address,
@@ -63,7 +62,7 @@ export function ProjectGallery({
   }
 
   // Klik/ketuk separuh kiri foto = sebelumnya, separuh kanan = berikutnya, tanpa tanda apa pun di
-  // foto (revisi pemilik 2026-10-09: geser dihapus). Gambar kecil dan tombol panah keyboard tetap.
+  // foto. Gambar kecil dan tombol panah keyboard tetap.
   function onStageClick(event: MouseEvent<HTMLDivElement>) {
     if (!many) return
     const box = event.currentTarget.getBoundingClientRect()
@@ -77,7 +76,7 @@ export function ProjectGallery({
   return (
     <div role="region" aria-label={labels.gallery} onKeyDown={onKeyDown}>
       {/* bingkai jendela browser seperti di daftar project; rasio foto mengikuti foto pertama agar
-          tampil utuh, foto lain menyesuaikan di dalamnya (revisi pemilik 2026-10-08) */}
+          tampil utuh, foto lain menyesuaikan di dalamnya */}
       <div className="pj-browser">
         <div className="pj-browser-bar" aria-hidden="true">
           <span className="pj-browser-dots">

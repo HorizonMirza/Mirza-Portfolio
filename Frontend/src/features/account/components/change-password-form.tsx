@@ -1,5 +1,9 @@
 'use client'
 
+// Ganti password di panel Akun: aturan wajib dicentang langsung saat mengetik
+// dan garis kekuatan. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
+// perangkat ikut berubah (perangkat lain dikeluarkan).
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -11,20 +15,18 @@ import { applyResult } from '@/components/admin/apply-result'
 import { Field } from '@/components/admin/field'
 import { Button } from '@/components/ui/button'
 import { PasswordInput } from '@/components/admin/password-input'
-import { MIN_PASSWORD_LENGTH, PASSWORD_RULES } from '@backend/lib/password-policy'
 import { cn } from '@/lib/utils'
 
+import { MIN_PASSWORD_LENGTH, PASSWORD_RULES } from '@backend/lib/password-policy'
 import { changePassword } from '@backend/features/account/actions'
-import { passwordStrength } from '../password-strength'
 import { type ChangePasswordInput, changePasswordSchema } from '@backend/features/account/schema'
+
+import { passwordStrength } from '../password-strength'
 
 const empty: ChangePasswordInput = { currentPassword: '', newPassword: '' }
 
 const STRENGTH_LABEL = ['', 'Terlalu pendek', 'Cukup', 'Kuat', 'Sangat Kuat'] as const
 
-// Ganti password di panel Akun (revisi 2026-11-11): aturan wajib dicentang langsung saat mengetik
-// dan garis kekuatan. Setelah berhasil, halaman dimuat ulang agar linimasa dan daftar
-// perangkat ikut berubah (perangkat lain dikeluarkan).
 export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
   const t = useAdminT()
   const router = useRouter()
@@ -41,7 +43,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
   const [next] = useWatch({ control, name: ['newPassword'] })
   const strength = passwordStrength(next ?? '')
   const placeholder = t('Min. {min} Karakter', { min: MIN_PASSWORD_LENGTH })
-  // lima syarat yang ditampilkan, urutan dan tulisan sesuai permintaan pemilik 2026-11-16; "berbeda dari
+  // lima syarat yang ditampilkan; "berbeda dari
   // password saat ini" tetap diperiksa saat Simpan lewat changePasswordSchema
   const rules = [
     { ok: PASSWORD_RULES.digit(next ?? ''), label: t('Minimal 1 Angka') },
@@ -89,8 +91,7 @@ export function ChangePasswordForm({ onDone }: { onDone?: () => void } = {}) {
         )}
       </Field>
       <div className="flex flex-col gap-2">
-        {/* satu garis kekuatan, lalu daftar syarat kecil (tata letak form Ganti Password acuan pemilik
-            2026-11-16); label kekuatan tetap dibacakan pembaca layar */}
+        {/* satu garis kekuatan, lalu daftar syarat kecil ; label kekuatan tetap dibacakan pembaca layar */}
         <div className="h-1 overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
           <span
             className={cn(

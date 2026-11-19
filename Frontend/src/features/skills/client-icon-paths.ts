@@ -1,6 +1,6 @@
 // Path ikon brand yang dipakai komponen klien admin (editor project dan kartu kontak Footer).
 // Tabel penuh BRAND_ICONS (63 ikon, 70 KB) hanya diimpor di server; komponen klien yang mengimpornya
-// membawa seluruh tabel ke browser (audit 2026-11-17, PERF-01). Nilai di sini disalin dari
+// membawa seluruh tabel ke browser. Nilai di sini disalin dari
 // brand-icons.ts dan dijaga sama oleh tests/unit/client-icon-paths.test.ts.
 export const CLIENT_ICON_PATHS = {
   whatsapp:

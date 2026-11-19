@@ -1,6 +1,5 @@
-// Kunci penyimpanan pilihan tema (next-themes dan tombol tema). Diganti dari 'theme' pada 2026-10-20
-// (permintaan pemilik "default dark mode"): pilihan lama yang tersimpan, termasuk terang, diabaikan
-// sekali sehingga semua pengunjung kembali mulai dari tema gelap. Sejak 2026-11-11 tema awal diatur di
+// Kunci penyimpanan pilihan tema (next-themes dan tombol tema). Namanya bukan 'theme' agar pilihan
+// lama dari versi sebelumnya diabaikan dan pengunjung mulai dari tema awal. Tema awal diatur di
 // Admin → Pengaturan (gelap, terang, atau ikuti perangkat).
 export const THEME_STORAGE_KEY = 'mmirza-theme'
 

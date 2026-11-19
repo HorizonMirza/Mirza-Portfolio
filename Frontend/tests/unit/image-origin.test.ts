@@ -1,3 +1,5 @@
+// Tes unit src/features/skills/image-origin: isCrossOrigin.
+
 import { describe, expect, it } from 'vitest'
 
 import { isCrossOrigin } from '@/features/skills/image-origin'

@@ -1,3 +1,5 @@
+// Akses panel admin: tanpa sesi diarahkan ke login, login dan logout, dan tampilan halaman login.
+
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 

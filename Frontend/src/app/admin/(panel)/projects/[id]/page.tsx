@@ -1,11 +1,14 @@
+// Admin → Projects, ubah satu project di pratinjau halaman detailnya.
+
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { z } from 'zod'
 
 import { PageHeader } from '@/components/admin/page-header'
+import { ProjectLive } from '@/features/projects/components/project-live'
+
 import { getProjectAssets } from '@backend/features/assets/queries'
 import { projectPreviewTexts } from '@backend/features/projects/admin-texts'
-import { ProjectLive } from '@/features/projects/components/project-live'
 import { getProjectForEdit } from '@backend/features/projects/queries'
 import { listSkillOptions } from '@backend/features/skills/queries'
 import { getAdminT } from '@backend/lib/admin-lang-server'
@@ -19,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('Ubah Project') }
 }
 
-// satu project seperti halaman detail situs, diubah langsung (revisi 2026-11-12)
+// satu project seperti halaman detail situs, diubah langsung
 export default async function EditProjectPage({ params }: PageProps<'/admin/projects/[id]'>) {
   await requireSuperAdminPage()
   const { id } = await params

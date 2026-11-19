@@ -1,12 +1,15 @@
 'use client'
 
+// Daftar entri pengalaman/pendidikan yang diubah langsung di halaman: tiap
+// entri menyimpan nilainya sendiri; Simpan menyimpan semua entri yang berubah sekaligus. Data baru
+// dari server (setelah router.refresh) diambil untuk entri yang tidak sedang diubah.
+
 import { useState } from 'react'
 import { toast } from 'sonner'
 
-import type { AssetView } from '@backend/features/assets/asset-view'
-
 import { uploadAsset } from '@/features/assets/upload-client'
 
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { saveExperience } from '@backend/features/experience/actions'
 import { experienceSchema, type ExperienceInput } from '@backend/features/experience/schema'
 
@@ -42,9 +45,6 @@ function fillOtherLanguage(v: ExperienceInput): ExperienceInput {
   return next
 }
 
-// Daftar entri pengalaman/pendidikan yang diubah langsung di halaman (revisi 2026-11-13): tiap
-// entri menyimpan nilainya sendiri; Simpan menyimpan semua entri yang berubah sekaligus. Data baru
-// dari server (setelah router.refresh) diambil untuk entri yang tidak sedang diubah.
 export function useEntries(initial: EntryRow[]) {
   const [rows, setRows] = useState(initial)
   const [saved, setSaved] = useState<Record<string, string>>(() =>

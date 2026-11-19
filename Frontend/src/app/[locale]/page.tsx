@@ -1,3 +1,5 @@
+// Beranda: hero, Pengalaman, pita Project, Keahlian Teknis (globe), dan grafik GitHub.
+
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import type { CSSProperties } from 'react'
@@ -12,19 +14,10 @@ import { LiquidMaskPortrait } from '@/components/site/liquid-mask-portrait'
 import { Container } from '@/components/site/section-heading'
 import ContributionSkyline from '@/components/ui/contribution-skyline'
 import { ExperienceAccordion } from '@/features/experience/components/public/experience-accordion'
-import { getPublicExperiences } from '@backend/features/experience/public'
 import { employmentText } from '@/features/experience/display'
-import { initials, organizationName, sortByLatest } from '@backend/features/experience/schema'
 import { skylineLabelsFrom } from '@/features/github/labels'
-import { getGithubContributions, githubLogin } from '@backend/features/profile/github-contributions'
-import { getPublicProfile } from '@backend/features/profile/public'
-import { getPublishedProjects } from '@backend/features/projects/public'
 import { SkillGlobe } from '@/features/skills/components/skill-globe'
-import { toSkillItems } from '@backend/features/skills/skill-items'
-import { getSiteSettings } from '@backend/features/settings/public'
-import { getPublicSkills } from '@backend/features/skills/public'
 import { Link } from '@/i18n/navigation'
-import { siteUrl } from '@backend/lib/env'
 import {
   DEFAULT_PHOTO_ALT,
   DEFAULT_PROFILE_PHOTO,
@@ -33,10 +26,20 @@ import {
   HERO_PORTRAIT,
 } from '@/lib/default-photo'
 import { JsonLd } from '@/lib/json-ld'
+import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
+
+import { getPublicExperiences } from '@backend/features/experience/public'
+import { initials, organizationName, sortByLatest } from '@backend/features/experience/schema'
+import { getGithubContributions, githubLogin } from '@backend/features/profile/github-contributions'
+import { getPublicProfile } from '@backend/features/profile/public'
+import { getPublishedProjects } from '@backend/features/projects/public'
+import { toSkillItems } from '@backend/features/skills/skill-items'
+import { getSiteSettings } from '@backend/features/settings/public'
+import { getPublicSkills } from '@backend/features/skills/public'
+import { siteUrl } from '@backend/lib/env'
 import { routing } from '@backend/i18n/routing'
 import { formatMonth, loc } from '@backend/lib/localized'
 import { pageMetadata } from '@backend/lib/seo'
-import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]'>): Promise<Metadata> {
   const { locale } = await params
@@ -83,7 +86,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const contributionDays = contributions
     ? contributions.weeks.flat().map((day) => ({ date: day.date, count: day.count }))
     : []
-  // Project pilihan (audit Home 2026-10-15): yang bertanda unggulan di depan, lalu urutan admin.
+  // Project pilihan: yang bertanda unggulan di depan, lalu urutan admin.
   // Pita gambar butuh minimal dua sampul agar ada yang mengalir.
   const showcase = [...projects.filter((p) => p.featured), ...projects.filter((p) => !p.featured)]
   const showcaseCovers = showcase.flatMap((p) =>
@@ -91,7 +94,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   )
 
   // Bagian beranda hanya tampil bila datanya ada (mis. GitHub butuh GITHUB_TOKEN dan URL profil GitHub).
-  // Pengalaman di beranda (revisi pemilik 2026-10-16, demo E3 akordion): kerja dan organisasi
+  // Pengalaman di beranda: kerja dan organisasi
   // terbaru di atas, pendidikan tidak ikut (sama dengan halaman Pengalaman)
   const workHistory = sortByLatest(experiences.filter((e) => e.type !== 'EDUCATION'))
   const sections = [
@@ -142,18 +145,17 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           : DEFAULT_PHOTO_ALT[locale]
       }
       // foto dikirim apa adanya (WebP 1120 px kualitas 85), tanpa kompresi ulang Next.js yang membuatnya
-      // buram di HP (laporan pemilik 2026-10-20); di HP foto selebar 140vw
+      // buram di HP; di HP foto selebar 140vw
       unoptimized
       loading="eager"
       // tanpa placeholder blur: versi buram foto transparan tampil sebagai kotak kemerahan di belakang foto
-      // saat halaman dimuat ulang (laporan pemilik 2026-10-19)
+      // saat halaman dimuat ulang
       draggable={false}
       className="hero-portrait-img"
     />
   )
-  // peran dari profil (kolom Peran di Tentang, dipisah "|"), di pojok bawah hero (demo peran 3).
-  // Kosong atau profil gagal dimuat: teks bawaan About.roles, sama seperti halaman Tentang
-  // (audit 2026-10-31, BUG-05).
+  // peran dari profil (kolom Peran di Tentang, dipisah "|"), di pojok bawah hero.
+  // Kosong atau profil gagal dimuat: teks bawaan About.roles, sama seperti halaman Tentang.
   const roles = ((profile && loc(profile, 'aboutRoles', locale)) || tAbout('roles'))
     .split('|')
     .map((r) => r.trim())
@@ -161,11 +163,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   return (
     <>
       {person ? <JsonLd data={person} /> : null}
-      {/* Hero (revisi pemilik 2026-10-19): foto besar tanpa bingkai rata
+      {/* Hero: foto besar tanpa bingkai rata
           bawah, nama dua baris memudar ke bawah di belakang dan di depan foto. Salinan depan dilubangi di
-          area wajah (demo 5) agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
+          area wajah agar nama terbaca tanpa menutupi wajah. Liquid mask di seluruh hero. */}
       {/* Hero memanjang ke belakang navbar (hero-shell) agar efek hover bereaksi sampai navbar; isinya di
-          .hero, tepat di bawah navbar. Latar vortex ungu dihapus 2026-11-01 karena lag (permintaan pemilik). */}
+          .hero, tepat di bawah navbar. */}
       <section aria-labelledby="hero-title" className="hero-shell">
         {/* Animasi hero bisa dimatikan di Admin → Pengaturan: foto dan nama tetap, tanpa efek cairan
             dan kursor titik + cincin */}
@@ -174,7 +176,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           bleed={HERO_ARMOR_BLEED}
           disabled={!settings.heroAnimation}
         >
-          {/* kursor titik + cincin di atas foto (pilihan pemilik 2026-11-06, demo K3) */}
+          {/* kursor titik + cincin di atas foto */}
           {settings.heroAnimation ? <HeroCursor /> : null}
           <HeroContent
             name={name}
@@ -197,16 +199,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           aria-labelledby="experience-title"
           className="home-curtain reveal border-t border-border py-16 md:py-24"
         >
-          {/* Transisi antarbagian "judul tirai" (pilihan pemilik 2026-10-16, demo T3): judul naik dari
+          {/* Transisi antarbagian "judul tirai": judul naik dari
               balik batasnya, isi bagian menyusul memudar. Diatur .home-curtain di styles/site/motion.css. */}
-          {/* Revisi pemilik 2026-10-16: tanpa nomor bagian dan tanpa tautan "Semua Pengalaman",
-              judul di tengah seperti bagian Project */}
           <Container>
             <h2 id="experience-title" className="mb-8 text-center text-h2 font-bold">
               <span>{t('experienceHeading')}</span>
             </h2>
             {/* Akordion <details> bawaan browser: tanpa JavaScript, bisa dipakai keyboard dan
-                pembaca layar. Semua tertutup di awal, tanpa ikon +/× (revisi pemilik 2026-10-16). */}
+                pembaca layar. Semua tertutup di awal, tanpa ikon +/×. */}
             <ExperienceAccordion>
               {workHistory.map((e) => {
                 const org = organizationName(e, locale)
@@ -243,8 +243,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                       </span>
                       <span className="home-xp-when home-xp-when-side">{when}</span>
                     </summary>
-                    {/* tiap poin satu baris di layar lebar, tanpa batas lebar teks (revisi pemilik
-                        2026-10-16); di HP tetap turun baris */}
+                    {/* tiap poin satu baris di layar lebar, tanpa batas lebar teks; di HP
+                        tetap turun baris */}
                     <MarkdownView
                       source={loc(e, 'description', locale)}
                       size="base"
@@ -263,19 +263,16 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           aria-labelledby="projects-title"
           className="home-curtain reveal border-t border-border py-16 md:py-24"
         >
-          {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul "Project" di tengah, tanpa tautan
-              "Semua project" dan tanpa deretan nama; letaknya di bawah Pengalaman. */}
           <Container>
             <h2 id="projects-title" className="mb-8 text-center text-h2 font-bold">
               <span>{t('projectsHeading')}</span>
             </h2>
           </Container>
-          {/* Pita sampul berjalan (pilihan pemilik 2026-10-15): tiap sampul kini tautan ke halaman
-              detail project dan pita tidak berhenti saat disorot (revisi 2026-10-16). Deret diulang
+          {/* Pita sampul berjalan: tiap sampul tautan ke halaman
+              detail project dan pita tidak berhenti saat disorot. Deret diulang
               dua kali agar putaran tidak terputus; salinan kedua disembunyikan dari pembaca layar
               dan keyboard. Pita berhenti saat ada fokus keyboard di dalamnya agar tautan bisa dipilih
-              dan saat di luar layar. Tombol jeda dihapus 2026-11-06 atas keputusan pemilik
-              (revisi 2026-11-06). */}
+              dan saat di luar layar. */}
           <div className="home-marquee-wrap">
             <div className="home-marquee">
               <ul
@@ -292,7 +289,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                         tabIndex={copy === 1 ? -1 : undefined}
                       >
                         {/* nama muncul di tengah sampul saat disorot; di layar sentuh nama tampil di
-                          bawah sampul (pilihan pemilik 2026-10-16, demo N5) */}
+                          bawah sampul */}
                         <span className="home-marquee-cover">
                           <Image
                             placeholder={SHIMMER_PLACEHOLDER}
@@ -318,12 +315,11 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <section
           id="skills"
           aria-labelledby="stack-title"
-          // jarak ke bagian GitHub dirapatkan (revisi pemilik 2026-10-20)
+          // jarak ke bagian GitHub dirapatkan
           className="home-curtain reveal scroll-mt-24 border-t border-border pt-16 pb-10 md:pt-24 md:pb-14"
         >
           <Container>
-            {/* Revisi pemilik 2026-10-16: tanpa nomor bagian, judul di tengah; keterangan sumber
-                logo ada di halaman Privasi (bagian Kredit) */}
+            {/* keterangan sumber logo ada di halaman Privasi (bagian Kredit) */}
             <h2 id="stack-title" className="mb-4 text-center text-h2 font-bold">
               <span>{t('stackHeading')}</span>
             </h2>
@@ -348,8 +344,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
           className="home-curtain reveal border-t border-border pt-10 pb-16 md:pt-16 md:pb-24"
         >
           <Container>
-            {/* Revisi pemilik 2026-10-16: judul "GitHub" di tengah tanpa nomor, tanpa tautan profil
-                dan tanpa baris aktivitas terbaru; tinggal grafik kontribusi */}
             <h2 id="github-title" className="mb-8 text-center text-h2 font-bold">
               <span>{t('githubHeading')}</span>
             </h2>

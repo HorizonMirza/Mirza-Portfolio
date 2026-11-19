@@ -1,5 +1,5 @@
 // Semua suara situs, dibuat langsung dengan Web Audio (tanpa berkas audio, tanpa library). Hanya
-// diputar dari tindakan pengguna (revisi 2026-10-01 dan 2026-10-03).
+// diputar dari tindakan pengguna.
 // Volume tiap suara (0–100) diatur Super Admin di /admin/settings, dikirim lewat atribut
 // data-sound-mix di <html>. 0 berarti suara itu mati; suara yang belum diatur berbunyi penuh.
 
@@ -184,7 +184,7 @@ function ping(ctx: AudioContext, out: GainNode, freq: number, dur: number, vol: 
 }
 
 // Menu utama: tik kaca, denting tipis dan pendek karena menu paling sering ditekan.
-// Dibuat lebih keras (permintaan pemilik 2026-10-03).
+// Dibuat lebih keras.
 export function playNavSound() {
   const a = audio('nav')
   if (!a) return
@@ -192,17 +192,17 @@ export function playNavSound() {
   ping(a.ctx, a.out, 3950, 0.1, 0.16)
 }
 
-// Timeline Pengalaman (pilihan pemilik 2026-10-08, demo A3 "Bip digital"): bip kotak pendek
+// Timeline Pengalaman: bip kotak pendek
 // setiap kali entri aktif berganti saat digulir. Bisa berbunyi beberapa kali dalam satu
 // gulir, jadi sengaja singkat (60 ms).
 export function playTimelineStepSound() {
   const a = audio('timeline')
   if (!a) return
-  // dibuat lebih keras (revisi pemilik 2026-10-08): 0,07 -> 0,2, sedikit lebih panjang
+  // dibuat lebih keras: 0,07 -> 0,2, sedikit lebih panjang
   blip(a.ctx, a.out, { at: 0, freq: 1250, dur: 0.06, vol: 0.2, type: 'square' })
 }
 
-// Akordion Pengalaman di beranda (pilihan pemilik 2026-10-16, demo S9 "Blip digital", berbunyi saat
+// Akordion Pengalaman di beranda (berbunyi saat
 // dibuka dan ditutup): dua blip kotak naik saat dibuka, satu blip lebih rendah saat ditutup.
 export function playExperienceToggleSound(open: boolean) {
   const a = audio('experienceToggle')
@@ -222,7 +222,7 @@ export function playExperienceToggleSound(open: boolean) {
   }
 }
 
-// Daftar project "lampu sorot" (pilihan pemilik 2026-10-09, demo suara A7 "Gelembung"): "blup"
+// Daftar project "lampu sorot": "blup"
 // kecil yang naik cepat setiap kali project yang menyala berganti saat digulir.
 export function playProjectSpotlightSound() {
   const a = audio('spotlight')
@@ -241,8 +241,7 @@ export function playProjectSpotlightSound() {
   osc.stop(t + dur + 0.05)
 }
 
-// Kartu foto halaman Tentang (pilihan pemilik 2026-10-08, demo B1 "Kilau", lalu diperhalus atas
-// permintaan pemilik): satu nada lembut per langkah dari urutan nada yang naik-turun. Tiap panggilan
+// Kartu foto halaman Tentang: satu nada lembut per langkah dari urutan nada yang naik-turun. Tiap panggilan
 // melanjutkan ke nada berikutnya (tidak mulai dari awal), jadi selama kursor bergeser di kartu
 // terdengar satu kilau yang mengalir. Tempo diatur oleh PhotoTilt.
 const SHIMMER_NOTES = [1318.51, 1567.98, 1760, 1975.53, 2349.32, 1975.53, 1760, 1567.98]
@@ -293,7 +292,7 @@ export function previewSound(kind: SoundKind, level: number) {
   }
 }
 
-// Kartu ID di halaman kontak (pilihan pemilik 2026-10-03, demo suara nomor 6 "Pegas"): saat
+// Kartu ID di halaman kontak: saat
 // diambil, nada segitiga naik singkat; saat dilepas, pegas bergetar yang makin pelan.
 export function playLanyardSound(kind: 'grab' | 'release') {
   const a = audio('lanyard')
@@ -331,7 +330,7 @@ export function playLanyardSound(kind: 'grab' | 'release') {
   lfo.stop(t + 0.6)
 }
 
-// Galeri detail project (pilihan pemilik 2026-10-08, demo efek nomor 8): desir lembut saat gambar
+// Galeri detail project: desir lembut saat gambar
 // berganti, naik ke gambar berikutnya dan turun ke gambar sebelumnya. Lebih pendek dan lebih pelan
 // dari desir tombol tema karena bisa ditekan beruntun.
 export function playSlideSound(forward: boolean) {

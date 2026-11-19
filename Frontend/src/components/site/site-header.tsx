@@ -1,30 +1,32 @@
+// Topbar "tubelight" tiga bagian: foto bulat di kiri, kapsul menu di tengah (desktop),
+// tombol bahasa dan tema di kanan, masing-masing lingkaran sendiri.
+// HP: menu pindah ke kapsul ikon di bawah layar.
+
 import { getTranslations } from 'next-intl/server'
 
 import { LocaleSwitcher } from '@/components/shared/locale-switcher'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
-import { getPublicProfile } from '@backend/features/profile/public'
 import { DEFAULT_PROFILE_AVATAR } from '@/lib/default-photo'
+
+import { getPublicProfile } from '@backend/features/profile/public'
 import type { AppLocale } from '@backend/i18n/routing'
 
 import { HomeAvatarLink } from './home-avatar-link'
 import { NavLinks } from './nav-links'
 
 // permukaan melayang bersama: kapsul menu dan tombol-tombol bulat di topbar
-// tanpa backdrop-blur (2026-10-20): blur di header sticky dihitung ulang tiap bingkai saat halaman digulir
+// tanpa backdrop-blur: blur di header sticky dihitung ulang tiap bingkai saat halaman digulir
 // atau latar hero beranimasi (efek hover), salah satu penyebab lag; latar 95% pekat sebagai gantinya
 const floating = 'border border-border bg-surface/95 shadow-lg'
 const pill = `flex items-center gap-1 rounded-full p-1 ${floating}`
 
-// Topbar "tubelight" tiga bagian: foto bulat di kiri, kapsul menu di tengah (desktop),
-// tombol bahasa dan tema di kanan, masing-masing lingkaran sendiri.
-// HP: menu pindah ke kapsul ikon di bawah layar.
 export async function SiteHeader({
   locale,
   currentPath,
   editable = false,
 }: {
   locale: AppLocale
-  // pratinjau admin (revisi 2026-11-12): halaman situs yang ditiru, untuk menu yang menyala
+  // pratinjau admin: halaman situs yang ditiru, untuk menu yang menyala
   currentPath?: string
   // pratinjau Admin → Navbar: nama menu bisa diketik (NavEditProvider), kapsul menu selalu tampil
   // (di layar kecil di baris sendiri), foto dan tombol bahasa/tema hanya tampilan

@@ -1,5 +1,7 @@
 'use client'
 
+// Editor teks situs di admin: teks diketik langsung di pratinjau dan disimpan per modul.
+
 import {
   createContext,
   useCallback,
@@ -23,7 +25,6 @@ import {
   SaveBar,
   useEditLang,
 } from '@/components/admin/live-edit'
-
 import { SiteFrame } from '@/components/admin/site-frame'
 
 import { saveSiteTexts } from '@backend/features/site-text/actions'
@@ -134,8 +135,7 @@ export function EditText({
   )
 }
 
-// Admin → modul situs (About, Experience, Projects, Contact, Navbar, Footer), revisi 2026-11-12:
-// halaman tampil seperti di situs dan teksnya diketik langsung. Tombol ID/EN memilih bahasa yang
+// Admin → modul situs (About, Experience, Projects, Contact, Navbar, Footer): halaman tampil seperti di situs dan teksnya diketik langsung. Tombol ID/EN memilih bahasa yang
 // diubah; Simpan satu baris di bawah.
 export function SiteTextLive({
   moduleId,

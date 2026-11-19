@@ -1,3 +1,5 @@
+// Pemeriksaan aksesibilitas (axe, WCAG 2.2 AA) halaman publik di tema gelap dan terang.
+
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
 

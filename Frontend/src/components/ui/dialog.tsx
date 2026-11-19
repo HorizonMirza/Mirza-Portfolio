@@ -1,5 +1,7 @@
 'use client'
 
+// Dialog modal di atas Radix Dialog bergaya shadcn.
+
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { ComponentProps } from 'react'
@@ -17,7 +19,7 @@ export function DialogContent({
   return (
     <DialogPrimitive.Portal>
       {/* latar belakang selalu dikaburkan tipis untuk semua dialog: hapus, simpan, form akun, potong
-          gambar (revisi pemilik 2026-11-16) */}
+          gambar */}
       <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px]" />
       <DialogPrimitive.Content
         className={cn(

@@ -1,17 +1,20 @@
+// Admin → About: halaman Tentang yang diubah langsung (kartu foto, peran, bio, pendidikan).
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { PageHeader } from '@/components/admin/page-header'
+import { ProfileLive } from '@/features/profile/components/profile-live'
+import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
+
 import { getProfileAssets } from '@backend/features/assets/queries'
 import { getPublicExperiences } from '@backend/features/experience/public'
 import { listExperienceEntriesAdmin } from '@backend/features/experience/queries'
 import { initials, organizationName } from '@backend/features/experience/schema'
-import { ProfileLive } from '@/features/profile/components/profile-live'
 import { getPublicProfile } from '@backend/features/profile/public'
 import { getProfileForEdit } from '@backend/features/profile/queries'
 import { getAdminT } from '@backend/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'
-import { DEFAULT_PROFILE_PHOTO } from '@/lib/default-photo'
 import { isUploadConfigured } from '@backend/lib/uploads'
 
 // judul tab browser ikut bahasa admin
@@ -20,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t('About') }
 }
 
-// About: halaman Tentang dalam satu halaman, profil dan pendidikan (revisi 2026-11-12 dan 2026-11-13)
+// About: halaman Tentang dalam satu halaman, profil dan pendidikan
 export default async function ProfilePage() {
   await requireSuperAdminPage()
   const [values, assets, profile, experiences, tId, tEn, educationRows, tIdExp] = await Promise.all(

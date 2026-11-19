@@ -1,13 +1,23 @@
 'use client'
 
+// Kartu foto halaman Tentang yang bisa "dipegang" (mengikuti video
+// contoh): kartu miring 3D mengikuti kursor, cahaya lembut ikut bergerak di atas foto, chip kampus
+// dan bendera melayang lebih dekat (translateZ), dan kartu sedikit mengecil saat
+// ditekan. Saat kursor keluar, kartu kembali tegak perlahan. Di layar sentuh kartu bereaksi saat
+// disentuh/digeser ke samping; geser ke atas-bawah tetap menggulir halaman.
+// Nilai per gerakan ditulis langsung lewat requestAnimationFrame: `transform` ke elemen bertanda
+// data-tilt-target dan posisi/opacity kilau ke elemen data-tilt-glare itu sendiri, bukan lewat
+// variabel CSS di pembungkus yang diwariskan ke seluruh isi kartu (aturan CLAUDE.md). Transisi tetap dari styles/site/about.css (.ab-pc) dan projects.css (.pj-tilt-in). Reduced-motion: kartu diam (suara tetap). Suara kilau mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
+// Dipakai juga untuk gambar di daftar project dengan
+// kelas pembungkus sendiri; di sana tanpa suara (`sound={false}`).
+
 import { type PointerEvent, type ReactNode, useRef } from 'react'
 
 import { playPhotoShimmerSound } from '@/lib/ui-sounds'
 
 // Kemiringan maksimum kartu (derajat) saat kursor di tepi kartu (bawaan; bisa diubah lewat prop).
 const MAX_TILT = 12
-// Suara kilau saat kursor bergeser di kartu: satu nada tiap 190 ms (lambat dan halus, revisi
-// pemilik 2026-10-08) selama kursor berpindah minimal 6 px; nada berikutnya melanjutkan urutan.
+// Suara kilau saat kursor bergeser di kartu: satu nada tiap 190 ms (lambat dan halus) selama kursor berpindah minimal 6 px; nada berikutnya melanjutkan urutan.
 const SOUND_GAP_MS = 190
 const SOUND_MIN_MOVE = 6
 
@@ -15,18 +25,6 @@ function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-// Kartu foto halaman Tentang yang bisa "dipegang" (revisi pemilik 2026-10-07, mengikuti video
-// contoh): kartu miring 3D mengikuti kursor, cahaya lembut ikut bergerak di atas foto, chip kampus
-// dan bendera melayang lebih dekat (translateZ), dan kartu sedikit mengecil saat
-// ditekan. Saat kursor keluar, kartu kembali tegak perlahan. Di layar sentuh kartu bereaksi saat
-// disentuh/digeser ke samping; geser ke atas-bawah tetap menggulir halaman.
-// Nilai per gerakan ditulis langsung lewat requestAnimationFrame: `transform` ke elemen bertanda
-// data-tilt-target dan posisi/opacity kilau ke elemen data-tilt-glare itu sendiri, bukan lewat
-// variabel CSS di pembungkus yang diwariskan ke seluruh isi kartu (CLAUDE.md, audit 2026-11-02
-// PERF-04). Transisi tetap dari styles/site/about.css (.ab-pc) dan projects.css (.pj-tilt-in). Reduced-motion: kartu diam (suara tetap). Suara kilau (pilihan pemilik 2026-10-08,
-// demo B1, diperhalus) mengalir selama kursor bergeser di kartu dan berhenti saat kursor diam.
-// Dipakai juga untuk gambar di daftar project (pilihan pemilik 2026-10-08, demo efek nomor 1) dengan
-// kelas pembungkus sendiri; di sana tanpa suara (`sound={false}`, revisi pemilik 2026-10-09).
 export function PhotoTilt({
   children,
   className = 'ab-tilt',

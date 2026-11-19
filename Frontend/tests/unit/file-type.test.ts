@@ -1,8 +1,10 @@
+// Tes unit src/features/assets/file-type: resolveMime.
+
 import { describe, expect, it } from 'vitest'
 
 import { resolveMime } from '@/features/assets/file-type'
 
-// audit 2026-11-17, BUG-10: tipe kosong dari browser tidak boleh menolak format yang diizinkan
+// tipe kosong dari browser tidak boleh menolak format yang diizinkan
 describe('resolveMime', () => {
   it('memakai tipe dari browser bila ada', () => {
     expect(resolveMime('foto.avif', 'image/avif')).toBe('image/avif')

@@ -1,7 +1,10 @@
+// Kapan pemberitahuan pembuka tampil (sekali per minggu per browser) dan skrip yang menampilkannya
+// sebelum JavaScript.
+
 import type { IntroFrequency } from '@backend/features/settings/options'
 
-// Penanda "sudah dilihat" kartu pembuka. Frekuensinya diatur di Admin → Pengaturan (2026-11-11):
-// - visit (bawaan, pilihan pemilik 2026-10-12): sekali setiap situs dibuka (tab baru), lewat sessionStorage
+// Penanda "sudah dilihat" kartu pembuka. Frekuensinya diatur di Admin → Pengaturan:
+// - visit (bawaan): sekali setiap situs dibuka (tab baru), lewat sessionStorage
 // - once: sekali saja di browser itu, lewat localStorage
 // - weekly: muncul lagi bila terakhir dilihat lebih dari 7 hari lalu, lewat localStorage
 // Kunci yang sama dipakai di kedua penyimpanan; localStorage berisi waktu terakhir dilihat (ms).
@@ -30,8 +33,8 @@ export function markIntroSeen(frequency: IntroFrequency, now: number = Date.now(
 
 // Atribut di <html> yang dipasang skrip di bawah sebelum halaman tampil. Selama atribut ada,
 // kartu pemberitahuan (sudah ada di HTML) langsung ditampilkan menutupi layar lewat CSS (styles/site/intro-notice.css),
-// agar beranda tidak sempat terlihat sebelum kartu terbuka (permintaan pemilik 2026-10-19) dan
-// pengunjung tidak menunggu JavaScript untuk melihat isi (PERF-02). IntroNotice melepasnya tepat
+// agar beranda tidak sempat terlihat sebelum kartu terbuka dan
+// pengunjung tidak menunggu JavaScript untuk melihat isi. IntroNotice melepasnya tepat
 // sebelum kartu dibuka sebagai modal, atau bila kartu tidak dibuka.
 export const INTRO_PENDING_ATTR = 'data-intro'
 

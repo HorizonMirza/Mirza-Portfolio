@@ -1,3 +1,5 @@
+// Tes unit: cron harian.
+
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const count = (n: number) =>
@@ -51,7 +53,6 @@ describe('cron harian', () => {
     })
   })
 
-  // audit 2026-11-17, ERR-01
   it('langkah pertama gagal: sisanya tetap jalan dan respons 500 menyebut langkahnya', async () => {
     db.$executeRaw.mockRejectedValueOnce(new Error('ringkasan gagal'))
     const res = await call()
@@ -67,7 +68,6 @@ describe('cron harian', () => {
     expect(report).toHaveBeenCalledOnce()
   })
 
-  // audit 2026-11-17, DB-02
   it('menghapus log audit > 365 hari, sesi dan verifikasi kedaluwarsa', async () => {
     await call()
     const audit = db.auditLog.deleteMany.mock.calls[0]?.[0] as {

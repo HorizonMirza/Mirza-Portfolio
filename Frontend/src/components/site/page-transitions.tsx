@@ -1,19 +1,21 @@
 'use client'
 
+// Transisi antarhalaman situs: View Transitions di desktop, animasi transform di perangkat sentuh.
+
 import { useLocale } from 'next-intl'
 import { useEffect, useLayoutEffect, useRef } from 'react'
 
 import { usePathname, useRouter } from '@/i18n/navigation'
-import { routing } from '@backend/i18n/routing'
 import { warmUpAudio } from '@/lib/ui-sounds'
 import { prefersReducedMotion, touchFirstDevice } from '@/lib/view-transition'
+
+import { routing } from '@backend/i18n/routing'
 
 import { isSiteNavActive, siteNav } from './nav-items'
 
 // Perangkat sentuh (HP, tablet): pindah halaman TANPA View Transitions bawaan browser. Snapshot
 // halaman lama dan baru dikerjakan sinkron dalam satu task panjang, dan di HP itu membuat transisi
-// patah-patah (diukur 2026-10-07: jeda frame sampai 400 ms dengan CPU 4x lebih lambat, 33–133 ms
-// tanpanya). React punya jalur bawaan bila browser tidak mendukung View Transitions: DOM langsung
+// patah-patah (jeda frame sampai 400 ms dengan CPU 4x lebih lambat, 33–133 ms tanpanya). React punya jalur bawaan bila browser tidak mendukung View Transitions: DOM langsung
 // diganti. Jalur itu dipakai dengan menutupi document.startViewTransition, lalu halaman baru masuk
 // lewat animasi transform + opacity yang dikerjakan GPU. Tombol tema tetap memakai fungsi aslinya
 // (lib/view-transition.ts). Laptop dan desktop (pointer halus) tidak berubah.
@@ -51,7 +53,7 @@ export function PageTransitions() {
     if (from === pathname || !touchFirstDevice() || prefersReducedMotion()) return
     const main = document.getElementById('main')
     if (!main) return
-    // daftar project ↔ detail: muncul lebih pelan sambil sedikit naik (revisi pemilik 2026-10-09)
+    // daftar project ↔ detail: muncul lebih pelan sambil sedikit naik
     if (isProjectHop(from, pathname)) {
       main.animate(
         [
@@ -74,8 +76,7 @@ export function PageTransitions() {
     )
   }, [pathname])
 
-  // Hal yang dulu baru disiapkan saat tombol pertama kali ditekan (sehingga hanya klik pertama
-  // yang tersendat) disiapkan lebih awal:
+  // Disiapkan lebih awal agar klik pertama tidak tersendat:
   // - mesin suara (AudioContext) dibuat pada sentuhan/klik pertama di mana pun;
   // - halaman yang sama dalam bahasa lain diambil di belakang layar saat browser senggang. Tombol
   //   bahasa tidak bisa di-prefetch oleh <Link> (next-intl mematikannya untuk ganti bahasa).

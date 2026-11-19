@@ -1,5 +1,13 @@
 'use client'
 
+// Admin → Projects, satu project: halaman detail project seperti di situs
+// (tautan kembali, peran, judul, tombol aplikasi dan GitHub, galeri di bingkai browser), diketik
+// langsung. Tombol ditekan untuk ditampilkan atau disembunyikan, URL-nya diketik di bawah tombol.
+// Galeri seperti di situs (foto besar + deretan gambar kecil, foto pertama = sampul): foto sampul
+// ditekan untuk diganti, tombol + menambah gambar, tong sampah menghapus foto yang sedang tampil.
+// Ringkasan dan teknologi (tampil di daftar project) di bawahnya. Status, kategori, dan tahun tidak
+// diubah di sini; bahasa ikut pilihan bahasa di bilah atas admin.
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
@@ -23,12 +31,12 @@ import {
 } from '@/components/admin/live-edit'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 import { uploadAsset } from '@/features/assets/upload-client'
-import type { AssetView } from '@backend/features/assets/asset-view'
 import { CLIENT_ICON_PATHS } from '@/features/skills/client-icon-paths'
-import type { SkillOptionGroup } from '@backend/features/skills/queries'
 import { cn } from '@/lib/utils'
-import { slugify } from '@backend/lib/validation'
 
+import type { AssetView } from '@backend/features/assets/asset-view'
+import type { SkillOptionGroup } from '@backend/features/skills/queries'
+import { slugify } from '@backend/lib/validation'
 import { saveProject } from '@backend/features/projects/actions'
 import {
   type ProjectInput,
@@ -44,13 +52,6 @@ type PendingImage = { blob: Blob; name: string; preview: string }
 
 type ButtonTexts = Record<Lang, { demo: string; repo: string; back: string; stack: string }>
 
-// Admin → Projects, satu project (revisi 2026-11-12): halaman detail project seperti di situs
-// (tautan kembali, peran, judul, tombol aplikasi dan GitHub, galeri di bingkai browser), diketik
-// langsung. Tombol ditekan untuk ditampilkan atau disembunyikan, URL-nya diketik di bawah tombol.
-// Galeri seperti di situs (foto besar + deretan gambar kecil, foto pertama = sampul): foto sampul
-// ditekan untuk diganti, tombol + menambah gambar, tong sampah menghapus foto yang sedang tampil.
-// Ringkasan dan teknologi (tampil di daftar project) di bawahnya. Status, kategori, dan tahun tidak
-// diubah di sini (revisi pemilik 2026-11-16); bahasa ikut pilihan bahasa di bilah atas admin.
 export function ProjectLive({
   projectId,
   defaultValues,
@@ -75,7 +76,7 @@ export function ProjectLive({
   const t = useAdminT()
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar (revisi 2026-11-15)
+  // sampul ditekan: langsung membuka pemilih berkas, lalu pemotong gambar
   const picker = useAssetPicker({ configured, onDone: () => router.refresh() })
   const [lang, setLang] = useEditLang()
   // foto yang sedang tampil di galeri (0 = sampul bila ada)

@@ -1,4 +1,4 @@
-// Pemeriksaan email di form login sebelum bertanya ke server (revisi 2026-10-03). Fungsi murni
+// Pemeriksaan email di form login sebelum bertanya ke server. Fungsi murni
 // agar mudah dites. `domain` adalah domain email Super Admin (mis. "gmail.com"), null bila tidak
 // diketahui sehingga hanya format yang diperiksa.
 const EMAIL_FORMAT = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

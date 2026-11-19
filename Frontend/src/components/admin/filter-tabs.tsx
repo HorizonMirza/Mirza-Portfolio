@@ -1,14 +1,15 @@
+// Filter sebagai tautan (?status=...) agar bisa dibagikan dan bekerja tanpa JavaScript.
+// stretch: satu baris selebar panel sampai tepi kiri-kanan, tombol terpisah sama lebar, yang aktif
+// terisi penuh (tab Home).
+// Tidak pernah digeser menyamping: bila tidak muat dalam satu baris,
+// tombol turun ke baris berikutnya. Flex-wrap dengan dasar lebar dari label terpanjang, paling lebar
+// setengah baris (jadi selalu minimal dua per baris, mis. Beranda 2x2 di HP); tombol yang tersisa di
+// baris terakhir melebar penuh (mis. 503 di Halaman Status, Arsip di Pesan).
+
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
 
-// Filter sebagai tautan (?status=...) agar bisa dibagikan dan bekerja tanpa JavaScript.
-// stretch: satu baris selebar panel sampai tepi kiri-kanan, tombol terpisah sama lebar, yang aktif
-// terisi penuh (tab Home, revisi pemilik 2026-11-11 dan 2026-11-12).
-// Tidak pernah digeser menyamping (revisi pemilik 2026-11-17): bila tidak muat dalam satu baris,
-// tombol turun ke baris berikutnya. Flex-wrap dengan dasar lebar dari label terpanjang, paling lebar
-// setengah baris (jadi selalu minimal dua per baris, mis. Beranda 2x2 di HP); tombol yang tersisa di
-// baris terakhir melebar penuh (mis. 503 di Halaman Status, Arsip di Pesan).
 export function FilterTabs({
   label,
   items,
@@ -26,7 +27,7 @@ export function FilterTabs({
     return (
       <nav
         aria-label={label}
-        // selebar panel isi sampai tepi kiri-kanan (revisi pemilik 2026-11-12), keluar dari batas
+        // selebar panel isi sampai tepi kiri-kanan, keluar dari batas
         // max-w-6xl isi halaman: 100cqw = lebar isi <main> (@container di layout panel)
         className="admin-bleed mb-6 flex flex-wrap gap-2 py-1"
       >
@@ -43,7 +44,7 @@ export function FilterTabs({
                 : 'border border-border bg-surface text-muted hover:bg-surface-2 hover:text-text',
             )}
           >
-            {/* jumlah dalam kurung, huruf sama dengan namanya (revisi pemilik 2026-11-16) */}
+            {/* jumlah dalam kurung, huruf sama dengan namanya */}
             {text(item)}
           </Link>
         ))}

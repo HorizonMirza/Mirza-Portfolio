@@ -1,5 +1,12 @@
 'use client'
 
+// Admin → Footer, kartu kontak (dan 161): kartu tautan seperti di footer
+// situs, diketik langsung di tempatnya. Dipasang di dalam pratinjau Footer (SiteTextLive) tanpa form
+// dan tombol Simpan sendiri: disimpan bersama teks footer lewat satu tombol Simpan. Kartu kosong tidak
+// tampil di situs, jadi ditandai bergaris putus. Judul kartu (WhatsApp, Email, ...) tetap. WhatsApp
+// dan Email hanya satu isian. LinkedIn, GitHub, dan Instagram punya nama yang tampil dan tautan.
+// Kartu Resume CV: ikon dan keterangan ("Google Drive") tetap, hanya link yang diketik.
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowUpRight, FileText, Mail } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -8,14 +15,14 @@ import { useForm, useWatch } from 'react-hook-form'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import { applyResult } from '@/components/admin/apply-result'
-import { cvLabel, derivedCardValue } from '@backend/features/profile/footer-links'
 import { InlineInput, LiveErrors } from '@/components/admin/live-edit'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
-import type { AssetView } from '@backend/features/assets/asset-view'
 import { useRegisterExtraSave } from '@/features/site-text/components/site-text-live'
 import { CLIENT_ICON_PATHS, type ClientIconSlug } from '@/features/skills/client-icon-paths'
 import { cn } from '@/lib/utils'
 
+import { cvLabel, derivedCardValue } from '@backend/features/profile/footer-links'
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { saveContactLinks } from '@backend/features/profile/actions'
 import { type ContactLinksInput, contactLinksSchema } from '@backend/features/profile/schema'
 
@@ -86,12 +93,6 @@ const CARDS: {
 const isSocial = (key: Key): key is SocialKey =>
   key === 'linkedin' || key === 'github' || key === 'instagram'
 
-// Admin → Footer, kartu kontak (revisi 2026-11-12 dan 2026-11-15, dan 161): kartu tautan seperti di footer
-// situs, diketik langsung di tempatnya. Dipasang di dalam pratinjau Footer (SiteTextLive) tanpa form
-// dan tombol Simpan sendiri: disimpan bersama teks footer lewat satu tombol Simpan. Kartu kosong tidak
-// tampil di situs, jadi ditandai bergaris putus. Judul kartu (WhatsApp, Email, ...) tetap. WhatsApp
-// dan Email hanya satu isian. LinkedIn, GitHub, dan Instagram punya nama yang tampil dan tautan.
-// Kartu Resume CV: ikon dan keterangan ("Google Drive") tetap, hanya link yang diketik.
 export function ContactLinksLive({
   defaultValues,
   cv,

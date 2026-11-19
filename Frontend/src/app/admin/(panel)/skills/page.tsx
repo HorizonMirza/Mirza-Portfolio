@@ -1,9 +1,12 @@
+// Admin → Home, tab Skill teknis: globe skill dan editor kategori serta skill.
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { SkillsLive } from '@/features/skills/components/skills-live'
+
 import { getPublicSkills } from '@backend/features/skills/public'
 import { listSkillCategoriesAdmin } from '@backend/features/skills/queries'
 import { resolveLogo, toSkillItems } from '@backend/features/skills/skill-items'
@@ -18,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('Skill Teknis')} · Home` }
 }
 
-// Home → Skill teknis (revisi pemilik 2026-11-15): bagian "Keahlian Teknis"
+// Home → Skill teknis: bagian "Keahlian Teknis"
 // tampil seperti di beranda situs (globe, tiap bahasa dari data tersimpan), di bawahnya bagian untuk
 // mengubah dan menambah kategori dan skill; ID/EN dan Simpan di paling bawah seperti halaman lain.
 export default async function SkillsPage() {

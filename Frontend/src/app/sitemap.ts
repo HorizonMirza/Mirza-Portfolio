@@ -1,3 +1,5 @@
+// Setiap halaman tercantum per bahasa dengan alternatif hreflang ke bahasa lain.
+
 import type { MetadataRoute } from 'next'
 
 import { getPublishedProjects } from '@backend/features/projects/public'
@@ -6,7 +8,6 @@ import { siteUrl } from '@backend/lib/env'
 
 const STATIC_PATHS = ['', '/about', '/experience', '/projects', '/contact', '/privacy']
 
-// Setiap halaman tercantum per bahasa dengan alternatif hreflang ke bahasa lain.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteUrl()
   const projects = await getPublishedProjects()

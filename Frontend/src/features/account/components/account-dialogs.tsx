@@ -1,5 +1,7 @@
 'use client'
 
+// Dialog Akun: ganti nama atau email, dan ganti password; keduanya meminta password saat ini.
+
 import { Mail, User } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { type ReactNode, type RefObject, useId, useState, useTransition } from 'react'
@@ -11,12 +13,13 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { IconInput } from '@/components/admin/icon-input'
 import { PasswordInput } from '@/components/admin/password-input'
 import { Label } from '@/components/ui/label'
-import type { ActionResult } from '@backend/lib/action-result'
 
+import type { ActionResult } from '@backend/lib/action-result'
 import { changeAccountEmail, renameAccount } from '@backend/features/account/actions'
+
 import { ChangePasswordForm } from './change-password-form'
 
-// Form di Admin → Akun muncul sebagai dialog dengan latar belakang buram (revisi pemilik 2026-11-16):
+// Form di Admin → Akun muncul sebagai dialog dengan latar belakang buram:
 // nama, email, dan password. Nama dan email menampilkan yang lama, kolom yang baru, dan meminta
 // password akun.
 // Dialog dibuka dari baris biasa (bukan DialogTrigger), jadi fokus dikembalikan ke pembukanya lewat ref.
@@ -47,7 +50,7 @@ function FormDialog({
         className="max-h-[92dvh] max-w-md overflow-y-auto"
       >
         <DialogTitle>{title}</DialogTitle>
-        {/* tanpa keterangan di layar (revisi pemilik 2026-11-16); pembaca layar tetap dapat nama dialog */}
+        {/* tanpa keterangan di layar; pembaca layar tetap dapat nama dialog */}
         <DialogDescription className="sr-only">{title}</DialogDescription>
         <div className="mt-5">{children}</div>
       </DialogContent>
@@ -149,8 +152,7 @@ export function ChangeIdentityDialog({
         }}
       >
         {/* nama atau email sekarang: kartu bergaris dengan ikon bulat, keterangan kecil di atas dan
-            nilainya di bawah (tata letak form Ganti Username/Password acuan pemilik 2026-11-16);
-            hanya ditampilkan, tidak bisa ditekan atau diubah */}
+            nilainya di bawah; hanya ditampilkan, tidak bisa ditekan atau diubah */}
         <div className="flex items-center gap-3 rounded-md border border-border bg-surface px-3 py-2 select-none">
           <span
             aria-hidden="true"

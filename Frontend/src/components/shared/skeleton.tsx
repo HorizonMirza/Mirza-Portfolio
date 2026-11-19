@@ -1,8 +1,10 @@
+// Blok skeleton shimmer dasar: satu blok, beberapa baris teks, dan halaman sederhana.
+
 import type { CSSProperties, ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
-// Skeleton shimmer (permintaan pemilik 2026-11-10): blok abu-abu dengan kilau
+// Skeleton shimmer: blok abu-abu dengan kilau
 // bergerak (kelas .skeleton di styles/shared/skeleton.css) yang tampil di loading.tsx selama halaman berikutnya
 // dimuat. Bentuknya meniru tata letak halaman aslinya. Blok hanya hiasan (aria-hidden); SkeletonPage
 // memberi tahu pembaca layar bahwa halaman sedang dimuat.

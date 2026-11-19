@@ -1,9 +1,13 @@
+// Proxy Next (pengganti middleware): routing bahasa, CSP nonce untuk /admin, dan pemeriksaan sesi
+// admin.
+
 import { getSessionCookie } from 'better-auth/cookies'
 import { type NextRequest, NextResponse } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 
 import { siteDefaultLocale } from '@backend/features/settings/default-locale'
 import { routing } from '@backend/i18n/routing'
+
 import { buildCsp } from './lib/csp'
 
 const intlMiddleware = createMiddleware(routing)
@@ -41,7 +45,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   // Easter egg 418 "I'm a teapot" (app/[locale]/418): halamannya dirender seperti biasa, tetapi kode
-  // status HTTP-nya 418 (permintaan pemilik 2026-11-16).
+  // status HTTP-nya 418.
   if (/^\/(id|en)\/418\/?$/.test(pathname)) {
     return NextResponse.rewrite(request.nextUrl, { status: 418 })
   }

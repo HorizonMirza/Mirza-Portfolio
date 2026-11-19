@@ -1,5 +1,8 @@
+// Kartu foto halaman Tentang (foto, chip, bendera) dan pembentuk data chip-nya.
+
 import Image from 'next/image'
 import type { ReactNode } from 'react'
+
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
 export type PhotoCardChip = {
@@ -39,7 +42,7 @@ export function chipFrom({
   }
 }
 
-// Kartu foto halaman Tentang (pilihan C, revisi 2026-10-05): foto tanpa bingkai tebal dan tanpa
+// Kartu foto halaman Tentang (pilihan C): foto tanpa bingkai tebal dan tanpa
 // siku bidik, chip kampus di sudut atas, dan chip bendera (kaca, warnanya ikut tema).
 // Chip kampus hanya tampil bila datanya ada; fotonya dipasang oleh halaman lewat `photo`.
 export function AboutPhotoCard({
@@ -54,7 +57,7 @@ export function AboutPhotoCard({
   // pengganti isi chip (admin: teks dan logo bisa diubah langsung); tampil bila `chip` ada
   chipSlot?: ReactNode
   className?: string
-  // chip bendera bisa dimatikan di Admin → About → Profil (2026-11-10)
+  // chip bendera bisa dimatikan di Admin → About → Profil
   flag?: boolean
 }) {
   return (

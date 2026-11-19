@@ -1,3 +1,5 @@
+// Gambar pratinjau tautan (Open Graph) untuk satu project.
+
 import { hasLocale } from 'next-intl'
 
 import { getPublishedProject } from '@backend/features/projects/public'

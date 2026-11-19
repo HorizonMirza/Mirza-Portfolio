@@ -1,3 +1,5 @@
+// Admin → Pesan, satu pesan: isi lengkap, pengirim, dan tombol tandai/arsip/hapus.
+
 import { ArrowLeft, Reply } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
@@ -8,6 +10,7 @@ import { PageHeader } from '@/components/admin/page-header'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { MessageActions } from '@/features/messages/components/message-actions'
+
 import { getMessage } from '@backend/features/messages/queries'
 import { messageStatusLabel } from '@backend/features/messages/schema'
 import { getAdminT } from '@backend/lib/admin-lang-server'

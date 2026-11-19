@@ -1,6 +1,6 @@
 /* Bagian Pengalaman di beranda: akordeon dan logo instansi. */
 
-/* Pengalaman di beranda: akordion <details> (revisi pemilik 2026-10-16, demo E3). Baris berisi
+/* Pengalaman di beranda: akordion <details>. Baris berisi
    logo, peran, instansi, dan periode (tanpa ikon +/×, tanpa garis bawah saat disorot); isi
    deskripsi terbuka di bawahnya. Animasi tinggi saat membuka dan menutup dikerjakan
    ExperienceAccordion (Web Animations) agar sama di semua browser, termasuk Safari HP. */
@@ -36,9 +36,9 @@
   font-family: var(--font-display);
   font-weight: 700;
 }
-/* bingkai "bayangan lembut" (pilihan pemilik 2026-10-16, demo B5): bayangan halus di bawah dan
+/* bingkai "bayangan lembut": bayangan halus di bawah dan
    cincin warna latar sehingga logo tampak sedikit terangkat. Hanya di mode terang; di mode gelap
-   efeknya dihapus (revisi pemilik 2026-10-16) */
+   efeknya dihapus */
 :root:not(.dark) .home-xp-logo {
   box-shadow:
     0 6px 16px -6px rgb(0 0 0 / 0.55),
@@ -54,7 +54,7 @@
   min-width: 0;
 }
 .home-xp-role {
-  /* huruf peran dan instansi sama dengan halaman Pengalaman (revisi pemilik 2026-10-16): peran
+  /* huruf peran dan instansi sama dengan halaman Pengalaman: peran
      Oswald kapital ukuran h3, instansi Inter warna teks */
   font-family: var(--font-display);
   font-size: var(--text-h3);
@@ -66,7 +66,7 @@
   color: var(--text);
 }
 .home-xp-when {
-  /* huruf sama dengan tanggal di halaman Pengalaman (revisi pemilik 2026-10-16) */
+  /* huruf sama dengan tanggal di halaman Pengalaman */
   color: var(--text-muted);
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
@@ -76,7 +76,7 @@
   display: none;
 }
 .home-xp-body {
-  /* detail dimulai sejajar judul peran, bukan dari tepi logo (revisi pemilik 2026-10-16):
+  /* detail dimulai sejajar judul peran, bukan dari tepi logo:
      0,25rem jarak + 2,75rem logo + 1rem celah */
   padding: 0 0.25rem 1.25rem 4rem;
 }

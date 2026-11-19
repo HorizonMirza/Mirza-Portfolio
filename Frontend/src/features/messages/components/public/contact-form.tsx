@@ -1,5 +1,8 @@
 'use client'
 
+// Form kontak. "Coba Lagi" memasang ulang form lewat key, sehingga state
+// useActionState kembali kosong.
+
 import { Check, Send } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useActionState, useEffect, useRef, useState } from 'react'
@@ -8,9 +11,9 @@ import { Honeypot, PublicField } from '@/components/site/public-field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { usePathname } from '@/i18n/navigation'
-import { initialFormState, type PublicFormState } from '@backend/lib/form-state'
 import { cn } from '@/lib/utils'
 
+import { initialFormState, type PublicFormState } from '@backend/lib/form-state'
 import { submitContact } from '@backend/features/messages/public-actions'
 
 type ErrorKey =
@@ -21,8 +24,6 @@ type ErrorKey =
   | 'messageShort'
   | 'messageLong'
 
-// Form kontak (revisi 2026-10-03). "Coba Lagi" memasang ulang form lewat key, sehingga state
-// useActionState kembali kosong.
 export function ContactForm() {
   const [round, setRound] = useState(0)
   return <ContactFormInner key={round} onReset={() => setRound((r) => r + 1)} />
@@ -124,7 +125,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
         )}
       </PublicField>
       <div className="flex">
-        {/* Tombol bergaris dengan kilau berputar (pilihan pemilik, demo nomor 5): menyusut jadi
+        {/* Tombol bergaris dengan kilau berputar: menyusut jadi
             lingkaran berpemutar saat mengirim. */}
         <button
           type="submit"
@@ -148,7 +149,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
   if (!sent) return form
 
-  // Terkirim (pilihan pemilik 2026-10-03, demo nomor 3): form memudar dan menyusut, lalu tiket
+  // Terkirim: form memudar dan menyusut, lalu tiket
   // ringkasan terbuka. Urutannya murni CSS (.contact-sent di styles/site/contact.css) agar sama dengan atau
   // tanpa JavaScript. Waktu memakai WIB (zona Mirza) agar server dan browser menulis hal yang sama.
   const sentAt = v.sentAt

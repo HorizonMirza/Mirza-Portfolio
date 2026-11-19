@@ -1,3 +1,5 @@
+// Tes unit Backend/scripts/seed-ids: seedId.
+
 import { describe, expect, it } from 'vitest'
 
 import { seedId } from '@backend/scripts/seed-ids'

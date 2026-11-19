@@ -1,3 +1,5 @@
+// Root layout situs publik (/id, /en): font, tema, next-intl, header, footer, dan transisi halaman.
+
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
@@ -44,7 +46,7 @@ export async function generateMetadata({ params }: LayoutProps<'/[locale]'>): Pr
 
   return {
     // Mode perawatan menyala → noindex di semua halaman publik (halaman yang memasang robots sendiri
-    // tetap memakai miliknya). Selain itu situs selalu boleh diindeks (saklar dihapus 2026-11-16).
+    // tetap memakai miliknya). Selain itu situs selalu boleh diindeks.
     ...(settings.maintenanceMode ? { robots: { index: false, follow: false } } : {}),
     metadataBase: new URL(siteUrl()),
     title: { default: t('title'), template: '%s · Muhammad Mirza' },
@@ -93,7 +95,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         </a>
         <ThemeProvider
           attribute="class"
-          // tampilan awal dari Admin → Pengaturan (bawaan gelap, keputusan pemilik M4); pilihan
+          // tampilan awal dari Admin → Pengaturan (bawaan gelap); pilihan
           // pengunjung tersimpan dan didahulukan
           defaultTheme={settings.defaultTheme}
           enableSystem={settings.defaultTheme === 'system'}
@@ -106,7 +108,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
                 overflow-x-clip: tidak ada isi yang boleh lebih lebar dari layar. Di HP, halaman baru
                 masuk bergeser 40 px (page-transitions.tsx); tanpa clip lebar halaman sesaat jadi 430 px,
                 Chrome HP memperkecil tampilan agar muat dan tetap begitu, lalu menu bawah (fixed bottom)
-                terdorong ke luar layar. Penyebab "menu bawah HP hilang saat pindah bagian" (2026-10-20).
+                terdorong ke luar layar. Penyebab "menu bawah HP hilang saat pindah bagian".
                 clip, bukan hidden: tidak membuat wadah gulir, jadi header sticky tetap bekerja. */}
             {maintenance ? (
               <MaintenanceNotice name={profile?.name ?? 'Muhammad Mirza'} />
@@ -114,8 +116,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
               <div className="flex min-h-dvh flex-col overflow-x-clip pb-28 lg:pb-0">
                 <SiteHeader locale={locale} />
                 {/* isolate: z-index di dalam isi halaman (logo globe, menu kategori) tidak bisa naik ke atas
-                      navbar atas dan menu bawah HP (laporan pemilik 2026-10-20: navbar HP hilang saat pindah
-                      bagian) */}
+                      navbar atas dan menu bawah HP (tanpa ini navbar HP bisa hilang saat pindah bagian) */}
                 <main id="main" className="relative isolate flex-1">
                   {/* Transisi antarhalaman lewat View Transitions (tanpa library): dari menu utama
                         halaman bergeser searah urutan menu, daftar project ↔ detail memudar pelan mengikuti
@@ -142,7 +143,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
             {/* statistik kunjungan bisa dimatikan di Admin → Pengaturan (/api/track juga menolak) */}
             {settings.trackVisits && !maintenance ? <PageViewTracker /> : null}
             {settings.whatsappButton && !maintenance ? <WhatsAppFloat /> : null}
-            {/* skeleton shimmer saat pindah halaman, hanya di browser (revisi 2026-11-11) */}
+            {/* skeleton shimmer saat pindah halaman, hanya di browser */}
             {maintenance ? null : <NavigationSkeleton />}
             {/* pemberitahuan pembuka dari Admin → Home, tab Kartu pembuka, frekuensinya dari Admin → Pengaturan */}
             {intro ? <IntroNoticeSlot locale={locale} intro={intro} /> : null}

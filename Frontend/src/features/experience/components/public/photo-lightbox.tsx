@@ -1,5 +1,7 @@
 'use client'
 
+// Lightbox foto kegiatan di timeline Pengalaman.
+
 import { ArrowLeft } from 'lucide-react'
 import Image from 'next/image'
 import { useRef } from 'react'
@@ -12,8 +14,8 @@ import {
 } from '@/lib/view-transition'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
-// Foto kegiatan di timeline Pengalaman yang bisa ditekan untuk dilihat besar. Pilihan pemilik
-// 2026-11-06: C1 "Lightbox klasik", lalu "semua efeknya sama seperti di Project": foto miring 3D
+// Foto kegiatan di timeline Pengalaman yang bisa ditekan untuk dilihat besar, dengan efek
+// yang sama seperti di Project: foto miring 3D
 // mengikuti kursor dengan kilau (PhotoTilt, sama dengan gambar di daftar project, tanpa suara), dan
 // saat ditekan foto "terbang" dari timeline ke tampilan besar lalu kembali ke tempatnya saat ditutup
 // (View Transition bernama sama, kelas .morph 800 ms yang juga dipakai daftar → detail project).
@@ -158,8 +160,7 @@ export function PhotoLightbox({
         }}
       >
         {/* Kolom selebar konten situs: tombol kembali di posisi yang sama dengan "Semua project" di
-            detail project (di bawah area navbar, rata kiri konten), foto di bawahnya (revisi pemilik
-            2026-11-06) */}
+            detail project (di bawah area navbar, rata kiri konten), foto di bawahnya */}
         <div className="xp-lightbox-inner">
           <button type="button" className="xp-lightbox-back" onClick={() => void close()}>
             <ArrowLeft aria-hidden className="size-4" />

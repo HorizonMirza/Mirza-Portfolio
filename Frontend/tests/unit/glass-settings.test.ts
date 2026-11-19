@@ -1,3 +1,5 @@
+// Tes unit src/components/admin/glass-settings: pengaturan kaca admin.
+
 import { describe, expect, it } from 'vitest'
 
 import { GLASS_DEFAULT, parseGlass } from '@/components/admin/glass-settings'

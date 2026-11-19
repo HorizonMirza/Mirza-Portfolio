@@ -1,5 +1,5 @@
-// Teks periode pengalaman yang sama di halaman Pengalaman situs dan daftar Admin → Experience
-// (revisi 2026-11-13): lama bekerja dalam bulan, dihitung termasuk bulan mulai.
+// Teks periode pengalaman yang sama di halaman Pengalaman situs dan daftar Admin → Experience:
+// lama bekerja dalam bulan, dihitung termasuk bulan mulai.
 export function monthsBetween(start: string, end: string | null) {
   const [sy, sm] = start.split('-').map(Number)
   const now = new Date()

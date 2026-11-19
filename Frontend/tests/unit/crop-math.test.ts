@@ -1,3 +1,5 @@
+// Tes unit src/features/assets/crop-math: pemotong gambar.
+
 import { describe, expect, it } from 'vitest'
 
 import { clampOffset, coverScale, effectiveSize, exportSize } from '@/features/assets/crop-math'

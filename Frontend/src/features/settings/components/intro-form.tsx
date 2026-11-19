@@ -1,5 +1,12 @@
 'use client'
 
+// Admin → Home, tab Kartu pembuka:
+// layar kartu "Informasi Penting" tampil 1:1 seperti yang dilihat pengunjung (latar kotak commit,
+// huruf situs) di bingkai layar SiteFrame. Isi kartu langsung bisa diketik di tempatnya, tanpa kotak
+// isian dan tanpa ikon (hanya kursor berkedip), seperti mengetik di kolom pesan. Tombol ID/EN di kartu memilih bahasa yang diubah.
+// Judul, label, dan tombol kartu tetap (hanya pratinjau, tidak bisa ditekan). Simpan satu baris
+// penuh di bawah kartu.
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FileText, House } from 'lucide-react'
 import { useLayoutEffect, useRef, useTransition } from 'react'
@@ -23,12 +30,6 @@ export type IntroPreviewTexts = Record<
 
 const MAX = 600
 
-// Admin → Home, tab Kartu pembuka (revisi pemilik 2026-11-12):
-// layar kartu "Informasi Penting" tampil 1:1 seperti yang dilihat pengunjung (latar kotak commit,
-// huruf situs) di bingkai layar SiteFrame. Isi kartu langsung bisa diketik di tempatnya, tanpa kotak
-// isian dan tanpa ikon (hanya kursor berkedip), seperti mengetik di kolom pesan. Tombol ID/EN di kartu memilih bahasa yang diubah.
-// Judul, label, dan tombol kartu tetap (hanya pratinjau, tidak bisa ditekan). Simpan satu baris
-// penuh di bawah kartu.
 export function IntroForm({
   defaultValues,
   texts,
@@ -96,7 +97,7 @@ export function IntroForm({
 
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
-      {/* 1:1 seperti di situs (revisi pemilik 2026-11-12): layar kartu pembuka
+      {/* 1:1 seperti di situs: layar kartu pembuka
           (.intro, latar kotak commit) di bingkai layar SiteFrame */}
       <SiteFrame>
         <div className="intro flex" lang={lang}>
@@ -105,7 +106,7 @@ export function IntroForm({
             <div className="intro-panel">
               <div aria-hidden="true" className="intro-grain" />
               <div className="intro-box">
-                {/* ID/EN tetap di kartu seperti di situs (revisi 2026-11-15); pilihan yang sama juga ada di
+                {/* ID/EN tetap di kartu seperti di situs; pilihan yang sama juga ada di
                     baris atas Simpan */}
                 <div className="flex items-center justify-between gap-4">
                   <p className="intro-eyebrow font-mono uppercase">{card.eyebrow}</p>

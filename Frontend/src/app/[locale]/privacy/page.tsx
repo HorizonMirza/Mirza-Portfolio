@@ -1,11 +1,15 @@
+// Halaman Kebijakan Privasi: data yang dikumpulkan situs dan kredit logo, teksnya dari
+// messages/*.json.
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { Container, PageIntro } from '@/components/site/section-heading'
-import { getSiteSettings } from '@backend/features/settings/public'
-import { getPrivacyEditedAt } from '@backend/features/site-text/public'
 import { Link } from '@/i18n/navigation'
 import { metadataLocale, resolveLocale } from '@/lib/locale-page'
+
+import { getSiteSettings } from '@backend/features/settings/public'
+import { getPrivacyEditedAt } from '@backend/features/site-text/public'
 import { formatDateShort } from '@backend/lib/localized'
 import { pageMetadata } from '@backend/lib/seo'
 

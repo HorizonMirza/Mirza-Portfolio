@@ -1,19 +1,19 @@
 'use client'
 
-import { useEffect } from 'react'
-
-import { usePathname } from '@/i18n/navigation'
-
 // Reveal sekali jalan (DESIGN.md 2.4): hanya elemen .reveal yang berada di bawah layar saat halaman
 // dibuka yang disembunyikan, lalu tampil (fade + geser 12 px, 400 ms) saat masuk layar dan tidak
 // diulang. Tanpa JavaScript atau dengan reduced-motion semua konten langsung terlihat, dan tidak
 // ada elemen yang tertahan setengah transparan (kontras tetap penuh).
+
+import { useEffect } from 'react'
+
+import { usePathname } from '@/i18n/navigation'
+
 export function RevealObserver() {
   const pathname = usePathname()
 
   // Animasi berulang (pita project, kilau kolom dan tombol kirim kontak) dijeda saat di luar layar
-  // agar tidak terus dirender (laporan lag pemilik 2026-10-20, audit PERF-01); ditandai
-  // data-offscreen, dibaca CSS di src/styles/
+  // agar tidak terus dirender; ditandai data-offscreen, dibaca CSS di src/styles/
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return
     const io = new IntersectionObserver((entries) => {

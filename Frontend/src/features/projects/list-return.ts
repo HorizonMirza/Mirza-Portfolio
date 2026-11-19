@@ -1,5 +1,5 @@
 // Posisi gulir daftar project agar tombol "Semua project" di detail kembali ke tempat terakhir
-// pengunjung, bukan ke atas (revisi pemilik 2026-10-09). Disimpan di sessionStorage (hanya tab
+// pengunjung, bukan ke atas. Disimpan di sessionStorage (hanya tab
 // ini); bila penyimpanan diblokir, daftar dibuka dari atas seperti biasa.
 
 const SAVED_KEY = 'pj-list-scroll'

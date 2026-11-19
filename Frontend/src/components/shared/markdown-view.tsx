@@ -1,10 +1,11 @@
+// Markdown dari admin selalu disanitasi (tanpa HTML mentah) sebelum ditampilkan.
+// Judul di dalam konten diturunkan satu tingkat agar halaman tetap punya satu h1.
+
 import ReactMarkdown from 'react-markdown'
 import rehypeSanitize from 'rehype-sanitize'
 
 import { cn } from '@/lib/utils'
 
-// Markdown dari admin selalu disanitasi (tanpa HTML mentah) sebelum ditampilkan.
-// Judul di dalam konten diturunkan satu tingkat agar halaman tetap punya satu h1.
 export function MarkdownView({
   source,
   size = 'sm',

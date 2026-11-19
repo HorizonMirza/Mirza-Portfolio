@@ -14,7 +14,7 @@
       scroll-padding-bottom: 0;
     }
   }
-  /* Desktop lebih rapat (permintaan pemilik 2026-10-01): ukuran dasar 87,5% (14 px bila browser
+  /* Desktop lebih rapat: ukuran dasar 87,5% (14 px bila browser
      16 px), jadi semua teks, jarak, dan tombol berbasis rem ikut mengecil seragam. Persen, bukan px,
      agar pengaturan ukuran huruf pengguna tetap dihormati. HP tetap 100%: teks terbaca dan isian
      form tidak membuat iOS memperbesar layar. */

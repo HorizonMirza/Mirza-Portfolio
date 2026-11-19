@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/error-report: parseDsn, parseStack, buildEnvelope, reportServerError.
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { buildEnvelope, parseDsn, parseStack, reportServerError } from '@backend/lib/error-report'

@@ -1,5 +1,7 @@
 'use client'
 
+// Tombol hapus dengan dialog konfirmasi, dipakai semua data yang bisa dihapus di admin.
+
 import { Trash2 } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -14,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+
 import type { ActionResult } from '@backend/lib/action-result'
 
 export function ConfirmDelete({
@@ -25,7 +28,7 @@ export function ConfirmDelete({
 }: {
   // nama butir untuk tombol (pembaca layar); judul dialog sengaja umum, tanpa nama butir
   itemLabel: string
-  // judul dialog, mis. "Hapus Kategori" (revisi pemilik 2026-11-16: tidak perlu detail)
+  // judul dialog, mis. "Hapus Kategori" tanpa nama butir
   title?: string
   onConfirm: () => Promise<ActionResult<unknown>>
   onDone?: () => void

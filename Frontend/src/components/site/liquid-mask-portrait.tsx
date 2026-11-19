@@ -31,7 +31,7 @@ export function LiquidMaskPortrait({
 }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  // naik setiap konteks WebGL dipulihkan browser, agar efek dipasang ulang (ERR-06)
+  // naik setiap konteks WebGL dipulihkan browser, agar efek dipasang ulang
   const [glEpoch, setGlEpoch] = useState(0)
   // true sejak konteks dipulihkan sampai efek baru terpasang: cleanup tidak boleh melepas konteks
   // yang akan dipakai lagi

@@ -1,17 +1,18 @@
 'use client'
 
+// Bingkai layar untuk pratinjau 1:1 di admin:
+// isi dirender seukuran jendela browser admin (lebar dan tinggi layar yang sama dengan pengunjung
+// di perangkat ini), memakai markup dan kelas situs yang sama, lalu diperkecil (transform) agar pas
+// selebar panel. Media query tetap membaca layar sungguhan dan container query membaca isi bingkai,
+// jadi hasilnya sama persis dengan situs, hanya lebih kecil. Huruf situs (Oswald) dipulihkan lewat
+// .site-ui (styles/admin/panel.css).
+
 import { type ReactNode, useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
 type Box = { width: number; height: number; scale: number }
 
-// Bingkai layar untuk pratinjau 1:1 di admin (permintaan pemilik 2026-11-12):
-// isi dirender seukuran jendela browser admin (lebar dan tinggi layar yang sama dengan pengunjung
-// di perangkat ini), memakai markup dan kelas situs yang sama, lalu diperkecil (transform) agar pas
-// selebar panel. Media query tetap membaca layar sungguhan dan container query membaca isi bingkai,
-// jadi hasilnya sama persis dengan situs, hanya lebih kecil. Huruf situs (Oswald) dipulihkan lewat
-// .site-ui (styles/admin/panel.css).
 export function SiteFrame({
   children,
   className,

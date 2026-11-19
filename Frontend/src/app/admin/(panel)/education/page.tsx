@@ -1,7 +1,7 @@
+// Pendidikan diubah langsung di halaman About; alamat ini hanya diarahkan ke sana.
+
 import { redirect } from 'next/navigation'
 
-// Daftar pendidikan kini bagian dari halaman About (tab Profil dan Pendidikan digabung atas
-// permintaan pemilik 2026-11-13); entri diubah langsung di halaman About.
 export default function EducationPage() {
   redirect('/admin/profile')
 }

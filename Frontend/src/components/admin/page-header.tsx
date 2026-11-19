@@ -1,10 +1,11 @@
+// Judul dan deskripsi diterjemahkan ke bahasa tampilan admin (teks yang belum ada di kamus tetap
+// tampil apa adanya, mis. nama project). Nama halaman tampil di
+// top bar, jadi h1 di sini hanya untuk pembaca layar.
+
 import type { ReactNode } from 'react'
 
 import { getAdminT } from '@backend/lib/admin-lang-server'
 
-// Judul dan deskripsi diterjemahkan ke bahasa tampilan admin (teks yang belum ada di kamus tetap
-// tampil apa adanya, mis. nama project). Judul besar di panel isi dihapus (revisi pemilik 2026-11-11,
-// revisi 2026-11-11): nama halaman sudah tampil di top bar, jadi h1 hanya untuk pembaca layar.
 export async function PageHeader({
   title,
   description,

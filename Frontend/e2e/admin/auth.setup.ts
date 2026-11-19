@@ -1,6 +1,7 @@
+// Login admin sekali untuk semua tes admin; sesinya disimpan ke e2e/.auth/admin.json.
+
 import fs from 'node:fs'
 import path from 'node:path'
-
 import { expect, test as setup } from '@playwright/test'
 
 import { ADMIN_STATE, hasAdminEnv, login, uniqueIp } from './helpers'

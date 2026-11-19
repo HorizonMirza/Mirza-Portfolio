@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/rate-limit: hashIdentifier, retryAfterSeconds.
+
 import { describe, expect, it } from 'vitest'
 
 import { hashIdentifier, retryAfterSeconds } from '@backend/lib/rate-limit'

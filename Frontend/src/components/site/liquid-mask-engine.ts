@@ -7,8 +7,8 @@ import { isScrolling } from '@/lib/scroll-idle'
 
 import { createHeroFluid, type HeroFluid } from './hero-fluid'
 
-// jejak: umur (detik), jari-jari (4,5% sisi pendek, 18–30 px; 1,5× ukuran ujung kursor sebelumnya),
-// jarak antartitik, jumlah maksimum (revisi pemilik 2026-10-19)
+// jejak: umur (detik), jari-jari (4,5% sisi pendek, 18–30 px),
+// jarak antartitik, jumlah maksimum
 const BLOB_LIFE = 2.2
 const BLOB_LIFE_REDUCED = 0.3
 const BLOB_RADIUS = 0.045
@@ -16,11 +16,10 @@ const BLOB_MIN = 18
 const BLOB_MAX = 30
 const BLOB_STEP = 4
 const MAX_BLOBS = 260
-// cadangan tanpa WebGL2, gaya "Kabut" (demo bentuk 9): padat sampai 40% jari-jari luar lalu memudar
+// cadangan tanpa WebGL2, gaya "kabut": padat sampai 40% jari-jari luar lalu memudar
 // sampai 1,8× jari-jari
 const FOG_REACH = 1.8
-// Simulasi cairan (hero-fluid.ts, revisi pemilik 2026-10-20 "persis seperti Crazy Hover Mask Reveal"):
-// jari-jari tepi percikan sama dengan tepi kabut sebelumnya (±1,05× BLOB_RADIUS, ukuran tidak diubah),
+// Simulasi cairan (hero-fluid.ts): jari-jari tepi percikan ±1,05× jari-jari jejak (sama dengan tepi kabut),
 // sebagian kecepatan kursor ikut mendorong cairan, pusaran sedang, dan butiran tipis di tepi.
 const FLUID_EDGE = 1.05
 const FLUID_PUSH = 0.2
@@ -33,8 +32,7 @@ const FLUID_DPR_MAX = 1
 const BACK_DELAY_MS = 1200
 // resolusi masker jejak terhadap piksel CSS
 const MASK_SCALE = 0.5
-// tanda bisa di-hover (pilihan pemilik 2026-10-21 dari 10 demo letak intip: nomor 3 "Visor mata"):
-// sapuan mendatar menyapu kacamata dari kiri ke kanan dalam 0,8 detik, sehingga celah mata helm terlihat.
+// Tanda bisa di-hover, intip "visor mata": sapuan mendatar menyapu kacamata dari kiri ke kanan dalam 0,8 detik, sehingga celah mata helm terlihat.
 // Intip pertama 3 detik setelah beranda benar-benar terlihat (pemberitahuan pembuka sudah ditutup), lalu
 // tiap 8 detik selama kursor diam. Titik diukur di foto 1120×1100: kacamata x 385–690, mata ±y 370.
 const PEEK_EVERY_MS = 8000
@@ -96,7 +94,7 @@ export function createLiquidMask({
     if (!fluid) {
       // Konteks WebGL sudah terpasang tetapi shader gagal: cadangan 2D digambar di canvas baru yang
       // disisipkan di sebelahnya. Canvas milik React cukup disembunyikan, tidak diganti, agar
-      // rekonsiliasi React tidak kehilangan simpulnya (audit 2026-10-31, BUG-06).
+      // rekonsiliasi React tidak kehilangan simpulnya.
       fallback = document.createElement('canvas')
       fallback.className = canvas.className
       fallback.setAttribute('aria-hidden', 'true')
@@ -197,7 +195,7 @@ export function createLiquidMask({
       bctx.fillRect(0, 0, width, height)
     }
     // Paling belakang: siluet foto pertama berwarna latar halaman, jadi di dalam jejak foto benar-benar
-    // berganti dan bagian yang tidak tertutup armor (mis. telinga) hilang (permintaan pemilik 2026-10-19)
+    // berganti dan bagian yang tidak tertutup armor (mis. telinga) hilang
     sctx.setTransform(1, 0, 0, 1, 0, 0)
     sctx.clearRect(0, 0, silhouette.width, silhouette.height)
     sctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -225,7 +223,7 @@ export function createLiquidMask({
     }
     if (fluid) {
       // Kanvas cairan menutupi seluruh hero dan digambar ulang tiap bingkai selama hover: resolusinya
-      // dibatasi 1× piksel CSS (revisi lag hover 2026-11-06). Di layar 1,25×–2× jumlah pikselnya turun
+      // dibatasi 1× piksel CSS. Di layar 1,25×–2× jumlah pikselnya turun
       // 36–75%; tepi masker memang berbutir, jadi perbedaan ketajaman armor nyaris tidak terlihat.
       fluid.resize(width, height, Math.min(dpr, FLUID_DPR_MAX))
     } else {
@@ -320,7 +318,7 @@ export function createLiquidMask({
     if (!isScrolling()) drawFog()
     if (blobs.length > 0) frame = requestAnimationFrame(loop)
   }
-  // konteks WebGL hilang: tidak ada bingkai baru sampai efek dipasang ulang (ERR-06)
+  // konteks WebGL hilang: tidak ada bingkai baru sampai efek dipasang ulang
   let contextLost = false
   const wake = () => {
     if (frame || !photo || contextLost) return
@@ -354,9 +352,8 @@ export function createLiquidMask({
       const vy = dy / seconds
       if (fluid) {
         // Cairan: satu percikan berbentuk garis dari posisi lama ke posisi baru (dua lintasan GPU),
-        // menggantikan sampai 12 percikan bulat (24 lintasan) per gerakan yang membuat hover lag
-        // (laporan pemilik 2026-11-06). Dorongan dikali jumlah percikan lama (maks. 3) agar alirannya
-        // tetap terasa sama.
+        // bukan sampai 12 percikan bulat (24 lintasan) per gerakan yang membuat hover lag. Dorongan
+        // dikali jumlah ruas (maks. 3) agar alirannya tetap terasa sama.
         const steps = Math.max(1, Math.min(12, Math.floor(Math.hypot(dx, dy) / FLUID_STEP)))
         const r = baseRadius()
         const push = FLUID_PUSH * Math.min(steps, 3)
@@ -467,8 +464,7 @@ export function createLiquidMask({
     }
     if (now - lastPeek >= PEEK_EVERY_MS && now - idle >= PEEK_EVERY_MS) peek()
   }
-  // Pemeriksa 250 ms hanya berjalan saat hero terlihat dan tab aktif; sebelumnya tetap berdetak
-  // walau hero sudah jauh di luar layar (audit 2026-10-31, EFF-04)
+  // Pemeriksa 250 ms hanya berjalan saat hero terlihat dan tab aktif
   function syncPeekTimer() {
     const run = visible && document.visibilityState === 'visible'
     if (run && !peekTimer) {
@@ -483,9 +479,8 @@ export function createLiquidMask({
   syncPeekTimer()
   document.addEventListener('visibilitychange', syncPeekTimer)
 
-  // Konteks WebGL bisa hilang (GPU sibuk, driver di-reset, tab lama di latar). Dulu efek mati diam-
-  // diam sampai halaman dimuat ulang; kini loop berhenti, browser diminta memulihkan konteks
-  // (preventDefault), lalu efek dipasang ulang saat konteks kembali (audit 2026-11-03, ERR-06).
+  // Konteks WebGL bisa hilang (GPU sibuk, driver di-reset, tab lama di latar). Loop berhenti, browser diminta memulihkan konteks
+  // (preventDefault), lalu efek dipasang ulang saat konteks kembali.
   const onContextLost = (event: Event) => {
     event.preventDefault()
     contextLost = true

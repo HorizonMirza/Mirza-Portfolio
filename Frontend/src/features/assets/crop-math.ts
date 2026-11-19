@@ -1,4 +1,4 @@
-// Hitungan pemotong gambar (revisi 2026-11-15): bingkai potong berukuran tetap di layar, gambar
+// Hitungan pemotong gambar: bingkai potong berukuran tetap di layar, gambar
 // digeser, diputar, dan diperbesar di belakangnya. Murni angka agar mudah dites; dipakai pratinjau
 // dan hasil akhir dengan rumus yang sama.
 

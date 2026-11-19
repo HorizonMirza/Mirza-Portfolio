@@ -1,12 +1,13 @@
 'use client'
 
+// Catat kunjungan halaman tanpa cookie (sendBeacon tidak menunda navigasi).
+// Hash pengunjung dibuat di server dengan kunci harian (lihat /api/track).
+
 import { useLocale } from 'next-intl'
 import { useEffect } from 'react'
 
 import { usePathname } from '@/i18n/navigation'
 
-// Catat kunjungan halaman tanpa cookie (sendBeacon tidak menunda navigasi).
-// Hash pengunjung dibuat di server dengan kunci harian (lihat /api/track).
 export function PageViewTracker() {
   const pathname = usePathname()
   const locale = useLocale()
@@ -17,7 +18,7 @@ export function PageViewTracker() {
     const blob = new Blob([body], { type: 'application/json' })
     if (!navigator.sendBeacon?.('/api/track', blob)) {
       // statistik saja: gagal kirim (offline, pemblokir iklan) diabaikan tanpa galat "Uncaught (in
-      // promise)" di console (audit 2026-11-03, ERR-04)
+      // promise)" di console
       fetch('/api/track', {
         method: 'POST',
         body,

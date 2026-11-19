@@ -1,5 +1,8 @@
 'use client'
 
+// Foto profil di topbar: kembali ke beranda dengan suara dan arah geser yang sama seperti menu
+// Beranda (menu paling kiri, jadi selalu mundur). Di beranda sendiri: gulir ke bagian paling atas.
+
 import Image, { type StaticImageData } from 'next/image'
 
 import { Link, usePathname } from '@/i18n/navigation'
@@ -8,8 +11,6 @@ import { playNavSound } from '@/lib/ui-sounds'
 import { cn } from '@/lib/utils'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
-// Foto profil di topbar: kembali ke beranda dengan suara dan arah geser yang sama seperti menu
-// Beranda (menu paling kiri, jadi selalu mundur). Di beranda sendiri: gulir ke bagian paling atas.
 export function HomeAvatarLink({
   name,
   photo,
@@ -44,7 +45,7 @@ export function HomeAvatarLink({
         width={72}
         height={72}
         sizes="36px"
-        // latar lingkaran berlawanan dengan tema (putih di mode gelap, hitam di mode terang), pilihan pemilik 2026-10-27
+        // latar lingkaran berlawanan dengan tema (putih di mode gelap, hitam di mode terang)
         className="size-full rounded-full bg-text object-cover"
       />
       <span className="sr-only">{name}</span>

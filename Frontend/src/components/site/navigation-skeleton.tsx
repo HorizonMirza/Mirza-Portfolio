@@ -1,10 +1,17 @@
 'use client'
 
+// Skeleton shimmer saat pindah halaman di situs publik.
+// Halaman publik sengaja tanpa loading.tsx (HTML statis akan berisi skeleton dan 404 menjadi 200),
+// jadi skeleton ini hanya ada di browser: muncul setelah tautan ditekan bila halaman tujuan belum siap
+// dalam 150 ms, menutupi isi lama dengan bentuk halaman tujuan, lalu hilang begitu alamat berganti.
+// Tanpa JavaScript dan untuk mesin pencari tidak ada yang berubah.
+
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 
 import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shapes'
 import { usePathname } from '@/i18n/navigation'
+
 import { routing } from '@backend/i18n/routing'
 
 // jeda sebelum skeleton tampil: halaman yang sudah diambil lebih dulu (prefetch) berganti tanpa kedip
@@ -48,11 +55,6 @@ function internalTarget(event: MouseEvent): string | null {
   return url.pathname
 }
 
-// Skeleton shimmer saat pindah halaman di situs publik (pilihan pemilik 2026-11-11).
-// Halaman publik sengaja tanpa loading.tsx (revisi 2026-11-10: HTML statis jadi skeleton, 404 jadi 200),
-// jadi skeleton ini hanya ada di browser: muncul setelah tautan ditekan bila halaman tujuan belum siap
-// dalam 150 ms, menutupi isi lama dengan bentuk halaman tujuan, lalu hilang begitu alamat berganti.
-// Tanpa JavaScript dan untuk mesin pencari tidak ada yang berubah.
 export function NavigationSkeleton() {
   const pathname = usePathname()
   const locale = useLocale()

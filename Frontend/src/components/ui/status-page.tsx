@@ -1,3 +1,5 @@
+// Halaman status bersama untuk 11 kode HTTP (angka, ikon melayang, judul, kalimat, tombol).
+
 import {
   CircleCheck,
   Coffee,
@@ -14,8 +16,8 @@ import {
 } from 'lucide-react'
 import type { CSSProperties, ReactNode } from 'react'
 
-// Halaman status untuk 11 kode HTTP (permintaan pemilik 2026-11-16), turunan desain "hantu" 404 yang
-// dipilih pemilik (dulu ghost-404-page): angka depan, ikon melayang di tengah, angka belakang, judul
+// Halaman status untuk 11 kode HTTP, turunan desain "hantu" 404:
+// angka depan, ikon melayang di tengah, angka belakang, judul
 // Oswald huruf besar, satu kalimat, lalu tombol. Animasi CSS (styles/site/not-found.css .g404-*), tanpa JavaScript
 // klien; prefers-reduced-motion mematikan semua gerak. Warna dari token situs, ikut terang/gelap.
 // Teks dan tombol dari pemanggil, jadi dua bahasa dan bisa dipakai di situs publik maupun admin.

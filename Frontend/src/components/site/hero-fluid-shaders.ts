@@ -27,7 +27,7 @@ uniform vec3 uValue;
 uniform float uCap;
 void main() {
   // percikan berbentuk kapsul dari uPoint ke uPoint2 (titik bila keduanya sama): jarak ke ruas garis,
-  // sehingga satu gerakan kursor cukup satu lintasan, bukan belasan percikan bulat (revisi lag 2026-11-06)
+  // sehingga satu gerakan kursor cukup satu lintasan, bukan belasan percikan bulat
   vec2 a = uPoint;
   vec2 b = uPoint2;
   vec2 pa = vUv - a;

@@ -1,3 +1,5 @@
+// Tes unit src/features/experience/display: employmentText.
+
 import { describe, expect, it } from 'vitest'
 
 import { employmentText } from '@/features/experience/display'

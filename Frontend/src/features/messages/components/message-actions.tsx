@@ -1,5 +1,7 @@
 'use client'
 
+// Tombol aksi satu pesan di admin: tandai dibaca/belum, arsipkan, dan hapus.
+
 import { Archive, Inbox, MailCheck, MailOpen } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, useTransition } from 'react'

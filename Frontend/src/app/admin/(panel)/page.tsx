@@ -1,8 +1,13 @@
+// Admin → Dashboard: empat angka utama, grafik kunjungan harian, pesan terbaru, dan rincian per
+// hari.
+
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { VisitsChart } from '@/components/admin/visits-chart'
 import { Card } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
+
 import {
   DASHBOARD_RANGES,
   type DayStat,
@@ -13,7 +18,6 @@ import {
 import { getAdminT } from '@backend/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 import { formatDateTime, formatDayKey, formatNumber } from '@backend/lib/format'
-import { cn } from '@/lib/utils'
 
 // judul tab browser ikut bahasa admin
 export async function generateMetadata(): Promise<Metadata> {
@@ -86,7 +90,7 @@ function StatTile({
 
 const STATUS_LABEL = { NEW: 'Baru', READ: 'Dibaca', ARCHIVED: 'Arsip' } as const
 
-// Desain 01 "Ringkas" (pilihan pemilik 2026-11-16): selebar panel isi
+// Selebar panel isi
 // sampai tepi kiri-kanan, empat angka dengan grafik kecil, kunjungan harian dengan periode 7/30/90
 // hari (lewat ?range=, tanpa JavaScript tambahan), lalu Rincian per hari dan Pesan terbaru berdampingan.
 export default async function DashboardPage({ searchParams }: PageProps<'/admin'>) {
@@ -100,7 +104,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
   const tiles: { key: Metric; label: string; href: string }[] = [
     // jumlah pengunjung unik per hari yang dijumlahkan sepanjang periode: orang yang datang di
     // beberapa hari terhitung tiap hari (kode pengunjung memuat tanggal demi privasi), jadi
-    // labelnya menyebut "total harian" (audit 2026-11-17, BUG-03)
+    // labelnya menyebut "total harian"
     { key: 'visitors', label: t('Pengunjung'), href: '#kunjungan' },
     { key: 'views', label: t('Tayangan Halaman'), href: '#kunjungan' },
     { key: 'cv', label: t('Unduhan CV'), href: '/admin/pages/footer' },
@@ -109,7 +113,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
 
   return (
     <div className="admin-bleed flex flex-col gap-3">
-      {/* judul terlihat ada di top bar ("Dashboard"); sapaan besar dihapus (revisi pemilik 2026-11-06) */}
+      {/* judul terlihat ada di top bar ("Dashboard") */}
       <h1 className="sr-only">Dashboard</h1>
 
       <section aria-label={t('Ringkasan')} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -134,7 +138,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-h3 font-semibold">{t('Kunjungan Harian')}</h2>
           {/* kotak periode bersudut kecil dengan garis antar-pilihan, yang aktif terisi penuh seperti
-              tab lain di panel admin (revisi pemilik 2026-11-16) */}
+              tab lain di panel admin */}
           <nav
             aria-label={t('Periode')}
             className="inline-flex divide-x divide-border-strong overflow-hidden rounded-md border border-border-strong"
@@ -147,7 +151,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
                 replace
                 aria-current={r === range ? 'page' : undefined}
                 className={cn(
-                  // di HP lebih kecil (revisi pemilik 2026-11-17)
+                  // di HP lebih kecil
                   'inline-flex min-h-7 items-center px-2.5 text-[0.6875rem] font-semibold transition-colors sm:min-h-9 sm:px-3.5 sm:text-xs',
                   r === range ? 'bg-text text-bg' : 'text-muted hover:bg-surface-2 hover:text-text',
                 )}
@@ -174,7 +178,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
         </div>
       </Card>
 
-      {/* pesan terbaru (kiri) dan rincian per hari (kanan): satu baris dua kolom (revisi pemilik 2026-11-16) */}
+      {/* pesan terbaru (kiri) dan rincian per hari (kanan): satu baris dua kolom */}
       <div className="grid items-stretch gap-3 lg:grid-cols-2">
         <Card className="min-w-0">
           <h2 className="text-h3 font-semibold">{t('Pesan Terbaru')}</h2>
@@ -184,7 +188,7 @@ export default async function DashboardPage({ searchParams }: PageProps<'/admin'
             </p>
           ) : (
             /* kolom seperti tabel tanpa garis tabel: nama/subjek, status, waktu sejajar di semua baris
-               (subgrid; revisi pemilik 2026-11-16) */
+               (subgrid) */
             <ul className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
               {messages.map((m) => (
                 <li

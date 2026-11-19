@@ -1,3 +1,5 @@
+// Halaman detail project: peran, judul, tombol aplikasi/GitHub, dan galeri foto di bingkai browser.
+
 import { ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -9,11 +11,12 @@ import { Button } from '@/components/ui/button'
 import { browserAddress } from '@/features/projects/browser-address'
 import { BackToProjects } from '@/features/projects/components/public/back-to-projects'
 import { ProjectGallery } from '@/features/projects/components/public/project-gallery'
+import { metadataLocale, resolveLocale } from '@/lib/locale-page'
+
 import { getPublishedProject, getPublishedProjects } from '@backend/features/projects/public'
 import { BRAND_ICONS } from '@backend/features/skills/brand-icons'
 import { routing } from '@backend/i18n/routing'
 import { siteHost } from '@backend/lib/env'
-import { metadataLocale, resolveLocale } from '@/lib/locale-page'
 import { loc } from '@backend/lib/localized'
 import { pageMetadata } from '@backend/lib/seo'
 
@@ -68,25 +71,22 @@ export default async function ProjectPage({ params }: PageProps<'/[locale]/proje
         <BackToProjects slug={project.slug} label={t('back')} />
       </nav>
 
-      {/* Pilihan pemilik 2026-10-08 (demo galeri 1 "carousel + strip"): hanya
-          peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
+      {/* Hanya peran, judul, tombol yang dipilih Super Admin, dan foto aplikasi. Ringkasan, teknologi,
           uraian, dan studi kasus tidak ditampilkan di sini. */}
       <header className="pd-head pj-title-box mt-2 md:mt-6">
         {role ? <p className="pj-role">{role}</p> : null}
-        {/* selalu satu baris di HP dan laptop: ukuran mengikuti lebar kolom (revisi pemilik 2026-10-09) */}
+        {/* selalu satu baris di HP dan laptop: ukuran mengikuti lebar kolom */}
         <h1
           className="pj-title-fit pd-title font-bold"
           style={{ '--chars': title.length } as CSSProperties}
         >
           {title}
         </h1>
-        {/* di HP tombol lebih kecil dan jarak lebih rapat agar foto naik ke atas (revisi pemilik
-            2026-10-10) */}
+        {/* di HP tombol lebih kecil dan jarak lebih rapat agar foto naik ke atas */}
         {project.demoUrl || project.repoUrl ? (
           <div className="mt-4 flex flex-wrap justify-center gap-2 md:mt-6 md:gap-3">
             {project.demoUrl ? (
-              // warna sama dengan tombol GitHub: gelap di mode gelap, terang di mode terang (revisi
-              // pemilik 2026-10-09)
+              // warna sama dengan tombol GitHub: gelap di mode gelap, terang di mode terang
               <Button
                 asChild
                 variant="secondary"

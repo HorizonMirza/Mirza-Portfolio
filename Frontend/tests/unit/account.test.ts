@@ -1,7 +1,11 @@
+// Tes unit Backend/features/account/mask-email dan src/features/account/password-strength: Admin →
+// Akun, tempat masuk dari header Vercel.
+
 import { describe, expect, it } from 'vitest'
 
-import { maskEmail } from '@backend/features/account/mask-email'
 import { passwordStrength } from '@/features/account/password-strength'
+
+import { maskEmail } from '@backend/features/account/mask-email'
 import { deviceParts } from '@backend/lib/device'
 
 describe('Admin → Akun', () => {

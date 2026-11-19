@@ -1,7 +1,11 @@
+// Tes unit Backend/lib/email dan src/features/projects/browser-address: loc dan formatMonth,
+// formatDateShort, pageMetadata, whatsappUrl.
+
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { getEmailConfig } from '@backend/lib/email'
 import { browserAddress } from '@/features/projects/browser-address'
+
+import { getEmailConfig } from '@backend/lib/email'
 import { siteHost, siteUrl } from '@backend/lib/env'
 import { formatDateShort, formatMonth, loc } from '@backend/lib/localized'
 import { safeImage } from '@backend/lib/public-image'

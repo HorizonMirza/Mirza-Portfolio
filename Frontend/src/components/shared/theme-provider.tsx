@@ -1,5 +1,7 @@
 'use client'
 
+// Pembungkus next-themes (tema lewat kelas .dark di <html>).
+
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import type { ComponentProps } from 'react'
 

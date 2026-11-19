@@ -1,5 +1,7 @@
 'use client'
 
+// Kartu kontak footer dengan kartu detail saat disorot, termasuk grafik kontribusi kecil.
+
 import {
   type CSSProperties,
   type ReactNode,
@@ -13,9 +15,8 @@ import {
 import { type PackedContributions, unpackContributions } from '@/lib/contributions-pack'
 import { cn } from '@/lib/utils'
 
-// Kartu kontak footer dengan kartu detail saat disorot (permintaan pemilik 2026-10-08, diadaptasi
-// dari komponen ContactCards yang dikirim pemilik). Daftar kartu tetap seperti footer sebelumnya;
-// yang baru hanya saat kursor berada di atas sebuah kartu: kartu detailnya muncul di atasnya, dan
+// Kartu kontak footer dengan kartu detail saat disorot (diadaptasi dari komponen ContactCards).
+// Saat kursor berada di atas sebuah kartu, kartu detailnya muncul di atasnya, dan
 // berpindah antarkartu menggeser isinya searah gerakan sementara wadahnya berubah ukuran dan
 // posisi, sehingga terasa satu benda, bukan beberapa popup. Hanya untuk perangkat dengan hover
 // (HP tidak berubah). Warna memakai token tema situs, animasi di styles/site/contact.css (.cc-*).

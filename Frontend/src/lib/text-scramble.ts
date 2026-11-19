@@ -1,7 +1,7 @@
 // Animasi "acak huruf" saat ganti bahasa: teks yang terlihat di layar diacak lalu terurai menjadi
-// teks bahasa baru dari kiri ke kanan (revisi 2026-10-01). Hanya mengubah nodeValue node teks yang
+// teks bahasa baru dari kiri ke kanan. Hanya mengubah nodeValue node teks yang
 // sudah ada, jadi node milik React tidak diganti dan nilai akhirnya selalu teks asli. Panel admin juga
-// mengacak isi kolom form yang terlihat (opsi `fields`, revisi 2026-11-11).
+// mengacak isi kolom form yang terlihat (opsi `fields`).
 
 export const LANG_SCRAMBLE_KEY = 'mm-lang-scramble'
 
@@ -31,7 +31,7 @@ export function scrambleFrame(target: string, progress: number, glyph = randomGl
   for (let i = 0; i < target.length; i++) {
     const ch = target[i]
     // huruf terakhir terkunci tepat di akhir (progress 1), berapa pun panjang teksnya, agar teks
-    // pendek dan panjang selesai bersamaan (revisi 2026-11-11)
+    // pendek dan panjang selesai bersamaan
     const lock = 0.25 + ((i + 1) / target.length) * 0.75
     out += progress >= lock || !/[\p{L}\p{N}]/u.test(ch) ? ch : glyph()
   }
@@ -187,7 +187,7 @@ export function scrambleVisibleText(
   requestAnimationFrame(frame)
 }
 
-// Sesi ganti bahasa panel admin (revisi 2026-11-11): semua teks yang berubah diacak dan selesai
+// Sesi ganti bahasa panel admin: semua teks yang berubah diacak dan selesai
 // BERSAMAAN. Teks client component berganti seketika, teks server component tiba belakangan dan
 // bertahap setelah router.refresh(). Maka:
 // 1. tahan: teks yang berubah, serta teks lama yang diperkirakan akan berganti (`willChange`, mis.

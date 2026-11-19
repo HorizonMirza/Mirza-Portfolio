@@ -1,6 +1,11 @@
+// Bagian server pemberitahuan pembuka: menyiapkan isi dua bahasa sekaligus (Markdown dirender dan
+// disanitasi di server) agar tombol ID/EN di kartu bisa berganti bahasa tanpa memuat halaman.
+// Tombol Resume CV hanya tampil bila CV ada.
+
 import { getTranslations } from 'next-intl/server'
 
 import { MarkdownView } from '@/components/shared/markdown-view'
+
 import { getPublicProfile } from '@backend/features/profile/public'
 import type { IntroNoticeContent } from '@backend/features/settings/public'
 import { routing } from '@backend/i18n/routing'
@@ -9,9 +14,6 @@ import { IntroNotice, type IntroNoticeVersion } from './intro-notice'
 
 type Locale = (typeof routing.locales)[number]
 
-// Bagian server pemberitahuan pembuka: menyiapkan isi dua bahasa sekaligus (Markdown dirender dan
-// disanitasi di server) agar tombol ID/EN di kartu bisa berganti bahasa tanpa memuat halaman.
-// Tombol Resume CV hanya tampil bila CV ada.
 export async function IntroNoticeSlot({
   locale,
   intro,

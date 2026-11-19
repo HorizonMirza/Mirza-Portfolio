@@ -1,3 +1,5 @@
+// Bahasa dan tema: pengalihan bahasa dari browser, ganti bahasa, dan tema yang tidak berkedip.
+
 import { expect, test, type Browser } from '@playwright/test'
 
 import { CLIENT_NAV_TIMEOUT, waitForFiniteAnimations } from './wait'
@@ -13,7 +15,7 @@ test('browser berbahasa Indonesia diarahkan ke /id', async ({ browser }) => {
   const { context, page } = await openRootWithLocale(browser, 'id-ID')
   await expect(page).toHaveURL(/\/id$/)
   await expect(page.locator('html')).toHaveAttribute('lang', 'id')
-  // hero hanya berisi nama dan foto (revisi 2026-10-19); bahasa terlihat dari judul bagian
+  // hero hanya berisi nama dan foto; bahasa terlihat dari judul bagian
   await expect(page.getByRole('heading', { name: 'Keahlian Teknis' })).toBeVisible()
   await context.close()
 })
@@ -42,11 +44,11 @@ test('tombol bahasa berpindah ke versi Inggris di halaman yang sama', async ({ p
 })
 
 test('ganti bahasa tidak membuat tema berkedip', async ({ browser }) => {
-  // Laporan pemilik 2026-10-21: saat ganti bahasa React memasang ulang atribut <html> dan kelas tema
+  // Saat ganti bahasa React memasang ulang atribut <html> dan kelas tema
   // sempat hilang sampai next-themes memasangnya lagi. Tiap perubahan atribut <html> dicatat; saat
   // pencatat berjalan (setelah commit React selesai) kelas tema harus sudah kembali.
   // Tiap tema memakai konteks baru: memakai ulang satu halaman membuat iterasi kedua di Firefox
-  // menggantung menunggu navigasi (CI 2026-10-30, dua kali di langkah klik yang sama).
+  // menggantung menunggu navigasi.
   for (const theme of ['dark', 'light'] as const) {
     const context = await browser.newContext()
     const page = await context.newPage()
@@ -75,7 +77,7 @@ test('ganti bahasa tidak membuat tema berkedip', async ({ browser }) => {
 })
 
 test('pengunjung dengan pilihan tema lama tetap mulai dari gelap', async ({ browser }) => {
-  // kunci penyimpanan baru (2026-10-21): pilihan lama 'theme' diabaikan, dan tema tidak ikut sistem
+  // kunci penyimpanan baru: pilihan lama 'theme' diabaikan, dan tema tidak ikut sistem
   const context = await browser.newContext({ colorScheme: 'light' })
   const page = await context.newPage()
   await page.addInitScript(() => localStorage.setItem('theme', 'light'))
@@ -92,7 +94,7 @@ test('satu tombol tema membalik gelap dan terang, lalu tersimpan', async ({ page
   const html = page.locator('html')
   const toggle = page.getByRole('button', { name: 'Mode Gelap' })
 
-  // tampilan awal gelap (keputusan pemilik M4)
+  // tampilan awal gelap
   await expect(html).toHaveClass(/dark/)
   await expect(toggle).toHaveAttribute('aria-pressed', 'true')
 
@@ -175,7 +177,7 @@ test('tidak ada error di console', async ({ page, browserName }) => {
 
 // URL /admin/* tanpa sesi diarahkan ke login (e2e/admin/access.spec.ts).
 // URL tak dikenal di bawah /id atau /en: 404 dalam bahasa URL itu saja, satu tombol ke beranda,
-// tanpa terjemahan dan tanpa penjelasan 404 (revisi pemilik 2026-10-18).
+// tanpa terjemahan dan tanpa penjelasan 404.
 for (const [path, title, home, href] of [
   ['/id/halaman-yang-tidak-ada', 'Boo! Halamannya hilang.', 'Beranda', '/id'],
   ['/en/missing-page', 'Boo! Page missing.', 'Home', '/en'],

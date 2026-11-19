@@ -1,12 +1,18 @@
 'use client'
 
+// Pemilih berkas untuk semua gambar dan PDF yang bisa diganti di pratinjau admin: menekan gambar langsung membuka pemilih berkas (folder) tanpa
+// formulir. Gambar lalu masuk ke pemotong (geser, ukuran bingkai, perbesar/perkecil, putar) dan
+// tersimpan saat Simpan ditekan; PDF langsung diunggah. Satu pemilih bisa dipakai untuk banyak tujuan
+// lewat pick(target, id). `element` harus dirender sekali di komponen pemakai.
+
 import { type ReactNode, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 
-import { resolveMime } from '../file-type'
 import { UPLOAD_TARGETS, type UploadTarget } from '@backend/features/assets/targets'
+
+import { resolveMime } from '../file-type'
 import { uploadAsset, type UploadStage } from '../upload-client'
 import { ImageCropDialog } from './image-crop-dialog'
 
@@ -20,11 +26,6 @@ type Pending = {
   onCrop?: (blob: Blob, fileName: string) => void
 }
 
-// Pemilih berkas untuk semua gambar dan PDF yang bisa diganti di pratinjau admin (permintaan pemilik
-// 2026-11-15): menekan gambar langsung membuka pemilih berkas (folder) tanpa
-// formulir. Gambar lalu masuk ke pemotong (geser, ukuran bingkai, perbesar/perkecil, putar) dan
-// tersimpan saat Simpan ditekan; PDF langsung diunggah. Satu pemilih bisa dipakai untuk banyak tujuan
-// lewat pick(target, id). `element` harus dirender sekali di komponen pemakai.
 export function useAssetPicker({
   configured,
   onDone,

@@ -1,5 +1,10 @@
 'use client'
 
+// Admin → Pengaturan: daftar berkelompok Suara, Tampilan, Pesan, Privasi, Lanjutan; tiap baris satu
+// pengaturan dengan kontrol di kanan. Setiap perubahan langsung disimpan (tanpa tombol Simpan) lalu
+// muncul notifikasi "Tersimpan".
+// Gagal disimpan: kontrol kembali ke nilai terakhir yang tersimpan.
+
 import { useEffect, useRef, useState, useTransition } from 'react'
 import { toast } from 'sonner'
 
@@ -27,10 +32,6 @@ import {
   type Save,
 } from './settings-controls'
 
-// Admin → Pengaturan, desain 1 "Daftar berkelompok" (pilihan pemilik 2026-11-11):
-// kelompok Suara, Tampilan, Pesan, Privasi, Lanjutan (revisi pemilik 2026-11-16: semua suara satu
-// kelompok, Tampilan dan Konten digabung); tiap baris satu pengaturan dengan kontrol di kanan. Setiap perubahan langsung disimpan (tanpa tombol Simpan) lalu muncul notifikasi "Tersimpan".
-// Gagal disimpan: kontrol kembali ke nilai terakhir yang tersimpan.
 export function SiteSettingsList({
   initial,
   hasWhatsapp,
@@ -114,7 +115,7 @@ export function SiteSettingsList({
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Semua suara situs satu per satu (revisi pemilik 2026-11-16): tiap suara punya geseran volume
+      {/* Semua suara situs satu per satu: tiap suara punya geseran volume
           dan tombol coba sendiri, tanpa volume utama */}
       <Group title={t('Suara')}>
         {soundRows.map(([kind, title, description]) => (
@@ -274,7 +275,6 @@ export function SiteSettingsList({
 
       <Group title={t('Lanjutan')}>
         <MaintenanceRow on={values.maintenanceMode} onSave={save} />
-        {/* Halaman status pindah ke sidebar (revisi pemilik 2026-11-17) */}
       </Group>
     </div>
   )

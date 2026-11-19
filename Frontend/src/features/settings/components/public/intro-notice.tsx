@@ -1,5 +1,14 @@
 'use client'
 
+// Pemberitahuan pembuka: kartu ramping di tengah layar. Latar dan kartu sama dengan halaman login
+// Super Admin: latar hitam berisi kotak commit dengan gelombang cahaya (commit-grid.tsx) dan kartu
+// kaca gelap, selalu gelap di tema terang maupun gelap. Memakai <dialog> bawaan
+// (showModal): fokus terkunci di dalam kartu, Esc menutup, halaman di belakang tidak bisa diklik.
+// Dibuka setelah halaman tampil, jadi isi situs tetap dirender server dan terbaca mesin pencari.
+// Tombol ID/EN mengganti bahasa kartu di tempat (efek acak huruf dan suara seperti tombol bahasa di
+// header, tanpa memuat halaman). Bahasa situs ikut berganti setelah kartu ditutup, karena navigasi
+// dari dalam dialog modal tidak andal di Firefox.
+
 import { FileText, House } from 'lucide-react'
 import {
   type KeyboardEvent,
@@ -12,13 +21,14 @@ import {
 
 import { getPathname, usePathname, useRouter } from '@/i18n/navigation'
 import { CommitGrid } from '@/components/shared/commit-grid'
-import { routing } from '@backend/i18n/routing'
 import { LANG_SCRAMBLE_KEY, scrambleVisibleText, visibleTexts } from '@/lib/text-scramble'
 import { playLanguageSound } from '@/lib/ui-sounds'
 import { prefersReducedMotion } from '@/lib/view-transition'
 
-import { INTRO_PENDING_ATTR, introSeen, markIntroSeen } from '../../intro-pending'
+import { routing } from '@backend/i18n/routing'
 import type { IntroFrequency } from '@backend/features/settings/options'
+
+import { INTRO_PENDING_ATTR, introSeen, markIntroSeen } from '../../intro-pending'
 
 type Locale = (typeof routing.locales)[number]
 
@@ -37,20 +47,9 @@ function clearPending() {
 const LEAVE_MS = 320
 // sama dengan durasi animasi .intro[data-leaving='home'] (memudar dan buram)
 const HOME_LEAVE_MS = 450
-// Pindah bahasa lewat navigasi klien kadang macet di Firefox (CI 2026-10-12 s.d. 2026-10-15, juga tombol
-// bahasa di header). Bila alamat belum berganti setelah waktu ini, halaman dimuat biasa ke bahasa tujuan.
+// Pindah bahasa lewat navigasi klien kadang macet di Firefox (juga tombol bahasa di header). Bila alamat belum berganti setelah waktu ini, halaman dimuat biasa ke bahasa tujuan.
 const LOCALE_FALLBACK_MS = 1500
 
-// Pemberitahuan pembuka (pilihan pemilik 2026-10-12, demo 1 "Kartu tengah"; revisi 2026-10-15): kartu
-// ramping di tengah layar. Latar dan kartu sama dengan halaman login Super Admin (pilihan pemilik
-// 2026-10-15, demo latar 11): latar hitam dan kartu kaca gelap, selalu gelap di tema terang maupun
-// gelap (shader vortex ungu dihapus 2026-11-01 karena lag, permintaan pemilik). Sejak 2026-11-06 latarnya
-// kotak commit dengan gelombang cahaya (commit-grid.tsx, pilihan pemilik A42). Memakai <dialog> bawaan
-// (showModal): fokus terkunci di dalam kartu, Esc menutup, halaman di belakang tidak bisa diklik.
-// Dibuka setelah halaman tampil, jadi isi situs tetap dirender server dan terbaca mesin pencari.
-// Tombol ID/EN mengganti bahasa kartu di tempat (efek acak huruf dan suara seperti tombol bahasa di
-// header, tanpa memuat halaman). Bahasa situs ikut berganti setelah kartu ditutup, karena navigasi
-// dari dalam dialog modal tidak andal di Firefox (CI 2026-10-12).
 export function IntroNotice({
   locale,
   versions,
@@ -79,7 +78,7 @@ export function IntroNotice({
       return
     }
     // Kartu sudah tampil sejak sebelum JavaScript (styles/site/intro-notice.css, html[data-intro]): buka tanpa animasi
-    // masuk agar tidak berkedip (PERF-02)
+    // masuk agar tidak berkedip
     if (document.documentElement.hasAttribute(INTRO_PENDING_ATTR)) dialog.dataset.instant = ''
     clearPending()
     dialog.showModal()
@@ -127,8 +126,8 @@ export function IntroNotice({
         }
       }
       // Dimulai setelah tombol Esc dilepas: di Firefox, Esc juga berarti "hentikan pemuatan" dan
-      // bisa memutus permintaan halaman yang dimulai di antara tombol ditekan dan dilepas. CI
-      // 2026-10-15: bahasa situs tetap ID, lalu halaman kosong saat navigasi dimulai di antaranya.
+      // bisa memutus permintaan halaman yang dimulai di antara tombol ditekan dan dilepas (bahasa
+      // situs tetap ID, lalu halaman kosong).
       const go = () => {
         router.push(target, { locale: shown, scroll: goHome })
         if (shown === locale) return
@@ -143,7 +142,7 @@ export function IntroNotice({
       finish()
       return
     }
-    // Beranda: kartu dan latar memudar sambil makin buram (pilihan pemilik 2026-10-15)
+    // Beranda: kartu dan latar memudar sambil makin buram
     dialog.dataset.leaving = goHome ? 'home' : ''
     window.setTimeout(finish, goHome ? HOME_LEAVE_MS : LEAVE_MS)
   }
@@ -183,7 +182,7 @@ export function IntroNotice({
       onKeyDown={onDialogKeyDown}
       onClick={onDialogClick}
     >
-      {/* latar kotak commit dengan gelombang cahaya (pilihan pemilik 2026-11-06, demo A42) */}
+      {/* latar kotak commit dengan gelombang cahaya */}
       <CommitGrid />
       {/* kartu kaca seperti login admin (components/admin/login-form.tsx) */}
       <div className="intro-card login-card">
@@ -211,7 +210,7 @@ export function IntroNotice({
             <div className="intro-body">{v.body}</div>
             <div className={v.cvHref ? 'intro-actions intro-actions-2' : 'intro-actions'}>
               {/* Resume CV hanya membuka CV di tab baru; kartu tetap terbuka sampai pengunjung
-                  menekan Beranda, Esc, atau area di luar kartu (revisi pemilik 2026-10-16) */}
+                  menekan Beranda, Esc, atau area di luar kartu */}
               {v.cvHref ? (
                 <a
                   href={v.cvHref}

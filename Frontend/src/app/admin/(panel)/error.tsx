@@ -1,13 +1,13 @@
 'use client'
 
+// Galat di halaman panel admin: sidebar dan header tetap tampil, hanya isi halaman yang diganti
+// halaman status 500 (desain bersama). Teks mengikuti bahasa admin. Detail teknis tidak ditampilkan; kode
+// digest bisa dicocokkan dengan log server.
+
 import { useAdminT } from '@/components/admin/admin-lang'
 import { FlowButtonContent, flowButtonClassName } from '@/components/ui/flow-button'
 import { StatusPage } from '@/components/ui/status-page'
 
-// Galat di halaman panel admin: sidebar dan header tetap tampil, hanya isi halaman yang diganti
-// halaman status 500 (desain bersama, revisi pemilik 2026-11-16). Sebelumnya jatuh ke halaman bawaan
-// Next (audit 2026-10-31, GAP-06). Teks mengikuti bahasa admin. Detail teknis tidak ditampilkan; kode
-// digest bisa dicocokkan dengan log server.
 export default function AdminError({ error, retry }: { error: unknown; retry: () => void }) {
   const t = useAdminT()
   const digest =

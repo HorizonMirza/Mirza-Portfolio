@@ -1,3 +1,6 @@
+// Admin → Akun dan Admin → Pengaturan: identitas, sesi perangkat, dan pengaturan yang tersimpan
+// otomatis.
+
 import { expect, test } from '@playwright/test'
 
 import { ADMIN_STATE, hasAdminEnv, uniqueIp } from './helpers'
@@ -10,8 +13,7 @@ test.use({ storageState: ADMIN_STATE, contextOptions: { reducedMotion: 'reduce' 
 const SESSION_PROJECT = 'chromium'
 
 test.describe('Admin → Akun', () => {
-  // Desain 1 "Profil ala WhatsApp" (revisi 2026-11-11): semua kelompok langsung terlihat. Revisi
-  // 2026-11-16: foto penuh, kamera ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog.
+  // Semua kelompok langsung terlihat: foto penuh, kamera ke pemilih berkas, email tampil, ganti nama/email/password lewat dialog.
   test('identitas, email tampil apa adanya, perangkat langsung terlihat', async ({ page }) => {
     await page.goto('/admin/account')
     const email = process.env.ADMIN_EMAIL!
@@ -24,7 +26,7 @@ test.describe('Admin → Akun', () => {
       await expect(main.getByRole('heading', { name: group, exact: true })).toBeVisible()
     await expect(main.getByRole('heading', { name: /^Perangkat Tertaut · \d+$/ })).toBeVisible()
     await expect(main.getByText('Perangkat Ini', { exact: true })).toBeVisible()
-    // daftar aktivitas terbaru dihapus dari halaman Akun (revisi 2026-11-16)
+    // daftar aktivitas terbaru dihapus dari halaman Akun
     await expect(main.getByRole('heading', { name: 'Aktivitas terbaru' })).toHaveCount(0)
     await expect(main.getByRole('button', { name: /^Lihat semua aktivitas/ })).toHaveCount(0)
   })
@@ -229,14 +231,14 @@ test.describe('Admin → Pengaturan', () => {
     page,
   }) => {
     await page.goto('/admin/settings')
-    // satu geseran per suara situs, tanpa volume utama (revisi 2026-11-16)
+    // satu geseran per suara situs, tanpa volume utama
     await expect(page.getByRole('heading', { name: 'Suara', exact: true })).toBeVisible()
     await expect(page.getByRole('slider')).toHaveCount(9)
     for (const name of ['Menu', 'Tombol Tema', 'Kartu ID Kontak'])
       await expect(page.getByRole('slider', { name, exact: true })).toBeVisible()
     await expect(page.getByRole('slider', { name: 'Semua suara' })).toHaveCount(0)
     await expect(page.getByRole('heading', { name: 'Konten', exact: true })).toHaveCount(0)
-    // urutan kelompok Tampilan (revisi 2026-11-16)
+    // urutan kelompok Tampilan
     const titles = [
       'Tema Awal Pengunjung',
       'Bahasa Saat Pertama Dibuka',

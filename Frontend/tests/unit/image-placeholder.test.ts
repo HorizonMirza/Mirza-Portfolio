@@ -1,3 +1,5 @@
+// Tes unit src/lib/image-placeholder: SHIMMER_PLACEHOLDER.
+
 import { describe, expect, it } from 'vitest'
 
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'

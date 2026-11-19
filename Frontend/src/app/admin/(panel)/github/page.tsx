@@ -1,3 +1,5 @@
+// Admin → Home, tab GitHub: pratinjau grafik kontribusi dan pilihan warnanya.
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
@@ -5,8 +7,9 @@ import { ModuleTabs } from '@/components/admin/module-tabs'
 import { PageHeader } from '@/components/admin/page-header'
 import { GithubLive } from '@/features/github/components/github-live'
 import { skylineLabelsFrom } from '@/features/github/labels'
-import { getGithubPresetForEdit } from '@backend/features/github/queries'
 import { sampleContributions } from '@/features/github/sample'
+
+import { getGithubPresetForEdit } from '@backend/features/github/queries'
 import { getGithubContributions, githubLogin } from '@backend/features/profile/github-contributions'
 import { getPublicProfile } from '@backend/features/profile/public'
 import { getAdminLang, getAdminT } from '@backend/lib/admin-lang-server'
@@ -18,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `${t('GitHub')} · Home` }
 }
 
-// Home → GitHub: bagian GitHub beranda seperti di situs; warna grafik kontribusinya dipilih dari lima warna
-// (revisi 2026-11-15). Teks grafik mengikuti bahasa tampilan admin.
+// Home → GitHub: bagian GitHub beranda seperti di situs; warna grafik kontribusinya dipilih dari lima warna.
+// Teks grafik mengikuti bahasa tampilan admin.
 export default async function GithubPage() {
   await requireSuperAdminPage()
   const lang = await getAdminLang()

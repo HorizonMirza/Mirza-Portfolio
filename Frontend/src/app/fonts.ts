@@ -1,9 +1,11 @@
+// Font situs (Inter, Oswald, JetBrains Mono) lewat next/font/local.
+
 import localFont from 'next/font/local'
 
 // Font di-host sendiri (src/fonts, lisensi OFL) agar build tidak bergantung pada Google Fonts.
-// Hanya subset latin: cukup untuk teks ID/EN. Subset latin-ext tidak dipakai (M4) karena tanpa
+// Hanya subset latin: cukup untuk teks ID/EN. Subset latin-ext tidak dipakai karena tanpa
 // unicode-range ikut dimuat di setiap halaman dan memperlambat LCP.
-// Pilihan pemilik 2026-10-01: Oswald untuk judul, Inter untuk teks, JetBrains Mono untuk label.
+// Oswald untuk judul, Inter untuk teks, JetBrains Mono untuk label.
 
 const inter = localFont({
   src: [{ path: '../fonts/inter-latin-wght-normal.woff2', weight: '100 900', style: 'normal' }],

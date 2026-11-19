@@ -1,7 +1,8 @@
-import type { ContributionDay } from '@/components/ui/contribution-skyline'
-
 // Data contoh untuk pratinjau warna bila kontribusi GitHub asli belum tersedia (tanpa GITHUB_TOKEN
 // atau URL profil GitHub). Deterministik per tanggal; bukan data kontribusi sungguhan.
+
+import type { ContributionDay } from '@/components/ui/contribution-skyline'
+
 export function sampleContributions(now = new Date()): ContributionDay[] {
   const end = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
   const days: ContributionDay[] = []

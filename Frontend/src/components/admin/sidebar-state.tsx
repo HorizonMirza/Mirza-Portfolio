@@ -1,5 +1,7 @@
 'use client'
 
+// Keadaan sidebar admin (lebar atau ikon saja) yang disimpan di cookie, dan transisi labelnya.
+
 import { createContext, type ReactNode, useCallback, useContext, useState } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -34,7 +36,7 @@ export function useSidebarState() {
 
 // Tulisan di sidebar desktop memudar saat menciut dan muncul lagi setelah sidebar hampir selebar penuh,
 // sementara ikon tetap di tempat (padding sama di kedua keadaan), jadi tidak ada yang melompat.
-// Tulisan tetap ada untuk pembaca layar walau tidak terlihat. revisi 2026-11-11.
+// Tulisan tetap ada untuk pembaca layar walau tidak terlihat.
 export function fadeLabel(compact: boolean) {
   return cn(
     'lg:transition-opacity motion-reduce:transition-none',

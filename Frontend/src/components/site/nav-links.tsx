@@ -1,5 +1,8 @@
 'use client'
 
+// top: teks di kapsul atas (desktop). bottom: bilah bawah HP berisi ikon besar saja, seperti bilah
+// tab aplikasi; nama menu tetap ada untuk pembaca layar.
+
 import { BriefcaseBusiness, Code, House, Mail, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { ViewTransition } from 'react'
@@ -12,7 +15,7 @@ import { cn } from '@/lib/utils'
 import { useNavEdit } from './nav-edit'
 import { isSiteNavActive, siteNav } from './nav-items'
 
-// ikon menu bawah HP (pilihan pemilik 2026-10-01)
+// ikon menu bawah HP
 const icons = {
   home: House,
   about: User,
@@ -65,14 +68,12 @@ function BottomLamp({ index }: { index: number }) {
   )
 }
 
-// top: teks di kapsul atas (desktop). bottom: bilah bawah HP berisi ikon besar saja, seperti bilah
-// tab aplikasi (revisi pemilik 2026-10-07); nama menu tetap ada untuk pembaca layar.
 export function NavLinks({
   variant,
   currentPath,
 }: {
   variant: 'top' | 'bottom'
-  // pratinjau admin (revisi 2026-11-12): halaman situs yang sedang ditiru, mis. '/' untuk beranda
+  // pratinjau admin: halaman situs yang sedang ditiru, mis. '/' untuk beranda
   currentPath?: string
 }) {
   const t = useTranslations('Nav')
@@ -85,7 +86,7 @@ export function NavLinks({
     <ul
       className={cn(
         variant === 'top'
-          ? // pratinjau Navbar di admin: satu baris rapat di HP (revisi pemilik 2026-11-17)
+          ? // pratinjau Navbar di admin: satu baris rapat di HP
             cn('flex items-center gap-1', editLabel && 'justify-center gap-0 sm:gap-1')
           : 'relative grid w-full grid-cols-5 gap-(--nav-gap) [--nav-gap:0.25rem]',
       )}
@@ -101,8 +102,8 @@ export function NavLinks({
           return (
             <li key={item.href}>
               <span
-                // pratinjau admin: tanpa penanda menu aktif (revisi pemilik 2026-11-16); di HP lebih rapat
-                // agar kelima menu muat satu baris (revisi pemilik 2026-11-17)
+                // pratinjau admin: tanpa penanda menu aktif; di HP lebih rapat
+                // agar kelima menu muat satu baris
                 className="relative inline-flex min-h-8 items-center justify-center rounded-full px-1.5 text-[0.6875rem] font-semibold whitespace-nowrap text-muted sm:min-h-10 sm:px-4 sm:text-sm"
               >
                 {editLabel(item.key)}

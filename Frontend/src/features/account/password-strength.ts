@@ -1,7 +1,8 @@
-import { MIN_PASSWORD_LENGTH } from '@backend/lib/password-policy'
-
 // Perkiraan kekuatan 0–4 untuk meter di bawah password baru. Panjang paling berpengaruh (frasa panjang
 // lebih kuat daripada simbol acak); hanya petunjuk, aturan yang wajib tetap di changePasswordSchema.
+
+import { MIN_PASSWORD_LENGTH } from '@backend/lib/password-policy'
+
 export function passwordStrength(value: string): number {
   if (value.length < MIN_PASSWORD_LENGTH) return value.length === 0 ? 0 : 1
   let score = 2

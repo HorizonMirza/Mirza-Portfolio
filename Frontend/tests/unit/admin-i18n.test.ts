@@ -1,5 +1,7 @@
-import { describe, expect, it } from 'vitest'
+// Tes unit Backend/lib/admin-i18n: bahasa tampilan admin, pola dan isian kamus admin, kelengkapan
+// kamus admin.
 
+import { describe, expect, it } from 'vitest'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -39,7 +41,7 @@ describe('pola dan isian kamus admin', () => {
 })
 
 // Setiap t('...') di kode admin harus ada di kamus Inggris, agar tombol ID/EN benar-benar mengganti
-// seluruh tampilan admin (permintaan pemilik 2026-11-11).
+// seluruh tampilan admin.
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name)

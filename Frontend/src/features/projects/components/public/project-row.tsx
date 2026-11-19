@@ -1,27 +1,26 @@
+// Satu baris di halaman Project (zig-zag): gambar dan teks berdampingan, sisi gambar bergantian tiap baris di layar lebar; di HP gambar di
+// atas teks. Gambar masuk dari sisinya dan teks menyusul (reveal); seluruh baris bisa diklik.
+// Gambar 16:9 seperti layar desktop. Efek: gambar miring + kilau berbunyi, nomor besar bergaris
+// di belakang teks yang bergerak lebih lambat saat digulir, gambar "terbang" ke halaman detail
+// (View Transition bernama sama), dan logo di chip teknologi.
+
 import Image from 'next/image'
 import { getTranslations } from 'next-intl/server'
 import { type CSSProperties, ViewTransition } from 'react'
 
 import { PhotoTilt } from '@/features/profile/components/photo-tilt'
 import { browserAddress, imageRatio } from '@/features/projects/browser-address'
-import type { PublicProjectSummary } from '@backend/features/projects/public'
-import type { AppLocale } from '@backend/i18n/routing'
 import { Link } from '@/i18n/navigation'
-import { siteHost } from '@backend/lib/env'
-import { loc } from '@backend/lib/localized'
 import { cn } from '@/lib/utils'
-
-import { TechChips } from './tech-chips'
 import { SHIMMER_PLACEHOLDER } from '@/lib/image-placeholder'
 
-// Satu baris di halaman Project, pilihan pemilik 2026-10-08 (demo 6 "zig-zag"):
-// gambar dan teks berdampingan, sisi gambar bergantian tiap baris di layar lebar; di HP gambar di
-// atas teks. Gambar masuk dari sisinya dan teks menyusul (reveal); seluruh baris bisa diklik.
-// Revisi pemilik 2026-10-08: gambar 16:9 seperti layar desktop; baris nomor/kategori/tahun dan
-// "Baca detail" dihapus.
-// Efek pilihan pemilik (demo efek 1, 4, 6, 7): gambar miring + kilau berbunyi, nomor besar bergaris
-// di belakang teks yang bergerak lebih lambat saat digulir, gambar "terbang" ke halaman detail
-// (View Transition bernama sama), dan logo di chip teknologi.
+import type { PublicProjectSummary } from '@backend/features/projects/public'
+import type { AppLocale } from '@backend/i18n/routing'
+import { siteHost } from '@backend/lib/env'
+import { loc } from '@backend/lib/localized'
+
+import { TechChips } from './tech-chips'
+
 export async function ProjectRow({
   project,
   index,
@@ -56,7 +55,7 @@ export async function ProjectRow({
         >
           <PhotoTilt className="pj-tilt" maxTilt={8} sound={false}>
             <div className="pj-tilt-in" data-tilt-target="">
-              {/* bingkai jendela browser (pilihan pemilik 2026-10-08, demo bingkai nomor 1); warna dari
+              {/* bingkai jendela browser; warna dari
                   token tema sehingga ikut mode gelap/terang */}
               <div className="pj-browser">
                 <div className="pj-browser-bar" aria-hidden="true">
@@ -68,7 +67,7 @@ export async function ProjectRow({
                   <span className="pj-browser-url">{address}</span>
                 </div>
                 <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
-                  {/* rasio mengikuti foto agar tampil utuh (revisi pemilik 2026-10-08) */}
+                  {/* rasio mengikuti foto agar tampil utuh */}
                   <div
                     className="relative overflow-hidden bg-surface-2"
                     style={{ aspectRatio: imageRatio(project.cover) }}
@@ -99,11 +98,10 @@ export async function ProjectRow({
           </PhotoTilt>
         </Link>
       </div>
-      {/* revisi pemilik 2026-10-08: teks dan nomor besar berdampingan (nomor tidak lagi di belakang
-          teks), blok teks berjarak sama di kiri dan kanan */}
+      {/* teks dan nomor besar berdampingan, blok teks berjarak sama di kiri dan kanan */}
       <div className="pj-zz-text reveal relative grid grid-cols-[minmax(0,1fr)_auto] items-center">
         <div className="pj-title-box flex flex-col gap-3 pe-4 md:px-6">
-          {/* peran di awal, di atas judul (permintaan pemilik 2026-10-08) */}
+          {/* peran di awal, di atas judul */}
           {loc(project, 'role', locale) ? (
             <p className="pj-role">{loc(project, 'role', locale)}</p>
           ) : null}

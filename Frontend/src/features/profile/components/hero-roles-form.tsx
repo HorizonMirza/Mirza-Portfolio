@@ -1,5 +1,12 @@
 'use client'
 
+// Admin → Home, tab Peran: beranda tampil 1:1
+// seperti di situs (navbar dan hero asli di bingkai layar, SiteFrame). Peran di kiri dan kanan bawah
+// diketik langsung di tempatnya; bahasanya mengikuti tombol bahasa admin di top bar. Hanya peran
+// yang bisa diubah: foto utama tidak bisa ditekan. Peran disimpan sebagai satu teks dipisah "|";
+// selama kosong situs memakai teks bawaan (About.roles), yang juga tampil di sini; teks yang sama
+// dengan bawaan disimpan kosong.
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import Image, { type StaticImageData } from 'next/image'
 import { type ReactNode, useTransition } from 'react'
@@ -16,8 +23,8 @@ import {
 } from '@/components/admin/live-edit'
 import { SiteFrame } from '@/components/admin/site-frame'
 import { HeroContent } from '@/components/site/hero-content'
-import type { AssetView } from '@backend/features/assets/asset-view'
 
+import type { AssetView } from '@backend/features/assets/asset-view'
 import { saveHeroRoles } from '@backend/features/profile/actions'
 import { type HeroRolesInput, heroRolesSchema } from '@backend/features/profile/schema'
 
@@ -32,12 +39,6 @@ function clean(value: string | undefined) {
     .join(' | ')
 }
 
-// Admin → Home, tab Peran (revisi pemilik 2026-11-12): beranda tampil 1:1
-// seperti di situs (navbar dan hero asli di bingkai layar, SiteFrame). Peran di kiri dan kanan bawah
-// diketik langsung di tempatnya; bahasanya mengikuti tombol bahasa admin di top bar. Hanya peran
-// yang bisa diubah (revisi pemilik 2026-11-13): foto utama tidak bisa ditekan. Peran disimpan sebagai satu teks dipisah "|";
-// selama kosong situs memakai teks bawaan (About.roles), yang juga tampil di sini; teks yang sama
-// dengan bawaan disimpan kosong.
 export function HeroRolesForm({
   defaultValues,
   placeholders,
@@ -107,7 +108,7 @@ export function HeroRolesForm({
                 name={name}
                 titleTag="p"
                 portrait={
-                  // foto utama tidak diubah dari sini (revisi pemilik 2026-11-13): hanya peran
+                  // foto utama tidak diubah dari sini: hanya peran
                   <Image
                     src={portrait?.url ?? defaultPortrait}
                     {...(portrait

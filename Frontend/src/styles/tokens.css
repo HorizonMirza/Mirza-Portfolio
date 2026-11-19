@@ -5,7 +5,7 @@
  * Rasio kontras sudah dihitung di DESIGN.md. Ubah di sini saja, jangan menaruh warna acak di komponen.
  */
 :root {
-  /* Hitam-putih (pilihan pemilik 2026-10-01). Biru Azure (--note) hanya untuk catatan kecil:
+  /* Hitam-putih. Biru Azure (--note) hanya untuk catatan kecil:
      label, nomor bagian, tanggal, titik status, lampu menu, cincin fokus, grafik. */
   --bg: #ffffff;
   --surface: #f5f5f5;
@@ -22,8 +22,7 @@
   --success: #0b7a3e;
   /* Azure versi gelap untuk latar putih: 5,8:1 di putih, 5,3:1 di --surface */
   --note: #1d5fd0;
-  /* kalender kontribusi GitHub (level 1-4, biru situs pilihan pemilik 2026-10-16, demo W1;
-     level 0 memakai --surface-2) */
+  /* kalender kontribusi GitHub (level 1-4 biru situs; level 0 memakai --surface-2) */
   --gh-1: #b9d2f8;
   --gh-2: #6e9de8;
   --gh-3: #2f6fd6;
@@ -118,6 +117,6 @@
   --text-label--line-height: 1.4;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  /* pelan di awal dan akhir: sidebar admin menciut/melebar (revisi 2026-11-11) */
+  /* pelan di awal dan akhir: sidebar admin menciut/melebar */
   --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
 }

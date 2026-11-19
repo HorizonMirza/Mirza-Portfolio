@@ -1,14 +1,14 @@
-import type { ActionResult } from '@backend/lib/action-result'
+// Alur: tanda tangan dari server → unggah langsung ke Cloudinary → server memverifikasi respons lalu
+// mencatat Asset. Secret tidak pernah sampai ke browser. Berkas sudah di Cloudinary bila koneksi
+// putus saat menyimpan: dicoba sekali lagi, dan yang tetap gagal dibersihkan cron harian setelah 48
+// jam.
 
+import type { ActionResult } from '@backend/lib/action-result'
 import { attachUploadedAsset, signAssetUpload } from '@backend/features/assets/actions'
 import type { UploadTarget } from '@backend/features/assets/targets'
 
 export type UploadStage = 'menyiapkan' | 'mengunggah' | 'menyimpan'
 
-// Alur: tanda tangan dari server → unggah langsung ke Cloudinary → server memverifikasi respons lalu
-// mencatat Asset. Secret tidak pernah sampai ke browser. Berkas sudah di Cloudinary bila koneksi
-// putus saat menyimpan: dicoba sekali lagi, dan yang tetap gagal dibersihkan cron harian setelah 48
-// jam (audit 2026-11-02, DB-07).
 export async function uploadAsset(
   target: UploadTarget,
   targetId: string | undefined,

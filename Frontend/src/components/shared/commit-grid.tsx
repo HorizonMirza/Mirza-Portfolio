@@ -1,5 +1,7 @@
 'use client'
 
+// Latar kotak commit dengan gelombang cahaya untuk kartu pembuka dan login admin.
+
 import { useEffect, useRef } from 'react'
 
 import { isScrolling } from '@/lib/scroll-idle'
@@ -7,17 +9,15 @@ import { prefersReducedMotion } from '@/lib/view-transition'
 
 // Latar kartu pembuka dan halaman login Super Admin: kotak-kotak seperti grafik kontribusi GitHub dalam
 // biru situs (--note mode gelap, karena keduanya selalu gelap), dengan gelombang cahaya yang menyapu
-// miring dari kiri ke kanan. Pilihan pemilik 2026-11-06 (demo A42 "Gelombang commit"); gelombang
-// sempat dihapus lalu diminta kembali dengan akhir sapuan yang lebih halus. Pola kotak hiasan acak,
-// bukan data kontribusi.
-// Halus: gelombang baru diulang setelah benar-benar keluar dari layar (dulu diulang saat ekornya masih
-// terlihat di baris bawah sehingga tampak terpotong), ada jeda singkat antarsapuan, dan tepi cahaya
+// miring dari kiri ke kanan. Pola kotak hiasan acak, bukan data kontribusi.
+// Halus: gelombang baru diulang setelah benar-benar keluar dari layar (bukan saat ekornya masih
+// terlihat di baris bawah), ada jeda singkat antarsapuan, dan tepi cahaya
 // memudar dengan kurva smoothstep, bukan garis lurus.
 // Hemat: pola dasar digambar sekali ke kanvas cadangan; tiap bingkai hanya menyalin pola itu lalu
 // menggambar ulang kotak di pita gelombang. Di dalam dialog (kartu pembuka) hanya bekerja selama
 // dialog terbuka dan berhenti total saat ditutup. Loop juga berhenti saat kanvas di luar layar
 // (IntersectionObserver) dan melewatkan bingkai selama halaman digulir (lib/scroll-idle.ts); rAF
-// berhenti sendiri saat tab tersembunyi (audit 2026-11-17, PERF-02).
+// berhenti sendiri saat tab tersembunyi.
 // Reduced-motion: pola diam tanpa gelombang. Murni hiasan (aria-hidden).
 
 const NOTE = [77, 163, 255] as const

@@ -3,7 +3,7 @@
 /* Login admin: kilau berjalan mengelilingi kotak email dan password. Bingkai 1px berupa
    gradien conic yang diputar lewat @property; browser tanpa @property memakai bingkai diam.
    Animasi variabel @property dihitung ulang di thread utama tiap bingkai, jadi semua kilau memakai
-   steps(): 30 bingkai per detik, bukan 60, tetap mulus untuk garis tipis (audit 2026-11-02, PERF-01).
+   steps(): 30 bingkai per detik, bukan 60, tetap mulus untuk garis tipis.
    Kilau di form kontak juga dijeda saat di luar layar (data-offscreen dari reveal-observer.tsx). */
 @property --shine-angle {
   syntax: '<angle>';
@@ -46,7 +46,7 @@
       rgb(255 255 255 / 0.45)
     );
 }
-/* Kolom yang salah (revisi 2026-10-03): kilau dan bingkai merah, ditambah cincin tipis. */
+/* Kolom yang salah: kilau dan bingkai merah, ditambah cincin tipis. */
 .login-field.login-field-bad {
   background:
     conic-gradient(
@@ -117,7 +117,7 @@
   transition: background-color 9999s ease-out 0s;
 }
 
-/* latar login Super Admin: kotak commit yang sama (permintaan pemilik 2026-11-06) */
+/* latar login Super Admin: kotak commit yang sama */
 .login-grid {
   position: fixed;
   inset: 0;

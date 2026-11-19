@@ -1,5 +1,7 @@
 'use client'
 
+// Tata letak pratinjau tiap modul teks situs di admin (About, Contact, Navbar, Footer, dll.).
+
 import { Send } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { CSSProperties, ReactNode } from 'react'
@@ -11,15 +13,15 @@ import { Container } from '@/components/site/section-heading'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import type { AssetView } from '@backend/features/assets/asset-view'
 import { RemoveAssetButton } from '@/features/assets/components/remove-asset-button'
 import { useAssetPicker } from '@/features/assets/components/use-asset-picker'
 
+import type { AssetView } from '@backend/features/assets/asset-view'
 import type { ModuleId } from '@backend/features/site-text/catalog'
 
 import { EditText, ShownText, useShownText } from './site-text-live'
 
-// Tata letak pratinjau per modul (revisi 2026-11-15): halaman Navbar, Contact, dan Footer tampil
+// Tata letak pratinjau per modul: halaman Navbar, Contact, dan Footer tampil
 // 1:1 seperti situs di bingkai layar (SiteFrame), memakai kelas dan susunan yang sama. Hanya yang
 // memang diubah admin yang berupa isian bergaris putus-putus: nama menu (Navbar), foto, jabatan,
 // judul, dan pengantar (Contact), nilai kartu kontak (Footer). Tulisan lain tampil apa adanya.

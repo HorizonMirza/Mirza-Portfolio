@@ -1,3 +1,5 @@
+// Admin → Experience: timeline pengalaman kerja dan organisasi yang diubah langsung di pratinjau.
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
@@ -6,6 +8,7 @@ import {
   ExperienceTimelineLive,
 } from '@/features/experience/components/experience-timeline-live'
 import { PageHeader } from '@/components/admin/page-header'
+
 import { listExperienceEntriesAdmin } from '@backend/features/experience/queries'
 import { EMPLOYMENT_TYPES } from '@backend/features/experience/schema'
 import { getAdminT } from '@backend/lib/admin-lang-server'
@@ -40,7 +43,7 @@ async function siteTexts(locale: 'id' | 'en'): Promise<ExperienceTexts['id']> {
 }
 
 // Experience: halaman Pengalaman situs tampil sama persis dan diubah langsung di halaman ini, tanpa
-// tab Teks halaman dan tanpa pindah halaman (revisi pemilik 2026-11-13).
+// tab Teks halaman dan tanpa pindah halaman.
 export default async function ExperiencePage() {
   await requireSuperAdminPage()
   const [entries, id, en] = await Promise.all([

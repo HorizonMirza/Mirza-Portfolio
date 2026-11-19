@@ -1,8 +1,10 @@
+// Tes unit Backend/lib/audit: diffSnapshots untuk kolom JSON berupa objek, writeAudit.
+
 import { describe, expect, it, vi } from 'vitest'
 
 import { diffSnapshots, writeAudit } from '@backend/lib/audit'
 
-// audit 2026-11-17, EFF-02 dan EFF-03
+// kolom JSON berupa objek dan jejak perubahan yang ringkas
 const mix = { nav: 100, theme: 100, slide: 100, lanyard: 100 }
 
 describe('diffSnapshots untuk kolom JSON berupa objek', () => {

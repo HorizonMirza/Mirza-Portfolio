@@ -1,3 +1,5 @@
+// Tes unit src/lib/chart-geometry: niceTicks, pickTickIndexes, monotonePath, segments.
+
 import { describe, expect, it } from 'vitest'
 
 import { areaPath, monotonePath, niceTicks, pickTickIndexes, segments } from '@/lib/chart-geometry'

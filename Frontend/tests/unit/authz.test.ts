@@ -1,3 +1,5 @@
+// Tes unit: otorisasi Server Action admin.
+
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Semua Server Action admin wajib menolak tanpa sesi SUPER_ADMIN, sebelum menyentuh database.
@@ -77,7 +79,6 @@ async function load() {
     ['changeAccountEmail', () => account.changeAccountEmail({ email: 'a@b.co', password: 'x' })],
     ['revokeSession', () => sessions.revokeSession(id)],
     ['revokeOtherSessions', () => sessions.revokeOtherSessions()],
-    // action yang dulu belum tercakup (audit 2026-10-31, GAP-04)
     ['saveSiteTexts', () => siteText.saveSiteTexts('about', {})],
     ['saveIntroNotice', () => settings.saveIntroNotice({})],
     ['saveGithubPalette', () => settings.saveGithubPalette({})],

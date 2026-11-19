@@ -1,7 +1,6 @@
 /* Ubah langsung di pratinjau admin: teks yang bisa diketik dan bingkai layar pratinjau. */
 
-/* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx, revisi
-   2026-11-12): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
+/* Teks admin yang diketik langsung di pratinjau (components/admin/live-edit.tsx): tanpa latar, bingkai, dan garis fokus; huruf ikut teks di sekitarnya, hanya kursor berkedip. */
 /* dalam layer components agar kelas Tailwind di elemen yang sama (ukuran, tebal, rata tengah) menang */
 @layer components {
   .admin-inline {
@@ -36,7 +35,7 @@
     height: 1lh;
   }
   /* isian satu baris yang boleh turun baris (InlineInput wrap): selebar isinya sampai selebar
-     wadah, lalu turun baris; URL tanpa spasi dipatah di mana saja (revisi pemilik 2026-11-17) */
+     wadah, lalu turun baris; URL tanpa spasi dipatah di mana saja */
   textarea.admin-wrap {
     display: inline-block;
     max-width: 100%;
@@ -51,8 +50,8 @@
   .admin-inline-bad {
     box-shadow: inset 0 -2px 0 var(--danger);
   }
-  /* Penanda bagian yang bisa diubah (permintaan pemilik 2026-11-12): garis
-     putus-putus tipis diam (tanpa kedip, revisi pemilik) di sekeliling teks yang bisa diketik dan
+  /* Penanda bagian yang bisa diubah: garis
+     putus-putus tipis diam (tanpa kedip) di sekeliling teks yang bisa diketik dan
      foto/logo yang bisa ditekan untuk diganti. Hilang saat sedang diketik atau difokus. Outline
      tidak menggeser tata letak. */
   .admin-inline:not(:focus),
@@ -61,14 +60,14 @@
     outline-offset: 3px;
   }
   /* logo berlatar penuh (huruf gelap di latar terang): garis memakai warna teks halaman, bukan warna
-     hurufnya, supaya tetap terlihat di tema gelap (revisi 2026-11-15) */
+     hurufnya, supaya tetap terlihat di tema gelap */
   .ab-pc-logo,
   .ab-edu-logo,
   .xp-node {
     --editable-color: var(--text);
   }
   /* kartu pendidikan: garis putus-putus rapat di sekeliling teks (jarak 1px) dan bersudut tajam
-     (revisi 2026-11-15 malam) */
+     */
   .ab-edu-text .admin-inline:not(:focus),
   .ab-edu-text .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: 1px;
@@ -77,21 +76,21 @@
   .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: var(--editable-offset, 3px);
   }
-  /* daftar skill di admin: garis rapat dan pendek, pas di sekeliling teks (revisi 2026-11-16) */
+  /* daftar skill di admin: garis rapat dan pendek, pas di sekeliling teks */
   .admin-tight .admin-inline:not(:focus),
   .admin-tight .admin-editable:not(:disabled, :focus-visible) {
     outline-offset: 1px;
     border-radius: 0;
   }
   /* kartu foto About: garis mengikuti bingkai foto saja, pas di tengah (chip kampus dan bendera yang
-     menggantung tidak ikut) (revisi pemilik 2026-11-13) */
+     menggantung tidak ikut) */
   .admin-photo-edit:not(:focus-visible) .ab-pc-frame {
     outline: 1.5px dashed color-mix(in srgb, currentColor 40%, transparent);
     outline-offset: 4px;
   }
 }
 
-/* Bingkai layar pratinjau 1:1 di admin (components/admin/site-frame.tsx, revisi 2026-11-12): isi
+/* Bingkai layar pratinjau 1:1 di admin (components/admin/site-frame.tsx): isi
    berukuran satu layar penuh lalu diperkecil. Elemen fixed di dalamnya (latar kartu pembuka, menu
    bawah HP) menempel pada bingkai karena transform. Peran hero bisa diketik (di situs tidak bisa
    ditekan). */

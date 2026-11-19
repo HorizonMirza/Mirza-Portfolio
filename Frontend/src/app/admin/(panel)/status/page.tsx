@@ -1,8 +1,11 @@
+// Admin → Halaman Status: pratinjau 11 halaman status HTTP beserta tempat kodenya muncul.
+
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 import { FilterTabs } from '@/components/admin/filter-tabs'
 import { StatusPage, STATUS_CODES, type StatusCode } from '@/components/ui/status-page'
+
 import { getAdminT } from '@backend/lib/admin-lang-server'
 import { requireSuperAdminPage } from '@backend/lib/auth-guard'
 
@@ -28,7 +31,7 @@ const WHERE: Record<StatusCode, string> = {
   503: 'Situs: Mode perawatan di Pengaturan.',
 }
 
-// Pratinjau halaman status (permintaan pemilik 2026-11-16): satu kode per tab,
+// Pratinjau halaman status: satu kode per tab,
 // bahasa mengikuti bahasa admin; tombol di pratinjau hanya contoh (tidak bisa ditekan).
 export default async function StatusPreviewPage({ searchParams }: PageProps<'/admin/status'>) {
   await requireSuperAdminPage()
@@ -88,8 +91,8 @@ export default async function StatusPreviewPage({ searchParams }: PageProps<'/ad
             ) : null
           }
         />
-        {/* keterangan tempat kode ini muncul, di pojok kiri bawah pratinjau (revisi pemilik
-            2026-11-17); boleh turun baris di layar sempit */}
+        {/* keterangan tempat kode ini muncul, di pojok kiri bawah pratinjau; boleh turun
+            baris di layar sempit */}
         <p className="absolute right-4 bottom-3 left-4 text-xs text-muted">{t(WHERE[code])}</p>
       </section>
     </div>

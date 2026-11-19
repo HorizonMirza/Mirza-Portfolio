@@ -1,3 +1,5 @@
+// Skeleton loading.tsx panel admin, satu bentuk per jenis halaman.
+
 import type { ReactNode } from 'react'
 
 import { AdminText } from '@/components/admin/admin-lang'
@@ -5,7 +7,7 @@ import { type PageShape, PageShapeSkeleton } from '@/components/shared/page-shap
 import { Skeleton, SkeletonLines, SkeletonPage } from '@/components/shared/skeleton'
 import { Card } from '@/components/ui/card'
 
-// Skeleton panel admin untuk loading.tsx (revisi 2026-11-10). Halaman admin selalu mengambil data
+// Skeleton panel admin untuk loading.tsx. Halaman admin selalu mengambil data
 // langsung dari database, jadi skeleton ini tampil setiap pindah menu sampai datanya siap. Sidebar
 // dan top bar tetap tampil karena ada di layout; bentuk blok meniru tab modul, daftar, dan tata letak
 // tiap halaman.
@@ -14,7 +16,7 @@ function Loading({ children }: { children: ReactNode }) {
   return <SkeletonPage label={<AdminText text="Memuat Halaman…" />}>{children}</SkeletonPage>
 }
 
-// tab modul: satu baris tombol sama lebar seperti tab Home (revisi 2026-11-11), turun baris seperti
+// tab modul: satu baris tombol sama lebar seperti tab Home, turun baris seperti
 // FilterTabs, tidak digeser menyamping
 function TabsSkeleton({ count }: { count: number }) {
   if (count === 0) return null
@@ -30,7 +32,7 @@ function TabsSkeleton({ count }: { count: number }) {
 export function AdminDashboardSkeleton() {
   return (
     <Loading>
-      {/* meniru desain 01 "Ringkas" (revisi 2026-11-16), selebar panel isi */}
+      {/* meniru tata letak Dashboard, selebar panel isi */}
       <div className="admin-bleed flex flex-col gap-3">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
@@ -172,7 +174,7 @@ export function AdminSettingsSkeleton() {
   )
 }
 
-// Akun (desain 1): foto besar di tengah, nama, lalu kelompok daftar
+// Akun: foto besar di tengah, nama, lalu kelompok daftar
 export function AdminAccountSkeleton() {
   return (
     <Loading>
@@ -221,7 +223,7 @@ export function AdminStatusSkeleton() {
   )
 }
 
-// Halaman pratinjau 1:1 (permintaan pemilik 2026-11-16: skeleton sesuai layout halaman): tab Beranda
+// Halaman pratinjau 1:1, skeleton sesuai layout halamannya: tab Beranda
 // bila ada, panggung selebar panel berisi bentuk halaman situs yang sama dengan skeleton situs publik,
 // lalu baris ID/EN dan tombol Simpan bila halaman aslinya memilikinya.
 export function AdminStageSkeleton({

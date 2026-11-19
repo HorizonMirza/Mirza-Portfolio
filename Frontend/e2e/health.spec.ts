@@ -1,3 +1,5 @@
+// Endpoint /api/health melaporkan database terhubung.
+
 import { expect, test } from '@playwright/test'
 
 test('endpoint health melaporkan database terhubung', async ({ request }) => {

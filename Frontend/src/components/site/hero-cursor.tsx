@@ -1,10 +1,11 @@
 'use client'
 
+// Kursor titik + cincin di foto beranda, hanya untuk perangkat dengan kursor halus.
+
 import { useEffect, useRef } from 'react'
 
-// Kursor khusus di foto beranda (pilihan pemilik 2026-11-06 dari 20 demo: K3 "Titik + cincin"),
-// menggantikan crosshair bawaan. Titik kecil langsung di posisi kursor, cincin tipis menyusul sedikit
-// tertinggal; saat ditekan keduanya mengecil dan cincin terisi tipis. Hanya untuk mouse/touchpad
+// Kursor khusus "titik + cincin" di foto beranda, menggantikan crosshair bawaan. Titik kecil
+// langsung di posisi kursor, cincin tipis menyusul sedikit tertinggal; saat ditekan keduanya mengecil dan cincin terisi tipis. Hanya untuk mouse/touchpad
 // (hover + pointer halus); layar sentuh tetap tanpa kursor. Di atas header, tautan, tombol, atau
 // kolom isian kursor khusus disembunyikan dan kursor biasa kembali; saat digulir juga disembunyikan
 // sampai kursor bergerak lagi. Posisi ditulis langsung ke transform (bukan variabel CSS).

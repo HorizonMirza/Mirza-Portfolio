@@ -1,3 +1,5 @@
+// Chip teknologi project dengan logo kecil (lihat tech-chips.tsx untuk penjelasan pilihan desain).
+
 import type { CSSProperties } from 'react'
 
 import { cn } from '@/lib/utils'
@@ -15,7 +17,6 @@ export type ChipData = {
   brand: { path: string; viewBox?: string; evenOdd?: boolean } | null
 }
 
-// Chip teknologi project dengan logo kecil (lihat tech-chips.tsx untuk penjelasan pilihan desain).
 export function TechChipsList({
   chips,
   label,

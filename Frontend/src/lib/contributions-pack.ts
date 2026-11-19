@@ -1,7 +1,7 @@
 // Bentuk ringkas kalender kontribusi untuk dikirim dari server ke komponen klien (kartu GitHub di
 // footer, ada di semua halaman publik). Hari-hari berurutan, jadi cukup menyimpan tanggal pertama,
 // panjang minggu pertama, dan satu angka per hari (jumlah * 5 + tingkat). Sekitar 1 KB, bukan 12 KB
-// JSON objek per hari (audit 2026-11-17, PERF-03).
+// JSON objek per hari.
 export type PackedDay = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 }
 
 export type PackedContributions = {

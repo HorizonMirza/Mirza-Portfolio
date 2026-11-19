@@ -1,8 +1,11 @@
+// Halaman login Super Admin.
+
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 
 import { LoginForm } from '@/components/admin/login-form'
 import { CommitGrid } from '@/components/shared/commit-grid'
+
 import { getAdminEmailDomain, getAdminSession } from '@backend/lib/auth-guard'
 import { safeAdminRedirect } from '@backend/lib/safe-redirect'
 
@@ -16,9 +19,8 @@ export default async function LoginPage({ searchParams }: PageProps<'/admin/logi
   const emailDomain = await getAdminEmailDomain()
 
   return (
-    // Selalu hitam (permintaan pemilik), tidak mengikuti tema terang/gelap panel admin. Latar vortex
-    // ungu dihapus 2026-11-01 karena lag; sejak 2026-11-06 latarnya kotak commit yang sama dengan
-    // kartu pembuka (permintaan pemilik).
+    // Selalu hitam, tidak mengikuti tema terang/gelap panel admin. Latarnya kotak commit yang sama
+    // dengan kartu pembuka.
     <div className="relative min-h-dvh overflow-hidden bg-black text-white [color-scheme:dark]">
       <CommitGrid className="login-grid" />
       <main

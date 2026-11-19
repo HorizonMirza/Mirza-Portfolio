@@ -1,5 +1,5 @@
 // Hitungan murni untuk grafik SVG buatan sendiri (components/admin/visits-chart.tsx), pengganti
-// recharts (audit 2026-11-17, PERF-04). Tanpa DOM supaya mudah dites.
+// recharts. Tanpa DOM supaya mudah dites.
 export type XY = { x: number; y: number }
 
 // Langkah "enak dibaca" bilangan bulat: 1, 2, 5, 10, 20, 25, 50, 100, ... (2,5 hanya dari 25)

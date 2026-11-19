@@ -1,5 +1,10 @@
 'use client'
 
+// Admin → Home → GitHub: bagian GitHub beranda
+// tampil seperti di situs (grafik kontribusi, tinggi mengikuti isi agar tampilan 3D tidak terpotong)
+// dan warna grafiknya dipilih dari lima warna: merah, kuning, hijau, biru, dan ungu. Pratinjau
+// memakai data kontribusi asli bila tersedia, selain itu data contoh.
+
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { toast } from 'sonner'
@@ -12,13 +17,14 @@ import ContributionSkyline, {
   type ContributionDay,
   type SkylineLabels,
 } from '@/components/ui/contribution-skyline'
+import { cn } from '@/lib/utils'
+
 import { saveGithubPalette } from '@backend/features/settings/actions'
 import {
   GITHUB_PRESET_KEYS,
   GITHUB_PRESETS,
   type GithubPresetKey,
 } from '@backend/lib/github-palette'
-import { cn } from '@/lib/utils'
 
 const PRESET_NAME: Record<GithubPresetKey, string> = {
   red: 'Merah',
@@ -28,10 +34,6 @@ const PRESET_NAME: Record<GithubPresetKey, string> = {
   purple: 'Ungu',
 }
 
-// Admin → Home → GitHub (revisi pemilik 2026-11-15): bagian GitHub beranda
-// tampil seperti di situs (grafik kontribusi, tinggi mengikuti isi agar tampilan 3D tidak terpotong)
-// dan warna grafiknya dipilih dari lima warna: merah, kuning, hijau, biru, dan ungu. Pratinjau
-// memakai data kontribusi asli bila tersedia, selain itu data contoh.
 export function GithubLive({
   defaultPreset,
   data,
@@ -80,7 +82,7 @@ export function GithubLive({
         </section>
       </SiteFrame>
       {/* lima warna grafik, satu baris selebar Simpan; di HP kotak warna dan teks lebih kecil agar tidak
-          melewati garis tombol (revisi pemilik 2026-11-17) */}
+          melewati garis tombol */}
       <div
         role="group"
         aria-label={t('Warna Grafik')}

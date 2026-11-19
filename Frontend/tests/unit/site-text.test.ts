@@ -1,3 +1,6 @@
+// Tes unit Backend/features/site-text/catalog dan Backend/features/site-text/merge: daftar teks
+// situs, modul situs, aturan isi teks, skema simpan teks situs.
+
 import { describe, expect, it } from 'vitest'
 
 import {
@@ -52,8 +55,8 @@ describe('daftar teks situs', () => {
 describe('modul situs', () => {
   it('tiap teks milik modul yang dikenal, dan tiap modul berisi teks', () => {
     for (const entry of TEXT_CATALOG) expect(findModule(entry.module), entry.key).toBeDefined()
-    // Bagian Awal dan Home tanpa teks yang bisa diubah sejak 2026-11-10 (form khusus: isi kartu
-    // pembuka; foto dan peran), modul lain berisi teks
+    // Bagian Awal dan Home tanpa teks yang bisa diubah (form khusus: isi kartu pembuka; foto
+    // dan peran), modul lain berisi teks
     for (const site of SITE_MODULES)
       if (site.id === 'intro' || site.id === 'home') expect(entriesOf(site.id), site.id).toEqual([])
       else expect(entriesOf(site.id).length, site.id).toBeGreaterThan(0)
@@ -68,13 +71,13 @@ describe('modul situs', () => {
     // halaman data menyalakan menu modulnya, bukan menu sendiri
     const active = (path: string) =>
       adminNav.filter((item) => isNavActive(path, item)).map((item) => item.href)
-    // About: menu langsung ke tab Profil (tab Teks halaman About dihapus 2026-11-12)
+    // About: menu langsung ke tab Profil
     expect(active('/admin/profile')).toEqual(['/admin/profile'])
     expect(active('/admin/education')).toEqual(['/admin/profile'])
-    // tab Home (bagian 129): menu Home membuka tab pertama, kartu pembuka
+    // tab Home: menu Home membuka tab pertama, kartu pembuka
     for (const tab of ['/admin/pages/home', '/admin/roles', '/admin/skills', '/admin/github'])
       expect(active(tab), tab).toEqual(['/admin/pages/intro'])
-    // Experience tanpa tab Teks halaman sejak 2026-11-13: menu langsung ke timeline
+    // Experience: menu langsung ke timeline
     expect(active('/admin/experience/abc')).toEqual(['/admin/experience'])
     expect(active('/admin/pages/experience')).toEqual(['/admin/experience'])
     expect(active('/admin/projects/new')).toEqual(['/admin/projects'])
@@ -85,8 +88,7 @@ describe('modul situs', () => {
 
   it('kunci menu admin sesuai modul', async () => {
     const { adminNav, isNavActive } = await import('@/components/admin/nav')
-    // tiap modul punya menu sendiri atau menjadi tab modul lain (Bagian Awal di Home sejak
-    // 2026-11-11), sehingga selalu ada menu yang menyala
+    // tiap modul punya menu sendiri atau menjadi tab modul lain (Bagian Awal di Home), sehingga selalu ada menu yang menyala
     for (const site of SITE_MODULES)
       expect(
         adminNav.some((item) => isNavActive(`/admin/pages/${site.id}`, item)),

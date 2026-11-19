@@ -1,3 +1,5 @@
+// Tes unit Backend/lib/validation: slugify, slugSchema, githubRepoSchema, optionalUrl.
+
 import { describe, expect, it } from 'vitest'
 
 import { githubRepoSchema, optionalUrl, slugify, slugSchema } from '@backend/lib/validation'

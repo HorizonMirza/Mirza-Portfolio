@@ -1,21 +1,23 @@
 'use client'
 
+// Bulan mulai/selesai: tampil seperti di situs ("Jul 2026", bahasa isi yang dipilih). Ditekan membuka
+// kalender kecil bergaya aplikasi (tahun dengan panah, 12 bulan sebagai tombol), bukan dropdown bawaan
+// browser. Kalender digambar di body agar tidak ikut diperkecil oleh
+// bingkai pratinjau dan tidak terpotong.
+
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { useAdminT } from '@/components/admin/admin-lang'
 import type { Lang } from '@/components/admin/live-edit'
-import { formatMonth } from '@backend/lib/localized'
 import { cn } from '@/lib/utils'
+
+import { formatMonth } from '@backend/lib/localized'
 
 const FIRST_YEAR = 1990
 const WIDTH = 272
 
-// Bulan mulai/selesai: tampil seperti di situs ("Jul 2026", bahasa isi yang dipilih). Ditekan membuka
-// kalender kecil bergaya aplikasi (tahun dengan panah, 12 bulan sebagai tombol), bukan dropdown bawaan
-// browser (revisi pemilik 2026-11-16). Kalender digambar di body agar tidak ikut diperkecil oleh
-// bingkai pratinjau dan tidak terpotong.
 export function MonthPicker({
   label,
   value,

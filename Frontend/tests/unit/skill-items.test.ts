@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
+// Tes unit Backend/features/skills/skill-items: skill-items.
 
+import { describe, expect, it } from 'vitest'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 
@@ -27,7 +28,7 @@ describe('skill-items', () => {
     expect(resolveIcon('Project Management', null)).toBeNull()
   })
 
-  it('semua skill pilihan pemilik punya logo (permintaan 2026-10-18)', () => {
+  it('semua skill pilihan pemilik punya logo', () => {
     const missing = skillCategories
       .flatMap((c) => c.skills)
       .filter((name) => resolveIcon(name, null) === null)
@@ -46,7 +47,7 @@ describe('skill-items', () => {
       })
     expect(missing).toEqual([])
     expect(resolveLogo('Codex', null)).toEqual({ src: '/skills/openai.webp', invertDark: true })
-    // logo unggahan Super Admin didahulukan dari logo bawaan (2026-11-12)
+    // logo unggahan Super Admin didahulukan dari logo bawaan
     const url = 'https://res.cloudinary.com/demo/image/upload/v1/portfolio/skills/ts.webp'
     expect(resolveLogo('TypeScript', null, { url })).toEqual({ src: url, invertDark: false })
     expect(resolveLogo('Skill Baru', null, null)).toBeNull()

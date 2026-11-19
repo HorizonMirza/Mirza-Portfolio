@@ -1,8 +1,9 @@
+// Skeleton shimmer halaman masuk admin: latar hitam dan kartu form yang sama
+// bentuknya dengan LoginForm, tampil selama sesi diperiksa di server.
+
 import { AdminText } from '@/components/admin/admin-lang'
 import { Skeleton, SkeletonPage } from '@/components/shared/skeleton'
 
-// Skeleton shimmer halaman masuk admin (revisi 2026-11-10): latar hitam dan kartu form yang sama
-// bentuknya dengan LoginForm, tampil selama sesi diperiksa di server.
 export default function Loading() {
   return (
     <div className="relative min-h-dvh overflow-hidden bg-black text-white [color-scheme:dark]">

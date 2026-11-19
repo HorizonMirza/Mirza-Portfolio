@@ -1,6 +1,6 @@
 /* Halaman Contact (form, tombol kirim, kartu berbalik) dan kartu kontak di footer. */
 
-/* Form kontak (revisi 2026-10-03): kilau berjalan mengelilingi kotak seperti di login admin,
+/* Form kontak: kilau berjalan mengelilingi kotak seperti di login admin,
    tetapi warnanya ikut tema (gelap di tema terang, terang di tema gelap). Bingkai tipis bermask
    di atas border kolom sehingga mengikuti sudut kotak; diam pada reduced-motion. */
 .field-shine {
@@ -63,7 +63,7 @@
   }
 }
 
-/* Tombol kirim form kontak (revisi 2026-10-03, pilihan pemilik demo nomor 5): bergaris dengan
+/* Tombol kirim form kontak: bergaris dengan
    kilau berputar seperti kolom, warna ikut tema. Menyusut jadi lingkaran saat mengirim, lalu
    hijau terang mengkilap saat terkirim. */
 .send-btn {
@@ -143,8 +143,7 @@
     rotate: 360deg;
   }
 }
-/* Setelah terkirim: "Kartu berbalik" (pilihan pemilik 2026-10-20, demo 6, menggantikan susut + buka
-   dari revisi 2026-10-03 yang terasa kasar). Form dan tiket menumpuk di sel grid yang sama; form
+/* Setelah terkirim: "Kartu berbalik". Form dan tiket menumpuk di sel grid yang sama; form
    berputar ke belakang dan tiket (sisi belakang kartu) berputar ke depan dalam 760 ms. Setelah itu
    tinggi sisi form dilipat ke 0 dalam 360 ms, sehingga kotak menyusut halus ke tinggi tiket tanpa
    melompat. Murni CSS agar urutannya sama dengan atau tanpa JavaScript. */
@@ -276,7 +275,7 @@ html:has(.contact-sent) {
   }
 }
 
-/* Kartu kontak footer (components/ui/contact-cards.tsx, permintaan pemilik 2026-10-08): kartu masuk
+/* Kartu kontak footer (components/ui/contact-cards.tsx): kartu masuk
    dan keluar searah gerakan kursor (--cc-dir), dan kotak kontribusi GitHub memakai warna kalender
    beranda. */
 @keyframes cc-in {

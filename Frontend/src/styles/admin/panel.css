@@ -1,7 +1,7 @@
 /* Panel admin kaca hitam-putih: batang gulir, top bar, sidebar, laci menu, panel isi, dan huruf. */
 
 /* Panel admin: halaman dan panel menu tetap bisa digulir, tetapi batang gulirnya disembunyikan
-   (revisi pemilik 2026-10-26) */
+   */
 .no-scrollbar,
 .no-scrollbar * {
   scrollbar-width: none;
@@ -11,13 +11,13 @@
   display: none;
 }
 
-/* Panel admin kaca hitam-putih (pilihan pemilik 2026-11-11, demo 5+): top bar,
+/* Panel admin kaca hitam-putih: top bar,
    sidebar, dan panel isi dari kaca buram di atas latar gradasi, titik, atau polos. Token
    permukaan admin dibuat tembus pandang sehingga kartu, tabel, dan form ikut menjadi kaca. Nilai
    --g-* diatur lewat tombol Tampilan (glass-settings.tsx) dan tersimpan di browser. */
 .admin-glass,
 /* Laci menu (Sheet): geser masuk dengan perlambatan lembut, keluar sedikit lebih cepat; latar memudar;
-   menu muncul berurutan (revisi pemilik 2026-11-17: animasi laci jangan kaku). Reduced motion:
+   menu muncul berurutan agar laci tidak terasa kaku. Reduced motion:
    aturan global memendekkan semua animasi. */
 @keyframes sheet-in {
   from {
@@ -133,7 +133,7 @@
     radial-gradient(circle at 70% 88%, #4a4a4a 0, transparent 46%),
     radial-gradient(circle at 24% 92%, #161616 0, transparent 42%), #0b0b0c;
 }
-/* pola titik halus (revisi pemilik 2026-11-11, menggantikan kotak commit): gradien radial berulang,
+/* pola titik halus: gradien radial berulang,
    tanpa gambar dan tanpa animasi */
 .admin-glass[data-glass-bg='dots'] {
   --g-bg: radial-gradient(rgb(0 0 0 / 0.16) 1.1px, transparent 1.6px) 0 0 / 18px 18px, #ecebe8;
@@ -161,8 +161,7 @@
     0 20px 52px -25px rgb(0 0 0 / 0.7);
 }
 /* Panel isi admin yang digulir (<main>): garis tepinya berupa border sungguhan, bukan bayangan inset.
-   Bayangan inset berada di bawah isi, jadi isi yang digulir menimpa dan memotong garis atas (laporan
-   pemilik 2026-11-16). Dengan border, garis tetap terlihat dan isi berhenti tepat di bawah garis. Nilai
+   Bayangan inset berada di bawah isi, jadi isi yang digulir menimpa dan memotong garis atas. Dengan border, garis tetap terlihat dan isi berhenti tepat di bawah garis. Nilai
    warnanya sama dengan tepi .admin-glass-panel: garis atas lebih terang, sisanya tipis. */
 .admin-glass-scroll {
   border: 1px solid rgb(var(--g-hl) / calc(var(--g-edge) * 0.3));
@@ -224,7 +223,7 @@
 }
 
 /* Panel admin: semua huruf Inter biasa seperti teks utama, termasuk judul (h1-h3) dan utilitas
-   font-display; tanpa huruf kapital (pilihan pemilik 2026-11-11). Variabel
+   font-display; tanpa huruf kapital. Variabel
    --font-display di :root sudah terurai ke Oswald, jadi ditimpa di sini. */
 @layer base {
   .admin-ui {
@@ -233,7 +232,7 @@
   .admin-ui :is(h1, h2, h3) {
     text-transform: none;
   }
-  /* Pratinjau 1:1 di admin (components/admin/site-frame.tsx, revisi 2026-11-12): di dalam bingkai
+  /* Pratinjau 1:1 di admin (components/admin/site-frame.tsx): di dalam bingkai
      layar huruf dan huruf kapital kembali seperti situs (Oswald untuk judul). --font-oswald sengaja
      tidak ditimpa .admin-ui agar bisa dipakai di sini. */
   .admin-ui .site-ui {

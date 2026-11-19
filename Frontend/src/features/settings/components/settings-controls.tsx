@@ -140,7 +140,7 @@ export function Choice<V extends string>({
   onChange: (next: V) => void
   disabled?: boolean
 }) {
-  // daftar pilihan bergaya aplikasi, bukan dropdown bawaan browser (revisi pemilik 2026-11-16)
+  // daftar pilihan bergaya aplikasi, bukan dropdown bawaan browser
   return (
     <ChoiceSelect
       labelledBy={ids.title}
@@ -161,7 +161,7 @@ function useDelayedSave() {
     window.clearTimeout(timer.current)
     timer.current = window.setTimeout(run, TYPING_DELAY_MS)
   }
-  // membatalkan simpan yang masih menunggu (audit 2026-11-17, BUG-02)
+  // membatalkan simpan yang masih menunggu
   later.cancel = () => window.clearTimeout(timer.current)
   return later
 }
@@ -238,8 +238,8 @@ export function NumberControl({ ids, value, onSave }: { ids: Ids; value: number;
   const errorId = `${ids.title}-error`
   return (
     <div className="flex flex-col items-end gap-1">
-      {/* angka hanya diketik: tanpa panah naik-turun dan tanpa ubah lewat gulir (revisi pemilik
-          2026-11-17); selain angka diabaikan */}
+      {/* angka hanya diketik: tanpa panah naik-turun dan tanpa ubah lewat gulir; selain
+          angka diabaikan */}
       <Input
         type="text"
         inputMode="numeric"

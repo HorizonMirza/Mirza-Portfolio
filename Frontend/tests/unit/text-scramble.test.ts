@@ -1,3 +1,5 @@
+// Tes unit src/lib/text-scramble: scrambleFrame.
+
 import { describe, expect, it } from 'vitest'
 
 import { scrambleFrame } from '@/lib/text-scramble'
