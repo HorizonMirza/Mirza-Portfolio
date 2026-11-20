@@ -27,6 +27,10 @@ overrides:
   # di 11. Hapus bila eslint sudah memakai minimatch 11 sendiri.
   'minimatch@>=10 <11.0.1': 11.0.4
   '@isaacs/nonrecursive-glob-match': 1.0.3
+  # effect lewat prisma > @prisma/config (GHSA-7589-6fvf-x4pw, ReDoS pada regex TemplateLiteral; aman
+  # di >=3.22.1). Dikunci 3.22.4: versi terbaru 3.22.5 belum berumur 7 hari (WORKFLOW.md 10a). Hapus
+  # bila prisma sudah memakai effect yang aman sendiri.
+  'effect@<3.22.1': 3.22.4
 
 # Advisory tanpa versi perbaikan (patched: <0.0.0) yang hanya ada di alat pengembangan:
 # braces lewat eslint-config-next > @next/eslint-plugin-next > fast-glob > micromatch
