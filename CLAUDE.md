@@ -102,7 +102,7 @@ Frontend/        aplikasi Next.js (UI). SEMUA perintah pnpm dijalankan dari sini
   messages/          id.json, en.json     tests/unit/, e2e/
 Backend/         kode server, diimpor Frontend lewat alias @backend/* (tanpa package.json sendiri)
   features/          per domain: schema, queries, actions, public
-  lib/               db, auth, env, email, cloudinary, rate-limit, audit, admin-i18n, ...
+  lib/               db, auth, env, cloudinary, rate-limit, audit, admin-i18n, ...
   api/               logika route handler   i18n/routing.ts
   scripts/           seed.ts, admin-reset-password.ts   generated/   Prisma client (tidak di-commit)
 Database/        schema.prisma, migrations/, seed/seed-data.ts
