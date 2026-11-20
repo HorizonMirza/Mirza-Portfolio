@@ -1,13 +1,12 @@
 # Backend
 
-Kode server portofolio: Server Actions, query database (Prisma), autentikasi (Better Auth), email (Resend), unggah (Cloudinary), dan logika route API. Folder ini **bukan server terpisah**: kodenya diimpor aplikasi Next.js di `Frontend/` lewat alias `@backend/*`, dibundel saat `next build`, dan di-deploy bersama sebagai satu aplikasi di Vercel.
+Kode server portofolio: Server Actions, query database (Prisma), autentikasi (Better Auth), unggah (Cloudinary), dan logika route API. Folder ini **bukan server terpisah**: kodenya diimpor aplikasi Next.js di `Frontend/` lewat alias `@backend/*`, dibundel saat `next build`, dan di-deploy bersama sebagai satu aplikasi di Vercel.
 
 | Folder | Isi |
 |---|---|
 | `features/<domain>/` | `schema.ts` (Zod), `queries.ts`, `actions.ts` (`'use server'`), `public.ts` (data halaman publik) |
-| `lib/` | `db`, `auth`, `auth-guard`, `env`, `email`, `cloudinary`, `rate-limit`, `audit`, `admin-i18n`, ... |
+| `lib/` | `db`, `auth`, `auth-guard`, `env`, `cloudinary`, `rate-limit`, `audit`, `admin-i18n`, ... |
 | `api/` | Logika route handler. Berkas rute Next di `Frontend/src/app/api/**/route.ts` hanya me-re-export dari sini |
-| `emails/` | Template React Email |
 | `i18n/routing.ts` | Daftar bahasa situs (`id`, `en`) |
 | `scripts/` | `seed.ts` (`pnpm db:seed`), `seed-ids.ts`, `admin-reset-password.ts` |
 | `generated/prisma/` | Prisma client hasil `prisma generate` (tidak di-commit) |

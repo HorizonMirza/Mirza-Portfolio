@@ -9,7 +9,7 @@ import { isIP } from 'node:net'
 // - TRUSTED_PROXIES diisi (IP atau CIDR IPv4, dipisah koma; sama dengan yang dipakai Better Auth):
 //   rantai dibaca dari kanan, melewati proxy tepercaya, IP pertama yang bukan proxy = klien.
 // - Di Vercel (VERCEL terisi): Vercel menimpa x-forwarded-for dengan IP klien, entri pertama aman.
-// - Di luar Vercel tanpa daftar proxy (mis. image Docker di balik satu reverse proxy): entri paling
+// - Di luar Vercel tanpa daftar proxy (mis. di balik satu reverse proxy): entri paling
 //   kanan, yaitu yang ditambahkan proxy terdekat, bukan entri kiri yang bisa dipalsukan.
 type Env = Record<string, string | undefined>
 

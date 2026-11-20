@@ -1,8 +1,7 @@
 'use client'
 
-// Vercel Analytics dan Speed Insights (dipasang layout hanya di Vercel); query string dibuang dulu.
+// Vercel Speed Insights (dipasang layout hanya di Vercel): kecepatan halaman nyata pengunjung.
 
-import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 // Query string dibuang sebelum dikirim ke Vercel: parameter di URL (mis. token atau isian)
@@ -15,10 +14,5 @@ function withoutQuery<T extends { url: string }>(event: T): T {
 }
 
 export function VercelInsights() {
-  return (
-    <>
-      <Analytics beforeSend={withoutQuery} />
-      <SpeedInsights beforeSend={withoutQuery} />
-    </>
-  )
+  return <SpeedInsights beforeSend={withoutQuery} />
 }

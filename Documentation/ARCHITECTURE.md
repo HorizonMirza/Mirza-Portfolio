@@ -33,14 +33,11 @@ Versi memakai rilis stabil terbaru saat setup (Milestone 1) dan dikunci di `pack
 | Daftar admin | Tampil seperti daftar di situs, diubah langsung di pratinjau; TanStack Table dipakai sampai 2026-11-12 lalu dihapus | Admin melihat hasil persis seperti pengunjung; tanpa dependency tabel | TanStack Table, AG Grid (berat) |
 | Grafik dashboard admin | **SVG buatan sendiri** (`components/admin/visits-chart.tsx`, geometri di `lib/chart-geometry.ts`), hanya dimuat di `/admin`. | Tanpa library grafik: 102 KB gzip lebih ringan untuk satu grafik area | Recharts, Chart.js |
 | Markdown | Editor: **textarea Markdown + pratinjau** di admin. Tampilan: `react-markdown` + `rehype-sanitize` | Bio dan uraian pengalaman ditulis di admin, ringan, aman dari XSS | Editor WYSIWYG (berat, HTML sulit disanitasi), MDX di repo |
-| Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, PDF didukung, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
-| Email | **Resend** + **React Email** untuk template | API sederhana, tier gratis. Template email ditulis sebagai komponen React dua bahasa | SMTP sendiri, template HTML manual |
+| Upload | **Cloudinary** (unggah bertanda tangan) | Optimasi gambar otomatis, tier gratis, tanpa kartu kredit | Cloudflare R2, Vercel Blob |
 | Rate limit | Login: **rate limit bawaan Better Auth** (penyimpanan database). Form publik dan `/api/track`: **tabel `RateLimit` di PostgreSQL** + helper `Backend/lib/rate-limit.ts` | Trafik portofolio kecil, jadi Postgres cukup. Satu layanan dan akun lebih sedikit | Upstash Redis (bisa ditambah bila trafik besar) |
 | GitHub | **`fetch` biasa** ke GraphQL API untuk kalender kontribusi beranda dan footer (wajib `GITHUB_TOKEN`, di-cache 6 jam, tanpa token bagian GitHub tidak tampil). | Hanya satu endpoint, tidak perlu library | Octokit, scraping |
-| Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (`PageView`, `LoginEvent`, `RateLimit`, `AuditLog`, sesi dan verifikasi kedaluwarsa), ringkas statistik ke `PageViewDaily`, hapus berkas unggahan yatim | GitHub Actions cron (tetap dipakai untuk backup) |
-| Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Web Analytics** + **Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
-| Error tracking | **Sentry tanpa SDK**, hanya error server (`src/instrumentation.ts`, keputusan 18) | Tier gratis, tanpa JS klien tambahan | `@sentry/nextjs`, LogRocket |
-| Uptime | **UptimeRobot** (gratis) ke `/api/health`, dipasang pemilik (ditunda 2026-10-20) | Notifikasi email dan Telegram | Better Stack |
+| Tugas terjadwal | **Vercel Cron** (`Frontend/vercel.json`) memanggil `/api/cron/*` yang dilindungi `CRON_SECRET`. Paket gratis: maksimal sekali sehari per job | Bersihkan data lama (`PageView`, `LoginEvent`, `RateLimit`, `AuditLog`, sesi dan verifikasi kedaluwarsa), ringkas statistik ke `PageViewDaily`, hapus berkas unggahan yatim | GitHub Actions cron |
+| Analitik | Pencatatan sendiri (tabel `PageView`, tanpa cookie) + **Vercel Speed Insights** | Statistik untuk dashboard admin tanpa banner cookie | Google Analytics (cookie, banner persetujuan) |
 | Unit test | **Vitest** + Testing Library | Cepat, cocok TypeScript | Jest |
 | E2E dan a11y | **Playwright** + `@axe-core/playwright` | Uji lintas browser dan aksesibilitas otomatis | Cypress |
 | Performa | **Lighthouse manual** (mobile, tiap bulan) dan Web Vitals dari Vercel Speed Insights bila diaktifkan pemilik (ditunda 2026-10-20) | Target skor ≥ 90 dijaga lewat pemeriksaan manual; CI belum menjalankan Lighthouse | Lighthouse CI (belum dipasang) |
@@ -60,14 +57,10 @@ flowchart LR
     A[Super Admin] -->|HTTPS /admin| E
     E --> N[Next.js App<br/>Server Components,<br/>Server Actions, Route Handlers]
     N -->|Prisma| DB[(Neon PostgreSQL)]
-    N -->|URL bertanda tangan| CL[Cloudinary<br/>gambar dan CV]
-    N -->|kirim email| RS[Resend]
+    N -->|URL bertanda tangan| CL[Cloudinary<br/>gambar]
     N -->|kalender kontribusi| GH[GitHub API]
     VC[Vercel Cron] -->|harian| N
-    N -.->|error| SE[Sentry]
-    GA[GitHub Actions] -->|cron: backup terenkripsi| DB
-    GA -->|CI: lint, test, build| N
-    UT[Uptime monitor] -.->|cek /api/health| E
+    GA[GitHub Actions] -->|CI: lint, test, build| N
 ```
 
 ### Strategi render
@@ -111,14 +104,12 @@ Catatan:
 │   ├── messages/             # id.json, en.json (teks UI bawaan)
 │   ├── tests/unit/           # Vitest (termasuk tes kode Backend)
 │   ├── e2e/                  # Playwright + axe
-│   ├── Dockerfile            # image produksi (ghcr.io), dibangun dari akar repo; lihat DEPLOYMENT.md
 │   ├── prisma.config.ts      # menunjuk ke ../Database/ dan ../Backend/scripts/seed.ts
 │   └── package.json          # satu-satunya package.json; semua perintah pnpm dijalankan dari sini
 ├── Backend/                  # kode server, diimpor Frontend lewat alias @backend/*
 │   ├── features/             # per domain: schema.ts, queries.ts, actions.ts, public.ts
-│   ├── lib/                  # db, auth (Better Auth), env, email, cloudinary, rate-limit, audit, admin-i18n, ...
+│   ├── lib/                  # db, auth (Better Auth), env, cloudinary, rate-limit, audit, admin-i18n, ...
 │   ├── api/                  # logika route handler (auth, cron-daily, cv, health, track, not-found)
-│   ├── emails/               # template React Email
 │   ├── i18n/routing.ts       # daftar bahasa (dipakai Backend dan Frontend)
 │   ├── scripts/              # seed.ts, seed-ids.ts, admin-reset-password.ts
 │   ├── generated/prisma/     # Prisma client hasil generate (tidak di-commit)
@@ -381,9 +372,7 @@ Form kontak memakai **Server Action** dengan `useActionState`, bukan route handl
 
 | Action | Fungsi |
 |---|---|
-| `submitContact` | Honeypot → validasi → rate limit 5/jam per IP-hash → simpan `Message` (IP hanya hash) → notifikasi ke `CONTACT_TO_EMAIL` lewat Resend bila diatur (gagal kirim tidak menggagalkan pengunjung) |
-
-Email dikirim lewat REST API Resend dengan `fetch` (`Backend/lib/email.ts`, tanpa SDK). Template di `Backend/emails/` dirender `@react-email/render` (paket `@react-email/components` sudah deprecated, jadi tidak dipakai).
+| `submitContact` | Honeypot → validasi → rate limit 5/jam per IP-hash → simpan `Message` (IP hanya hash); pesan dibaca di Admin → Pesan, tanpa notifikasi email |
 
 ### 6.3 Route Handlers
 
@@ -391,8 +380,8 @@ Email dikirim lewat REST API Resend dengan `fetch` (`Backend/lib/email.ts`, tanp
 |---|---|---|---|
 | POST | `/api/track` | Publik, same-origin, rate limit 120/jam per IP | Beacon kunjungan tanpa cookie. `visitorHash` = HMAC(tanggal WIB + IP + user-agent), bot dilewati, path divalidasi |
 | GET | `/api/cv` | Publik | Catat unduhan (tanpa data pribadi, bot dilewati) lalu arahkan ke CV terbaru; tanpa CV → `/[locale]/about` |
-| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` sesuai masa simpan, `LoginEvent` > 90 hari, `RateLimit` > 1 hari, `AuditLog` > 365 hari, serta `Session` dan `Verification` yang sudah kedaluwarsa, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Tiap langkah berdiri sendiri (`Backend/lib/run-steps.ts`): satu yang gagal tidak menghentikan yang lain, dicatat, dikirim ke Sentry bila aktif, dan respons 500 menyebut langkahnya (ERR-01 audit 17-11). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
-| GET | `/api/health` | Publik | Status untuk uptime monitor (tanpa data sensitif) |
+| GET | `/api/cron/daily` | Vercel Cron (`Authorization: Bearer CRON_SECRET`) | Ringkas ke `PageViewDaily` sejak ringkasan terakhir, minimal 8 hari terakhir (idempoten; cron yang sempat mati tidak meninggalkan hari tanpa ringkasan, DB-06), hapus `PageView` sesuai masa simpan, `LoginEvent` > 90 hari, `RateLimit` > 1 hari, `AuditLog` > 365 hari, serta `Session` dan `Verification` yang sudah kedaluwarsa, lalu hapus berkas Cloudinary di `portfolio/` yang tidak punya baris `Asset` dan berumur > 48 jam, paling banyak 50 per hari (Admin API, DB-07). Tiap langkah berdiri sendiri (`Backend/lib/run-steps.ts`): satu yang gagal tidak menghentikan yang lain, dicatat di log, dan respons 500 menyebut langkahnya (ERR-01 audit 17-11). Jadwal `0 18 * * *` UTC (01.00 WIB) di `vercel.json` |
+| GET | `/api/health` | Publik | Status koneksi database untuk mengecek deploy (tanpa data sensitif) |
 
 ### 6.4 Kontrak
 
@@ -434,10 +423,10 @@ Kolom `website` pada form kontak adalah honeypot. Jika terisi, pesan dibuang dia
 | Header | HSTS, `X-Content-Type-Options`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, CSP dengan `frame-ancestors 'none'`, `object-src 'none'`, `form-action 'self'`. `upgrade-insecure-requests` hanya di Vercel |
 | Privasi data | IP di-hash. Log tidak memuat isi pesan atau email. Retensi data dibatasi |
 | Rantai pasok | `pnpm audit --audit-level=moderate` di CI (advisory tanpa perbaikan di alat dev diabaikan eksplisit lewat `auditConfig.ignoreGhsas` di `pnpm-workspace.yaml`), semua action GitHub dipin ke SHA, Dependabot alerts (notifikasi saja), update bulanan manual, `overrides` untuk celah dependency tidak langsung, versi terkunci |
-| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Email login baru lewat hook Better Auth + Resend (`Backend/emails/login-notification.tsx`, ADR 17). Riwayat masuk 90 hari di Admin → Akun |
+| Akses admin | Satu akun, log audit, ganti password dengan rate limit. Riwayat masuk (berhasil dan gagal) 90 hari di Admin → Akun |
 | Info halaman login | Diterima (audit 2026-11-01, SEC-08): halaman login mengirim **domain** email Super Admin (mis. `gmail.com`, bukan alamatnya) agar email domain lain langsung ditandai. Domain penyedia email umum tidak membantu menebak akun; bila kelak memakai domain pribadi, pertimbangkan menghapus tanda ini (`getAdminEmailDomain` di `Backend/lib/auth-guard.ts`) |
 
-Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL`, `GITHUB_TOKEN`, `CRON_SECRET`, `SENTRY_DSN`, `HASH_SALT_SECRET`.
+Kunci yang dibutuhkan (semua lewat environment, divalidasi Zod saat start): `DATABASE_URL`, `DATABASE_URL_UNPOOLED` atau `DIRECT_URL` (migrasi), `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD` (hanya untuk seed), `CLOUDINARY_*`, `GITHUB_TOKEN`, `CRON_SECRET`, `HASH_SALT_SECRET`.
 
 ## 9. Lingkungan dan Deployment
 
@@ -461,9 +450,9 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 
 **Batas paket gratis** yang relevan: Vercel Hobby (100 GB bandwidth, 1 juta pemanggilan fungsi per bulan, cron maksimal sekali sehari, **hanya untuk penggunaan pribadi non-komersial**) dan Neon Free (0,5 GB, 100 CU-jam, 10 branch, tidur setelah 5 menit). Bila situs kelak menawarkan jasa berbayar, pindah ke Vercel Pro atau Cloudflare Workers.
 
-**Perlindungan `main`:** rencananya GitHub ruleset (CI wajib hijau, force push dan hapus branch diblokir, admin di bypass list), tetapi **belum dipasang** (ditunda pemilik 2026-10-20, TODO.md). Sementara itu aturan "tanpa force push" dijaga lewat kesepakatan kerja.
+**Perlindungan `main`:** tanpa GitHub ruleset (keputusan pemilik); aturan "tanpa force push" dijaga lewat kesepakatan kerja di `CLAUDE.md`.
 
-**Rollback:** Vercel "Instant Rollback" ke deployment sebelumnya. Jika migrasi ikut berubah, pulihkan dari backup (bagian 11).
+**Rollback:** Vercel "Instant Rollback" ke deployment sebelumnya. Jika data ikut rusak, pulihkan lewat Neon (bagian 11).
 
 **Deploy pertama tanpa langkah manual (2026-09-30):** `scripts/vercel-build.sh` di production menjalankan `prisma migrate deploy`, lalu `tsx ../Backend/scripts/seed.ts --bootstrap` (konten CV hanya bila belum ada profil; akun admin hanya bila belum ada Super Admin sama sekali), lalu `next build`. URL auth di Vercel tanpa `BETTER_AUTH_URL`: domain production proyek (`VERCEL_PROJECT_PRODUCTION_URL`), dan semua alamat Vercel deployment tersebut masuk `trustedOrigins`. Ignored Build Step selalu mem-build bila belum ada deploy sebelumnya.
 
@@ -472,19 +461,14 @@ Migrasi harus kompatibel ke belakang (tambah kolom dulu, hapus kolom di rilis be
 | Workflow | Pemicu | Isi |
 |---|---|---|
 | `ci.yml` | push ke `main` (run lama dibatalkan oleh push berikutnya) | Tiga job paralel: **Lint, typecheck, unit test** (`prisma validate`, `lint`, `format:check`, `typecheck`, `test`, `pnpm audit --audit-level=moderate`); **Migrasi, seed, build, E2E** (Postgres 17 sementara, migrasi + cek drift skema, seed 2× untuk uji idempoten, `build`, Playwright + axe di Chromium, Firefox, WebKit, dan emulasi HP); **Scan secret (gitleaks)**. Semua action dipin ke SHA |
-| `backup.yml` | Cron harian 02.30 WIB (+ manual) | `pg_dump`, enkripsi gpg, uji pulih otomatis, simpan sebagai artifact 30 hari. Tanpa secret backup, run tetap hijau tetapi **tidak membuat backup** (DEPLOYMENT.md) |
-| `buat-release.yml` | Manual (Run workflow) | Membuat tag dan GitHub Release dari `main`; catatan rilis dari `.github/release-notes/<tag>.md` bila ada |
-| `release.yml` | Release dipublikasikan (+ manual) | Membangun image Docker, uji singkat, kirim ke GitHub Packages (`ghcr.io/horizonmirza/mirza-portfolio`) |
 | (tanpa bot) | Bulanan, manual | Update dependency dan GitHub Actions oleh Claude, commit atas nama pemilik (`WORKFLOW.md` bagian 10a) |
 
-Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib dienkripsi** sebelum diunggah.
+## 11. Monitoring, Logging, dan Pemulihan
 
-## 11. Monitoring, Logging, dan Backup
-
-- **Sentry:** error server lewat `onRequestError` di `src/instrumentation.ts`, dikirim ke envelope API Sentry dengan `fetch` (tanpa SDK), tanpa header, cookie, IP, dan query string. Error di browser belum dilaporkan (lihat ADR 18). **Belum aktif di production**: `SENTRY_DSN` belum diisi (ditunda pemilik 2026-10-20); tanpa itu tidak ada yang dikirim.
-- **Uptime monitor:** rencananya UptimeRobot memeriksa `/api/health` (cek koneksi database) dengan notifikasi email dan Telegram. **Belum dipasang** (ditunda pemilik 2026-10-20); endpoint-nya sudah ada.
-- **Vercel Analytics + Speed Insights:** tren traffic dan Web Vitals lapangan, hanya dimuat di Vercel, query string dibuang lewat `beforeSend`.
-- **Backup:** `backup.yml` harian 02.30 WIB: `pg_dump` (Postgres 17) → gpg AES-256 → artifact 30 hari, lalu **diuji pulih otomatis setiap kali** ke Postgres sementara (jumlah Profile, Super Admin, migrasi). Ditambah pemulihan bawaan Neon. Langkah pemulihan manual di `Documentation/DEPLOYMENT.md`.
+- **Error server:** tercatat di log Vercel (Runtime Logs); tanpa layanan error tracking terpisah (keputusan pemilik).
+- **`/api/health`:** memeriksa koneksi database, dipakai untuk mengecek setiap deploy; tanpa uptime monitor terpisah.
+- **Vercel Speed Insights:** Web Vitals lapangan, hanya dimuat di Vercel, query string dibuang lewat `beforeSend`. Jumlah kunjungan dicatat sendiri (tabel `PageView`).
+- **Pemulihan data:** fitur bawaan Neon (Restore ke titik waktu tertentu); tanpa workflow backup terpisah (keputusan pemilik).
 - **Log audit:** di database (`AuditLog`). Halaman bacanya di panel dihapus 2026-11-11 atas keputusan pemilik; pencatatan tetap wajib di setiap aksi admin.
 
 ## 12. Catatan Keputusan (ADR ringkas)
@@ -495,18 +479,16 @@ Artifact di repo publik dapat diunduh siapa saja, karena itu dump backup **wajib
 | 1a | Tidak memakai ASP.NET Core + Next.js (stack GAAS) atau FastAPI | Dipertimbangkan 2026-09-30. Ditolak karena: (1) recruiter menilai project, bukan arsitektur situs portofolio, dan kemampuan C#/.NET sudah terbukti lewat project GAAS; (2) backend .NET di hosting gratis "tidur" 30–50 detik saat sepi; (3) dua deploy dan dua layanan untuk satu orang; (4) M1 sudah jadi dan teruji. Bisa ditinjau lagi bila target kerja spesifik .NET | Final |
 | 2 | Konten di DB dengan kolom `_id`/`_en` | Sederhana, mudah dicari dan divalidasi, cukup untuk dua bahasa | Final (diterapkan) |
 | 3 | Analitik sendiri tanpa cookie | Tidak perlu banner cookie, data untuk dashboard admin | Final (diterapkan) |
-| 5 | Rate limit + honeypot di form publik | Mencegah spam dan kuota email habis | Final (dikonfirmasi 2026-09-30) |
+| 5 | Rate limit + honeypot di form publik | Mencegah spam dan tabel pesan terbanjiri | Final (dikonfirmasi 2026-09-30) |
 | 6 | Better Auth untuk login admin (menggantikan Auth.js) | Stabil, sesi di database, rate limit bawaan | Final (2026-09-30) |
 | 7 | Rate limit di PostgreSQL, tanpa Upstash | Trafik kecil, satu layanan lebih sedikit | Final (2026-09-30) |
-| 8 | `fetch` untuk GitHub API, React Email untuk template, Vercel Cron untuk tugas harian | Lebih sedikit dependency, gratis | Final (2026-09-30) |
+| 8 | `fetch` untuk GitHub API, Vercel Cron untuk tugas harian | Lebih sedikit dependency, gratis | Final (2026-09-30) |
 | 9 | PostgreSQL 17, UUID v7, `timestamptz`, ringkasan `PageViewDaily`, Neon via integrasi Vercel | Konsisten lokal/CI/production, cegah bug zona waktu, hemat kuota | Final (2026-09-30) |
 | 10 | Mutasi admin (termasuk tanda tangan unggah) lewat Server Action, bukan route handler `/api/admin/*` | Pemeriksaan Origin bawaan, tipe end-to-end, lebih sedikit kode | Final (M2, 2026-09-30) |
 | 11 | Urutan dengan tombol naik/turun, bukan seret | Bisa dipakai dengan keyboard dan pembaca layar, tanpa dependency drag-and-drop | Final (M2, 2026-09-30) |
-| 12 | Resend lewat `fetch` + `@react-email/render`, tanpa SDK dan tanpa `@react-email/components` (deprecated) | Satu dependency kecil, pola sama dengan GitHub API | Final (M3, 2026-09-30) |
+| 12 | Tanpa email: notifikasi pesan kontak dan login baru lewat Resend dihapus | Pemilik membaca pesan dan riwayat masuk langsung di admin; domain email tidak diverifikasi | Final (keputusan pemilik 2026-11-20) |
 | 15 | CSP tanpa nonce untuk halaman publik, dengan nonce hanya untuk `/admin` | Nonce memaksa semua halaman dirender dinamis (tanpa SSG/ISR/CDN), yang merugikan performa dan kuota. Halaman publik tidak punya input pengguna yang dirender tanpa escape; admin yang memegang sesi mendapat CSP paling ketat | Final (M4, 2026-09-30) |
 | 16 | SEO berbasis berkas: `app/sitemap.ts` (hreflang per URL), `app/robots.ts` (preview tidak diindeks), `opengraph-image.tsx` dinamis (umum + per project), JSON-LD `Person` di beranda | Tanpa dependency, data dari database yang sama | Final (M4, 2026-09-30) |
-| 17 | Notifikasi login baru ke email admin lewat hook Better Auth + `after()` Next.js | Tidak menunda login dan tetap terkirim di serverless | Final (M4, 2026-09-30) |
-| 18 | Sentry tanpa SDK, hanya error server | `@sentry/nextjs` menambah puluhan KB JavaScript klien dan OpenTelemetry di server, bertentangan dengan target Lighthouse dan aturan "jangan menambah JS klien tanpa alasan". Error klien bisa ditambah nanti bila perlu | Final (M5, 2026-10-01) |
-| 19 | Backup diuji pulih di setiap run | Backup yang tidak pernah dicoba pulih belum terbukti. Postgres sementara di runner gratis | Final (M5, 2026-10-01) |
+| 18 | Tanpa Sentry, uptime monitor, Vercel Web Analytics, workflow backup, dan image Docker | Tidak dipakai pemilik; error dibaca di log Vercel, data dipulihkan lewat Neon, deploy hanya ke Vercel | Final (keputusan pemilik 2026-11-20) |
 | 21 | Kalender kontribusi GitHub di beranda diambil di server lewat GitHub GraphQL API dengan `GITHUB_TOKEN` yang sudah ada | GraphQL satu-satunya sumber resmi kalender kontribusi dan selalu butuh token. Token fine-grained tanpa izin tambahan cukup untuk data publik. Hasil disimpan 6 jam agar tidak membebani batas API; bila gagal, bagian disembunyikan, halaman tetap tampil | Final (2026-10-01) |
 | 22 | Kode server dipindah ke folder `Backend/` (permintaan pemilik 2026-11-18), tetap satu aplikasi Next.js | Pemisahan folder yang jelas antara UI dan server tanpa mengubah deploy: tetap satu deploy Vercel, tanpa server kedua yang "tidur", tanpa menulis ulang Server Actions. Server API terpisah (Node.js atau ASP.NET Core) ditawarkan dan tidak dipilih | Final (2026-11-18) |

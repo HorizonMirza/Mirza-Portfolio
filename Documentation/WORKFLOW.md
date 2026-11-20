@@ -69,7 +69,6 @@ Sebuah fitur dianggap selesai bila **semua** poin terpenuhi:
 | E2E | Playwright | Alur utama: unduh CV, ganti bahasa/tema, kirim kontak, login admin, CRUD project |
 | Aksesibilitas | axe (di Playwright) | Semua halaman publik dan admin utama |
 | Performa | Lighthouse manual (Chrome DevTools atau PageSpeed Insights) | Home, Projects, detail Project (mobile); CI belum menjalankan Lighthouse |
-| Manual | Anda | Perangkat nyata: Android, iPhone (Safari), laptop. Lihat daftar periksa rilis |
 
 Bug yang ditemukan: tulis tes yang gagal dulu, perbaiki, pastikan tes lulus.
 
@@ -82,19 +81,12 @@ Claude memeriksa diff sendiri sebelum meminta review, lalu menjalankan review ko
 4. Kesederhanaan (tidak ada abstraksi atau dependency berlebihan)
 5. Tes dan dokumentasi
 
-## 7. Rilis, Deployment, dan Rollback
+## 7. Deployment dan Rollback
 
 - **Deploy:** otomatis dari `main` ke Vercel (production). Tidak ada staging terpisah dan tidak ada preview PR, jadi pemeriksaan lokal lengkap (bagian 2 langkah 3) menggantikan staging.
-- **Migrasi database:** kompatibel ke belakang. Tambahkan kolom/tabel dulu, hapus di rilis berikutnya. Uji dulu di database lokal/CI (CI menjalankan migrasi + seed dua kali) sebelum push.
+- **Migrasi database:** kompatibel ke belakang. Tambahkan kolom/tabel dulu, hapus di push berikutnya. Uji dulu di database lokal/CI (CI menjalankan migrasi + seed dua kali) sebelum push.
 - **Konten bukan lewat migrasi** (audit 2026-10-31, GAP-15): migrasi hanya untuk struktur (tabel, kolom, indeks). Menambah, mengubah, atau menghapus konten (project, teks, profil) dilakukan lewat panel admin agar tercatat di `AuditLog` dan bisa dilacak. Bila migrasi data benar-benar tidak terhindarkan (mis. memindahkan isi kolom saat struktur berubah), migrasi itu juga menulis satu baris `AuditLog` (`actorId` NULL, `action` = `migrasi`, `entity` sesuai tabel, `diff` berisi nama migrasi dan jumlah baris) dan disebut di log `TODO.md`. Migrasi konten lama seperti `20261008170000_delete_all_projects` tetap seperti adanya, karena migrasi yang sudah berjalan tidak boleh diubah.
-- **Daftar periksa rilis:**
-  - [ ] CI hijau, situs sudah dicek di HP nyata
-  - [ ] Lighthouse mobile ≥ 90
-  - [ ] Variabel lingkungan production lengkap
-  - [ ] Backup terbaru ada dan pernah diuji pulih
-  - [ ] Sitemap, robots, Open Graph diperiksa
-  - [ ] Uptime monitor dan Sentry aktif (saat ini belum, ditunda pemilik)
-- **Rollback:** Vercel Instant Rollback ke deployment sebelumnya. Jika ada migrasi berbahaya, pulihkan dari backup. Catat insiden di `Documentation/`.
+- **Rollback:** Vercel Instant Rollback ke deployment sebelumnya. Jika data ikut rusak, pulihkan lewat Neon (Restore ke titik waktu tertentu). Catat insiden di log `TODO.md`.
 
 ## 8. Alur Pembaruan Konten (harian)
 
@@ -107,7 +99,7 @@ Perubahan desain, fitur, atau struktur data dikerjakan Claude di kode lalu di-pu
 
 ## 9. Manajemen Secret
 
-- Semua secret ada di Vercel Environment Variables dan GitHub Actions Secrets.
+- Semua secret ada di Vercel Environment Variables (CI hanya memakai nilai uji sementara dan token bawaan GitHub).
 - Lokal memakai `.env.local` (tidak di-commit). Repo hanya berisi `Frontend/.env.example` tanpa nilai asli.
 - Bila secret terlanjur ter-commit: anggap bocor, **cabut dan buat ulang secretnya**, baru bersihkan repo.
 - `gitleaks` berjalan di CI (job "Scan secret"). Hook pre-commit (`Frontend/.husky/pre-commit`) hanya menjalankan lint-staged (ESLint dan Prettier), dua kali: di `Frontend/` (konfigurasi di `package.json`) dan di `Backend/` (`Backend/.lintstagedrc.json`), karena lint-staged hanya memproses berkas di folder tempat ia dijalankan.
@@ -117,9 +109,9 @@ Perubahan desain, fitur, atau struktur data dikerjakan Claude di kode lalu di-pu
 | Frekuensi | Kegiatan |
 |---|---|
 | Harian | Update konten lewat admin, baca pesan masuk |
-| Mingguan | Cek **Dependabot alerts** (Security → Dependabot), hasil CI, dan Sentry serta uptime bila sudah dipasang |
-| Bulanan | **Update dependency** (lihat bagian 10a), cek skor Lighthouse dan Web Vitals, tinjau statistik unduhan CV dan pesan, bersihkan pesan lama |
-| Triwulan | Uji pemulihan backup, tinjau akses akun dan token |
+| Mingguan | Cek **Dependabot alerts** (Security → Dependabot) dan hasil CI |
+| Bulanan | **Update dependency** (lihat bagian 10a), cek skor Lighthouse dan Speed Insights, tinjau statistik unduhan CV dan pesan, bersihkan pesan lama |
+| Triwulan | Tinjau akses akun dan token |
 
 ### 10a. Update dependency (tanpa bot)
 

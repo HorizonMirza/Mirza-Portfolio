@@ -1,22 +1,17 @@
 'use server'
 
-// Server Action form kontak publik: validasi, honeypot, rate limit per IP, simpan pesan, lalu kirim
-// notifikasi email ke pemilik di latar belakang.
+// Server Action form kontak publik: validasi, honeypot, rate limit per IP, lalu simpan pesan untuk
+// dibaca di Admin → Pesan.
 
-import { render } from '@react-email/render'
 import { headers } from 'next/headers'
-import { after } from 'next/server'
 
-import { ContactNotificationEmail } from '@backend/emails/contact-notification'
 import { clientIp } from '@backend/lib/client-ip'
 import { getDb } from '@backend/lib/db'
-import { getEmailConfig, sendEmail } from '@backend/lib/email'
-import { siteUrl } from '@backend/lib/env'
 import type { PublicFormState } from '@backend/lib/form-state'
 import { consumePublicRateLimit, hashIdentifier } from '@backend/lib/rate-limit'
 import { getSiteSettings } from '@backend/features/settings/public'
 
-import { CONTACT_RATE_LIMIT, contactSchema, toSingleLine } from './public-schema'
+import { CONTACT_RATE_LIMIT, contactSchema } from './public-schema'
 
 // Nilai teks satu isian form; isian yang tidak ada atau berupa berkas dianggap kosong.
 function field(formData: FormData, name: string) {
@@ -59,7 +54,7 @@ export async function submitContact(
     if (!limit.allowed) return { status: 'error', message: 'rateLimited', values }
 
     const data = parsed.data
-    const saved = await getDb().message.create({
+    await getDb().message.create({
       data: {
         name: data.name,
         email: data.email,
@@ -68,38 +63,7 @@ export async function submitContact(
         locale: data.locale,
         ipHash: hashIdentifier(ip),
       },
-      select: { id: true },
     })
-
-    // Pesan sudah tersimpan; notifikasi dikirim setelah jawaban sampai ke pengunjung (after), jadi
-    // pengunjung tidak ikut menunggu Resend (bisa sampai 10 detik). Gagal kirim tidak menggagalkan
-    // pengunjung.
-    const config = getEmailConfig()
-    const to = config?.CONTACT_TO_EMAIL
-    if (to) {
-      const email = ContactNotificationEmail({
-        name: data.name,
-        email: data.email,
-        subject: data.subject || null,
-        body: data.message,
-        locale: data.locale,
-        adminUrl: `${siteUrl()}/admin/messages/${saved.id}`,
-      })
-      after(async () => {
-        try {
-          await sendEmail({
-            to,
-            // nama dan subjek sudah satu baris dari skema; dibersihkan lagi sebagai pengaman header
-            subject: toSingleLine(`Pesan baru: ${data.subject || data.name}`).slice(0, 150),
-            html: await render(email),
-            text: await render(email, { plainText: true }),
-            replyTo: data.email,
-          })
-        } catch {
-          console.warn('[contact] notifikasi email gagal')
-        }
-      })
-    }
     // isian dan waktu kirim dikembalikan untuk tiket ringkasan setelah terkirim
     return {
       status: 'success',

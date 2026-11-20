@@ -1,19 +1,6 @@
 # TODO — Rencana Pengerjaan
 
-Status: **live di `mmirza.site` sejak 2026-10-01.** Milestone M0–M5 (setup, auth + admin, halaman publik, polish, deploy) selesai di sisi kode; checklist-nya dihapus 2026-11-18 dan riwayatnya ada di log di bawah. Pekerjaan sekarang berupa revisi dari pemilik, dicatat di log. Keputusan yang masih terbuka: `PRD.md` bagian 11.
-
-## Menunggu dari Pemilik
-
-Tugas akun pemilik ditunda sejak 2026-10-20 (keputusan pemilik). Langkah setiap layanan ada di `Documentation/DEPLOYMENT.md`.
-
-- [ ] **Resend:** verifikasi domain (SPF/DKIM), lalu uji email sungguhan (notifikasi pesan kontak dan login baru)
-- [ ] **Pemantauan:** aktifkan Analytics dan Speed Insights di Vercel, buat project Sentry lalu isi `SENTRY_DSN`, pasang UptimeRobot (monitor `/api/health` tiap 5 menit)
-- [ ] **GitHub ruleset** untuk `main`: CI wajib hijau, blokir force push dan hapus branch, admin di bypass list
-- [ ] **Backup:** isi secret `BACKUP_DATABASE_URL` dan `BACKUP_PASSPHRASE`, jalankan workflow Backup sekali lewat Actions
-- [ ] **Search Console:** kirim situs, cek pratinjau tautan di WhatsApp dan LinkedIn
-- [ ] **Uji rollback Vercel** sekali (Instant Rollback ke deployment sebelumnya)
-- [ ] **Uji manual** keyboard dan pembaca layar (VoiceOver/TalkBack) di HP nyata
-- [ ] **Pertanyaan konten** yang masih terbuka (`Documentation/CONTENT.md` bagian 10) dan keputusan sementara (`PRD.md` bagian 11)
+Status: **live di `mmirza.site` sejak 2026-10-01.** Milestone M0–M5 (setup, auth + admin, halaman publik, polish, deploy) selesai di sisi kode; checklist-nya dihapus 2026-11-18 dan riwayatnya ada di log di bawah. Tidak ada tugas akun pemilik yang tertunda: email (Resend), Sentry, uptime monitor, Vercel Web Analytics, GitHub ruleset, Search Console, backup GitHub Actions, dan rilis image Docker sengaja tidak dipakai (keputusan pemilik 2026-11-20). Pekerjaan sekarang berupa revisi dari pemilik, dicatat di log. Pertanyaan konten yang masih terbuka: `CONTENT.md` bagian 10; keputusan terbuka: `PRD.md` bagian 11.
 
 ## Backlog (v2 dan sesudah)
 
@@ -235,3 +222,4 @@ Tugas akun pemilik ditunda sejak 2026-10-20 (keputusan pemilik). Langkah setiap 
 | 2026-11-19 | Perapian `.github`: komentar kode audit di workflow dihapus, kepala `ci.yml` menjelaskan isinya, `RELEASE_TAG` dan token release ditulis sekali per job, gaya YAML disamakan dengan Prettier; catatan rilis v1.0.0 disesuaikan (CV berupa link, peran beranda bukan foto hero); ARCHITECTURE.md: `ci.yml` hanya dipicu push ke `main` |
 | 2026-11-19 | Perapian akhir seluruh repo: kepala berkas untuk konfigurasi Frontend (`next.config.ts`, `playwright.config.ts`, `vitest.config.mts`, `prisma.config.ts`, `eslint.config.mjs`, `postcss.config.mjs`, `pnpm-workspace.yaml`, hook pre-commit); README dan SKILL.md sesuai keadaan sekarang (CV berupa link, peran beranda, impor relatif dalam satu domain). Diperiksa tanpa temuan: aset `public/` (semua dirujuk), kunci `messages/*.json` (semua dipakai, sebagian lewat nama dinamis), variabel `.env.example` (semua dipakai) |
 | 2026-11-19 | Atas persetujuan pemilik ("perbaiki semuanya"): tujuan unggah `profile-cv` dan `hero-portrait` dihapus karena tidak punya tombol di admin (CV berupa link, foto utama beranda dari repo); ikut mati: pemeriksaan bentuk gambar `checkImageShape`, jalur PDF di pemilih berkas, field `kind`/`resourceType` per tujuan, dua pola dan tiga kunci terjemahan admin, tes `hero-assets.test.ts`. Data lama tetap: foto utama dan PDF CV yang sudah tersimpan tetap tampil, PDF tetap bisa dihapus. Bug diperbaiki: unggah foto atau logo chip kartu About membuang cache `projects`, bukan `profile` (kartu About baru berubah setelah cache kedaluwarsa); sekarang pemetaan tujuan → cache ditulis eksplisit. PRD, ARCHITECTURE, DEPLOYMENT, dan `.env.example` disesuaikan |
+| 2026-11-20 | Keputusan pemilik: tujuh tugas akun yang tertunda tidak dikerjakan dan dihapus dari dokumen, beserta kodenya: workflow Backup, workflow "Buat release" dan "Release image", `Frontend/Dockerfile`, catatan rilis v1.0.0, email Resend (notifikasi pesan kontak dan login baru, `Backend/lib/email.ts`, `Backend/emails/`, `lib/login-notice.ts`), laporan error Sentry (`lib/error-report.ts`, `src/instrumentation.ts`), Vercel Web Analytics (tidak aktif, skripnya 404), output standalone Docker di `next.config.ts`, variabel `RESEND_API_KEY`/`EMAIL_FROM`/`CONTACT_TO_EMAIL`/`SENTRY_DSN`, dependency `@react-email/render` dan `@vercel/analytics`. Speed Insights tetap (sudah aktif). Pemulihan data lewat Neon, rollback lewat Vercel. Teks Privasi (ID/EN) disesuaikan; `.env.example` diperbaiki (password minimal 8, bukan 12) |

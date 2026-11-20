@@ -49,7 +49,7 @@ Semua fitur wajib di v1 (jawaban 7.1: "semua", tidak ada yang ditunda). Priorita
 | F3 | **Experience**: timeline pengalaman kerja dan organisasi di `/experience` dengan logo instansi dan foto kegiatan, tanpa filter. Pendidikan tampil di About | P0 |
 | F4 | **Skills**: dikelompokkan per kategori dari admin, tanpa persen. Tidak punya halaman sendiri (`/skills` dialihkan ke `/#skills`); tampil di beranda sebagai globe logo yang bisa diputar dan difilter per kategori | P0 |
 | F5 | **Projects**: daftar + halaman detail (peran, judul, tombol demo dan repo, galeri foto) + tautan demo dan repo | P0 |
-| F6 | **Kontak**: form, notifikasi email ke pemilik, tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
+| F6 | **Kontak**: form (pesan dibaca di admin, tanpa notifikasi email), tautan sosial (LinkedIn, GitHub, Email, WhatsApp, Instagram) | P0 |
 | F7 | **Resume CV**: satu klik di kartu pembuka dan footer, link CV terbaru dari admin (mis. Google Drive), dihitung jumlah unduhannya | P0 |
 | F8 | **Dua bahasa** ID/EN dengan toggle, URL `/id` dan `/en` | P0 |
 | F9 | **Tema terang/gelap**: selalu mulai gelap, bisa diganti manual dan tersimpan | P0 |
@@ -120,7 +120,7 @@ v1 dikerjakan dalam lima milestone (Setup, Auth + Admin, Halaman publik, Polish,
 |---|---|---|
 | Animasi layar penuh menurunkan skor di HP | Lighthouse < 90 | Anggaran performa, kepadatan partikel turun di HP, lazy init |
 | Form kontak tanpa proteksi | Spam, kuota email habis | Honeypot + rate limit 5 pesan per jam per IP (IP di-hash) |
-| Data gratis (Neon, Vercel Hobby) berbatas | Pembatasan atau kehilangan data | Backup terjadwal terenkripsi, rollback Vercel |
+| Data gratis (Neon, Vercel Hobby) berbatas | Pembatasan atau kehilangan data | Pemulihan bawaan Neon ke titik waktu tertentu, rollback Vercel |
 
 ## 11. Keputusan Sementara **[ASUMSI]** yang Menunggu Konfirmasi
 
@@ -130,7 +130,7 @@ Nomor merujuk ke `Documentation/00-discovery.md` bagian 6. Keputusan yang sudah 
 |---|---|---|
 | 2 | Blog dan sertifikat ditunda ke v2 | Masukkan ke v1 |
 | 6 | Secret tidak pernah di-commit, hanya `Frontend/.env.example` | — |
-| 8 | Resend untuk email, Cloudinary untuk gambar (CV berupa link, keputusan pemilik 2026-11-19) | Cloudflare R2 |
+| 8 | Tanpa layanan email (keputusan pemilik 2026-11-20); Cloudinary untuk gambar (CV berupa link, keputusan pemilik 2026-11-19) | Cloudflare R2 |
 | 11 | Skill dikelompokkan tanpa level angka | Tampilkan level |
 | 12 | Tampilkan kota dan tombol WhatsApp. Alamat lengkap tidak ditampilkan | Tampilkan alamat penuh |
 | 13 | Semua konten diisi manual dalam dua bahasa | Terjemahan otomatis |

@@ -17,8 +17,6 @@ const db = {
 }
 vi.mock('@backend/lib/db', () => ({ getDb: () => db }))
 vi.mock('@backend/lib/orphan-uploads', () => ({ removeOrphanUploads: vi.fn(async () => 7) }))
-const report = vi.fn(async () => undefined)
-vi.mock('@backend/lib/error-report', () => ({ reportServerError: report }))
 
 process.env.CRON_SECRET = 'rahasia-cron-uji-1234567890'
 const { GET } = await import('@backend/api/cron-daily')
@@ -65,7 +63,7 @@ describe('cron harian', () => {
       removedOrphanUploads: 7,
     })
     expect(db.loginEvent.deleteMany).toHaveBeenCalledOnce()
-    expect(report).toHaveBeenCalledOnce()
+    expect(console.error).toHaveBeenCalledOnce()
   })
 
   it('menghapus log audit > 365 hari, sesi dan verifikasi kedaluwarsa', async () => {

@@ -8,7 +8,7 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** live di `mmirza.site` sejak 2026-10-01. Semua milestone selesai di sisi kode; tugas akun pemilik (Resend, UptimeRobot, ruleset, Search Console, secret backup) ditunda pemilik dan tercatat di `Documentation/TODO.md` bagian "Menunggu dari Pemilik". Pekerjaan sekarang berupa revisi dari Mirza: `DESIGN.md` diperbarui sesuai keadaan terbaru, riwayatnya dicatat di log `Documentation/TODO.md`.
+**Status:** live di `mmirza.site` sejak 2026-10-01. Selesai; tidak ada tugas akun pemilik yang tertunda (email, Sentry, uptime monitor, ruleset, Search Console, backup, dan rilis Docker sengaja tidak dipakai, keputusan pemilik 2026-11-20). Pekerjaan sekarang berupa revisi dari Mirza: `DESIGN.md` diperbarui sesuai keadaan terbaru, riwayatnya dicatat di log `Documentation/TODO.md`.
 
 **Next.js 16:** API berbeda dari versi lama. Baca panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 
@@ -19,9 +19,9 @@ Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) +
 | `Documentation/PRD.md` | Tujuan, fitur, user story, kriteria penerimaan, keputusan sementara | Sebelum mengerjakan fitur apa pun |
 | `Documentation/DESIGN.md` | Arah visual dan prinsip referensi, token, tipografi, komponen, peta situs, halaman, aksesibilitas, pedoman tulisan (keadaan sekarang) | Sebelum mengerjakan UI, desain, atau animasi |
 | `Documentation/ARCHITECTURE.md` | Tech stack, model data, API, keamanan, deployment | Sebelum mengubah struktur, data, atau API |
-| `Documentation/DEPLOYMENT.md` | Menjalankan lokal, deploy Vercel, image Docker (GitHub Packages), pemantauan, backup dan pemulihan | Sebelum mengubah deploy, Dockerfile, atau workflow release/backup |
-| `Documentation/WORKFLOW.md` | Commit, Definition of Done, rilis | Sebelum commit atau push |
-| `Documentation/TODO.md` | Tugas yang menunggu pemilik, backlog, dan log perubahan | Untuk menentukan pekerjaan berikutnya dan mencatat revisi |
+| `Documentation/DEPLOYMENT.md` | Menjalankan lokal, deploy Vercel, pemantauan dan pemulihan | Sebelum mengubah deploy atau konfigurasi Vercel |
+| `Documentation/WORKFLOW.md` | Commit, Definition of Done, deploy dan rollback | Sebelum commit atau push |
+| `Documentation/TODO.md` | Backlog dan log perubahan | Untuk menentukan pekerjaan berikutnya dan mencatat revisi |
 | `Documentation/00-discovery.md` | Jawaban asli pemilik dan keputusan terbuka | Bila ada keraguan tentang maksud pemilik |
 | `Documentation/CONTENT.md` | Konten dari CV (pengalaman, pendidikan, skill, angka yang boleh dipakai) dan yang masih ditanyakan | Sebelum menulis atau mengisi teks/seed apa pun |
 | `.agents/skill/SKILL.md` | Resep untuk tugas berulang: entitas baru, halaman publik, route API, konten dua bahasa, pemeriksaan sebelum selesai, menghapus kode tak terpakai. Tidak dimuat otomatis oleh Claude Code (bukan di `.claude/skills/`), jadi **baca manual** | Saat mengerjakan salah satu tugas itu |
@@ -30,7 +30,7 @@ Bila dokumen bertentangan, urutan kebenaran: jawaban pemilik di `00-discovery.md
 
 ## Stack Singkat
 
-Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas 2D/WebGL buatan sendiri (tanpa library animasi) · grafik admin SVG buatan sendiri (tanpa library grafik) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Resend + React Email · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
+Node.js 24 · Next.js 16 (App Router) + TypeScript 6 strict · Tailwind 4 + shadcn/ui · animasi CSS bawaan + canvas 2D/WebGL buatan sendiri (tanpa library animasi) · grafik admin SVG buatan sendiri (tanpa library grafik) · next-intl · PostgreSQL (Neon) + Prisma · Better Auth (email + password, satu admin) · Zod · Cloudinary · Vercel Cron · Vitest + Playwright + axe · pnpm · Vercel + GitHub Actions. Detail dan alasan: `Documentation/ARCHITECTURE.md`.
 
 ## Perintah
 
@@ -93,7 +93,7 @@ Sebelum menyerahkan pekerjaan jalankan: `lint`, `format:check`, `typecheck`, `te
 Akar repo hanya berisi berkas `.md`, ditambah `.github/` (wajib di akar), `.agents/skill/` (skill proyek), dan empat folder di bawah.
 
 ```
-Frontend/        aplikasi Next.js (UI) + Dockerfile. SEMUA perintah pnpm dijalankan dari sini (cd Frontend)
+Frontend/        aplikasi Next.js (UI). SEMUA perintah pnpm dijalankan dari sini (cd Frontend)
   src/app/[locale]/  halaman publik       src/app/admin/   panel admin
   src/app/api/       rute API (tipis: re-export dari Backend/api + konfigurasi segmen)
   src/components/    ui/, shared/, site/, admin/   src/features/  komponen per domain
@@ -103,7 +103,7 @@ Frontend/        aplikasi Next.js (UI) + Dockerfile. SEMUA perintah pnpm dijalan
 Backend/         kode server, diimpor Frontend lewat alias @backend/* (tanpa package.json sendiri)
   features/          per domain: schema, queries, actions, public
   lib/               db, auth, env, email, cloudinary, rate-limit, audit, admin-i18n, ...
-  api/               logika route handler   emails/   template React Email   i18n/routing.ts
+  api/               logika route handler   i18n/routing.ts
   scripts/           seed.ts, admin-reset-password.ts   generated/   Prisma client (tidak di-commit)
 Database/        schema.prisma, migrations/, seed/seed-data.ts
 Documentation/   dokumen perencanaan

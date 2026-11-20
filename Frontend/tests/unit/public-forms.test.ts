@@ -2,28 +2,17 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Server Action publik diuji dengan database, header, rate limit, dan email tiruan.
+// Server Action publik diuji dengan database, header, dan rate limit tiruan.
 const db = {
   message: { create: vi.fn(async () => ({ id: 'msg-1' })) },
 }
 const rate = { allowed: true }
-const sendEmail = vi.fn(async () => undefined)
-let emailConfig: unknown = null
 
 vi.mock('@backend/lib/db', () => ({ getDb: () => db }))
-// after() menjalankan tugas setelah jawaban terkirim; di tes dikumpulkan lalu ditunggu
-const afterTasks: Promise<unknown>[] = []
-vi.mock('next/server', () => ({
-  after: (task: () => unknown) => {
-    afterTasks.push(Promise.resolve().then(task))
-  },
-}))
-const flushAfter = () => Promise.all(afterTasks.splice(0))
 vi.mock('next/headers', () => ({
   headers: async () => new Headers({ 'x-forwarded-for': '203.0.113.9' }),
 }))
 vi.mock('next-intl/server', () => ({ getTranslations: async () => (key: string) => key }))
-vi.mock('@backend/lib/email', () => ({ getEmailConfig: () => emailConfig, sendEmail }))
 vi.mock('@backend/lib/rate-limit', () => ({
   consumePublicRateLimit: vi.fn(async () => ({
     allowed: rate.allowed,
@@ -52,7 +41,6 @@ const validContact = {
 beforeEach(() => {
   vi.clearAllMocks()
   rate.allowed = true
-  emailConfig = null
 })
 
 describe('submitContact', () => {
@@ -91,38 +79,17 @@ describe('submitContact', () => {
       locale: 'id',
     })
     expect(JSON.stringify(data)).not.toContain('203.0.113.9')
-    expect(sendEmail).not.toHaveBeenCalled()
   })
-  it('notifikasi email bila Resend diatur, gagal kirim tidak menggagalkan pengunjung', async () => {
-    emailConfig = {
-      RESEND_API_KEY: 'x',
-      EMAIL_FROM: 'a@b.c',
-      CONTACT_TO_EMAIL: 'owner@example.com',
-    }
-    sendEmail.mockRejectedValueOnce(new Error('down'))
-    const r = await submitContact(idle, form(validContact))
-    expect(r.status).toBe('success')
-    await flushAfter()
-    expect(sendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({ to: 'owner@example.com', replyTo: 'rina@example.com' }),
-    )
-  })
-  it('baris baru di nama tidak ikut ke subjek email notifikasi', async () => {
-    emailConfig = {
-      RESEND_API_KEY: 'x',
-      EMAIL_FROM: 'a@b.c',
-      CONTACT_TO_EMAIL: 'owner@example.com',
-    }
+  it('baris baru dan karakter kontrol di nama disimpan sebagai satu baris', async () => {
     const r = await submitContact(
       idle,
       form({ ...validContact, name: 'Rina\r\nBcc: korban@example.com\u0007' }),
     )
     expect(r.status).toBe('success')
-    await flushAfter()
-    const calls = sendEmail.mock.calls as unknown as [{ subject: string }][]
-    const sent = calls.at(-1)![0]
-    expect(sent.subject).toBe('Pesan baru: Rina Bcc: korban@example.com')
-    expect(sent.subject).not.toMatch(/[\r\n]/)
+    const data = (
+      db.message.create.mock.calls[0] as unknown as [{ data: Record<string, unknown> }]
+    )[0].data
+    expect(data.name).toBe('Rina Bcc: korban@example.com')
   })
   it('nama yang hanya berisi karakter kontrol ditolak sebagai kosong', async () => {
     const r = await submitContact(idle, form({ ...validContact, name: '\n\t\u0000' }))

@@ -1,5 +1,5 @@
 // Variabel lingkungan sisi server: validasi kunci wajib (database, auth) dan URL situs. Kunci layanan
-// tambahan (Resend, Sentry, Cloudinary, dan lainnya) opsional: bila kosong, fitur terkait mati sendiri.
+// tambahan (Cloudinary, GitHub, dan lainnya) opsional: bila kosong, fitur terkait mati sendiri.
 // Penjelasan tiap kunci: Documentation/ARCHITECTURE.md bagian 8.
 
 import { z } from 'zod'
@@ -109,7 +109,7 @@ export function trustedAuthOrigins(env: AuthEnv): string[] {
   return [...new Set(origins.filter((v): v is string => Boolean(v)))]
 }
 
-// URL publik situs untuk tautan absolut (email, sitemap). Urutan: domain yang diatur,
+// URL publik situs untuk tautan absolut (metadata, sitemap, robots). Urutan: domain yang diatur,
 // domain production Vercel, URL deployment, lalu localhost.
 export function siteUrl(source: Record<string, string | undefined> = process.env): string {
   const pick = (v: string | undefined) => (v && v.trim() !== '' ? v.trim() : undefined)

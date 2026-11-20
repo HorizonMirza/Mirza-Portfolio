@@ -4,7 +4,6 @@
 import { timingSafeEqual } from 'node:crypto'
 
 import { getDb } from '@backend/lib/db'
-import { reportServerError } from '@backend/lib/error-report'
 import { removeOrphanUploads } from '@backend/lib/orphan-uploads'
 import { summaryStart } from '@backend/lib/page-view-summary'
 import { runSteps } from '@backend/lib/run-steps'
@@ -102,15 +101,10 @@ export async function GET(request: Request) {
       // 7) Berkas unggahan Cloudinary tanpa baris Asset, lebih tua dari 48 jam.
       'berkas-yatim': async () => ({ removedOrphanUploads: await removeOrphanUploads(db) }),
     },
-    async (name, error) => {
+    (name, error) => {
       console.error(
         `[cron-daily] langkah "${name}" gagal`,
         error instanceof Error ? error.message : error,
-      )
-      await reportServerError(
-        error,
-        { path: '/api/cron/daily', method: 'GET' },
-        { routePath: '/api/cron/daily', routeType: 'route' },
       )
     },
   )

@@ -39,18 +39,18 @@ Every module comes in Indonesian and English, dark by default with a light theme
 | **App** | Next.js 16, React 19, TypeScript (strict), Tailwind CSS 4, next-intl |
 | **Motion** | CSS first (scroll-driven, View Transitions), then self-made canvas 2D and WebGL. No animation library; heavy scenes pause when off-screen or while scrolling |
 | **Data and auth** | PostgreSQL (Neon), Prisma, Better Auth, Zod |
-| **Services** | Cloudinary, Resend, Vercel (region `sin1`, daily cron) |
+| **Services** | Cloudinary, Vercel (region `sin1`, daily cron, Speed Insights) |
 | **Testing** | Vitest, Playwright, axe (WCAG 2.2 AA) |
-| **Delivery** | GitHub Actions CI (lint, format, typecheck, tests, `pnpm audit`, gitleaks, E2E on Chromium, Firefox, and WebKit), Docker image on GitHub Packages, daily encrypted database backup workflow (runs once its secrets are set) |
+| **Delivery** | GitHub Actions CI (lint, format, typecheck, tests, `pnpm audit`, gitleaks, E2E on Chromium, Firefox, and WebKit), auto-deploy to Vercel from `main` |
 
 ## Repository
 
 | Path | Contents |
 |---|---|
 | `Frontend/` | The Next.js app: pages, components, API routes, tests |
-| `Backend/` | Server code: Server Actions, database queries, auth, email, uploads, API logic. Bundled into the Next.js app, one deploy |
+| `Backend/` | Server code: Server Actions, database queries, auth, uploads, API logic. Bundled into the Next.js app, one deploy |
 | `Database/` | Prisma schema, migrations, seed data |
-| `Documentation/` | [PRD](Documentation/PRD.md), [design](Documentation/DESIGN.md), [architecture](Documentation/ARCHITECTURE.md), [workflow](Documentation/WORKFLOW.md), [deployment & backup](Documentation/DEPLOYMENT.md), [TODO](Documentation/TODO.md) |
-| `.github/` | CI, release (Docker image), and backup workflows |
+| `Documentation/` | [PRD](Documentation/PRD.md), [design](Documentation/DESIGN.md), [architecture](Documentation/ARCHITECTURE.md), [workflow](Documentation/WORKFLOW.md), [deployment](Documentation/DEPLOYMENT.md), [TODO](Documentation/TODO.md) |
+| `.github/` | CI workflow |
 
 © Muhammad Mirza Wirya. All rights reserved.

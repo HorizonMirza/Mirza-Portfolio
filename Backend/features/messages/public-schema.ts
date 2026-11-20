@@ -2,9 +2,9 @@
 
 import { z } from 'zod'
 
-// Teks satu baris: baris baru, tab, dan karakter kontrol lain diganti spasi. Nama dan subjek masuk ke
-// subjek email notifikasi, jadi tidak boleh membawa baris baru.
-export function toSingleLine(value: string) {
+// Teks satu baris: baris baru, tab, dan karakter kontrol lain diganti spasi. Nama dan subjek tampil
+// sebagai satu baris di daftar Admin → Pesan.
+function toSingleLine(value: string) {
   return value
     .replace(/[\p{Cc}\u2028\u2029]+/gu, ' ')
     .replace(/\s+/g, ' ')

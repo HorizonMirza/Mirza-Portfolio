@@ -1,4 +1,4 @@
-# Deployment, Menjalankan Lokal, Pemantauan, dan Backup
+# Deployment dan Menjalankan Lokal
 
 Panduan operasional. Gambaran proyek ada di [`README.md`](../README.md); keputusan arsitektur di [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
@@ -69,7 +69,7 @@ Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapu
    | `ADMIN_PASSWORD` | Production | password admin, minimal 8 karakter |
    | `CRON_SECRET` | Production | teks acak minimal 16 karakter |
    | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Production, Preview | dari dashboard Cloudinary (opsional, untuk unggah foto dan gambar) |
-   | `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_TO_EMAIL` | Production | opsional, untuk notifikasi email pesan kontak (newsletter dihapus 2026-11-06). `EMAIL_FROM` harus di domain yang terverifikasi di Resend |
+   | `GITHUB_TOKEN` | Production, Preview | token *fine-grained* tanpa izin tambahan, untuk kalender kontribusi GitHub |
 
    `BETTER_AUTH_URL` dan `NEXT_PUBLIC_SITE_URL` **dikosongkan dulu**: situs otomatis memakai domain `*.vercel.app` proyek. Isi keduanya (`https://domainanda.site`) setelah domain sendiri terpasang.
 4. **Deployments → titik tiga pada deploy terakhir → Redeploy**. Di log build akan terlihat "All migrations have been successfully applied", "Akun admin dibuat", dan "Seed selesai".
@@ -82,64 +82,11 @@ Catatan:
 - Pengisian awal (`Backend/scripts/seed.ts --bootstrap`) hanya mengisi konten bila belum ada profil, jadi data yang Anda hapus lewat admin tidak muncul lagi di deploy berikutnya.
 - Commit yang hanya mengubah `Documentation/`, `.github/`, atau berkas `.md` di akar tidak memicu build; perubahan di `Frontend/`, `Backend/`, atau `Database/` selalu di-build (`Frontend/scripts/vercel-ignore-build.sh`). Deploy pertama dan Redeploy commit yang sama (misalnya setelah mengubah Environment Variables) selalu di-build.
 - Menjalankan seed manual dari komputer sendiri tetap bisa: `pnpm db:seed` di `Frontend/` dengan `DATABASE_URL` production.
-
-Setelah deploy (pemilik akun):
-
-- **GitHub → Settings → Rules → Rulesets → New branch ruleset** untuk `main`: aktifkan *Block force pushes* dan *Restrict deletions*. Jangan aktifkan *Require a pull request*, karena semua pekerjaan langsung di `main` (tanpa branch lain).
-
-## Image Docker (GitHub Packages)
-
-Setiap release di GitHub membangun image aplikasi dan mengirimnya ke **GitHub Packages**: `ghcr.io/horizonmirza/mirza-portfolio` (tag `vX.Y.Z`, `X.Y.Z`, dan `latest`). Workflow-nya `.github/workflows/release.yml`: migrasi dan seed ke Postgres sementara, `docker build`, uji singkat (`/api/health` dan lima halaman), baru `docker push`. Database sementara itu tidak ikut ke image.
-
-**Membuat release.** Buka GitHub → tab **Actions** → **Buat release** → **Run workflow**, isi tag (mis. `v1.0.0`). Workflow `.github/workflows/buat-release.yml` membuat tag dan Release dari `main` (catatan rilis dari `.github/release-notes/<tag>.md`, atau otomatis dari commit bila berkasnya tidak ada), lalu menjalankan `release.yml` untuk membangun image bertag itu. Release yang dibuat lewat tombol **Draft a new release** di GitHub juga memicu `release.yml` sendiri.
-
-Menjalankan (butuh PostgreSQL yang **sudah dimigrasi**, mis. lewat `pnpm db:deploy` dari repo ini):
-
-```bash
-docker run -d --name mirza-portfolio -p 3000:3000 \
-  -e DATABASE_URL="postgresql://user:pass@host:5432/portfolio" \
-  -e BETTER_AUTH_SECRET="$(openssl rand -base64 32)" \
-  -e BETTER_AUTH_URL="http://localhost:3000" \
-  -e NEXT_PUBLIC_SITE_URL="http://localhost:3000" \
-  ghcr.io/horizonmirza/mirza-portfolio:latest
-```
-
-- Variabel lain (Cloudinary, Resend, `CRON_SECRET`, `ADMIN_EMAIL`, dst.) sama dengan tabel di bagian Deploy ke Vercel.
-- **Di balik reverse proxy (nginx, Caddy, Traefik, load balancer):** isi `TRUSTED_PROXIES` dengan IP atau CIDR IPv4 proxy tersebut, dipisah koma (mis. `TRUSTED_PROXIES=172.16.0.0/12`). IP klien lalu dibaca dari kanan `x-forwarded-for`, melewati proxy tepercaya, sehingga batas percobaan login dan form tidak bisa diakali dengan header palsu. Tanpa variabel ini, di luar Vercel situs memakai entri paling kanan (yang ditambahkan proxy terdekat) dan Better Auth hanya mempercayai header berisi satu IP. Image yang diakses langsung tanpa proxy tidak punya sumber IP tepercaya; letakkan di balik proxy untuk production. Di Vercel variabel ini tidak perlu.
-- Image berjalan sebagai user non-root, mendengarkan port 3000 (`PORT` bisa diganti), dan punya `HEALTHCHECK` ke `/api/health`.
-- Server mandiri (`output: 'standalone'`) hanya aktif saat build Docker (`DOCKER_BUILD=1`), jadi build Vercel dan CI tidak berubah. Karena akar pelacakan berkas adalah akar repo (kode server di `Backend/`), server di dalam image ada di `/app/Frontend/server.js`; kode Backend sudah dibundel ke dalamnya.
-- Isi halaman yang sudah dirender saat build berasal dari data seed; setelah itu halaman mengikuti database yang terhubung (revalidasi, paling lambat 10 menit). `NEXT_PUBLIC_SITE_URL` awal image adalah `https://mmirza.site`; ganti dengan `--build-arg NEXT_PUBLIC_SITE_URL=...` saat membangun sendiri.
-- Membangun lokal dari akar repo: `docker build --network=host -f Frontend/Dockerfile --build-arg DATABASE_URL=<postgres-yang-sudah-dimigrasi> -t mirza-portfolio .`
-- **Jangan pernah memakai URL database production sebagai `DATABASE_URL` saat `docker build`.** Nilai `--build-arg` tercatat di riwayat layer image (`docker history`) dan ikut terkirim bersama image ke GitHub Packages. Pakai database Postgres sementara yang sudah dimigrasi (seperti di `release.yml`); URL production hanya diberikan saat `docker run` lewat `-e`.
-
 - Domain `mmirza.site` (Hostinger) sudah terhubung: A `@` dan CNAME `www` ke Vercel, `www` dialihkan ke `mmirza.site`.
 
-## Pemantauan dan Backup (Milestone 5)
+## Pemantauan dan Pemulihan
 
-**Vercel Web Analytics dan Speed Insights.** Di project Vercel: tab **Analytics → Enable** dan tab **Speed Insights → Enable** (paket Hobby gratis). Skrip hanya dimuat di Vercel (`components/site/vercel-insights.tsx`) dan query string dibuang sebelum dikirim, jadi parameter di URL (mis. token atau isian) tidak ikut tercatat.
-
-**Sentry (error server).** Buat project Sentry (platform Next.js), salin **DSN**, lalu tambahkan `SENTRY_DSN` di Vercel (Production, tipe Config). Error dikirim dari `src/instrumentation.ts` lewat HTTP tanpa SDK, tanpa header, cookie, IP, atau query string. Tanpa `SENTRY_DSN` tidak ada yang dikirim.
-
-**Backup harian** (`.github/workflows/backup.yml`, 02.30 WIB): `pg_dump` → enkripsi AES-256 (gpg) → artifact 30 hari → langsung diuji pulih ke Postgres sementara (jumlah Profile, Super Admin, dan migrasi dicek). Isi dua secret di **GitHub → Settings → Secrets and variables → Actions**:
-
-| Secret | Isi |
-|---|---|
-| `BACKUP_DATABASE_URL` | connection string Neon **tanpa pooler** (Neon Console → Connect → matikan *Connection pooling*) |
-| `BACKUP_PASSPHRASE` | kalimat sandi panjang (≥ 32 karakter). **Simpan juga di password manager**: tanpa ini backup tidak bisa dibuka |
-
-Jalankan sekali lewat **Actions → Backup → Run workflow** untuk memastikan hijau.
-
-> **Status 2026-10-31: backup production belum aktif.** Pengisian kedua secret ditunda pemilik (2026-10-20). Selama secret kosong, run harian tetap hijau tetapi **tidak membuat backup apa pun**; run menampilkan peringatan kuning dan ringkasan "Backup TIDAK berjalan". Backup baru benar-benar ada setelah secret diisi dan satu run menghasilkan artifact `portfolio-*`.
-
-**Memulihkan backup** (bila data production rusak):
-
-```bash
-# 1. Unduh artifact dari Actions → Backup → run terakhir, ekstrak backup.dump.gpg
-gpg --decrypt --output restore.dump backup.dump.gpg       # minta BACKUP_PASSPHRASE
-# 2. Paling aman: pulihkan ke branch Neon baru dulu, cek isinya, baru arahkan aplikasi ke sana.
-#    Untuk menimpa database yang sedang dipakai (data di dalamnya diganti isi backup):
-pg_restore --clean --if-exists --no-owner --no-acl --dbname "<URL Neon tanpa pooler>" restore.dump
-rm restore.dump
-```
-
-Neon juga punya pemulihan bawaan ke titik waktu tertentu (Neon Console → Restore), sebagai lapis kedua.
+- **Vercel Speed Insights** aktif di project Vercel: skripnya hanya dimuat di Vercel (`components/site/vercel-insights.tsx`) dan query string dibuang sebelum dikirim.
+- **`/api/health`** memeriksa koneksi database (dipakai untuk mengecek setiap deploy).
+- **Pesan kontak** tidak dikirim lewat email: semuanya dibaca di Admin → Pesan.
+- **Data rusak:** pulihkan lewat fitur bawaan Neon (Neon Console → Restore ke titik waktu tertentu). Kesalahan kode dikembalikan dengan Vercel Instant Rollback ke deployment sebelumnya.

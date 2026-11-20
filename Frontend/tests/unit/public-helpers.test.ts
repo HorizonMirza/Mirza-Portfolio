@@ -1,11 +1,10 @@
-// Tes unit Backend/lib/email dan src/features/projects/browser-address: loc dan formatMonth,
-// formatDateShort, pageMetadata, whatsappUrl.
+// Tes unit helper publik: loc dan formatMonth, formatDateShort, siteUrl/siteHost, browserAddress,
+// safeImage, isBot/isSameOrigin, pageMetadata, whatsappUrl, dan CSP.
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { browserAddress } from '@/features/projects/browser-address'
 
-import { getEmailConfig } from '@backend/lib/email'
 import { siteHost, siteUrl } from '@backend/lib/env'
 import { formatDateShort, formatMonth, loc } from '@backend/lib/localized'
 import { safeImage } from '@backend/lib/public-image'
@@ -76,20 +75,6 @@ describe('siteHost dan browserAddress', () => {
     expect(host).toBe('contoh.dev')
     expect(browserAddress({ slug: 'gaas', demoUrl: null }, host)).toBe('contoh.dev/projects/gaas')
     expect(browserAddress({ slug: 'gaas', demoUrl: 'https://gaas.app/' }, host)).toBe('gaas.app')
-  })
-})
-
-describe('getEmailConfig', () => {
-  it('null bila Resend belum diatur', () => {
-    expect(getEmailConfig({})).toBeNull()
-    expect(getEmailConfig({ RESEND_API_KEY: 're_x', EMAIL_FROM: '' })).toBeNull()
-  })
-  it('terbaca bila lengkap, CONTACT_TO_EMAIL opsional', () => {
-    expect(
-      getEmailConfig({ RESEND_API_KEY: 're_x', EMAIL_FROM: 'Mirza <halo@mirza.site>' }),
-    ).toMatchObject({
-      EMAIL_FROM: 'Mirza <halo@mirza.site>',
-    })
   })
 })
 
@@ -167,22 +152,5 @@ describe('buildCsp', async () => {
     expect(dev).toContain("'unsafe-eval'")
     expect(dev).not.toContain('upgrade-insecure-requests')
     expect(buildCsp({ dev: false, preview: false })).not.toContain('upgrade-insecure-requests')
-  })
-})
-
-describe('describeDevice', async () => {
-  const { describeDevice } = await import('@backend/lib/login-notice')
-  it('meringkas user-agent', () => {
-    expect(
-      describeDevice(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/140.0 Safari/537.36',
-      ),
-    ).toBe('Chrome di Windows')
-    expect(
-      describeDevice(
-        'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit Version/18.0 Mobile Safari/604.1',
-      ),
-    ).toBe('Safari di iOS')
-    expect(describeDevice(null)).toBe('Browser tidak dikenal di sistem tidak dikenal')
   })
 })

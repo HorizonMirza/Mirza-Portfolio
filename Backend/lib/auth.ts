@@ -1,5 +1,5 @@
 // Konfigurasi Better Auth: login email + password satu Super Admin, sesi 8 jam, rate limit login,
-// riwayat masuk, dan email notifikasi login (hanya server).
+// dan riwayat masuk (hanya server).
 
 import 'server-only'
 
@@ -13,7 +13,6 @@ import { trustedProxies } from '@backend/lib/client-ip'
 import { getDb } from '@backend/lib/db'
 import { getAuthEnv, resolveBaseUrl, trustedAuthOrigins } from '@backend/lib/env'
 import { recordLoginEvent } from '@backend/lib/login-events'
-import { notifyLogin } from '@backend/lib/login-notice'
 import { MIN_PASSWORD_LENGTH } from '@backend/lib/password-policy'
 import { authRateLimitStorage, hashIdentifier } from '@backend/lib/rate-limit'
 
@@ -67,11 +66,6 @@ function createAuth() {
               ipAddress: session.ipAddress ? hashIdentifier(session.ipAddress) : null,
             },
           }),
-          // email ke admin setiap ada login baru (bila Resend diatur). Dijalankan lewat after() agar
-          // tidak menunda respons login dan tetap selesai di serverless setelah respons terkirim.
-          after: async (session) => {
-            after(() => notifyLogin(session))
-          },
         },
       },
     },

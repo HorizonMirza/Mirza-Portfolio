@@ -241,7 +241,7 @@ Aturan lain: target sentuh ≥ 44 × 44 px di HP (desktop ≥ 38 px karena ukura
 - Atribut `lang` mengikuti locale, `hreflang` di setiap halaman.
 - Animasi menghormati `prefers-reduced-motion`. Tidak ada konten berkedip.
 - Canvas dekoratif (hero, kartu ID) `aria-hidden` dan tidak menerima fokus; informasinya tersedia sebagai teks.
-- Pengujian: axe otomatis di Playwright untuk semua halaman publik di kedua tema dan bahasa; pemeriksaan manual keyboard dan pembaca layar di perangkat nyata oleh pemilik.
+- Pengujian: axe otomatis di Playwright untuk semua halaman publik di kedua tema dan bahasa, ditambah tes navigasi keyboard di E2E.
 
 ## 9. Pedoman Tulisan (Copy)
 

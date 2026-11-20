@@ -199,7 +199,7 @@
     "cvHeading": "CV Downloads",
     "cvBody": "Only the number of downloads and the page language are recorded, with no personal data.",
     "servicesHeading": "Third-party Services",
-    "servicesBody": "The site runs on Vercel, the database on Neon (Singapore), and images and the CV on Cloudinary. These services are used only while they are switched on: Resend to send email, Vercel Web Analytics and Speed Insights to record visit counts and page speed without cookies (page addresses without parameters), and Sentry for server error reports without personal data. Each receives only the data it needs to do its job.",
+    "servicesBody": "The site runs on Vercel, the database on Neon (Singapore), and images on Cloudinary. Vercel Speed Insights records page speed without cookies (page addresses without parameters). Each receives only the data it needs to do its job.",
     "rightsHeading": "Your Rights",
     "rightsBody": "You can ask for a copy or deletion of your data through the contact page.",
     "contactLink": "Go to the Contact Page",
