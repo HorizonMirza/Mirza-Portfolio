@@ -10,7 +10,7 @@ import { deviceParts } from '@backend/lib/device'
 
 describe('Admin → Akun', () => {
   it('email disamarkan tanpa menghilangkan domain', () => {
-    expect(maskEmail('purbandono@gmail.com')).toBe('pu••••••••@gmail.com')
+    expect(maskEmail('contohnama@example.com')).toBe('co••••••••@example.com')
     expect(maskEmail('ab@x.id')).toBe('ab•••@x.id')
   })
 
