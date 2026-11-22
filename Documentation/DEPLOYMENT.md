@@ -55,7 +55,7 @@ Hook pre-commit (Husky + lint-staged, di `Frontend/.husky`) menjalankan ESLint d
 
 Situs sudah live di `mmirza.site`, jadi langkah di bawah hanya diperlukan bila project Vercel dipasang ulang dari nol. Setiap push ke `main` langsung di-deploy otomatis.
 
-Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, Ignored Build Step, dan Vercel Cron harian. Deploy production pertama otomatis menjalankan migrasi, lalu mengisi konten dari CV dan membuat akun admin bila database masih kosong. Tidak perlu menjalankan apa pun dari komputer sendiri.
+Konfigurasi hosting sudah ada di `Frontend/vercel.json`: region server **Singapura (`sin1`)**, build command `pnpm build:vercel`, Ignored Build Step, dan Vercel Cron harian. Versi Node dikunci `"engines": { "node": "24.x" }` di `Frontend/package.json` (sama dengan `.nvmrc` dan CI); Vercel membaca nilai ini, jadi pengaturan Node.js Version di dashboard tidak perlu diubah. Deploy production pertama otomatis menjalankan migrasi, lalu mengisi konten dari CV dan membuat akun admin bila database masih kosong. Tidak perlu menjalankan apa pun dari komputer sendiri.
 
 1. **Vercel → Add New → Project → Import** repo `HorizonMirza/Mirza-Portfolio`. Klik **Edit** di Root Directory lalu pilih `Frontend`. Framework terdeteksi Next.js, build command dan region terbaca dari `vercel.json`. Klik **Deploy**. Deploy pertama ini **akan gagal** karena database belum ada, itu wajar.
 2. **Storage → Create Database → Neon** (di halaman project): region **Singapore (aws-ap-southeast-1)**, hubungkan ke **Production** dan **Preview**. Integrasi mengisi `DATABASE_URL` dan `DATABASE_URL_UNPOOLED` otomatis.
@@ -106,6 +106,7 @@ Kode dibekukan sejak **2026-11-22** (finalisasi). Situs berjalan tanpa perubahan
 | Tahunan | Perpanjangan domain `mmirza.site` (nyalakan perpanjangan otomatis) | Hostinger → Domains |
 | Tahunan | Teks yang menua: usia di bio About, isi kartu pembuka | Admin → Tentang, Admin → Beranda |
 | Tahunan | Ganti password admin, keluarkan perangkat yang tidak dikenal | Admin → Akun |
+| Sebelum April 2028 | Dukungan Node.js 24 berakhir. Naikkan ke Node LTS berikutnya (`engines` di `Frontend/package.json`, `.nvmrc`, lalu uji penuh); ini termasuk commit darurat | Repo |
 
 Sertifikat SSL diperbarui otomatis oleh Vercel selama DNS domain tetap mengarah ke Vercel. Tahun hak cipta di footer dihitung otomatis.
 
