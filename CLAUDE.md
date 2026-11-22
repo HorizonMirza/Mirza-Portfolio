@@ -8,7 +8,7 @@ Panduan untuk Claude Code di repo ini. Baca ini dulu, lalu dokumen di `Documenta
 
 Website portofolio pribadi **Muhammad Mirza**: situs publik dua bahasa (ID/EN) + panel Super Admin untuk mengelola konten. Satu pemilik, dikerjakan bersama: **Claude menulis kode, Mirza mereview**.
 
-**Status:** live di `mmirza.site` sejak 2026-10-01. Selesai; tidak ada tugas akun pemilik yang tertunda (email, Sentry, uptime monitor, ruleset, Search Console, backup, dan rilis Docker sengaja tidak dipakai, keputusan pemilik 2026-11-20). Pekerjaan sekarang berupa revisi dari Mirza: `DESIGN.md` diperbarui sesuai keadaan terbaru, riwayatnya dicatat di log `Documentation/TODO.md`.
+**Status:** live di `mmirza.site` sejak 2026-10-01. Selesai; tidak ada tugas akun pemilik yang tertunda (email, Sentry, uptime monitor, ruleset, Search Console, backup, dan rilis Docker sengaja tidak dipakai, keputusan pemilik 2026-11-20). **Kode dibekukan sejak 2026-11-22** (finalisasi): commit hanya untuk advisory keamanan high/critical atau kerusakan yang tidak bisa dipulihkan lewat dashboard (`Documentation/DEPLOYMENT.md` bagian "Perawatan Setelah Dibekukan"). Riwayat ada di log `Documentation/TODO.md`.
 
 **Next.js 16:** API berbeda dari versi lama. Baca panduan di `Frontend/node_modules/next/dist/docs/` sebelum menulis kode Next.
 

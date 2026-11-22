@@ -90,3 +90,45 @@ Catatan:
 - **`/api/health`** memeriksa koneksi database (dipakai untuk mengecek setiap deploy).
 - **Pesan kontak** tidak dikirim lewat email: semuanya dibaca di Admin → Pesan.
 - **Data rusak:** pulihkan lewat fitur bawaan Neon (Neon Console → Restore ke titik waktu tertentu). Kesalahan kode dikembalikan dengan Vercel Instant Rollback ke deployment sebelumnya.
+
+## Perawatan Setelah Dibekukan
+
+Kode dibekukan sejak **2026-11-22** (finalisasi). Situs berjalan tanpa perubahan kode; yang perlu dijaga hanya akun dan layanan di luar repo. Semua langkah di bawah dikerjakan lewat dashboard, tanpa commit.
+
+| Kapan | Yang dicek | Di mana |
+|---|---|---|
+| Mingguan | Pesan masuk dan angka kunjungan | Admin → Pesan, Admin → Dashboard |
+| Bulanan | `https://mmirza.site/api/health` berisi `"status":"ok"` dan `"database":"ok"` | Browser |
+| Bulanan | Cron harian `/api/cron/daily` (01.00 WIB) sukses, log runtime tanpa error berulang | Vercel → Project → Settings → Cron Jobs, dan Logs |
+| Bulanan | Peringatan keamanan dependency | GitHub → repo → Security → Dependabot alerts |
+| Bulanan | Kalender GitHub tampil di beranda. Bila hilang, token kedaluwarsa (lihat di bawah) | Beranda situs |
+| Triwulan | Kuota paket gratis: Vercel (bandwidth, function), Neon (penyimpanan, compute), Cloudinary (kredit) | Vercel → Usage, Neon Console → Usage, Cloudinary → Dashboard |
+| Tahunan | Perpanjangan domain `mmirza.site` (nyalakan perpanjangan otomatis) | Hostinger → Domains |
+| Tahunan | Teks yang menua: usia di bio About, isi kartu pembuka | Admin → Tentang, Admin → Beranda |
+| Tahunan | Ganti password admin, keluarkan perangkat yang tidak dikenal | Admin → Akun |
+
+Sertifikat SSL diperbarui otomatis oleh Vercel selama DNS domain tetap mengarah ke Vercel. Tahun hak cipta di footer dihitung otomatis.
+
+### Mengganti `GITHUB_TOKEN`
+
+Kalender kontribusi GitHub di beranda dan footer hilang (tanpa error) bila token kedaluwarsa atau dicabut.
+
+1. GitHub → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token. Repository access: **Public repositories**, tanpa izin tambahan. Pilih masa berlaku terpanjang dan catat tanggalnya.
+2. Vercel → Project → Settings → Environment Variables → `GITHUB_TOKEN` (Production dan Preview) → Edit → tempel token baru.
+3. Deployments → deploy terakhir → titik tiga → **Redeploy**. Kalender tampil lagi paling lambat 6 jam kemudian (cache).
+
+### Bila Situs Bermasalah
+
+1. **Situs tidak terbuka:** buka `/api/health`. Bila `"database":"error"`, cek Neon Console (compute, kuota, status layanan). Bila domain tidak terbuka, cek Vercel → Settings → Domains (harus Valid) dan DNS di Hostinger (A `@` dan CNAME `www` ke Vercel).
+2. **Error setelah deploy:** Vercel → Deployments → deploy sukses sebelumnya → **Instant Rollback**.
+3. **Data terhapus atau rusak:** Neon Console → Restore ke titik waktu sebelum kejadian (dalam jangka riwayat paket Neon).
+4. **Lupa password admin:** dari komputer pengembang, `ADMIN_NEW_PASSWORD=... pnpm admin:reset-password` di `Frontend/` dengan `DATABASE_URL` production (semua sesi ikut dicabut).
+5. **Form kontak penuh spam:** Admin → Pengaturan → turunkan Batas Pesan per Jam, atau matikan Terima Pesan dari Form Kontak sementara.
+
+### Kapan Commit Darurat Boleh Dilakukan
+
+Hanya bila salah satu terjadi:
+- Dependabot alert atau advisory tingkat **high/critical** pada paket yang ikut ke production (`next`, `react`, `better-auth`, `@prisma/client`, dan sejenisnya).
+- Situs rusak karena perubahan di luar repo (misalnya API pihak ketiga berubah) dan tidak bisa dipulihkan lewat dashboard.
+
+Ikuti `WORKFLOW.md` bagian 4 dan 10a: satu commit kecil, versi perbaikan saja, semua pemeriksaan (lint, typecheck, test, build, E2E) hijau sebelum push, lalu CI hijau.

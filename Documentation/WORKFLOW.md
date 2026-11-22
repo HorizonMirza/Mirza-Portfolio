@@ -106,6 +106,8 @@ Perubahan desain, fitur, atau struktur data dikerjakan Claude di kode lalu di-pu
 
 ## 10. Pemeliharaan
 
+**Sejak 2026-11-22 kode dibekukan.** Jadwal di bawah berlaku untuk pekerjaan di dashboard dan panel admin; update dependency bulanan (10a) tidak dijalankan lagi, kecuali commit darurat untuk advisory high/critical. Daftar cek pemilik: `DEPLOYMENT.md` bagian "Perawatan Setelah Dibekukan".
+
 | Frekuensi | Kegiatan |
 |---|---|
 | Harian | Update konten lewat admin, baca pesan masuk |
